@@ -77,7 +77,8 @@ class Robot: WorkspaceObject
         self.module_name = module_name
         if self.module_name != ""
         {
-            select_modules(name: module_name)
+            select_modules(module_name)
+            apply_statistics_flags()
         }
         
         //Robot scene address
@@ -93,21 +94,27 @@ class Robot: WorkspaceObject
         }
     }
     
-    private func select_modules(name: String) //Select model visual controller an connector
+    /**
+     Function description.
+    
+     Code example.
+     
+            switch name
+            {
+            case "Connector Name":
+                model_controller = RobotController()
+                connector = RobotConnector()
+            case "Connector Name 2":
+                model_controller = RobotController2()
+                connector = RobotConnector2()
+            default:
+                break
+            }
+     */
+    public var select_modules: ((_ name: String) -> Void) = {name in }
+    
+    private func apply_statistics_flags()
     {
-        switch name
-        {
-        case "Portal":
-            model_controller = PortalController()
-            connector = RobotConnector()
-        case "6DOF":
-            model_controller = _6DOFController()
-            connector = RobotConnector()
-        default:
-            break
-        }
-        
-        //Apply get statistics parameters
         model_controller.get_statistics = get_statistics
         connector.get_statistics = get_statistics
     }

@@ -37,7 +37,8 @@ class Tool: WorkspaceObject
         if dictionary.keys.contains("Module") //Select model visual controller an connector
         {
             self.module_name = dictionary["Module"] as? String ?? ""
-            select_modules(name: module_name)
+            select_modules(module_name)
+            apply_statistics_flags()
         }
         
         if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it
@@ -98,25 +99,32 @@ class Tool: WorkspaceObject
         self.module_name = tool_struct.module ?? ""
         if module_name != ""
         {
-            select_modules(name: module_name)
+            select_modules(module_name)
+            apply_statistics_flags()
         }
     }
     
-    private func select_modules(name: String) //Select model visual controller an connector
+    /**
+     Function description.
+    
+     Code example.
+     
+            switch name
+            {
+            case "Connector Name":
+                model_controller = ToolController()
+                connector = ToolConnector()
+            case "Connector Name 2":
+                model_controller = ToolController2()
+                connector = ToolConnector2()
+            default:
+                break
+            }
+     */
+    public var select_modules: ((_ name: String) -> Void) = {name in }
+    
+    private func apply_statistics_flags()
     {
-        switch name
-        {
-        case "gripper":
-            model_controller = GripperController()
-            connector = ToolConnector()
-        case "drill":
-            model_controller = DrillController()
-            connector = ToolConnector()
-        default:
-            break
-        }
-        
-        //Apply get statistics parameters
         model_controller.get_statistics = get_statistics
         connector.get_statistics = get_statistics
     }
