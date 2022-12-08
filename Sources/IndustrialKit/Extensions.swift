@@ -8,7 +8,7 @@
 import Foundation
 
 //MARK: - Angles convertion extension
-extension Float
+public extension Float
 {
     var to_deg: Float
     {

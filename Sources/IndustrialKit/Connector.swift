@@ -8,7 +8,7 @@
 import Foundation
 
 //MARK: - Workspace object connector
-class WorkspaceObjectConnector
+public class WorkspaceObjectConnector
 {
     //Connection functions
     public func connect() //Connect to robot controller function
@@ -63,7 +63,7 @@ class WorkspaceObjectConnector
 }
 
 //MARK: - Robot connector
-class RobotConnector: WorkspaceObjectConnector
+public class RobotConnector: WorkspaceObjectConnector
 {
     //Perform functions
     public func move_to(point: PositionPoint)
@@ -82,7 +82,7 @@ class RobotConnector: WorkspaceObjectConnector
 }
 
 //MARK: - Tool connector
-class ToolConnector: WorkspaceObjectConnector
+public class ToolConnector: WorkspaceObjectConnector
 {
     //Perform functions
     func perform(code: Int) //Perform function for tool operation code

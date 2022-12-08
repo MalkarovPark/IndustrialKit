@@ -2,9 +2,9 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class PositionsProgram: Identifiable, Equatable
+public class PositionsProgram: Identifiable, Equatable
 {
-    static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
+    public static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
     {
         return lhs.name == rhs.name //Identity condition by names
     }
@@ -13,12 +13,12 @@ class PositionsProgram: Identifiable, Equatable
     public var points = [PositionPoint]()
     
     //MARK: - Positions program init functions
-    init()
+    public init()
     {
         self.name = "None"
     }
     
-    init(name: String?)
+    public init(name: String?)
     {
         self.name = name ?? "None"
     }
@@ -291,7 +291,7 @@ class PositionsProgram: Identifiable, Equatable
 }
 
 //MARK: - Program structure for workspace preset document handling
-struct program_struct: Codable
+public struct program_struct: Codable
 {
     var name: String
     var points = [PositionPoint]()

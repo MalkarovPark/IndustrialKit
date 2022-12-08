@@ -14,14 +14,14 @@ import SwiftUI
  
  Industrial production objects are represented by equipment that provide technological operations performing.
  */
-class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
+public class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
 {
-    static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool //Identity condition by names
+    public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool //Identity condition by names
     {
         return lhs.name == rhs.name
     }
     
-    func hash(into hasher: inout Hasher)
+    public func hash(into hasher: inout Hasher)
     {
         hasher.combine(name)
     }

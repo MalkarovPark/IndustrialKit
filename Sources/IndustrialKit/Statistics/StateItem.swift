@@ -1,15 +1,15 @@
 //
-//  File.swift
-//  
+//  WorkspaceObjectChart.swift
+//  Robotic Complex Workspace
 //
 //  Created by Malkarov Park on 08.12.2022.
 //
 
 import Foundation
 
-struct StateItem: Identifiable, Codable
+public struct StateItem: Identifiable, Codable
 {
-    var id = UUID()
+    public var id = UUID()
     
     var name: String
     var value: String?

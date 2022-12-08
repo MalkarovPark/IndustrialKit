@@ -9,20 +9,20 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class Tool: WorkspaceObject
+public class Tool: WorkspaceObject
 {
     //MARK: - Init functions
-    override init()
+    public override init()
     {
         super.init()
     }
     
-    override init(name: String)
+    public override init(name: String)
     {
         super.init(name: name)
     }
     
-    init(name: String, dictionary: [String: Any]) //Init by dictionary
+    public init(name: String, dictionary: [String: Any]) //Init by dictionary
     {
         super.init()
         
@@ -62,7 +62,7 @@ class Tool: WorkspaceObject
         }
     }
     
-    init(tool_struct: ToolStruct) //Init by tool structure
+    public init(tool_struct: ToolStruct) //Init by tool structure
     {
         super.init(name: tool_struct.name!)
         
@@ -381,7 +381,7 @@ class Tool: WorkspaceObject
     }
     
     //MARK: - Visual build functions
-    override var scene_node_name: String { "tool" }
+    public override var scene_node_name: String { "tool" }
     
     private var model_controller = ToolModelController()
     
@@ -390,7 +390,7 @@ class Tool: WorkspaceObject
     private var tool_parts = [SCNNode]()
     private var lengths = [Float]()
     
-    override func node_by_description()
+    public override func node_by_description()
     {
         node = SCNNode()
         node?.geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
@@ -439,8 +439,8 @@ class Tool: WorkspaceObject
         model_controller.info_code = nil
     }
     
-    var is_attached = false
-    var attached_to: String?
+    public var is_attached = false
+    public var attached_to: String?
     
     //MARK: - Chart functions
     public var charts_data: [WorkspaceObjectChart]?
@@ -519,12 +519,12 @@ class Tool: WorkspaceObject
     
     //MARK: - UI functions
     #if os(macOS)
-    override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
     {
         return("\(self.name ?? "Tool")", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255), self.image)
     }
     #else
-    override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
         return("\(self.name ?? "Tool")", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255), self.image)
     }
@@ -605,31 +605,31 @@ class Tool: WorkspaceObject
 }
 
 //MARK: - Tool structure for workspace preset document handling
-struct ToolStruct: Codable
+public struct ToolStruct: Codable
 {
-    var name: String?
-    var codes: [Int]
-    var names: [String]
+    public var name: String?
+    public var codes: [Int]
+    public var names: [String]
     
-    var scene: String?
-    var lengths: [Float]
+    public var scene: String?
+    public var lengths: [Float]
     
-    var is_placed: Bool
-    var location: [Float]
-    var rotation: [Float]
+    public var is_placed: Bool
+    public var location: [Float]
+    public var rotation: [Float]
     
-    var is_attached: Bool
-    var attached_to: String?
+    public var is_attached: Bool
+    public var attached_to: String?
     
-    var demo: Bool
-    var update_model_by_connector: Bool
+    public var demo: Bool
+    public var update_model_by_connector: Bool
     
-    var get_statistics: Bool
-    var charts_data: [WorkspaceObjectChart]?
-    var state: [StateItem]?
+    public var get_statistics: Bool
+    public var charts_data: [WorkspaceObjectChart]?
+    public var state: [StateItem]?
     
-    var programs: [OperationsProgram]
-    var image_data: Data
+    public var programs: [OperationsProgram]
+    public var image_data: Data
     
-    var module: String?
+    public var module: String?
 }

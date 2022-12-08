@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class Part: WorkspaceObject
+public class Part: WorkspaceObject
 {
     private var figure: String? //Part figure name
     private var lengths: [Float]? //lengths for part without scene figure
@@ -40,7 +40,7 @@ class Part: WorkspaceObject
      
      > This variable is codable.
      */
-    public var physics_type: PhysicsType = .ph_none //Physic body type
+    public var physics_type: PhysicsType = PhysicsType.ph_none //Physic body type
     
     ///The state of physics calculation for part node.
     public var enable_physics = false
@@ -168,9 +168,9 @@ class Part: WorkspaceObject
     }
     
     //MARK: - Visual build functions
-    override var scene_node_name: String { "part" }
+    public override var scene_node_name: String { "part" }
     
-    override func node_by_description()
+    public override func node_by_description()
     {
         node = SCNNode()
         
@@ -340,12 +340,12 @@ class Part: WorkspaceObject
     }
     
     #if os(macOS)
-    override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
     {
         return("\(self.name ?? "Part")", "Subtitle", self.color, self.image)
     }
     #else
-    override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
         return("\(self.name ?? "Part")", "Subtitle", self.color, self.image)
     }
@@ -359,7 +359,7 @@ class Part: WorkspaceObject
     }
 }
 
-enum PhysicsType: String, Codable, Equatable, CaseIterable
+public enum PhysicsType: String, Codable, Equatable, CaseIterable
 {
     case ph_static = "Static"
     case ph_dynamic = "Dynamic"
@@ -368,7 +368,7 @@ enum PhysicsType: String, Codable, Equatable, CaseIterable
 }
 
 //MARK: - Part structure for workspace preset document handling
-struct PartStruct: Codable
+public struct PartStruct: Codable
 {
     var name: String
     

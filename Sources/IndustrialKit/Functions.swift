@@ -111,3 +111,15 @@ func clear_constranints(node: SCNNode)
         node.rotation.x -= 1
     }
 }
+
+//MARK: - Conversion functions for space parameters
+func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling lengths by divider
+{
+    var new_numbers = [Float]()
+    for number in numbers
+    {
+        new_numbers.append(number * factor)
+    }
+    
+    return new_numbers
+}

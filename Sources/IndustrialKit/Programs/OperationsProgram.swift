@@ -7,14 +7,14 @@
 
 import Foundation
 
-class OperationsProgram: Identifiable, Codable, Hashable
+public class OperationsProgram: Identifiable, Codable, Hashable
 {
-    static func == (lhs: OperationsProgram, rhs: OperationsProgram) -> Bool
+    public static func == (lhs: OperationsProgram, rhs: OperationsProgram) -> Bool
     {
         return lhs.name == rhs.name //Identity condition by names
     }
     
-    func hash(into hasher: inout Hasher)
+    public func hash(into hasher: inout Hasher)
     {
         hasher.combine(id)
     }
@@ -63,12 +63,12 @@ class OperationsProgram: Identifiable, Codable, Hashable
     }
     
     //MARK: - Positions program init functions
-    init()
+    public init()
     {
         self.name = "None"
     }
     
-    init(name: String?)
+    public init(name: String?)
     {
         self.name = name ?? "None"
     }

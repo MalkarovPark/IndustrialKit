@@ -8,14 +8,14 @@
 import Foundation
 
 //MARK: - Chart class and structure
-class WorkspaceObjectChart: Identifiable, Codable, Hashable
+public class WorkspaceObjectChart: Identifiable, Codable, Hashable
 {
-    static func == (lhs: WorkspaceObjectChart, rhs: WorkspaceObjectChart) -> Bool
+    public static func == (lhs: WorkspaceObjectChart, rhs: WorkspaceObjectChart) -> Bool
     {
         lhs.id == rhs.id
     }
     
-    func hash(into hasher: inout Hasher)
+    public func hash(into hasher: inout Hasher)
     {
         hasher.combine(id)
     }
@@ -61,16 +61,16 @@ class WorkspaceObjectChart: Identifiable, Codable, Hashable
     }
 }
 
-struct ChartDataItem: Identifiable, Codable
+public struct ChartDataItem: Identifiable, Codable
 {
-    var id = UUID()
+    public var id = UUID()
     var name: String
     
     var domain: [String: Float]
     var codomain: Float
 }
 
-enum ChartStyle: Codable, Equatable, CaseIterable
+public enum ChartStyle: Codable, Equatable, CaseIterable
 {
     case area
     case line

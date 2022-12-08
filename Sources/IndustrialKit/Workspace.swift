@@ -16,7 +16,7 @@ import SwiftUI
  
  Builds a visual model of the production system.
  */
-class Workspace: ObservableObject
+public class Workspace: ObservableObject
 {
     //MARK: - Workspace objects data
     @Published public var robots = [Robot]()
@@ -1715,20 +1715,20 @@ class Workspace: ObservableObject
     }
 }
 
-enum WorkspaceObjectType: String, Equatable, CaseIterable
+public enum WorkspaceObjectType: String, Equatable, CaseIterable
 {
     case robot = "Robot"
     case part = "Part"
     case tool = "Tool"
 }
 
-enum PositionComponents: String, Equatable, CaseIterable
+public enum PositionComponents: String, Equatable, CaseIterable
 {
     case location = "Location"
     case rotation = "Rotation"
 }
 
-enum LocationComponents: Equatable, CaseIterable
+public enum LocationComponents: Equatable, CaseIterable
 {
     case x
     case y
@@ -1748,7 +1748,7 @@ enum LocationComponents: Equatable, CaseIterable
     }
 }
 
-enum RotationComponents: Equatable, CaseIterable
+public enum RotationComponents: Equatable, CaseIterable
 {
     case r
     case p
@@ -1769,10 +1769,10 @@ enum RotationComponents: Equatable, CaseIterable
 }
 
 //MARK: - Structure for workspace preset document handling
-struct WorkspacePreset: Codable
+public struct WorkspacePreset: Codable
 {
-    var robots = [RobotStruct]()
-    var elements = [workspace_program_element_struct]()
-    var tools = [ToolStruct]()
-    var parts = [PartStruct]()
+    public var robots = [RobotStruct]()
+    public var elements = [workspace_program_element_struct]()
+    public var tools = [ToolStruct]()
+    public var parts = [PartStruct]()
 }

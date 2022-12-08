@@ -7,14 +7,14 @@
 
 import Foundation
 
-class PositionPoint: Identifiable, Codable, Hashable
+public class PositionPoint: Identifiable, Codable, Hashable
 {
-    static func == (lhs: PositionPoint, rhs: PositionPoint) -> Bool
+    public static func == (lhs: PositionPoint, rhs: PositionPoint) -> Bool
     {
         lhs.id == rhs.id
     }
     
-    func hash(into hasher: inout Hasher)
+    public func hash(into hasher: inout Hasher)
     {
         hasher.combine(id)
     }
@@ -32,7 +32,7 @@ class PositionPoint: Identifiable, Codable, Hashable
     public var move_speed: Float
     
     //MARK: - Init functions
-    init()
+    public init()
     {
         self.x = 0
         self.y = 0
@@ -46,7 +46,7 @@ class PositionPoint: Identifiable, Codable, Hashable
         self.move_speed = 10
     }
     
-    init(x: Float, y: Float, z: Float)
+    public init(x: Float, y: Float, z: Float)
     {
         self.x = x
         self.y = y
@@ -60,7 +60,7 @@ class PositionPoint: Identifiable, Codable, Hashable
         self.move_speed = 10
     }
     
-    init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType)
+    public init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType)
     {
         self.x = x
         self.y = y
@@ -74,7 +74,7 @@ class PositionPoint: Identifiable, Codable, Hashable
         self.move_speed = 10
     }
     
-    init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType, move_speed: Float)
+    public init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType, move_speed: Float)
     {
         self.x = x
         self.y = y
@@ -89,7 +89,7 @@ class PositionPoint: Identifiable, Codable, Hashable
     }
 }
 
-enum MoveType: String, Codable, Equatable, CaseIterable
+public enum MoveType: String, Codable, Equatable, CaseIterable
 {
     case linear = "Linear"
     case fine = "Fine"

@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 import SwiftUI
 
-class Robot: WorkspaceObject
+public class Robot: WorkspaceObject
 {
     private var manufacturer: String?
     private var model: String?
@@ -419,13 +419,13 @@ class Robot: WorkspaceObject
     }
     
     //MARK: - Visual build functions
-    override var scene_node_name: String { "robot" }
+    public override var scene_node_name: String { "robot" }
     
     private var model_controller = RobotModelController()
     
     public var update_model_by_connector = false //Update model by model controller
     
-    override func node_by_description()
+    public override func node_by_description()
     {
         node = SCNNode()
         
@@ -774,7 +774,7 @@ class Robot: WorkspaceObject
     
     //MARK: - UI functions
     #if os(macOS)
-    override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
     {
         let color: Color
         switch self.manufacturer
@@ -794,7 +794,7 @@ class Robot: WorkspaceObject
         return("\(self.name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color, self.image)
     }
     #else
-    override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
         let color: Color
         switch self.manufacturer
@@ -879,43 +879,31 @@ class Robot: WorkspaceObject
 }
 
 //MARK: - Robot structure for workspace preset document handling
-struct RobotStruct: Codable
+public struct RobotStruct: Codable
 {
-    var name: String
-    var manufacturer: String
-    var model: String
+    public var name: String
+    public var manufacturer: String
+    public var model: String
     
-    var module: String
-    var scene: String
-    var lengths: [Float]
+    public var module: String
+    public var scene: String
+    public var lengths: [Float]
     
-    var is_placed: Bool
-    var location: [Float]
-    var rotation: [Float]
+    public var is_placed: Bool
+    public var location: [Float]
+    public var rotation: [Float]
     
-    var demo: Bool
-    var update_model_by_connector: Bool
+    public var demo: Bool
+    public var update_model_by_connector: Bool
     
-    var get_statistics: Bool
-    var charts_data: [WorkspaceObjectChart]?
-    var state: [StateItem]?
+    public var get_statistics: Bool
+    public var charts_data: [WorkspaceObjectChart]?
+    public var state: [StateItem]?
     
-    var image_data: Data
-    var programs: [program_struct]
+    public var image_data: Data
+    public var programs: [program_struct]
     
-    var origin_location: [Float]
-    var origin_rotation: [Float]
-    var space_scale: [Float]
-}
-
-//MARK: - Conversion functions for space parameters
-func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling lengths by divider
-{
-    var new_numbers = [Float]()
-    for number in numbers
-    {
-        new_numbers.append(number * factor)
-    }
-    
-    return new_numbers
+    public var origin_location: [Float]
+    public var origin_rotation: [Float]
+    public var space_scale: [Float]
 }
