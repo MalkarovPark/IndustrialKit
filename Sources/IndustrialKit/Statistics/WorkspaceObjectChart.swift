@@ -79,15 +79,3 @@ enum ChartStyle: Codable, Equatable, CaseIterable
     case rule
     case bar
 }
-
-//MARK: - State structure
-struct StateItem: Identifiable, Codable
-{
-    var id = UUID()
-    
-    var name: String
-    var value: String?
-    var image: String?
-    
-    var children: [StateItem]?
-}
