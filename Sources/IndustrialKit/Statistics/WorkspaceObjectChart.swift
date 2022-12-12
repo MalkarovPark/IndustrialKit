@@ -68,6 +68,13 @@ public struct ChartDataItem: Identifiable, Codable
     
     var domain: [String: Float]
     var codomain: Float
+    
+    public init(name: String, domain: [String: Float], codomain: Float)
+    {
+        self.name = name
+        self.domain = domain
+        self.codomain = codomain
+    }
 }
 
 public enum ChartStyle: Codable, Equatable, CaseIterable
