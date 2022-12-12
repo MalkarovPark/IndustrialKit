@@ -20,7 +20,7 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     }
     
     public var id = UUID()
-    public var element_data = WorkspaceProgramElementStruct(element_type: .perofrmer, performer_type: .robot, modificator_type: .observer, logic_type: .jump)
+    public var element_data = WorkspaceProgramElementStruct(element_type: ProgramElementType.perofrmer, performer_type: PerformerType.robot, modificator_type: ModificatorType.observer, logic_type: LogicType.jump)
     
     //MARK: - Element init functions
     public init(element_type: ProgramElementType, performer_type: PerformerType, modificator_type: ModificatorType, logic_type: LogicType)
@@ -161,6 +161,33 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     public var logic_type: LogicType = .jump
     
     public var mark_name = String()
+    
+    //MARK: Init function
+    public init()
+    {
+        element_type = .perofrmer
+        
+        performer_type = .robot
+        
+        robot_name = String()
+        tool_name = String()
+        
+        program_name = String()
+        
+        modificator_type = .observer
+        target_mark_name = String()
+        
+        logic_type = .jump
+        mark_name = String()
+    }
+    
+    public init(element_type: ProgramElementType, performer_type: PerformerType, modificator_type: ModificatorType, logic_type: LogicType)
+    {
+        self.element_type = element_type
+        self.performer_type = performer_type
+        self.modificator_type = modificator_type
+        self.logic_type = logic_type
+    }
 }
 
 //MARK: - Type enums
