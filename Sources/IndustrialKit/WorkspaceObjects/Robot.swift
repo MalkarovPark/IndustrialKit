@@ -15,13 +15,13 @@ public class Robot: WorkspaceObject
     private var model: String?
     
     //MARK: - Init functions
-    override init()
+    public override init()
     {
         super.init()
         robot_init(name: "None", manufacturer: "Default", model: "Model", lengths: [Float](), module_name: "None", scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], demo: self.demo, update_model_by_connector: self.update_model_by_connector, get_statistics: false, charts_data: nil, state: nil, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
-    override init(name: String)
+    public override init(name: String)
     {
         super.init()
         robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), module_name: "None", scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], demo: self.demo, update_model_by_connector: self.update_model_by_connector, get_statistics: false, charts_data: nil, state: nil, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])

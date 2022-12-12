@@ -15,7 +15,7 @@ import SceneKit
  Controller can add SCNaction or update position, angles for any nodes nested in object visual model root node.
  > Model controller does not build the visual model, but can change it according to instance's lengths.
  */
-public class ModelController
+open class ModelController
 {
     ///Model nodes from connected root node.
     public var nodes = [SCNNode]()
@@ -121,7 +121,7 @@ public class ModelController
 
 //MARK: - Model controller implementations
 ///Provides control over visual model for robot.
-public class RobotModelController: ModelController
+open class RobotModelController: ModelController
 {
     /**
      Updates robot model nodes by target position.
@@ -166,7 +166,7 @@ public class RobotModelController: ModelController
 }
 
 ///Provides control over visual model for robot.
-public class ToolModelController: ModelController
+open class ToolModelController: ModelController
 {
     /**
      Performs node action by operation code.

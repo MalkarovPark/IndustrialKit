@@ -59,7 +59,7 @@ public class Part: WorkspaceObject
     }
     
     //MARK: - Part init functions
-    override init(name: String)
+    public override init(name: String)
     {
         super.init(name: name)
     }
@@ -137,7 +137,7 @@ public class Part: WorkspaceObject
         }
     }
     
-    init(part_struct: PartStruct) //Init by part structure
+    public init(part_struct: PartStruct) //Init by part structure
     {
         super.init()
         init_by_struct(part_struct: part_struct)
