@@ -23,6 +23,11 @@ open class ModelController
     ///Model nodes lengths.
     public var lengths = [Float]()
     
+    public init()
+    {
+        
+    }
+    
     /**
      Gets parts nodes links from model root node and pass to array.
      

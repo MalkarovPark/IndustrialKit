@@ -10,6 +10,11 @@ import Foundation
 //MARK: - Workspace object connector
 public class WorkspaceObjectConnector
 {
+    public init()
+    {
+        
+    }
+    
     //Connection functions
     public func connect() //Connect to robot controller function
     {
