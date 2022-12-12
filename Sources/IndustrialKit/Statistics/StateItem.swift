@@ -11,11 +11,11 @@ public struct StateItem: Identifiable, Codable
 {
     public var id = UUID()
     
-    var name: String
-    var value: String?
-    var image: String?
+    public var name: String
+    public var value: String?
+    public var image: String?
     
-    var children: [StateItem]?
+    public var children: [StateItem]?
     
     //MARK: Init functions
     public init(name: String)
