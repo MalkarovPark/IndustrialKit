@@ -31,12 +31,12 @@ public class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObjec
     ///Object name in workspace
     public var name: String?
     
-    init()
+    public init()
     {
         self.name = "None"
     }
     
-    init(name: String) //Init object by name. Used for mismatch.
+    public init(name: String) //Init object by name. Used for mismatch.
     {
         self.name = name
     }
