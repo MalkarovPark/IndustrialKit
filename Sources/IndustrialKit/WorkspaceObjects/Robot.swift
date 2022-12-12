@@ -77,7 +77,7 @@ public class Robot: WorkspaceObject
         self.module_name = module_name
         if self.module_name != ""
         {
-            select_modules(module_name)
+            Robot.select_modules(module_name)
             apply_statistics_flags()
         }
         
@@ -111,7 +111,7 @@ public class Robot: WorkspaceObject
                 break
             }
      */
-    public var select_modules: ((_ name: String) -> Void) = {name in }
+    public static var select_modules: ((_ name: String) -> Void) = {name in }
     
     private func apply_statistics_flags()
     {

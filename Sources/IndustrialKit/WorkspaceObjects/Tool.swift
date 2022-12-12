@@ -99,7 +99,7 @@ public class Tool: WorkspaceObject
         self.module_name = tool_struct.module ?? ""
         if module_name != ""
         {
-            select_modules(module_name)
+            Tool.select_modules(module_name)
             apply_statistics_flags()
         }
     }
@@ -121,7 +121,7 @@ public class Tool: WorkspaceObject
                 break
             }
      */
-    public var select_modules: ((_ name: String) -> Void) = {name in }
+    public static var select_modules: ((_ name: String) -> Void) = {name in }
     
     private func apply_statistics_flags()
     {
