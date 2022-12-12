@@ -121,7 +121,7 @@ public class Tool: WorkspaceObject
                 break
             }
      */
-    public static var select_modules: ((_ name: String, _ controller: inout ToolModelController, _ connector: inout ToolConnector) -> Void) = { name,controller,connector in }
+    public static var select_modules: ((_ name: String, _ model_controller: inout ToolModelController, _ connector: inout ToolConnector) -> Void) = { name,controller,connector in }
     
     private func apply_statistics_flags()
     {
