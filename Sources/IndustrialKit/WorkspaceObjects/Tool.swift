@@ -37,7 +37,7 @@ public class Tool: WorkspaceObject
         if dictionary.keys.contains("Module") //Select model visual controller an connector
         {
             self.module_name = dictionary["Module"] as? String ?? ""
-            select_modules(module_name)
+            Tool.select_modules(module_name, &model_controller, &connector)
             apply_statistics_flags()
         }
         
@@ -99,7 +99,7 @@ public class Tool: WorkspaceObject
         self.module_name = tool_struct.module ?? ""
         if module_name != ""
         {
-            Tool.select_modules(module_name)
+            Tool.select_modules(module_name, &model_controller, &connector)
             apply_statistics_flags()
         }
     }
@@ -121,7 +121,7 @@ public class Tool: WorkspaceObject
                 break
             }
      */
-    public static var select_modules: ((_ name: String) -> Void) = {name in }
+    public static var select_modules: ((_ name: String, _ controller: inout ToolModelController, _ connector: inout ToolConnector) -> Void) = { name,controller,connector in }
     
     private func apply_statistics_flags()
     {
