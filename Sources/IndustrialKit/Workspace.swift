@@ -18,6 +18,12 @@ import SwiftUI
  */
 public class Workspace: ObservableObject
 {
+    //MARK: - Init functions
+    public init()
+    {
+        
+    }
+    
     //MARK: - Workspace objects data
     @Published public var robots = [Robot]()
     @Published public var elements = [WorkspaceProgramElement]()
@@ -1496,7 +1502,7 @@ public class Workspace: ObservableObject
     public var is_editing = false
     
     ///Force updates SwiftUI view.
-    func update_view()
+    public func update_view()
     {
         self.objectWillChange.send()
     }

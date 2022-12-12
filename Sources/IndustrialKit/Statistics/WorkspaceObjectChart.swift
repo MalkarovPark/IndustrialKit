@@ -42,19 +42,19 @@ public class WorkspaceObjectChart: Identifiable, Codable, Hashable
     
     public var data = [ChartDataItem]()
     
-    init()
+    public init()
     {
         self.name = "None"
         self.style = .line
     }
     
-    init(name: String)
+    public init(name: String)
     {
         self.name = name
         self.style = .line
     }
     
-    init(name: String, style: ChartStyle)
+    public init(name: String, style: ChartStyle)
     {
         self.name = name
         self.style = style

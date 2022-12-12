@@ -27,7 +27,7 @@ public class Robot: WorkspaceObject
         robot_init(name: name, manufacturer: "Default", model: "Model", lengths: [Float](), module_name: "None", scene: "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], demo: self.demo, update_model_by_connector: self.update_model_by_connector, get_statistics: false, charts_data: nil, state: nil, image_data: Data(), origin_location: [0, 0, 0], origin_rotation: [0, 0, 0], space_scale: [200, 200, 200])
     }
     
-    init(name: String, manufacturer: String, dictionary: [String: Any]) //Init by model dictionary
+    public init(name: String, manufacturer: String, dictionary: [String: Any]) //Init by model dictionary
     {
         super.init()
         
@@ -40,7 +40,7 @@ public class Robot: WorkspaceObject
         robot_init(name: name, manufacturer: manufacturer, model: dictionary["Name"] as? String ?? "", lengths: lengths, module_name: dictionary["Module"] as? String ?? "", scene: dictionary["Scene"] as? String ?? "", is_placed: false, location: [0, 0, 0], rotation: [0, 0, 0], demo: self.demo, update_model_by_connector: self.update_model_by_connector, get_statistics: false, charts_data: nil, state: nil, image_data: Data(), origin_location: Robot.default_origin_location, origin_rotation: [0, 0, 0], space_scale: Robot.default_space_scale)
     }
     
-    init(robot_struct: RobotStruct) //Init by robot structure
+    public init(robot_struct: RobotStruct) //Init by robot structure
     {
         super.init()
         robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, module_name: robot_struct.module, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, demo: self.demo, update_model_by_connector: self.update_model_by_connector, get_statistics: robot_struct.get_statistics, charts_data: robot_struct.charts_data, state: robot_struct.state, image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
