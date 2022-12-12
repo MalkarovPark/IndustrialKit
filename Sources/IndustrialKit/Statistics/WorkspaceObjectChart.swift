@@ -64,10 +64,10 @@ public class WorkspaceObjectChart: Identifiable, Codable, Hashable
 public struct ChartDataItem: Identifiable, Codable
 {
     public var id = UUID()
-    var name: String
+    public var name: String
     
-    var domain: [String: Float]
-    var codomain: Float
+    public var domain: [String: Float]
+    public var codomain: Float
     
     public init(name: String, domain: [String: Float], codomain: Float)
     {
