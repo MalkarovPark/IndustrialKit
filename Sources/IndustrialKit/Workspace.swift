@@ -1161,7 +1161,7 @@ public class Workspace: ObservableObject
     
     //MARK: Performation functions
     ///Program performating cycle state.
-    @Published var cycled = false
+    @Published public var cycled = false
     
     ///Workspace performing state.
     public var performed = false
@@ -1740,7 +1740,7 @@ public enum LocationComponents: Equatable, CaseIterable
     case y
     case z
     
-    var info: (text: String, index: Int)
+    public var info: (text: String, index: Int)
     {
         switch self
         {
@@ -1760,7 +1760,7 @@ public enum RotationComponents: Equatable, CaseIterable
     case p
     case w
     
-    var info: (text: String, index: Int)
+    public var info: (text: String, index: Int)
     {
         switch self
         {

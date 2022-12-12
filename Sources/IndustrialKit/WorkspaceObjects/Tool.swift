@@ -485,7 +485,7 @@ public class Tool: WorkspaceObject
         }
     }
     
-    func clear_chart_data()
+    public func clear_chart_data()
     {
         if get_statistics
         {
