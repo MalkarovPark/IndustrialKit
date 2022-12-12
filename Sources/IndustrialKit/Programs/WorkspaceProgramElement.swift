@@ -20,12 +20,12 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     }
     
     public var id = UUID()
-    public var element_data = workspace_program_element_struct(element_type: .perofrmer, performer_type: .robot, modificator_type: .observer, logic_type: .jump)
+    public var element_data = WorkspaceProgramElementStruct(element_type: .perofrmer, performer_type: .robot, modificator_type: .observer, logic_type: .jump)
     
     //MARK: - Element init functions
     public init(element_type: ProgramElementType, performer_type: PerformerType, modificator_type: ModificatorType, logic_type: LogicType)
     {
-        self.element_data = workspace_program_element_struct(element_type: element_type, performer_type: performer_type, modificator_type: modificator_type, logic_type: logic_type)
+        self.element_data = WorkspaceProgramElementStruct(element_type: element_type, performer_type: performer_type, modificator_type: modificator_type, logic_type: logic_type)
     }
     
     public init(element_type: ProgramElementType, performer_type: PerformerType)
@@ -46,7 +46,7 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
         self.element_data.logic_type = logic_type
     }
     
-    public init(element_struct: workspace_program_element_struct) //Init by element struct
+    public init(element_struct: WorkspaceProgramElementStruct) //Init by element struct
     {
         self.element_data = element_struct
     }
@@ -140,7 +140,7 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
 }
 
 //MARK: - Models of program element data
-public struct workspace_program_element_struct: Codable, Hashable
+public struct WorkspaceProgramElementStruct: Codable, Hashable
 {
     public var element_type: ProgramElementType = .perofrmer
     

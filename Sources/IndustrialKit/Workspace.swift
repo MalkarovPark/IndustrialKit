@@ -1370,7 +1370,7 @@ public class Workspace: ObservableObject
     {
         //Find mark elements indexes
         var marks_associations = [(String, Int)]()
-        var element_data = workspace_program_element_struct()
+        var element_data = WorkspaceProgramElementStruct()
         for i in 0..<elements.count
         {
             element_data = elements[i].element_data
@@ -1408,7 +1408,7 @@ public class Workspace: ObservableObject
      
      - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
      */
-    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [workspace_program_element_struct])
+    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [WorkspaceProgramElementStruct])
     {
         //Get robots info for save to file
         var robots_file_info = [RobotStruct]()
@@ -1432,7 +1432,7 @@ public class Workspace: ObservableObject
         }
         
         //Get workspace program elements info for save to file
-        var elements_file_info = [workspace_program_element_struct]()
+        var elements_file_info = [WorkspaceProgramElementStruct]()
         for element in elements
         {
             elements_file_info.append(element.element_data)
@@ -1778,7 +1778,23 @@ public enum RotationComponents: Equatable, CaseIterable
 public struct WorkspacePreset: Codable
 {
     public var robots = [RobotStruct]()
-    public var elements = [workspace_program_element_struct]()
+    public var elements = [WorkspaceProgramElementStruct]()
     public var tools = [ToolStruct]()
     public var parts = [PartStruct]()
+    
+    public init()
+    {
+        robots = [RobotStruct]()
+        elements = [WorkspaceProgramElementStruct]()
+        tools = [ToolStruct]()
+        parts = [PartStruct]()
+    }
+    
+    public init(robots: [RobotStruct], elements: [WorkspaceProgramElementStruct], tools: [ToolStruct], parts: [PartStruct])
+    {
+        self.robots = robots
+        self.elements = elements
+        self.tools = tools
+        self.parts = parts
+    }
 }
