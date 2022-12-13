@@ -7,6 +7,11 @@
 
 import Foundation
 
+/**
+ A workspace action performed to manage means of production.
+ 
+ The element contains some action performed by the production system.
+ */
 public class WorkspaceProgramElement: Codable, Hashable, Identifiable
 {
     public static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
@@ -20,12 +25,12 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     }
     
     public var id = UUID()
-    public var element_data = WorkspaceProgramElementStruct(element_type: ProgramElementType.perofrmer, performer_type: PerformerType.robot, modificator_type: ModificatorType.observer, logic_type: LogicType.jump)
+    public var element_data = WorkspaceProgramElementStruct(element_type: ProgramElementType.perofrmer, performer_type: PerformerType.robot, modifier_type: ModifierType.observer, logic_type: LogicType.jump)
     
     //MARK: - Element init functions
-    public init(element_type: ProgramElementType, performer_type: PerformerType, modificator_type: ModificatorType, logic_type: LogicType)
+    public init(element_type: ProgramElementType, performer_type: PerformerType, modifier_type: ModifierType, logic_type: LogicType)
     {
-        self.element_data = WorkspaceProgramElementStruct(element_type: element_type, performer_type: performer_type, modificator_type: modificator_type, logic_type: logic_type)
+        self.element_data = WorkspaceProgramElementStruct(element_type: element_type, performer_type: performer_type, modifier_type: modifier_type, logic_type: logic_type)
     }
     
     public init(element_type: ProgramElementType, performer_type: PerformerType)
@@ -34,10 +39,10 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
         self.element_data.performer_type = performer_type
     }
     
-    public init(element_type: ProgramElementType, modificator_type: ModificatorType)
+    public init(element_type: ProgramElementType, modifier_type: ModifierType)
     {
         self.element_data.element_type = element_type
-        self.element_data.modificator_type = modificator_type
+        self.element_data.modifier_type = modifier_type
     }
     
     public init(element_type: ProgramElementType, logic_type: LogicType)
@@ -60,8 +65,8 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
         {
         case .perofrmer:
             subtype = "\(self.element_data.performer_type.rawValue)"
-        case .modificator:
-            subtype = "\(self.element_data.modificator_type.rawValue)"
+        case .modifier:
+            subtype = "\(self.element_data.modifier_type.rawValue)"
         case .logic:
             subtype = "\(self.element_data.logic_type.rawValue)"
         }
@@ -97,8 +102,8 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
                     info = "No tool selected"
                 }
             }
-        case .modificator:
-            switch element_data.modificator_type
+        case .modifier:
+            switch element_data.modifier_type
             {
             case .observer:
                 info = "None"
@@ -153,7 +158,7 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     public var program_name = String()
     
     //MARK: For Modififcator
-    public var modificator_type: ModificatorType = .observer
+    public var modifier_type: ModifierType = .observer
     
     public var target_mark_name = String()
 
@@ -174,18 +179,18 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
         
         program_name = String()
         
-        modificator_type = .observer
+        modifier_type = .observer
         target_mark_name = String()
         
         logic_type = .jump
         mark_name = String()
     }
     
-    public init(element_type: ProgramElementType, performer_type: PerformerType, modificator_type: ModificatorType, logic_type: LogicType)
+    public init(element_type: ProgramElementType, performer_type: PerformerType, modifier_type: ModifierType, logic_type: LogicType)
     {
         self.element_type = element_type
         self.performer_type = performer_type
-        self.modificator_type = modificator_type
+        self.modifier_type = modifier_type
         self.logic_type = logic_type
     }
 }
@@ -194,7 +199,7 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
 public enum ProgramElementType: String, Codable, Equatable, CaseIterable
 {
     case perofrmer = "Performer"
-    case modificator = "Modificator"
+    case modifier = "Modifier"
     case logic = "Logic"
 }
 
@@ -204,7 +209,7 @@ public enum PerformerType: String, Codable, Equatable, CaseIterable
     case tool = "Tool"
 }
 
-public enum ModificatorType: String, Codable, Equatable, CaseIterable
+public enum ModifierType: String, Codable, Equatable, CaseIterable
 {
     case observer = "Observer"
     case changer = "Changer"

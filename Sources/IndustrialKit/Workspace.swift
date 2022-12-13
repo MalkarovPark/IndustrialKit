@@ -1037,7 +1037,7 @@ public class Workspace: ObservableObject
                 case .tool:
                     break
                 }
-            case .modificator:
+            case .modifier:
                 break
             case .logic:
                 switch element.element_data.logic_type
@@ -1228,7 +1228,7 @@ public class Workspace: ObservableObject
                     self.select_new_element()
                 }
             }
-        case .modificator:
+        case .modifier:
             break
         case .logic:
             switch element.element_data.logic_type
@@ -1313,7 +1313,7 @@ public class Workspace: ObservableObject
             case .tool:
                 pause_tool()
             }
-        case .modificator:
+        case .modifier:
             break
         case .logic:
             switch element.element_data.logic_type
