@@ -30,7 +30,7 @@ The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS and requ
 
 # Getting Started <a name="getting-started"></a>
 
-* [Website](https://www.celadon.org)
+* [Website](https://malkarovpark.github.io/Celadon/)
 * [Documentation](https://celadon-industrial.github.io/IndustrialKit/documentation/carekit/)
 
 ### Installation (Option One): SPM
@@ -45,9 +45,9 @@ Download the project source code and drag in IndustrialKit.xcodeproj, Industrial
 
 ### Robotic Complex Workspace App <a name="rcworkspace-app"></a>
 
-The included sample app demonstrates a fully constructed IndustrialKit app: [OCKCatalog](https://github.com/carekit-apple/CareKitCatalog)
+The included sample app demonstrates a fully constructed IndustrialKit app: [RCWorkspace](https://github.com/MalkarovPark/Robotic-Complex-Workspace)
 
-![ockcatalog](https://upload.wikimedia.org/wikipedia/commons/8/86/Ornament_met_bloemen_en_bladeren_Oeuvre_de_Juste_Aurele_Meissonnier_%28serietitel%29%2C_RP-P-1998-314.jpg)
+![rcworkspace](https://upload.wikimedia.org/wikipedia/commons/8/86/Ornament_met_bloemen_en_bladeren_Oeuvre_de_Juste_Aurele_Meissonnier_%28serietitel%29%2C_RP-P-1998-314.jpg)
 
 # IndustrialKit <a name="industrialkit"></a>
 
