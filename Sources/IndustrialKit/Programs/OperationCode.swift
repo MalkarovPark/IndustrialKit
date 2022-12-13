@@ -8,7 +8,7 @@
 import Foundation
 
 /**
- Contains the numerical value of the operation code performed by the tool in production.
+ A type that contains the numerical value of the operation code performed by the tool in production.
  
  A program unit with an integer. This class is identifiable in an array.
  */

@@ -8,7 +8,7 @@
 import Foundation
 
 /**
- A named set of operation codes performed by an industrial robot.
+ A type of named set of operation codes performed by an industrial robot.
  
  Contains an array of opcodes and a custom name used for identification.
  */

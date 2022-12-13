@@ -8,7 +8,7 @@
 import Foundation
 
 /**
- A workspace action performed to manage means of production.
+ A type of workspace program element that is performed to manage means of production.
  
  The element contains some action performed by the production system.
  */
@@ -25,39 +25,75 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     }
     
     public var id = UUID()
+    
+    ///An element program data.
     public var element_data = WorkspaceProgramElementStruct(element_type: ProgramElementType.perofrmer, performer_type: PerformerType.robot, modifier_type: ModifierType.observer, logic_type: LogicType.jump)
     
     //MARK: - Element init functions
+    
+    /**
+     Creates a new program element.
+     - Parameters:
+        - element_type: The program element type.
+        - performer_type: The performer element type.
+        - modifier_type: The modifier element type.
+        - logic_type: The logic element type.
+     */
     public init(element_type: ProgramElementType, performer_type: PerformerType, modifier_type: ModifierType, logic_type: LogicType)
     {
         self.element_data = WorkspaceProgramElementStruct(element_type: element_type, performer_type: performer_type, modifier_type: modifier_type, logic_type: logic_type)
     }
     
+    /**
+     Creates a new performer program element.
+     - Parameters:
+        - element_type: The program element type.
+        - performer_type: The performer element type.
+     */
     public init(element_type: ProgramElementType, performer_type: PerformerType)
     {
         self.element_data.element_type = element_type
         self.element_data.performer_type = performer_type
     }
     
+    /**
+     Creates a new modifier program element.
+     - Parameters:
+        - element_type: The program element type.
+        - modifier_type: The modifier element type.
+     */
     public init(element_type: ProgramElementType, modifier_type: ModifierType)
     {
         self.element_data.element_type = element_type
         self.element_data.modifier_type = modifier_type
     }
     
+    /**
+     Creates a new logic program element.
+     - Parameters:
+        - element_type: The program element type.
+        - logic_type: The logic element type.
+     */
     public init(element_type: ProgramElementType, logic_type: LogicType)
     {
         self.element_data.logic_type = logic_type
         self.element_data.logic_type = logic_type
     }
     
-    public init(element_struct: WorkspaceProgramElementStruct) //Init by element struct
+    /**
+     Creates a new program element by structure.
+     - Parameters:
+        - element_struct: A codable program element structure.
+     */
+    public init(element_struct: WorkspaceProgramElementStruct)
     {
         self.element_data = element_struct
     }
     
     //MARK: - Visual data output
-    public var subtype: String //Subtype string for a specific type
+    
+    ///A subtype string for a specific type.
+    public var subtype: String
     {
         var subtype = String()
         
@@ -74,7 +110,8 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
         return subtype
     }
     
-    public var info: String //String for the text in program element card
+    ///A string for the text in program element card.
+    public var info: String
     {
         var info = String()
         
@@ -141,33 +178,50 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
         return info
     }
     
-    public var target_element_index = 0 //The index of the target mark element for the jump element.
+    ///An index of the target mark element for the jump element.
+    public var target_element_index = 0
 }
 
 //MARK: - Models of program element data
+
+///Structure for workspace program element data.
 public struct WorkspaceProgramElementStruct: Codable, Hashable
 {
+    ///A program element type.
     public var element_type: ProgramElementType = .perofrmer
     
     //MARK: For Performer
+    
+    ///A performer element type.
     public var performer_type: PerformerType = .robot
     
+    ///A name of performed robot.
     public var robot_name = String()
+    
+    ///A name of performed tool.
     public var tool_name = String()
     
+    ///A name of program to perform.
     public var program_name = String()
     
     //MARK: For Modififcator
+    
+    ///A modificator name.
     public var modifier_type: ModifierType = .observer
     
+    ///A target mark name.
     public var target_mark_name = String()
 
     //MARK: For logic
+    ///A logic element type.
     public var logic_type: LogicType = .jump
     
+    ///A target mark name.
     public var mark_name = String()
     
     //MARK: Init function
+    
+    ///Creates a new program element with default values.
     public init()
     {
         element_type = .perofrmer
@@ -186,6 +240,14 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
         mark_name = String()
     }
     
+    /**
+     Creates a new program element structure.
+     - Parameters:
+        - element_type: The program element type.
+        - performer_type: The performer element type.
+        - modifier_type: The modifier element type.
+        - logic_type: The logic element type.
+     */
     public init(element_type: ProgramElementType, performer_type: PerformerType, modifier_type: ModifierType, logic_type: LogicType)
     {
         self.element_type = element_type
@@ -196,6 +258,8 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
 }
 
 //MARK: - Type enums
+
+///A program element type enum.
 public enum ProgramElementType: String, Codable, Equatable, CaseIterable
 {
     case perofrmer = "Performer"
@@ -203,18 +267,21 @@ public enum ProgramElementType: String, Codable, Equatable, CaseIterable
     case logic = "Logic"
 }
 
+///A performer program element type enum.
 public enum PerformerType: String, Codable, Equatable, CaseIterable
 {
     case robot = "Robot"
     case tool = "Tool"
 }
 
+///A modifier program element type enum.
 public enum ModifierType: String, Codable, Equatable, CaseIterable
 {
     case observer = "Observer"
     case changer = "Changer"
 }
 
+///A logic program element type enum.
 public enum LogicType: String, Codable, Equatable, CaseIterable
 {
     case jump = "Jump"

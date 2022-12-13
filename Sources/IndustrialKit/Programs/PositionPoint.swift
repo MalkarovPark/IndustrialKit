@@ -8,7 +8,7 @@
 import Foundation
 
 /**
- Describes the target position.
+ A type of value that describes the target position.
  
  The position consists of the location of the manipulator in a rectangular coordinate system and the rotation angles in it.
  */

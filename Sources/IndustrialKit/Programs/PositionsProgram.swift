@@ -3,7 +3,7 @@ import SceneKit
 import SwiftUI
 
 /**
- A named set of target positions performed by an industrial robot.
+ A type of named set of target positions performed by an industrial robot.
  
  Contains an array of positions and a custom name used for identification. Builds a visual model of the points with trajectory and provides actions for the robot model.
  */
@@ -14,7 +14,7 @@ public class PositionsProgram: Identifiable, Equatable
         return lhs.name == rhs.name //Identity condition by names
     }
     
-    ///An positions program name.
+    ///A positions program name.
     public var name: String?
     
     ///An array of positions points.
@@ -320,8 +320,13 @@ public class PositionsProgram: Identifiable, Equatable
 }
 
 //MARK: - Program structure for workspace preset document handling
+
+///Codable struct for positions program.
 public struct program_struct: Codable
 {
+    ///A positions program name.
     var name: String
+    
+    ///An array of positions points.
     var points = [PositionPoint]()
 }
