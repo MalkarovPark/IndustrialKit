@@ -2,6 +2,11 @@ import Foundation
 import SceneKit
 import SwiftUI
 
+/**
+ A named set of target positions performed by an industrial robot.
+ 
+ Contains an array of positions and a custom name used for identification. Builds a visual model of the points with trajectory and provides actions for the robot model.
+ */
 public class PositionsProgram: Identifiable, Equatable
 {
     public static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
@@ -9,27 +14,48 @@ public class PositionsProgram: Identifiable, Equatable
         return lhs.name == rhs.name //Identity condition by names
     }
     
+    ///An positions program name.
     public var name: String?
+    
+    ///An array of positions points.
     public var points = [PositionPoint]()
     
     //MARK: - Positions program init functions
+    ///Creates a new positions program.
     public init()
     {
         self.name = "None"
     }
     
+    /**
+     Creates a new positions program.
+     - Parameters:
+        - name: A new program name.
+     */
     public init(name: String?)
     {
         self.name = name ?? "None"
     }
     
     //MARK: - Point manage functions
+    
+    /**
+     Add the new point to positions program.
+     - Parameters:
+        - code: An added code.
+     */
     public func add_point(_ point: PositionPoint)
     {
         points.append(point)
         visual_build()
     }
     
+    /**
+     Creates a new positions program.
+     - Parameters:
+        - index: Updated position pint index.
+        - code: New position point.
+     */
     public func update_point(number: Int, _ point: PositionPoint)
     {
         if points.indices.contains(number) //Checking for the presence of a point with a given number to update
@@ -39,7 +65,12 @@ public class PositionsProgram: Identifiable, Equatable
         }
     }
     
-    public func delete_point(number: Int) //Checking for the presence of a point with a given number to delete
+    /**
+     Checks for the presence of a point with a given index to delete.
+     - Parameters:
+        - index: An index of deleted point.
+     */
+    public func delete_point(number: Int)
     {
         if points.indices.contains(number)
         {
@@ -48,28 +79,18 @@ public class PositionsProgram: Identifiable, Equatable
         }
     }
     
-    /*public var points_info: [[Float]]
-    {
-        var pinfo = [[Float]]()
-        if points.count > 0
-        {
-            var pindex: Float = 1.0
-            for point in points
-            {
-                pinfo.append([point.x, point.y, point.z, point.r, point.p, point.w, pindex])
-                pindex += 1
-            }
-        }
-        return pinfo
-    }*/
-    
+    ///Returns the positions points count.
     public var points_count: Int
     {
         return points.count
     }
     
     //MARK: - Visual functions
-    public var positions_group = SCNNode() //Node with all positions points model
+    
+    ///A node with all positions points model.
+    public var positions_group = SCNNode()
+    
+    ///An index of selected point for edit.
     public var selected_point_index = -1
     {
         didSet
@@ -95,9 +116,10 @@ public class PositionsProgram: Identifiable, Equatable
     private let cylinder_color = UIColor.white
     #endif
     
+    ///Returns a cone node for point.
     private var cone_node: SCNNode
     {
-        //MARK: Building cones showing tool rotation at point
+        //Building cones showing tool rotation at point
         let cone_node = SCNNode()
         
         for i in 0..<3 //Set point conical arrows for points
@@ -116,6 +138,8 @@ public class PositionsProgram: Identifiable, Equatable
     }
     
     //MARK: Build points visual model
+    
+    ///Builds visual model of positions program.
     public func visual_build()
     {
         visual_clear()
@@ -250,7 +274,8 @@ public class PositionsProgram: Identifiable, Equatable
         }
     }
     
-    public func visual_clear() //Remove positions points models from cell
+    ///Removes positions points models from cell.
+    public func visual_clear()
     {
         positions_group.enumerateChildNodes
         { (node, stop) in
@@ -259,6 +284,8 @@ public class PositionsProgram: Identifiable, Equatable
     }
     
     //MARK: - Create moving group for robot
+    
+    ///Returns a SCNAction arrays for location and rotation movements to each program points.
     public func points_moving_group(move_time: TimeInterval) -> (moving: [SCNAction], rotation: [SCNAction])
     {
         var moving_position: SCNVector3
@@ -284,6 +311,8 @@ public class PositionsProgram: Identifiable, Equatable
     }
     
     //MARK: - Work with file system
+    
+    ///Returns a codable file structure for positions program.
     public var file_info: program_struct
     {
         return program_struct(name: name ?? "None", points: self.points)

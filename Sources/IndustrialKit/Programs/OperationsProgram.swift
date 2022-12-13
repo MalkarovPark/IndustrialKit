@@ -8,7 +8,7 @@
 import Foundation
 
 /**
- A program performable by an industrial tool.
+ A named set of operation codes performed by an industrial robot.
  
  Contains an array of opcodes and a custom name used for identification.
  */
@@ -41,7 +41,7 @@ public class OperationsProgram: Identifiable, Codable, Hashable
     /**
      Creates a new operations program.
      - Parameters:
-        - name: A new positions program name.
+        - name: A new program name.
      */
     public init(name: String?)
     {

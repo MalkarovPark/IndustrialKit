@@ -7,6 +7,11 @@
 
 import Foundation
 
+/**
+ Describes the target position.
+ 
+ The position consists of the location of the manipulator in a rectangular coordinate system and the rotation angles in it.
+ */
 public class PositionPoint: Identifiable, Codable, Hashable
 {
     public static func == (lhs: PositionPoint, rhs: PositionPoint) -> Bool
@@ -19,10 +24,10 @@ public class PositionPoint: Identifiable, Codable, Hashable
         hasher.combine(id)
     }
     
-    ///Point location components.
+    ///A point location component.
     public var x, y, z: Float
     
-    ///Point rotation components.
+    ///A point rotation component.
     public var r, p, w: Float
     
     ///Type of moving to point.
@@ -32,6 +37,7 @@ public class PositionPoint: Identifiable, Codable, Hashable
     public var move_speed: Float
     
     //MARK: - Init functions
+    ///Creates a point with zero position values, a speed of 10 mm/sec, and a linear movement type.
     public init()
     {
         self.x = 0
@@ -46,6 +52,13 @@ public class PositionPoint: Identifiable, Codable, Hashable
         self.move_speed = 10
     }
     
+    /**
+     Creates a point with only location values.
+     - Parameters:
+        - x: Location by *x* axis.
+        - y: Location by *y* axis.
+        - z: Location by *z* axis.
+     */
     public init(x: Float, y: Float, z: Float)
     {
         self.x = x
@@ -60,6 +73,41 @@ public class PositionPoint: Identifiable, Codable, Hashable
         self.move_speed = 10
     }
     
+    /**
+     Creates a point with location and rotation values.
+     - Parameters:
+        - x: A location by *x* axis.
+        - y: A location by *y* axis.
+        - z: A location by *z* axis.
+        - r: A roll value.
+        - p: A pitch value.
+        - w: An yaw value.
+     */
+    public init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)
+    {
+        self.x = x
+        self.y = y
+        self.z = z
+        
+        self.r = r
+        self.p = p
+        self.w = w
+        
+        self.move_type = .linear
+        self.move_speed = 10
+    }
+    
+    /**
+     Creates a point with location and rotation values and move type.
+     - Parameters:
+        - x: A location by *x* axis.
+        - y: A location by *y* axis.
+        - z: A location by *z* axis.
+        - r: A roll value.
+        - p: A pitch value.
+        - w: An yaw value.
+        - move_type: A movement to point type.
+     */
     public init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType)
     {
         self.x = x
@@ -74,6 +122,43 @@ public class PositionPoint: Identifiable, Codable, Hashable
         self.move_speed = 10
     }
     
+    /**
+     Creates a point with location and rotation values and move speed.
+     - Parameters:
+        - x: A location by *x* axis.
+        - y: A location by *y* axis.
+        - z: A location by *z* axis.
+        - r: A roll value.
+        - p: A pitch value.
+        - w: An yaw value.
+        - move_speed: A movement to point speed.
+     */
+    public init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_speed: Float)
+    {
+        self.x = x
+        self.y = y
+        self.z = z
+        
+        self.r = r
+        self.p = p
+        self.w = w
+        
+        self.move_type = .linear
+        self.move_speed = move_speed
+    }
+    
+    /**
+     Creates a point with location and rotation values and move type.
+     - Parameters:
+        - x: A location by *x* axis.
+        - y: A location by *y* axis.
+        - z: A location by *z* axis.
+        - r: A roll value.
+        - p: A pitch value.
+        - w: An yaw value.
+        - move_type: A movement to point type.
+        - move_speed: A movement to point speed.
+     */
     public init(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float, move_type: MoveType, move_speed: Float)
     {
         self.x = x
@@ -89,6 +174,7 @@ public class PositionPoint: Identifiable, Codable, Hashable
     }
 }
 
+///Movement to point type.
 public enum MoveType: String, Codable, Equatable, CaseIterable
 {
     case linear = "Linear"
