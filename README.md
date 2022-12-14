@@ -35,13 +35,9 @@ The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS and requ
 
 ### Installation (Option One): SPM
 
-CareKit can be installed via SPM. Create a new Xcode project and navigate to `File > Swift Packages > Add Package Dependency`. Enter the url `https://github.com/celadon-industrial/IndustrialKit` and tap `Next`. Choose the `main` branch, and on the next screen, check off the packages as needed.
+CareKit can be installed via SPM. Create a new Xcode project and navigate to `File > Swift Packages > Add Package Dependency`. Enter the url `https://github.com/MalkarovPark/IndustrialKit` and tap `Next`. Choose the `main` branch, and on the next screen, check off the packages as needed.
 
-### Installation (Option Two): Embedded Framework
-
-Download the project source code and drag in IndustrialKit.xcodeproj, IndustrialKitUI.xcodeproj as needed. Then, embed the framework as a dynamic framework in your app, by adding it to the Embedded Binaries section of the General pane for your target as shown in the figure below.
-
-<img width="1000" alt="embedded-framework" src="https://upload.wikimedia.org/wikipedia/commons/8/86/Ornament_met_bloemen_en_bladeren_Oeuvre_de_Juste_Aurele_Meissonnier_%28serietitel%29%2C_RP-P-1998-314.jpg">
+<img width="1000" alt="embedded-framework" src="https://user-images.githubusercontent.com/62340924/207657493-af8eae06-1e02-4c3d-a330-730225a19306.png">
 
 ### Robotic Complex Workspace App <a name="rcworkspace-app"></a>
 
