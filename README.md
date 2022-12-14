@@ -31,7 +31,7 @@ The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS and requ
 # Getting Started <a name="getting-started"></a>
 
 * [Website](https://malkarovpark.github.io/Celadon/)
-* [Documentation](https://celadon-industrial.github.io/IndustrialKit/documentation/carekit/)
+* [Documentation](https://celadon-industrial.github.io/IndustrialKit/documentation/industrialkit/)
 
 ### Installation with SPM
 
