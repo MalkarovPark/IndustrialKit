@@ -83,7 +83,7 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     /**
      Creates a new program element by structure.
      - Parameters:
-        - element_struct: A codable program element structure.
+        - element_struct: A program element structure.
      */
     public init(element_struct: WorkspaceProgramElementStruct)
     {
@@ -244,9 +244,9 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
      Creates a new program element structure.
      - Parameters:
         - element_type: The program element type.
-        - performer_type: The performer element type.
-        - modifier_type: The modifier element type.
-        - logic_type: The logic element type.
+        - performer_type: The performer program element type.
+        - modifier_type: The modifier program element type.
+        - logic_type: The logic program element type.
      */
     public init(element_type: ProgramElementType, performer_type: PerformerType, modifier_type: ModifierType, logic_type: LogicType)
     {
