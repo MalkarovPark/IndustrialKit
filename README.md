@@ -19,7 +19,7 @@ IndustrialKit is an open source software platform for creating applications that
     * [Robotic Complex Workspace App](#rcworkspace-app)
 * [IndustrialKit](#industrialkit)
     * [Workspace Object](#workspace-object)
-* [IndustrialUI](#carekitui)
+* [IndustrialKitUI](#industrialkitui)
     * [SwiftUI](#industrialkitui-swiftui)
 * [Getting Help](#getting-help)
 * [License](#license)
@@ -53,7 +53,7 @@ CareKit is the overarching package that provides view controllers to tie CareKit
 
 The workspace object is...
 
-# IndustrialKitUI <a name="industrialkitui-swiftui"></a>
+# IndustrialKitUI <a name="industrialkitui"></a>
 
 ### SwiftUI <a name="industrialkitui-swiftui"></a>
 
