@@ -69,7 +69,7 @@ public struct LargeCardView: View
 }
 
 //MARK: Large card preview for drag
-struct LargeCardViewPreview: View
+public struct LargeCardViewPreview: View
 {
     @State public var color: Color
     #if os(macOS)
