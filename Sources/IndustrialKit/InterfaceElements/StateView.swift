@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct StateView: View
 {
-    @Binding var state_data: [StateItem]?
+    @Binding public var state_data: [StateItem]?
     
     public var body: some View
     {
@@ -40,11 +40,11 @@ public struct StateView: View
     }
 }
 
-public struct StateItemView: View
+struct StateItemView: View
 {
     var item: StateItem
     
-    public var body: some View
+    var body: some View
     {
         HStack
         {

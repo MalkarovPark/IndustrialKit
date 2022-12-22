@@ -10,14 +10,14 @@ import SwiftUI
 //MARK: - Large card view
 public struct LargeCardView: View
 {
-    @State var color: Color
+    @State public var color: Color
     #if os(macOS)
-    @State var image: NSImage
+    @State public var image: NSImage
     #else
-    @State var image: UIImage
+    @State public var image: UIImage
     #endif
-    @State var title: String
-    @State var subtitle: String
+    @State public var title: String
+    @State public var subtitle: String
     
     public var body: some View
     {
@@ -71,16 +71,16 @@ public struct LargeCardView: View
 //MARK: Large card preview for drag
 struct LargeCardViewPreview: View
 {
-    @State var color: Color
+    @State public var color: Color
     #if os(macOS)
-    @State var image: NSImage
+    @State public var image: NSImage
     #else
-    @State var image: UIImage
+    @State public var image: UIImage
     #endif
-    @State var title: String
-    @State var subtitle: String
+    @State public var title: String
+    @State public var subtitle: String
     
-    var body: some View
+    public var body: some View
     {
         ZStack
         {
@@ -139,7 +139,7 @@ public struct CircleDeleteButtonModifier: ViewModifier
     let objects: [WorkspaceObject]
     let on_delete: (IndexSet) -> ()
     
-    var object_type_name: String
+    public var object_type_name: String
     
     public func body(content: Content) -> some View
     {
@@ -186,13 +186,13 @@ public struct CircleDeleteButtonModifier: ViewModifier
 //MARK: - Small card view
 public struct SmallCardView: View
 {
-    @State var color: Color
+    @State public var color: Color
     #if os(macOS)
-    @State var image: NSImage
+    @State public var image: NSImage
     #else
-    @State var image: UIImage
+    @State public var image: UIImage
     #endif
-    @State var title: String
+    @State public var title: String
     
     public var body: some View
     {
@@ -255,13 +255,13 @@ public struct SmallCardView: View
 //MARK: Small card preview for drag
 public struct SmallCardViewPreview: View
 {
-    @State var color: Color
+    @State public var color: Color
     #if os(macOS)
-    @State var image: NSImage
+    @State public var image: NSImage
     #else
-    @State var image: UIImage
+    @State public var image: UIImage
     #endif
-    @State var title: String
+    @State public var title: String
     
     public var body: some View
     {
@@ -319,7 +319,7 @@ public struct BorderlessDeleteButtonModifier: ViewModifier
     let objects: [WorkspaceObject]
     let on_delete: (IndexSet) -> ()
     
-    var object_type_name: String
+    public var object_type_name: String
     
     public func body(content: Content) -> some View
     {

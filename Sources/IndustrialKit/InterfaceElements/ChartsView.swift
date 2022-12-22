@@ -11,7 +11,7 @@ import Charts
 public struct ChartsView: View
 {
     @State private var chart_selection = 0
-    @Binding var charts_data: [WorkspaceObjectChart]?
+    @Binding public var charts_data: [WorkspaceObjectChart]?
     
     public var body: some View
     {
