@@ -13,6 +13,11 @@ public struct ChartsView: View
     @State private var chart_selection = 0
     @Binding public var charts_data: [WorkspaceObjectChart]?
     
+    public init(charts_data: Binding<[WorkspaceObjectChart]?>)
+    {
+        self._charts_data = charts_data
+    }
+    
     public var body: some View
     {
         VStack(spacing: 0)

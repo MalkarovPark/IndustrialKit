@@ -11,6 +11,11 @@ public struct StateView: View
 {
     @Binding public var state_data: [StateItem]?
     
+    public init(state_data: Binding<[StateItem]?>)
+    {
+        self._state_data = state_data
+    }
+    
     public var body: some View
     {
         VStack(spacing: 0)

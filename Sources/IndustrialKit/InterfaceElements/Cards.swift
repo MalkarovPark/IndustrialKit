@@ -19,6 +19,24 @@ public struct LargeCardView: View
     @State public var title: String
     @State public var subtitle: String
     
+    #if os(macOS)
+    public init(color: Color, image: NSImage, title: String, subtitle: String)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+        self.subtitle = subtitle
+    }
+    #else
+    public init(color: Color, image: UIImage, title: String, subtitle: String)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+        self.subtitle = subtitle
+    }
+    #endif
+    
     public var body: some View
     {
         ZStack
