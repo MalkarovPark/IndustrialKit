@@ -98,6 +98,24 @@ public struct LargeCardViewPreview: View
     @State public var title: String
     @State public var subtitle: String
     
+    #if os(macOS)
+    public init(color: Color, image: NSImage, title: String, subtitle: String)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+        self.subtitle = subtitle
+    }
+    #else
+    public init(color: Color, image: UIImage, title: String, subtitle: String)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+        self.subtitle = subtitle
+    }
+    #endif
+    
     public var body: some View
     {
         ZStack
@@ -159,6 +177,15 @@ public struct CircleDeleteButtonModifier: ViewModifier
     
     public var object_type_name: String
     
+    public init(workspace: Workspace, object_item: WorkspaceObject, objects: [WorkspaceObject], on_delete: @escaping (IndexSet) -> (), object_type_name: String)
+    {
+        self.workspace = workspace
+        self.object_item = object_item
+        self.objects = objects
+        self.on_delete = on_delete
+        self.object_type_name = object_type_name
+    }
+    
     public func body(content: Content) -> some View
     {
         content
@@ -212,6 +239,22 @@ public struct SmallCardView: View
     #endif
     @State public var title: String
     
+    #if os(macOS)
+    public init(color: Color, image: NSImage, title: String)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+    }
+    #else
+    public init(color: Color, image: UIImage, title: String)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+    }
+    #endif
+    
     public var body: some View
     {
         ZStack
@@ -245,18 +288,6 @@ public struct SmallCardView: View
                         .frame(width: 64, height: 64)
                         .background(Color.clear)
                     }
-                    /*.onTapGesture
-                    {
-                        part_view_presented = true
-                    }
-                    .popover(isPresented: $part_view_presented)
-                    {
-                        PartView(document: $document, part_item: $part_item)
-                            .onDisappear()
-                        {
-                            part_view_presented = false
-                        }
-                    }*/
                     
                     Rectangle()
                         .foregroundColor(color)
@@ -280,6 +311,22 @@ public struct SmallCardViewPreview: View
     @State public var image: UIImage
     #endif
     @State public var title: String
+    
+    #if os(macOS)
+    public init(color: Color, image: NSImage, title: String)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+    }
+    #else
+    public init(color: Color, image: UIImage, title: String)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+    }
+    #endif
     
     public var body: some View
     {
@@ -338,6 +385,15 @@ public struct BorderlessDeleteButtonModifier: ViewModifier
     let on_delete: (IndexSet) -> ()
     
     public var object_type_name: String
+    
+    public init(workspace: Workspace, object_item: WorkspaceObject, objects: [WorkspaceObject], on_delete: @escaping (IndexSet) -> (), object_type_name: String)
+    {
+        self.workspace = workspace
+        self.object_item = object_item
+        self.objects = objects
+        self.on_delete = on_delete
+        self.object_type_name = object_type_name
+    }
     
     public func body(content: Content) -> some View
     {
