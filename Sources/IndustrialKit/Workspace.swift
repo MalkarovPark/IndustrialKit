@@ -620,14 +620,24 @@ public class Workspace: ObservableObject
     
     //MARK: Robots naming
     /**
-     Returns index number of robot by name.
+     Returns robot by name.
      
      - Parameters:
         - name: A name of tobot for index find.
      */
     public func robot_by_name(_ name: String) -> Robot
     {
-        return self.robots[robot_index_by_name(name)]
+        let index = robot_index_by_name(name)
+        if robots.indices.contains(index)
+        {
+            return self.robots[index]
+        }
+        else
+        {
+            return Robot()
+        }
+        
+        //return self.robots[robot_index_by_name(name)]
     }
     
     ///Names of all robots in workspace.
@@ -796,14 +806,24 @@ public class Workspace: ObservableObject
     }
     
     /**
-     Returns index number of robot by name.
+     Returns tool by name.
      
      - Parameters:
         - name: A name of tobot for index find.
      */
     public func tool_by_name(_ name: String) -> Tool
     {
-        return self.tools[tool_index_by_name(name)]
+        let index = tool_index_by_name(name)
+        if tools.indices.contains(index)
+        {
+            return self.tools[index]
+        }
+        else
+        {
+            return Tool()
+        }
+        
+        //return self.tools[tool_index_by_name(name)]
     }
     
     ///Names of all tools in workspace.
@@ -968,6 +988,27 @@ public class Workspace: ObservableObject
     private func part_index_by_name(_ name: String) -> Int
     {
         return parts.firstIndex(of: Part(name: name)) ?? -1
+    }
+    
+    /**
+     Returns part by name.
+     
+     - Parameters:
+        - name: A name of tobot for index find.
+     */
+    public func part_by_name(_ name: String) -> Part
+    {
+        let index = part_index_by_name(name)
+        if parts.indices.contains(index)
+        {
+            return self.parts[index]
+        }
+        else
+        {
+            return Part()
+        }
+        
+        //return self.parts[part_index_by_name(name)]
     }
     
     ///Names of all parts in workspace.

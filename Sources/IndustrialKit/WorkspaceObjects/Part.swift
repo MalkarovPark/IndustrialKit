@@ -59,6 +59,11 @@ public class Part: WorkspaceObject
     }
     
     //MARK: - Part init functions
+    public override init()
+    {
+        super.init()
+    }
+    
     public override init(name: String)
     {
         super.init(name: name)
