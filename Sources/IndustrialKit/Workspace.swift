@@ -525,6 +525,38 @@ public class Workspace: ObservableObject
         }
     }
     
+    ///Returns an array of all placed workspace objects.
+    public var placed_objects: [WorkspaceObject]
+    {
+        var objects = [WorkspaceObject]()
+        
+        for robot in robots
+        {
+            if robot.is_placed
+            {
+                objects.append(robot)
+            }
+        }
+        
+        for tool in tools
+        {
+            if tool.is_placed
+            {
+                objects.append(tool)
+            }
+        }
+        
+        for part in parts
+        {
+            if part.is_placed
+            {
+                objects.append(part)
+            }
+        }
+        
+        return objects
+    }
+    
     //MARK: - Robots handling functions
     //MARK: Robots manage functions
     ///Adds robot in workspace.
