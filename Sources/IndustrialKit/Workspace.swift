@@ -525,7 +525,7 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///Returns an array of all placed workspace objects.
+    /*///Returns an array of all placed workspace objects.
     public var placed_objects: [WorkspaceObject]
     {
         var objects = [WorkspaceObject]()
@@ -587,7 +587,7 @@ public class Workspace: ObservableObject
         }
         
         return objects_names
-    }
+    }*/
     
     //MARK: - Robots handling functions
     //MARK: Robots manage functions
@@ -1096,6 +1096,20 @@ public class Workspace: ObservableObject
         for part in parts
         {
             if part.name != nil && !part.is_placed
+            {
+                names.append(part.name!)
+            }
+        }
+        return names
+    }
+    
+    ///Names of parts placed in workspace.
+    public var placed_parts_names: [String] //Array of robots names added to workspace
+    {
+        var names = [String]()
+        for part in parts
+        {
+            if part.name != nil && part.is_placed
             {
                 names.append(part.name!)
             }
