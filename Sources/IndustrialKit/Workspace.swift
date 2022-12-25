@@ -67,6 +67,22 @@ public class Workspace: ObservableObject
         return nil
     }
     
+    ///Selected workspace object.
+    public var selected_object: WorkspaceObject
+    {
+        switch selected_object_type
+        {
+        case .robot:
+            return selected_robot
+        case .tool:
+            return selected_tool
+        case .part:
+            return selected_part
+        default:
+            return WorkspaceObject()
+        }
+    }
+    
     ///Sets new pointer position by selected workspace object.
     public func update_pointer()
     {
