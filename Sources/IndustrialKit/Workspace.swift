@@ -1859,8 +1859,8 @@ public class Workspace: ObservableObject
 public enum WorkspaceObjectType: String, Equatable, CaseIterable
 {
     case robot = "Robot"
-    case part = "Part"
     case tool = "Tool"
+    case part = "Part"
 }
 
 public enum PositionComponents: String, Equatable, CaseIterable
