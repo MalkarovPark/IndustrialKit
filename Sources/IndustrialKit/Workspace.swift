@@ -70,16 +70,33 @@ public class Workspace: ObservableObject
     ///Selected workspace object.
     public var selected_object: WorkspaceObject?
     {
-        switch selected_object_type
+        get
         {
-        case .robot:
-            return selected_robot
-        case .tool:
-            return selected_tool
-        case .part:
-            return selected_part
-        default:
-            return nil
+            switch selected_object_type
+            {
+            case .robot:
+                return selected_robot
+            case .tool:
+                return selected_tool
+            case .part:
+                return selected_part
+            default:
+                return nil
+            }
+        }
+        set
+        {
+            switch selected_object_type
+            {
+            case .robot:
+                selected_robot = newValue as! Robot
+            case .tool:
+                selected_tool = newValue as! Tool
+            case .part:
+                selected_part = newValue as! Part
+            default:
+                break
+            }
         }
     }
     
