@@ -68,7 +68,7 @@ public class Workspace: ObservableObject
     }
     
     ///Selected workspace object.
-    public var selected_object: WorkspaceObject
+    public var selected_object: WorkspaceObject?
     {
         switch selected_object_type
         {
@@ -79,7 +79,7 @@ public class Workspace: ObservableObject
         case .part:
             return selected_part
         default:
-            return WorkspaceObject()
+            return nil
         }
     }
     
