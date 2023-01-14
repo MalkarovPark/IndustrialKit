@@ -402,7 +402,7 @@ public class Robot: WorkspaceObject
     }
     
     //MARK: - Connection functions
-    private var connector = RobotConnector()
+    public var connector = RobotConnector()
     
     private func connect()
     {

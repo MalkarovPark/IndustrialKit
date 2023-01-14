@@ -16,17 +16,60 @@ public class WorkspaceObjectConnector
     }
     
     //Connection functions
-    public func connect() //Connect to robot controller function
+    private(set) var connected: Bool = false
+    private(set) var connection_updating: Bool = false
+    
+    private var connection_task = Task {}
+    
+    private var disconnection_task = Task {}
+    
+    ///Connects instance to real workspace object.
+    public func connect()
     {
+        disconnection_task.cancel()
         
+        if !connected
+        {
+            connection_updating = true
+            
+            connection_task = Task
+            {
+                connected = await connection_process()
+            }
+            
+            connection_updating = false
+        }
     }
     
-    public func disconnect() //Disconnect robot function
+    ///Disconnects real workspace object from instance.
+    public func disconnect()
     {
+        connection_task.cancel()
         
+        if connected
+        {
+            connection_updating = true
+            //connected = await disconnection_process()
+            
+            disconnection_task = Task
+            {
+                await disconnection_process()
+            }
+            
+            connected = false
+            connection_updating = false
+        }
     }
     
-    public var connected: Bool = false
+    open func connection_process() async -> Bool
+    {
+        return true
+    }
+    
+    open func disconnection_process() async // -> Bool
+    {
+        //return false
+    }
     
     ///A get statistics flag.
     public var get_statistics = false
@@ -71,7 +114,7 @@ public class WorkspaceObjectConnector
 public class RobotConnector: WorkspaceObjectConnector
 {
     //Perform functions
-    public func move_to(point: PositionPoint)
+    open func move_to(point: PositionPoint)
     {
         
     }
@@ -90,12 +133,12 @@ public class RobotConnector: WorkspaceObjectConnector
 public class ToolConnector: WorkspaceObjectConnector
 {
     //Perform functions
-    func perform(code: Int) //Perform function for tool operation code
+    open func perform(code: Int) //Perform function for tool operation code
     {
         
     }
     
-    func perform(code: Int, completion: @escaping () -> Void)
+    public func perform(code: Int, completion: @escaping () -> Void)
     {
         perform(code: code)
         completion()

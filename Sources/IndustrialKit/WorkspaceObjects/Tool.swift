@@ -364,7 +364,7 @@ public class Tool: WorkspaceObject
     }
     
     //MARK: - Connection functions
-    private var connector = ToolConnector()
+    public var connector = ToolConnector()
     
     private func connect()
     {
