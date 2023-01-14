@@ -16,8 +16,8 @@ public class WorkspaceObjectConnector
     }
     
     //Connection functions
-    private(set) var connected: Bool = false
-    private(set) var connection_updating: Bool = false
+    public var connected: Bool = false
+    public var connection_updating: Bool = false
     
     private var connection_task = Task {}
     
