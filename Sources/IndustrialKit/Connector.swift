@@ -8,6 +8,13 @@
 import Foundation
 
 //MARK: - Workspace object connector
+/**
+ A type provides connection and control for real workspace objects.
+ 
+ Contains connect, disconnect functions and connection parameters array.
+ 
+ Control functions are specialized for subtypes by workspace objects.
+ */
 public class WorkspaceObjectConnector
 {
     public init()
@@ -15,12 +22,16 @@ public class WorkspaceObjectConnector
         
     }
     
-    //Connection functions
+    ///A connection state.
     public var connected: Bool = false
+    
+    ///A connection in updating process state.
     public var connection_updating: Bool = false
     
-    private var connection_task = Task {}
+    ///An array of connection parameters.
+    public var connection_parameters = [ConnectionParameter]()
     
+    private var connection_task = Task {}
     private var disconnection_task = Task {}
     
     ///Connects instance to real workspace object.
@@ -111,39 +122,65 @@ public class WorkspaceObjectConnector
 }
 
 //MARK: - Robot connector
+/**
+ This subtype provides control for industrial robot.
+ 
+ Contains special function for movement to point performation.
+ */
 public class RobotConnector: WorkspaceObjectConnector
 {
-    //Perform functions
+    ///Performs movement to point.
     open func move_to(point: PositionPoint)
     {
         
     }
     
+    ///Performs movement to point with compleition handler.
     public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
         move_to(point: point)
         completion()
     }
     
-    //Visual model handling
+    ///A robot model controller.
     public var model_controller: RobotModelController?
 }
 
 //MARK: - Tool connector
+/**
+ This subtype provides control for industrial tool.
+ 
+ Contains special function for operation code performation.
+ */
 public class ToolConnector: WorkspaceObjectConnector
 {
-    //Perform functions
-    open func perform(code: Int) //Perform function for tool operation code
+    ///Performs operation code.
+    open func perform(code: Int)
     {
         
     }
     
+    ///Performs operation code with compleition handler.
     public func perform(code: Int, completion: @escaping () -> Void)
     {
         perform(code: code)
         completion()
     }
     
-    //Visual model handling
+    ///A tool model controller.
     public var model_controller: ToolModelController?
+}
+
+//MARK: - Connector parameter
+public struct ConnectionParameter: Identifiable
+{
+    public var id = UUID()
+    public var name: String
+    public var value: Any
+    
+    public init(name: String, value: Any)
+    {
+        self.name = name
+        self.value = value
+    }
 }
