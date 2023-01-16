@@ -29,7 +29,7 @@ open class WorkspaceObjectConnector
     public var connection_updating: Bool = false
     
     ///An array of connection parameters.
-    open var parameters = [ConnectionParameter]()
+    public var parameters = [ConnectionParameter]()
     
     private var connection_task = Task {}
     private var disconnection_task = Task {}
