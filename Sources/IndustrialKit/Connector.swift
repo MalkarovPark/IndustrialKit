@@ -172,8 +172,13 @@ open class ToolConnector: WorkspaceObjectConnector
 }
 
 //MARK: - Connector parameter
-public struct ConnectionParameter: Identifiable
+public struct ConnectionParameter: Identifiable, Equatable
 {
+    public static func == (lhs: ConnectionParameter, rhs: ConnectionParameter) -> Bool
+    {
+        lhs.id == rhs.id
+    }
+    
     public var id = UUID()
     public var name: String
     public var value: Any
