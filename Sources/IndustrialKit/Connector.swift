@@ -15,7 +15,7 @@ import Foundation
  
  Control functions are specialized for subtypes by workspace objects.
  */
-public class WorkspaceObjectConnector
+open class WorkspaceObjectConnector
 {
     public init()
     {
@@ -127,7 +127,7 @@ public class WorkspaceObjectConnector
  
  Contains special function for movement to point performation.
  */
-public class RobotConnector: WorkspaceObjectConnector
+open class RobotConnector: WorkspaceObjectConnector
 {
     ///Performs movement to point.
     open func move_to(point: PositionPoint)
@@ -152,7 +152,7 @@ public class RobotConnector: WorkspaceObjectConnector
  
  Contains special function for operation code performation.
  */
-public class ToolConnector: WorkspaceObjectConnector
+open class ToolConnector: WorkspaceObjectConnector
 {
     ///Performs operation code.
     open func perform(code: Int)
