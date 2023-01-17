@@ -82,7 +82,16 @@ open class WorkspaceObjectConnector
         //return false
     }
     
-    open var connection_info: String { "" }
+    private var connection_output = String()
+    
+    ///A connection output data.
+    open var output: String { connection_output }
+    
+    ///Clears connectiopn output data.
+    public func clear_output()
+    {
+        connection_output = String()
+    }
     
     ///A get statistics flag.
     public var get_statistics = false
