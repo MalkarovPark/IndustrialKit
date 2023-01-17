@@ -82,6 +82,8 @@ open class WorkspaceObjectConnector
         //return false
     }
     
+    open var connection_info: String { "" }
+    
     ///A get statistics flag.
     public var get_statistics = false
     {
