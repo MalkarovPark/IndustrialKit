@@ -22,6 +22,22 @@ open class WorkspaceObjectConnector
         
     }
     
+    ///A connection process toggle.
+    public var is_connect: Bool = false
+    {
+        didSet
+        {
+            if !connected
+            {
+                connect()
+            }
+            else
+            {
+                disconnect()
+            }
+        }
+    }
+    
     ///A connection state.
     public var connected: Bool = false
     
