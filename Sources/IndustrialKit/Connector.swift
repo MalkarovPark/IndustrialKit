@@ -121,7 +121,7 @@ open class WorkspaceObjectConnector: ObservableObject
     }
     
     ///A get output flag.
-    public var get_output = false
+    @Published public var get_output = false
     
     private var connector_output_data = String()
     
