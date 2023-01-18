@@ -43,7 +43,7 @@ open class WorkspaceObjectConnector: ObservableObject
     @Published public var connected: Bool = false
     
     ///A connection in updating process state.
-    @Published public var connection_updating: Bool = false
+    public var connection_updating: Bool = false
     
     ///An array of connection parameters.
     public var parameters = [ConnectionParameter]()
@@ -63,9 +63,10 @@ open class WorkspaceObjectConnector: ObservableObject
             connection_task = Task
             {
                 connected = await connection_process()
+                connection_updating = false
             }
             
-            connection_updating = false
+            //connection_updating = false
         }
     }
     
