@@ -40,10 +40,10 @@ open class WorkspaceObjectConnector: ObservableObject
     }*/
     
     ///A connection state.
-    public var connected: Bool = false
+    @Published public var connected: Bool = false
     
     ///A connection in updating process state.
-    public var connection_updating: Bool = false
+    @Published public var connection_updating: Bool = false
     
     ///An array of connection parameters.
     public var parameters = [ConnectionParameter]()
