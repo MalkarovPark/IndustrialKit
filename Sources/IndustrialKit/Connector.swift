@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 //MARK: - Workspace object connector
 /**
@@ -162,6 +163,34 @@ open class WorkspaceObjectConnector
     }
     
     public var update_model = false
+    
+    //MARK: UI functions
+    public var connection_button: (label: String, color: Color)
+    {
+        var label = String()
+        var color = .gray
+        
+        if !connection_updating
+        {
+            if !connected
+            {
+                label = "Connect"
+                color = .gray
+            }
+            else
+            {
+                label = "Disconnect"
+                color = .green
+            }
+        }
+        else
+        {
+            label = "Connecting"
+            color = .yellow
+        }
+        
+        return (label, color)
+    }
 }
 
 //MARK: - Robot connector
