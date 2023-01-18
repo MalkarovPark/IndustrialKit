@@ -127,6 +127,7 @@ open class WorkspaceObjectConnector: ObservableObject
     public func clear_output()
     {
         output = String()
+        self.objectWillChange.send()
     }
     
     ///A get statistics flag.
