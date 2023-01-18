@@ -40,10 +40,10 @@ open class WorkspaceObjectConnector: ObservableObject
     }*/
     
     ///A connection state.
-    public var connected: Bool = false
+    @MainActor public var connected: Bool = false
     
     ///A connection in updating process state.
-    public var connection_updating: Bool = false
+    @MainActor public var connection_updating: Bool = false
     
     ///An array of connection parameters.
     public var parameters = [ConnectionParameter]()
@@ -52,7 +52,7 @@ open class WorkspaceObjectConnector: ObservableObject
     private var disconnection_task = Task {}
     
     ///Connects instance to real workspace object.
-    public func connect()
+    @MainActor public func connect()
     {
         disconnection_task.cancel()
         
@@ -70,7 +70,7 @@ open class WorkspaceObjectConnector: ObservableObject
     }
     
     ///Disconnects real workspace object from instance.
-    public func disconnect()
+    @MainActor public func disconnect()
     {
         connection_task.cancel()
         
