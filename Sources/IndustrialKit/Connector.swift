@@ -39,6 +39,21 @@ open class WorkspaceObjectConnector: ObservableObject
         }
     }*/
     
+    /*public var connection: Bool = false
+    {
+        didSet
+        {
+            if connection
+            {
+                connect()
+            }
+            else
+            {
+                disconnect()
+            }
+        }
+    }*/
+    
     ///A connection state.
     @Published public var connected: Bool = false
     
@@ -55,6 +70,7 @@ open class WorkspaceObjectConnector: ObservableObject
     public func connect()
     {
         disconnection_task.cancel()
+        connection_failure = false
         
         if !connected
         {
@@ -64,6 +80,8 @@ open class WorkspaceObjectConnector: ObservableObject
             {
                 connected = await connection_process()
                 connection_updating = false
+                
+                connection_failure = !connected
             }
             
             //connection_updating = false
@@ -87,6 +105,8 @@ open class WorkspaceObjectConnector: ObservableObject
             
             connected = false
             connection_updating = false
+            
+            connection_failure = false
         }
     }
     
@@ -169,6 +189,11 @@ open class WorkspaceObjectConnector: ObservableObject
     public var update_model = false
     
     //MARK: UI functions
+    ///A failure result of connection.
+    private var connection_failure = false
+    
+    ///Data for connection button.
+    /// - Returns: Button label and light color – *label*, *color*.
     public var connection_button: (label: String, color: Color)
     {
         var label = String()
@@ -179,7 +204,15 @@ open class WorkspaceObjectConnector: ObservableObject
             if !connected
             {
                 label = "Connect"
-                color = .gray
+                
+                if !connection_failure
+                {
+                    color = .gray
+                }
+                else
+                {
+                    color = .red
+                }
             }
             else
             {
