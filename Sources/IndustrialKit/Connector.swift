@@ -22,7 +22,7 @@ open class WorkspaceObjectConnector
         
     }
     
-    ///A connection process toggle.
+    /*///A connection process toggle.
     public var is_connect: Bool = false
     {
         didSet
@@ -36,7 +36,7 @@ open class WorkspaceObjectConnector
                 disconnect()
             }
         }
-    }
+    }*/
     
     ///A connection state.
     public var connected: Bool = false
