@@ -190,7 +190,7 @@ open class WorkspaceObjectConnector: ObservableObject
     
     //MARK: UI functions
     ///A failure result of connection.
-    private var connection_failure = false
+    @Published public var connection_failure = false
     
     ///Data for connection button.
     /// - Returns: Button label and light color – *label*, *color*.
