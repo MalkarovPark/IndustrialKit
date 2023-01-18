@@ -60,12 +60,10 @@ open class WorkspaceObjectConnector
         {
             connection_updating = true
             
-            connected = connection_process()
-            
-            /*connection_task = Task
+            connection_task = Task
             {
                 connected = await connection_process()
-            }*/
+            }
             
             connection_updating = false
         }
@@ -81,23 +79,22 @@ open class WorkspaceObjectConnector
             connection_updating = true
             //connected = await disconnection_process()
             
-            disconnection_process()
-            /*disconnection_task = Task
+            disconnection_task = Task
             {
                 await disconnection_process()
-            }*/
+            }
             
             connected = false
             connection_updating = false
         }
     }
     
-    open func connection_process() -> Bool //async -> Bool
+    open func connection_process() async -> Bool
     {
         return true
     }
     
-    open func disconnection_process() //async // -> Bool
+    open func disconnection_process() async // -> Bool
     {
         //return false
     }
