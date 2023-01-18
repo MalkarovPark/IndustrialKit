@@ -16,7 +16,7 @@ import SwiftUI
  
  Control functions are specialized for subtypes by workspace objects.
  */
-open class WorkspaceObjectConnector
+open class WorkspaceObjectConnector: ObservableObject
 {
     public init()
     {
@@ -165,7 +165,7 @@ open class WorkspaceObjectConnector
     public var update_model = false
     
     //MARK: UI functions
-    public var connection_button: (label: String, color: Color)
+    @MainActor public var connection_button: (label: String, color: Color)
     {
         var label = String()
         var color = Color.gray
