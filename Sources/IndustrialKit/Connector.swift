@@ -189,6 +189,8 @@ open class WorkspaceObjectConnector
             color = .yellow
         }
         
+        print(connected)
+        
         return (label, color)
     }
 }
