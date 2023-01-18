@@ -262,16 +262,28 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            reset_moving()
+            if demo && connector.connected
+            {
+                reset_moving()
+                disconnect()
+            }
+            
+            /*reset_moving()
             
             if demo
             {
-                connect()
+                if connector.connected
+                {
+                    disconnect()
+                }
             }
             else
             {
-                disconnect()
-            }
+                if !connector.connected
+                {
+                    connect()
+                }
+            }*/
         }
     }
     
