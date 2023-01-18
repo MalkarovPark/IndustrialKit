@@ -103,6 +103,8 @@ open class WorkspaceObjectConnector: ObservableObject
     ///A get output flag.
     public var get_output = false
     
+    private var connector_output_data = String()
+    
     ///A connection output data.
     public var output: String
     {
@@ -110,14 +112,14 @@ open class WorkspaceObjectConnector: ObservableObject
         {
             if !get_output
             {
-                self.output = String()
+                connector_output_data = String()
             }
             
-            return self.output
+            return connector_output_data
         }
         set
         {
-            self.output = newValue
+            connector_output_data = newValue
         }
     }
     
