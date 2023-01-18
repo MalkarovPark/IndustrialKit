@@ -168,7 +168,7 @@ open class WorkspaceObjectConnector
     public var connection_button: (label: String, color: Color)
     {
         var label = String()
-        var color = .gray
+        var color = Color.gray
         
         if !connection_updating
         {
