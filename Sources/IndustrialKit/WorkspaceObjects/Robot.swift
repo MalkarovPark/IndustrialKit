@@ -43,7 +43,7 @@ public class Robot: WorkspaceObject
     public init(robot_struct: RobotStruct) //Init by robot structure
     {
         super.init()
-        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, module_name: robot_struct.module, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, demo: self.demo, update_model_by_connector: self.update_model_by_connector, get_statistics: robot_struct.get_statistics, charts_data: robot_struct.charts_data, state: robot_struct.state, image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
+        robot_init(name: robot_struct.name, manufacturer: robot_struct.manufacturer, model: robot_struct.model, lengths: robot_struct.lengths, module_name: robot_struct.module, scene: robot_struct.scene, is_placed: robot_struct.is_placed, location: robot_struct.location, rotation: robot_struct.rotation, demo: robot_struct.demo, update_model_by_connector: self.update_model_by_connector, get_statistics: robot_struct.get_statistics, charts_data: robot_struct.charts_data, state: robot_struct.state, image_data: robot_struct.image_data, origin_location: robot_struct.origin_location, origin_rotation: robot_struct.origin_rotation, space_scale: robot_struct.space_scale)
         read_programs(robot_struct: robot_struct) //Import programs if robot init by structure (from document file)
     }
     
