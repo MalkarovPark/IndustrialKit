@@ -101,7 +101,7 @@ open class WorkspaceObjectConnector
     ///A get output flag.
     public var get_output = false
     
-    private var connection_output = String()
+    internal var connection_output = String()
     
     ///A connection output data.
     public var output: String
