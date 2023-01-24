@@ -20,7 +20,10 @@ IndustrialKit is an open source software platform for creating applications that
 * [IndustrialKit](#industrialkit)
     * [Workspace Object](#workspace-object)
 * [IndustrialKitUI](#industrialkitui)
-    * [SwiftUI](#industrialkitui-swiftui)
+    * [Cards](#industrialkitui-cards)
+    * [Position View](#industrialkitui-positionview)
+    * [Charts View](#industrialkitui-chartsview)
+    * [State View](#industrialkitui-stateview)
 * [Getting Help](#getting-help)
 * [License](#license)
 
@@ -43,7 +46,7 @@ CareKit can be installed via SPM. Create a new Xcode project and navigate to `Fi
 
 The included sample app demonstrates a fully constructed IndustrialKit app: [RCWorkspace](https://github.com/MalkarovPark/Robotic-Complex-Workspace)
 
-![rcworkspace](https://upload.wikimedia.org/wikipedia/commons/8/86/Ornament_met_bloemen_en_bladeren_Oeuvre_de_Juste_Aurele_Meissonnier_%28serietitel%29%2C_RP-P-1998-314.jpg)
+![rcworkspace](https://user-images.githubusercontent.com/62340924/213884632-2e7d7706-6d00-472c-b56f-4712770dfd47.png)
 
 # IndustrialKit <a name="industrialkit"></a>
 
@@ -55,9 +58,21 @@ The workspace object is...
 
 # IndustrialKitUI <a name="industrialkitui"></a>
 
-### SwiftUI <a name="industrialkitui-swiftui"></a>
+### Cards <a name="industrialkitui-cards"></a>
 
-A SwiftUI API is currently available for the view...
+Cards
+
+### Position View <a name="industrialkitui-positionview"></a>
+
+Position View
+
+### Charts View <a name="industrialkitui-chartsview"></a>
+
+Charts View
+
+### State View <a name="industrialkitui-stateview"></a>
+
+State View
 
 # Getting Help <a name="getting-help"></a>
 GitHub is our primary forum for IndustrialKit. Feel free to open up issues about questions, problems, or ideas.
