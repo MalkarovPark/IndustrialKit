@@ -17,7 +17,7 @@ import SceneKit
  
  - Returns: Name after validation. May differ from the input.
  */
-func mismatched_name(name: String, names: [String]) -> String
+public func mismatched_name(name: String, names: [String]) -> String
 {
     var name_count = 1
     var name_postfix: String
@@ -48,7 +48,7 @@ func mismatched_name(name: String, names: [String]) -> String
 ///     - pointer_location: Input point location components – *x*, *y*, *z*.
 ///     - pointer_rotation: Input origin rotation components – *r*, *p*, *w*.
 /// - Returns: Transformed inputed point location components – *x*, *y*, *z*.
-func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float]
+public func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float]
 {
     let new_x, new_y, new_z: Float
     if origin_rotation.reduce(0, +) > 0 //If at least one rotation angle of the origin is not equal to zero
@@ -76,7 +76,7 @@ func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [F
     - node: The node to which the bit mask number applies.
     - value: A new category bit mask value.
  */
-func apply_bit_mask(node: SCNNode, _ value: Int)
+public func apply_bit_mask(node: SCNNode, _ value: Int)
 {
     node.categoryBitMask = value
     
@@ -92,7 +92,7 @@ func apply_bit_mask(node: SCNNode, _ value: Int)
  - Parameters:
     - node: The node whose bindings are being removed.
  */
-func clear_constranints(node: SCNNode)
+public func clear_constranints(node: SCNNode)
 {
     guard node.constraints != nil
     else
@@ -113,7 +113,7 @@ func clear_constranints(node: SCNNode)
 }
 
 //MARK: - Conversion functions for space parameters
-func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling lengths by divider
+public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling lengths by divider
 {
     var new_numbers = [Float]()
     for number in numbers
