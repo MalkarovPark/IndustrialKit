@@ -442,6 +442,7 @@ public class Robot: WorkspaceObject
     public override func node_by_description()
     {
         node = SCNNode()
+        print(scene_internal_folder_address + "/" + module_name + ".scn")
         
         if module_name != ""
         {
