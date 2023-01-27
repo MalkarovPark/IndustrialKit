@@ -431,6 +431,10 @@ public class Robot: WorkspaceObject
     //MARK: - Visual build functions
     public override var scene_node_name: String { "robot" }
     
+    public override var scene_internal_folder_address: String { Robot.scene_folder }
+    
+    public static var scene_folder = String()
+    
     private var model_controller = RobotModelController()
     
     public var update_model_by_connector = false //Update model by model controller
@@ -439,38 +443,13 @@ public class Robot: WorkspaceObject
     {
         node = SCNNode()
         
-        switch module_name
+        if module_name != ""
         {
-        case "Portal":
-            portal_model()
-        case "6DOF":
-            vidof_model()
-        default:
-            no_model()
+            node = SCNScene(named: scene_internal_folder_address + "/" + module_name + ".scn")!.rootNode.childNode(withName: scene_node_name, recursively: false)! //Get default models by modules names.
         }
-        
-        func portal_model() //Use default portal manipulator model
+        else
         {
-            node = SCNScene(named: "Components.scnassets/Robots/Default/Portal.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
-        }
-        
-        func vidof_model() //Use default 6DOF manipulator model
-        {
-            node = SCNScene(named: "Components.scnassets/Robots/Default/6DOF.scn")!.rootNode.childNode(withName: "robot", recursively: false)!
-        }
-        
-        func no_model()
-        {
-            node?.geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
-            
-            #if os(macOS)
-            node?.geometry?.firstMaterial?.diffuse.contents = NSColor.gray
-            #else
-            node?.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
-            #endif
-            
-            node?.geometry?.firstMaterial?.lightingModel = .physicallyBased
-            node?.name = "robot"
+            no_model_node()
         }
     }
     

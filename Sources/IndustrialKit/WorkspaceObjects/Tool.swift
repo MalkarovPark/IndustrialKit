@@ -391,27 +391,17 @@ public class Tool: WorkspaceObject
     //MARK: - Visual build functions
     public override var scene_node_name: String { "tool" }
     
+    public override var scene_internal_folder_address: String { Tool.scene_folder }
+    
+    public static var scene_folder = String()
+    
     private var model_controller = ToolModelController()
     
     public var update_model_by_connector = false //Update model by model controller
     
     private var tool_parts = [SCNNode]()
-    private var lengths = [Float]()
     
-    public override func node_by_description()
-    {
-        node = SCNNode()
-        node?.geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
-        
-        #if os(macOS)
-        node?.geometry?.firstMaterial?.diffuse.contents = NSColor.gray
-        #else
-        node?.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
-        #endif
-        
-        node?.geometry?.firstMaterial?.lightingModel = .physicallyBased
-        node?.name = "Tool"
-    }
+    private var lengths = [Float]()
     
     public func workcell_connect(scene: SCNScene, name: String) //Connect tool parts from scene
     {

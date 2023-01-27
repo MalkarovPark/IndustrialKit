@@ -124,6 +124,8 @@ public class Workspace: ObservableObject
     ///Link to edited object node.
     public var edited_object_node: SCNNode?
     
+    public static var workcell_scene_address = String()
+    
     ///Gets new object node model for previewing position.
     public func view_object_node(type: WorkspaceObjectType, name: String)
     {
@@ -155,7 +157,7 @@ public class Workspace: ObservableObject
             
             //Get new node
             select_robot(name: name) //Select robot in workspace
-            workcells_node?.addChildNode(SCNScene(named: "Components.scnassets/Workcell.scn")!.rootNode.childNode(withName: "unit", recursively: false)!) //Get workcell from Workcell.scn and add it to Workspace.scn
+            workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!) //Get workcell from Workcell.scn and add it to Workspace.scn
             
             edited_object_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
             
@@ -1769,7 +1771,7 @@ public class Workspace: ObservableObject
             {
                 if robot.is_placed == true
                 {
-                    workcells_node?.addChildNode(SCNScene(named: "Components.scnassets/Workcell.scn")!.rootNode.childNode(withName: "unit", recursively: false)!)
+                    workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!)
                     unit_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
                     
                     unit_node?.name = robot.name //Select robot cell node

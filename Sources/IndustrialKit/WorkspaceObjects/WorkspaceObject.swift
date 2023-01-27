@@ -61,6 +61,9 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     ///Name of node for connect to instance node variable.
     open var scene_node_name: String? { nil }
     
+    ///Addres of internal folder with workspace objects scenes.
+    open var scene_internal_folder_address: String? { nil }
+    
     ///Folder access bookmark.
     public static var folder_bookmark: Data?
     
@@ -87,17 +90,33 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
                 catch
                 {
                     print(error.localizedDescription)
-                    node_by_description() //If node could not imported, create node model by description
+                    node_by_internal() //If node could not imported, create node model by description
                 }
             }
             else
             {
-                node_by_description()
+                node_by_internal()
             }
         }
         catch
         {
             print(error.localizedDescription)
+            node_by_internal()
+        }
+    }
+    
+    private func node_by_internal()
+    {
+        node = SCNNode()
+        
+        if scene_internal_folder_address != nil && scene_node_name != nil
+        {
+            //Get model scene from application resources
+            node = SCNScene(named: scene_internal_folder_address! + "/" + scene_address)!.rootNode.childNode(withName: scene_node_name!, recursively: false)!
+        }
+        else
+        {
+            //Get node by description
             node_by_description()
         }
     }
@@ -105,7 +124,23 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     ///Builds model by description without external scene.
     open func node_by_description()
     {
+        no_model_node()
+    }
+    
+    ///Builds a filler node for object without model description.
+    public func no_model_node()
+    {
+        //Build filler model node
+        node?.geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
         
+        #if os(macOS)
+        node?.geometry?.firstMaterial?.diffuse.contents = NSColor.gray
+        #else
+        node?.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
+        #endif
+        
+        node?.geometry?.firstMaterial?.lightingModel = .physicallyBased
+        node?.name = scene_node_name
     }
     
     //MARK: - UI functions

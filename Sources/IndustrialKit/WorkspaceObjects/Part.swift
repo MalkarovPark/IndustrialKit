@@ -175,6 +175,10 @@ public class Part: WorkspaceObject
     //MARK: - Visual build functions
     public override var scene_node_name: String { "part" }
     
+    public override var scene_internal_folder_address: String { Part.scene_folder }
+    
+    public static var scene_folder = String()
+    
     public override func node_by_description()
     {
         node = SCNNode()
