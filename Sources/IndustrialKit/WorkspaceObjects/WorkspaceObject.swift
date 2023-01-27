@@ -108,6 +108,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     private func node_by_internal()
     {
         node = SCNNode()
+        print(scene_internal_folder_address! + "/" + scene_address)
         
         if scene_internal_folder_address != nil && scene_node_name != nil
         {
