@@ -110,7 +110,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         node = SCNNode()
         print(scene_internal_folder_address! + "/" + scene_address)
         
-        if scene_internal_folder_address != nil && scene_node_name != nil
+        if scene_internal_folder_address != nil && (scene_node_name != nil || scene_node_name != "")
         {
             //Get model scene from application resources
             node = SCNScene(named: scene_internal_folder_address! + "/" + scene_address)!.rootNode.childNode(withName: scene_node_name!, recursively: false)!
