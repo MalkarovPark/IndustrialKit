@@ -90,7 +90,7 @@ public class Robot: WorkspaceObject
         else
         {
             self.lengths = lengths
-            node_by_description()
+            get_node_from_scene()
         }
     }
     
