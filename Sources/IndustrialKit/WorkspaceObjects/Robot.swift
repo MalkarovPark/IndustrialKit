@@ -267,23 +267,6 @@ public class Robot: WorkspaceObject
                 reset_moving()
                 disconnect()
             }
-            
-            /*reset_moving()
-            
-            if demo
-            {
-                if connector.connected
-                {
-                    disconnect()
-                }
-            }
-            else
-            {
-                if !connector.connected
-                {
-                    connect()
-                }
-            }*/
         }
     }
     
@@ -323,7 +306,22 @@ public class Robot: WorkspaceObject
         }
         else
         {
-            //Move to point for real robot.
+            if connector.connected
+            {
+                //Move to point for real robot
+                connector.move_to(point: programs[selected_program_index].points[target_point_index])
+                {
+                    self.select_new_point()
+                }
+            }
+            else
+            {
+                //Skip operation if real robot is not connected
+                moving_finished = true
+                rotation_finished = true
+                
+                select_new_point()
+            }
         }
     }
     

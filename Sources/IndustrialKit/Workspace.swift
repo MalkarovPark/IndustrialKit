@@ -1502,7 +1502,7 @@ public class Workspace: ObservableObject
         switch selected_object_type
         {
         case .robot:
-            selected_tool.reset_performing()
+            selected_robot.reset_moving()
         case .tool:
             selected_tool.reset_performing()
         default:

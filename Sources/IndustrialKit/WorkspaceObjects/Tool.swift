@@ -310,9 +310,17 @@ public class Tool: WorkspaceObject
         else
         {
             //Move to point for real tool
-            connector.perform(code: selected_program.codes[selected_code_index].value)
+            if connector.connected
             {
-                self.select_new_code()
+                connector.perform(code: selected_program.codes[selected_code_index].value)
+                {
+                    self.select_new_code()
+                }
+            }
+            else
+            {
+                //Skip operation if real tool is not connected
+                select_new_code()
             }
         }
     }
