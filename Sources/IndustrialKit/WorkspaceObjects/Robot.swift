@@ -446,7 +446,14 @@ public class Robot: WorkspaceObject
         if module_name != ""
         {
             //Get default models by modules names
-            node = SCNScene(named: scene_internal_folder_address + (scene_internal_folder_address != "" ? "/" : "") + module_name + ".scn")!.rootNode.childNode(withName: scene_node_name, recursively: false)!
+            guard let new_scene = SCNScene(named: scene_internal_folder_address + (scene_internal_folder_address != "" ? "/" : "") + module_name + ".scn")
+            else
+            {
+                node_by_description()
+                return
+            }
+            
+            node = new_scene.rootNode.childNode(withName: scene_node_name, recursively: false)!
             //node = SCNScene(named: scene_internal_folder_address + "/" + module_name + ".scn")!.rootNode.childNode(withName: scene_node_name, recursively: false)!
         }
         else
