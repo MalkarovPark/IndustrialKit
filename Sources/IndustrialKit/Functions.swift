@@ -123,3 +123,61 @@ public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scali
     
     return new_numbers
 }
+
+//MARK: Connection parameters view functions
+internal func read_connection_parameters(connector: WorkspaceObjectConnector, _ parameters: [String]?)
+{
+    if parameters != nil && connector.parameters.count > 0
+    {
+        if parameters?.count == connector.parameters.count
+        {
+            for i in 0 ... connector.parameters.count
+            {
+                switch connector.parameters[i].value
+                {
+                case is String:
+                    connector.parameters[i].value = parameters?[i] ?? ""
+                case is Int:
+                    connector.parameters[i].value = Int(parameters![i]) ?? 0
+                case is Float:
+                    connector.parameters[i].value = Float(parameters![i]) ?? 0
+                case is Bool:
+                    connector.parameters[i].value = parameters![i] == "true"
+                default:
+                    break
+                }
+            }
+        }
+    }
+}
+
+internal func get_connection_parameters(connector: WorkspaceObjectConnector) -> [String]?
+{
+    if connector.parameters.count > 0
+    {
+        var parameters = [String]()
+        
+        for parameter in connector.parameters
+        {
+            switch parameter.value
+            {
+            case let value as String:
+                parameters.append(value)
+            case let value as Int:
+                parameters.append(String(value))
+            case let value as Float:
+                parameters.append(String(value))
+            case let value as Bool:
+                parameters.append(String(value))
+            default:
+                break
+            }
+        }
+        
+        return parameters
+    }
+    else
+    {
+        return nil
+    }
+}

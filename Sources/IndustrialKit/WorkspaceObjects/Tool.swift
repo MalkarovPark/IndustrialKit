@@ -102,6 +102,8 @@ public class Tool: WorkspaceObject
             Tool.select_modules(module_name, &model_controller, &connector)
             apply_statistics_flags()
         }
+        
+        read_connection_parameters(connector: self.connector, tool_struct.connection_parameters)
     }
     
     /**
@@ -598,7 +600,25 @@ public class Tool: WorkspaceObject
     //MARK: - Work with file system
     public var file_info: ToolStruct
     {
-        return ToolStruct(name: self.name, codes: self.codes, names: self.codes_names, scene: self.scene_address, lengths: self.lengths, is_placed: self.is_placed, location: self.location, rotation: self.rotation, is_attached: self.is_attached, attached_to: self.attached_to, demo: self.demo, update_model_by_connector: self.update_model_by_connector, get_statistics: self.get_statistics, charts_data: self.charts_data, state: self.state_data, programs: self.programs, image_data: self.image_data, module: self.module_name)
+        return ToolStruct(name: self.name,
+                          codes: self.codes,
+                          names: self.codes_names,
+                          scene: self.scene_address,
+                          lengths: self.lengths,
+                          is_placed: self.is_placed,
+                          location: self.location,
+                          rotation: self.rotation,
+                          is_attached: self.is_attached,
+                          attached_to: self.attached_to,
+                          demo: self.demo,
+                          connection_parameters: get_connection_parameters(connector: self.connector),
+                          update_model_by_connector: self.update_model_by_connector,
+                          get_statistics: self.get_statistics,
+                          charts_data: self.charts_data,
+                          state: self.state_data,
+                          programs: self.programs,
+                          image_data: self.image_data,
+                          module: self.module_name)
     }
 }
 
@@ -620,6 +640,7 @@ public struct ToolStruct: Codable
     public var attached_to: String?
     
     public var demo: Bool
+    public var connection_parameters: [String]?
     public var update_model_by_connector: Bool
     
     public var get_statistics: Bool
