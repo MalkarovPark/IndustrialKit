@@ -112,7 +112,8 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         if scene_internal_folder_address != nil && scene_address != "" && scene_node_name != nil
         {
             //Get model scene from application resources
-            node = SCNScene(named: scene_internal_folder_address! + "/" + scene_address)!.rootNode.childNode(withName: scene_node_name!, recursively: false)!
+            node = SCNScene(named: scene_internal_folder_address! + (scene_internal_folder_address != "" ? "/" : "") + scene_address)!.rootNode.childNode(withName: scene_node_name!, recursively: false)!
+            //node = SCNScene(named: scene_internal_folder_address! + "/" + scene_address)!.rootNode.childNode(withName: scene_node_name!, recursively: false)!
         }
         else
         {
