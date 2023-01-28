@@ -131,7 +131,7 @@ internal func read_connection_parameters(connector: WorkspaceObjectConnector, _ 
     {
         if parameters?.count == connector.parameters.count
         {
-            for i in 0 ... connector.parameters.count
+            for i in 0 ..< connector.parameters.count
             {
                 switch connector.parameters[i].value
                 {
