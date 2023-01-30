@@ -1614,6 +1614,8 @@ public class Workspace: ObservableObject
     {
         //Update robots data from file
         robots.removeAll()
+        Robot.folder_bookmark = robots_bookmark
+        
         for robot_struct in preset.robots
         {
             robots.append(Robot(robot_struct: robot_struct))
@@ -1621,10 +1623,7 @@ public class Workspace: ObservableObject
         
         //Update tools data from file
         tools.removeAll()
-        if tools_bookmark != nil
-        {
-            Tool.folder_bookmark = tools_bookmark
-        }
+        Tool.folder_bookmark = tools_bookmark
         
         for tool_struct in preset.tools
         {
@@ -1633,10 +1632,7 @@ public class Workspace: ObservableObject
         
         //Update parts data from file
         parts.removeAll()
-        if parts_bookmark != nil
-        {
-            Part.folder_bookmark = parts_bookmark
-        }
+        Part.folder_bookmark = parts_bookmark
         
         for part_struct in preset.parts
         {
