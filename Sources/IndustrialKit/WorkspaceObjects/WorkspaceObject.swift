@@ -109,7 +109,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     {
         node = SCNNode()
         
-        if scene_internal_folder_address != nil && scene_address != "" && scene_node_name != nil
+        if scene_internal_folder_address != nil && scene_node_name != nil // && scene_address != ""
         {
             //Get model scene from application resources
             guard let new_scene = SCNScene(named: scene_internal_folder_address! + (scene_internal_folder_address != "" ? "/" : "") + scene_address)
