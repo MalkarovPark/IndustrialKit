@@ -335,6 +335,11 @@ public class Robot: WorkspaceObject
                 reset_moving()
                 disconnect()
             }
+            
+            if !demo
+            {
+                connect()
+            }
         }
     }
     
@@ -486,7 +491,7 @@ public class Robot: WorkspaceObject
     {
         connector.update_model = update_model_by_connector
         connector.model_controller = model_controller
-        connector.connect()
+        //connector.connect()
     }
     
     private func disconnect()

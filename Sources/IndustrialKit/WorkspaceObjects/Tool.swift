@@ -250,15 +250,15 @@ public class Tool: WorkspaceObject
     {
         didSet
         {
-            reset_performing()
+            if demo && connector.connected
+            {
+                reset_performing()
+                disconnect()
+            }
             
-            if demo
+            if !demo
             {
                 connect()
-            }
-            else
-            {
-                disconnect()
             }
         }
     }
@@ -380,7 +380,7 @@ public class Tool: WorkspaceObject
     {
         connector.update_model = update_model_by_connector
         connector.model_controller = model_controller
-        connector.connect()
+        //connector.connect()
     }
     
     private func disconnect()
