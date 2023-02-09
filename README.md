@@ -66,7 +66,9 @@ Cards can be large and small, delete buttons can be round and outlineless, respe
 
 The small card has no title, its right segment is marked with color. It has an outlineless delete button that is white in color and is located in the center right.
 
-![cards](https://user-images.githubusercontent.com/62340924/217912672-89e07885-683b-4ca2-a932-054dfcfd8b99.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/217912672-89e07885-683b-4ca2-a932-054dfcfd8b99.png" />
+</p>
 
 ### Position View <a name="industrialkitui-positionview"></a>
 
@@ -77,19 +79,25 @@ The editing window contains two groups of three editable parameters:
 
 Each editable parameter consists of a field and an associated stepper. The described sequence of groups can be displayed in a vertical, horizontal or some other stack.
 
-![position_view](https://user-images.githubusercontent.com/62340924/217921506-b5ee2a5d-8bba-46a3-93cb-fefcd01abac6.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/217921506-b5ee2a5d-8bba-46a3-93cb-fefcd01abac6.png" />
+</p>
 
 ### Charts View <a name="industrialkitui-chartsview"></a>
 
 Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to switch between them by segmented picker (if count of arrays of arrays is more than one). The type of chart is determined by its properties.
 
-![charts_view](https://user-images.githubusercontent.com/62340924/217925809-2388c544-e15c-4118-85f8-3a145f875440.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/217925809-2388c544-e15c-4118-85f8-3a145f875440.png" />
+</p>
 
 ### State View <a name="industrialkitui-stateview"></a>
 
 Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable SF Symbol.
 
-![state_view](https://user-images.githubusercontent.com/62340924/217926978-00048eda-4dce-4397-839e-70ef15ba51be.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62340924/217926978-00048eda-4dce-4397-839e-70ef15ba51be.png" />
+</p>
 
 # Getting Help <a name="getting-help"></a>
 GitHub is our primary forum for IndustrialKit. Feel free to open up issues about questions, problems, or ideas.
