@@ -81,11 +81,15 @@ Each editable parameter consists of a field and an associated stepper. The descr
 
 ### Charts View <a name="industrialkitui-chartsview"></a>
 
-Charts View
+Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to switch between them by segmented picker (if count of arrays of arrays is more than one). The type of chart is determined by its properties.
+
+![charts_view](https://user-images.githubusercontent.com/62340924/217925809-2388c544-e15c-4118-85f8-3a145f875440.png)
 
 ### State View <a name="industrialkitui-stateview"></a>
 
-State View
+Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable SF Symbol.
+
+![state_view](https://user-images.githubusercontent.com/62340924/217926978-00048eda-4dce-4397-839e-70ef15ba51be.png)
 
 # Getting Help <a name="getting-help"></a>
 GitHub is our primary forum for IndustrialKit. Feel free to open up issues about questions, problems, or ideas.
