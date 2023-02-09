@@ -93,7 +93,7 @@ Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to swit
 
 ### State View <a name="industrialkitui-stateview"></a>
 
-Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable SF Symbol.
+Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable SF Symbols.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/62340924/217926978-00048eda-4dce-4397-839e-70ef15ba51be.png" />
