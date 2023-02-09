@@ -60,11 +60,24 @@ The workspace object is...
 
 ### Cards <a name="industrialkitui-cards"></a>
 
-Cards
+Used to display workspace objects and get their content from the card_info method, which is available for all objects inherited from WorkspaceObject.
+
+Cards can be large and small, delete buttons can be round and outlineless, respectively. The large card contains an image, title, subtitle, and has a background color. A round delete button is applied to such a card, placed in the upper right corner.
+
+The small card has no title, its right segment is marked with color. It has an outlineless delete button that is white in color and is located in the center right.
+
+![cards](https://user-images.githubusercontent.com/62340924/217912672-89e07885-683b-4ca2-a932-054dfcfd8b99.png)
 
 ### Position View <a name="industrialkitui-positionview"></a>
 
-Position View
+Provides editing of positions, for example for production objects in the workspace or target positions for robots.
+The editing window contains two groups of three editable parameters:
+   * __Location__ with editable position parameters in a rectangular coordinate system - *x*, *y*, *z*;
+   * __Rotation__ with editable rotation angles at a point - *r*, *p*, *w*.
+
+Each editable parameter consists of a field and an associated stepper. The described sequence of groups can be displayed in a vertical, horizontal or some other stack.
+
+![position_view](https://user-images.githubusercontent.com/62340924/217921506-b5ee2a5d-8bba-46a3-93cb-fefcd01abac6.png)
 
 ### Charts View <a name="industrialkitui-chartsview"></a>
 
