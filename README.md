@@ -18,7 +18,14 @@ IndustrialKit is an open source software platform for creating applications that
 * [Getting Started](#getting-started)
     * [Robotic Complex Workspace App](#rcworkspace-app)
 * [IndustrialKit](#industrialkit)
-    * [Workspace Object](#workspace-object)
+    * [Workspace](#workspace)
+    * [Robot](#robot)
+    * [Tool](#tool)
+    * [Part](#part)
+    * [Connector](#connector)
+    * [ModelController](#model-controller)
+    * [Functions](#functions)
+    * [Extensions](#extensions)
 * [IndustrialKitUI](#industrialkitui)
     * [Cards](#industrialkitui-cards)
     * [Position View](#industrialkitui-positionview)
@@ -52,9 +59,37 @@ The included sample app demonstrates a fully constructed IndustrialKit app: [RCW
 
 CareKit is the overarching package that provides view controllers to tie CareKitUI and CareKitStore together. When importing CareKit, CareKitUI and CareKitStore will be imported under the hood.
 
-### Workspace Object <a name="workspace-object">
+### Workspace <a name="workspace">
 
-The workspace object is...
+The workspace is...
+
+### Robot <a name="robot">
+
+The robot is...
+
+### Tool <a name="tool">
+
+The tool is...
+
+### Part <a name="part">
+
+The part is...
+
+### Connector <a name="connector">
+
+The connector is...
+
+### ModelController <a name="model-controller">
+
+The model controller is...
+
+### Functions <a name="functions">
+
+Functions...
+
+### Extensions <a name="extensions">
+
+Extensions...
 
 # IndustrialKitUI <a name="industrialkitui"></a>
 

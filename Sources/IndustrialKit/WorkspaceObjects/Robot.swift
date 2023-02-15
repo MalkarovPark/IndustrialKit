@@ -163,7 +163,7 @@ public class Robot: WorkspaceObject
     }
     
     /**
-     Function description.
+     Model connector and contoller selection function for robot.
     
      Code example.
      

@@ -107,7 +107,7 @@ public class Tool: WorkspaceObject
     }
     
     /**
-     Function description.
+     Model connector and contoller selection function for tool.
     
      Code example.
      
