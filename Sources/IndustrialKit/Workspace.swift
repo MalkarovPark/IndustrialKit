@@ -14,7 +14,7 @@ import SwiftUI
  
  Performs management of the production complex.
  
- Builds a visual model of the production system.
+ Also can build a visual model of the production system with editing functions.
  */
 public class Workspace: ObservableObject
 {
@@ -106,6 +106,7 @@ public class Workspace: ObservableObject
         update_object_pointer_position(by_node: edited_object_node ?? SCNNode())
     }
     
+    ///Updates opject selection pointer position.
     private func update_object_pointer_position(by_node: SCNNode)
     {
         //Remove old and add new constraint
@@ -121,9 +122,10 @@ public class Workspace: ObservableObject
         object_pointer_node?.isHidden = false //Unhide pointer node
     }
     
-    ///Link to edited object node.
+    ///A link to edited object node.
     public var edited_object_node: SCNNode?
     
+    ///A workcell scene adress.
     public static var workcell_scene_address = String()
     
     ///Gets new object node model for previewing position.
@@ -1168,7 +1170,8 @@ public class Workspace: ObservableObject
         return marks_names
     }
     
-    public func delete_element(index: Int) //Delete program element by number
+    ///Deletes program element by number.
+    public func delete_element(index: Int)
     {
         if elements.indices.contains(index)
         {
@@ -1320,10 +1323,17 @@ public class Workspace: ObservableObject
     ///Workspace performing state.
     public var performed = false
     
+    ///An Index of target element in control program array.
     private var selected_element_index = 0
     
-    public var element_changed = false //This flag perform update if performed element changed
+    /**
+     An program element changed flag.
+     
+     This flag perform update if performed element changed. Used for GUI.
+     */
+    public var element_changed = false
     
+    ///Selects program element and performs by workcell.
     public func start_pause_performing()
     {
         if !(object_pointer_node?.isHidden ?? false)
@@ -1357,11 +1367,13 @@ public class Workspace: ObservableObject
         }
     }
     
+    ///A selected workspace program element.
     private var selected_program_element: WorkspaceProgramElement
     {
         return elements[selected_element_index]
     }
     
+    ///Selects and performs program element by workspace.
     private func perform_next_element()
     {
         let element = selected_program_element
@@ -1416,6 +1428,7 @@ public class Workspace: ObservableObject
         }
     }
     
+    ///Set the new target program element index.
     private func select_new_element()
     {
         if performed
@@ -1453,6 +1466,7 @@ public class Workspace: ObservableObject
         }
     }
     
+    ///Pauses program element performing.
     public func pause_performing()
     {
         let element = selected_program_element
@@ -1490,6 +1504,11 @@ public class Workspace: ObservableObject
         }
     }
     
+    /**
+     Jumps to program element by index.
+     - Parameters:
+        - index: An element index to jump.
+     */
     private func jump_to(index: Int)
     {
         selected_element_index = index
@@ -1515,11 +1534,13 @@ public class Workspace: ObservableObject
         selected_element_index = 0 //Select firs program element
     }
     
+    ///Prepare workspace program to perform.
     private func prepare_program()
     {
         defining_elements_indexes()
     }
     
+    ///Define program element indexes.
     private func defining_elements_indexes()
     {
         //Find mark elements indexes

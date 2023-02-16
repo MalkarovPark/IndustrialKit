@@ -26,17 +26,24 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         hasher.combine(name)
     }
     
-    public var id = UUID() //Object identifier
+    ///Object identifier.
+    public var id = UUID()
     
-    ///Object name in workspace
+    ///Object name in workspace.
     public var name: String?
     
+    ///Object init function.
     public init()
     {
         self.name = "None"
     }
     
-    public init(name: String) //Init object by name. Used for mismatch.
+    /**
+     Init object by name.
+     
+     Used for object mismatch.
+     */
+    public init(name: String)
     {
         self.name = name
     }
@@ -105,6 +112,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
+    ///Set workspace object nod by internal resource.
     private func node_by_internal()
     {
         node = SCNNode()
@@ -129,7 +137,11 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         }
     }
     
-    ///Builds model by description without external scene.
+    /**
+     Builds model node by description without external scene.
+     
+     Name of the scene corresponds to name of the module.
+     */
     open func node_by_description()
     {
         no_model_node()

@@ -69,7 +69,8 @@ public class Part: WorkspaceObject
         super.init(name: name)
     }
     
-    public init(name: String, dictionary: [String: Any]) //Init part by dictionary and use models folder
+    ///Inits part by dictionary and use models folder
+    public init(name: String, dictionary: [String: Any])
     {
         super.init()
         init_by_dictionary(name: name, dictionary: dictionary)
@@ -85,6 +86,7 @@ public class Part: WorkspaceObject
         }
     }
     
+    ///Inits tool by model dictionary.
     private func init_by_dictionary(name: String, dictionary: [String: Any])
     {
         self.name = name
@@ -142,12 +144,14 @@ public class Part: WorkspaceObject
         }
     }
     
-    public init(part_struct: PartStruct) //Init by part structure
+    ///Inits part by codable part structure.
+    public init(part_struct: PartStruct)
     {
         super.init()
         init_by_struct(part_struct: part_struct)
     }
     
+    ///Common init part by struct function.
     private func init_by_struct(part_struct: PartStruct)
     {
         self.name = part_struct.name
@@ -177,6 +181,7 @@ public class Part: WorkspaceObject
     
     public override var scene_internal_folder_address: String { Part.scene_folder }
     
+    ///A scene folder address.
     public static var scene_folder = String()
     
     public override func node_by_description()
@@ -310,6 +315,7 @@ public class Part: WorkspaceObject
     }
     
     //MARK: Part in workspace handling
+    ///Resets model postion.
     public func model_position_reset()
     {
         node?.position = SCNVector3(0, 0, 0)
@@ -349,11 +355,13 @@ public class Part: WorkspaceObject
     }
     
     #if os(macOS)
+    ///Returns info for part card view.
     public override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
     {
         return("\(self.name ?? "Part")", "Subtitle", self.color, self.image)
     }
     #else
+    ///Returns info for part card view.
     public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
         return("\(self.name ?? "Part")", "Subtitle", self.color, self.image)
@@ -377,6 +385,7 @@ public enum PhysicsType: String, Codable, Equatable, CaseIterable
 }
 
 //MARK: - Part structure for workspace preset document handling
+///A codable part struct.
 public struct PartStruct: Codable
 {
     var name: String

@@ -9,6 +9,11 @@ import Foundation
 import SceneKit
 import SwiftUI
 
+/**
+ An industrial tool class.
+ 
+ Permorms operation by codes order in selected operations program.
+ */
 public class Tool: WorkspaceObject
 {
     //MARK: - Init functions
@@ -17,12 +22,14 @@ public class Tool: WorkspaceObject
         super.init()
     }
     
+    ///Inits tool by name.
     public override init(name: String)
     {
         super.init(name: name)
     }
     
-    public init(name: String, dictionary: [String: Any]) //Init by dictionary
+    ///Inits tool by model dictionary.
+    public init(name: String, dictionary: [String: Any])
     {
         super.init()
         
@@ -62,7 +69,8 @@ public class Tool: WorkspaceObject
         }
     }
     
-    public init(tool_struct: ToolStruct) //Init by tool structure
+    ///Inits tool by codable tool structure.
+    public init(tool_struct: ToolStruct)
     {
         super.init(name: tool_struct.name!)
         
@@ -132,8 +140,10 @@ public class Tool: WorkspaceObject
     }
     
     //MARK: - Program manage functions
+    ///An array of tool operations programs.
     @Published private var programs = [OperationsProgram]()
     
+    ///A selected operations program index.
     public var selected_program_index = 0
     {
         willSet
@@ -143,12 +153,23 @@ public class Tool: WorkspaceObject
         }
     }
     
+    /**
+     Adds new operations program to tool.
+     - Parameters:
+        - program: A new tool operations program.
+     */
     public func add_program(_ program: OperationsProgram)
     {
         program.name = mismatched_name(name: program.name!, names: programs_names)
         programs.append(program)
     }
     
+    /**
+     Updates operations program in tool by index.
+     - Parameters:
+        - index: Updated program index.
+        - program: A new tool operations program.
+     */
     public func update_program(index: Int, _ program: OperationsProgram) //Update program by index
     {
         if programs.indices.contains(index) //Checking for the presence of a position program with a given number to update
@@ -157,11 +178,22 @@ public class Tool: WorkspaceObject
         }
     }
     
+    /**
+     Updates operations program by name.
+     - Parameters:
+        - name: Updated program name.
+        - program: A new tool operations program.
+     */
     public func update_program(name: String, _ program: OperationsProgram) //Update program by name
     {
         update_program(index: index_by_name(name: name), program)
     }
     
+    /**
+     Deletes operations program in tool by index.
+     - Parameters:
+        - index: Deleted program index.
+     */
     public func delete_program(index: Int) //Delete program by index
     {
         if programs.indices.contains(index) //Checking for the presence of a position program with a given number to delete
@@ -170,21 +202,37 @@ public class Tool: WorkspaceObject
         }
     }
     
+    /**
+     Deletes operations program in tool by name.
+     - Parameters:
+        - name: Deleted program name.
+     */
     public func delete_program(name: String) //Delete program by name
     {
         delete_program(index: index_by_name(name: name))
     }
     
+    /**
+     Selects operations program in tool by index.
+     - Parameters:
+        - index: Selected program index.
+     */
     public func select_program(index: Int) //Delete program by index
     {
         selected_program_index = index
     }
     
+    /**
+     Selects operations program in tool by name.
+     - Parameters:
+        - name: Selected program name.
+     */
     public func select_program(name: String) //Select program by name
     {
         select_program(index: index_by_name(name: name))
     }
     
+    ///A selected operations program.
     public var selected_program: OperationsProgram
     {
         get //Return positions program by selected index
@@ -204,11 +252,13 @@ public class Tool: WorkspaceObject
         }
     }
     
+    ///Returns index by program name.
     private func index_by_name(name: String) -> Int //Get index of program by name
     {
         return programs.firstIndex(of: OperationsProgram(name: name)) ?? -1
     }
     
+    ///All operations programs names in tool.
     public var programs_names: [String] //Get all names of programs in tool
     {
         var prog_names = [String]()
@@ -222,30 +272,57 @@ public class Tool: WorkspaceObject
         return prog_names
     }
     
-    public var programs_count: Int //Get count of programs in tool
+    ///A operations programs coount in tool.
+    public var programs_count: Int
     {
         return programs.count
     }
     
-    //MARK: - Control functions
+    //MARK: - Codes functions
+    ///An array of avaliable operation codes values for tool.
     public var codes = [Int]()
     
-    public var performed = false //Performing state of tool
-    
+    ///An avaliable codes count.
     public var codes_count: Int
     {
         return codes.count
     }
     
-    public var info_code = 0 //Information code
+    ///An output code.
+    public var info_code = 0
     
     //MARK: - Performing functions
+    ///A name of tool module to describe model controller and connector.
     private var module_name = ""
     
-    public var performing_completed = false //This flag set if the robot has passed all positions. Used for indication in GUI
-    public var selected_code_index = 0 //Index of target point in points array
-    public var code_changed = false //This flag perform update if performed code changed
+    ///A moving state of tool.
+    public var performed = false
     
+    /**
+     An operations completion state.
+     
+     This flag set if the tool has passed all operations.
+     
+     > Used for indication in GUI.
+     */
+    public var performing_completed = false
+    
+    ///An Index of target code in operation codes array.
+    public var selected_code_index = 0
+    
+    /**
+     An operation code changed flag.
+     
+     This flag perform update if performed code changed. Used for GUI.
+     */
+    public var code_changed = false
+    
+    /**
+     Demo state of tool.
+     
+     If did set *true* – class instance try to connects a real tool by connector.
+     If did set *false* – class instance disconnects from a real tool.
+     */
     public var demo = true
     {
         didSet
@@ -269,7 +346,8 @@ public class Tool: WorkspaceObject
     }
     
     //MARK: Performation cycle
-    public func start_pause_performing() //Handling robot moving
+    ///Selects codes and performs tool operation.
+    public func start_pause_performing()
     {
         if !performed
         {
@@ -299,6 +377,7 @@ public class Tool: WorkspaceObject
         }
     }
     
+    ///Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
         if demo
@@ -327,13 +406,17 @@ public class Tool: WorkspaceObject
         }
     }
     
+    ///Finish handler for operation code performation.
     public var finish_handler: (() -> Void) = {}
+    
+    ///Clears finish handler.
     public func clear_finish_handler()
     {
         finish_handler = {}
     }
     
-    private func select_new_code() //Set new target point index
+    ///Set the new target operation code index.
+    private func select_new_code()
     {
         update_statistics_data()
         
@@ -364,7 +447,8 @@ public class Tool: WorkspaceObject
         }
     }
     
-    public func reset_performing() //Reset tool performing
+    ///Resets tool operation performation.
+    public func reset_performing()
     {
         performed = false
         performing_completed = false
@@ -374,8 +458,10 @@ public class Tool: WorkspaceObject
     }
     
     //MARK: - Connection functions
+    ///A tool connector.
     public var connector = ToolConnector()
     
+    ///Connects model controller to connector.
     private func connect()
     {
         connector.update_model = update_model_by_connector
@@ -383,6 +469,7 @@ public class Tool: WorkspaceObject
         //connector.connect()
     }
     
+    ///Disconnects from real tool.
     private func disconnect()
     {
         connector.update_model = false
@@ -395,16 +482,32 @@ public class Tool: WorkspaceObject
     
     public override var scene_internal_folder_address: String { Tool.scene_folder }
     
+    ///An internal scene folder address.
     public static var scene_folder = String()
     
+    ///A tool visual model controller.
     private var model_controller = ToolModelController()
     
-    public var update_model_by_connector = false //Update model by model controller
+    /**
+     Updates tool visual model by model controller.
+     
+     Called on the SCNScene *rendrer* function.
+     */
+    public var update_model_by_connector = false
     
-    private var tool_parts = [SCNNode]()
+    ///An array of connected tool parts.
+    //private var tool_parts = [SCNNode]()
     
+    ///An array of tool parts lengths.
     private var lengths = [Float]()
     
+    /**
+     Connects to robot model in scene.
+     - Parameters:
+        - scene: A current scene.
+        - name: A robot name.
+        - connect_camera: Place camera to robot's camera node.
+     */
     public func workcell_connect(scene: SCNScene, name: String) //Connect tool parts from scene
     {
         //let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
@@ -432,20 +535,28 @@ public class Tool: WorkspaceObject
         model_controller.info_code = self.info_code
     }
     
-    public func workcell_disconnect() //Disconnect tool model parts
+    ///Disconnect tool model parts from workcell.
+    public func workcell_disconnect()
     {
         model_controller.remove_all_model_actions()
         model_controller.nodes_disconnect()
         model_controller.info_code = nil
     }
     
+    ///A flag determines if tool is attached to the robot manipulator.
     public var is_attached = false
+    
+    ///A name of the robot that the tool is attached to.
     public var attached_to: String?
     
     //MARK: - Chart functions
+    ///A tool charts data.
     public var charts_data: [WorkspaceObjectChart]?
+    
+    ///A tool state data.
     public var state_data: [StateItem]?
     
+    ///A statistics getting toggle.
     public var get_statistics = false
     {
         didSet
@@ -461,8 +572,10 @@ public class Tool: WorkspaceObject
         }
     }
     
+    ///Index of chart element.
     private var chart_element_index = 0
     
+    ///Update statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     func update_statistics_data()
     {
         if charts_data == nil
@@ -485,6 +598,7 @@ public class Tool: WorkspaceObject
         }
     }
     
+    ///Clears tool chart data.
     public func clear_chart_data()
     {
         if get_statistics
@@ -500,6 +614,7 @@ public class Tool: WorkspaceObject
         }
     }
     
+    ///Clears tool state data.
     public func clear_state_data()
     {
         state_data = nil
@@ -519,18 +634,36 @@ public class Tool: WorkspaceObject
     
     //MARK: - UI functions
     #if os(macOS)
+    /**
+     Returns info for tool card view.
+     
+     Output avaliable codes count. If their number is zero, the instrument is listed as *static*.
+     */
     public override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
     {
         return("\(self.name ?? "Tool")", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255), self.image)
     }
     #else
+    /**
+     Returns info for tool card view.
+     
+     Output avaliable codes count. If their number is zero, the instrument is listed as *static*.
+     */
     public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
         return("\(self.name ?? "Tool")", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255), self.image)
     }
     #endif
     
-    public func inspector_code_color(code: OperationCode) -> Color //Get point color for inspector view
+    /**
+     Returns point color for inspector view.
+     
+     Colors mean:
+     - gray – if operation not selected.
+     - yellow – if target operation not passed.
+     - green – if target operation passed.
+     */
+    public func inspector_code_color(code: OperationCode) -> Color
     {
         var color = Color.gray //Gray point color if the robot is not reching the code
         let code_index = self.selected_program.codes.firstIndex(of: code) //Number of selected code
@@ -560,6 +693,7 @@ public class Tool: WorkspaceObject
         return color
     }
     
+    ///Apply corresponded label and SF Symbol to operation code.
     public func code_info(_ code: Int) -> (label: String, image: Image)
     {
         var image = Image("")
@@ -598,6 +732,7 @@ public class Tool: WorkspaceObject
     private var codes_names = [String]()
     
     //MARK: - Work with file system
+    ///Converts tool data to codable tool struct.
     public var file_info: ToolStruct
     {
         return ToolStruct(name: self.name,
@@ -623,6 +758,7 @@ public class Tool: WorkspaceObject
 }
 
 //MARK: - Tool structure for workspace preset document handling
+///A codable tool struct.
 public struct ToolStruct: Codable
 {
     public var name: String?
