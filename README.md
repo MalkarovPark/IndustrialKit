@@ -57,7 +57,9 @@ The included sample app demonstrates a fully constructed IndustrialKit app: [RCW
 
 # IndustrialKit <a name="industrialkit"></a>
 
-CareKit is the overarching package that provides view controllers to tie CareKitUI and CareKitStore together. When importing CareKit, CareKitUI and CareKitStore will be imported under the hood.
+IndustrialKit is the overarching package that provides all need classes, structures, functions, enums for build industrial applications.
+
+IndustrialKitUI provides some views and modifiers for use in design and data processing tasks.
 
 ### Workspace <a name="workspace">
 
