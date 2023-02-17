@@ -22,8 +22,8 @@ IndustrialKit is an open source software platform for creating applications that
     * [Robot](#robot)
     * [Tool](#tool)
     * [Part](#part)
-    * [Connector](#connector)
-    * [ModelController](#model-controller)
+    * [Connectors](#connectors)
+    * [Model Controllers](#model-controllers)
     * [Functions](#functions)
     * [Extensions](#extensions)
 * [IndustrialKitUI](#industrialkitui)
@@ -61,27 +61,45 @@ CareKit is the overarching package that provides view controllers to tie CareKit
 
 ### Workspace <a name="workspace">
 
-The workspace is...
+Described by the *Workspace* class is the basis of the production complex, which consists of robots, tools, parts, controlled by a common program, presented as a sequence of blocks - algorithmic elements. Thus, this class contains four properties of an array of values of types of workspace objects *Robot*, *Tool*, *Part* and elements of the global control program *WorkspaceProgramElement*.
+
+For arrays of objects, a standard set of functions is used, including adding, deleting, selecting, deselecting, searching by name. However, some features may not be available for some objects.
 
 ### Robot <a name="robot">
 
-The robot is...
+The *Robot* class describes an object of the production system that works with the representation of positions in space and is able to move its manipulator endpoint to them. The robot contains in its property an array of positional programs related to the *PositionsProgram* class.
+
+The positional program contains an array of target positions of type *PositionPoint*. Position describes the location (*x*, *y*, *z*), rotation angles in it (*r*, *p*, *w*), type and speed of movement.
+
+Robot can add, delete and edit its programs. There are functions for selecting and starting, pausing, resetting the program.
 
 ### Tool <a name="tool">
 
-The tool is...
+Other kinds of industrial equipment used in a technological complex is described by the *Tool* class. Tool can be either free-standing or attached to the endpoint of the robot manipulator.
+
+Interaction with tools is organized by opcides and infocodes. The opcode is responsible for the executable technological operation - when a numerical value is set in the spectial property, the start of the operation associated with the code is initialized. The default value for this property is -1, which means no operation performed. When operation done, the value of the opcode is reset to this value.
+
+Operational code sequences are contained in the programs array, the elements are the *OperationProgram* class, with a set of numeric code values with *OperationCode* class. Program management is similar to that of robots - there are functions for adding, deleting, selecting and performing.
 
 ### Part <a name="part">
 
-The part is...
+Parts form the environment, such as tables, drives, safety fences, etc., and also represent objects with which the executing devices interact directly - an example is the parts assembled by robots. Described by the *Detail* class.
 
-### Connector <a name="connector">
+This class has a set of properties that describe the appearance and physical properties of the part. A part model can be obtained both parametrically - from an array of lengths and the name of a geometric primitive, and by importing from a scene file.
 
-The connector is...
+### Connectors <a name="connectors">
 
-### ModelController <a name="model-controller">
+Connectors are used to connect and control industrial equipment. They are divided into two subtypes - for switching robots and tools, described by the *RobotConnector* and *ToolConnector* classes, respectively.
 
-The model controller is...
+Connectors of individual models are inherited from these base classes and have their own specific redefinitions of functions and variables.
+
+Connection to the equipment is performed by the connect function, disconnection - disconnect. The connection state returns by Bool property. State of the equipment returns in array of dictionaries. They contains String name of the returned property and the value of Any type. The connection parameters are set in the corresponding array of structures.
+
+### Model Controllers <a name="model-controllers">
+
+Used to connect to and control robot and tool models in the rendered scene. Represented by *RobotModelController* and *ToolModelController* subclasses.
+
+Also, controllers can change the model in accordance with the specified parameters.
 
 ### Functions <a name="functions">
 
