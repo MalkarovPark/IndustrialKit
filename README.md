@@ -63,13 +63,13 @@ IndustrialKitUI provides some views and modifiers for use in design and data pro
 
 ### Workspace <a name="workspace">
 
-Described by the *Workspace* class is the basis of the production complex, which consists of robots, tools, parts, controlled by a common program, presented as a sequence of blocks - algorithmic elements. Thus, this class contains four properties of an array of values of types of workspace objects *Robot*, *Tool*, *Part* and elements of the global control program *WorkspaceProgramElement*.
+Described by the *Workspace* class is the basis of the production complex, which consists of robots, tools, parts and controlled by a global program, presented as a sequence of blocks - algorithmic elements. Thus, this class contains four properties of an array of values of types of workspace objects (*WorkspaceObject* class) inherited such as *Robot*, *Tool*, *Part* and elements of the global control program with type *WorkspaceProgramElement*.
 
 For arrays of objects, a standard set of functions is used, including adding, deleting, selecting, deselecting, searching by name. However, some features may not be available for some objects.
 
 ### Robot <a name="robot">
 
-The *Robot* class describes an object of the production system that works with the representation of positions in space and is able to move its manipulator endpoint to them. The robot contains in its property an array of positional programs related to the *PositionsProgram* class.
+The *Robot* class describes an object of the production system that works with the representation of positions in space and is able to move its arm (manipulator) endpoint to them. The robot contains in its property an array of positional programs related to the *PositionsProgram* class.
 
 The positional program contains an array of target positions of type *PositionPoint*. Position describes the location (*x*, *y*, *z*), rotation angles in it (*r*, *p*, *w*), type and speed of movement.
 
@@ -95,11 +95,11 @@ Connectors are used to connect and control industrial equipment. They are divide
 
 Connectors of individual models are inherited from these base classes and have their own specific redefinitions of functions and variables.
 
-Connection to the equipment is performed by the connect function, disconnection - disconnect. The connection state returns by Bool property. State of the equipment returns in array of dictionaries. They contains String name of the returned property and the value of Any type. The connection parameters are set in the corresponding array of structures.
+Connection to the equipment is performed by the connect function, disconnection - disconnect. The connection state returns by Bool property. State of the equipment returns in array of dictionaries. They contain String name of the returned property and the value of Any type. The connection parameters are set in the corresponding array of structures.
 
 ### Model Controllers <a name="model-controllers">
 
-Used to connect to and control robot and tool models in the rendered scene. Represented by *RobotModelController* and *ToolModelController* subclasses.
+This controllers are used to connect to and control robot and tool models in the rendered scene. Represented by *RobotModelController* and *ToolModelController* subclasses.
 
 Also, controllers can change the model in accordance with the specified parameters.
 
