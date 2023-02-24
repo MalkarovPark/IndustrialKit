@@ -460,6 +460,7 @@ struct Cards_Previews: PreviewProvider
                 #endif
             }
             .padding(4)
+            .frame(width: 320)
             //.background(.white)
         }
     }

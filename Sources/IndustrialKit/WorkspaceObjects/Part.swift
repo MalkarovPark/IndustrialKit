@@ -9,6 +9,11 @@ import Foundation
 import SceneKit
 import SwiftUI
 
+/**
+ A part in production complex class.
+ 
+ Forms environment, and represent objects with which executing devices interact directly.
+ */
 public class Part: WorkspaceObject
 {
     private var figure: String? //Part figure name
