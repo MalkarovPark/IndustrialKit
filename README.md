@@ -79,13 +79,13 @@ Robot can add, delete and edit its programs. There are functions for selecting a
 
 Other kinds of industrial equipment used in a technological complex is described by the *Tool* class. Tool can be either free-standing or attached to the endpoint of the robot manipulator.
 
-Interaction with tools is organized by opcides and infocodes. The opcode is responsible for the executable technological operation - when a numerical value is set in the spectial property, the start of the operation associated with the code is initialized. The default value for this property is -1, which means no operation performed. When operation done, the value of the opcode is reset to this value.
+Interaction with tools is organized by opcides and infocodes. The opcode is responsible for the executable technological operation - when a numerical value is set in the spectial property, the start of the operation associated with the code is initialized. The default value for this property is -1, which means no operation performed. When the operation is done, the value of the opcode is reset to this value.
 
 Operational code sequences are contained in the programs array, the elements are the *OperationProgram* class, with a set of numeric code values with *OperationCode* class. Program management is similar to that of robots - there are functions for adding, deleting, selecting and performing.
 
 ### Part <a name="part">
 
-Parts form the environment, such as tables, drives, safety fences, etc., and also represent objects with which the executing devices interact directly - an example is the parts assembled by robots. Described by the *Detail* class.
+Parts form the environment, such as tables, drives, safety fences, etc., and also represent objects with which the executing devices interact directly - an example is the parts assembled by robots. Described by the *Part* class.
 
 This class has a set of properties that describe the appearance and physical properties of the part. A part model can be obtained both parametrically - from an array of lengths and the name of a geometric primitive, and by importing from a scene file.
 
