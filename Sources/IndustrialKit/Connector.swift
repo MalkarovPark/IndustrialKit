@@ -150,6 +150,12 @@ open class WorkspaceObjectConnector: ObservableObject
         self.objectWillChange.send()
     }
     
+    ///Pauses operation code perfoming.
+    open func pause()
+    {
+        
+    }
+    
     ///A get statistics flag.
     public var get_statistics = false
     {
@@ -186,6 +192,7 @@ open class WorkspaceObjectConnector: ObservableObject
         
     }
     
+    ///A flag of update model avalibility.
     public var update_model = false
     
     //MARK: UI functions

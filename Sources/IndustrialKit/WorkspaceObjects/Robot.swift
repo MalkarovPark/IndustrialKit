@@ -561,6 +561,7 @@ public class Robot: WorkspaceObject
             else
             {
                 //Remove actions for real robot
+                connector.pause()
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
@@ -575,8 +576,16 @@ public class Robot: WorkspaceObject
     {
         if performed
         {
-            pointer_node?.removeAllActions()
-            pointer_node_internal?.removeAllActions()
+            if demo
+            {
+                pointer_node?.removeAllActions()
+                pointer_node_internal?.removeAllActions()
+            }
+            else
+            {
+                connector.pause()
+            }
+            
             current_pointer_position_select()
             performed = false
             target_point_index = 0

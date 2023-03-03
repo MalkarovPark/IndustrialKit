@@ -373,6 +373,7 @@ public class Tool: WorkspaceObject
             else
             {
                 //Remove actions for real tool
+                connector.pause()
             }
         }
     }
