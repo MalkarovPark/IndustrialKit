@@ -604,7 +604,7 @@ public class Robot: WorkspaceObject
     private func connect()
     {
         //connector.update_model = update_model_by_connector
-        connector.model_controller = model_controller
+        //connector.model_controller = model_controller
         //connector.connect()
     }
     
@@ -735,6 +735,12 @@ public class Robot: WorkspaceObject
         robot_location_place()
         update_space_scale() //Set space scale by connected robot parameters
         update_position() //Update robot parts position on robot connection
+        
+        //Pass model controller to connector
+        if update_model_by_connector
+        {
+            connector.model_controller = model_controller
+        }
     }
     
     ///Updates robot model by target position.

@@ -471,7 +471,7 @@ public class Tool: WorkspaceObject
     private func connect()
     {
         //connector.update_model = update_model_by_connector
-        connector.model_controller = model_controller
+        //connector.model_controller = model_controller
         //connector.connect()
     }
     
@@ -539,6 +539,12 @@ public class Tool: WorkspaceObject
         }
         
         model_controller.info_code = self.info_code
+        
+        //Pass model controller to connector
+        if update_model_by_connector
+        {
+            connector.model_controller = model_controller
+        }
     }
     
     ///Disconnect tool model parts from workcell.
@@ -547,6 +553,8 @@ public class Tool: WorkspaceObject
         model_controller.remove_all_model_actions()
         model_controller.nodes_disconnect()
         model_controller.info_code = nil
+        
+        connector.model_controller = nil
     }
     
     ///A flag determines if tool is attached to the robot manipulator.
