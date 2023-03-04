@@ -271,15 +271,15 @@ open class RobotConnector: WorkspaceObjectConnector
 open class ToolConnector: WorkspaceObjectConnector
 {
     ///Performs operation code.
-    open func perform(code: Int)
+    open func perform(code: Int) async
     {
         
     }
     
     ///Performs operation code with compleition handler.
-    open func perform(code: Int, completion: @escaping () -> Void)
+    open func perform(code: Int, completion: @escaping () -> Void) async
     {
-        perform(code: code)
+        await perform(code: code)
         completion()
     }
     
