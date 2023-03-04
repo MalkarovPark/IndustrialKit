@@ -44,7 +44,10 @@ public class Tool: WorkspaceObject
         if dictionary.keys.contains("Module") //Select model visual controller an connector
         {
             self.module_name = dictionary["Module"] as? String ?? ""
+            
             Tool.select_modules(module_name, &model_controller, &connector)
+            connector.update_model = update_model_by_connector
+            
             apply_statistics_flags()
         }
         
@@ -108,6 +111,8 @@ public class Tool: WorkspaceObject
         if module_name != ""
         {
             Tool.select_modules(module_name, &model_controller, &connector)
+            connector.update_model = update_model_by_connector
+            
             apply_statistics_flags()
         }
         
@@ -465,7 +470,7 @@ public class Tool: WorkspaceObject
     ///Connects model controller to connector.
     private func connect()
     {
-        connector.update_model = update_model_by_connector
+        //connector.update_model = update_model_by_connector
         connector.model_controller = model_controller
         //connector.connect()
     }
@@ -748,7 +753,7 @@ public class Tool: WorkspaceObject
                           attached_to: self.attached_to,
                           demo: self.demo,
                           connection_parameters: get_connection_parameters(connector: self.connector),
-                          update_model_by_connector: self.update_model_by_connector,
+                          update_model_by_connector: self.connector.update_model,
                           get_statistics: self.get_statistics,
                           charts_data: self.charts_data,
                           state: self.state_data,
