@@ -337,11 +337,6 @@ public class Tool: WorkspaceObject
                 reset_performing()
                 disconnect()
             }
-            
-            if !demo
-            {
-                connect()
-            }
         }
     }
     
@@ -466,14 +461,6 @@ public class Tool: WorkspaceObject
     //MARK: - Connection functions
     ///A tool connector.
     public var connector = ToolConnector()
-    
-    ///Connects model controller to connector.
-    private func connect()
-    {
-        //connector.update_model = update_model_by_connector
-        //connector.model_controller = model_controller
-        //connector.connect()
-    }
     
     ///Disconnects from real tool.
     private func disconnect()

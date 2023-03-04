@@ -252,7 +252,7 @@ open class RobotConnector: WorkspaceObjectConnector
     }
     
     ///Performs movement to point with compleition handler.
-    public func move_to(point: PositionPoint, completion: @escaping () -> Void)
+    open func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
         move_to(point: point)
         completion()
@@ -277,7 +277,7 @@ open class ToolConnector: WorkspaceObjectConnector
     }
     
     ///Performs operation code with compleition handler.
-    public func perform(code: Int, completion: @escaping () -> Void)
+    open func perform(code: Int, completion: @escaping () -> Void)
     {
         perform(code: code)
         completion()
