@@ -1822,15 +1822,11 @@ public class Workspace: ObservableObject
         {
             for tool in tools
             {
-                tool_node = tool.node
-                apply_bit_mask(node: tool_node ?? SCNNode(), Workspace.tool_bit_mask)
-                tool_node?.name = tool.name
-                
                 if tool.is_placed
                 {
-                    //tool_node = tool.node
-                    //apply_bit_mask(node: tool_node ?? SCNNode(), Workspace.tool_bit_mask)
-                    //tool_node?.name = tool.name
+                    tool_node = tool.node
+                    apply_bit_mask(node: tool_node ?? SCNNode(), Workspace.tool_bit_mask)
+                    tool_node?.name = tool.name
                     tools_node?.addChildNode(tool_node ?? SCNNode())
                     tool.workcell_connect(scene: scene, name: tool.name!) //Connect to robot model, place manipulator
                     
@@ -1868,16 +1864,12 @@ public class Workspace: ObservableObject
         {
             for part in parts
             {
-                part_node = part.node
-                apply_bit_mask(node: part_node ?? SCNNode(), Workspace.part_bit_mask)
-                part_node?.name = part.name
-                
                 if part.is_placed
                 {
-                    //part_node = part.node
+                    part_node = part.node
                     part.enable_physics = true
-                    //apply_bit_mask(node: part_node ?? SCNNode(), Workspace.part_bit_mask)
-                    //part_node?.name = part.name
+                    apply_bit_mask(node: part_node ?? SCNNode(), Workspace.part_bit_mask)
+                    part_node?.name = part.name
                     parts_node?.addChildNode(part_node ?? SCNNode())
                     
                     //Set part node position
