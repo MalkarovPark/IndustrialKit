@@ -223,8 +223,14 @@ open class RobotConnector: WorkspaceObjectConnector
     ///Performs movement to point with compleition handler.
     open func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
-        move_to(point: point)
-        completion()
+        DispatchQueue.global().async
+        {
+            self.move_to(point: point)
+            completion()
+        }
+        
+        //move_to(point: point)
+        //completion()
     }
     
     ///A robot model controller.
