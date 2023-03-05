@@ -473,6 +473,9 @@ public class Robot: WorkspaceObject
                 //Move to point for real robot
                 connector.move_to(point: programs[selected_program_index].points[target_point_index])
                 {
+                    self.moving_finished = true
+                    self.rotation_finished = true
+                    
                     self.select_new_point()
                 }
             }
