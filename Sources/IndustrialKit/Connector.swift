@@ -23,37 +23,6 @@ open class WorkspaceObjectConnector: ObservableObject
         
     }
     
-    /*///A connection process toggle.
-    public var is_connect: Bool = false
-    {
-        didSet
-        {
-            if !connected
-            {
-                connect()
-            }
-            else
-            {
-                disconnect()
-            }
-        }
-    }*/
-    
-    /*public var connection: Bool = false
-    {
-        didSet
-        {
-            if connection
-            {
-                connect()
-            }
-            else
-            {
-                disconnect()
-            }
-        }
-    }*/
-    
     ///A connection state.
     @Published public var connected: Bool = false
     
@@ -279,8 +248,14 @@ open class ToolConnector: WorkspaceObjectConnector
     ///Performs operation code with compleition handler.
     open func perform(code: Int, completion: @escaping () -> Void)
     {
-        perform(code: code)
-        completion()
+        DispatchQueue.global().async
+        {
+            self.perform(code: code)
+            completion()
+        }
+        
+        //perform(code: code)
+        //completion()
     }
     
     ///A tool model controller.
