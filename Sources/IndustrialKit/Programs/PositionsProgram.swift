@@ -313,16 +313,16 @@ public class PositionsProgram: Identifiable, Equatable
     //MARK: - Work with file system
     
     ///Returns a codable file structure for positions program.
-    public var file_info: program_struct
+    public var file_info: ProgramStruct
     {
-        return program_struct(name: name ?? "None", points: self.points)
+        return ProgramStruct(name: name ?? "None", points: self.points)
     }
 }
 
 //MARK: - Program structure for workspace preset document handling
 
 ///Codable struct for positions program.
-public struct program_struct: Codable
+public struct ProgramStruct: Codable
 {
     ///A positions program name.
     var name: String

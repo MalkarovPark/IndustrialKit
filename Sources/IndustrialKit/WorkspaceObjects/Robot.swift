@@ -1108,8 +1108,8 @@ public class Robot: WorkspaceObject
     ///Converts robot data to codable robot struct.
     public var file_info: RobotStruct
     {
-        //Convert robot programs set to program_struct array
-        var programs_array = [program_struct]()
+        //Convert robot programs set to ProgramStruct array
+        var programs_array = [ProgramStruct]()
         if programs_count > 0
         {
             for program in programs
@@ -1147,10 +1147,10 @@ public class Robot: WorkspaceObject
         
         if robot_struct.programs.count > 0
         {
-            for program_struct in robot_struct.programs
+            for ProgramStruct in robot_struct.programs
             {
-                viewed_program = PositionsProgram(name: program_struct.name)
-                viewed_program?.points = program_struct.points
+                viewed_program = PositionsProgram(name: ProgramStruct.name)
+                viewed_program?.points = ProgramStruct.points
                 
                 programs.append(viewed_program!)
             }
@@ -1183,7 +1183,7 @@ public struct RobotStruct: Codable
     public var state: [StateItem]?
     
     public var image_data: Data
-    public var programs: [program_struct]
+    public var programs: [ProgramStruct]
     
     public var origin_location: [Float]
     public var origin_rotation: [Float]
