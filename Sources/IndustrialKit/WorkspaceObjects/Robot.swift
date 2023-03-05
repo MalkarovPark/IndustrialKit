@@ -115,7 +115,7 @@ public class Robot: WorkspaceObject
                    location: robot_struct.location,
                    rotation: robot_struct.rotation,
                    demo: robot_struct.demo,
-                   update_model_by_connector: self.update_model_by_connector,
+                   update_model_by_connector: robot_struct.update_model_by_connector,
                    get_statistics: robot_struct.get_statistics,
                    charts_data: robot_struct.charts_data,
                    state: robot_struct.state, image_data: robot_struct.image_data,
