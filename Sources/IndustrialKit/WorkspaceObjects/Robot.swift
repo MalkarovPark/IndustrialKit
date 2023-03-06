@@ -776,8 +776,13 @@ public class Robot: WorkspaceObject
     ///Update robot manipulator parts positions by target point.
     public func update_robot()
     {
-        model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-        update_statistics_data()
+        if demo
+        {
+            model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+            update_statistics_data()
+        }
+        //model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        //update_statistics_data()
         
         if demo || !performed
         {
