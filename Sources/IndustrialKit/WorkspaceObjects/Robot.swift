@@ -628,6 +628,19 @@ public class Robot: WorkspaceObject
      Called on the SCNScene *rendrer* function.
      */
     public var update_model_by_connector = false
+    {
+        didSet
+        {
+            if update_model_by_connector
+            {
+                connector.model_controller = model_controller
+            }
+            else
+            {
+                connector.model_controller = nil
+            }
+        }
+    }
     
     public override func node_by_description()
     {
