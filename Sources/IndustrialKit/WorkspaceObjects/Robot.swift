@@ -388,11 +388,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            if demo || !performed //!(!demo && performed)
-            {
-                update_location()
-            }
-            //update_location()
+            update_location()
         }
     }
     
@@ -405,11 +401,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            if demo || !performed
-            {
-                update_rotation()
-            }
-            //update_rotation()
+            update_rotation()
         }
     }
     
@@ -776,19 +768,13 @@ public class Robot: WorkspaceObject
     ///Update robot manipulator parts positions by target point.
     public func update_robot()
     {
-        if demo
+        if demo || !performed
         {
             model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
             update_statistics_data()
-        }
-        //model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-        //update_statistics_data()
-        
-        if demo || !performed
-        {
+            
             current_pointer_position_select()
         }
-        //current_pointer_position_select()
     }
     
     //MARK: Cell box handling
