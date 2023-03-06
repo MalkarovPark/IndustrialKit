@@ -235,6 +235,23 @@ open class RobotConnector: WorkspaceObjectConnector
     
     ///A robot model controller.
     public var model_controller: RobotModelController?
+    
+    /**
+     A robot cell origin location.
+     
+     Array with three coordinates – [*x*, *y*, *z*].
+     */
+    public var origin_location = [Float](repeating: 0, count: 3)
+    
+    /**
+     A robot cell origin rotation.
+     
+     Array with three angles – [*r*, *p*, *w*].
+     */
+    public var origin_rotation = [Float](repeating: 0, count: 3)
+    
+    ///A robot cell box scale.
+    public var space_scale = [Float](repeating: 200, count: 3)
 }
 
 //MARK: - Tool connector
