@@ -496,6 +496,7 @@ public class Tool: WorkspaceObject
             }
             else
             {
+                connector.model_controller?.reset_model()
                 connector.model_controller = nil
             }
         }

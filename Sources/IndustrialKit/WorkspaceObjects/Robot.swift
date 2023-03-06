@@ -637,6 +637,7 @@ public class Robot: WorkspaceObject
             }
             else
             {
+                connector.model_controller?.reset_model()
                 connector.model_controller = nil
             }
         }
