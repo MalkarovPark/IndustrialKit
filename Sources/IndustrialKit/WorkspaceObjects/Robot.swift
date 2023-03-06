@@ -602,6 +602,19 @@ public class Robot: WorkspaceObject
     //MARK: - Connection functions
     ///A robot connector.
     public var connector = RobotConnector()
+    {
+        didSet
+        {
+            if connector.update_model
+            {
+                connector.model_controller = model_controller
+            }
+            else
+            {
+                connector.model_controller = nil
+            }
+        }
+    }
     
     ///Disconnects from real robot.
     private func disconnect()
@@ -628,19 +641,6 @@ public class Robot: WorkspaceObject
      Called on the SCNScene *rendrer* function.
      */
     public var update_model_by_connector = false
-    {
-        didSet
-        {
-            if update_model_by_connector
-            {
-                connector.model_controller = model_controller
-            }
-            else
-            {
-                connector.model_controller = nil
-            }
-        }
-    }
     
     public override func node_by_description()
     {

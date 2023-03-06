@@ -461,6 +461,19 @@ public class Tool: WorkspaceObject
     //MARK: - Connection functions
     ///A tool connector.
     public var connector = ToolConnector()
+    {
+        didSet
+        {
+            if connector.update_model
+            {
+                connector.model_controller = model_controller
+            }
+            else
+            {
+                connector.model_controller = nil
+            }
+        }
+    }
     
     ///Disconnects from real tool.
     private func disconnect()
@@ -487,19 +500,6 @@ public class Tool: WorkspaceObject
      Called on the SCNScene *rendrer* function.
      */
     public var update_model_by_connector = false
-    {
-        didSet
-        {
-            if update_model_by_connector
-            {
-                connector.model_controller = model_controller
-            }
-            else
-            {
-                connector.model_controller = nil
-            }
-        }
-    }
     
     ///An array of connected tool parts.
     //private var tool_parts = [SCNNode]()
