@@ -388,7 +388,11 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            update_location()
+            if demo || !performed //!(!demo && performed)
+            {
+                update_location()
+            }
+            //update_location()
         }
     }
     
@@ -401,7 +405,11 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            update_rotation()
+            if demo || !performed
+            {
+                update_rotation()
+            }
+            //update_rotation()
         }
     }
     
@@ -538,8 +546,6 @@ public class Robot: WorkspaceObject
         //Handling robot moving
         if !performed
         {
-            //clear_chart_data()
-            
             //Move to next point if moving was stop
             performed = true
             move_to_next_point()
