@@ -606,7 +606,7 @@ public class Robot: WorkspaceObject
     ///Disconnects from real robot.
     private func disconnect()
     {
-        connector.update_model = false
+        //connector.update_model = false
         connector.model_controller = nil
         connector.disconnect()
     }
@@ -623,7 +623,7 @@ public class Robot: WorkspaceObject
     private var model_controller = RobotModelController()
     
     /**
-     Updates robot visual model by model controller.
+     Updates robot visual model by model controller in connector.
      
      Called on the SCNScene *rendrer* function.
      */

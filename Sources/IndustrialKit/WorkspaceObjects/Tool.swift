@@ -482,7 +482,7 @@ public class Tool: WorkspaceObject
     private var model_controller = ToolModelController()
     
     /**
-     Updates tool visual model by model controller.
+     Updates tool visual model by model controller in connector.
      
      Called on the SCNScene *rendrer* function.
      */
