@@ -779,7 +779,11 @@ public class Robot: WorkspaceObject
         model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
         update_statistics_data()
         
-        current_pointer_position_select()
+        if demo || !performed
+        {
+            current_pointer_position_select()
+        }
+        //current_pointer_position_select()
     }
     
     //MARK: Cell box handling
