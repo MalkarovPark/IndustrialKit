@@ -536,13 +536,20 @@ public class Robot: WorkspaceObject
     public func start_pause_moving()
     {
         //Handling robot moving
-        if performed == false
+        if !performed
         {
             //clear_chart_data()
             
             //Move to next point if moving was stop
             performed = true
             move_to_next_point()
+            
+            if !demo //Pass workcell parameters to connector
+            {
+                connector.origin_location = origin_location
+                connector.origin_rotation = origin_rotation
+                connector.space_scale = space_scale
+            }
         }
         else
         {
