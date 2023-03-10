@@ -32,6 +32,13 @@ open class WorkspaceObjectConnector: ObservableObject
     ///An array of connection parameters.
     public var parameters = [ConnectionParameter]()
     
+    /**
+     A pause flag of performation.
+     
+     Used to pass to the performation function (*move to point* or *perform code*) information about the stop.
+     */
+    public var paused = true
+    
     private var connection_task = Task {}
     private var disconnection_task = Task {}
     
@@ -122,7 +129,7 @@ open class WorkspaceObjectConnector: ObservableObject
     ///Pauses moving or operation code perfoming.
     public func pause()
     {
-        
+        paused = true
     }
     
     ///Additive operations by pause performation.
@@ -237,20 +244,16 @@ open class RobotConnector: WorkspaceObjectConnector
             completion()
         }*/
         
+        paused = false
         moving_task = Task
         {
             self.move_to(point: point)
+            paused = true
             completion()
         }
         
         //move_to(point: point)
         //completion()
-    }
-    
-    override open func pause()
-    {
-        moving_task.cancel()
-        pause_operations()
     }
     
     ///A robot model controller.
@@ -299,20 +302,16 @@ open class ToolConnector: WorkspaceObjectConnector
             completion()
         }*/
         
+        paused = false
         performing_task = Task
         {
             self.perform(code: code)
+            paused = true
             completion()
         }
         
         //perform(code: code)
         //completion()
-    }
-    
-    override open func pause()
-    {
-        performing_task.cancel()
-        pause_operations()
     }
     
     ///A tool model controller.
