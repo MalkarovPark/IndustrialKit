@@ -119,8 +119,14 @@ open class WorkspaceObjectConnector: ObservableObject
         self.objectWillChange.send()
     }
     
-    ///Pauses operation code perfoming.
-    open func pause()
+    ///Pauses moving or operation code perfoming.
+    public func pause()
+    {
+        
+    }
+    
+    ///Additive operations by pause performation.
+    open func pause_operations()
     {
         
     }
@@ -214,6 +220,8 @@ open class WorkspaceObjectConnector: ObservableObject
  */
 open class RobotConnector: WorkspaceObjectConnector
 {
+    private var moving_task = Task {}
+    
     ///Performs movement to point.
     open func move_to(point: PositionPoint)
     {
@@ -223,7 +231,13 @@ open class RobotConnector: WorkspaceObjectConnector
     ///Performs movement to point with compleition handler.
     open func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
-        DispatchQueue.global().async
+        /*DispatchQueue.global().async
+        {
+            self.move_to(point: point)
+            completion()
+        }*/
+        
+        moving_task = Task
         {
             self.move_to(point: point)
             completion()
@@ -231,6 +245,12 @@ open class RobotConnector: WorkspaceObjectConnector
         
         //move_to(point: point)
         //completion()
+    }
+    
+    override open func pause()
+    {
+        moving_task.cancel()
+        pause_operations()
     }
     
     ///A robot model controller.
@@ -262,6 +282,8 @@ open class RobotConnector: WorkspaceObjectConnector
  */
 open class ToolConnector: WorkspaceObjectConnector
 {
+    private var performing_task = Task {}
+    
     ///Performs operation code.
     open func perform(code: Int)
     {
@@ -271,7 +293,13 @@ open class ToolConnector: WorkspaceObjectConnector
     ///Performs operation code with compleition handler.
     open func perform(code: Int, completion: @escaping () -> Void)
     {
-        DispatchQueue.global().async
+        /*DispatchQueue.global().async
+        {
+            self.perform(code: code)
+            completion()
+        }*/
+        
+        performing_task = Task
         {
             self.perform(code: code)
             completion()
@@ -279,6 +307,12 @@ open class ToolConnector: WorkspaceObjectConnector
         
         //perform(code: code)
         //completion()
+    }
+    
+    override open func pause()
+    {
+        performing_task.cancel()
+        pause_operations()
     }
     
     ///A tool model controller.
