@@ -46,7 +46,11 @@ public class Tool: WorkspaceObject
             self.module_name = dictionary["Module"] as? String ?? ""
             
             Tool.select_modules(module_name, &model_controller, &connector)
-            //connector.update_model = update_model_by_connector
+            
+            if update_model_by_connector
+            {
+                connector.model_controller = model_controller
+            }
             
             apply_statistics_flags()
         }
@@ -111,7 +115,11 @@ public class Tool: WorkspaceObject
         if module_name != ""
         {
             Tool.select_modules(module_name, &model_controller, &connector)
-            //connector.update_model = update_model_by_connector
+            
+            if update_model_by_connector
+            {
+                connector.model_controller = model_controller
+            }
             
             apply_statistics_flags()
         }

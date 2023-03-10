@@ -159,7 +159,11 @@ public class Robot: WorkspaceObject
         if self.module_name != ""
         {
             Robot.select_modules(module_name, &model_controller, &connector)
-            //connector.update_model = update_model_by_connector
+            
+            if update_model_by_connector
+            {
+                connector.model_controller = model_controller
+            }
             
             apply_statistics_flags()
         }
