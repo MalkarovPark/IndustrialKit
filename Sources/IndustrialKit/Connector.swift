@@ -168,7 +168,7 @@ open class WorkspaceObjectConnector: ObservableObject
     }
     
     ///A flag of update model avalibility.
-    //@Published public var update_model = false
+    @Published public var update_model = false
     
     //MARK: UI functions
     ///A failure result of connection.
