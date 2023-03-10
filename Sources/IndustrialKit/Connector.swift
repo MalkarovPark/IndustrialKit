@@ -252,10 +252,10 @@ open class RobotConnector: WorkspaceObjectConnector
             
             if canceled == false
             {
-                canceled = true
+                //canceled = true
                 completion()
             }
-            canceled = true
+            canceled = false
         }
         
         //move_to(point: point)
@@ -315,10 +315,10 @@ open class ToolConnector: WorkspaceObjectConnector
             
             if canceled == false
             {
-                canceled = true
+                //canceled = true
                 completion()
             }
-            canceled = true
+            canceled = false
         }
         
         //perform(code: code)
