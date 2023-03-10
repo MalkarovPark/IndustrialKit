@@ -231,17 +231,17 @@ open class RobotConnector: WorkspaceObjectConnector
     ///Performs movement to point with compleition handler.
     open func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
-        DispatchQueue.global().async
-        {
-            self.move_to(point: point)
-            completion()
-        }
-        
-        /*moving_task = Task
+        /*DispatchQueue.global().async
         {
             self.move_to(point: point)
             completion()
         }*/
+        
+        moving_task = Task
+        {
+            self.move_to(point: point)
+            completion()
+        }
         
         //move_to(point: point)
         //completion()
@@ -293,17 +293,17 @@ open class ToolConnector: WorkspaceObjectConnector
     ///Performs operation code with compleition handler.
     open func perform(code: Int, completion: @escaping () -> Void)
     {
-        DispatchQueue.global().async
-        {
-            self.perform(code: code)
-            completion()
-        }
-        
-        /*performing_task = Task
+        /*DispatchQueue.global().async
         {
             self.perform(code: code)
             completion()
         }*/
+        
+        performing_task = Task
+        {
+            self.perform(code: code)
+            completion()
+        }
         
         //perform(code: code)
         //completion()
