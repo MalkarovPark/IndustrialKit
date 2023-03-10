@@ -130,6 +130,7 @@ open class WorkspaceObjectConnector: ObservableObject
     public func pause()
     {
         paused = true
+        pause_operations()
     }
     
     ///Additive operations by pause performation.
