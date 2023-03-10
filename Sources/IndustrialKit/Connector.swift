@@ -37,7 +37,7 @@ open class WorkspaceObjectConnector: ObservableObject
      
      Used to pass to the performation function (*move to point* or *perform code*) information about the stop.
      */
-    public var paused = true
+    public var canceled = true
     
     private var connection_task = Task {}
     private var disconnection_task = Task {}
@@ -129,7 +129,7 @@ open class WorkspaceObjectConnector: ObservableObject
     ///Pauses moving or operation code perfoming.
     public func pause()
     {
-        paused = true
+        canceled = true
         pause_operations()
     }
     
@@ -245,12 +245,17 @@ open class RobotConnector: WorkspaceObjectConnector
             completion()
         }*/
         
-        paused = false
+        canceled = false
         moving_task = Task
         {
             self.move_to(point: point)
-            paused = true
-            completion()
+            
+            if canceled == false
+            {
+                canceled = true
+                completion()
+            }
+            canceled = true
         }
         
         //move_to(point: point)
@@ -303,12 +308,17 @@ open class ToolConnector: WorkspaceObjectConnector
             completion()
         }*/
         
-        paused = false
+        canceled = false
         performing_task = Task
         {
             self.perform(code: code)
-            paused = true
-            completion()
+            
+            if canceled == false
+            {
+                canceled = true
+                completion()
+            }
+            canceled = true
         }
         
         //perform(code: code)
