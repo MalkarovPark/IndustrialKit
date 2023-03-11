@@ -95,8 +95,8 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
                     self.node = try SCNScene(url: URL(string: url.absoluteString + scene_address)!).rootNode.childNode(withName: scene_node_name ?? "", recursively: false)
                     
                     //test
-                    let shape = SCNPhysicsShape(node: self.node ?? SCNNode(), options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron])
-                    self.node?.physicsBody = SCNPhysicsBody(type: .kinematic, shape: shape)
+                    //let shape = SCNPhysicsShape(node: self.node ?? SCNNode(), options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron])
+                    //self.node?.physicsBody = SCNPhysicsBody(type: .kinematic, shape: shape)
                     //test
                 }
                 catch
