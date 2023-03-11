@@ -34,7 +34,10 @@ public class Part: WorkspaceObject
         case .ph_dynamic:
             return .dynamic()
         case .ph_kinematic:
-            return .kinematic()
+            let shape = SCNPhysicsShape(node: self.node ?? SCNNode(), options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron])
+            
+            return SCNPhysicsBody(type: .kinematic, shape: shape)
+            //return .kinematic()
         default:
             return .none
         }
