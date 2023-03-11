@@ -93,10 +93,16 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
                 do
                 {
                     self.node = try SCNScene(url: URL(string: url.absoluteString + scene_address)!).rootNode.childNode(withName: scene_node_name ?? "", recursively: false)
+                    
+                    //test
+                    let body = SCNPhysicsBodyType.kinematic
+                    let shape = SCNPhysicsShape(node: self.node!, options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron])
+                    self.node?.physicsBody = SCNPhysicsBody(type: body, shape: shape)
+                    //test
                 }
                 catch
                 {
-                    print(error.localizedDescription)
+                    //print(error.localizedDescription)
                     node_by_internal() //If node could not imported, create node model by description
                 }
             }

@@ -59,8 +59,6 @@ open class WorkspaceObjectConnector: ObservableObject
                 
                 connection_failure = !connected
             }
-            
-            //connection_updating = false
         }
     }
     
@@ -72,7 +70,6 @@ open class WorkspaceObjectConnector: ObservableObject
         if connected
         {
             connection_updating = true
-            //connected = await disconnection_process()
             
             disconnection_task = Task
             {
@@ -237,14 +234,8 @@ open class RobotConnector: WorkspaceObjectConnector
     }
     
     ///Performs movement to point with compleition handler.
-    open func move_to(point: PositionPoint, completion: @escaping () -> Void)
+    public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
-        /*DispatchQueue.global().async
-        {
-            self.move_to(point: point)
-            completion()
-        }*/
-        
         canceled = false
         moving_task = Task
         {
@@ -257,9 +248,6 @@ open class RobotConnector: WorkspaceObjectConnector
             }
             canceled = false
         }
-        
-        //move_to(point: point)
-        //completion()
     }
     
     ///A robot model controller.
@@ -300,14 +288,8 @@ open class ToolConnector: WorkspaceObjectConnector
     }
     
     ///Performs operation code with compleition handler.
-    open func perform(code: Int, completion: @escaping () -> Void)
+    public func perform(code: Int, completion: @escaping () -> Void)
     {
-        /*DispatchQueue.global().async
-        {
-            self.perform(code: code)
-            completion()
-        }*/
-        
         canceled = false
         performing_task = Task
         {
@@ -320,9 +302,6 @@ open class ToolConnector: WorkspaceObjectConnector
             }
             canceled = false
         }
-        
-        //perform(code: code)
-        //completion()
     }
     
     ///A tool model controller.
