@@ -87,6 +87,7 @@ public class Part: WorkspaceObject
         {
             self.scene_address = dictionary["Scene"] as? String ?? ""
             get_node_from_scene()
+            color_from_model()
         }
         else
         {
@@ -182,6 +183,26 @@ public class Part: WorkspaceObject
         self.image_data = part_struct.image_data
         
         get_node_from_scene()
+        
+        if scene_address != ""
+        {
+            color_from_model()
+        }
+    }
+    
+    private func color_from_model()
+    {
+        if node != nil
+        {
+            #if os(macOS)
+            let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? NSColor
+            #else
+            let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? UIColor
+            #endif
+            
+            let components = node_color?.cgColor.components
+            figure_color = [Int((components?[0])! * 255), Int((components?[1])! * 255), Int((components?[2])! * 255)]
+        }
     }
     
     //MARK: - Visual build functions
