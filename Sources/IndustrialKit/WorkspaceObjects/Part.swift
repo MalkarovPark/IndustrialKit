@@ -201,8 +201,7 @@ public class Part: WorkspaceObject
             #endif
             
             let components = node_color?.cgColor.components
-            //figure_color = [Int((components?[0]) ?? (123 / 255) * 255), Int((components?[1]) ?? (123 / 255) * 255), Int((components?[2]) ?? (129 / 255) * 255)]
-            figure_color = [Int((components?[0])! * 255), Int((components?[1])! * 255), Int((components?[2])! * 255)]
+            figure_color = [Int((components?[0]) ?? (123 / 255) * 255), Int((components?[1]) ?? (123 / 255) * 255), Int((components?[2]) ?? (129 / 255) * 255)]
         }
     }
     
