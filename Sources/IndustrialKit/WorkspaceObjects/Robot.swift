@@ -412,8 +412,9 @@ public class Robot: WorkspaceObject
     ///A time to point moving.
     public var move_time: Float?
     {
-        return 1
-        //return selected_program.points[target_point_index].move_speed
+        //return 1
+        print(selected_program.points[target_point_index].move_speed)
+        return selected_program.points[target_point_index].move_speed
     }
     
     /**
