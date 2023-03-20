@@ -413,8 +413,39 @@ public class Robot: WorkspaceObject
     public var move_time: Float?
     {
         //return 1
-        print(selected_program.points[target_point_index].move_speed)
-        return selected_program.points[target_point_index].move_speed
+        if target_point_index == 0
+        {
+            return 0 //Null time for first position
+        }
+        else
+        {
+            //Calculate time between points
+            let s = selected_program.points[target_point_index].move_speed
+            let v = distance_between_points(point1: selected_program.points[target_point_index], point2: selected_program.points[target_point_index - 1])
+            
+            if v != 0
+            {
+                return s/v
+            }
+            else
+            {
+                return 0
+            }
+        }
+        
+        func distance_between_points(point1: PositionPoint, point2: PositionPoint) -> Float
+        {
+            let x_dist = (point2.x - point1.x)
+            let y_dist = (point2.y - point1.y)
+            let z_dist = (point2.z - point1.z)
+            return sqrt(Float(x_dist * x_dist + y_dist * y_dist + z_dist * z_dist))
+        }
+    }
+    
+    ///A time to point rotate.
+    public var rotate_time: Float?
+    {
+        return 1
     }
     
     /**
@@ -465,7 +496,7 @@ public class Robot: WorkspaceObject
                 self.moving_finished = true
                 self.select_new_point()
             }
-            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).rotation[target_point_index])
+            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
             {
                 self.rotation_finished = true
                 self.select_new_point()
