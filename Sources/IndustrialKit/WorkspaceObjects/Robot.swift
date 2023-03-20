@@ -425,7 +425,6 @@ public class Robot: WorkspaceObject
             
             if v != 0
             {
-                print(s/v)
                 return s/v
             }
             else
