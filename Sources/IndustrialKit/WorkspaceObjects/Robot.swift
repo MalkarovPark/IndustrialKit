@@ -415,7 +415,18 @@ public class Robot: WorkspaceObject
         //return 1
         if target_point_index == 0
         {
-            return 0 //Null time for first position
+            let v = selected_program.points[0].move_speed
+            let s = distance_between_points(point1: selected_program.points[0], point2: PositionPoint(x: pointer_location[0], y: pointer_location[1], z: pointer_location[2]))
+            
+            if v != 0
+            {
+                return s/v
+            }
+            else
+            {
+                return 0
+            }
+            //return 0 //Null time for first position
         }
         else
         {
