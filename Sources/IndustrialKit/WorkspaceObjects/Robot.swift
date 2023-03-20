@@ -420,8 +420,8 @@ public class Robot: WorkspaceObject
         else
         {
             //Calculate time between points
-            let s = selected_program.points[target_point_index].move_speed
-            let v = distance_between_points(point1: selected_program.points[target_point_index], point2: selected_program.points[target_point_index - 1])
+            let v = selected_program.points[target_point_index].move_speed
+            let s = distance_between_points(point1: selected_program.points[target_point_index], point2: selected_program.points[target_point_index - 1])
             
             if v != 0
             {
