@@ -200,8 +200,19 @@ public class Part: WorkspaceObject
             let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? UIColor
             #endif
             
-            let components = node_color?.cgColor.components
-            figure_color = [Int((components?[0]) ?? (123 / 255) * 255), Int((components?[1]) ?? (123 / 255) * 255), Int((components?[2]) ?? (129 / 255) * 255)]
+            if let color = node_color
+            {
+                var red: CGFloat = 0
+                var green: CGFloat = 0
+                var blue: CGFloat = 0
+                
+                color.getRed(&red, green: &green, blue: &blue, alpha: nil)
+                figure_color = [Int(red * 255), Int(green * 255), Int(blue * 255)]
+            }
+            else
+            {
+                figure_color = [123, 123, 129]
+            }
         }
     }
     
