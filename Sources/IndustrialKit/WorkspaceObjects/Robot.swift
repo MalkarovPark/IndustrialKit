@@ -316,7 +316,15 @@ public class Robot: WorkspaceObject
         {
             if programs.count > 0
             {
-                return programs[selected_program_index]
+                if selected_program_index < programs_count
+                {
+                    return programs[selected_program_index]
+                }
+                else
+                {
+                    return programs[selected_program_index - 1]
+                }
+                //return programs[selected_program_index]
             }
             else
             {
