@@ -26,10 +26,6 @@ public struct ChartsView: View
             {
                 if charts_data!.count > 0
                 {
-                    Text("Statistics")
-                        .font(.title2)
-                        .padding([.top, .leading, .trailing])
-                    
                     if charts_data!.count > 1
                     {
                         Text("Statistics")
