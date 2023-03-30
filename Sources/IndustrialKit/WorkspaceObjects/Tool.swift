@@ -603,7 +603,7 @@ public class Tool: WorkspaceObject
     private var chart_element_index = 0
     
     ///Update statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
-    func update_statistics_data()
+    public func update_statistics_data()
     {
         if charts_data == nil
         {
