@@ -427,7 +427,11 @@ public class Tool: WorkspaceObject
     ///Set the new target operation code index.
     private func select_new_code()
     {
-        update_statistics_data()
+        DispatchQueue.main.async
+        {
+            self.update_statistics_data()
+        }
+        //update_statistics_data()
         
         if performed
         {
