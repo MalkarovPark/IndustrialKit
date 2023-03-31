@@ -227,7 +227,12 @@ open class RobotConnector: WorkspaceObjectConnector
 {
     private var moving_task = Task {}
     
-    ///Performs movement to point.
+    /**
+     Performs robot movement to point.
+     
+     - Parameters:
+        - point: The the target point that moving performed by the real robot.
+     */
     open func move_to(point: PositionPoint)
     {
         
@@ -281,7 +286,12 @@ open class ToolConnector: WorkspaceObjectConnector
 {
     private var performing_task = Task {}
     
-    ///Performs operation code.
+    /**
+     Performs node action by operation code.
+     
+     - Parameters:
+        - code: The information code of the operation performed by the real tool.
+     */
     open func perform(code: Int)
     {
         

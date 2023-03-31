@@ -431,7 +431,8 @@ public class Tool: WorkspaceObject
         {
             self.update_statistics_data()
         }*/
-        update_statistics_data()
+        
+        update_statistics_data() //Pre-performing update
         
         if performed
         {
@@ -443,6 +444,8 @@ public class Tool: WorkspaceObject
         }
         
         code_changed = true
+        
+        update_statistics_data() //Post-performing update
         
         if selected_code_index < selected_program.codes_count
         {
