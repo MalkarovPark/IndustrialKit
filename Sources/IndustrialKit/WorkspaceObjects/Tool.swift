@@ -389,6 +389,8 @@ public class Tool: WorkspaceObject
     ///Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
+        update_statistics_data() //Pre-performing update
+        
         if demo
         {
             //Move to point for virtual tool
@@ -432,7 +434,7 @@ public class Tool: WorkspaceObject
             self.update_statistics_data()
         }*/
         
-        update_statistics_data() //Pre-performing update
+        update_statistics_data() //Post-performing update
         
         if performed
         {
@@ -444,8 +446,6 @@ public class Tool: WorkspaceObject
         }
         
         code_changed = true
-        
-        update_statistics_data() //Post-performing update
         
         if selected_code_index < selected_program.codes_count
         {
