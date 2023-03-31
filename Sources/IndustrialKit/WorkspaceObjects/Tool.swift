@@ -389,7 +389,7 @@ public class Tool: WorkspaceObject
     ///Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
-        update_statistics_data() //Pre-performing update
+        update_statistics = true
         
         if demo
         {
@@ -434,7 +434,7 @@ public class Tool: WorkspaceObject
             self.update_statistics_data()
         }*/
         
-        update_statistics_data() //Post-performing update
+        update_statistics = false
         
         if performed
         {
@@ -598,6 +598,30 @@ public class Tool: WorkspaceObject
             else
             {
                 connector.get_statistics = get_statistics
+            }
+        }
+    }
+    
+    private var get_statistics_task = Task {}
+    
+    private var update_statistics = false
+    {
+        didSet
+        {
+            if update_statistics
+            {
+                perform_statistics()
+            }
+        }
+    }
+    
+    private func perform_statistics()
+    {
+        get_statistics_task = Task
+        {
+            while update_statistics
+            {
+                update_statistics_data()
             }
         }
     }
