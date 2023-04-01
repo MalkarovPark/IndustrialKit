@@ -176,9 +176,9 @@ public class Workspace: ObservableObject
             
             edited_object_node = selected_tool.node?.clone()
             edited_object_node?.name = name
-            selected_tool.workcell_connect(scene: scene, name: name)
             
             tools_node?.addChildNode(edited_object_node ?? SCNNode())
+            selected_tool.workcell_connect(scene: scene, name: name)
         case .part:
             //Deselect other
             deselect_robot()
