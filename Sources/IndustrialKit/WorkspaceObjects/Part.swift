@@ -21,9 +21,6 @@ public class Part: WorkspaceObject
     private var figure_color: [Int]? //Color for part without scene figure
     private var material_name: String? //Material for part without scene figure
     
-    ///Possibility of picking up part.
-    public var gripable: Bool?
-    
     ///Physics body for part model node by physics type.
     public var physics: SCNPhysicsBody?
     {
@@ -171,8 +168,6 @@ public class Part: WorkspaceObject
         self.figure_color = part_struct.figure_color
         self.material_name = part_struct.material_name
         self.physics_type = part_struct.physics_type
-        
-        self.gripable = part_struct.gripable
         
         self.is_placed = part_struct.is_placed
         self.location = part_struct.location
@@ -415,7 +410,7 @@ public class Part: WorkspaceObject
     ///Codable file structure of part.
     public var file_info: PartStruct
     {
-        return PartStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, gripable: self.gripable ?? false, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
+        return PartStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
     }
 }
 
@@ -441,8 +436,6 @@ public struct PartStruct: Codable
     var figure_color: [Int]
     var material_name: String
     var physics_type: PhysicsType
-    
-    var gripable: Bool
     
     var is_placed: Bool
     var location: [Float]

@@ -701,7 +701,7 @@ public class Workspace: ObservableObject
     {
         get
         {
-            if selected_robot_index > -1
+            if selected_robot_index > -1 && selected_robot_index < robots.count
             {
                 return robots[selected_robot_index]
             }
@@ -848,7 +848,7 @@ public class Workspace: ObservableObject
     {
         get
         {
-            if selected_tool_index > -1
+            if selected_tool_index > -1 && selected_tool_index < tools.count
             {
                 return tools[selected_tool_index]
             }
@@ -1033,7 +1033,7 @@ public class Workspace: ObservableObject
     {
         get
         {
-            if selected_part_index > -1
+            if selected_part_index > -1 && selected_part_index < parts.count
             {
                 return parts[selected_part_index]
             }
