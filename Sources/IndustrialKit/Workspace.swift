@@ -175,6 +175,7 @@ public class Workspace: ObservableObject
             select_tool(name: name)
             
             edited_object_node = selected_tool.node?.clone()
+            selected_tool.workcell_connect(scene: scene, name: name)
             edited_object_node?.name = name
             
             tools_node?.addChildNode(edited_object_node ?? SCNNode())
