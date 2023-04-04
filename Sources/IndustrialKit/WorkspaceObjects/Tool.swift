@@ -665,6 +665,8 @@ public class Tool: WorkspaceObject
             {
                 connector.clear_charts_data()
             }
+            
+            charts_data = nil
         }
     }
     
