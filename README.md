@@ -143,7 +143,7 @@ Each editable parameter consists of a field and an associated stepper. The descr
 Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to switch between them by segmented picker (if count of arrays of arrays is more than one). The type of chart is determined by its properties.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62340924/217925809-2388c544-e15c-4118-85f8-3a145f875440.png" />
+  <img src="https://user-images.githubusercontent.com/62340924/230785411-60b2646d-efcf-4cd0-a980-bf8d75693af7.png" />
 </p>
 
 ### State View <a name="industrialkitui-stateview"></a>
@@ -151,7 +151,7 @@ Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to swit
 Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable SF Symbols.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/62340924/217926978-00048eda-4dce-4397-839e-70ef15ba51be.png" />
+  <img src="https://user-images.githubusercontent.com/62340924/230785427-0cf6c573-b34f-46ff-856a-9c7a2e3c2416.png" />
 </p>
 
 # Getting Help <a name="getting-help"></a>
