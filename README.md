@@ -105,11 +105,19 @@ Also, controllers can change the model in accordance with the specified paramete
 
 ### Functions <a name="functions">
 
-Functions...
+Some functions that can be used both in framework and independently by developers.
+
+   * __mismatched_name__ – finds and update mismatched name;
+
+   * __origin_transform__ – transforms input position by origin rotation;
+
+   * __apply_bit_mask__ – applies certain category bit mask int value for inputed node and all nested;
+
+   * __clear_constranints__ – removes all constrains from inputed node.
 
 ### Extensions <a name="extensions">
 
-Extensions...
+Added for Float and used to convert radians to degrees – __to_deg__ and vice versa – __to_rad__.
 
 # IndustrialKitUI <a name="industrialkitui"></a>
 
