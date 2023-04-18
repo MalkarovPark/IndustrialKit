@@ -459,6 +459,7 @@ public class Tool: WorkspaceObject
             performed = false
             performing_completed = true
             
+            update_statistics_data()
             finish_handler()
         }
     }
