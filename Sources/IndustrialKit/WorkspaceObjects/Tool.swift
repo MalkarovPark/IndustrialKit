@@ -456,10 +456,10 @@ public class Tool: WorkspaceObject
         {
             //Reset target point index if all points passed
             selected_code_index = 0
+            update_statistics_data()
             performed = false
             performing_completed = true
             
-            update_statistics_data()
             finish_handler()
         }
     }
