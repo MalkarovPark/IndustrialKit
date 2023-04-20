@@ -676,11 +676,11 @@ public class Workspace: ObservableObject
             let new_position = robots.count
             
             robots.append(Robot())
-            var updated_item = robots[robots.count - 1]
+            //var updated_item = robots[robots.count - 1]
             
-            updated_item = new_robot
-            updated_item.name = new_name
-            updated_item.is_placed = false
+            robots[robots.count - 1] = new_robot
+            robots[robots.count - 1].name = new_name
+            robots[robots.count - 1].is_placed = false
         }
     }
     
