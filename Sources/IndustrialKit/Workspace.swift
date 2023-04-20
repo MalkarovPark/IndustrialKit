@@ -671,11 +671,11 @@ public class Workspace: ObservableObject
     {
         if robots.indices.contains(index)
         {
-            var new_robot = robots[index]
-            new_robot.name = mismatched_name(name: new_robot.name ?? "None", names: robots_names)
-            new_robot.is_placed = false
+            let new_robot = robots[index]
+            robots.append(Robot(name: mismatched_name(name: new_robot.name ?? "None", names: robots_names)))
             
-            robots.append(new_robot)
+            robots[robots.count] = new_robot
+            robots[robots.count].is_placed = false
         }
     }
     
