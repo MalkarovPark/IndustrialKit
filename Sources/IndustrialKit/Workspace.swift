@@ -673,14 +673,13 @@ public class Workspace: ObservableObject
         {
             let new_robot = robots[index]
             let new_name = mismatched_name(name: new_robot.name ?? "None", names: robots_names)
-            let new_position = robots.count
+            let new_index = robots.count
             
             robots.append(Robot())
-            //var updated_item = robots[robots.count - 1]
             
-            robots[robots.count - 1] = new_robot
-            robots[robots.count - 1].name = new_name
-            robots[robots.count - 1].is_placed = false
+            robots[new_index] = new_robot
+            robots[new_index].name = new_name
+            robots[new_index].is_placed = false
         }
     }
     
