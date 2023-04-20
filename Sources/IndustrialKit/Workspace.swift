@@ -673,7 +673,7 @@ public class Workspace: ObservableObject
         {
             let new_robot = robots[index]
             let new_name = mismatched_name(name: new_robot.name ?? "None", names: robots_names)
-            let new_position = robots.count - 1
+            let new_position = robots.count
             
             robots.append(Robot())
             var updated_item = robots[robots.count - 1]
@@ -887,7 +887,7 @@ public class Workspace: ObservableObject
         {
             let new_tool = tools[index]
             let new_name = mismatched_name(name: new_tool.name ?? "None", names: tools_names)
-            let new_position = tools.count - 1
+            let new_position = tools.count
             
             tools.append(Tool())
             var updated_item = tools[tools.count - 1]
@@ -1106,7 +1106,7 @@ public class Workspace: ObservableObject
         {
             let new_part = parts[index]
             let new_name = mismatched_name(name: new_part.name ?? "None", names: parts_names)
-            let new_position = parts.count - 1
+            let new_position = parts.count
             
             tools.append(Tool())
             var updated_item = parts[parts.count - 1]
