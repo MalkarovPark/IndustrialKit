@@ -671,13 +671,12 @@ public class Workspace: ObservableObject
     {
         if robots.indices.contains(index)
         {
-            //let new_robot = robots[index]
             let new_name = mismatched_name(name: robots[index].name ?? "None", names: robots_names)
             let new_index = robots.count
             
             robots.append(Robot())
             
-            robots[new_index] = Robot(robot_struct: robots[index].file_info) //new_robot
+            robots[new_index] = Robot(robot_struct: robots[index].file_info)
             robots[new_index].name = new_name
             robots[new_index].is_placed = false
         }
@@ -884,16 +883,14 @@ public class Workspace: ObservableObject
     {
         if tools.indices.contains(index)
         {
-            let new_tool = tools[index]
-            let new_name = mismatched_name(name: new_tool.name ?? "None", names: tools_names)
-            let new_position = tools.count
+            let new_name = mismatched_name(name: tools[index].name ?? "None", names: tools_names)
+            let new_index = tools.count
             
             tools.append(Tool())
-            var updated_item = tools[tools.count - 1]
             
-            updated_item = new_tool
-            updated_item.name = new_name
-            updated_item.is_placed = false
+            tools[new_index] = Tool(tool_struct: tools[index].file_info)
+            tools[new_index].name = new_name
+            tools[new_index].is_placed = false
         }
     }
     
@@ -1103,16 +1100,14 @@ public class Workspace: ObservableObject
     {
         if parts.indices.contains(index)
         {
-            let new_part = parts[index]
-            let new_name = mismatched_name(name: new_part.name ?? "None", names: parts_names)
-            let new_position = parts.count
-            
-            tools.append(Tool())
-            var updated_item = parts[parts.count - 1]
-            
-            updated_item = new_part
-            updated_item.name = new_name
-            updated_item.is_placed = false
+            let new_name = mismatched_name(name: parts[index].name ?? "None", names: parts_names)
+            let new_index = parts.count
+
+            parts.append(Part())
+
+            parts[new_index] = Part(part_struct: parts[index].file_info)
+            parts[new_index].name = new_name
+            parts[new_index].is_placed = false
         }
     }
     
