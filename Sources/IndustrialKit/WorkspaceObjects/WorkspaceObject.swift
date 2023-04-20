@@ -206,4 +206,10 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         return("Title", "Subtitle", Color.clear, UIImage())
     }
     #endif
+    
+    ///Clears preview image in object.
+    public func clear_preview()
+    {
+        image_data = Data()
+    }
 }
