@@ -672,10 +672,15 @@ public class Workspace: ObservableObject
         if robots.indices.contains(index)
         {
             let new_robot = robots[index]
-            robots.append(Robot(name: mismatched_name(name: new_robot.name ?? "None", names: robots_names)))
+            let new_name = mismatched_name(name: new_robot.name ?? "None", names: robots_names)
+            let new_position = robots.count - 1
             
-            robots[robots.count - 1] = new_robot
-            robots[robots.count - 1].is_placed = false
+            robots.append(Robot())
+            var updated_item = robots[robots.count - 1]
+            
+            updated_item = new_robot
+            updated_item.name = new_name
+            updated_item.is_placed = false
         }
     }
     
@@ -880,11 +885,16 @@ public class Workspace: ObservableObject
     {
         if tools.indices.contains(index)
         {
-            var new_tool = tools[index]
-            new_tool.name = mismatched_name(name: new_tool.name ?? "None", names: tools_names)
-            new_tool.is_placed = false
+            let new_tool = tools[index]
+            let new_name = mismatched_name(name: new_tool.name ?? "None", names: tools_names)
+            let new_position = tools.count - 1
             
-            tools.append(new_tool)
+            tools.append(Tool())
+            var updated_item = tools[tools.count - 1]
+            
+            updated_item = new_tool
+            updated_item.name = new_name
+            updated_item.is_placed = false
         }
     }
     
@@ -1094,11 +1104,16 @@ public class Workspace: ObservableObject
     {
         if parts.indices.contains(index)
         {
-            var new_part = parts[index]
-            new_part.name = mismatched_name(name: new_part.name ?? "None", names: parts_names)
-            new_part.is_placed = false
+            let new_part = parts[index]
+            let new_name = mismatched_name(name: new_part.name ?? "None", names: parts_names)
+            let new_position = parts.count - 1
             
-            parts.append(new_part)
+            tools.append(Tool())
+            var updated_item = parts[tools.count - 1]
+            
+            updated_item = new_part
+            updated_item.name = new_name
+            updated_item.is_placed = false
         }
     }
     
