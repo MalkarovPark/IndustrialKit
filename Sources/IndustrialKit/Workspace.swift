@@ -1109,7 +1109,7 @@ public class Workspace: ObservableObject
             let new_position = parts.count - 1
             
             tools.append(Tool())
-            var updated_item = parts[tools.count - 1]
+            var updated_item = parts[parts.count - 1]
             
             updated_item = new_part
             updated_item.name = new_name
