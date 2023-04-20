@@ -50,7 +50,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     
     //MARK: - Object in workspace handling
     ///In workspace placement state.
-    public var is_placed = false
+    @Published var is_placed = false
     
     ///Object location components – *x*, *y*, *z*.
     public var location = [Float](repeating: 0, count: 3)
