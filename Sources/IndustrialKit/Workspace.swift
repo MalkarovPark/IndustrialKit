@@ -661,6 +661,35 @@ public class Workspace: ObservableObject
         delete_robot(index: robot_index_by_name(name))
     }
     
+    /**
+     Duplicates robot in workspace.
+     
+     - Parameters:
+        - index: An index of robot to be duplicated.
+     */
+    public func duplicate_robot(index: Int)
+    {
+        if robots.indices.contains(index)
+        {
+            var new_robot = robots[index]
+            new_robot.name = mismatched_name(name: new_robot.name ?? "None", names: robots_names)
+            new_robot.is_placed = false
+            
+            robots.append(new_robot)
+        }
+    }
+    
+    /**
+     Duplicates robot in workspace.
+     
+     - Parameters:
+        - name: A name of robot to be duplicated.
+     */
+    public func duplicate_robot(name: String)
+    {
+        duplicate_robot(index: robot_index_by_name(name))
+    }
+    
     //MARK: Robot selection functions
     private var selected_robot_index = -1
     
@@ -839,6 +868,35 @@ public class Workspace: ObservableObject
     public func delete_tool(name: String)
     {
         delete_tool(index: tool_index_by_name(name))
+    }
+    
+    /**
+     Duplicates tool in workspace.
+     
+     - Parameters:
+        - index: An index of tool to be duplicated.
+     */
+    public func duplicate_tool(index: Int)
+    {
+        if tools.indices.contains(index)
+        {
+            var new_tool = tools[index]
+            new_tool.name = mismatched_name(name: new_tool.name ?? "None", names: tools_names)
+            new_tool.is_placed = false
+            
+            tools.append(new_tool)
+        }
+    }
+    
+    /**
+     Duplicates tool in workspace.
+     
+     - Parameters:
+        - name: A name of tool to be duplicated.
+     */
+    public func duplicate_tool(name: String)
+    {
+        duplicate_tool(index: tool_index_by_name(name))
     }
 
     //MARK: Tools selection functions
@@ -1024,6 +1082,35 @@ public class Workspace: ObservableObject
     public func delete_part(name: String)
     {
         delete_part(index: part_index_by_name(name))
+    }
+    
+    /**
+     Duplicates part in workspace.
+     
+     - Parameters:
+        - index: An index of part to be duplicated.
+     */
+    public func duplicate_part(index: Int)
+    {
+        if parts.indices.contains(index)
+        {
+            var new_part = parts[index]
+            new_part.name = mismatched_name(name: new_part.name ?? "None", names: parts_names)
+            new_part.is_placed = false
+            
+            parts.append(new_part)
+        }
+    }
+    
+    /**
+     Duplicates part in workspace.
+     
+     - Parameters:
+        - name: A name of part to be duplicated.
+     */
+    public func duplicate_part(name: String)
+    {
+        duplicate_part(index: part_index_by_name(name))
     }
     
     //MARK: Parts selection functions
