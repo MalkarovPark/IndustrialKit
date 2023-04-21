@@ -19,21 +19,31 @@ public struct LargeCardView: View
     @State public var title: String
     @State public var subtitle: String
     
+    @Binding var name: String
+    @Binding var is_renamed: Bool
+    @FocusState private var is_focused: Bool
+    
     #if os(macOS)
-    public init(color: Color, image: NSImage, title: String, subtitle: String)
+    public init(color: Color, image: NSImage, title: String, subtitle: String, name: Binding<String>, is_renamed: Binding<Bool>)
     {
         self.color = color
         self.image = image
         self.title = title
         self.subtitle = subtitle
+        
+        self._name = name
+        self._is_renamed = is_renamed
     }
     #else
-    public init(color: Color, image: UIImage, title: String, subtitle: String)
+    public init(color: Color, image: UIImage, title: String, subtitle: String, name: Binding<String>, is_renamed: Binding<Bool>)
     {
         self.color = color
         self.image = image
         self.title = title
         self.subtitle = subtitle
+        
+        self._name = name
+        self._is_renamed = is_renamed
     }
     #endif
     
@@ -61,20 +71,31 @@ public struct LargeCardView: View
                 Spacer()
                 HStack
                 {
-                    VStack(alignment: .leading)
+                    if !is_renamed
                     {
-                        Text(title)
-                            .font(.headline)
-                            .padding(.top, 8)
-                            .padding(.leading, 4)
-                        
-                        Text(subtitle)
-                            .foregroundColor(.gray)
-                            .padding(.bottom, 8)
-                            .padding(.leading, 4)
+                        VStack(alignment: .leading)
+                        {
+                            Text(title)
+                                .font(.headline)
+                                .padding(.top, 8)
+                                .padding(.leading, 4)
+                            
+                            Text(subtitle)
+                                .foregroundColor(.gray)
+                                .padding(.bottom, 8)
+                                .padding(.leading, 4)
+                        }
+                        .padding(.horizontal, 8)
+                        Spacer()
                     }
-                    .padding(.horizontal, 8)
-                    Spacer()
+                    else
+                    {
+                        TextField("Name", text: $name)
+                            .focused($is_focused)
+                            .textFieldStyle(.roundedBorder)
+                            .labelsHidden()
+                            .padding()
+                    }
                 }
                 .background(color.opacity(0.2))
                 .background(.thinMaterial)
@@ -444,7 +465,7 @@ struct Cards_Previews: PreviewProvider
             VStack()
             {
                 #if os(macOS)
-                LargeCardView(color: .green, image: NSImage(), title: "Title", subtitle: "Subtitle")
+                LargeCardView(color: .green, image: NSImage(), title: "Title", subtitle: "Subtitle", name: .constant("Name"), is_renamed: .constant(false))
                     .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
                     .padding([.horizontal, .top])
                 SmallCardView(color: .green, image: NSImage(), title: "Title")
