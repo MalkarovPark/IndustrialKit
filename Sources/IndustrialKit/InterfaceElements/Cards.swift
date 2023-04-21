@@ -19,31 +19,31 @@ public struct LargeCardView: View
     @State public var title: String
     @State public var subtitle: String
     
-    @Binding var name: String
-    @Binding var is_renamed: Bool
+    @State private var name: String
+    @State private var is_renamed: Bool
     @FocusState private var is_focused: Bool
     
     #if os(macOS)
-    public init(color: Color, image: NSImage, title: String, subtitle: String, name: Binding<String>, is_renamed: Binding<Bool>)
+    public init(color: Color, image: NSImage, title: String, subtitle: String, name: String, is_renamed: Bool)
     {
         self.color = color
         self.image = image
         self.title = title
         self.subtitle = subtitle
         
-        self._name = name
-        self._is_renamed = is_renamed
+        self.name = name
+        self.is_renamed = is_renamed
     }
     #else
-    public init(color: Color, image: UIImage, title: String, subtitle: String, name: Binding<String>, is_renamed: Binding<Bool>)
+    public init(color: Color, image: UIImage, title: String, subtitle: String, name: String, is_renamed: Bool)
     {
         self.color = color
         self.image = image
         self.title = title
         self.subtitle = subtitle
         
-        self._name = name
-        self._is_renamed = is_renamed
+        self.name = name
+        self.is_renamed = is_renamed
     }
     #endif
     
@@ -465,7 +465,7 @@ struct Cards_Previews: PreviewProvider
             VStack()
             {
                 #if os(macOS)
-                LargeCardView(color: .green, image: NSImage(), title: "Title", subtitle: "Subtitle", name: .constant("Name"), is_renamed: .constant(false))
+                LargeCardView(color: .green, image: NSImage(), title: "Title", subtitle: "Subtitle", name: "Name", is_renamed: false)
                     .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
                     .padding([.horizontal, .top])
                 SmallCardView(color: .green, image: NSImage(), title: "Title")
