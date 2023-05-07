@@ -179,7 +179,7 @@ public class Part: WorkspaceObject
         
         get_node_from_scene()
         
-        color_to_model()
+        //color_to_model()
         /*if scene_address != ""
         {
             color_from_model()
@@ -394,7 +394,7 @@ public class Part: WorkspaceObject
             }
             
             //Update color by components
-            //color_to_model()
+            color_to_model()
         }
     }
     
