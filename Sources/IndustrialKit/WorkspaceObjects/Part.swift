@@ -179,10 +179,10 @@ public class Part: WorkspaceObject
         
         get_node_from_scene()
         
-        if scene_address != ""
+        /*if scene_address != ""
         {
             color_from_model()
-        }
+        }*/
     }
     
     private func color_from_model()
