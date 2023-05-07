@@ -179,7 +179,15 @@ public class Part: WorkspaceObject
         
         get_node_from_scene()
         
-        color_to_model()
+        if node != nil
+        {
+            #if os(macOS)
+            node?.geometry?.firstMaterial?.diffuse.contents = NSColor(red: CGFloat(figure_color?[0] ?? 0) / 255, green: CGFloat(figure_color?[1] ?? 0) / 255, blue: CGFloat(figure_color?[2] ?? 0) / 255, alpha: 1)
+            #else
+            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(red: CGFloat(figure_color?[0] ?? 0) / 255, green: CGFloat(figure_color?[1] ?? 0) / 255, blue: CGFloat(figure_color?[2] ?? 0) / 255, alpha: 1)
+            #endif
+        }
+        //color_to_model()
         /*if scene_address != ""
         {
             color_from_model()
