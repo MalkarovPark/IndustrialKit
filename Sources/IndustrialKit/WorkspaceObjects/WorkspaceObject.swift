@@ -92,7 +92,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
             {
                 do
                 {
-                    self.node = try SCNScene(url: URL(string: url.absoluteString + scene_address)!).rootNode.childNode(withName: scene_node_name ?? "", recursively: false)
+                    self.node = try SCNScene(url: URL(string: url.absoluteString + scene_address)!).rootNode.childNode(withName: scene_node_name ?? "", recursively: false)?.clone()
                 }
                 catch
                 {
