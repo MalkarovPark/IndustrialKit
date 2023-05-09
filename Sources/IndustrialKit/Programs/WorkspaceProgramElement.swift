@@ -215,8 +215,8 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     ///A push/pop selector for changer.
     public var is_push = true
     
-    ///A slot index for hold info data.
-    public var slot_index = 0
+    ///A register index for hold info data.
+    public var register_index = 0
 
     //MARK: For logic
     ///A logic element type.
