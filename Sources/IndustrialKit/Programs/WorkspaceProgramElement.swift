@@ -209,8 +209,14 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     ///A modificator name.
     public var modifier_type: ModifierType = .observer
     
-    ///A target mark name.
-    public var target_mark_name = String()
+    ///An observable workspace object name.
+    public var object_name = String()
+    
+    ///A push/pop selector for changer.
+    public var is_push = true
+    
+    ///A slot index for hold info data.
+    public var slot_index = 0
 
     //MARK: For logic
     ///A logic element type.
@@ -218,6 +224,9 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     
     ///A target mark name.
     public var mark_name = String()
+    
+    ///A target mark name.
+    public var target_mark_name = String()
     
     //MARK: Init function
     
