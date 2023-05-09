@@ -123,7 +123,7 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
             case .robot:
                 if element_data.robot_name != ""
                 {
-                    info = "Name – \(element_data.robot_name)"
+                    info = "\(element_data.robot_name) – \(element_data.program_name)"
                 }
                 else
                 {
@@ -132,7 +132,7 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
             case .tool:
                 if element_data.tool_name != ""
                 {
-                    info = "Name – \(element_data.tool_name)"
+                    info = "\(element_data.tool_name) – \(element_data.program_name)"
                 }
                 else
                 {
@@ -143,9 +143,16 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
             switch element_data.modifier_type
             {
             case .observer:
-                info = "None"
+                info = "Output from – \(element_data.object_name)"
             case .changer:
-                info = "None"
+                if element_data.is_push
+                {
+                    info = "Push previous to \(element_data.register_index)"
+                }
+                else
+                {
+                    info = "Pop from \(element_data.register_index) to next"
+                }
             }
         case .logic:
             switch element_data.logic_type
@@ -169,9 +176,9 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
                     info = "Unnamed"
                 }
             case .equal:
-                info = "None"
+                info = "Compare equality of previous"
             case .unequal:
-                info = "None"
+                info = "Compare unequality of previous"
             }
         }
         
