@@ -177,9 +177,9 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
                     info = "Unnamed"
                 }
             case .equal:
-                info = "Compare equality of previous"
+                info = "Compare with previous"
             case .unequal:
-                info = "Compare unequality of previous"
+                info = "Compare with previous"
             }
         }
         
@@ -235,6 +235,9 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     
     ///A target mark name.
     public var target_mark_name = String()
+    
+    ///A value to compare for element.
+    public var compared_value = 0
     
     //MARK: Init function
     
