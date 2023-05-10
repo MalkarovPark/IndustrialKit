@@ -1634,8 +1634,7 @@ public class Workspace: ObservableObject
             buffer = tool_by_name(name).info_code
         }
         
-        selected_element_index += 1
-        perform_next_element()
+        select_new_element()
     }
     
     ///Checks if next element accept to pass data.
@@ -1694,8 +1693,7 @@ public class Workspace: ObservableObject
             registers[index] = buffer
         }
         
-        selected_element_index += 1
-        perform_next_element()
+        select_new_element()
     }
     
     /**
@@ -1710,8 +1708,7 @@ public class Workspace: ObservableObject
             registers[index] = buffer
         }
         
-        selected_element_index += 1
-        perform_next_element()
+        select_new_element()
     }
     
     /**
@@ -1736,8 +1733,7 @@ public class Workspace: ObservableObject
         }
         
         buffer = nil
-        selected_element_index += 1
-        perform_next_element()
+        select_new_element()
     }
     
     private func check_unequal()
@@ -1751,8 +1747,7 @@ public class Workspace: ObservableObject
         }
         
         buffer = nil
-        selected_element_index += 1
-        perform_next_element()
+        select_new_element()
     }
     
     ///Resets workspace performing.
