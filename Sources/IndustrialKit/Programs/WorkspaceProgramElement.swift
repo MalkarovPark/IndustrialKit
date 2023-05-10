@@ -144,7 +144,6 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
             {
             case .observer:
                 //info = "Output from – \(element_data.object_name)"
-                print(element_data.object_name)
                 info = "Output from \(element_data.object_name)"
             case .changer:
                 if element_data.is_push
