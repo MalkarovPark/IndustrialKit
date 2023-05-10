@@ -1514,9 +1514,9 @@ public class Workspace: ObservableObject
             case .mark:
                 select_new_element()
             case .equal:
-                break
+                check_equal()
             case .unequal:
-                break
+                check_unequal()
             }
         }
         
