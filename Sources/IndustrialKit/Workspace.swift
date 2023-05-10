@@ -1633,6 +1633,9 @@ public class Workspace: ObservableObject
         {
             buffer = tool_by_name(name).info_code
         }
+        
+        selected_element_index += 1
+        perform_next_element()
     }
     
     ///Checks if next element accept to pass data.
@@ -1690,6 +1693,9 @@ public class Workspace: ObservableObject
         {
             registers[index] = buffer
         }
+        
+        selected_element_index += 1
+        perform_next_element()
     }
     
     /**
@@ -1703,6 +1709,9 @@ public class Workspace: ObservableObject
         {
             registers[index] = buffer
         }
+        
+        selected_element_index += 1
+        perform_next_element()
     }
     
     /**
