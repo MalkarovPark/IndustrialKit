@@ -143,7 +143,8 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
             switch element_data.modifier_type
             {
             case .observer:
-                info = "Output from – \(element_data.object_name)"
+                //info = "Output from – \(element_data.object_name)"
+                info = "Output from \(element_data.object_name)"
             case .changer:
                 if element_data.is_push
                 {
