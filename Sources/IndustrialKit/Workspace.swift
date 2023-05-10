@@ -1492,7 +1492,20 @@ public class Workspace: ObservableObject
                 }
             }
         case .modifier:
-            break
+            switch element.element_data.modifier_type
+            {
+            case .observer:
+                observe_from(name: element.element_data.object_name)
+            case .changer:
+                if element.element_data.is_push
+                {
+                    push_info_to(index: element.element_data.register_index)
+                }
+                else
+                {
+                    pop_info_from(index: element.element_data.register_index)
+                }
+            }
         case .logic:
             switch element.element_data.logic_type
             {
@@ -1500,7 +1513,9 @@ public class Workspace: ObservableObject
                 jump_to(index: element.target_element_index)
             case .mark:
                 select_new_element()
-            default:
+            case .equal:
+                break
+            case .unequal:
                 break
             }
         }
@@ -1601,6 +1616,95 @@ public class Workspace: ObservableObject
         }
     }
     
+    ///A holded info value for pass to next elements.
+    private var buffer: Int? = nil
+    
+    ///An array of pushed info data.
+    private var registers: [Int?] = [Int?](repeating: nil, count: 256)
+    
+    /**
+     Pushes info from tool to buffer.
+     - Parameters:
+        - name: A name of observable tool.
+     */
+    private func observe_from(name: String)
+    {
+        if next_element_accepting
+        {
+            buffer = tool_by_name(name).info_code
+        }
+    }
+    
+    ///Checks if next element accept to pass data.
+    private var next_element_accepting: Bool
+    {
+        if selected_element_index < elements.count - 1
+        {
+            let next_element_data = elements[selected_element_index + 1].element_data
+            
+            if next_element_data.element_type == .logic || (next_element_data.element_type == .modifier && next_element_data.modifier_type == .changer) //Accepts any logic and modifier-changer elements.
+            {
+                return true
+            }
+            else
+            {
+                return false
+            }
+        }
+        else
+        {
+            return false
+        }
+    }
+    
+    ///Checks if next element is logic.
+    private var next_logic_accepting: Bool
+    {
+        if selected_element_index < elements.count - 1
+        {
+            let next_element_data = elements[selected_element_index + 1].element_data
+            
+            if next_element_data.element_type == .logic //Accepts any logic elements.
+            {
+                return true
+            }
+            else
+            {
+                return false
+            }
+        }
+        else
+        {
+            return false
+        }
+    }
+    
+    /**
+     Pushes info from observer to register.
+     - Parameters:
+        - index: An index of register to push.
+     */
+    private func push_info_to(index: Int)
+    {
+        if index < 256
+        {
+            registers[index] = buffer
+        }
+    }
+    
+    /**
+     Pops info from register to next logic element (if exsists).
+     - Parameters:
+        - index: An index of register to pop.
+     */
+    private func pop_info_from(index: Int)
+    {
+        if index < 256 && next_logic_accepting
+        {
+            registers[index] = buffer
+        }
+    }
+    
     /**
      Jumps to program element by index.
      - Parameters:
@@ -1610,6 +1714,22 @@ public class Workspace: ObservableObject
     {
         selected_element_index = index
         perform_next_element()
+    }
+    
+    private func check_equal()
+    {
+        if selected_element_index < elements.count - 2
+        {
+            
+        }
+        
+        buffer = nil
+    }
+    
+    private func check_unequal()
+    {
+        
+        buffer = nil
     }
     
     ///Resets workspace performing.
