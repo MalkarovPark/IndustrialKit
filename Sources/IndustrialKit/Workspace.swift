@@ -1727,6 +1727,7 @@ public class Workspace: ObservableObject
         }
         
         buffer = nil
+        selected_element_index += 1
         perform_next_element()
     }
     
@@ -1741,6 +1742,7 @@ public class Workspace: ObservableObject
         }
         
         buffer = nil
+        selected_element_index += 1
         perform_next_element()
     }
     
