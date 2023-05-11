@@ -1724,7 +1724,7 @@ public class Workspace: ObservableObject
     
     private func check_equal()
     {
-        if selected_element_index < elements.count - 2
+        if selected_element_index < elements.count - 1
         {
             if buffer == elements[selected_element_index].element_data.compared_value
             {
@@ -1738,7 +1738,7 @@ public class Workspace: ObservableObject
     
     private func check_unequal()
     {
-        if selected_element_index < elements.count - 2
+        if selected_element_index < elements.count - 1
         {
             if buffer != elements[selected_element_index].element_data.compared_value
             {
