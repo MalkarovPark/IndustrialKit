@@ -1724,9 +1724,10 @@ public class Workspace: ObservableObject
     
     private func check_equal()
     {
-        print(elements.count)
         if selected_element_index < elements.count - 1
         {
+            print(buffer)
+            print(elements[selected_element_index].element_data.compared_value)
             if buffer == elements[selected_element_index].element_data.compared_value
             {
                 selected_element_index += 1
