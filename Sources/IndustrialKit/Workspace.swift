@@ -1634,6 +1634,7 @@ public class Workspace: ObservableObject
         {
             buffer = tool_by_name(name).info_code
         }
+        print(buffer)
         
         select_new_element()
     }
