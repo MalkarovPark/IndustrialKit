@@ -1728,7 +1728,7 @@ public class Workspace: ObservableObject
         {
             if buffer == elements[selected_element_index].element_data.compared_value
             {
-                selected_element_index += 2
+                selected_element_index += 1
             }
         }
         
@@ -1742,7 +1742,7 @@ public class Workspace: ObservableObject
         {
             if buffer != elements[selected_element_index].element_data.compared_value
             {
-                selected_element_index += 2
+                selected_element_index += 1
             }
         }
         
