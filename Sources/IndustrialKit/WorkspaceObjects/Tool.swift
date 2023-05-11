@@ -301,8 +301,18 @@ public class Tool: WorkspaceObject
         return codes.count
     }
     
-    ///An output code.
-    public var info_code = 0
+    ///An information output code.
+    public var info_code: Int?
+    {
+        if demo
+        {
+            return model_controller.info_code
+        }
+        else
+        {
+            return connector.info_code
+        }
+    }
     
     //MARK: - Performing functions
     ///A name of tool module to describe model controller and connector.

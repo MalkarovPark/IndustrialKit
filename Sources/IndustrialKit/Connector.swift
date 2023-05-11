@@ -314,6 +314,9 @@ open class ToolConnector: WorkspaceObjectConnector
         }
     }
     
+    ///Inforamation code updated by connector.
+    public var info_code: Int?
+    
     ///A tool model controller.
     public var model_controller: ToolModelController?
 }
