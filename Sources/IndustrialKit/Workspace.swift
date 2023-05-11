@@ -1629,6 +1629,7 @@ public class Workspace: ObservableObject
      */
     private func observe_from(name: String)
     {
+        print(buffer)
         if next_element_accepting
         {
             buffer = tool_by_name(name).info_code
@@ -1726,8 +1727,6 @@ public class Workspace: ObservableObject
     {
         if selected_element_index < elements.count - 1
         {
-            print(buffer)
-            print(elements[selected_element_index].element_data.compared_value)
             if buffer == elements[selected_element_index].element_data.compared_value
             {
                 selected_element_index += 1
