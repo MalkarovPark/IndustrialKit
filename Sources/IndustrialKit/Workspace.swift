@@ -1629,12 +1629,11 @@ public class Workspace: ObservableObject
      */
     private func observe_from(name: String)
     {
-        print(buffer)
+        print(selected_program_element)
         if next_element_accepting
         {
             buffer = tool_by_name(name).info_code
         }
-        print(buffer)
         
         select_new_element()
     }
