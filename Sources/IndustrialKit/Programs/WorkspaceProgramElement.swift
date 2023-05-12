@@ -1,6 +1,6 @@
 //
 //  WorkspaceProgramElement.swift
-//  Robotic Complex Workspace
+//  IndustrialKit
 //
 //  Created by Malkarov Park on 01.04.2022.
 //
