@@ -53,7 +53,8 @@ CareKit can be installed via SPM. Create a new Xcode project and navigate to `Fi
 
 The included sample app demonstrates a fully constructed IndustrialKit app: [RCWorkspace](https://github.com/MalkarovPark/Robotic-Complex-Workspace)
 
-![rcworkspace](https://user-images.githubusercontent.com/62340924/213884632-2e7d7706-6d00-472c-b56f-4712770dfd47.png)
+![rcworkspace](https://github.com/MalkarovPark/IndustrialKit/assets/62340924/1b52f566-e49f-4f19-9c30-2d7b49339031)
+
 
 # IndustrialKit <a name="industrialkit"></a>
 
