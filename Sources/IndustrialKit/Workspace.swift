@@ -1433,6 +1433,12 @@ public class Workspace: ObservableObject
     ///Selects program element and performs by workcell.
     public func start_pause_performing()
     {
+        guard elements.count > 0
+        else
+        {
+            return
+        }
+        
         if !(object_pointer_node?.isHidden ?? false)
         {
             deselect_object_for_edit()
@@ -1460,7 +1466,6 @@ public class Workspace: ObservableObject
             
             //Stop perfomed objects
             pause_performing()
-            //selected_robot.start_pause_moving()
         }
     }
     
