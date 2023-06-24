@@ -528,19 +528,13 @@ public class Workspace: ObservableObject
             {
             case .robot:
                 selected_robot.is_placed = false
-                selected_robot.location = [0, 0, 0]
-                selected_robot.rotation = [0, 0, 0]
                 deselect_robot()
             case .tool:
                 selected_tool.is_placed = false
                 remove_attachment()
-                selected_tool.location = [0, 0, 0]
-                selected_tool.rotation = [0, 0, 0]
                 deselect_tool()
             case .part:
                 selected_part.is_placed = false
-                selected_part.location = [0, 0, 0]
-                selected_part.rotation = [0, 0, 0]
                 deselect_part()
             default:
                 break

@@ -590,6 +590,11 @@ public class Tool: WorkspaceObject
     ///A name of the robot that the tool is attached to.
     public var attached_to: String?
     
+    override public func on_remove()
+    {
+        attached_to = nil
+    }
+    
     //MARK: - Chart functions
     ///A tool charts data.
     public var charts_data: [WorkspaceObjectChart]?

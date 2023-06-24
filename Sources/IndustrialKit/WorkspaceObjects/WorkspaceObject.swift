@@ -51,6 +51,23 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     //MARK: - Object in workspace handling
     ///In workspace placement state.
     @Published public var is_placed = false
+    {
+        didSet
+        {
+            if !is_placed
+            {
+                location = [0, 0, 0]
+                rotation = [0, 0, 0]
+                on_remove()
+            }
+        }
+    }
+    
+    ///Additional operations after remowing an object from the workspace.
+    open func on_remove()
+    {
+        
+    }
     
     ///Object location components – *x*, *y*, *z*.
     public var location = [Float](repeating: 0, count: 3)
