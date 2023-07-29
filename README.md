@@ -167,4 +167,4 @@ Output statistics by the StateItem array. If the elements are nested within each
 GitHub is our primary forum for IndustrialKit. Feel free to open up issues about questions, problems, or ideas.
 
 # License <a name="license"></a>
-This project is made available under the terms of a Apache 2.0 license. See the [LICENSE](LICENSE) file.
+This project is made available under the terms of an Apache 2.0 license. See the [LICENSE](LICENSE) file.
