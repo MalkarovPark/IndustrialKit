@@ -39,7 +39,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     }
     
     /**
-     Init object by name.
+     Inits object by name.
      
      Used for object mismatch.
      */

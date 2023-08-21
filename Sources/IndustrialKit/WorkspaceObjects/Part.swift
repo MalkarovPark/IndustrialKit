@@ -74,7 +74,7 @@ public class Part: WorkspaceObject
         super.init(name: name)
     }
     
-    ///Inits part by dictionary and use models folder
+    ///Inits part by dictionary and use models folder.
     public init(name: String, dictionary: [String: Any])
     {
         super.init()
