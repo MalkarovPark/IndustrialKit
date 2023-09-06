@@ -859,6 +859,12 @@ public class Robot: WorkspaceObject
      Array with three coordinates – [*x*, *y*, *z*].
      */
     public var origin_location = [Float](repeating: 0, count: 3)
+    {
+        didSet
+        {
+            update_location()
+        }
+    }
     
     /**
      A robot cell origin rotation.
@@ -866,6 +872,12 @@ public class Robot: WorkspaceObject
      Array with three angles – [*r*, *p*, *w*].
      */
     public var origin_rotation = [Float](repeating: 0, count: 3)
+    {
+        didSet
+        {
+            update_rotation()
+        }
+    }
     
     ///A robot cell box scale.
     public var space_scale = [Float](repeating: 200, count: 3)
