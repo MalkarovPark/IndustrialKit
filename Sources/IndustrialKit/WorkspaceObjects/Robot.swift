@@ -498,11 +498,6 @@ public class Robot: WorkspaceObject
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
     }
     
-    public func move_to_point(_ position: PositionPoint) //Single position perform
-    {
-        
-    }
-    
     //MARK: Performation cycle
     ///Selects and performs robot to point movement.
     public func move_to_next_point()
@@ -520,6 +515,8 @@ public class Robot: WorkspaceObject
                 self.rotation_finished = true
                 self.select_new_point()
             }
+            
+            //model_controller.nodes_move_to(position: programs[selected_program_index].points[target_point_index])
         }
         else
         {
@@ -849,7 +846,12 @@ public class Robot: WorkspaceObject
             current_pointer_position_select()
         }*/
         
-        model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        if demo
+        {
+            model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+            
+            current_pointer_position_select() //?
+        }
     }
     
     //MARK: Cell box handling
