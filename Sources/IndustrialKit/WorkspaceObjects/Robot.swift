@@ -818,6 +818,8 @@ public class Robot: WorkspaceObject
     private func update_location()
     {
         pointer_node?.position = get_pointer_position().location
+        
+        update_robot()
     }
     
     ///Sets robot pointer node rotation.
@@ -832,18 +834,22 @@ public class Robot: WorkspaceObject
         pointer_node?.eulerAngles.y = get_pointer_position().rot_z
         pointer_node_internal?.eulerAngles.z = get_pointer_position().rot_x
         #endif
+        
+        update_robot()
     }
     
     ///Update robot manipulator parts positions by target point.
     public func update_robot()
     {
-        if demo || !performed
+        /*if demo || !performed
         {
             model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
             update_statistics_data()
             
             current_pointer_position_select()
-        }
+        }*/
+        
+        model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
     //MARK: Cell box handling
