@@ -488,16 +488,11 @@ public class Robot: WorkspaceObject
     ///Returns robot pointer position.
     public func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
-        guard pointer_location.count == 3 else
-        {
-            return (SCNVector3(0, 0, 0), 0, 0, 0)
-        }
-        
         return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
     
     ///Selects current pointer position.
-    private func current_pointer_position_select()
+    public func current_pointer_position_select()
     {
         pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
@@ -516,7 +511,7 @@ public class Robot: WorkspaceObject
             while !canceled
             {
                 current_pointer_position_select()
-                //usleep(10000)
+                usleep(10000)
             }
             
             canceled = false
@@ -653,7 +648,7 @@ public class Robot: WorkspaceObject
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
             {
-                //self.current_pointer_position_select()
+                self.current_pointer_position_select()
             }
         }
     }
@@ -673,7 +668,7 @@ public class Robot: WorkspaceObject
                 connector.pause()
             }
             
-            //current_pointer_position_select()
+            current_pointer_position_select()
             performed = false
             target_point_index = 0
             
@@ -844,11 +839,6 @@ public class Robot: WorkspaceObject
     ///Sets robot pointer node location.
     private func update_location()
     {
-        guard pointer_location.count == 3 else
-        {
-            return
-        }
-        
         pointer_node?.position = get_pointer_position().location
         
         update_robot()
@@ -857,11 +847,6 @@ public class Robot: WorkspaceObject
     ///Sets robot pointer node rotation.
     private func update_rotation()
     {
-        guard pointer_rotation.count == 3 else
-        {
-            return
-        }
-        
         #if os(macOS)
         pointer_node?.eulerAngles.x = CGFloat(get_pointer_position().rot_y)
         pointer_node?.eulerAngles.y = CGFloat(get_pointer_position().rot_z)
