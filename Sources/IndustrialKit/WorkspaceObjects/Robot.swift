@@ -488,6 +488,11 @@ public class Robot: WorkspaceObject
     ///Returns robot pointer position.
     public func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
+        guard pointer_location.count == 3 else
+        {
+            return (SCNVector3(0, 0, 0), 0, 0, 0)
+        }
+        
         return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
     
