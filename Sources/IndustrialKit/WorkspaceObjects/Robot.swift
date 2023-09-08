@@ -839,7 +839,12 @@ public class Robot: WorkspaceObject
     ///Sets robot pointer node location.
     private func update_location()
     {
-        //pointer_node?.position = get_pointer_position().location
+        guard pointer_location.count == 3 else
+        {
+            return
+        }
+        
+        pointer_node?.position = get_pointer_position().location
         
         update_robot()
     }
@@ -847,6 +852,11 @@ public class Robot: WorkspaceObject
     ///Sets robot pointer node rotation.
     private func update_rotation()
     {
+        guard pointer_rotation.count == 3 else
+        {
+            return
+        }
+        
         #if os(macOS)
         pointer_node?.eulerAngles.x = CGFloat(get_pointer_position().rot_y)
         pointer_node?.eulerAngles.y = CGFloat(get_pointer_position().rot_z)
