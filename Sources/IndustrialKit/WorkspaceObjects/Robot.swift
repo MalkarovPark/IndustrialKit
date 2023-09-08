@@ -492,10 +492,8 @@ public class Robot: WorkspaceObject
     }
     
     ///Selects current pointer position.
-    public func current_pointer_position_select()
+    private func current_pointer_position_select()
     {
-        print([Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg])
-        
         pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
     }
@@ -650,7 +648,7 @@ public class Robot: WorkspaceObject
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
             {
-                self.current_pointer_position_select()
+                //self.current_pointer_position_select()
             }
         }
     }
@@ -670,7 +668,7 @@ public class Robot: WorkspaceObject
                 connector.pause()
             }
             
-            current_pointer_position_select()
+            //current_pointer_position_select()
             performed = false
             target_point_index = 0
             
