@@ -400,7 +400,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            update_location()
+            //update_location()
         }
     }
     
@@ -413,7 +413,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            update_rotation()
+            //update_rotation()
         }
     }
     
@@ -885,7 +885,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            //update_location()
+            update_location()
         }
     }
     
@@ -898,7 +898,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            //update_rotation()
+            update_rotation()
         }
     }
     
