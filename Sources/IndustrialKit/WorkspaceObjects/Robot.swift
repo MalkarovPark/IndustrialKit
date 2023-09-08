@@ -510,8 +510,12 @@ public class Robot: WorkspaceObject
         {
             while !canceled
             {
-                current_pointer_position_select()
-                usleep(10000)
+                do
+                {
+                    current_pointer_position_select()
+                }
+                //current_pointer_position_select()
+                //usleep(10000)
             }
             
             canceled = false
