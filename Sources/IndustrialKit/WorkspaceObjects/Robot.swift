@@ -498,12 +498,34 @@ public class Robot: WorkspaceObject
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
     }
     
+    //Test Task
+    private var moving_task = Task {}
+    
+    private var canceled = true
+    
+    public func nodes_update_perform()
+    {
+        canceled = false
+        moving_task = Task
+        {
+            while !canceled
+            {
+                current_pointer_position_select()
+            }
+            
+            canceled = false
+        }
+    }
+    //Test Task
+    
     //MARK: Performation cycle
     ///Selects and performs robot to point movement.
     public func move_to_next_point()
     {
         if demo == true
         {
+            nodes_update_perform()
+            
             //Move to point for virtual robot
             pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
             {
@@ -564,6 +586,8 @@ public class Robot: WorkspaceObject
         {
             moving_finished = false
             rotation_finished = false
+            
+            canceled = true
             
             if target_point_index < selected_program.points_count - 1
             {
@@ -846,6 +870,7 @@ public class Robot: WorkspaceObject
             current_pointer_position_select()
         }*/
         
+        update_statistics_data()
         model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
