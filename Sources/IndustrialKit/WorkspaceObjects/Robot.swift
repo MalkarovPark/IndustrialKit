@@ -510,11 +510,7 @@ public class Robot: WorkspaceObject
         {
             while !canceled
             {
-                do
-                {
-                    current_pointer_position_select()
-                }
-                //current_pointer_position_select()
+                current_pointer_position_select()
                 //usleep(10000)
             }
             
@@ -889,7 +885,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            update_location()
+            //update_location()
         }
     }
     
@@ -902,7 +898,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            update_rotation()
+            //update_rotation()
         }
     }
     
