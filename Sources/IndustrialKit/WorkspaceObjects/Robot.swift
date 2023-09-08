@@ -400,7 +400,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            //update_location()
+            update_location()
         }
     }
     
@@ -413,7 +413,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            //update_rotation()
+            update_rotation()
         }
     }
     
@@ -839,7 +839,7 @@ public class Robot: WorkspaceObject
     ///Sets robot pointer node location.
     private func update_location()
     {
-        pointer_node?.position = get_pointer_position().location
+        //pointer_node?.position = get_pointer_position().location
         
         update_robot()
     }
