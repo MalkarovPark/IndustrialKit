@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SceneKit
 
 /**
  A type of value that describes the target position.
@@ -171,6 +172,18 @@ public class PositionPoint: Identifiable, Codable, Hashable
         
         self.move_type = move_type
         self.move_speed = move_speed
+    }
+    
+    //MARK: Movement functions
+    public func moving(time: Float) -> (position: SCNAction, rotation: SCNAction)
+    {
+        let moving_position = SCNVector3(y, z, x) //Convert location to scnvector
+        let moving_rotation = [p.to_rad, w.to_rad, 0] //Get rotation from from position point
+        
+        let action_position = SCNAction.group([SCNAction.move(to: moving_position, duration: TimeInterval(time)), SCNAction.rotateTo(x: CGFloat(moving_rotation[0]), y: CGFloat(moving_rotation[1]), z: CGFloat(moving_rotation[2]), duration: TimeInterval(time))])
+        let action_rotation = SCNAction.rotateTo(x: 0, y: 0, z: CGFloat(r.to_rad), duration: TimeInterval(time))
+        
+        return (action_position, action_rotation)
     }
 }
 

@@ -512,11 +512,11 @@ public class Robot: WorkspaceObject
     {
         moving_task = Task
         {
-            pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
+            pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
             {
                 self.moving_finished = true
             }
-            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
+            pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
             {
                 self.rotation_finished = true
             }
