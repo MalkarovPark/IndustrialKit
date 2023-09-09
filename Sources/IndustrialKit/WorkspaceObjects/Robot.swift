@@ -517,6 +517,9 @@ public class Robot: WorkspaceObject
             {
                 //current_pointer_position_select()
             }
+            
+            moving_finished = false
+            rotation_finished = false
             completion()
         }
     }
@@ -527,24 +530,10 @@ public class Robot: WorkspaceObject
     {
         if demo == true
         {
-            //Move to point for virtual robot
-            /*pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
-            {
-                self.moving_finished = true
-                self.select_new_point()
-            }
-            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
-            {
-                self.rotation_finished = true
-                self.select_new_point()
-            }*/
-            
             nodes_move_to(position: programs[selected_program_index].points[target_point_index])
             {
                 self.select_new_point()
             }
-            
-            //model_controller.nodes_move_to(position: programs[selected_program_index].points[target_point_index])
         }
         else
         {
@@ -553,18 +542,11 @@ public class Robot: WorkspaceObject
                 //Move to point for real robot
                 connector.move_to(point: programs[selected_program_index].points[target_point_index])
                 {
-                    self.moving_finished = true
-                    self.rotation_finished = true
-                    
                     self.select_new_point()
                 }
             }
             else
             {
-                //Skip operation if real robot is not connected
-                moving_finished = true
-                rotation_finished = true
-                
                 select_new_point()
             }
         }
@@ -588,29 +570,21 @@ public class Robot: WorkspaceObject
     ///Set the new target point index.
     private func select_new_point()
     {
-        if moving_finished == true && rotation_finished == true //Waiting for the target point reach
+        if target_point_index < selected_program.points_count - 1
         {
-            moving_finished = false
-            rotation_finished = false
+            //Select and move to next point
+            target_point_index += 1
+            move_to_next_point()
+        }
+        else
+        {
+            //Reset target point index if all points passed
+            target_point_index = 0
+            performed = false
+            moving_completed = true
+            current_pointer_position_select()
             
-            //canceled = true
-            
-            if target_point_index < selected_program.points_count - 1
-            {
-                //Select and move to next point
-                target_point_index += 1
-                move_to_next_point()
-            }
-            else
-            {
-                //Reset target point index if all points passed
-                target_point_index = 0
-                performed = false
-                moving_completed = true
-                current_pointer_position_select()
-                
-                finish_handler()
-            }
+            finish_handler()
         }
     }
     
