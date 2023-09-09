@@ -502,6 +502,12 @@ public class Robot: WorkspaceObject
     
     private var cancel_task = false
     
+    ///Moving finished flag.
+    private var moving_finished = false
+    
+    ///Rotation finished flag.
+    private var rotation_finished = false
+    
     private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
     {
         pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
@@ -525,8 +531,8 @@ public class Robot: WorkspaceObject
             
             if cancel_task
             {
-                remove_movement_actions()
                 cancel_task = false
+                remove_movement_actions()
             }
             else
             {
@@ -574,12 +580,6 @@ public class Robot: WorkspaceObject
             }
         }
     }
-    
-    ///Moving finished flag.
-    private var moving_finished = false
-    
-    ///Rotation finished flag.
-    private var rotation_finished = false
     
     ///Finish handler for to point moving.
     public var finish_handler: (() -> Void) = {}
