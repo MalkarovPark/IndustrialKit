@@ -510,6 +510,37 @@ public class Robot: WorkspaceObject
     
     private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
     {
+        DispatchQueue.global(qos: .background).async
+        {
+            self.pointer_node?.runAction(self.programs[self.selected_program_index].points[self.target_point_index].moving(time: self.move_time ?? 1).position)
+            {
+                self.moving_finished = true
+            }
+            
+            self.pointer_node_internal?.runAction(self.programs[self.selected_program_index].points[self.target_point_index].moving(time: self.rotate_time ?? 1).rotation)
+            {
+                self.rotation_finished = true
+            }
+            
+            while !(self.moving_finished && self.rotation_finished) && !self.cancel_task
+            {
+                //wait...
+            }
+            
+            self.moving_finished = false
+            self.rotation_finished = false
+            
+            if self.cancel_task
+            {
+                self.cancel_task = false
+                self.remove_movement_actions()
+            }
+            else
+            {
+                completion()
+            }
+        }
+        
         /*moving_task = Task
         {
             pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
@@ -540,26 +571,6 @@ public class Robot: WorkspaceObject
                 completion()
             }
         }*/
-        
-        pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
-        {
-            self.moving_finished = true
-            
-            if self.moving_finished && self.rotation_finished
-            {
-                completion()
-            }
-        }
-        
-        pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
-        {
-            self.rotation_finished = true
-            
-            if self.moving_finished && self.rotation_finished
-            {
-                completion()
-            }
-        }
     }
     
     private func remove_movement_actions()
