@@ -510,18 +510,18 @@ public class Robot: WorkspaceObject
     
     private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
     {
-        pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
+        /*moving_task = Task
         {
-            self.moving_finished = true
-        }
-        
-        pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
-        {
-            self.rotation_finished = true
-        }
-        
-        moving_task = Task
-        {
+            pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
+            {
+                self.moving_finished = true
+            }
+            
+            pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
+            {
+                self.rotation_finished = true
+            }
+            
             while !(moving_finished && rotation_finished) && !cancel_task
             {
                 //wait...
@@ -536,6 +536,26 @@ public class Robot: WorkspaceObject
                 remove_movement_actions()
             }
             else
+            {
+                completion()
+            }
+        }*/
+        
+        pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
+        {
+            self.moving_finished = true
+            
+            if self.moving_finished && self.rotation_finished
+            {
+                completion()
+            }
+        }
+        
+        pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
+        {
+            self.rotation_finished = true
+            
+            if self.moving_finished && self.rotation_finished
             {
                 completion()
             }
