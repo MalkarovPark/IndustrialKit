@@ -525,8 +525,8 @@ public class Robot: WorkspaceObject
             
             if cancel_task
             {
-                self.pointer_node?.removeAllActions()
-                self.pointer_node_internal?.removeAllActions()
+                await pointer_node?.removeAllActions()
+                await pointer_node_internal?.removeAllActions()
                 cancel_task = false
             }
             else
