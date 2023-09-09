@@ -485,8 +485,8 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///Returns robot pointer position.
-    public func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
+    ///Returns robot pointer position for nodes.
+    private func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
         return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
@@ -498,24 +498,7 @@ public class Robot: WorkspaceObject
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
     }
     
-    //Test Task
     private var moving_task = Task {}
-    
-    /*private var canceled = true
-    
-    public func nodes_update_perform()
-    {
-        canceled = false
-        moving_task = Task
-        {
-            while !canceled
-            {
-                current_pointer_position_select()
-            }
-            
-            canceled = false
-        }
-    }*/
     
     private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
     {
@@ -528,21 +511,15 @@ public class Robot: WorkspaceObject
             self.rotation_finished = true
         }
         
-        //canceled = false
         moving_task = Task
         {
-            while !(moving_finished && rotation_finished) //!canceled
+            while !(moving_finished && rotation_finished)
             {
                 //current_pointer_position_select()
             }
-            
-            //canceled = false
             completion()
         }
-        
-        //completion()
     }
-    //Test Task
     
     //MARK: Performation cycle
     ///Selects and performs robot to point movement.
