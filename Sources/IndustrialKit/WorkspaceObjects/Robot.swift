@@ -529,7 +529,7 @@ public class Robot: WorkspaceObject
         }
         
         //canceled = false
-        moving_task = Task
+        /*moving_task = Task
         {
             while !(moving_finished && rotation_finished) //!canceled
             {
@@ -538,9 +538,13 @@ public class Robot: WorkspaceObject
             
             //canceled = false
             completion()
-        }
+        }*/
         
-        //completion()
+        while !(moving_finished && rotation_finished) //!canceled
+        {
+            current_pointer_position_select()
+        }
+        completion()
     }
     //Test Task
     
