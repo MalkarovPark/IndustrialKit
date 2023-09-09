@@ -510,17 +510,17 @@ public class Robot: WorkspaceObject
     
     private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
     {
-        pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
-        {
-            self.moving_finished = true
-        }
-        pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
-        {
-            self.rotation_finished = true
-        }
-        
         moving_task = Task
         {
+            pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
+            {
+                self.moving_finished = true
+            }
+            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
+            {
+                self.rotation_finished = true
+            }
+            
             while !(moving_finished && rotation_finished) && !cancel_task
             {
                 //wait...
