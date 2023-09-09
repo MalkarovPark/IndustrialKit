@@ -500,6 +500,8 @@ public class Robot: WorkspaceObject
     
     private var moving_task = Task {}
     
+    private var cancel_task = false
+    
     private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
     {
         pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
@@ -513,9 +515,16 @@ public class Robot: WorkspaceObject
         
         moving_task = Task
         {
-            while !(moving_finished && rotation_finished)
+            while !(moving_finished && rotation_finished) && !cancel_task
             {
                 //current_pointer_position_select()
+            }
+            
+            if cancel_task
+            {
+                pointer_node?.removeAllActions()
+                pointer_node_internal?.removeAllActions()
+                cancel_task = false
             }
             
             moving_finished = false
@@ -524,12 +533,29 @@ public class Robot: WorkspaceObject
         }
     }
     
+    private func reset_model()
+    {
+        cancel_task = true
+    }
+    
     //MARK: Performation cycle
     ///Selects and performs robot to point movement.
     public func move_to_next_point()
     {
         if demo == true
         {
+            //Move to point for virtual robot
+            /*pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
+            {
+                self.moving_finished = true
+                self.select_new_point()
+            }
+            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
+            {
+                self.rotation_finished = true
+                self.select_new_point()
+            }*/
+            
             nodes_move_to(position: programs[selected_program_index].points[target_point_index])
             {
                 self.select_new_point()
@@ -616,8 +642,9 @@ public class Robot: WorkspaceObject
         {
             if demo
             {
-                pointer_node?.removeAllActions()
-                pointer_node_internal?.removeAllActions()
+                reset_model()
+                //pointer_node?.removeAllActions()
+                //pointer_node_internal?.removeAllActions()
             }
             else
             {
@@ -639,8 +666,9 @@ public class Robot: WorkspaceObject
         {
             if demo
             {
-                pointer_node?.removeAllActions()
-                pointer_node_internal?.removeAllActions()
+                reset_model()
+                //pointer_node?.removeAllActions()
+                //pointer_node_internal?.removeAllActions()
             }
             else
             {
