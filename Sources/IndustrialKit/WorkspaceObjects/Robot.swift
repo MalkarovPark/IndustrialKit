@@ -501,7 +501,7 @@ public class Robot: WorkspaceObject
     //Test Task
     private var moving_task = Task {}
     
-    private var canceled = true
+    /*private var canceled = true
     
     public func nodes_update_perform()
     {
@@ -511,11 +511,36 @@ public class Robot: WorkspaceObject
             while !canceled
             {
                 current_pointer_position_select()
-                //usleep(10000)
             }
             
             canceled = false
         }
+    }*/
+    
+    private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
+    {
+        pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
+        {
+            self.moving_finished = true
+        }
+        pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
+        {
+            self.rotation_finished = true
+        }
+        
+        //canceled = false
+        moving_task = Task
+        {
+            while !(moving_finished && rotation_finished) //!canceled
+            {
+                current_pointer_position_select()
+            }
+            
+            //canceled = false
+            completion()
+        }
+        
+        //completion()
     }
     //Test Task
     
@@ -525,10 +550,8 @@ public class Robot: WorkspaceObject
     {
         if demo == true
         {
-            nodes_update_perform()
-            
             //Move to point for virtual robot
-            pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
+            /*pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
             {
                 self.moving_finished = true
                 self.select_new_point()
@@ -536,6 +559,11 @@ public class Robot: WorkspaceObject
             pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
             {
                 self.rotation_finished = true
+                self.select_new_point()
+            }*/
+            
+            nodes_move_to(position: programs[selected_program_index].points[target_point_index])
+            {
                 self.select_new_point()
             }
             
@@ -588,7 +616,7 @@ public class Robot: WorkspaceObject
             moving_finished = false
             rotation_finished = false
             
-            canceled = true
+            //canceled = true
             
             if target_point_index < selected_program.points_count - 1
             {
@@ -871,7 +899,7 @@ public class Robot: WorkspaceObject
             current_pointer_position_select()
         }*/
         
-        update_statistics_data()
+        //update_statistics_data()
         model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
