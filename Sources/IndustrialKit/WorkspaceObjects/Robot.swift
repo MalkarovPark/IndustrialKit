@@ -510,7 +510,32 @@ public class Robot: WorkspaceObject
     
     private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
     {
-        DispatchQueue.global(qos: .default).async
+        self.moving_finished = false
+        self.rotation_finished = false
+        
+        pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
+        {
+            self.moving_finished = true
+            
+            check_completion()
+        }
+        
+        pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
+        {
+            self.rotation_finished = true
+            
+            check_completion()
+        }
+        
+        func check_completion()
+        {
+            if self.moving_finished && self.rotation_finished
+            {
+                completion()
+            }
+        }
+        
+        /*DispatchQueue.global(qos: .default).async
         {
             self.pointer_node?.runAction(self.programs[self.selected_program_index].points[self.target_point_index].moving(time: self.move_time ?? 1).position)
             {
@@ -539,7 +564,7 @@ public class Robot: WorkspaceObject
             {
                 completion()
             }
-        }
+        }*/
         
         /*moving_task = Task
         {
