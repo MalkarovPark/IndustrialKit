@@ -525,8 +525,7 @@ public class Robot: WorkspaceObject
             
             if cancel_task
             {
-                await pointer_node?.removeAllActions()
-                await pointer_node_internal?.removeAllActions()
+                remove_movement_actions()
                 cancel_task = false
             }
             else
@@ -534,6 +533,12 @@ public class Robot: WorkspaceObject
                 completion()
             }
         }
+    }
+    
+    private func remove_movement_actions()
+    {
+        pointer_node?.removeAllActions()
+        pointer_node_internal?.removeAllActions()
     }
     
     private func reset_model()
