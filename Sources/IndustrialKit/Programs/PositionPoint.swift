@@ -174,7 +174,13 @@ public class PositionPoint: Identifiable, Codable, Hashable
         self.move_speed = move_speed
     }
     
-    //MARK: Movement functions
+    //MARK: - Movement functions
+    
+    /**
+     Returns a SCNActions for location and rotation movements to program point.
+     - Parameters:
+        - time: A moving time to position.
+     */
     public func moving(time: Float) -> (position: SCNAction, rotation: SCNAction)
     {
         let moving_position = SCNVector3(y, z, x) //Convert location to scnvector

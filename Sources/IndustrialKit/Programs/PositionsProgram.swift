@@ -290,33 +290,6 @@ public class PositionsProgram: Identifiable, Equatable
         }
     }
     
-    //MARK: - Create moving group for robot
-    
-    ///Returns a SCNAction arrays for location and rotation movements to each program points.
-    public func points_moving_group(move_time: TimeInterval) -> (moving: [SCNAction], rotation: [SCNAction])
-    {
-        var moving_position: SCNVector3
-        var moving_rotation: [Float] = [0.0, 0.0, 0.0]
-        
-        var movings_array = [SCNAction]() //Position moving array by position program
-        var movings_array2 = [SCNAction]() //Rotation moving array by position program for tool node
-        
-        if points.count > 0
-        {
-            for point in points
-            {
-                moving_position = SCNVector3(point.y, point.z, point.x) //Convert location to scnvector
-                moving_rotation = [point.p.to_rad, point.w.to_rad, 0] //Get rotation from from position point
-                
-                //Append scnactions
-                movings_array.append(SCNAction.group([SCNAction.move(to: moving_position, duration: move_time), SCNAction.rotateTo(x: CGFloat(moving_rotation[0]), y: CGFloat(moving_rotation[1]), z: CGFloat(moving_rotation[2]), duration: move_time)]))
-                movings_array2.append(SCNAction.rotateTo(x: 0, y: 0, z: CGFloat(point.r.to_rad), duration: move_time))
-            }
-        }
-        
-        return (movings_array, movings_array2)
-    }
-    
     //MARK: - Work with file system
     
     ///Returns a codable file structure for positions program.
