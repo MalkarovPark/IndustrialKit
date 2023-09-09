@@ -510,7 +510,7 @@ public class Robot: WorkspaceObject
     
     private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
     {
-        DispatchQueue.global(qos: .background).async
+        DispatchQueue.global(qos: .userInteractive).async
         {
             self.pointer_node?.runAction(self.programs[self.selected_program_index].points[self.target_point_index].moving(time: self.move_time ?? 1).position)
             {
