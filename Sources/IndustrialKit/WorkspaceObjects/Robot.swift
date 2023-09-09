@@ -517,7 +517,7 @@ public class Robot: WorkspaceObject
         {
             while !(moving_finished && rotation_finished) && !cancel_task
             {
-                //current_pointer_position_select()
+                //wait...
             }
             
             moving_finished = false
@@ -548,17 +548,6 @@ public class Robot: WorkspaceObject
         if demo == true
         {
             //Move to point for virtual robot
-            /*pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
-            {
-                self.moving_finished = true
-                self.select_new_point()
-            }
-            pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
-            {
-                self.rotation_finished = true
-                self.select_new_point()
-            }*/
-            
             nodes_move_to(position: programs[selected_program_index].points[target_point_index])
             {
                 self.select_new_point()
@@ -873,15 +862,7 @@ public class Robot: WorkspaceObject
     ///Update robot manipulator parts positions by target point.
     public func update_robot()
     {
-        /*if demo || !performed
-        {
-            model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-            update_statistics_data()
-            
-            current_pointer_position_select()
-        }*/
-        
-        //update_statistics_data()
+        update_statistics_data()
         model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
