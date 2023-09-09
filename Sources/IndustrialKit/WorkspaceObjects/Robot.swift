@@ -520,16 +520,19 @@ public class Robot: WorkspaceObject
                 //current_pointer_position_select()
             }
             
+            moving_finished = false
+            rotation_finished = false
+            
             if cancel_task
             {
                 pointer_node?.removeAllActions()
                 pointer_node_internal?.removeAllActions()
                 cancel_task = false
             }
-            
-            moving_finished = false
-            rotation_finished = false
-            completion()
+            else
+            {
+                completion()
+            }
         }
     }
     
