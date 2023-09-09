@@ -512,9 +512,6 @@ public class Robot: WorkspaceObject
     {
         DispatchQueue.global(qos: .default).async
         {
-            self.moving_finished = false
-            self.rotation_finished = false
-            
             self.pointer_node?.runAction(self.programs[self.selected_program_index].points[self.target_point_index].moving(time: self.move_time ?? 1).position)
             {
                 self.moving_finished = true
