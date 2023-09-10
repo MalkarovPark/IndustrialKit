@@ -529,7 +529,7 @@ public class Robot: WorkspaceObject
         
         func check_completion()
         {
-            if self.moving_finished && self.rotation_finished
+            if (self.moving_finished && self.rotation_finished) || self.cancel_task
             {
                 completion()
             }
