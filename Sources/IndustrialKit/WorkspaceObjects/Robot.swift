@@ -615,6 +615,7 @@ public class Robot: WorkspaceObject
     private func reset_model()
     {
         cancel_task = true
+        remove_movement_actions()
     }
     
     //MARK: Performation cycle
