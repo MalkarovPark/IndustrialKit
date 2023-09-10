@@ -531,7 +531,15 @@ public class Robot: WorkspaceObject
         {
             if (self.moving_finished && self.rotation_finished) || self.cancel_task
             {
-                completion()
+                if self.cancel_task
+                {
+                    self.cancel_task = false
+                    self.remove_movement_actions()
+                }
+                else
+                {
+                    completion()
+                }
             }
         }
         
