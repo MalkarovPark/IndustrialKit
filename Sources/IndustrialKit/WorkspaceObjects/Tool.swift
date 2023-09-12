@@ -552,7 +552,6 @@ public class Tool: WorkspaceObject
             {
                 unit_node = _node
                 stopped = true
-                print((_node.name ?? "") + " is tool")
             }
         }
         
