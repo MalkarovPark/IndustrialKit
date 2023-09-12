@@ -494,6 +494,7 @@ public class Robot: WorkspaceObject
     ///Selects current pointer position.
     public func current_pointer_position_select()
     {
+        update_statistics_data()
         model_controller.current_pointer_position_select()
     }
     
@@ -796,8 +797,7 @@ public class Robot: WorkspaceObject
         
         update_location()
         update_rotation()
-        //model_controller.update_robot() //Updates robot model by target position.
-        //update_position() //Update robot parts position on robot connection
+        //model_controller.update_robot() //Updates robot model by target position. Update robot parts position on robot connection
         
         //Pass model controller to connector
         /*if update_model_by_connector
@@ -822,13 +822,6 @@ public class Robot: WorkspaceObject
         {
             model_controller.pointer_rotation = pointer_rotation
         }
-    }
-    
-    ///Update robot manipulator parts positions by target point.
-    public func update_robot()
-    {
-        update_statistics_data()
-        model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
     //MARK: Cell box handling
