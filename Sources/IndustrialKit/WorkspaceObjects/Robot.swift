@@ -552,6 +552,7 @@ public class Robot: WorkspaceObject
             performed = false
             moving_completed = true
             current_pointer_position_select()
+            pointer_position_to_robot()
             
             finish_handler()
         }
@@ -614,8 +615,6 @@ public class Robot: WorkspaceObject
             if demo
             {
                 model_controller.reset_model()
-                //pointer_node?.removeAllActions()
-                //pointer_node_internal?.removeAllActions()
             }
             else
             {
