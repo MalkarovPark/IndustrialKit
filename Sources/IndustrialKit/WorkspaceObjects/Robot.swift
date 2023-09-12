@@ -715,10 +715,10 @@ public class Robot: WorkspaceObject
                 connector.pause()
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
+            /*DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
             {
                 self.current_pointer_position_select()
-            }
+            }*/
         }
     }
     
@@ -738,7 +738,7 @@ public class Robot: WorkspaceObject
                 connector.pause()
             }
             
-            current_pointer_position_select()
+            //current_pointer_position_select()
             performed = false
             target_point_index = 0
             
