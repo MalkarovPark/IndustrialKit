@@ -205,19 +205,19 @@ open class RobotModelController: ModelController
     ///Rotation finished flag.
     private var rotation_finished = false
     
-    /*private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
+    private func nodes_move_to(position: PositionPoint, move_time: Float?, rotate_time: Float?, completion: @escaping () -> Void)
     {
         self.moving_finished = false
         self.rotation_finished = false
         self.cancel_task = false
         
-        pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
+        pointer_node?.runAction(position.moving(time: move_time ?? 1).position)
         {
             self.moving_finished = true
             check_completion()
         }
         
-        pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
+        pointer_node_internal?.runAction(position.moving(time: rotate_time ?? 1).rotation)
         {
             self.rotation_finished = true
             check_completion()
@@ -238,7 +238,7 @@ open class RobotModelController: ModelController
                 }
             }
         }
-    }*/
+    }
     
     private func remove_movement_actions()
     {

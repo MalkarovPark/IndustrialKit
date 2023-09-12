@@ -508,7 +508,7 @@ public class Robot: WorkspaceObject
     ///Rotation finished flag.
     private var rotation_finished = false
     
-    private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
+    private func nodes_move_to(position: PositionPoint, move_time: Float?, rotate_time: Float?, completion: @escaping () -> Void)
     {
         self.moving_finished = false
         self.rotation_finished = false
@@ -562,7 +562,7 @@ public class Robot: WorkspaceObject
         if demo == true
         {
             //Move to point for virtual robot
-            nodes_move_to(position: programs[selected_program_index].points[target_point_index])
+            nodes_move_to(position: programs[selected_program_index].points[target_point_index], move_time: move_time, rotate_time: rotate_time)
             {
                 self.select_new_point()
             }
