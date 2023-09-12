@@ -795,25 +795,23 @@ public class Robot: WorkspaceObject
     ///Sets robot pointer node location.
     private func update_location()
     {
-        pointer_node?.position = get_pointer_position().location
+        if !performed
+        {
+            model_controller.pointer_location = pointer_location
+        }
         
-        update_robot()
+        //update_robot()
     }
     
     ///Sets robot pointer node rotation.
     private func update_rotation()
     {
-        #if os(macOS)
-        pointer_node?.eulerAngles.x = CGFloat(get_pointer_position().rot_y)
-        pointer_node?.eulerAngles.y = CGFloat(get_pointer_position().rot_z)
-        pointer_node_internal?.eulerAngles.z = CGFloat(get_pointer_position().rot_x)
-        #else
-        pointer_node?.eulerAngles.x = get_pointer_position().rot_y
-        pointer_node?.eulerAngles.y = get_pointer_position().rot_z
-        pointer_node_internal?.eulerAngles.z = get_pointer_position().rot_x
-        #endif
+        if !performed
+        {
+            model_controller.pointer_rotation = pointer_rotation
+        }
         
-        update_robot()
+        //update_robot()
     }
     
     ///Update robot manipulator parts positions by target point.
