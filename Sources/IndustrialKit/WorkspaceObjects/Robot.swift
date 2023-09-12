@@ -558,7 +558,7 @@ public class Robot: WorkspaceObject
             
             while !(self.moving_finished && self.rotation_finished) && !self.cancel_task
             {
-                //wait...
+                //current_pointer_position_select()
             }
             
             self.moving_finished = false
@@ -589,7 +589,7 @@ public class Robot: WorkspaceObject
             
             while !(moving_finished && rotation_finished) && !cancel_task
             {
-                //wait...
+                //current_pointer_position_select()
             }
             
             moving_finished = false
