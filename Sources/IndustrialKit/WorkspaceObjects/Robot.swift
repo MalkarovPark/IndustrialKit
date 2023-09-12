@@ -581,6 +581,9 @@ public class Robot: WorkspaceObject
         else
         {
             //Remove all action if moving was perform
+            pointer_location = model_controller.pointer_location
+            pointer_rotation = model_controller.pointer_rotation
+            
             performed = false
             pause_handler()
         }
