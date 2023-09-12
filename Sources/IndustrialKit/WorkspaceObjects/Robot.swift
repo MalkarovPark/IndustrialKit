@@ -562,13 +562,12 @@ public class Robot: WorkspaceObject
         //Handling robot moving
         if !performed
         {
-            if demo //Pass workcell parameters to model controller
-            {
-                model_controller.origin_location = origin_location
-                model_controller.origin_rotation = origin_rotation
-                model_controller.space_scale = space_scale
-            }
-            else //Pass workcell parameters to connector
+            //Pass workcell parameters to model controller
+            /*model_controller.origin_location = origin_location
+            model_controller.origin_rotation = origin_rotation
+            model_controller.space_scale = space_scale*/
+            
+            if !demo //Pass workcell parameters to model controller
             {
                 connector.origin_location = origin_location
                 connector.origin_rotation = origin_rotation
@@ -776,6 +775,11 @@ public class Robot: WorkspaceObject
         //Place and scale cell box
         robot_location_place()
         update_space_scale() //Set space scale by connected robot parameters
+        
+        //Pass workcell parameters to model controller
+        model_controller.origin_location = origin_location
+        model_controller.origin_rotation = origin_rotation
+        model_controller.space_scale = space_scale
         
         update_location()
         update_rotation()
