@@ -169,54 +169,87 @@ open class RobotModelController: ModelController
         
     }
     
-    private var moving_task = Task {}
-    
-    public var canceled = true
+    /**
+     A robot pointer location.
+     
+     Array with three coordinates – [*x*, *y*, *z*].
+     */
+    public var pointer_location: [Float] = [0.0, 0.0, 0.0]
     
     /**
-     Performs node action by target point.
+     A robot pointer rotation.
      
-     - Parameters:
-        - point: The target point performed by the robot visual model.
+     Array with three angles – [*r*, *p*, *w*].
      */
-    public func nodes_move_to(position: PositionPoint)
+    public var pointer_rotation: [Float] = [0.0, 0.0, 0.0]
+    
+    ///Robot teach pointer.
+    public var pointer_node: SCNNode?
+    
+    ///Node for internal element.
+    public var pointer_node_internal: SCNNode?
+    
+    public func current_pointer_position_select()
     {
-        /*pointer_node?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(move_time ?? 1)).moving[target_point_index])
-        {
-            self.moving_finished = true
-            self.select_new_point()
-        }
-        pointer_node_internal?.runAction(programs[selected_program_index].points_moving_group(move_time: TimeInterval(rotate_time ?? 1)).rotation[target_point_index])
-        {
-            self.rotation_finished = true
-            self.select_new_point()
-        }*/
-        
-        canceled = false
-        moving_task = Task
-        {
-            //self.move_to(point: point)
-            
-            if canceled == false
-            {
-                //canceled = true
-                //completion()
-            }
-            canceled = false
-        }
+        pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
+        pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
     }
     
-    /**
-     Performs node action by operation code with completion handler.
-     
-     - Parameters:
-     - point: The target point performed by the robot visual model.
-        - completion: A completion block that is calls when the action completes.
-     */
-    open func nodes_perform(position: PositionPoint, completion: @escaping () -> Void)
+    private var moving_task = Task {}
+    
+    private var cancel_task = false
+    
+    ///Moving finished flag.
+    private var moving_finished = false
+    
+    ///Rotation finished flag.
+    private var rotation_finished = false
+    
+    /*private func nodes_move_to(position: PositionPoint, completion: @escaping () -> Void)
     {
-        nodes_move_to(position: position)
-        completion()
+        self.moving_finished = false
+        self.rotation_finished = false
+        self.cancel_task = false
+        
+        pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
+        {
+            self.moving_finished = true
+            check_completion()
+        }
+        
+        pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
+        {
+            self.rotation_finished = true
+            check_completion()
+        }
+        
+        func check_completion()
+        {
+            if (self.moving_finished && self.rotation_finished) || self.cancel_task
+            {
+                if self.cancel_task
+                {
+                    self.remove_movement_actions()
+                    //self.cancel_task = false
+                }
+                else
+                {
+                    completion()
+                }
+            }
+        }
+    }*/
+    
+    private func remove_movement_actions()
+    {
+        pointer_node?.removeAllActions()
+        pointer_node_internal?.removeAllActions()
+    }
+    
+    open override func reset_model()
+    {
+        cancel_task = true
+        remove_movement_actions()
     }
 }
 

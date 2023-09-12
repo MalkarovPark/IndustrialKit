@@ -517,14 +517,12 @@ public class Robot: WorkspaceObject
         pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
         {
             self.moving_finished = true
-            
             check_completion()
         }
         
         pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
         {
             self.rotation_finished = true
-            
             check_completion()
         }
         
@@ -543,68 +541,6 @@ public class Robot: WorkspaceObject
                 }
             }
         }
-        
-        /*DispatchQueue.global(qos: .default).async
-        {
-            self.pointer_node?.runAction(self.programs[self.selected_program_index].points[self.target_point_index].moving(time: self.move_time ?? 1).position)
-            {
-                self.moving_finished = true
-            }
-            
-            self.pointer_node_internal?.runAction(self.programs[self.selected_program_index].points[self.target_point_index].moving(time: self.rotate_time ?? 1).rotation)
-            {
-                self.rotation_finished = true
-            }
-            
-            while !(self.moving_finished && self.rotation_finished) && !self.cancel_task
-            {
-                //current_pointer_position_select()
-            }
-            
-            self.moving_finished = false
-            self.rotation_finished = false
-            
-            if self.cancel_task
-            {
-                self.cancel_task = false
-                self.remove_movement_actions()
-            }
-            else
-            {
-                completion()
-            }
-        }*/
-        
-        /*moving_task = Task
-        {
-            pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
-            {
-                self.moving_finished = true
-            }
-            
-            pointer_node_internal?.runAction(programs[selected_program_index].points[target_point_index].moving(time: rotate_time ?? 1).rotation)
-            {
-                self.rotation_finished = true
-            }
-            
-            while !(moving_finished && rotation_finished) && !cancel_task
-            {
-                //current_pointer_position_select()
-            }
-            
-            moving_finished = false
-            rotation_finished = false
-            
-            if cancel_task
-            {
-                cancel_task = false
-                remove_movement_actions()
-            }
-            else
-            {
-                completion()
-            }
-        }*/
     }
     
     private func remove_movement_actions()
