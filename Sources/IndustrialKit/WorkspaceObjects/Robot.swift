@@ -790,6 +790,7 @@ public class Robot: WorkspaceObject
     {
         update_location()
         update_rotation()
+        model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
     ///Sets robot pointer node location.
