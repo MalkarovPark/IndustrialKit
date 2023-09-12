@@ -581,9 +581,7 @@ public class Robot: WorkspaceObject
         else
         {
             //Remove all action if moving was perform
-            pointer_location = model_controller.pointer_location
-            pointer_rotation = model_controller.pointer_rotation
-            
+            pointer_position_to_robot()
             performed = false
             pause_handler()
         }
@@ -593,9 +591,6 @@ public class Robot: WorkspaceObject
             if demo
             {
                 model_controller.reset_model()
-                //reset_model()
-                //pointer_node?.removeAllActions()
-                //pointer_node_internal?.removeAllActions()
             }
             else
             {
@@ -626,11 +621,26 @@ public class Robot: WorkspaceObject
                 connector.pause()
             }
             
-            //current_pointer_position_select()
+            pointer_position_to_robot()
             performed = false
             target_point_index = 0
             
             clear_chart_data()
+        }
+    }
+    
+    ///Pass pointer position from model controller or connector to robot.
+    private func pointer_position_to_robot()
+    {
+        if demo
+        {
+            pointer_location = model_controller.pointer_location
+            pointer_rotation = model_controller.pointer_rotation
+        }
+        else
+        {
+            pointer_location = connector.pointer_location
+            pointer_rotation = connector.pointer_rotation
         }
     }
     

@@ -259,6 +259,20 @@ open class RobotConnector: WorkspaceObjectConnector
     public var model_controller: RobotModelController?
     
     /**
+     A robot pointer location.
+     
+     Array with three coordinates – [*x*, *y*, *z*].
+     */
+    public var pointer_location: [Float] = [0.0, 0.0, 0.0]
+    
+    /**
+     A robot pointer rotation.
+     
+     Array with three angles – [*r*, *p*, *w*].
+     */
+    public var pointer_rotation: [Float] = [0.0, 0.0, 0.0]
+    
+    /**
      A robot cell origin location.
      
      Array with three coordinates – [*x*, *y*, *z*].
