@@ -783,7 +783,7 @@ public class Robot: WorkspaceObject
         
         update_location()
         update_rotation()
-        model_controller.update_robot() //Updates robot model by target position.
+        //model_controller.update_robot() //Updates robot model by target position.
         //update_position() //Update robot parts position on robot connection
         
         //Pass model controller to connector
