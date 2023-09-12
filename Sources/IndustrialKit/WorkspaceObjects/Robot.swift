@@ -512,6 +512,7 @@ public class Robot: WorkspaceObject
     {
         self.moving_finished = false
         self.rotation_finished = false
+        self.cancel_task = false
         
         pointer_node?.runAction(programs[selected_program_index].points[target_point_index].moving(time: move_time ?? 1).position)
         {
@@ -534,7 +535,7 @@ public class Robot: WorkspaceObject
                 if self.cancel_task
                 {
                     self.remove_movement_actions()
-                    self.cancel_task = false
+                    //self.cancel_task = false
                 }
                 else
                 {
