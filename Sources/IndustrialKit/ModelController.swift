@@ -175,6 +175,12 @@ open class RobotModelController: ModelController
      Array with three coordinates – [*x*, *y*, *z*].
      */
     public var pointer_location: [Float] = [0.0, 0.0, 0.0]
+    {
+        didSet
+        {
+            update_location()
+        }
+    }
     
     /**
      A robot pointer rotation.
@@ -182,6 +188,65 @@ open class RobotModelController: ModelController
      Array with three angles – [*r*, *p*, *w*].
      */
     public var pointer_rotation: [Float] = [0.0, 0.0, 0.0]
+    {
+        didSet
+        {
+            update_rotation()
+        }
+    }
+    
+    ///Sets robot pointer node location.
+    private func update_location()
+    {
+        pointer_node?.position = get_pointer_position().location
+        
+        update_robot()
+    }
+    
+    ///Sets robot pointer node rotation.
+    private func update_rotation()
+    {
+        #if os(macOS)
+        pointer_node?.eulerAngles.x = CGFloat(get_pointer_position().rot_y)
+        pointer_node?.eulerAngles.y = CGFloat(get_pointer_position().rot_z)
+        pointer_node_internal?.eulerAngles.z = CGFloat(get_pointer_position().rot_x)
+        #else
+        pointer_node?.eulerAngles.x = get_pointer_position().rot_y
+        pointer_node?.eulerAngles.y = get_pointer_position().rot_z
+        pointer_node_internal?.eulerAngles.z = get_pointer_position().rot_x
+        #endif
+        
+        update_robot()
+    }
+    
+    /**
+     A robot cell origin location.
+     
+     Array with three coordinates – [*x*, *y*, *z*].
+     */
+    public var origin_location = [Float](repeating: 0, count: 3)
+    
+    /**
+     A robot cell origin rotation.
+     
+     Array with three angles – [*r*, *p*, *w*].
+     */
+    public var origin_rotation = [Float](repeating: 0, count: 3)
+    
+    ///A robot cell box scale.
+    public var space_scale = [Float](repeating: 200, count: 3)
+    
+    ///Update robot manipulator parts positions by target point.
+    public func update_robot()
+    {
+        nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+    }
+    
+    ///Returns robot pointer position for nodes.
+    private func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
+    {
+        return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
+    }
     
     ///Robot teach pointer.
     public var pointer_node: SCNNode?
@@ -189,7 +254,7 @@ open class RobotModelController: ModelController
     ///Node for internal element.
     public var pointer_node_internal: SCNNode?
     
-    public func current_pointer_position_select()
+    public func current_pointer_position_select() //Call from internal – nodes_move_to function
     {
         pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]

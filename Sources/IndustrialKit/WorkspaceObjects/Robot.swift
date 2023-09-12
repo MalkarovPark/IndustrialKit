@@ -501,7 +501,7 @@ public class Robot: WorkspaceObject
     ///Selects and performs robot to point movement.
     public func move_to_next_point()
     {
-        if demo == true
+        if demo
         {
             //Move to point for virtual robot
             model_controller.nodes_move_to(position: programs[selected_program_index].points[target_point_index], move_time: move_time, rotate_time: rotate_time)
@@ -562,16 +562,22 @@ public class Robot: WorkspaceObject
         //Handling robot moving
         if !performed
         {
-            //Move to next point if moving was stop
-            performed = true
-            move_to_next_point()
-            
-            if !demo //Pass workcell parameters to connector
+            if demo //Pass workcell parameters to model controller
+            {
+                model_controller.origin_location = origin_location
+                model_controller.origin_rotation = origin_rotation
+                model_controller.space_scale = space_scale
+            }
+            else //Pass workcell parameters to connector
             {
                 connector.origin_location = origin_location
                 connector.origin_rotation = origin_rotation
                 connector.space_scale = space_scale
             }
+            
+            //Move to next point if moving was stop
+            performed = true
+            move_to_next_point()
         }
         else
         {
