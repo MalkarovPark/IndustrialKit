@@ -776,24 +776,14 @@ public class Robot: WorkspaceObject
         //Place and scale cell box
         robot_location_place()
         update_space_scale() //Set space scale by connected robot parameters
-        update_position() //Update robot parts position on robot connection
+        model_controller.update_robot() //Updates robot model by target position.
+        //update_position() //Update robot parts position on robot connection
         
         //Pass model controller to connector
         /*if update_model_by_connector
         {
             connector.model_controller = model_controller
         }*/
-    }
-    
-    ///Updates robot model by target position.
-    public func update_position()
-    {
-        model_controller.pointer_location = pointer_location
-        model_controller.pointer_rotation = pointer_rotation
-        
-        //update_location()
-        //update_rotation()
-        //model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
     ///Sets robot pointer node location.
@@ -803,8 +793,6 @@ public class Robot: WorkspaceObject
         {
             model_controller.pointer_location = pointer_location
         }
-        
-        //update_robot()
     }
     
     ///Sets robot pointer node rotation.
@@ -814,8 +802,6 @@ public class Robot: WorkspaceObject
         {
             model_controller.pointer_rotation = pointer_rotation
         }
-        
-        //update_robot()
     }
     
     ///Update robot manipulator parts positions by target point.
