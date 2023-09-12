@@ -40,7 +40,7 @@ open class ModelController
     }
     
     ///Removes all nodes in object model from controller.
-    public final func nodes_disconnect()
+    public func nodes_disconnect()
     {
         nodes.removeAll()
     }
@@ -195,8 +195,30 @@ open class RobotModelController: ModelController
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
     }
     
-    private var moving_task = Task {}
+    /**
+     Gets parts nodes links from model root node and pass to array.
+     
+     - Parameters:
+        - node: A root node of workspace object model.
+        - pointer: A node of pointer for robot.
+        - pointer_internal: A internal node of pointer for robot.
+     */
+    public func nodes_connect(_ node: SCNNode, pointer: SCNNode, pointer_internal: SCNNode)
+    {
+        nodes_connect(node)
+        pointer_node = pointer
+        pointer_node_internal = pointer_internal
+    }
     
+    public override func nodes_disconnect()
+    {
+        nodes.removeAll()
+        pointer_node = SCNNode()
+    }
+    
+    //private var moving_task = Task {}
+    
+    ///Cancel perform flag.
     private var cancel_task = false
     
     ///Moving finished flag.
@@ -205,7 +227,7 @@ open class RobotModelController: ModelController
     ///Rotation finished flag.
     private var rotation_finished = false
     
-    private func nodes_move_to(position: PositionPoint, move_time: Float?, rotate_time: Float?, completion: @escaping () -> Void)
+    public func nodes_move_to(position: PositionPoint, move_time: Float?, rotate_time: Float?, completion: @escaping () -> Void)
     {
         self.moving_finished = false
         self.rotation_finished = false

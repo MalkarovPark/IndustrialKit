@@ -494,65 +494,7 @@ public class Robot: WorkspaceObject
     ///Selects current pointer position.
     public func current_pointer_position_select()
     {
-        pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
-        pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
-    }
-    
-    private var moving_task = Task {}
-    
-    private var cancel_task = false
-    
-    ///Moving finished flag.
-    private var moving_finished = false
-    
-    ///Rotation finished flag.
-    private var rotation_finished = false
-    
-    private func nodes_move_to(position: PositionPoint, move_time: Float?, rotate_time: Float?, completion: @escaping () -> Void)
-    {
-        self.moving_finished = false
-        self.rotation_finished = false
-        self.cancel_task = false
-        
-        pointer_node?.runAction(position.moving(time: move_time ?? 1).position)
-        {
-            self.moving_finished = true
-            check_completion()
-        }
-        
-        pointer_node_internal?.runAction(position.moving(time: rotate_time ?? 1).rotation)
-        {
-            self.rotation_finished = true
-            check_completion()
-        }
-        
-        func check_completion()
-        {
-            if (self.moving_finished && self.rotation_finished) || self.cancel_task
-            {
-                if self.cancel_task
-                {
-                    self.remove_movement_actions()
-                    //self.cancel_task = false
-                }
-                else
-                {
-                    completion()
-                }
-            }
-        }
-    }
-    
-    private func remove_movement_actions()
-    {
-        pointer_node?.removeAllActions()
-        pointer_node_internal?.removeAllActions()
-    }
-    
-    private func reset_model()
-    {
-        cancel_task = true
-        remove_movement_actions()
+        model_controller.current_pointer_position_select()
     }
     
     //MARK: Performation cycle
@@ -562,7 +504,7 @@ public class Robot: WorkspaceObject
         if demo == true
         {
             //Move to point for virtual robot
-            nodes_move_to(position: programs[selected_program_index].points[target_point_index], move_time: move_time, rotate_time: rotate_time)
+            model_controller.nodes_move_to(position: programs[selected_program_index].points[target_point_index], move_time: move_time, rotate_time: rotate_time)
             {
                 self.select_new_point()
             }
@@ -642,7 +584,8 @@ public class Robot: WorkspaceObject
         {
             if demo
             {
-                reset_model()
+                model_controller.reset_model()
+                //reset_model()
                 //pointer_node?.removeAllActions()
                 //pointer_node_internal?.removeAllActions()
             }
@@ -666,7 +609,7 @@ public class Robot: WorkspaceObject
         {
             if demo
             {
-                reset_model()
+                model_controller.reset_model()
                 //pointer_node?.removeAllActions()
                 //pointer_node_internal?.removeAllActions()
             }
@@ -811,7 +754,7 @@ public class Robot: WorkspaceObject
         self.tool_node = node?.childNode(withName: "tool", recursively: true)
         self.unit_node?.addChildNode(node ?? SCNNode())
         model_controller.nodes_disconnect()
-        model_controller.nodes_connect(node ?? SCNNode())
+        model_controller.nodes_connect(node ?? SCNNode(), pointer: self.pointer_node ?? SCNNode(), pointer_internal: self.pointer_node_internal ?? SCNNode())
         if lengths.count > 0
         {
             model_controller.lengths = lengths
