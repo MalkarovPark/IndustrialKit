@@ -788,9 +788,12 @@ public class Robot: WorkspaceObject
     ///Updates robot model by target position.
     public func update_position()
     {
-        update_location()
-        update_rotation()
-        model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        model_controller.pointer_location = pointer_location
+        model_controller.pointer_rotation = pointer_rotation
+        
+        //update_location()
+        //update_rotation()
+        //model_controller.nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
     ///Sets robot pointer node location.
