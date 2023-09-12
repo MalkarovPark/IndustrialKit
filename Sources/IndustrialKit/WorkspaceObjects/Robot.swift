@@ -776,6 +776,9 @@ public class Robot: WorkspaceObject
         //Place and scale cell box
         robot_location_place()
         update_space_scale() //Set space scale by connected robot parameters
+        
+        update_location()
+        update_rotation()
         model_controller.update_robot() //Updates robot model by target position.
         //update_position() //Update robot parts position on robot connection
         
