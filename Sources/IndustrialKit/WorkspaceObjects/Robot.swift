@@ -491,11 +491,15 @@ public class Robot: WorkspaceObject
         return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
     
-    ///Selects current pointer position.
-    public func current_pointer_position_select()
+    /**
+     Updates robot model by current pointer position.
+     
+     > Placed in the public protection level for normal synchronization in SceneKit.
+     */
+    public func update_model()
     {
         update_statistics_data()
-        model_controller.current_pointer_position_select()
+        model_controller.update_model()
     }
     
     //MARK: Performation cycle
@@ -551,7 +555,7 @@ public class Robot: WorkspaceObject
             target_point_index = 0
             performed = false
             moving_completed = true
-            current_pointer_position_select()
+            update_model()
             pointer_position_to_robot()
             
             finish_handler()
@@ -602,7 +606,7 @@ public class Robot: WorkspaceObject
             
             /*DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
             {
-                self.current_pointer_position_select()
+                self.update_model()
             }*/
         }
     }
@@ -1023,7 +1027,7 @@ public class Robot: WorkspaceObject
     ///Index of chart element.
     private var chart_element_index = 0
     
-    ///Update statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
+    ///Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     public func update_statistics_data()
     {
         if charts_data == nil

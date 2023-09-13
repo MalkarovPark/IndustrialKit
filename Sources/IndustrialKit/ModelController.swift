@@ -254,7 +254,12 @@ open class RobotModelController: ModelController
     ///Node for internal element.
     public var pointer_node_internal: SCNNode?
     
-    public func current_pointer_position_select() //Call from internal – nodes_move_to function
+    /**
+     Updates robot model by current pointer position.
+     
+     > Can be used within class, but for normal synchronization in SceneKit it is placed in the public protection level.
+     */
+    public func update_model() //Call from internal – nodes_move_to function
     {
         pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]

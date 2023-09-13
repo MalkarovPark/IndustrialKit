@@ -165,7 +165,7 @@ public class Workspace: ObservableObject
             
             edited_object_node?.name = name
             selected_robot.workcell_connect(scene: scene, name: name, connect_camera: false)
-            selected_robot.current_pointer_position_select()
+            selected_robot.update_model()
         case .tool:
             //Deselect other
             deselect_robot()
@@ -2034,7 +2034,7 @@ public class Workspace: ObservableObject
                     
                     unit_node?.name = robot.name //Select robot cell node
                     robot.workcell_connect(scene: scene, name: robot.name!, connect_camera: connect_camera) //Connect to robot model, place manipulator
-                    robot.current_pointer_position_select() //Update robot by current position
+                    robot.update_model() //Update robot by current position
                     
                     apply_bit_mask(node: robot.unit_node ?? SCNNode(), Workspace.robot_bit_mask)
                     
