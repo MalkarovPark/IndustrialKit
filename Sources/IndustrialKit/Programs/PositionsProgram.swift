@@ -44,6 +44,13 @@ public class PositionsProgram: Identifiable, Equatable
         self.name = name ?? "None"
     }
     
+    ///Inits positions program by codable positions program structure.
+    public init(program_struct: ProgramStruct)
+    {
+        self.name = program_struct.name
+        self.points = program_struct.points
+    }
+    
     //MARK: - Point manage functions
     
     /**

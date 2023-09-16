@@ -1216,16 +1216,11 @@ public class Robot: WorkspaceObject
     ///Convert array of codable positions programs structs to robot programs.
     private func read_programs(robot_struct: RobotStruct)
     {
-        var viewed_program: PositionsProgram?
-        
         if robot_struct.programs.count > 0
         {
             for ProgramStruct in robot_struct.programs
             {
-                viewed_program = PositionsProgram(name: ProgramStruct.name)
-                viewed_program?.points = ProgramStruct.points
-                
-                programs.append(viewed_program!)
+                programs.append(PositionsProgram(program_struct: ProgramStruct))
             }
         }
     }

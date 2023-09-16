@@ -181,3 +181,56 @@ internal func get_connection_parameters(connector: WorkspaceObjectConnector) -> 
         return nil
     }
 }
+
+//MARK: - Pass functions
+/**
+ Pass selected preferences between robots.
+ 
+ - Parameters:
+    - origin_location: A flag to pass origin location.
+    - origin_rotation: A flag to pass origin rotation.
+    - space_scale: A flag to pass space scale.
+    - from: A robot that preferences pass from.
+    - to: Robot that preferences pass to.
+ */
+public func pass_robot_preferences(_ origin_location: Bool, _ origin_rotation: Bool, _ space_scale: Bool, from: Robot, to: Robot)
+{
+    if origin_location
+    {
+        to.origin_location = from.origin_location
+    }
+    
+    if origin_rotation
+    {
+        to.origin_rotation = from.origin_rotation
+    }
+    
+    if space_scale
+    {
+        to.space_scale = from.space_scale
+    }
+}
+
+/**
+ Pass selected programs between robots.
+ 
+ - Parameters:
+    - names: Names of passed programs.
+    - from: A robot that programs pass from.
+    - to: Robot that programs pass to.
+ */
+public func pass_positions_programs(names: [String], from: Robot, to: Robot)
+{
+    let programs = from.file_info.programs
+    
+    for name in names
+    {
+        for program in programs
+        {
+            if program.name == name
+            {
+                to.add_program(PositionsProgram(program_struct: program))
+            }
+        }
+    }
+}
