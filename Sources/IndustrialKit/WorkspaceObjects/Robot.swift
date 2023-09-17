@@ -794,8 +794,8 @@ public class Robot: WorkspaceObject
         update_space_scale() //Set space scale by connected robot parameters
         
         //Pass workcell parameters to model controller
-        model_controller.origin_location = origin_location
-        model_controller.origin_rotation = origin_rotation
+        //model_controller.origin_location = origin_location
+        //model_controller.origin_rotation = origin_rotation
         model_controller.space_scale = space_scale
         
         update_location()
@@ -866,6 +866,9 @@ public class Robot: WorkspaceObject
     ///Places cell workspace relative to manipulator.
     public func robot_location_place()
     {
+        model_controller.origin_location = origin_location
+        model_controller.origin_rotation = origin_rotation
+        
         let vertical_length = model_controller.lengths.last
         
         //MARK: Place workcell box
