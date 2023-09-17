@@ -1635,7 +1635,7 @@ public class Workspace: ObservableObject
     }
     
     ///Clears all data registers.
-    public func clear_regisers()
+    public func clear_registers()
     {
         registers = [Int](repeating: 0, count: 256)
     }
