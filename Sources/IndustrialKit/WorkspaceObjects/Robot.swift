@@ -837,6 +837,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
+            robot_location_place()
             update_location()
         }
     }
@@ -850,6 +851,7 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
+            robot_location_place()
             update_rotation()
         }
     }
