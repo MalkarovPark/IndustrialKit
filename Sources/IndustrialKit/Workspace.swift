@@ -1626,7 +1626,7 @@ public class Workspace: ObservableObject
     private var buffer: Int? = nil
     
     ///An array of pushed info data.
-    private var registers: [Int?] = [Int?](repeating: nil, count: 256)
+    public var registers: [Int?] = [Int?](repeating: nil, count: 256)
     
     /**
      Pushes info from tool to buffer.
