@@ -1626,7 +1626,48 @@ public class Workspace: ObservableObject
     private var buffer: Int? = nil
     
     ///An array of pushed info data.
-    public var registers: [Int?] = [Int?](repeating: nil, count: 256)
+    private var registers: [Int?] = [Int?](repeating: nil, count: 256)
+    
+    ///An public array of info data registers.
+    public var data_regisers: [Int?]
+    {
+        return registers
+    }
+    
+    ///Clears all data registers.
+    public func clear_regisers()
+    {
+        registers = [Int?](repeating: nil, count: 256)
+    }
+    
+    /**
+     Clears selected register data.
+     
+     - Parameters:
+        - index: An index of register to be cleared.
+     */
+    public func clear_regiser(_ index: Int)
+    {
+        if index < 256 && index >= 0
+        {
+            registers[index] = nil
+        }
+    }
+    
+    /**
+     Updates selected register data.
+     
+     - Parameters:
+        - index: An index of register to be updated.
+        - new_value: A new data register value.
+     */
+    public func update_register(_ index: Int, new_value: Int)
+    {
+        if index < 256 && index >= 0
+        {
+            registers[index] = new_value
+        }
+    }
     
     /**
      Pushes info from tool to buffer.
