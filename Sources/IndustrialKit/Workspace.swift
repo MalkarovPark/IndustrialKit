@@ -1623,13 +1623,13 @@ public class Workspace: ObservableObject
     }
     
     ///A holded info value for pass to next elements.
-    private var buffer: Int? = nil
+    private var buffer: Int = 0
     
     ///An array of pushed info data.
-    private var registers: [Int?] = [Int?](repeating: nil, count: 256)
+    private var registers: [Int] = [Int](repeating: 0, count: 256)
     
     ///An public array of info data registers.
-    public var data_regisers: [Int?]
+    public var data_regisers: [Int]
     {
         return registers
     }
@@ -1637,7 +1637,7 @@ public class Workspace: ObservableObject
     ///Clears all data registers.
     public func clear_regisers()
     {
-        registers = [Int?](repeating: nil, count: 256)
+        registers = [Int](repeating: 0, count: 256)
     }
     
     /**
@@ -1650,7 +1650,7 @@ public class Workspace: ObservableObject
     {
         if index < 256 && index >= 0
         {
-            registers[index] = nil
+            registers[index] = 0
         }
     }
     
@@ -1678,7 +1678,7 @@ public class Workspace: ObservableObject
     {
         if next_element_accepting
         {
-            buffer = tool_by_name(name).info_code
+            buffer = tool_by_name(name).info_code ?? 0
         }
         
         select_new_element()
@@ -1779,7 +1779,7 @@ public class Workspace: ObservableObject
             }
         }
         
-        buffer = nil
+        buffer = 0
         select_new_element()
     }
     
@@ -1793,7 +1793,7 @@ public class Workspace: ObservableObject
             }
         }
         
-        buffer = nil
+        buffer = 0
         select_new_element()
     }
     
