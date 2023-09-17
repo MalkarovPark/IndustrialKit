@@ -1629,7 +1629,7 @@ public class Workspace: ObservableObject
     private var registers: [Int] = [Int](repeating: 0, count: 256)
     
     ///An public array of info data registers.
-    public var data_regisers: [Int]
+    public var data_registers: [Int]
     {
         return registers
     }
@@ -1646,7 +1646,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - index: An index of register to be cleared.
      */
-    public func clear_regiser(_ index: Int)
+    public func clear_register(_ index: Int)
     {
         if index < 256 && index >= 0
         {
