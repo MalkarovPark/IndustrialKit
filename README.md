@@ -45,7 +45,7 @@ The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS and requ
 
 ### Installation with SPM
 
-CareKit can be installed via SPM. Create a new Xcode project and navigate to `File > Swift Packages > Add Package Dependency`. Enter the url `https://github.com/MalkarovPark/IndustrialKit` and tap `Next`. Choose the `main` branch, and on the next screen, check off the packages as needed.
+CareKit can be installed via SPM. Create a new Xcode project and navigate to `File > Swift Packages > Add Package Dependency`. Enter the url `https://github.com/MalkarovPark/IndustrialKit` and tap `Next`. Select the `main` branch, and on the next screen, check off the packages as needed.
 
 <img width="1000" alt="embedded-framework" src="https://user-images.githubusercontent.com/62340924/207657493-af8eae06-1e02-4c3d-a330-730225a19306.png">
 
