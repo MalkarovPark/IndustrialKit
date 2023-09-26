@@ -529,10 +529,12 @@ public class Workspace: ObservableObject
             case .robot:
                 selected_robot.is_placed = false
                 deselect_robot()
+                elements_check()
             case .tool:
                 selected_tool.is_placed = false
                 remove_attachment()
                 deselect_tool()
+                elements_check()
             case .part:
                 selected_part.is_placed = false
                 deselect_part()
