@@ -1676,7 +1676,7 @@ public class Workspace: ObservableObject
      */
     private func observe_from(name: String)
     {
-        if next_element_accepting
+        if next_push_accepting
         {
             buffer = tool_by_name(name).info_code ?? 0
         }
@@ -1684,8 +1684,8 @@ public class Workspace: ObservableObject
         select_new_element()
     }
     
-    ///Checks if next element accept to pass data.
-    private var next_element_accepting: Bool
+    ///Checks if next element accepts to push data.
+    private var next_push_accepting: Bool
     {
         if selected_element_index < elements.count - 1
         {
@@ -1706,8 +1706,8 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///Checks if next element is logic.
-    private var next_logic_accepting: Bool
+    ///Checks if next element accepts to pop data.
+    private var next_pop_accepting: Bool
     {
         if selected_element_index < elements.count - 1
         {
@@ -1719,11 +1719,21 @@ public class Workspace: ObservableObject
             }
             else
             {
-                return false
+                if next_element_data.element_type == .modifier && next_element_data.modifier_type == .changer && next_element_data.is_push
+                {
+                    return true
+                }
+                else
+                {
+                    buffer = 0
+                    return false
+                }
+                //return false
             }
         }
         else
         {
+            buffer = 0
             return false
         }
     }
@@ -1735,9 +1745,10 @@ public class Workspace: ObservableObject
      */
     private func push_info_to(index: Int)
     {
-        if index < 256
+        if index < 256 && next_push_accepting
         {
             registers[index] = buffer
+            buffer = 0
         }
         
         select_new_element()
@@ -1750,9 +1761,9 @@ public class Workspace: ObservableObject
      */
     private func pop_info_from(index: Int)
     {
-        if index < 256 && next_logic_accepting
+        if index < 256 && next_pop_accepting
         {
-            registers[index] = buffer
+            buffer = registers[index]
         }
         
         select_new_element()
