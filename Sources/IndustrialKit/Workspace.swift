@@ -648,6 +648,7 @@ public class Workspace: ObservableObject
         if robots.indices.contains(index)
         {
             robots.remove(at: index)
+            elements_check()
         }
     }
     
@@ -860,6 +861,7 @@ public class Workspace: ObservableObject
         if tools.indices.contains(index)
         {
             tools.remove(at: index)
+            elements_check()
         }
     }
     
@@ -1278,7 +1280,7 @@ public class Workspace: ObservableObject
     }
     
     //MARK: Workspace progem elements checking functions
-    public func elements_check() //Select check by element type
+    public func elements_check()
     {
         for element in elements
         {
@@ -1535,6 +1537,11 @@ public class Workspace: ObservableObject
         //MARK: Elements processing
         func perform_robot(name: String, program: String, completion: @escaping () -> Void)
         {
+            guard selected_robot_index != -1 else
+            {
+                return
+            }
+            
             select_robot(name: name)
             selected_robot.select_program(name: program)
             selected_robot.finish_handler = completion
@@ -1544,6 +1551,11 @@ public class Workspace: ObservableObject
         
         func perform_tool(name: String, program: String, completion: @escaping () -> Void)
         {
+            guard selected_tool_index != -1 else
+            {
+                return
+            }
+            
             select_tool(name: name)
             selected_tool.select_program(name: program)
             selected_tool.finish_handler = completion
