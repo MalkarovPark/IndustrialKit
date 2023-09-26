@@ -1537,30 +1537,34 @@ public class Workspace: ObservableObject
         //MARK: Elements processing
         func perform_robot(name: String, program: String, completion: @escaping () -> Void)
         {
-            guard selected_robot_index != -1 else
+            if selected_robot_index != -1
             {
-                return
+                select_robot(name: name)
+                selected_robot.select_program(name: program)
+                selected_robot.finish_handler = completion
+                
+                selected_robot.start_pause_moving()
             }
-            
-            select_robot(name: name)
-            selected_robot.select_program(name: program)
-            selected_robot.finish_handler = completion
-            
-            selected_robot.start_pause_moving()
+            else
+            {
+                completion()
+            }
         }
         
         func perform_tool(name: String, program: String, completion: @escaping () -> Void)
         {
-            guard selected_tool_index != -1 else
+            if selected_tool_index != -1
             {
-                return
+                select_tool(name: name)
+                selected_tool.select_program(name: program)
+                selected_tool.finish_handler = completion
+                
+                selected_tool.start_pause_performing()
             }
-            
-            select_tool(name: name)
-            selected_tool.select_program(name: program)
-            selected_tool.finish_handler = completion
-            
-            selected_tool.start_pause_performing()
+            else
+            {
+                completion()
+            }
         }
     }
     
