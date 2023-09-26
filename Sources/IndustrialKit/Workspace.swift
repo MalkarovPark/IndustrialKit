@@ -1631,12 +1631,12 @@ public class Workspace: ObservableObject
     }
     
     ///A holded info value for pass to next elements.
-    private var buffer: Int = 0
+    private var buffer: Int? = nil
     
     ///Clears buffer value
     private func clear_buffer()
     {
-        buffer = 0
+        buffer = nil
     }
     
     ///An array of pushed info data.
@@ -1702,10 +1702,10 @@ public class Workspace: ObservableObject
      */
     private func push_info_to(index: Int)
     {
-        if index < 256
+        if index < 256 && buffer != nil
         {
-            registers[index] = buffer
-            buffer = 0
+            registers[index] = buffer!
+            clear_buffer() //buffer = 0
         }
         
         select_new_element()
