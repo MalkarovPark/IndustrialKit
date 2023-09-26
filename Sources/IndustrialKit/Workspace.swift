@@ -1696,7 +1696,7 @@ public class Workspace: ObservableObject
     }
     
     /**
-     Pushes info from observer to register.
+     Pushes info from previous element to register.
      - Parameters:
         - index: An index of register to push.
      */
