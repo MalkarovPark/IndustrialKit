@@ -1484,6 +1484,8 @@ public class Workspace: ObservableObject
         switch element.element_data.element_type
         {
         case .perofrmer:
+            clear_buffer()
+            
             switch element.element_data.performer_type
             {
             case .robot:
@@ -1501,6 +1503,7 @@ public class Workspace: ObservableObject
             switch element.element_data.modifier_type
             {
             case .observer:
+                //clear_buffer()
                 observe_from(name: element.element_data.object_name)
             case .changer:
                 if element.element_data.is_push
@@ -1509,6 +1512,7 @@ public class Workspace: ObservableObject
                 }
                 else
                 {
+                    //clear_buffer()
                     pop_info_from(index: element.element_data.register_index)
                 }
             }
@@ -1516,8 +1520,10 @@ public class Workspace: ObservableObject
             switch element.element_data.logic_type
             {
             case .jump:
+                clear_buffer()
                 jump_to(index: element.target_element_index)
             case .mark:
+                clear_buffer()
                 select_new_element()
             case .equal:
                 check_equal()
@@ -1580,6 +1586,8 @@ public class Workspace: ObservableObject
                 deselect_robot()
                 deselect_tool()
                 //update_view()
+                
+                clear_buffer()
             }
         }
     }
@@ -1624,6 +1632,12 @@ public class Workspace: ObservableObject
     
     ///A holded info value for pass to next elements.
     private var buffer: Int = 0
+    
+    ///Clears buffer value
+    private func clear_buffer()
+    {
+        buffer = 0
+    }
     
     ///An array of pushed info data.
     private var registers: [Int] = [Int](repeating: 0, count: 256)
@@ -1676,66 +1690,9 @@ public class Workspace: ObservableObject
      */
     private func observe_from(name: String)
     {
-        if next_push_accepting
-        {
-            buffer = tool_by_name(name).info_code ?? 0
-        }
+        buffer = tool_by_name(name).info_code ?? 0
         
         select_new_element()
-    }
-    
-    ///Checks if next element accepts to push data.
-    private var next_push_accepting: Bool
-    {
-        if selected_element_index < elements.count - 1
-        {
-            let next_element_data = elements[selected_element_index + 1].element_data
-            
-            if next_element_data.element_type == .logic || (next_element_data.element_type == .modifier && next_element_data.modifier_type == .changer) //Accepts any logic and modifier-changer elements.
-            {
-                return true
-            }
-            else
-            {
-                return false
-            }
-        }
-        else
-        {
-            return false
-        }
-    }
-    
-    ///Checks if next element accepts to pop data.
-    private var next_pop_accepting: Bool
-    {
-        if selected_element_index < elements.count - 1
-        {
-            let next_element_data = elements[selected_element_index + 1].element_data
-            
-            if next_element_data.element_type == .logic //Accepts any logic elements.
-            {
-                return true
-            }
-            else
-            {
-                if next_element_data.element_type == .modifier && next_element_data.modifier_type == .changer && next_element_data.is_push
-                {
-                    return true
-                }
-                else
-                {
-                    buffer = 0
-                    return false
-                }
-                //return false
-            }
-        }
-        else
-        {
-            buffer = 0
-            return false
-        }
     }
     
     /**
@@ -1745,7 +1702,7 @@ public class Workspace: ObservableObject
      */
     private func push_info_to(index: Int)
     {
-        if index < 256 && next_push_accepting
+        if index < 256
         {
             registers[index] = buffer
             buffer = 0
@@ -1761,9 +1718,10 @@ public class Workspace: ObservableObject
      */
     private func pop_info_from(index: Int)
     {
-        if index < 256 && next_pop_accepting
+        if index < 256
         {
             buffer = registers[index]
+            //registers[index] = 0
         }
         
         select_new_element()
@@ -1825,6 +1783,7 @@ public class Workspace: ObservableObject
         
         performed = false //Enable workspace program edit
         selected_element_index = 0 //Select firs program element
+        clear_buffer()
     }
     
     ///Prepare workspace program to perform.
