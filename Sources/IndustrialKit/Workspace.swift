@@ -1857,7 +1857,7 @@ public class Workspace: ObservableObject
      
      - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
      */
-    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [WorkspaceProgramElementStruct])
+    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [WorkspaceProgramElementStruct], registers: [Int])
     {
         //Get robots info for save to file
         var robots_file_info = [RobotStruct]()
@@ -1887,7 +1887,7 @@ public class Workspace: ObservableObject
             elements_file_info.append(element.element_data)
         }
         
-        return(robots_file_info, tools_file_info, parts_file_info, elements_file_info)
+        return(robots_file_info, tools_file_info, parts_file_info, elements_file_info, registers)
     }
     
     ///File bookmark for robots models.
@@ -1939,6 +1939,16 @@ public class Workspace: ObservableObject
         for element_struct in preset.elements
         {
             elements.append(WorkspaceProgramElement(element_struct: element_struct))
+        }
+        
+        for (index, value) in preset.registers.enumerated()
+        {
+            /*if index < self.registers.count
+            {
+                self.registers[index] = value
+            }*/
+            
+            self.registers[index] = value
         }
     }
     
@@ -2227,6 +2237,8 @@ public struct WorkspacePreset: Codable
     public var tools = [ToolStruct]()
     public var parts = [PartStruct]()
     
+    public var registers: [Int] = [Int](repeating: 0, count: 256)
+    
     public init()
     {
         robots = [RobotStruct]()
@@ -2242,4 +2254,22 @@ public struct WorkspacePreset: Codable
         self.tools = tools
         self.parts = parts
     }
+    
+    /*public init(robots: [RobotStruct], elements: [WorkspaceProgramElementStruct], tools: [ToolStruct], parts: [PartStruct], registers: [Int])
+    {
+        self.robots = robots
+        self.elements = elements
+        self.tools = tools
+        self.parts = parts
+        
+        for (index, value) in registers.enumerated()
+        {
+            /*if index < self.registers.count
+            {
+                self.registers[index] = value
+            }*/
+            
+            self.registers[index] = value
+        }
+    }*/
 }

@@ -154,7 +154,7 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
                     info = "Pop from \(element_data.register_index) to next"
                 }
             case .changer:
-                info = "Script \("name")"
+                info = "Script – \(element_data.module_name)"
             }
         case .logic:
             switch element_data.logic_type
@@ -220,6 +220,9 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     
     ///An observable workspace object name.
     public var object_name = String()
+    
+    ///A changer module name.
+    public var module_name = String()
     
     ///A push/pop selector for changer.
     public var is_push = true
