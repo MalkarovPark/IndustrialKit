@@ -1258,7 +1258,8 @@ public class Workspace: ObservableObject
     
     //MARK: - Control program functions
     //MARK: Workspace program elements handling
-    public var marks_names: [String] //Get names of all marks in workspace program
+    ///All marks in workspace program.
+    public var marks_names: [String]
     {
         var marks_names = [String]()
         for program_element in self.elements

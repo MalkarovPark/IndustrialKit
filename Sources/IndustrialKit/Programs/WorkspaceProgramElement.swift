@@ -30,7 +30,6 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     public var element_data = WorkspaceProgramElementStruct(element_type: ProgramElementType.perofrmer, performer_type: PerformerType.robot, modifier_type: ModifierType.observer, logic_type: LogicType.jump)
     
     //MARK: - Element init functions
-    
     /**
      Creates a new program element.
      - Parameters:
@@ -91,7 +90,6 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     }
     
     //MARK: - Visual data output
-    
     ///A subtype string for a specific type.
     public var subtype: String
     {
@@ -154,7 +152,7 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
                     info = "Pop from \(element_data.register_index) to next"
                 }
             case .changer:
-                info = "Script – \(element_data.module_name)"
+                info = "Module – \(element_data.module_name)"
             }
         case .logic:
             switch element_data.logic_type
@@ -200,7 +198,6 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     public var element_type: ProgramElementType = .perofrmer
     
     //MARK: For Performer
-    
     ///A performer element type.
     public var performer_type: PerformerType = .robot
     
@@ -214,7 +211,6 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     public var program_name = String()
     
     //MARK: For Modififcator
-    
     ///A modificator name.
     public var modifier_type: ModifierType = .observer
     
@@ -244,7 +240,6 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     public var compared_value = 0
     
     //MARK: Init function
-    
     ///Creates a new program element with default values.
     public init()
     {
@@ -282,7 +277,6 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
 }
 
 //MARK: - Type enums
-
 ///A program element type enum.
 public enum ProgramElementType: String, Codable, Equatable, CaseIterable
 {
