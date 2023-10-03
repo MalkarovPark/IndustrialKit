@@ -1509,7 +1509,7 @@ public class Workspace: ObservableObject
             case .observer:
                 //clear_buffer()
                 observe_from(name: element.element_data.object_name)
-            case .changer:
+            case .mover:
                 if element.element_data.is_push
                 {
                     push_info_to(index: element.element_data.register_index)
@@ -1519,6 +1519,8 @@ public class Workspace: ObservableObject
                     //clear_buffer()
                     pop_info_from(index: element.element_data.register_index)
                 }
+            case .changer:
+                break
             }
         case .logic:
             switch element.element_data.logic_type

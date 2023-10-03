@@ -143,9 +143,8 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
             switch element_data.modifier_type
             {
             case .observer:
-                //info = "Output from – \(element_data.object_name)"
                 info = "Output from \(element_data.object_name)"
-            case .changer:
+            case .mover:
                 if element_data.is_push
                 {
                     info = "Push previous to \(element_data.register_index)"
@@ -154,6 +153,8 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
                 {
                     info = "Pop from \(element_data.register_index) to next"
                 }
+            case .changer:
+                info = "Script \("name")"
             }
         case .logic:
             switch element_data.logic_type
@@ -298,6 +299,7 @@ public enum PerformerType: String, Codable, Equatable, CaseIterable
 public enum ModifierType: String, Codable, Equatable, CaseIterable
 {
     case observer = "Observer"
+    case mover = "Mover"
     case changer = "Changer"
 }
 
