@@ -513,8 +513,9 @@ public class Workspace: ObservableObject
             }
             
             //Disconnect from edited node
-            edited_object_node = SCNNode() //Remove old reference
             edited_object_node?.removeFromParentNode() //Remove old node
+            edited_object_node = SCNNode() //Remove old reference
+            //edited_object_node?.removeFromParentNode() //Remove old node
         }
     }
     
@@ -1521,7 +1522,7 @@ public class Workspace: ObservableObject
                     pop_info_from(index: element.element_data.register_index)
                 }
             case .changer:
-                break
+                perform_changer()
             }
         case .logic:
             switch element.element_data.logic_type
@@ -1572,6 +1573,19 @@ public class Workspace: ObservableObject
             {
                 completion()
             }
+        }
+        
+        func perform_changer()
+        {
+            let updated_registers = Workspace.change_by(name: element.element_data.module_name, registers: registers)
+            for (index, value) in updated_registers.enumerated()
+            {
+                if index < self.registers.count
+                {
+                    self.registers[index] = value
+                }
+            }
+            select_new_element()
         }
     }
     
@@ -1716,6 +1730,19 @@ public class Workspace: ObservableObject
         buffer = tool_by_name(name).info_code ?? 0
         
         select_new_element()
+    }
+    
+    ///A changer modules names array.
+    public static var changer_modules = [String]()
+    
+    /**
+     Pushes info from tool to buffer.
+     - Parameters:
+        - name: A name of changer module.
+     */
+    public static func change_by(name: String, registers: [Int]) -> [Int]
+    {
+        return [Int](repeating: 0, count: 256)
     }
     
     /**

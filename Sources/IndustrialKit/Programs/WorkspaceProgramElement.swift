@@ -190,7 +190,6 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
 }
 
 //MARK: - Models of program element data
-
 ///Structure for workspace program element data.
 public struct WorkspaceProgramElementStruct: Codable, Hashable
 {
