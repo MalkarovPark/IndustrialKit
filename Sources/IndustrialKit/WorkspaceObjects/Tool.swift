@@ -45,7 +45,8 @@ public class Tool: WorkspaceObject
         {
             self.module_name = dictionary["Module"] as? String ?? ""
             
-            Tool.select_modules(module_name, &model_controller, &connector)
+            //Tool.select_modules(module_name, &model_controller, &connector)
+            select_modules(module_name, &model_controller, &connector)
             
             if update_model_by_connector
             {
@@ -114,7 +115,8 @@ public class Tool: WorkspaceObject
         self.module_name = tool_struct.module ?? ""
         if module_name != ""
         {
-            Tool.select_modules(module_name, &model_controller, &connector)
+            //Tool.select_modules(module_name, &model_controller, &connector)
+            select_modules(module_name, &model_controller, &connector)
             
             if update_model_by_connector
             {
@@ -144,7 +146,11 @@ public class Tool: WorkspaceObject
                 break
             }
      */
-    public static var select_modules: ((_ name: String, _ model_controller: inout ToolModelController, _ connector: inout ToolConnector) -> Void) = { name,controller,connector in }
+    //public static var select_modules: ((_ name: String, _ model_controller: inout ToolModelController, _ connector: inout ToolConnector) -> Void) = { name,controller,connector in }
+    public func select_modules(_ name: String, _ model_controller: inout ToolModelController, _ connector: inout ToolConnector)
+    {
+        
+    }
     
     private func apply_statistics_flags()
     {

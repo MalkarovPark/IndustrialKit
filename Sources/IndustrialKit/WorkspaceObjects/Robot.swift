@@ -158,7 +158,8 @@ public class Robot: WorkspaceObject
         self.module_name = module_name
         if self.module_name != ""
         {
-            Robot.select_modules(module_name, &model_controller, &connector)
+            //Robot.select_modules(module_name, &model_controller, &connector)
+            select_modules(module_name, &model_controller, &connector)
             
             if update_model_by_connector
             {
@@ -198,7 +199,11 @@ public class Robot: WorkspaceObject
                 break
             }
      */
-    public static var select_modules: ((_ name: String, _ model_controller: inout RobotModelController, _ connector: inout RobotConnector) -> Void) = { name,controller,connector in }
+    //public static var select_modules: ((_ name: String, _ model_controller: inout RobotModelController, _ connector: inout RobotConnector) -> Void) = { name,controller,connector in }
+    public func select_modules(_ name: String, _ model_controller: inout RobotModelController, _ connector: inout RobotConnector)
+    {
+        
+    }
     
     private func apply_statistics_flags()
     {
