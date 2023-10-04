@@ -1522,7 +1522,7 @@ public class Workspace: ObservableObject
                     pop_info_from(index: element.element_data.register_index)
                 }
             case .changer:
-                perform_changer()
+                Workspace.change_by(element.element_data.module_name, &registers)
             }
         case .logic:
             switch element.element_data.logic_type
@@ -1575,7 +1575,7 @@ public class Workspace: ObservableObject
             }
         }
         
-        func perform_changer()
+        /*func perform_changer()
         {
             let updated_registers = Workspace.change_by(name: element.element_data.module_name, registers: registers)
             for (index, value) in updated_registers.enumerated()
@@ -1586,7 +1586,7 @@ public class Workspace: ObservableObject
                 }
             }
             select_new_element()
-        }
+        }*/
     }
     
     ///Set the new target program element index.
@@ -1736,14 +1736,21 @@ public class Workspace: ObservableObject
     public static var changer_modules = [String]()
     
     /**
-     Pushes info from tool to buffer.
-     - Parameters:
-        - name: A name of changer module.
+     Updates registers by changer module selected by name.
+    
+     Code example.
+     
+            switch name
+            {
+            case "Module Name":
+                //Algorythm
+            case "Module Name 2":
+                //Algorythm 2
+            default:
+                break
+            }
      */
-    public static func change_by(name: String, registers: [Int]) -> [Int]
-    {
-        return [Int](repeating: 0, count: 256)
-    }
+    public static var change_by: ((_ name: String, _ registers: inout [Int]) -> Void) = { name,registers in }
     
     /**
      Pushes info from previous element to register.
