@@ -1523,6 +1523,8 @@ public class Workspace: ObservableObject
                 }
             case .changer:
                 Workspace.change_by(element.element_data.module_name, &registers)
+                check_registers()
+                select_new_element()
             }
         case .logic:
             switch element.element_data.logic_type
@@ -1575,18 +1577,22 @@ public class Workspace: ObservableObject
             }
         }
         
-        /*func perform_changer()
+        func check_registers()
         {
-            let updated_registers = Workspace.change_by(name: element.element_data.module_name, registers: registers)
-            for (index, value) in updated_registers.enumerated()
+            if registers.count != 256
             {
-                if index < self.registers.count
+                var fixed_registers = [Int](repeating: 0, count: 256)
+                for (index, value) in registers.enumerated()
                 {
-                    self.registers[index] = value
+                    if index < self.registers.count
+                    {
+                        fixed_registers[index] = value
+                    }
                 }
+                
+                registers = fixed_registers
             }
-            select_new_element()
-        }*/
+        }
     }
     
     ///Set the new target program element index.
