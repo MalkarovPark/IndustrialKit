@@ -1294,17 +1294,25 @@ public class Workspace: ObservableObject
                 switch element.element_data.performer_type
                 {
                 case .robot:
-                    robot_element_check(element: element)
+                    robot_element_check(element)
                 case .tool:
-                    break
+                    tool_element_check(element)
                 }
             case .modifier:
-                break
+                switch element.element_data.modifier_type
+                {
+                case .observer:
+                    observer_element_check(element)
+                case .mover:
+                    break
+                case .changer:
+                    changer_element_check(element)
+                }
             case .logic:
                 switch element.element_data.logic_type
                 {
                 case .jump:
-                    jump_element_check(element: element)
+                    jump_element_check(element)
                 case .mark:
                     break
                 default:
@@ -1313,7 +1321,7 @@ public class Workspace: ObservableObject
             }
         }
         
-        func robot_element_check(element: WorkspaceProgramElement) //Check element by selected robot exists
+        func robot_element_check(_ element: WorkspaceProgramElement) //Check element by selected robot exists
         {
             if element.element_data.robot_name != ""
             {
@@ -1351,7 +1359,7 @@ public class Workspace: ObservableObject
             }
         }
         
-        func tool_element_check(element: WorkspaceProgramElement)
+        func tool_element_check(_ element: WorkspaceProgramElement)
         {
             if element.element_data.tool_name != ""
             {
@@ -1389,7 +1397,31 @@ public class Workspace: ObservableObject
             }
         }
         
-        func jump_element_check(element: WorkspaceProgramElement) //Check element by selected mark exists
+        func observer_element_check(_ element: WorkspaceProgramElement)
+        {
+            if self.placed_tools_names.count > 0
+            {
+                element.element_data.object_name = self.placed_tools_names.first!
+            }
+            else
+            {
+                element.element_data.object_name = ""
+            }
+        }
+        
+        func changer_element_check(_ element: WorkspaceProgramElement)
+        {
+            if Workspace.changer_modules.count > 0
+            {
+                element.element_data.module_name = Workspace.changer_modules.first!
+            }
+            else
+            {
+                element.element_data.module_name = "None"
+            }
+        }
+        
+        func jump_element_check(_ element: WorkspaceProgramElement) //Check element by selected mark exists
         {
             if marks_names.count > 0
             {
