@@ -565,6 +565,12 @@ public class Robot: WorkspaceObject
     ///A robot moving performation toggle.
     public func start_pause_moving()
     {
+        guard selected_program.points_count > 0
+        else
+        {
+            return
+        }
+        
         //Handling robot moving
         if !performed
         {

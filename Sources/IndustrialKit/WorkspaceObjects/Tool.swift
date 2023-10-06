@@ -367,6 +367,13 @@ public class Tool: WorkspaceObject
     ///Selects codes and performs tool operation.
     public func start_pause_performing()
     {
+        guard selected_program.codes_count > 0
+        else
+        {
+            return
+        }
+        
+        //Handling tool performing
         if !performed
         {
             //Move to next point if moving was stop
