@@ -38,12 +38,12 @@ public struct PositionView: View
                                 #if os(macOS)
                                     .frame(width: 20.0)
                                 #else
-                                    .frame(width: 40.0)
+                                    .frame(width: 30.0)
                                 #endif
                                 TextField("0", value: $location[location_component.info.index], format: .number)
                                     .textFieldStyle(.roundedBorder)
                                 #if os(iOS) || os(visionOS)
-                                    .frame(minWidth: 80)
+                                    .frame(minWidth: 60)
                                 #endif
                                 Stepper("Enter", value: $location[location_component.info.index], in: -1000...1000)
                                     .labelsHidden()
@@ -58,12 +58,12 @@ public struct PositionView: View
                                     #if os(macOS)
                                         .frame(width: 20.0)
                                     #else
-                                        .frame(width: 40.0)
+                                        .frame(width: 30.0)
                                     #endif
                                 TextField("0", value: $rotation[rotation_component.info.index], format: .number)
                                     .textFieldStyle(.roundedBorder)
                                 #if os(iOS) || os(visionOS)
-                                    .frame(minWidth: 80)
+                                    .frame(minWidth: 60)
                                 #endif
                                 Stepper("Enter", value: $rotation[rotation_component.info.index], in: -180...180)
                                     .labelsHidden()
