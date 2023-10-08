@@ -42,8 +42,10 @@ public struct PositionView: View
                                 #endif
                                 TextField("0", value: $location[location_component.info.index], format: .number)
                                     .textFieldStyle(.roundedBorder)
-                                #if os(iOS) || os(visionOS)
+                                #if os(iOS)
                                     .frame(minWidth: 60)
+                                #elseif os(visionOS)
+                                    .frame(minWidth: 80)
                                 #endif
                                 Stepper("Enter", value: $location[location_component.info.index], in: -1000...1000)
                                     .labelsHidden()
