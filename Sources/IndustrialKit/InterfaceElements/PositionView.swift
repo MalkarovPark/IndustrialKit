@@ -35,9 +35,16 @@ public struct PositionView: View
                             HStack(spacing: 8)
                             {
                                 Text(location_component.info.text)
+                                #if os(macOS)
                                     .frame(width: 20.0)
+                                #else
+                                    .frame(width: 40.0)
+                                #endif
                                 TextField("0", value: $location[location_component.info.index], format: .number)
                                     .textFieldStyle(.roundedBorder)
+                                #if os(iOS) || os(visionOS)
+                                    .frame(minWidth: 80)
+                                #endif
                                 Stepper("Enter", value: $location[location_component.info.index], in: -1000...1000)
                                     .labelsHidden()
                             }
@@ -48,9 +55,16 @@ public struct PositionView: View
                             HStack(spacing: 8)
                             {
                                 Text(rotation_component.info.text)
-                                    .frame(width: 20.0)
+                                    #if os(macOS)
+                                        .frame(width: 20.0)
+                                    #else
+                                        .frame(width: 40.0)
+                                    #endif
                                 TextField("0", value: $rotation[rotation_component.info.index], format: .number)
                                     .textFieldStyle(.roundedBorder)
+                                #if os(iOS) || os(visionOS)
+                                    .frame(minWidth: 80)
+                                #endif
                                 Stepper("Enter", value: $rotation[rotation_component.info.index], in: -180...180)
                                     .labelsHidden()
                             }
