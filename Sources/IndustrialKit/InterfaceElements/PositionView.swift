@@ -64,8 +64,10 @@ public struct PositionView: View
                                     #endif
                                 TextField("0", value: $rotation[rotation_component.info.index], format: .number)
                                     .textFieldStyle(.roundedBorder)
-                                #if os(iOS) || os(visionOS)
+                                #if os(iOS)
                                     .frame(minWidth: 60)
+                                #elseif os(visionOS)
+                                    .frame(minWidth: 80)
                                 #endif
                                 Stepper("Enter", value: $rotation[rotation_component.info.index], in: -180...180)
                                     .labelsHidden()
