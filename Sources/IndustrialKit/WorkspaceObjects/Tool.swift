@@ -711,17 +711,6 @@ public class Tool: WorkspaceObject
     }
     
     //MARK: - UI functions
-    #if os(macOS)
-    /**
-     Returns info for tool card view.
-     
-     Output avaliable codes count. If their number is zero, the instrument is listed as *static*.
-     */
-    public override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
-    {
-        return("\(self.name ?? "Tool")", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255), self.image)
-    }
-    #else
     /**
      Returns info for tool card view.
      
@@ -731,7 +720,6 @@ public class Tool: WorkspaceObject
     {
         return("\(self.name ?? "Tool")", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255), self.image)
     }
-    #endif
     
     /**
      Returns point color for inspector view.

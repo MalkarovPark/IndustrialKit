@@ -382,11 +382,7 @@ public class Part: WorkspaceObject
         }
         set
         {
-            #if os(macOS)
-            let viewed_color_components = NSColor(newValue).cgColor.components
-            #else
             let viewed_color_components = UIColor(newValue).cgColor.components
-            #endif
             
             for i in 0..<(figure_color?.count ?? 3)
             {
@@ -398,19 +394,11 @@ public class Part: WorkspaceObject
         }
     }
     
-    #if os(macOS)
-    ///Returns info for part card view.
-    public override var card_info: (title: String, subtitle: String, color: Color, image: NSImage) //Get info for robot card view
-    {
-        return("\(self.name ?? "Part")", "Subtitle", self.color, self.image)
-    }
-    #else
     ///Returns info for part card view.
     public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
         return("\(self.name ?? "Part")", "Subtitle", self.color, self.image)
     }
-    #endif
     
     //MARK: - Work with file system
     ///Codable file structure of part.

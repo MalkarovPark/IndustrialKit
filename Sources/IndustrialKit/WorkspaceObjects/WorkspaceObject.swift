@@ -184,26 +184,6 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     ///Universal data storage for NSImage or UIImage.
     public var image_data = Data()
     
-    #if os(macOS)
-    ///Workspace object preview image.
-    public var image: NSImage
-    {
-        get
-        {
-            return NSImage(data: image_data) ?? NSImage() //Retrun NSImage from image data
-        }
-        set
-        {
-            image_data = newValue.tiffRepresentation ?? Data() //Convert NSImage to image data
-        }
-    }
-    
-    ///Returns info for object card view (with NSImage).
-    public var card_info: (title: String, subtitle: String, color: Color, image: NSImage)
-    {
-        return("Title", "Subtitle", Color.clear, NSImage())
-    }
-    #else
     ///Workspace object preview image.
     public var image: UIImage
     {
@@ -222,7 +202,6 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     {
         return("Title", "Subtitle", Color.clear, UIImage())
     }
-    #endif
     
     ///Clears preview image in object.
     public func clear_preview()

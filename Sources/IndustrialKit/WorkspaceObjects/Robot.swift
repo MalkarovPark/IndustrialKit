@@ -1098,32 +1098,6 @@ public class Robot: WorkspaceObject
     }
     
     //MARK: - UI functions
-    #if os(macOS)
-    /**
-     Returns info for robot card view.
-     
-     Color sets by the manufacturer name.
-     */
-    public override var card_info: (title: String, subtitle: String, color: Color, image: NSImage)
-    {
-        let color: Color
-        switch self.manufacturer
-        {
-        case "Default":
-            color = Color.green
-        case "ABB":
-            color = Color.red
-        case "FANUC":
-            color = Color.yellow
-        case "KUKA":
-            color = Color.orange
-        default:
-            color = Color.clear
-        }
-        
-        return("\(self.name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color, self.image)
-    }
-    #else
     /**
      Returns info for robot card view.
      
@@ -1148,7 +1122,6 @@ public class Robot: WorkspaceObject
         
         return("\(self.name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color, self.image)
     }
-    #endif
     
     /**
      Returns point color for inspector view.

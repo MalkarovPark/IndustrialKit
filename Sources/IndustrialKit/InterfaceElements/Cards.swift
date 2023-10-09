@@ -11,23 +11,10 @@ import SwiftUI
 public struct LargeCardView: View
 {
     @State public var color: Color
-    #if os(macOS)
-    @State public var image: NSImage
-    #else
     @State public var image: UIImage
-    #endif
     @State public var title: String
     @State public var subtitle: String
     
-    #if os(macOS)
-    public init(color: Color, image: NSImage, title: String, subtitle: String)
-    {
-        self.color = color
-        self.image = image
-        self.title = title
-        self.subtitle = subtitle
-    }
-    #else
     public init(color: Color, image: UIImage, title: String, subtitle: String)
     {
         self.color = color
@@ -35,7 +22,6 @@ public struct LargeCardView: View
         self.title = title
         self.subtitle = subtitle
     }
-    #endif
     
     public var body: some View
     {
@@ -90,23 +76,10 @@ public struct LargeCardView: View
 public struct LargeCardViewPreview: View
 {
     @State public var color: Color
-    #if os(macOS)
-    @State public var image: NSImage
-    #else
     @State public var image: UIImage
-    #endif
     @State public var title: String
     @State public var subtitle: String
     
-    #if os(macOS)
-    public init(color: Color, image: NSImage, title: String, subtitle: String)
-    {
-        self.color = color
-        self.image = image
-        self.title = title
-        self.subtitle = subtitle
-    }
-    #else
     public init(color: Color, image: UIImage, title: String, subtitle: String)
     {
         self.color = color
@@ -114,7 +87,6 @@ public struct LargeCardViewPreview: View
         self.title = title
         self.subtitle = subtitle
     }
-    #endif
     
     public var body: some View
     {
@@ -232,28 +204,15 @@ public struct CircleDeleteButtonModifier: ViewModifier
 public struct SmallCardView: View
 {
     @State public var color: Color
-    #if os(macOS)
-    @State public var image: NSImage
-    #else
     @State public var image: UIImage
-    #endif
     @State public var title: String
     
-    #if os(macOS)
-    public init(color: Color, image: NSImage, title: String)
-    {
-        self.color = color
-        self.image = image
-        self.title = title
-    }
-    #else
     public init(color: Color, image: UIImage, title: String)
     {
         self.color = color
         self.image = image
         self.title = title
     }
-    #endif
     
     public var body: some View
     {
@@ -305,28 +264,15 @@ public struct SmallCardView: View
 public struct SmallCardViewPreview: View
 {
     @State public var color: Color
-    #if os(macOS)
-    @State public var image: NSImage
-    #else
     @State public var image: UIImage
-    #endif
     @State public var title: String
     
-    #if os(macOS)
-    public init(color: Color, image: NSImage, title: String)
-    {
-        self.color = color
-        self.image = image
-        self.title = title
-    }
-    #else
     public init(color: Color, image: UIImage, title: String)
     {
         self.color = color
         self.image = image
         self.title = title
     }
-    #endif
     
     public var body: some View
     {
@@ -443,21 +389,12 @@ struct Cards_Previews: PreviewProvider
         {
             VStack()
             {
-                #if os(macOS)
-                LargeCardView(color: .green, image: NSImage(), title: "Title", subtitle: "Subtitle")
-                    .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
-                    .padding([.horizontal, .top])
-                SmallCardView(color: .green, image: NSImage(), title: "Title")
-                    .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
-                    .padding()
-                #else
                 LargeCardView(color: .green, image: UIImage(), title: "Title", subtitle: "Subtitle")
                     .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
                     .padding([.horizontal, .top])
                 SmallCardView(color: .green, image: UIImage(), title: "Title")
                     .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
                     .padding()
-                #endif
             }
             .padding(4)
             .frame(width: 320)
