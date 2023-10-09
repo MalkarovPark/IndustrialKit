@@ -514,7 +514,6 @@ public class Workspace: ObservableObject
             
             //Disconnect from edited node
             edited_object_node = SCNNode() //Remove old reference
-            edited_object_node?.removeFromParentNode() //Remove old node
             //edited_object_node?.removeFromParentNode() //Remove old node
         }
     }
