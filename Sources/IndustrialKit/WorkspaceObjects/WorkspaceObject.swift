@@ -170,13 +170,9 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
         //Build filler model node
         node?.geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
         
-        #if os(macOS)
-        node?.geometry?.firstMaterial?.diffuse.contents = NSColor.gray
-        #else
         node?.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
-        #endif
-        
         node?.geometry?.firstMaterial?.lightingModel = .physicallyBased
+        
         node?.name = scene_node_name
     }
     
