@@ -1190,7 +1190,7 @@ public class Robot: WorkspaceObject
                            get_statistics: self.get_statistics,
                            charts_data: self.charts_data,
                            state: self.state_data,
-                           image_data: self.image_data,
+                           image_data: self.image_data ?? Data(),
                            programs: programs_array,
                            origin_location: self.origin_location,
                            origin_rotation: self.origin_rotation,

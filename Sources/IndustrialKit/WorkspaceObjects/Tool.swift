@@ -818,7 +818,7 @@ public class Tool: WorkspaceObject
                           charts_data: self.charts_data,
                           state: self.state_data,
                           programs: self.programs,
-                          image_data: self.image_data,
+                          image_data: self.image_data ?? Data(),
                           module: self.module_name)
     }
 }

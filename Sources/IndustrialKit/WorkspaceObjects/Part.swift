@@ -404,7 +404,7 @@ public class Part: WorkspaceObject
     ///Codable file structure of part.
     public var file_info: PartStruct
     {
-        return PartStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data)
+        return PartStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data ?? Data())
     }
 }
 

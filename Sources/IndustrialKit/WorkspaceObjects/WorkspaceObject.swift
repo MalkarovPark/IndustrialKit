@@ -178,14 +178,14 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     
     //MARK: - UI functions
     ///Universal data storage for NSImage or UIImage.
-    public var image_data = Data()
+    public var image_data: Data? = nil
     
     ///Workspace object preview image.
     public var image: UIImage
     {
         get
         {
-            return UIImage(data: image_data) ?? UIImage() //Retrun UIImage from image data
+            return UIImage(data: image_data ?? Data()) ?? UIImage() //Retrun UIImage from image data
         }
         set
         {
@@ -202,6 +202,6 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject
     ///Clears preview image in object.
     public func clear_preview()
     {
-        image_data = Data()
+        image_data = nil
     }
 }
