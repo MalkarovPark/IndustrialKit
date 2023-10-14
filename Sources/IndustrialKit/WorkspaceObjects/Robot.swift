@@ -1050,7 +1050,7 @@ public class Robot: WorkspaceObject
         {
             if demo //Get statistic from model controller
             {
-                state_data = model_controller.state()
+                state_data = model_controller.state_data()
                 charts_data = model_controller.charts_data()
             }
             else //Get statistic from real robot

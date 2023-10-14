@@ -20,9 +20,6 @@ open class ModelController
     ///Model nodes from connected root node.
     public var nodes = [SCNNode]()
     
-    ///Model nodes lengths.
-    public var lengths = [Float]()
-    
     public init()
     {
         
@@ -51,42 +48,6 @@ open class ModelController
         
     }
     
-    ///Stops connected model actions performation.
-    public final func remove_all_model_actions()
-    {
-        for node in nodes //Remove all node actions
-        {
-            node.removeAllActions()
-        }
-        
-        reset_model()
-    }
-    
-    /**
-     Required count of lengths to transform the connected model.
-     
-     Сan be overridden depending on the number of lengths used in the transformation.
-     */
-    open var description_lengths_count: Int { 0 }
-    
-    ///Updates connected model nodes scales by instance lengths.
-    public final func nodes_transform()
-    {
-        guard lengths.count == description_lengths_count //Return if current lengths count is not equal required one
-        else
-        {
-            return
-        }
-        
-        update_nodes_lengths()
-    }
-    
-    ///Sets new values for connected nodes geometries.
-    open func update_nodes_lengths()
-    {
-        
-    }
-    
     ///A get statistics flag.
     public var get_statistics = false
     {
@@ -106,7 +67,7 @@ open class ModelController
     }
     
     ///Retruns perfroming state info.
-    open func state() -> [StateItem]?
+    open func state_data() -> [StateItem]?
     {
         return [StateItem]()
     }
@@ -128,6 +89,34 @@ open class ModelController
 ///Provides control over visual model for robot.
 open class RobotModelController: ModelController
 {
+    ///Model nodes lengths.
+    public var lengths = [Float]()
+    
+    /**
+     Required count of lengths to transform the connected model.
+     
+     Сan be overridden depending on the number of lengths used in the transformation.
+     */
+    open var description_lengths_count: Int { 0 }
+    
+    ///Sets new values for connected nodes geometries.
+    open func update_nodes_lengths()
+    {
+        
+    }
+    
+    ///Updates connected model nodes scales by instance lengths.
+    public final func nodes_transform()
+    {
+        guard lengths.count == description_lengths_count //Return if current lengths count is not equal required one
+        else
+        {
+            return
+        }
+        
+        update_nodes_lengths()
+    }
+    
     /**
      Updates robot model nodes by target position.
      
@@ -370,6 +359,17 @@ open class ToolModelController: ModelController
     {
         nodes_perform(code: code)
         completion()
+    }
+    
+    ///Stops connected model actions performation.
+    public final func remove_all_model_actions()
+    {
+        for node in nodes //Remove all node actions
+        {
+            node.removeAllActions()
+        }
+        
+        reset_model()
     }
     
     ///Inforamation code updated by model controller.
