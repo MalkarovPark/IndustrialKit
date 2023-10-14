@@ -565,11 +565,11 @@ public class Tool: WorkspaceObject
         model_controller.nodes_disconnect()
         model_controller.nodes_connect(unit_node)// ?? SCNNode())
         
-        if lengths.count > 0
+        /*if lengths.count > 0
         {
             model_controller.lengths = lengths
             model_controller.nodes_transform()
-        }
+        }*/
         
         model_controller.info_code = self.info_code
         
