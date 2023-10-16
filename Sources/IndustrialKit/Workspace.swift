@@ -566,6 +566,18 @@ public class Workspace: ObservableObject
         }
     }
     
+    /**
+     Returns index number of workspace object by name.
+     
+     - Parameters:
+        - name: A name of object for index find.
+        - objects: An array of objects where the index searches.
+     */
+    private func index_by_name(_ name: String, objects: [WorkspaceObject]) -> Int
+    {
+        return objects.firstIndex(where: { $0.name == name }) ?? -1
+    }
+    
     /*///Returns an array of all placed workspace objects.
     public var placed_objects: [WorkspaceObject]
     {
@@ -662,7 +674,7 @@ public class Workspace: ObservableObject
      */
     public func delete_robot(name: String)
     {
-        delete_robot(index: robot_index_by_name(name))
+        delete_robot(index: index_by_name(name, objects: robots))
     }
     
     /**
@@ -694,16 +706,11 @@ public class Workspace: ObservableObject
      */
     public func duplicate_robot(name: String)
     {
-        duplicate_robot(index: robot_index_by_name(name))
+        duplicate_robot(index: index_by_name(name, objects: robots))
     }
     
     //MARK: Robot selection functions
     private var selected_robot_index = -1
-    
-    private func robot_index_by_name(_ name: String) -> Int //Get index number of robot by name
-    {
-        return robots.firstIndex(of: Robot(name: name)) ?? -1
-    }
     
     /**
      Selects robot by index.
@@ -724,7 +731,7 @@ public class Workspace: ObservableObject
      */
     public func select_robot(name: String)
     {
-        select_robot(index: robot_index_by_name(name))
+        select_robot(index: index_by_name(name, objects: robots))
     }
     
     ///Deselects selected robot.
@@ -765,7 +772,7 @@ public class Workspace: ObservableObject
      */
     public func robot_by_name(_ name: String) -> Robot
     {
-        let index = robot_index_by_name(name)
+        let index = index_by_name(name, objects: robots)
         if robots.indices.contains(index)
         {
             return self.robots[index]
@@ -875,7 +882,7 @@ public class Workspace: ObservableObject
      */
     public func delete_tool(name: String)
     {
-        delete_tool(index: tool_index_by_name(name))
+        delete_tool(index: index_by_name(name, objects: tools))
     }
     
     /**
@@ -907,7 +914,7 @@ public class Workspace: ObservableObject
      */
     public func duplicate_tool(name: String)
     {
-        duplicate_tool(index: tool_index_by_name(name))
+        duplicate_tool(index: index_by_name(name, objects: tools))
     }
 
     //MARK: Tools selection functions
@@ -955,25 +962,13 @@ public class Workspace: ObservableObject
      */
     public func select_tool(name: String) //Select tool by name
     {
-        select_tool(index: tool_index_by_name(name))
+        select_tool(index: index_by_name(name, objects: tools))
     }
     
     ///Deselects selected tool.
     public func deselect_tool()
     {
         selected_tool_index = -1
-    }
-    
-    //MARK: Tools naming
-    /**
-     Returns index number of tool by name.
-     
-     - Parameters:
-        - name: A name of tool for index find.
-     */
-    private func tool_index_by_name(_ name: String) -> Int
-    {
-        return tools.firstIndex(of: Tool(name: name)) ?? -1
     }
     
     /**
@@ -984,7 +979,7 @@ public class Workspace: ObservableObject
      */
     public func tool_by_name(_ name: String) -> Tool
     {
-        let index = tool_index_by_name(name)
+        let index = index_by_name(name, objects: tools)
         if tools.indices.contains(index)
         {
             return self.tools[index]
@@ -1092,7 +1087,7 @@ public class Workspace: ObservableObject
      */
     public func delete_part(name: String)
     {
-        delete_part(index: part_index_by_name(name))
+        delete_part(index: index_by_name(name, objects: parts))
     }
     
     /**
@@ -1124,7 +1119,7 @@ public class Workspace: ObservableObject
      */
     public func duplicate_part(name: String)
     {
-        duplicate_part(index: part_index_by_name(name))
+        duplicate_part(index: index_by_name(name, objects: parts))
     }
     
     //MARK: Parts selection functions
@@ -1172,25 +1167,13 @@ public class Workspace: ObservableObject
      */
     public func select_part(name: String)
     {
-        select_part(index: part_index_by_name(name))
+        select_part(index: index_by_name(name, objects: parts))
     }
     
     ///Deselects selected part.
     public func deselect_part()
     {
         selected_part_index = -1
-    }
-    
-    //MARK: Parts naming
-    /**
-     Returns index number of part by name.
-     
-     - Parameters:
-        - name: A name of part for index find.
-     */
-    private func part_index_by_name(_ name: String) -> Int
-    {
-        return parts.firstIndex(of: Part(name: name)) ?? -1
     }
     
     /**
@@ -1201,7 +1184,7 @@ public class Workspace: ObservableObject
      */
     public func part_by_name(_ name: String) -> Part
     {
-        let index = part_index_by_name(name)
+        let index = index_by_name(name, objects: parts)
         if parts.indices.contains(index)
         {
             return self.parts[index]
