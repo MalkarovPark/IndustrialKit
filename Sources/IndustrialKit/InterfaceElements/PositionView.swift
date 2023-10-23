@@ -100,7 +100,7 @@ public struct PositionControl: View
         self._scale = scale
     }
     
-    var body: some View
+    public var body: some View
     {
         GroupBox
         {
