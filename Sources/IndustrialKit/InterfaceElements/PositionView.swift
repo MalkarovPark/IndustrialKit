@@ -81,7 +81,7 @@ public struct PositionView: View
     }
 }
 
-struct PositionControl: View
+public struct PositionControl: View
 {
     @Binding var location: [Float]
     @Binding var rotation: [Float]
