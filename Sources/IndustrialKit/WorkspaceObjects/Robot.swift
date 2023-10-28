@@ -675,7 +675,7 @@ public class Robot: WorkspaceObject
     public static var scene_folder = String()
     
     ///A robot visual model controller.
-    private var model_controller = RobotModelController()
+    public var model_controller = RobotModelController()
     
     /**
      Updates robot visual model by model controller in connector.
