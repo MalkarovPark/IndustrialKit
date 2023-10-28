@@ -2030,12 +2030,6 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///Resets camera position SCNAction
-    public var reset_view_action: SCNAction
-    {
-        return SCNAction.group([SCNAction.move(to: camera_node!.worldPosition, duration: 0.5), SCNAction.rotate(toAxisAngle: camera_node!.rotation, duration: 0.5)])
-    }
-    
     ///If add in view presented or not dismissed state.
     public var add_in_view_dismissed = true
     

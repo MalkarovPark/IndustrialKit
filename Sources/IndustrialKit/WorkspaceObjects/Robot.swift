@@ -758,19 +758,13 @@ public class Robot: WorkspaceObject
         - scene: A current scene.
         - name: A robot name.
         - connect_camera: Place camera to robot's camera node.
+     
+     > The scene should contain nodes named: box, space, pointer, internal, points.
      */
     public func workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
         //Find nodes from scene by names
         self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
-        /*scene.rootNode.enumerateChildNodes
-        { (_node, stop) in
-            if _node.name == name, _node.categoryBitMask == Workspace.robot_bit_mask
-            {
-                unit_node = _node
-                //print((_node.name ?? "") + "is tool")
-            }
-        }*/
         
         self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
         self.space_node = self.box_node?.childNode(withName: "space", recursively: true)
@@ -914,7 +908,7 @@ public class Robot: WorkspaceObject
     public func update_space_scale()
     {
         //XY planes
-        modified_node = space_node!.childNode(withName: "w0", recursively: true)!
+        modified_node = space_node?.childNode(withName: "w0", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[0]))
         modified_node.geometry?.firstMaterial = saved_material
@@ -923,7 +917,7 @@ public class Robot: WorkspaceObject
         #else
         modified_node.position.y = -space_scale[2] / 2
         #endif
-        modified_node = space_node!.childNode(withName: "w1", recursively: true)!
+        modified_node = space_node?.childNode(withName: "w1", recursively: true) ?? SCNNode()
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[0]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
@@ -933,7 +927,7 @@ public class Robot: WorkspaceObject
         #endif
         
         //YZ plane
-        modified_node = space_node!.childNode(withName: "w2", recursively: true)!
+        modified_node = space_node?.childNode(withName: "w2", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
@@ -942,7 +936,7 @@ public class Robot: WorkspaceObject
         #else
         modified_node.position.z = -space_scale[0] / 2
         #endif
-        modified_node = space_node!.childNode(withName: "w3", recursively: true)!
+        modified_node = space_node?.childNode(withName: "w3", recursively: true) ?? SCNNode()
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
@@ -952,7 +946,7 @@ public class Robot: WorkspaceObject
         #endif
         
         //XZ plane
-        modified_node = space_node!.childNode(withName: "w4", recursively: true)!
+        modified_node = space_node?.childNode(withName: "w4", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial)!
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
@@ -961,7 +955,7 @@ public class Robot: WorkspaceObject
         #else
         modified_node.position.x = -space_scale[1] / 2
         #endif
-        modified_node = space_node!.childNode(withName: "w5", recursively: true)!
+        modified_node = space_node?.childNode(withName: "w5", recursively: true) ?? SCNNode()
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
