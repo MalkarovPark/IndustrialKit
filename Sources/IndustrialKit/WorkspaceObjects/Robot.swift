@@ -909,7 +909,7 @@ public class Robot: WorkspaceObject
     {
         //XY planes
         modified_node = space_node?.childNode(withName: "w0", recursively: true) ?? SCNNode()
-        saved_material = (modified_node.geometry?.firstMaterial)!
+        saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[0]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
@@ -928,7 +928,7 @@ public class Robot: WorkspaceObject
         
         //YZ plane
         modified_node = space_node?.childNode(withName: "w2", recursively: true) ?? SCNNode()
-        saved_material = (modified_node.geometry?.firstMaterial)!
+        saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
@@ -947,7 +947,7 @@ public class Robot: WorkspaceObject
         
         //XZ plane
         modified_node = space_node?.childNode(withName: "w4", recursively: true) ?? SCNNode()
-        saved_material = (modified_node.geometry?.firstMaterial)!
+        saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]), height: CGFloat(space_scale[2]))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
