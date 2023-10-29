@@ -127,6 +127,16 @@ public class Tool: WorkspaceObject
         read_connection_parameters(connector: self.connector, tool_struct.connection_parameters)
     }
     
+    ///Inits tool by name, controller, connector and scene name.
+    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String)
+    {
+        super.init(name: name)
+        
+        self.model_controller = model_controller
+        self.connector = connector
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)!
+    }
+    
     /**
      Model connector and contoller selection function for tool.
     

@@ -127,6 +127,16 @@ public class Robot: WorkspaceObject
         read_connection_parameters(connector: connector, robot_struct.connection_parameters)
     }
     
+    ///Inits robot by name, controller, connector and scene name.
+    public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene_name: String)
+    {
+        super.init(name: name)
+        
+        self.model_controller = model_controller
+        self.connector = connector
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)!
+    }
+    
     ///Common init function.
     private func robot_init(name: String, manufacturer: String, model: String, lengths: [Float], module_name: String, scene: String, is_placed: Bool, location: [Float], rotation: [Float], demo: Bool, update_model_by_connector: Bool, get_statistics: Bool, charts_data: [WorkspaceObjectChart]?, state: [StateItem]?, image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
     {
