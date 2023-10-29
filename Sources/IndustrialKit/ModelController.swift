@@ -286,6 +286,28 @@ open class RobotModelController: ModelController
     ///Rotation finished flag.
     private var rotation_finished = false
     
+    /**
+     Updates connected model nodes scales by lengths.
+     
+     - Parameters:
+        - lengths: The new model nodes lengths.
+     */
+    public func transform_by_lengths(_ lengths: [Float])
+    {
+        if lengths.count > 0
+        {
+            self.lengths = lengths
+            nodes_transform()
+        }
+    }
+    
+    /**
+     Performs node action by target point with completion handler.
+     
+     - Parameters:
+        - position: The target position performed by the tool visual model.
+        - completion: A completion block that is calls when the action completes.
+     */
     public func nodes_move_to(position: PositionPoint, move_time: Float?, rotate_time: Float?, completion: @escaping () -> Void)
     {
         self.moving_finished = false

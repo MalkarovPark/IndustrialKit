@@ -787,11 +787,7 @@ public class Robot: WorkspaceObject
         self.unit_node?.addChildNode(node ?? SCNNode())
         model_controller.nodes_disconnect()
         model_controller.nodes_connect(node ?? SCNNode(), pointer: self.pointer_node ?? SCNNode(), pointer_internal: self.pointer_node_internal ?? SCNNode())
-        if lengths.count > 0
-        {
-            model_controller.lengths = lengths
-            model_controller.nodes_transform()
-        }
+        model_controller.transform_by_lengths(lengths)
         
         //Connect robot camera
         if connect_camera
@@ -810,7 +806,7 @@ public class Robot: WorkspaceObject
         
         update_location()
         update_rotation()
-        //model_controller.update_robot() //Updates robot model by target position. Update robot parts position on robot connection
+        //model_controller.update_robot() //Updates robot model by target position. Update robot parts position on robot connection.
         
         //Pass model controller to connector
         /*if update_model_by_connector
