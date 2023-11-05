@@ -9,9 +9,9 @@ import SwiftUI
 
 public struct ViewCloseButton: ViewModifier
 {
-    @Binding public var is_presented: Bool?
+    @Binding public var is_presented: Bool
     
-    public init(is_presented: Binding<Bool?>)
+    public init(is_presented: Binding<Bool>)
     {
         self._is_presented = is_presented
     }
@@ -21,7 +21,7 @@ public struct ViewCloseButton: ViewModifier
         content
             .overlay(alignment: .topLeading)
             {
-                Button(action: { is_presented?.toggle() })
+                Button(action: { is_presented.toggle() })
                 {
                     Image(systemName: "xmark")
                 }
