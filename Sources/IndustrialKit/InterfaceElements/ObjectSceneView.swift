@@ -13,24 +13,30 @@ public struct ObjectSceneView: UIViewRepresentable
     private let scene_view = SCNView(frame: .zero)
     private let viewed_scene: SCNScene
     private let node: SCNNode
+    private let on_render: ((_ scene_view: SCNView) -> Void)
     private let on_tap: ((_ recognizer: UITapGestureRecognizer, _ scene_view: SCNView) -> Void)
     
     private var inited_with_scene = true
     private var inited_with_node = true
     
+    //MARK: Init functions
     public init(node: SCNNode)
     {
         self.viewed_scene = SCNScene()
         self.node = node
+        
+        self.on_render = {_ in }
         self.on_tap = {_, _ in }
         
         self.inited_with_node = true
     }
     
-    public init(node: SCNNode, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
+    public init(node: SCNNode, on_render: @escaping (_ scene_view: SCNView) -> Void, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
     {
         self.viewed_scene = SCNScene()
         self.node = node
+        
+        self.on_render = on_render
         self.on_tap = on_tap
         
         self.inited_with_node = true
@@ -40,15 +46,19 @@ public struct ObjectSceneView: UIViewRepresentable
     {
         self.viewed_scene = scene
         self.node = SCNNode()
+        
+        self.on_render = {_ in }
         self.on_tap = {_, _ in }
         
         self.inited_with_scene = true
     }
     
-    public init(scene: SCNScene, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
+    public init(scene: SCNScene, on_render: @escaping (_ scene_view: SCNView) -> Void, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
     {
         self.viewed_scene = scene
         self.node = SCNNode()
+        
+        self.on_render = on_render
         self.on_tap = on_tap
         
         self.inited_with_scene = true
@@ -58,16 +68,20 @@ public struct ObjectSceneView: UIViewRepresentable
     {
         self.viewed_scene = scene
         self.node = node
+        
+        self.on_render = {_ in }
         self.on_tap = {_, _ in }
         
         self.inited_with_scene = true
         self.inited_with_node = true
     }
     
-    public init(scene: SCNScene, node: SCNNode, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
+    public init(scene: SCNScene, on_render: @escaping (_ scene_view: SCNView) -> Void, node: SCNNode, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
     {
         self.viewed_scene = scene
         self.node = node
+        
+        self.on_render = on_render
         self.on_tap = on_tap
         
         self.inited_with_scene = true
@@ -88,6 +102,7 @@ public struct ObjectSceneView: UIViewRepresentable
         return scene_view
     }
     
+    //MARK: Scene functions
     #if os(macOS)
     public func makeNSView(context: Context) -> SCNView
     {
@@ -179,7 +194,7 @@ public struct ObjectSceneView: UIViewRepresentable
         
         public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
         {
-            control.scene_check()
+            control.on_render(scn_view)
         }
         
         private let scn_view: SCNView
@@ -209,11 +224,6 @@ public struct ObjectSceneView: UIViewRepresentable
                 }
             }
         }
-    }
-    
-    func scene_check() //Render functions
-    {
-        
     }
 }
 
