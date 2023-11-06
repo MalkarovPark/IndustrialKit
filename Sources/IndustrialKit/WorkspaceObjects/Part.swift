@@ -359,7 +359,7 @@ public class Part: WorkspaceObject
             node?.geometry?.firstMaterial?.lightingModel = .physicallyBased
         }
         
-        node?.name = "Figure"
+        node?.name = "part"
     }
     
     //MARK: Part in workspace handling
