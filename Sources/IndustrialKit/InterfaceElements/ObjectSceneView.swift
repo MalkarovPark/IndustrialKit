@@ -15,28 +15,28 @@ public struct ObjectSceneView: UIViewRepresentable
     private let node: SCNNode
     private let on_tap: ((_ recognizer: UITapGestureRecognizer, _ scene_view: SCNView) -> Void)
     
-    init(node: SCNNode)
+    public init(node: SCNNode)
     {
         self.viewed_scene = SCNScene()
         self.node = node
         self.on_tap = {_, _ in }
     }
     
-    init(node: SCNNode, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
+    public init(node: SCNNode, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
     {
         self.viewed_scene = SCNScene()
         self.node = node
         self.on_tap = on_tap
     }
     
-    init(scene: SCNScene)
+    public init(scene: SCNScene)
     {
         self.viewed_scene = scene
         self.node = SCNNode()
         self.on_tap = {_, _ in }
     }
     
-    init(scene: SCNScene, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
+    public init(scene: SCNScene, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
     {
         self.viewed_scene = scene
         self.node = SCNNode()
@@ -174,8 +174,8 @@ public struct ObjectSceneView: UIViewRepresentable
 
 //MARK: - Scene Views typealilases
 #if os(macOS)
-typealias UIViewRepresentable = NSViewRepresentable
-typealias UITapGestureRecognizer = NSClickGestureRecognizer
+public typealias UIViewRepresentable = NSViewRepresentable
+public typealias UITapGestureRecognizer = NSClickGestureRecognizer
 #endif
 
 #Preview
