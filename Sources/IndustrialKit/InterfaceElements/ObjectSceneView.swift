@@ -25,8 +25,8 @@ public struct ObjectSceneView: UIViewRepresentable
         self.viewed_scene = SCNScene()
         self.node = node
         
-        self.on_render = {_ in }
-        self.on_tap = {_, _ in }
+        self.on_render = { _ in }
+        self.on_tap = { _, _ in }
         
         self.inited_with_node = true
     }
@@ -47,13 +47,10 @@ public struct ObjectSceneView: UIViewRepresentable
         self.viewed_scene = scene
         self.node = SCNNode()
         
-        self.on_render = {_ in }
-        self.on_tap = {_, _ in }
+        self.on_render = { _ in }
+        self.on_tap = { _, _ in }
         
         self.inited_with_scene = true
-        
-        base_camera_location = scene_view.pointOfView?.position ?? SCNVector3(0, 0, 2)
-        base_camera_rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
     }
     
     public init(scene: SCNScene, on_render: @escaping (_ scene_view: SCNView) -> Void, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
@@ -65,9 +62,6 @@ public struct ObjectSceneView: UIViewRepresentable
         self.on_tap = on_tap
         
         self.inited_with_scene = true
-        
-        base_camera_location = scene_view.pointOfView?.position ?? SCNVector3(0, 0, 2)
-        base_camera_rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
     }
     
     public init(scene: SCNScene, node: SCNNode)
@@ -75,14 +69,11 @@ public struct ObjectSceneView: UIViewRepresentable
         self.viewed_scene = scene
         self.node = node
         
-        self.on_render = {_ in }
-        self.on_tap = {_, _ in }
+        self.on_render = { _ in }
+        self.on_tap = { _, _ in }
         
         self.inited_with_scene = true
         self.inited_with_node = true
-        
-        base_camera_location = scene_view.pointOfView?.position ?? SCNVector3(0, 0, 2)
-        base_camera_rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
     }
     
     public init(scene: SCNScene, node: SCNNode, on_render: @escaping (_ scene_view: SCNView) -> Void, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
@@ -95,13 +86,11 @@ public struct ObjectSceneView: UIViewRepresentable
         
         self.inited_with_scene = true
         self.inited_with_node = true
-        
-        base_camera_location = scene_view.pointOfView?.position ?? SCNVector3(0, 0, 2)
-        base_camera_rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
     }
     
-    private var base_camera_location = SCNVector3()
-    private var base_camera_rotation = SCNVector4()
+    #if os(macOS)
+    private let base_camera_position_node = SCNNode()
+    #endif
     
     func scn_scene(context: Context) -> SCNView
     {
@@ -112,6 +101,14 @@ public struct ObjectSceneView: UIViewRepresentable
         if inited_with_node
         {
             scene_view.scene?.rootNode.addChildNode(node.clone())
+        }
+        
+        if inited_with_scene
+        {
+            scene_view.scene?.rootNode.addChildNode(node.clone())
+            
+            base_camera_position_node.position = scene_view.pointOfView?.position ?? SCNVector3(0, 0, 2)
+            base_camera_position_node.rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
         }
         
         return scene_view
@@ -231,7 +228,7 @@ public struct ObjectSceneView: UIViewRepresentable
                 {
                     on_reset_view = true
                     
-                    let reset_action = SCNAction.group([SCNAction.move(to: control.base_camera_location, duration: 0.5), SCNAction.rotate(toAxisAngle: control.base_camera_rotation, duration: 0.5)])
+                    let reset_action = SCNAction.group([SCNAction.move(to: control.base_camera_position_node.position, duration: 0.5), SCNAction.rotate(toAxisAngle: control.base_camera_position_node.rotation, duration: 0.5)])
                     scn_view.defaultCameraController.pointOfView?.runAction(
                         reset_action, completionHandler: { self.on_reset_view = false })
                 }
