@@ -109,8 +109,6 @@ public struct ObjectSceneView: UIViewRepresentable
         
         if inited_with_scene
         {
-            scene_view.scene?.rootNode.addChildNode(node.clone())
-            
             #if os(macOS)
             base_camera_position_node.position = scene_view.pointOfView?.position ?? SCNVector3(0, 0, 2)
             base_camera_position_node.rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
