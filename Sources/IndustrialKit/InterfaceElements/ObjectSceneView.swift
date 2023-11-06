@@ -100,7 +100,11 @@ public struct ObjectSceneView: UIViewRepresentable
         
         if inited_with_node
         {
-            scene_view.scene?.rootNode.addChildNode(node.clone())
+            let new_node = node.clone()
+            new_node.name = "None"
+            scene_view.scene?.rootNode.addChildNode(new_node)
+            
+            //scene_view.scene?.rootNode.addChildNode(node.clone())
         }
         
         if inited_with_scene
