@@ -107,8 +107,10 @@ public struct ObjectSceneView: UIViewRepresentable
         {
             scene_view.scene?.rootNode.addChildNode(node.clone())
             
+            #if os(macOS)
             base_camera_position_node.position = scene_view.pointOfView?.position ?? SCNVector3(0, 0, 2)
             base_camera_position_node.rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
+            #endif
         }
         
         return scene_view
@@ -213,6 +215,7 @@ public struct ObjectSceneView: UIViewRepresentable
             control.on_tap(gesture_recognize, scn_view)
         }
         
+        #if os(macOS)
         @objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
         {
             reset_camera_view_position(locataion: SCNVector3(0, 0, 2), rotation: SCNVector4Zero, view: scn_view)
@@ -229,6 +232,7 @@ public struct ObjectSceneView: UIViewRepresentable
                 }
             }
         }
+        #endif
     }
 }
 
