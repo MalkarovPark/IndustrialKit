@@ -54,6 +54,16 @@ public struct ObjectSceneView: UIViewRepresentable
         self.inited_with_scene = true
     }
     
+    public init(scene: SCNScene, node: SCNNode)
+    {
+        self.viewed_scene = scene
+        self.node = node
+        self.on_tap = {_, _ in }
+        
+        self.inited_with_scene = true
+        self.inited_with_node = true
+    }
+    
     public init(scene: SCNScene, node: SCNNode, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
     {
         self.viewed_scene = scene
