@@ -15,11 +15,16 @@ public struct ObjectSceneView: UIViewRepresentable
     private let node: SCNNode
     private let on_tap: ((_ recognizer: UITapGestureRecognizer, _ scene_view: SCNView) -> Void)
     
+    private var inited_with_scene = true
+    private var inited_with_node = true
+    
     public init(node: SCNNode)
     {
         self.viewed_scene = SCNScene()
         self.node = node
         self.on_tap = {_, _ in }
+        
+        self.inited_with_node = true
     }
     
     public init(node: SCNNode, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
@@ -27,6 +32,8 @@ public struct ObjectSceneView: UIViewRepresentable
         self.viewed_scene = SCNScene()
         self.node = node
         self.on_tap = on_tap
+        
+        self.inited_with_node = true
     }
     
     public init(scene: SCNScene)
@@ -34,6 +41,8 @@ public struct ObjectSceneView: UIViewRepresentable
         self.viewed_scene = scene
         self.node = SCNNode()
         self.on_tap = {_, _ in }
+        
+        self.inited_with_scene = true
     }
     
     public init(scene: SCNScene, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
@@ -41,6 +50,18 @@ public struct ObjectSceneView: UIViewRepresentable
         self.viewed_scene = scene
         self.node = SCNNode()
         self.on_tap = on_tap
+        
+        self.inited_with_scene = true
+    }
+    
+    public init(scene: SCNScene, node: SCNNode, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
+    {
+        self.viewed_scene = scene
+        self.node = node
+        self.on_tap = on_tap
+        
+        self.inited_with_scene = true
+        self.inited_with_node = true
     }
     
     func scn_scene(context: Context) -> SCNView
@@ -49,7 +70,10 @@ public struct ObjectSceneView: UIViewRepresentable
         scene_view.delegate = context.coordinator
         scene_view.scene?.background.contents = UIColor.clear
         
-        scene_view.scene?.rootNode.addChildNode(node.clone())
+        if inited_with_node
+        {
+            scene_view.scene?.rootNode.addChildNode(node.clone())
+        }
         
         return scene_view
     }
@@ -71,7 +95,7 @@ public struct ObjectSceneView: UIViewRepresentable
         
         scene_view.backgroundColor = UIColor.clear
         
-        if viewed_scene.rootNode.childNodes.count == 0
+        if !inited_with_scene //&& inited_with_node
         {
             let camera_node = SCNNode()
             camera_node.camera = SCNCamera()
