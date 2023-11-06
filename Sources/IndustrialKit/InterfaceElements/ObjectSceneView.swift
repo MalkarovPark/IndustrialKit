@@ -146,7 +146,7 @@ public struct ObjectSceneView: UIViewRepresentable
         return scn_scene(context: context)
     }
     #else
-    func makeUIView(context: Context) -> SCNView
+    public func makeUIView(context: Context) -> SCNView
     {
         //Add gesture recognizer
         scene_view.addGestureRecognizer(UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:))))
@@ -176,7 +176,7 @@ public struct ObjectSceneView: UIViewRepresentable
         
     }
     #else
-    func updateUIView(_ ui_view: SCNView, context: Context)
+    public func updateUIView(_ ui_view: SCNView, context: Context)
     {
         
     }
