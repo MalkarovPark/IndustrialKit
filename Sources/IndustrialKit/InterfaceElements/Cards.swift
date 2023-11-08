@@ -183,7 +183,7 @@ public struct CircleDeleteButtonModifier: ViewModifier
         {
             Alert(
                 title: Text("Delete \(object_type_name)?"),
-                message: Text("Do you wand to delete this \(object_type_name) – \(object_item.name ?? "")"),
+                message: Text("Do you want to delete this \(object_type_name) – \(object_item.name ?? "")"),
                 primaryButton: .destructive(Text("Yes"), action: delete_object),
                 secondaryButton: .cancel(Text("No"))
             )
