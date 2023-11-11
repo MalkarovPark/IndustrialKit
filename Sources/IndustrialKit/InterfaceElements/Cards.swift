@@ -15,12 +15,37 @@ public struct LargeCardView: View
     @State public var title: String
     @State public var subtitle: String
     
+    //For rename
+    @Binding public var to_rename: Bool
+    @Binding public var edited_name: String
+    @State private var new_name: String
+    @FocusState private var is_focused: Bool
+    let on_rename: () -> ()
+    
     public init(color: Color, image: UIImage, title: String, subtitle: String)
     {
         self.color = color
         self.image = image
         self.title = title
         self.subtitle = subtitle
+        
+        self._to_rename = .constant(false)
+        self._edited_name = .constant("")
+        self.new_name = ""
+        self.on_rename = { }
+    }
+    
+    public init(color: Color, image: UIImage, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+        self.subtitle = subtitle
+        
+        self._to_rename = to_rename
+        self._edited_name = edited_name
+        _new_name = State(initialValue: edited_name.wrappedValue)
+        self.on_rename = on_rename
     }
     
     public var body: some View
@@ -47,20 +72,59 @@ public struct LargeCardView: View
                 Spacer()
                 HStack
                 {
-                    VStack(alignment: .leading)
+                    if !to_rename
                     {
-                        Text(title)
-                            .font(.headline)
-                            .padding(.top, 8)
-                            .padding(.leading, 4)
-                        
-                        Text(subtitle)
-                            .foregroundColor(.gray)
-                            .padding(.bottom, 8)
-                            .padding(.leading, 4)
+                        VStack(alignment: .leading)
+                        {
+                            Text(title)
+                                .font(.headline)
+                                .padding(.top, 8)
+                                .padding(.leading, 4)
+                            
+                            Text(subtitle)
+                                .foregroundColor(.gray)
+                                .padding(.bottom, 8)
+                                .padding(.leading, 4)
+                        }
+                        .padding(.horizontal, 8)
+                        Spacer()
                     }
-                    .padding(.horizontal, 8)
-                    Spacer()
+                    else
+                    {
+                        VStack(alignment: .leading)
+                        {
+                            HStack
+                            {
+                                #if os(macOS)
+                                TextField("Name", text: $title)
+                                    .textFieldStyle(.roundedBorder)
+                                    .focused($is_focused)
+                                    .labelsHidden()
+                                    .padding()
+                                    .onSubmit
+                                    {
+                                        edited_name = new_name
+                                        on_rename()
+                                        to_rename = false
+                                    }
+                                    .onExitCommand
+                                    {
+                                        to_rename = false
+                                    }
+                                #else
+                                TextField("Name", text: $title, onCommit: {
+                                    edited_name = new_name
+                                    on_rename()
+                                    to_rename = false
+                                })
+                                    .textFieldStyle(.roundedBorder)
+                                    .focused($is_focused)
+                                    .labelsHidden()
+                                    .padding()
+                                #endif
+                            }
+                        }
+                    }
                 }
                 .background(color.opacity(0.2))
                 .background(.thinMaterial)
@@ -207,11 +271,35 @@ public struct SmallCardView: View
     @State public var image: UIImage
     @State public var title: String
     
+    //For rename
+    @Binding public var to_rename: Bool
+    @Binding public var edited_name: String
+    @State private var new_name: String
+    @FocusState private var is_focused: Bool
+    let on_rename: () -> ()
+    
     public init(color: Color, image: UIImage, title: String)
     {
         self.color = color
         self.image = image
         self.title = title
+        
+        self._to_rename = .constant(false)
+        self._edited_name = .constant("")
+        self.new_name = ""
+        self.on_rename = { }
+    }
+    
+    public init(color: Color, image: UIImage, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+        
+        self._to_rename = to_rename
+        self._edited_name = edited_name
+        _new_name = State(initialValue: edited_name.wrappedValue)
+        self.on_rename = on_rename
     }
     
     public var body: some View
@@ -224,11 +312,44 @@ public struct SmallCardView: View
                 {
                     HStack(spacing: 0)
                     {
-                        Text(title)
+                        if !to_rename
+                        {
+                            Text(title)
+                                .font(.headline)
+                                .padding()
+                            
+                            Spacer()
+                        }
+                        else
+                        {
+                            #if os(macOS)
+                            TextField("Name", text: $title)
+                                .focused($is_focused)
+                                .labelsHidden()
+                                .font(.headline)
+                                .padding()
+                                .onSubmit
+                                {
+                                    edited_name = new_name
+                                    on_rename()
+                                    to_rename = false
+                                }
+                                .onExitCommand
+                            {
+                                to_rename = false
+                            }
+                            #else
+                            TextField("Name", text: $title, onCommit: {
+                                edited_name = new_name
+                                on_rename()
+                                to_rename = false
+                            })
+                            .focused($is_focused)
+                            .labelsHidden()
                             .font(.headline)
                             .padding()
-                        
-                        Spacer()
+                            #endif
+                        }
                         
                         Rectangle()
                             .fill(.clear)
