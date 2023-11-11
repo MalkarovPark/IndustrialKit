@@ -18,7 +18,7 @@ public struct LargeCardView: View
     //For rename
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
-    @State private var new_name: String?
+    @State private var new_name: String
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
@@ -51,7 +51,7 @@ public struct LargeCardView: View
                 edited_name.wrappedValue = $0
             }
         )
-        _new_name = State(initialValue: edited_name.wrappedValue)
+        _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
     }
     
@@ -281,7 +281,7 @@ public struct SmallCardView: View
     //For rename
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
-    @State private var new_name: String?
+    @State private var new_name: String
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
@@ -312,7 +312,7 @@ public struct SmallCardView: View
                 edited_name.wrappedValue = $0
             }
         )
-        _new_name = State(initialValue: edited_name.wrappedValue)
+        _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
     }
     
