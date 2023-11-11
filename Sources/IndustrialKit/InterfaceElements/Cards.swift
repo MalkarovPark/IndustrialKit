@@ -17,8 +17,8 @@ public struct LargeCardView: View
     
     //For rename
     @Binding public var to_rename: Bool
-    @Binding public var edited_name: String
-    @State private var new_name: String
+    @Binding public var edited_name: String?
+    @State private var new_name: String?
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
@@ -35,7 +35,7 @@ public struct LargeCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, image: UIImage, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
+    public init(color: Color, image: UIImage, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
     {
         self.color = color
         self.image = image
@@ -273,8 +273,8 @@ public struct SmallCardView: View
     
     //For rename
     @Binding public var to_rename: Bool
-    @Binding public var edited_name: String
-    @State private var new_name: String
+    @Binding public var edited_name: String?
+    @State private var new_name: String?
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
@@ -290,7 +290,7 @@ public struct SmallCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, image: UIImage, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
+    public init(color: Color, image: UIImage, title: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
     {
         self.color = color
         self.image = image
