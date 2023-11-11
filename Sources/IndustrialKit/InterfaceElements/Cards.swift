@@ -110,7 +110,8 @@ public struct LargeCardView: View
                                     .padding()
                                     .onSubmit
                                     {
-                                        edited_name = new_name 
+                                        edited_name = new_name
+                                        title = new_name
                                         on_rename()
                                         to_rename = false
                                     }
@@ -121,6 +122,7 @@ public struct LargeCardView: View
                                 #else
                                 TextField("Name", text: $title, onCommit: {
                                     edited_name = new_name
+                                    title = new_name
                                     on_rename()
                                     to_rename = false
                                 })
@@ -345,6 +347,7 @@ public struct SmallCardView: View
                                 .onSubmit
                                 {
                                     edited_name = new_name
+                                    title = new_name
                                     on_rename()
                                     to_rename = false
                                 }
@@ -355,6 +358,7 @@ public struct SmallCardView: View
                             #else
                             TextField("Name", text: $title, onCommit: {
                                 edited_name = new_name
+                                title = new_name
                                 on_rename()
                                 to_rename = false
                             })
