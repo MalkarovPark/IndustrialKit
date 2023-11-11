@@ -18,7 +18,7 @@ public struct LargeCardView: View
     //For rename
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
-    @State private var new_name = String()
+    @State private var new_name: String
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
@@ -51,7 +51,7 @@ public struct LargeCardView: View
                 edited_name.wrappedValue = $0
             }
         )
-        //_new_name = State(initialValue: _edited_name.wrappedValue)
+        _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
     }
     
@@ -103,14 +103,14 @@ public struct LargeCardView: View
                             HStack
                             {
                                 #if os(macOS)
-                                TextField("Name", text: $title)
+                                TextField("Name", text: $new_name)
                                     .textFieldStyle(.roundedBorder)
                                     .focused($is_focused)
                                     .labelsHidden()
                                     .padding()
                                     .onSubmit
                                     {
-                                        edited_name = new_name ?? ""
+                                        edited_name = new_name 
                                         on_rename()
                                         to_rename = false
                                     }
@@ -120,7 +120,7 @@ public struct LargeCardView: View
                                     }
                                 #else
                                 TextField("Name", text: $title, onCommit: {
-                                    edited_name = new_name ?? ""
+                                    edited_name = new_name
                                     on_rename()
                                     to_rename = false
                                 })
@@ -281,7 +281,7 @@ public struct SmallCardView: View
     //For rename
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
-    @State private var new_name = String()
+    @State private var new_name: String
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
@@ -312,7 +312,7 @@ public struct SmallCardView: View
                 edited_name.wrappedValue = $0
             }
         )
-        //_new_name = State(initialValue: _edited_name.wrappedValue)
+        _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
     }
     
@@ -337,14 +337,14 @@ public struct SmallCardView: View
                         else
                         {
                             #if os(macOS)
-                            TextField("Name", text: $edited_name)
+                            TextField("Name", text: $new_name)
                                 .focused($is_focused)
                                 .labelsHidden()
                                 .font(.headline)
                                 .padding()
                                 .onSubmit
                                 {
-                                    edited_name = new_name ?? ""
+                                    edited_name = new_name
                                     on_rename()
                                     to_rename = false
                                 }
@@ -354,7 +354,7 @@ public struct SmallCardView: View
                             }
                             #else
                             TextField("Name", text: $title, onCommit: {
-                                edited_name = new_name ?? ""
+                                edited_name = new_name
                                 on_rename()
                                 to_rename = false
                             })
