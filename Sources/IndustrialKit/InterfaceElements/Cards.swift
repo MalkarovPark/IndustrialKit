@@ -10,12 +10,13 @@ import SwiftUI
 //MARK: - Large card view
 public struct LargeCardView: View
 {
+    //View parameters
     @State public var color: Color
     @State public var image: UIImage
     @State public var title: String
     @State public var subtitle: String
     
-    //For rename
+    //Rename parameters
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
     @State private var new_name: String
@@ -141,71 +142,7 @@ public struct LargeCardView: View
         }
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
         .frame(height: 192)
-        .shadow(radius: 8.0)
-    }
-}
-
-//MARK: Large card preview for drag
-public struct LargeCardViewPreview: View
-{
-    @State public var color: Color
-    @State public var image: UIImage
-    @State public var title: String
-    @State public var subtitle: String
-    
-    public init(color: Color, image: UIImage, title: String, subtitle: String)
-    {
-        self.color = color
-        self.image = image
-        self.title = title
-        self.subtitle = subtitle
-    }
-    
-    public var body: some View
-    {
-        ZStack
-        {
-            Rectangle()
-                .foregroundColor(color)
-                .overlay
-            {
-                #if os(macOS)
-                Image(nsImage: image)
-                    .resizable()
-                    .scaledToFill()
-                #else
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                #endif
-            }
-            
-            VStack
-            {
-                Spacer()
-                HStack
-                {
-                    VStack(alignment: .leading)
-                    {
-                        Text(title)
-                            .font(.headline)
-                            .padding(.top, 8)
-                            .padding(.leading, 4)
-                        
-                        Text(subtitle)
-                            .foregroundColor(.gray)
-                            .padding(.bottom, 8)
-                            .padding(.leading, 4)
-                    }
-                    .padding(.horizontal, 8)
-                    Spacer()
-                }
-                .background(color.opacity(0.2))
-                .background(.thinMaterial)
-            }
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .frame(height: 192)
+        //.shadow(radius: 8)
     }
 }
 
@@ -276,11 +213,12 @@ public struct CircleDeleteButtonModifier: ViewModifier
 //MARK: - Small card view
 public struct SmallCardView: View
 {
+    //View properties
     @State public var color: Color
     @State public var image: UIImage
     @State public var title: String
     
-    //For rename
+    //Rename properties
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
     @State private var new_name: String
@@ -395,66 +333,7 @@ public struct SmallCardView: View
             .background(.thinMaterial)
         }
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        .shadow(radius: 8.0)
-    }
-}
-
-//MARK: Small card preview for drag
-public struct SmallCardViewPreview: View
-{
-    @State public var color: Color
-    @State public var image: UIImage
-    @State public var title: String
-    
-    public init(color: Color, image: UIImage, title: String)
-    {
-        self.color = color
-        self.image = image
-        self.title = title
-    }
-    
-    public var body: some View
-    {
-        ZStack
-        {
-            VStack
-            {
-                HStack(spacing: 0)
-                {
-                    HStack(spacing: 0)
-                    {
-                        Text(title)
-                            .font(.headline)
-                            .padding()
-                        
-                        Spacer()
-                        
-                        Rectangle()
-                            .fill(.clear)
-                            .overlay
-                        {
-                            #if os(macOS)
-                            Image(nsImage: image)
-                                .resizable()
-                                .scaledToFill()
-                            #else
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                            #endif
-                        }
-                        .frame(width: 64, height: 64)
-                        .background(Color.clear)
-                    }
-                    
-                    Rectangle()
-                        .foregroundColor(color)
-                        .frame(width: 32, height: 64)
-                }
-            }
-            .background(.thinMaterial)
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        //.shadow(radius: 8)
     }
 }
 
