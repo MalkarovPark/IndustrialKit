@@ -412,6 +412,7 @@ public struct SmallCardView: View
                             {
                                 ObjectSceneView(node: node!)
                                     .disabled(true)
+                                    .padding(8)
                             }
                         }
                         .frame(width: 64, height: 64)
