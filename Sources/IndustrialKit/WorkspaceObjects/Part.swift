@@ -175,8 +175,6 @@ public class Part: WorkspaceObject
         
         self.scene_address = part_struct.scene
         
-        self.image_data = part_struct.image_data
-        
         get_node_from_scene()
         
         color_to_model()
@@ -397,14 +395,14 @@ public class Part: WorkspaceObject
     ///Returns info for part card view.
     public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
-        return("\(self.name ?? "Part")", "Subtitle", self.color, self.image)
+        return("\(self.name ?? "Part")", "Subtitle", self.color, UIImage())
     }
     
     //MARK: - Work with file system
     ///Codable file structure of part.
     public var file_info: PartStruct
     {
-        return PartStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, is_placed: self.is_placed, location: self.location, rotation: self.rotation, image_data: self.image_data ?? Data())
+        return PartStruct(name: self.name ?? "None", scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, is_placed: self.is_placed, location: self.location, rotation: self.rotation)
     }
 }
 
@@ -434,6 +432,4 @@ public struct PartStruct: Codable
     var is_placed: Bool
     var location: [Float]
     var rotation: [Float]
-    
-    var image_data: Data
 }

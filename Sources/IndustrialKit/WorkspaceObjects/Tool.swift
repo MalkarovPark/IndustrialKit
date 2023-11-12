@@ -100,7 +100,6 @@ public class Tool: WorkspaceObject
         
         self.scene_address = tool_struct.scene ?? ""
         self.programs = tool_struct.programs
-        self.image_data = tool_struct.image_data
         
         if scene_address != ""
         {
@@ -828,7 +827,6 @@ public class Tool: WorkspaceObject
                           charts_data: self.charts_data,
                           state: self.state_data,
                           programs: self.programs,
-                          image_data: self.image_data ?? Data(),
                           module: self.module_name)
     }
 }
@@ -860,7 +858,6 @@ public struct ToolStruct: Codable
     public var state: [StateItem]?
     
     public var programs: [OperationsProgram]
-    public var image_data: Data
     
     public var module: String?
 }
