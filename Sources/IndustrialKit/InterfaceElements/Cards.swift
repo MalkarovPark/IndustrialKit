@@ -6,13 +6,15 @@
 //
 
 import SwiftUI
+import SceneKit
 
 //MARK: - Large card view
 public struct LargeCardView: View
 {
     //View parameters
     @State public var color: Color
-    @State public var image: UIImage
+    let image: UIImage?
+    let node: SCNNode?
     @State public var title: String
     @State public var subtitle: String
     
@@ -23,10 +25,11 @@ public struct LargeCardView: View
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
-    public init(color: Color, image: UIImage, title: String, subtitle: String)
+    public init(color: Color, image: UIImage?, title: String, subtitle: String)
     {
         self.color = color
         self.image = image
+        self.node = nil
         self.title = title
         self.subtitle = subtitle
         
@@ -36,10 +39,46 @@ public struct LargeCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, image: UIImage, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
+    public init(color: Color, image: UIImage?, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
     {
         self.color = color
         self.image = image
+        self.node = nil
+        self.title = title
+        self.subtitle = subtitle
+        
+        self._to_rename = to_rename
+        self._edited_name = Binding<String>(
+            get: {
+                edited_name.wrappedValue ?? ""
+            },
+            set: {
+                edited_name.wrappedValue = $0
+            }
+        )
+        _new_name = State(initialValue: _edited_name.wrappedValue)
+        self.on_rename = on_rename
+    }
+    
+    public init(color: Color, node: SCNNode?, title: String, subtitle: String)
+    {
+        self.color = color
+        self.image = nil
+        self.node = node
+        self.title = title
+        self.subtitle = subtitle
+        
+        self._to_rename = .constant(false)
+        self._edited_name = .constant("")
+        self.new_name = ""
+        self.on_rename = { }
+    }
+    
+    public init(color: Color, node: SCNNode?, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
+    {
+        self.color = color
+        self.image = nil
+        self.node = node
         self.title = title
         self.subtitle = subtitle
         
@@ -64,15 +103,28 @@ public struct LargeCardView: View
                 .foregroundColor(color)
                 .overlay
             {
-                #if os(macOS)
-                Image(nsImage: image)
-                    .resizable()
-                    .scaledToFill()
-                #else
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                #endif
+                if image != nil
+                {
+                    #if os(macOS)
+                    Image(nsImage: image!)
+                        .resizable()
+                        .scaledToFill()
+                    #else
+                    Image(uiImage: image!)
+                        .resizable()
+                        .scaledToFill()
+                    #endif
+                }
+                
+                if node != nil
+                {
+                    Button(action: { })
+                    {
+                        ObjectSceneView(node: node!)
+                            .disabled(true)
+                    }
+                    .buttonStyle(.borderless)
+                }
             }
             
             VStack
@@ -215,7 +267,8 @@ public struct SmallCardView: View
 {
     //View properties
     @State public var color: Color
-    @State public var image: UIImage
+    let image: UIImage?
+    let node: SCNNode?
     @State public var title: String
     
     //Rename properties
@@ -225,10 +278,11 @@ public struct SmallCardView: View
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
-    public init(color: Color, image: UIImage, title: String)
+    public init(color: Color, image: UIImage?, title: String)
     {
         self.color = color
         self.image = image
+        self.node = nil
         self.title = title
         
         self._to_rename = .constant(false)
@@ -237,10 +291,44 @@ public struct SmallCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, image: UIImage, title: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
+    public init(color: Color, image: UIImage?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
     {
         self.color = color
         self.image = image
+        self.node = nil
+        self.title = title
+        
+        self._to_rename = to_rename
+        self._edited_name = Binding<String>(
+            get: {
+                edited_name.wrappedValue ?? ""
+            },
+            set: {
+                edited_name.wrappedValue = $0
+            }
+        )
+        _new_name = State(initialValue: _edited_name.wrappedValue)
+        self.on_rename = on_rename
+    }
+    
+    public init(color: Color, node: SCNNode?, title: String)
+    {
+        self.color = color
+        self.image = nil
+        self.node = node
+        self.title = title
+        
+        self._to_rename = .constant(false)
+        self._edited_name = .constant("")
+        self.new_name = ""
+        self.on_rename = { }
+    }
+    
+    public init(color: Color, node: SCNNode?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
+    {
+        self.color = color
+        self.image = nil
+        self.node = node
         self.title = title
         
         self._to_rename = to_rename
@@ -311,15 +399,28 @@ public struct SmallCardView: View
                             .fill(.clear)
                             .overlay
                         {
-                            #if os(macOS)
-                            Image(nsImage: image)
-                                .resizable()
-                                .scaledToFill()
-                            #else
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                            #endif
+                            if image != nil
+                            {
+                                #if os(macOS)
+                                Image(nsImage: image!)
+                                    .resizable()
+                                    .scaledToFill()
+                                #else
+                                Image(uiImage: image!)
+                                    .resizable()
+                                    .scaledToFill()
+                                #endif
+                            }
+                            
+                            if node != nil
+                            {
+                                Button(action: { })
+                                {
+                                    ObjectSceneView(node: node!)
+                                        .disabled(true)
+                                }
+                                .buttonStyle(.borderless)
+                            }
                         }
                         .frame(width: 64, height: 64)
                         .background(Color.clear)
@@ -407,11 +508,27 @@ struct Cards_Previews: PreviewProvider
         {
             VStack()
             {
-                LargeCardView(color: .green, image: UIImage(), title: "Title", subtitle: "Subtitle")
+                LargeCardView(color: .green, image: nil, title: "Title", subtitle: "Subtitle")
+                    .shadow(radius: 8)
                     .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
                     .padding([.horizontal, .top])
-                SmallCardView(color: .green, image: UIImage(), title: "Title")
+                SmallCardView(color: .green, image: nil, title: "Title")
+                    .shadow(radius: 8)
                     .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
+                    .padding()
+            }
+            .padding(4)
+            .frame(width: 320)
+            //.background(.white)
+            
+            VStack()
+            {
+                LargeCardView(color: .gray, node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), title: "Cube", subtitle: "Model")
+                    .shadow(radius: 8)
+                    .padding([.horizontal, .top])
+                
+                SmallCardView(color: .gray, node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), title: "Cube")
+                    .shadow(radius: 8)
                     .padding()
             }
             .padding(4)
