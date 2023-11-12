@@ -118,12 +118,8 @@ public struct LargeCardView: View
                 
                 if node != nil
                 {
-                    Button(action: { })
-                    {
-                        ObjectSceneView(node: node!)
-                            .disabled(true)
-                    }
-                    .buttonStyle(.borderless)
+                    ObjectSceneView(node: node!)
+                        .disabled(true)
                 }
             }
             
@@ -414,12 +410,8 @@ public struct SmallCardView: View
                             
                             if node != nil
                             {
-                                Button(action: { })
-                                {
-                                    ObjectSceneView(node: node!)
-                                        .disabled(true)
-                                }
-                                .buttonStyle(.borderless)
+                                ObjectSceneView(node: node!)
+                                    .disabled(true)
                             }
                         }
                         .frame(width: 64, height: 64)
