@@ -92,7 +92,7 @@ public func apply_bit_mask(node: SCNNode, _ value: Int)
  - Parameters:
     - node: The node whose bindings are being removed.
  */
-public func clear_constranints(node: SCNNode)
+public func clear_constraints(node: SCNNode)
 {
     guard node.constraints != nil
     else

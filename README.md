@@ -114,7 +114,7 @@ Some functions that can be used both in framework and independently by developer
 
    * __apply_bit_mask__ – applies certain category bit mask int value for inputed node and all nested;
 
-   * __clear_constranints__ – removes all constrains from inputed node.
+   * __clear_constraints__ – removes all constrains from inputed node.
 
 ### Extensions <a name="extensions">
 

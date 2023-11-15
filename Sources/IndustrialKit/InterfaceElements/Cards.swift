@@ -374,9 +374,9 @@ public struct SmallCardView: View
                                     to_rename = false
                                 }
                                 .onExitCommand
-                            {
-                                to_rename = false
-                            }
+                                {
+                                    to_rename = false
+                                }
                             #else
                             TextField("Name", text: $title, onCommit: {
                                 edited_name = new_name
