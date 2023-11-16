@@ -234,6 +234,8 @@ public class Robot: WorkspaceObject
         didSet
         {
             selected_program.visual_build()
+            //points_node?.addChildNode(selected_program.positions_group)
+            points_node? = selected_program.positions_group
         }
     }
     
