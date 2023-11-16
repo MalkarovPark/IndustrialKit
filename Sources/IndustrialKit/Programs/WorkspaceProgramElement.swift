@@ -176,9 +176,9 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
                     info = "Unnamed"
                 }
             case .equal:
-                info = "Compare with previous"
+                info = "Compare previous with \(element_data.compared_value)"
             case .unequal:
-                info = "Compare with previous"
+                info = "Compare previous with \(element_data.compared_value)"
             }
         }
         
