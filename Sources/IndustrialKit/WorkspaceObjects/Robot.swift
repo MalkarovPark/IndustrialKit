@@ -226,13 +226,13 @@ public class Robot: WorkspaceObject
         willSet
         {
             //Stop robot moving before program change
-            selected_program.visual_clear()
             performed = false
             moving_completed = false
             target_point_index = 0
         }
         didSet
         {
+            points_node?.remove_all_child_nodes()
             selected_program.visual_build()
             points_node?.addChildNode(selected_program.positions_group)
         }
@@ -1121,7 +1121,7 @@ public class Robot: WorkspaceObject
             color = Color.clear
         }
         
-        return("\(self.name ?? "Robot Name")", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color, self.image)
+        return("\(self.name)", "\(self.manufacturer ?? "Manufacturer") – \(self.model ?? "Model")", color, self.image)
     }
     
     /**
@@ -1176,7 +1176,7 @@ public class Robot: WorkspaceObject
             }
         }
         
-        return RobotStruct(name: name ?? "Robot Name",
+        return RobotStruct(name: name,
                            manufacturer: manufacturer ?? "Manufacturer",
                            model: model ?? "Model",
                            module: self.module_name,

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SceneKit
 #if os(macOS)
 import AppKit
 #endif
@@ -21,6 +22,37 @@ public extension Float
     var to_rad: Float
     {
         return self * .pi / 180
+    }
+}
+
+//MARK: - SCNNode edit extensions
+public extension SCNNode
+{
+    ///Removes all constrains from node.
+    func remove_all_constraints()
+    {
+        guard self.constraints != nil
+        else
+        {
+            return
+        }
+        
+        if self.constraints?.count ?? 0 > 0
+        {
+            self.constraints?.removeAll() //Remove constraint
+            
+            //Update position
+            self.position.x += 1
+            self.position.x -= 1
+            self.rotation.x += 1
+            self.rotation.x -= 1
+        }
+    }
+    
+    ///Removes all child nodes from node.
+    func remove_all_child_nodes()
+    {
+        self.childNodes.forEach { $0.removeFromParentNode() }
     }
 }
 

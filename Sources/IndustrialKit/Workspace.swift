@@ -1052,7 +1052,7 @@ public class Workspace: ObservableObject
     ///Removes attachment for edited tool and reset it position in workspace.
     public func remove_attachment()
     {
-        clear_constraints(node: edited_object_node ?? SCNNode())
+        edited_object_node?.remove_all_constraints()
         selected_tool.attached_to = nil
     }
     

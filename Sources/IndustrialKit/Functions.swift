@@ -86,32 +86,6 @@ public func apply_bit_mask(node: SCNNode, _ value: Int)
     }
 }
 
-/**
- Removes all constrains from inputed node.
- 
- - Parameters:
-    - node: The node whose bindings are being removed.
- */
-public func clear_constraints(node: SCNNode)
-{
-    guard node.constraints != nil
-    else
-    {
-        return
-    }
-    
-    if node.constraints?.count ?? 0 > 0
-    {
-        node.constraints?.removeAll() //Remove constraint
-        
-        //Update position
-        node.position.x += 1
-        node.position.x -= 1
-        node.rotation.x += 1
-        node.rotation.x -= 1
-    }
-}
-
 //MARK: - Conversion functions for space parameters
 public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling lengths by divider
 {

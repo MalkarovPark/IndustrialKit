@@ -291,10 +291,7 @@ public class PositionsProgram: Identifiable, Equatable
     ///Removes positions points models from cell.
     public func visual_clear()
     {
-        positions_group.enumerateChildNodes
-        { (node, stop) in
-            node.removeFromParentNode()
-        }
+        positions_group.remove_all_child_nodes()
     }
     
     //MARK: - Work with file system
