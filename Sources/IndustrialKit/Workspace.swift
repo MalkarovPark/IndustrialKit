@@ -647,7 +647,7 @@ public class Workspace: ObservableObject
     ///Adds robot in workspace.
     public func add_robot(_ robot: Robot)
     {
-        robot.name = mismatched_name(name: robot.name!, names: robots_names)
+        robot.name = mismatched_name(name: robot.name, names: robots_names)
         robots.append(robot)
     }
     
@@ -687,7 +687,7 @@ public class Workspace: ObservableObject
     {
         if robots.indices.contains(index)
         {
-            let new_name = mismatched_name(name: robots[index].name ?? "None", names: robots_names)
+            let new_name = mismatched_name(name: robots[index].name, names: robots_names)
             let new_index = robots.count
             
             robots.append(Robot())
@@ -793,7 +793,7 @@ public class Workspace: ObservableObject
         {
             for robot in robots
             {
-                robots_names.append(robot.name ?? "None")
+                robots_names.append(robot.name)
             }
         }
         return robots_names
@@ -805,9 +805,9 @@ public class Workspace: ObservableObject
         var names = [String]()
         for robot in robots
         {
-            if robot.name != nil && !robot.is_placed
+            if !robot.is_placed
             {
-                names.append(robot.name!)
+                names.append(robot.name)
             }
         }
         return names
@@ -819,9 +819,9 @@ public class Workspace: ObservableObject
         var names = [String]()
         for robot in robots
         {
-            if robot.name != nil && robot.is_placed
+            if robot.is_placed
             {
-                names.append(robot.name!)
+                names.append(robot.name)
             }
         }
         return names
@@ -855,7 +855,7 @@ public class Workspace: ObservableObject
     ///Adds tool in workspace.
     public func add_tool(_ tool: Tool)
     {
-        tool.name = mismatched_name(name: tool.name!, names: tools_names)
+        tool.name = mismatched_name(name: tool.name, names: tools_names)
         tools.append(tool)
     }
     
@@ -895,7 +895,7 @@ public class Workspace: ObservableObject
     {
         if tools.indices.contains(index)
         {
-            let new_name = mismatched_name(name: tools[index].name ?? "None", names: tools_names)
+            let new_name = mismatched_name(name: tools[index].name, names: tools_names)
             let new_index = tools.count
             
             tools.append(Tool())
@@ -1000,7 +1000,7 @@ public class Workspace: ObservableObject
         {
             for tool in tools
             {
-                names.append(tool.name ?? "None")
+                names.append(tool.name)
             }
         }
         return names
@@ -1012,9 +1012,9 @@ public class Workspace: ObservableObject
         var names = [String]()
         for tool in tools
         {
-            if tool.name != nil && !tool.is_placed
+            if !tool.is_placed
             {
-                names.append(tool.name!)
+                names.append(tool.name)
             }
         }
         return names
@@ -1026,9 +1026,9 @@ public class Workspace: ObservableObject
         var names = [String]()
         for tool in tools
         {
-            if tool.name != nil && tool.is_placed
+            if tool.is_placed
             {
-                names.append(tool.name!)
+                names.append(tool.name)
             }
         }
         return names
@@ -1061,7 +1061,7 @@ public class Workspace: ObservableObject
     ///Adds part in workspace.
     public func add_part(_ part: Part)
     {
-        part.name = mismatched_name(name: part.name!, names: parts_names)
+        part.name = mismatched_name(name: part.name, names: parts_names)
         parts.append(part)
     }
     
@@ -1100,7 +1100,7 @@ public class Workspace: ObservableObject
     {
         if parts.indices.contains(index)
         {
-            let new_name = mismatched_name(name: parts[index].name ?? "None", names: parts_names)
+            let new_name = mismatched_name(name: parts[index].name, names: parts_names)
             let new_index = parts.count
 
             parts.append(Part())
@@ -1205,7 +1205,7 @@ public class Workspace: ObservableObject
         {
             for part in parts
             {
-                parts_names.append(part.name ?? "None")
+                parts_names.append(part.name)
             }
         }
         return parts_names
@@ -1217,9 +1217,9 @@ public class Workspace: ObservableObject
         var names = [String]()
         for part in parts
         {
-            if part.name != nil && !part.is_placed
+            if !part.is_placed
             {
-                names.append(part.name!)
+                names.append(part.name)
             }
         }
         return names
@@ -1231,9 +1231,9 @@ public class Workspace: ObservableObject
         var names = [String]()
         for part in parts
         {
-            if part.name != nil && part.is_placed
+            if part.is_placed
             {
-                names.append(part.name!)
+                names.append(part.name)
             }
         }
         return names
@@ -2125,7 +2125,7 @@ public class Workspace: ObservableObject
                     unit_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
                     
                     unit_node?.name = robot.name //Select robot cell node
-                    robot.workcell_connect(scene: scene, name: robot.name!, connect_camera: connect_camera) //Connect to robot model, place manipulator
+                    robot.workcell_connect(scene: scene, name: robot.name, connect_camera: connect_camera) //Connect to robot model, place manipulator
                     robot.update_model() //Update robot by current position
                     
                     apply_bit_mask(node: robot.unit_node ?? SCNNode(), Workspace.robot_bit_mask)
@@ -2161,7 +2161,7 @@ public class Workspace: ObservableObject
                     apply_bit_mask(node: tool_node ?? SCNNode(), Workspace.tool_bit_mask)
                     tool_node?.name = tool.name
                     tools_node?.addChildNode(tool_node ?? SCNNode())
-                    tool.workcell_connect(scene: scene, name: tool.name!) //Connect to robot model, place manipulator
+                    tool.workcell_connect(scene: scene, name: tool.name) //Connect to robot model, place manipulator
                     
                     if !tool.is_attached
                     {

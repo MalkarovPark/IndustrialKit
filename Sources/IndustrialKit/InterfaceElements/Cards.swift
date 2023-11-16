@@ -39,7 +39,7 @@ public struct LargeCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, image: UIImage?, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
+    public init(color: Color, image: UIImage?, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
     {
         self.color = color
         self.image = image
@@ -48,14 +48,7 @@ public struct LargeCardView: View
         self.subtitle = subtitle
         
         self._to_rename = to_rename
-        self._edited_name = Binding<String>(
-            get: {
-                edited_name.wrappedValue ?? ""
-            },
-            set: {
-                edited_name.wrappedValue = $0
-            }
-        )
+        self._edited_name = edited_name
         _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
     }
@@ -241,7 +234,7 @@ public struct CircleDeleteButtonModifier: ViewModifier
         {
             Alert(
                 title: Text("Delete \(object_type_name)?"),
-                message: Text("Do you want to delete this \(object_type_name) – \(object_item.name ?? "")"),
+                message: Text("Do you want to delete this \(object_type_name) – \(object_item.name)"),
                 primaryButton: .destructive(Text("Yes"), action: delete_object),
                 secondaryButton: .cancel(Text("No"))
             )
@@ -287,7 +280,7 @@ public struct SmallCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, image: UIImage?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
+    public init(color: Color, image: UIImage?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
     {
         self.color = color
         self.image = image
@@ -295,14 +288,7 @@ public struct SmallCardView: View
         self.title = title
         
         self._to_rename = to_rename
-        self._edited_name = Binding<String>(
-            get: {
-                edited_name.wrappedValue ?? ""
-            },
-            set: {
-                edited_name.wrappedValue = $0
-            }
-        )
+        self._edited_name = edited_name
         _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
     }
@@ -475,7 +461,7 @@ public struct BorderlessDeleteButtonModifier: ViewModifier
         {
             Alert(
                 title: Text("Delete \(object_type_name)?"),
-                message: Text("Do you want to delete this \(object_type_name) – \(object_item.name ?? "")"),
+                message: Text("Do you want to delete this \(object_type_name) – \(object_item.name)"),
                 primaryButton: .destructive(Text("Delete"), action: delete_object),
                 secondaryButton: .cancel(Text("Cancel"))
             )
