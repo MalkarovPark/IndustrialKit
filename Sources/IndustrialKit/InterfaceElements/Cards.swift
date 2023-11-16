@@ -67,7 +67,7 @@ public struct LargeCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, node: SCNNode?, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
+    public init(color: Color, node: SCNNode?, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
     {
         self.color = color
         self.image = nil
@@ -76,14 +76,7 @@ public struct LargeCardView: View
         self.subtitle = subtitle
         
         self._to_rename = to_rename
-        self._edited_name = Binding<String>(
-            get: {
-                edited_name.wrappedValue ?? ""
-            },
-            set: {
-                edited_name.wrappedValue = $0
-            }
-        )
+        self._edited_name = edited_name
         _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
     }
@@ -306,7 +299,7 @@ public struct SmallCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, node: SCNNode?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String?>, on_rename: @escaping () -> ())
+    public init(color: Color, node: SCNNode?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
     {
         self.color = color
         self.image = nil
@@ -314,14 +307,7 @@ public struct SmallCardView: View
         self.title = title
         
         self._to_rename = to_rename
-        self._edited_name = Binding<String>(
-            get: {
-                edited_name.wrappedValue ?? ""
-            },
-            set: {
-                edited_name.wrappedValue = $0
-            }
-        )
+        self._edited_name = edited_name
         _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
     }
