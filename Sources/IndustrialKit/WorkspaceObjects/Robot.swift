@@ -226,7 +226,7 @@ public class Robot: WorkspaceObject
         willSet
         {
             //Stop robot moving before program change
-            //selected_program.visual_clear()
+            selected_program.visual_clear()
             performed = false
             moving_completed = false
             target_point_index = 0
