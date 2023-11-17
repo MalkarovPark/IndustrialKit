@@ -232,9 +232,7 @@ public class Robot: WorkspaceObject
         }
         didSet
         {
-            points_node?.remove_all_child_nodes()
-            selected_program.visual_build()
-            points_node?.addChildNode(selected_program.positions_group)
+            update_points_model()
         }
     }
     
@@ -807,6 +805,8 @@ public class Robot: WorkspaceObject
         
         update_location()
         update_rotation()
+        
+        update_points_model()
         //model_controller.update_robot() //Updates robot model by target position. Update robot parts position on robot connection.
         
         //Pass model controller to connector
@@ -1010,6 +1010,19 @@ public class Robot: WorkspaceObject
                     program.visual_build()
                 }
             }
+        }
+    }
+    
+    ///An option of view current position program model.
+    public static var view_current_program_model = true
+    
+    private func update_points_model() //Update selected positions program model for robot
+    {
+        if Robot.view_current_program_model
+        {
+            points_node?.remove_all_child_nodes()
+            selected_program.visual_build()
+            points_node?.addChildNode(selected_program.positions_group)
         }
     }
     
