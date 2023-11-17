@@ -784,18 +784,7 @@ public class Robot: WorkspaceObject
             scene.rootNode.addChildNode(self.unit_node!)
         }
 
-        if let node = self.unit_node?.childNode(withName: "box", recursively: true)
-        {
-            self.box_node = node
-        }
-        else
-        {
-            self.box_node = SCNNode()
-            self.box_node?.name = "box"
-            self.unit_node?.addChildNode(self.box_node!)
-        }
-
-        if let node = self.box_node?.childNode(withName: "space", recursively: true)
+        if let node = self.unit_node?.childNode(withName: "space", recursively: true)
         {
             self.space_node = node
         }
@@ -803,10 +792,21 @@ public class Robot: WorkspaceObject
         {
             self.space_node = SCNNode()
             self.space_node?.name = "space"
-            self.box_node?.addChildNode(self.space_node!)
+            self.unit_node?.addChildNode(self.space_node!)
+        }
+        
+        if let node = self.space_node?.childNode(withName: "box", recursively: true)
+        {
+            self.box_node = node
+        }
+        else
+        {
+            self.box_node = SCNNode()
+            self.box_node?.name = "box"
+            self.space_node?.addChildNode(self.box_node!)
         }
 
-        if let node = self.box_node?.childNode(withName: "pointer", recursively: true)
+        if let node = self.space_node?.childNode(withName: "pointer", recursively: true)
         {
             self.pointer_node = node
         }
@@ -814,7 +814,7 @@ public class Robot: WorkspaceObject
         {
             self.pointer_node = SCNNode()
             self.pointer_node?.name = "pointer"
-            self.box_node?.addChildNode(self.pointer_node!)
+            self.space_node?.addChildNode(self.pointer_node!)
         }
 
         if let node = self.pointer_node?.childNode(withName: "internal", recursively: true)
@@ -828,7 +828,7 @@ public class Robot: WorkspaceObject
             self.pointer_node?.addChildNode(self.pointer_node_internal!)
         }
 
-        if let node = self.box_node?.childNode(withName: "points", recursively: true)
+        if let node = self.space_node?.childNode(withName: "points", recursively: true)
         {
             self.points_node = node
         }
@@ -836,7 +836,7 @@ public class Robot: WorkspaceObject
         {
             self.points_node = SCNNode()
             self.points_node?.name = "points"
-            self.box_node?.addChildNode(self.points_node!)
+            self.space_node?.addChildNode(self.points_node!)
         }
 
         // Connect robot parts
@@ -949,21 +949,21 @@ public class Robot: WorkspaceObject
         
         //MARK: Place workcell box
         #if os(macOS)
-        box_node?.position.x = CGFloat(origin_location[1])
-        box_node?.position.y = CGFloat(origin_location[2] + (vertical_length ?? 0)) //Add vertical base length
-        box_node?.position.z = CGFloat(origin_location[0])
+        space_node?.position.x = CGFloat(origin_location[1])
+        space_node?.position.y = CGFloat(origin_location[2] + (vertical_length ?? 0)) //Add vertical base length
+        space_node?.position.z = CGFloat(origin_location[0])
         
-        box_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
-        box_node?.eulerAngles.y = CGFloat(origin_rotation[2].to_rad)
-        box_node?.eulerAngles.z = CGFloat(origin_rotation[0].to_rad)
+        space_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
+        space_node?.eulerAngles.y = CGFloat(origin_rotation[2].to_rad)
+        space_node?.eulerAngles.z = CGFloat(origin_rotation[0].to_rad)
         #else
-        box_node?.position.x = Float(origin_location[1])
-        box_node?.position.y = Float(origin_location[2] + (vertical_length ?? 0))
-        box_node?.position.z = Float(origin_location[0])
+        space_node?.position.x = Float(origin_location[1])
+        space_node?.position.y = Float(origin_location[2] + (vertical_length ?? 0))
+        space_node?.position.z = Float(origin_location[0])
         
-        box_node?.eulerAngles.x = origin_rotation[1].to_rad
-        box_node?.eulerAngles.y = origin_rotation[2].to_rad
-        box_node?.eulerAngles.z = origin_rotation[0].to_rad
+        space_node?.eulerAngles.x = origin_rotation[1].to_rad
+        space_node?.eulerAngles.y = origin_rotation[2].to_rad
+        space_node?.eulerAngles.z = origin_rotation[0].to_rad
         #endif
         
         //MARK: Place camera
@@ -981,7 +981,7 @@ public class Robot: WorkspaceObject
     ///Updates cell box model scale.
     public func update_space_scale()
     {
-        guard space_node?.childNodes.count ?? 0 > 0
+        guard box_node?.childNodes.count ?? 0 > 0
         else
         {
             return
