@@ -949,21 +949,21 @@ public class Robot: WorkspaceObject
         
         //MARK: Place workcell box
         #if os(macOS)
-        box_node?.position.x = CGFloat(origin_location[1])
-        box_node?.position.y = CGFloat(origin_location[2] + (vertical_length ?? 0)) //Add vertical base length
-        box_node?.position.z = CGFloat(origin_location[0])
+        space_node?.position.x = CGFloat(origin_location[1])
+        space_node?.position.y = CGFloat(origin_location[2] + (vertical_length ?? 0)) //Add vertical base length
+        space_node?.position.z = CGFloat(origin_location[0])
         
-        box_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
-        box_node?.eulerAngles.y = CGFloat(origin_rotation[2].to_rad)
-        box_node?.eulerAngles.z = CGFloat(origin_rotation[0].to_rad)
+        space_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
+        space_node?.eulerAngles.y = CGFloat(origin_rotation[2].to_rad)
+        space_node?.eulerAngles.z = CGFloat(origin_rotation[0].to_rad)
         #else
-        box_node?.position.x = Float(origin_location[1])
-        box_node?.position.y = Float(origin_location[2] + (vertical_length ?? 0))
-        box_node?.position.z = Float(origin_location[0])
+        space_node?.position.x = Float(origin_location[1])
+        space_node?.position.y = Float(origin_location[2] + (vertical_length ?? 0))
+        space_node?.position.z = Float(origin_location[0])
         
-        box_node?.eulerAngles.x = origin_rotation[1].to_rad
-        box_node?.eulerAngles.y = origin_rotation[2].to_rad
-        box_node?.eulerAngles.z = origin_rotation[0].to_rad
+        space_node?.eulerAngles.x = origin_rotation[1].to_rad
+        space_node?.eulerAngles.y = origin_rotation[2].to_rad
+        space_node?.eulerAngles.z = origin_rotation[0].to_rad
         #endif
         
         //MARK: Place camera
