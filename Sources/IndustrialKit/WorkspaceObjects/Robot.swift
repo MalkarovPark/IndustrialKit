@@ -772,26 +772,93 @@ public class Robot: WorkspaceObject
      */
     public func workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
-        //Find nodes from scene by names
-        self.unit_node = scene.rootNode.childNode(withName: name, recursively: true)
-        
-        self.box_node = self.unit_node?.childNode(withName: "box", recursively: true)
-        self.space_node = self.box_node?.childNode(withName: "space", recursively: true)
-        self.pointer_node = self.box_node?.childNode(withName: "pointer", recursively: true)
-        self.pointer_node_internal = self.pointer_node?.childNode(withName: "internal", recursively: true)
-        self.points_node = self.box_node?.childNode(withName: "points", recursively: true)
-        
-        //Connect robot parts
+        // Find nodes from scene by names or add them
+        if let node = scene.rootNode.childNode(withName: name, recursively: true)
+        {
+            self.unit_node = node
+        }
+        else
+        {
+            self.unit_node = SCNNode()
+            self.unit_node?.name = name
+            scene.rootNode.addChildNode(self.unit_node!)
+        }
+
+        if let node = self.unit_node?.childNode(withName: "box", recursively: true)
+        {
+            self.box_node = node
+        }
+        else
+        {
+            self.box_node = SCNNode()
+            self.box_node?.name = "box"
+            self.unit_node?.addChildNode(self.box_node!)
+        }
+
+        if let node = self.box_node?.childNode(withName: "space", recursively: true)
+        {
+            self.space_node = node
+        }
+        else
+        {
+            self.space_node = SCNNode()
+            self.space_node?.name = "space"
+            self.box_node?.addChildNode(self.space_node!)
+        }
+
+        if let node = self.box_node?.childNode(withName: "pointer", recursively: true)
+        {
+            self.pointer_node = node
+        }
+        else
+        {
+            self.pointer_node = SCNNode()
+            self.pointer_node?.name = "pointer"
+            self.box_node?.addChildNode(self.pointer_node!)
+        }
+
+        if let node = self.pointer_node?.childNode(withName: "internal", recursively: true)
+        {
+            self.pointer_node_internal = node
+        }
+        else
+        {
+            self.pointer_node_internal = SCNNode()
+            self.pointer_node_internal?.name = "internal"
+            self.pointer_node?.addChildNode(self.pointer_node_internal!)
+        }
+
+        if let node = self.box_node?.childNode(withName: "points", recursively: true)
+        {
+            self.points_node = node
+        }
+        else
+        {
+            self.points_node = SCNNode()
+            self.points_node?.name = "points"
+            self.box_node?.addChildNode(self.points_node!)
+        }
+
+        // Connect robot parts
         self.tool_node = node?.childNode(withName: "tool", recursively: true)
         self.unit_node?.addChildNode(node ?? SCNNode())
         model_controller.nodes_disconnect()
         model_controller.nodes_connect(node ?? SCNNode(), pointer: self.pointer_node ?? SCNNode(), pointer_internal: self.pointer_node_internal ?? SCNNode())
         model_controller.transform_by_lengths(lengths)
-        
-        //Connect robot camera
+
+        // Connect robot camera
         if connect_camera
         {
-            self.camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
+            if let node = scene.rootNode.childNode(withName: "camera", recursively: true)
+            {
+                self.camera_node = node
+            }
+            else
+            {
+                self.camera_node = SCNNode()
+                self.camera_node?.name = "camera"
+                scene.rootNode.addChildNode(self.camera_node!)
+            }
         }
         
         //Place and scale cell box
@@ -914,6 +981,12 @@ public class Robot: WorkspaceObject
     ///Updates cell box model scale.
     public func update_space_scale()
     {
+        guard space_node?.childNodes.count ?? 0 > 0
+        else
+        {
+            return
+        }
+        
         //XY planes
         modified_node = space_node?.childNode(withName: "w0", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
