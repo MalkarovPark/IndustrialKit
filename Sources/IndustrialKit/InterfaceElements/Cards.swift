@@ -124,7 +124,9 @@ public struct LargeCardView: View
                                 .padding(.leading, 4)
                             
                             Text(subtitle)
+                            #if os(macOS) || os(iOS)
                                 .foregroundColor(.gray)
+                            #endif
                                 .padding(.bottom, 8)
                                 .padding(.leading, 4)
                         }
