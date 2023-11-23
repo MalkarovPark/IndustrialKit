@@ -466,6 +466,105 @@ public struct BorderlessDeleteButtonModifier: ViewModifier
     }
 }
 
+struct ElementCardView: View
+{
+    let title: String
+    let info: String
+    let image: Image
+    let color: Color
+    
+    @Binding var is_current: Bool
+    
+    @EnvironmentObject var base_workspace: Workspace
+    
+    public init(title: String, info: String, image: Image, color: Color, is_current: Binding<Bool>)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+        self.info = info
+        
+        self._is_current = is_current
+    }
+    
+    public init(title: String, info: String, image: Image, color: Color)
+    {
+        self.color = color
+        self.image = image
+        self.title = title
+        self.info = info
+        
+        self._is_current = .constant(false)
+    }
+    
+    var body: some View
+    {
+        ZStack
+        {
+            if is_current
+            {
+                Rectangle()
+                    .foregroundStyle(.mint.opacity(0.5))
+            }
+            
+            VStack
+            {
+                HStack(spacing: 0)
+                {
+                    ZStack
+                    {
+                        image
+                            .foregroundColor(.white)
+                            .imageScale(.large)
+                            .animation(.easeInOut(duration: 0.2), value: image)
+                    }
+                    .frame(width: 48, height: 48)
+                    .background(color)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .padding(16)
+                    .animation(.easeInOut(duration: 0.2), value: color)
+                    
+                    HStack(spacing: 0)
+                    {
+                        HStack(spacing: 0)
+                        {
+                            VStack(alignment: .leading)
+                            {
+                                Text(title)
+                                    .font(.title3)
+                                    .animation(.easeInOut(duration: 0.2), value: title)
+                                Text(info)
+                                    .foregroundColor(.secondary)
+                                    .animation(.easeInOut(duration: 0.2), value: info)
+                            }
+                            
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .padding(.trailing, 16)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .background(.thinMaterial)
+        }
+        .frame(height: 80)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        //.shadow(radius: 8)
+        .overlay(alignment: .topTrailing)
+        {
+            if is_current
+            {
+                Circle()
+                    .foregroundColor(.secondary.opacity(0.5))
+                    .frame(width: 16, height: 16)
+                    .padding()
+                    .transition(AnyTransition.scale)
+            }
+        }
+    }
+}
+
 //MARK: - Cards preview
 struct Cards_Previews: PreviewProvider
 {
@@ -501,6 +600,14 @@ struct Cards_Previews: PreviewProvider
             .padding(4)
             .frame(width: 320)
             //.background(.white)
+            
+            VStack()
+            {
+                ElementCardView(title: "Title", info: "Info", image: Image(systemName: "cube"), color: .green, is_current: .constant(true))
+                    .shadow(radius: 8)
+            }
+            .padding(16)
+            .frame(width: 320)
         }
     }
 }
