@@ -2286,7 +2286,7 @@ public struct WorkspacePreset: Codable
     public var tools = [ToolStruct]()
     public var parts = [PartStruct]()
     
-    public var registers: [Int] = [Int](repeating: 0, count: 256)
+    public var registers: [Float] = [Float](repeating: 0, count: 256)
     
     public init()
     {
