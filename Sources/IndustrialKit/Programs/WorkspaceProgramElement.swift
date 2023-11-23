@@ -272,7 +272,7 @@ public class ObserverModifierElement: ModifierElement
     
     public override var image_name: String
     {
-        return ""
+        return "loupe"
     }
 }
 
