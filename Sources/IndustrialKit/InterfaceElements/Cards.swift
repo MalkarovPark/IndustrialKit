@@ -466,7 +466,7 @@ public struct BorderlessDeleteButtonModifier: ViewModifier
     }
 }
 
-struct ElementCardView: View
+public struct ElementCardView: View
 {
     let title: String
     let info: String
@@ -497,7 +497,7 @@ struct ElementCardView: View
         self._is_current = .constant(false)
     }
     
-    var body: some View
+    public var body: some View
     {
         ZStack
         {
