@@ -27,6 +27,11 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     
     public var id = UUID()
     
+    public init()
+    {
+        
+    }
+    
     ///A string for the title in program element card.
     open var title: String
     {
