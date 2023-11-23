@@ -236,7 +236,7 @@ public struct WorkspaceProgramElementStruct: Codable, Hashable
     public var target_mark_name = String()
     
     ///A value to compare for element.
-    public var compared_value = 0
+    public var compared_value: Float = 0
     
     //MARK: Init function
     ///Creates a new program element with default values.

@@ -1595,7 +1595,7 @@ public class Workspace: ObservableObject
         {
             if registers.count != 256
             {
-                var fixed_registers = [Int](repeating: 0, count: 256)
+                var fixed_registers = [Float](repeating: 0, count: 256)
                 for (index, value) in registers.enumerated()
                 {
                     if index < self.registers.count
@@ -1688,7 +1688,7 @@ public class Workspace: ObservableObject
     }
     
     ///A holded info value for pass to next elements.
-    private var buffer: Int? = nil
+    private var buffer: Float? = nil
     
     ///Clears buffer value
     private func clear_buffer()
@@ -1697,10 +1697,10 @@ public class Workspace: ObservableObject
     }
     
     ///An array of pushed info data.
-    private var registers: [Int] = [Int](repeating: 0, count: 256)
+    private var registers: [Float] = [Float](repeating: 0, count: 256)
     
     ///An public array of info data registers.
-    public var data_registers: [Int]
+    public var data_registers: [Float]
     {
         return registers
     }
@@ -1708,7 +1708,7 @@ public class Workspace: ObservableObject
     ///Clears all data registers.
     public func clear_registers()
     {
-        registers = [Int](repeating: 0, count: 256)
+        registers = [Float](repeating: 0, count: 256)
     }
     
     /**
@@ -1732,7 +1732,7 @@ public class Workspace: ObservableObject
         - index: An index of register to be updated.
         - new_value: A new data register value.
      */
-    public func update_register(_ index: Int, new_value: Int)
+    public func update_register(_ index: Int, new_value: Float)
     {
         if index < 256 && index >= 0
         {
@@ -1747,7 +1747,7 @@ public class Workspace: ObservableObject
      */
     private func observe_from(name: String)
     {
-        buffer = tool_by_name(name).info_code ?? 0
+        buffer = Float(tool_by_name(name).info_code ?? 0)
         
         select_new_element()
     }
@@ -1770,7 +1770,7 @@ public class Workspace: ObservableObject
                 break
             }
      */
-    public static var change_by: ((_ name: String, _ registers: inout [Int]) -> Void) = { name,registers in }
+    public static var change_by: ((_ name: String, _ registers: inout [Float]) -> Void) = { name,registers in }
     
     /**
      Pushes info from previous element to register.
@@ -1781,7 +1781,7 @@ public class Workspace: ObservableObject
     {
         if index < 256 && buffer != nil
         {
-            registers[index] = buffer!
+            registers[index] = Float(buffer!)
             clear_buffer() //buffer = 0
         }
         
@@ -1912,7 +1912,7 @@ public class Workspace: ObservableObject
      
      - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
      */
-    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [WorkspaceProgramElementStruct], registers: [Int])
+    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [WorkspaceProgramElementStruct], registers: [Float])
     {
         //Get robots info for save to file
         var robots_file_info = [RobotStruct]()
@@ -2003,7 +2003,7 @@ public class Workspace: ObservableObject
                 self.registers[index] = value
             }*/
             
-            self.registers[index] = value
+            self.registers[index] = Float(value)
         }
     }
     
