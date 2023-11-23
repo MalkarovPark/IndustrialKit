@@ -493,7 +493,7 @@ public struct ElementCardView: View
         self.title = title
         self.info = info
         
-        self._is_current = .constant(false)
+        self.is_current = false
     }
     
     public var body: some View
@@ -602,7 +602,7 @@ struct Cards_Previews: PreviewProvider
             
             VStack()
             {
-                ElementCardView(title: "Title", info: "Info", image: Image(systemName: "cube"), color: .green, is_current: .constant(true))
+                ElementCardView(title: "Title", info: "Info", image: Image(systemName: "cube"), color: .green, is_current: true)
                     .shadow(radius: 8)
             }
             .padding(16)
