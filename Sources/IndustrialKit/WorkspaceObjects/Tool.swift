@@ -311,7 +311,7 @@ public class Tool: WorkspaceObject
     }
     
     ///An information output code.
-    public var info_code: Int?
+    public var info_code: Float?
     {
         if demo
         {

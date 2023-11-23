@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /**
  A type of workspace program element that is performed to manage means of production.
@@ -16,262 +17,328 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
 {
     public static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
-        return lhs.id.uuidString + lhs.element_data.element_type.rawValue == rhs.id.uuidString + rhs.element_data.element_type.rawValue //Identity condition by id plus element type
+        return lhs.id.uuidString == rhs.id.uuidString //Identity condition by id plus element type
     }
     
     public func hash(into hasher: inout Hasher)
     {
-        hasher.combine(id.uuidString + element_data.element_type.rawValue)
+        hasher.combine(id.uuidString)
     }
     
     public var id = UUID()
     
-    ///An element program data.
-    public var element_data = WorkspaceProgramElementStruct(element_type: ProgramElementType.perofrmer, performer_type: PerformerType.robot, modifier_type: ModifierType.observer, logic_type: LogicType.jump)
-    
-    //MARK: - Element init functions
-    /**
-     Creates a new program element.
-     - Parameters:
-        - element_type: The program element type.
-        - performer_type: The performer element type.
-        - modifier_type: The modifier element type.
-        - logic_type: The logic element type.
-     */
-    public init(element_type: ProgramElementType, performer_type: PerformerType, modifier_type: ModifierType, logic_type: LogicType)
+    ///A string for the title in program element card.
+    open var title: String
     {
-        self.element_data = WorkspaceProgramElementStruct(element_type: element_type, performer_type: performer_type, modifier_type: modifier_type, logic_type: logic_type)
-    }
-    
-    /**
-     Creates a new performer program element.
-     - Parameters:
-        - element_type: The program element type.
-        - performer_type: The performer element type.
-     */
-    public init(element_type: ProgramElementType, performer_type: PerformerType)
-    {
-        self.element_data.element_type = element_type
-        self.element_data.performer_type = performer_type
-    }
-    
-    /**
-     Creates a new modifier program element.
-     - Parameters:
-        - element_type: The program element type.
-        - modifier_type: The modifier element type.
-     */
-    public init(element_type: ProgramElementType, modifier_type: ModifierType)
-    {
-        self.element_data.element_type = element_type
-        self.element_data.modifier_type = modifier_type
-    }
-    
-    /**
-     Creates a new logic program element.
-     - Parameters:
-        - element_type: The program element type.
-        - logic_type: The logic element type.
-     */
-    public init(element_type: ProgramElementType, logic_type: LogicType)
-    {
-        self.element_data.logic_type = logic_type
-        self.element_data.logic_type = logic_type
-    }
-    
-    /**
-     Creates a new program element by structure.
-     - Parameters:
-        - element_struct: A program element structure.
-     */
-    public init(element_struct: WorkspaceProgramElementStruct)
-    {
-        self.element_data = element_struct
-    }
-    
-    //MARK: - Visual data output
-    ///A subtype string for a specific type.
-    public var subtype: String
-    {
-        var subtype = String()
-        
-        switch element_data.element_type
-        {
-        case .perofrmer:
-            subtype = "\(self.element_data.performer_type.rawValue)"
-        case .modifier:
-            subtype = "\(self.element_data.modifier_type.rawValue)"
-        case .logic:
-            subtype = "\(self.element_data.logic_type.rawValue)"
-        }
-        
-        return subtype
+        return "Title"
     }
     
     ///A string for the text in program element card.
-    public var info: String
+    open var info: String
     {
-        var info = String()
-        
-        switch element_data.element_type
-        {
-        case .perofrmer:
-            switch element_data.performer_type
-            {
-            case .robot:
-                if element_data.robot_name != ""
-                {
-                    info = "\(element_data.robot_name) – \(element_data.program_name)"
-                }
-                else
-                {
-                    info = "No robot selected"
-                }
-            case .tool:
-                if element_data.tool_name != ""
-                {
-                    info = "\(element_data.tool_name) – \(element_data.program_name)"
-                }
-                else
-                {
-                    info = "No tool selected"
-                }
-            }
-        case .modifier:
-            switch element_data.modifier_type
-            {
-            case .observer:
-                info = "Output from \(element_data.object_name)"
-            case .mover:
-                if element_data.is_push
-                {
-                    info = "Push previous to \(element_data.register_index)"
-                }
-                else
-                {
-                    info = "Pop from \(element_data.register_index) to next"
-                }
-            case .changer:
-                info = "Module – \(element_data.module_name)"
-            }
-        case .logic:
-            switch element_data.logic_type
-            {
-            case .jump:
-                if element_data.target_mark_name != ""
-                {
-                    info = "To mark – \(element_data.target_mark_name)"
-                }
-                else
-                {
-                    info = "No mark selected"
-                }
-            case .mark:
-                if element_data.mark_name != ""
-                {
-                    info = element_data.mark_name
-                }
-                else
-                {
-                    info = "Unnamed"
-                }
-            case .equal:
-                info = "Compare previous with \(element_data.compared_value)"
-            case .unequal:
-                info = "Compare previous with \(element_data.compared_value)"
-            }
-        }
-        
-        return info
+        return "Info"
     }
     
-    ///An index of the target mark element for the jump element.
-    public var target_element_index = 0
+    ///An image name for program element card.
+    open var image_name: String
+    {
+        return "app"
+    }
+    
+    ///An image for program element card.
+    public var image: Image
+    {
+        return Image(systemName: image_name)
+    }
+    
+    ///A color for the program element card.
+    open var color: Color
+    {
+        return Color(.gray)
+    }
 }
 
-//MARK: - Models of program element data
-///Structure for workspace program element data.
-public struct WorkspaceProgramElementStruct: Codable, Hashable
+//MARK: - Performer program elements
+class PerformerElement: WorkspaceProgramElement
 {
-    ///A program element type.
-    public var element_type: ProgramElementType = .perofrmer
+    ///A name of workspace object.
+    public var object_name = ""
     
-    //MARK: For Performer
-    ///A performer element type.
-    public var performer_type: PerformerType = .robot
+    ///Determines if workspace object is perform a single action.
+    public var is_single_perfrom = true
     
-    ///A name of performed robot.
-    public var robot_name = String()
+    ///A name of program to perfrom.
+    public var program_name = ""
     
-    ///A name of performed tool.
-    public var tool_name = String()
+    ///An index of register with index of program to perform.
+    public var program_index_from = 0
     
-    ///A name of program to perform.
-    public var program_name = String()
+    ///Determines if workspace object is perform a program by index from registers.
+    public var is_program_by_index = false
     
-    //MARK: For Modififcator
-    ///A modificator name.
-    public var modifier_type: ModifierType = .observer
-    
-    ///An observable workspace object name.
-    public var object_name = String()
-    
-    ///A changer module name.
-    public var module_name = String()
-    
-    ///A push/pop selector for changer.
-    public var is_push = true
-    
-    ///A register index for hold info data.
-    public var register_index = 0
-
-    //MARK: For logic
-    ///A logic element type.
-    public var logic_type: LogicType = .jump
-    
-    ///A target mark name.
-    public var mark_name = String()
-    
-    ///A target mark name.
-    public var target_mark_name = String()
-    
-    ///A value to compare for element.
-    public var compared_value: Float = 0
-    
-    //MARK: Init function
-    ///Creates a new program element with default values.
-    public init()
+    override var info: String
     {
-        element_type = .perofrmer
-        
-        performer_type = .robot
-        
-        robot_name = String()
-        tool_name = String()
-        
-        program_name = String()
-        
-        modifier_type = .observer
-        target_mark_name = String()
-        
-        logic_type = .jump
-        mark_name = String()
+        if !is_single_perfrom
+        {
+            if !is_program_by_index
+            {
+                return "\(object_name) – \(program_name)"
+            }
+            else
+            {
+                return "Program index from \(program_index_from)"
+            }
+        }
+        else
+        {
+            return "Perform from registers"
+        }
     }
     
-    /**
-     Creates a new program element structure.
-     - Parameters:
-        - element_type: The program element type.
-        - performer_type: The performer program element type.
-        - modifier_type: The modifier program element type.
-        - logic_type: The logic program element type.
-     */
-    public init(element_type: ProgramElementType, performer_type: PerformerType, modifier_type: ModifierType, logic_type: LogicType)
+    override var color: Color
     {
-        self.element_type = element_type
-        self.performer_type = performer_type
-        self.modifier_type = modifier_type
-        self.logic_type = logic_type
+        return .green
+    }
+}
+
+///Performs program or position on selected robot.
+class RobotPerformerElement: PerformerElement
+{
+    ///Index of *x* location component.
+    public var x_index = 0
+    ///Index of *y* location component.
+    public var y_index = 0
+    ///Index of *z* location component.
+    public var z_index = 0
+    
+    ///Index of *r* rotation component.
+    public var r_index = 0
+    ///Index of *p* rotation component.
+    public var p_index = 0
+    ///Index of *w* rotation component.
+    public var w_index = 0
+    
+    override var title: String
+    {
+        return "Robot"
+    }
+    
+    override var image_name: String
+    {
+        return "r.square"
+    }
+}
+
+///Performs program or position on selected tool.
+class ToolPerformerElement: PerformerElement
+{
+    ///Index of operation code location component.
+    public var opcode_index = 0
+    
+    override var title: String
+    {
+        return "Tool"
+    }
+    
+    override var image_name: String
+    {
+        return "hammer"
+    }
+}
+
+//MARK: - Modifier elements
+class ModifierElement: WorkspaceProgramElement
+{
+    override var title: String
+    {
+        return "Modifier"
+    }
+    
+    override var color: Color
+    {
+        return .pink
+    }
+}
+
+///Moves data between registers.
+class MoverModifierElement: ModifierElement
+{
+    ///An index of value to move.
+    public var from_index = 0
+    
+    ///An index of target register.
+    public var to_index = 0
+    
+    override var info: String
+    {
+        return "Move from \(from_index) to \(to_index)"
+    }
+    
+    override var image_name: String
+    {
+        return "square.on.square.dashed"
+    }
+}
+
+///Copies data from register to target register.
+class CopyModifierElement: ModifierElement
+{
+    ///An index of value to copy.
+    public var from_index = 0
+    
+    ///An index of target register.
+    public var to_index = 0
+    
+    override var info: String
+    {
+        return "Copy from \(from_index) to \(to_index)"
+    }
+    
+    override var image_name: String
+    {
+        return "plus.square.on.square"
+    }
+}
+
+///Writes data to selected register.
+class WriteModifierElement: ModifierElement
+{
+    ///A writable value.
+    public var value: Float = 0
+    
+    ///An index of register to write.
+    public var to_index = 0
+    
+    override var info: String
+    {
+        return "Write \(value) to \(to_index)"
+    }
+    
+    override var image_name: String
+    {
+        return "square.and.pencil"
+    }
+}
+
+///Cleares data in all registers.
+class ClearModifierElement: ModifierElement
+{
+    override var info: String
+    {
+        return "Clear all registers"
+    }
+    
+    override var image_name: String
+    {
+        return "clear"
+    }
+}
+
+///Changes registers by changer module.
+class ChangerModifierElement: ModifierElement
+{
+    ///A name of modifier module.
+    public var module_name = ""
+    
+    override var info: String
+    {
+        return "Module – \(module_name)"
+    }
+    
+    override var image_name: String
+    {
+        return "wand.and.rays"
+    }
+}
+
+///Pushes info code from tool to registers.
+class ObserverModifierElement: ModifierElement
+{
+    ///A name of object to observe output.
+    public var object_name = ""
+    
+    ///An index of target register.
+    public var to_index = 0
+    
+    override var info: String
+    {
+        return "Observe form \(object_name) to \(to_index)"
+    }
+    
+    override var image_name: String
+    {
+        return ""
+    }
+}
+
+//MARK: - Logic elements
+class LogicElement: WorkspaceProgramElement
+{
+    override var title: String
+    {
+        return "Logic"
+    }
+    
+    override var color: Color
+    {
+        return .gray
+    }
+}
+
+///Jumps to the specified mark when the conditions are met
+class ComparatorLogicElement: LogicElement
+{
+    ///An index of register with compared value.
+    public var value_index = 0
+    
+    ///An index of register with compared value.
+    public var second_value_index = 0
+    
+    ///A type of compare.
+    public var compare_type: CompareType = .equal
+    
+    ///A name of the target mark.
+    public var target_mark_name = ""
+    
+    ///An index of the target mark element.
+    public var target_element_index = 0
+    
+    override var info: String
+    {
+        return "Jump to \(target_mark_name) if value of \(value_index) \(compare_type.rawValue) value of \(second_value_index)"
+    }
+    
+    override var image_name: String
+    {
+        return "arrowshape.bounce.forward"
+    }
+}
+
+///A logic program element type enum.
+public enum CompareType: String, Codable, Equatable, CaseIterable
+{
+    case equal = "="
+    case unequal = "≠"
+    case greater = ">"
+    case greater_equal = "⩾"
+    case less = "<"
+    case less_equal = "⩽"
+}
+
+///A logic mark to jump.
+class MarkLogicElement: LogicElement
+{
+    ///A target mark name.
+    public var name = ""
+    
+    override var info: String
+    {
+        return name
+    }
+    
+    override var image_name: String
+    {
+        return "record.circle"
     }
 }
 
