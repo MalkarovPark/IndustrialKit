@@ -44,8 +44,10 @@ public struct PositionView: View
                                     .textFieldStyle(.roundedBorder)
                                 #if os(iOS)
                                     .frame(minWidth: 60)
+                                    .keyboardType(.decimalPad)
                                 #elseif os(visionOS)
                                     .frame(minWidth: 80)
+                                    .keyboardType(.decimalPad)
                                 #endif
                                 Stepper("Enter", value: $location[location_component.info.index], in: -1000...1000)
                                     .labelsHidden()
@@ -66,8 +68,10 @@ public struct PositionView: View
                                     .textFieldStyle(.roundedBorder)
                                 #if os(iOS)
                                     .frame(minWidth: 60)
+                                    .keyboardType(.decimalPad)
                                 #elseif os(visionOS)
                                     .frame(minWidth: 80)
+                                    .keyboardType(.decimalPad)
                                 #endif
                                 Stepper("Enter", value: $rotation[rotation_component.info.index], in: -180...180)
                                     .labelsHidden()
