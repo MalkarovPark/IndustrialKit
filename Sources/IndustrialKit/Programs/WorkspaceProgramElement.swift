@@ -346,36 +346,3 @@ class MarkLogicElement: LogicElement
         return "record.circle"
     }
 }
-
-//MARK: - Type enums
-///A program element type enum.
-public enum ProgramElementType: String, Codable, Equatable, CaseIterable
-{
-    case perofrmer = "Performer"
-    case modifier = "Modifier"
-    case logic = "Logic"
-}
-
-///A performer program element type enum.
-public enum PerformerType: String, Codable, Equatable, CaseIterable
-{
-    case robot = "Robot"
-    case tool = "Tool"
-}
-
-///A modifier program element type enum.
-public enum ModifierType: String, Codable, Equatable, CaseIterable
-{
-    case observer = "Observer"
-    case mover = "Mover"
-    case changer = "Changer"
-}
-
-///A logic program element type enum.
-public enum LogicType: String, Codable, Equatable, CaseIterable
-{
-    case jump = "Jump"
-    case mark = "Mark"
-    case equal = "Equal"
-    case unequal = "Unequal"
-}
