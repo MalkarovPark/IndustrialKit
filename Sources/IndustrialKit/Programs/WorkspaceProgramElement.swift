@@ -64,7 +64,7 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
 }
 
 //MARK: - Performer program elements
-class PerformerElement: WorkspaceProgramElement
+public class PerformerElement: WorkspaceProgramElement
 {
     ///A name of workspace object.
     public var object_name = ""
@@ -81,7 +81,7 @@ class PerformerElement: WorkspaceProgramElement
     ///Determines if workspace object is perform a program by index from registers.
     public var is_program_by_index = false
     
-    override var info: String
+    public override var info: String
     {
         if !is_single_perfrom
         {
@@ -100,14 +100,14 @@ class PerformerElement: WorkspaceProgramElement
         }
     }
     
-    override var color: Color
+    public override var color: Color
     {
         return .green
     }
 }
 
 ///Performs program or position on selected robot.
-class RobotPerformerElement: PerformerElement
+public class RobotPerformerElement: PerformerElement
 {
     ///Index of *x* location component.
     public var x_index = 0
@@ -123,50 +123,50 @@ class RobotPerformerElement: PerformerElement
     ///Index of *w* rotation component.
     public var w_index = 0
     
-    override var title: String
+    public override var title: String
     {
         return "Robot"
     }
     
-    override var image_name: String
+    public override var image_name: String
     {
         return "r.square"
     }
 }
 
 ///Performs program or position on selected tool.
-class ToolPerformerElement: PerformerElement
+public class ToolPerformerElement: PerformerElement
 {
     ///Index of operation code location component.
     public var opcode_index = 0
     
-    override var title: String
+    public override var title: String
     {
         return "Tool"
     }
     
-    override var image_name: String
+    public override var image_name: String
     {
         return "hammer"
     }
 }
 
 //MARK: - Modifier elements
-class ModifierElement: WorkspaceProgramElement
+public class ModifierElement: WorkspaceProgramElement
 {
-    override var title: String
+    public override var title: String
     {
         return "Modifier"
     }
     
-    override var color: Color
+    public override var color: Color
     {
         return .pink
     }
 }
 
 ///Moves data between registers.
-class MoverModifierElement: ModifierElement
+public class MoverModifierElement: ModifierElement
 {
     ///An index of value to move.
     public var from_index = 0
@@ -174,19 +174,19 @@ class MoverModifierElement: ModifierElement
     ///An index of target register.
     public var to_index = 0
     
-    override var info: String
+    public override var info: String
     {
         return "Move from \(from_index) to \(to_index)"
     }
     
-    override var image_name: String
+    public override var image_name: String
     {
         return "square.on.square.dashed"
     }
 }
 
 ///Copies data from register to target register.
-class CopyModifierElement: ModifierElement
+public class CopyModifierElement: ModifierElement
 {
     ///An index of value to copy.
     public var from_index = 0
@@ -194,19 +194,19 @@ class CopyModifierElement: ModifierElement
     ///An index of target register.
     public var to_index = 0
     
-    override var info: String
+    public override var info: String
     {
         return "Copy from \(from_index) to \(to_index)"
     }
     
-    override var image_name: String
+    public override var image_name: String
     {
         return "plus.square.on.square"
     }
 }
 
 ///Writes data to selected register.
-class WriteModifierElement: ModifierElement
+public class WriteModifierElement: ModifierElement
 {
     ///A writable value.
     public var value: Float = 0
@@ -214,50 +214,50 @@ class WriteModifierElement: ModifierElement
     ///An index of register to write.
     public var to_index = 0
     
-    override var info: String
+    public override var info: String
     {
         return "Write \(value) to \(to_index)"
     }
     
-    override var image_name: String
+    public override var image_name: String
     {
         return "square.and.pencil"
     }
 }
 
 ///Cleares data in all registers.
-class ClearModifierElement: ModifierElement
+public class ClearModifierElement: ModifierElement
 {
-    override var info: String
+    public override var info: String
     {
         return "Clear all registers"
     }
     
-    override var image_name: String
+    public override var image_name: String
     {
         return "clear"
     }
 }
 
 ///Changes registers by changer module.
-class ChangerModifierElement: ModifierElement
+public class ChangerModifierElement: ModifierElement
 {
     ///A name of modifier module.
     public var module_name = ""
     
-    override var info: String
+    public override var info: String
     {
         return "Module – \(module_name)"
     }
     
-    override var image_name: String
+    public override var image_name: String
     {
         return "wand.and.rays"
     }
 }
 
 ///Pushes info code from tool to registers.
-class ObserverModifierElement: ModifierElement
+public class ObserverModifierElement: ModifierElement
 {
     ///A name of object to observe output.
     public var object_name = ""
@@ -265,33 +265,33 @@ class ObserverModifierElement: ModifierElement
     ///An index of target register.
     public var to_index = 0
     
-    override var info: String
+    public override var info: String
     {
         return "Observe form \(object_name) to \(to_index)"
     }
     
-    override var image_name: String
+    public override var image_name: String
     {
         return ""
     }
 }
 
 //MARK: - Logic elements
-class LogicElement: WorkspaceProgramElement
+public class LogicElement: WorkspaceProgramElement
 {
-    override var title: String
+    public override var title: String
     {
         return "Logic"
     }
     
-    override var color: Color
+    public override var color: Color
     {
         return .gray
     }
 }
 
 ///Jumps to the specified mark when the conditions are met
-class ComparatorLogicElement: LogicElement
+public class ComparatorLogicElement: LogicElement
 {
     ///An index of register with compared value.
     public var value_index = 0
@@ -308,14 +308,31 @@ class ComparatorLogicElement: LogicElement
     ///An index of the target mark element.
     public var target_element_index = 0
     
-    override var info: String
+    public override var info: String
     {
         return "Jump to \(target_mark_name) if value of \(value_index) \(compare_type.rawValue) value of \(second_value_index)"
     }
     
-    override var image_name: String
+    public override var image_name: String
     {
         return "arrowshape.bounce.forward"
+    }
+}
+
+///A logic mark to jump.
+public class MarkLogicElement: LogicElement
+{
+    ///A target mark name.
+    public var name = ""
+    
+    public override var info: String
+    {
+        return name
+    }
+    
+    public override var image_name: String
+    {
+        return "record.circle"
     }
 }
 
@@ -328,21 +345,4 @@ public enum CompareType: String, Codable, Equatable, CaseIterable
     case greater_equal = "⩾"
     case less = "<"
     case less_equal = "⩽"
-}
-
-///A logic mark to jump.
-class MarkLogicElement: LogicElement
-{
-    ///A target mark name.
-    public var name = ""
-    
-    override var info: String
-    {
-        return name
-    }
-    
-    override var image_name: String
-    {
-        return "record.circle"
-    }
 }
