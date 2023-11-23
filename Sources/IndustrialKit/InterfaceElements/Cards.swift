@@ -472,19 +472,18 @@ public struct ElementCardView: View
     let info: String
     let image: Image
     let color: Color
-    
-    @Binding var is_current: Bool
+    let is_current: Bool
     
     @EnvironmentObject var base_workspace: Workspace
     
-    public init(title: String, info: String, image: Image, color: Color, is_current: Binding<Bool>)
+    public init(title: String, info: String, image: Image, color: Color, is_current: Bool)
     {
         self.color = color
         self.image = image
         self.title = title
         self.info = info
         
-        self._is_current = is_current
+        self.is_current = is_current
     }
     
     public init(title: String, info: String, image: Image, color: Color)
