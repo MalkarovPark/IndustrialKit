@@ -25,6 +25,8 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
         hasher.combine(id)
     }
     
+    public var id = UUID()
+    
     public init()
     {
         
