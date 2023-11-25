@@ -17,15 +17,13 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
 {
     public static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
-        return lhs.id.uuidString == rhs.id.uuidString //Identity condition by id plus element type
+        return lhs.id == rhs.id //Identity condition by id plus element type
     }
     
     public func hash(into hasher: inout Hasher)
     {
-        hasher.combine(id.uuidString)
+        hasher.combine(id)
     }
-    
-    public var id = UUID()
     
     public init()
     {
@@ -323,7 +321,7 @@ public class ComparatorLogicElement: LogicElement
 public class MarkLogicElement: LogicElement
 {
     ///A target mark name.
-    public var name = ""
+    public var name = "None"
     
     public override var info: String
     {

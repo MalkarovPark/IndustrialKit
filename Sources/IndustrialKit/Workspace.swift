@@ -34,7 +34,7 @@ public class Workspace: ObservableObject
             if elements.count > 0
             {
                 performed = false //Enable workspace program edit
-                selected_element_index = 0 //Select firs program element
+                selected_element_index = 0 //Select first program element
             }
         }
     }
@@ -1785,7 +1785,7 @@ public class Workspace: ObservableObject
         }
         
         performed = false //Enable workspace program edit
-        selected_element_index = 0 //Select firs program element
+        selected_element_index = 0 //Select first program element
     }
     
     ///Prepare workspace program to perform.
