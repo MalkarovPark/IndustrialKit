@@ -345,4 +345,23 @@ public enum CompareType: String, Codable, Equatable, CaseIterable
     case greater_equal = "⩾"
     case less = "<"
     case less_equal = "⩽"
+    
+    func compare(_ value1: Int, _ value2: Int) -> Bool
+    {
+        switch self
+        {
+        case .equal:
+            return value1 == value2
+        case .unequal:
+            return value1 != value2
+        case .greater:
+            return value1 > value2
+        case .greater_equal:
+            return value1 >= value2
+        case .less:
+            return value1 < value2
+        case .less_equal:
+            return value1 <= value2
+        }
+    }
 }

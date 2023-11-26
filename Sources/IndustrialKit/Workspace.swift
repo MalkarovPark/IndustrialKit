@@ -1722,38 +1722,9 @@ public class Workspace: ObservableObject
      */
     private func compare_by(element: ComparatorLogicElement)
     {
-        switch element.compare_type
+        if element.compare_type.compare(element.value_index, element.second_value_index)
         {
-        case .equal:
-            if element.value_index == element.second_value_index
-            {
-                selected_element_index = element.target_element_index
-            }
-        case .unequal:
-            if element.value_index != element.second_value_index
-            {
-                selected_element_index = element.target_element_index
-            }
-        case .greater:
-            if element.value_index > element.second_value_index
-            {
-                selected_element_index = element.target_element_index
-            }
-        case .greater_equal:
-            if element.value_index >= element.second_value_index
-            {
-                selected_element_index = element.target_element_index
-            }
-        case .less:
-            if element.value_index < element.second_value_index
-            {
-                selected_element_index = element.target_element_index
-            }
-        case .less_equal:
-            if element.value_index <= element.second_value_index
-            {
-                selected_element_index = element.target_element_index
-            }
+            selected_element_index = element.target_element_index
         }
         
         perform_next_element()
