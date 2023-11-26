@@ -208,3 +208,41 @@ public func pass_positions_programs(names: [String], from: Robot, to: Robot)
         }
     }
 }
+
+///
+/**
+ Converts sturct to appropriate program element.
+ 
+ - Parameters:
+    - element_struct: A workspace program element struct.
+ 
+ - Returns: Inherited from the workspace program element class instance.
+ */
+public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct) -> WorkspaceProgramElement
+{
+    switch element_struct.identifier
+    {
+    case .robot_perofrmer:
+        return RobotPerformerElement(element_struct: element_struct)
+    case .tool_performer:
+        return ToolPerformerElement(element_struct: element_struct)
+    case .mover_modifier:
+        return MoverModifierElement(element_struct: element_struct)
+    case .copy_modifier:
+        return ToolPerformerElement(element_struct: element_struct)
+    case .write_modifier:
+        return WriteModifierElement(element_struct: element_struct)
+    case .clear_modifier:
+        return ClearModifierElement(element_struct: element_struct)
+    case .changer_modifier:
+        return ChangerModifierElement(element_struct: element_struct)
+    case .observer_modifier:
+        return ObserverModifierElement(element_struct: element_struct)
+    case .comparator_logic:
+        return ComparatorLogicElement(element_struct: element_struct)
+    case .mark_logic:
+        return MarkLogicElement(element_struct: element_struct)
+    case .none:
+        return WorkspaceProgramElement()
+    }
+}
