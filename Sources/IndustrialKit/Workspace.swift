@@ -1722,7 +1722,7 @@ public class Workspace: ObservableObject
      */
     private func compare_by(element: ComparatorLogicElement)
     {
-        if element.compare_type.compare(element.value_index, element.second_value_index)
+        if element.compare_type.compare(element.value_index, element.value2_index)
         {
             selected_element_index = element.target_element_index
         }
@@ -1786,7 +1786,7 @@ public class Workspace: ObservableObject
         {
             if element is ComparatorLogicElement
             {
-                var comparator = element as! ComparatorLogicElement
+                let comparator = element as! ComparatorLogicElement
                 target_mark_name = comparator.target_mark_name
                 if target_mark_name != ""
                 {
@@ -1809,7 +1809,7 @@ public class Workspace: ObservableObject
      
      - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
      */
-    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [WorkspaceProgramElement], registers: [Float])
+    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [WorkspaceProgramElementStruct], registers: [Float])
     {
         //Get robots info for save to file
         var robots_file_info = [RobotStruct]()
@@ -1833,10 +1833,10 @@ public class Workspace: ObservableObject
         }
         
         //Get workspace program elements info for save to file
-        var elements_file_info = [WorkspaceProgramElement]()
+        var elements_file_info = [WorkspaceProgramElementStruct]()
         for element in elements
         {
-            elements_file_info.append(element)
+            elements_file_info.append(element.file_info)
         }
         
         return(robots_file_info, tools_file_info, parts_file_info, elements_file_info, registers)
@@ -1890,12 +1890,42 @@ public class Workspace: ObservableObject
         elements.removeAll()
         for element in preset.elements
         {
-            elements.append(element)
+            elements.append(element_view(element))
         }
         
         for (index, value) in preset.registers.enumerated()
         {
             self.registers[index] = Float(value)
+        }
+    }
+    
+    ///Converts sturct to appropriate program element.
+    private func element_view(_ element_struct: WorkspaceProgramElementStruct) -> WorkspaceProgramElement
+    {
+        switch element_struct.identifier
+        {
+        case .robot_perofrmer:
+            return RobotPerformerElement(element_struct: element_struct)
+        case .tool_performer:
+            return ToolPerformerElement(element_struct: element_struct)
+        case .mover_modifier:
+            return MoverModifierElement(element_struct: element_struct)
+        case .copy_modifier:
+            return ToolPerformerElement(element_struct: element_struct)
+        case .write_modifier:
+            return WriteModifierElement(element_struct: element_struct)
+        case .clear_modifier:
+            return ClearModifierElement(element_struct: element_struct)
+        case .changer_modifier:
+            return ChangerModifierElement(element_struct: element_struct)
+        case .observer_modifier:
+            return ObserverModifierElement(element_struct: element_struct)
+        case .comparator_logic:
+            return ComparatorLogicElement(element_struct: element_struct)
+        case .mark_logic:
+            return MarkLogicElement(element_struct: element_struct)
+        case .none:
+            return WorkspaceProgramElement()
         }
     }
     
@@ -2174,7 +2204,7 @@ public enum RotationComponents: Equatable, CaseIterable
 public struct WorkspacePreset: Codable
 {
     public var robots = [RobotStruct]()
-    public var elements = [WorkspaceProgramElement]()
+    public var elements = [WorkspaceProgramElementStruct]()
     public var tools = [ToolStruct]()
     public var parts = [PartStruct]()
     
@@ -2183,12 +2213,12 @@ public struct WorkspacePreset: Codable
     public init()
     {
         robots = [RobotStruct]()
-        elements = [WorkspaceProgramElement]()
+        elements = [WorkspaceProgramElementStruct]()
         tools = [ToolStruct]()
         parts = [PartStruct]()
     }
     
-    public init(robots: [RobotStruct], elements: [WorkspaceProgramElement], tools: [ToolStruct], parts: [PartStruct])
+    public init(robots: [RobotStruct], elements: [WorkspaceProgramElementStruct], tools: [ToolStruct], parts: [PartStruct])
     {
         self.robots = robots
         self.elements = elements

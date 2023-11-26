@@ -13,7 +13,7 @@ import SwiftUI
  
  The element contains some action performed by the production system.
  */
-public class WorkspaceProgramElement: Codable, Hashable, Identifiable
+public class WorkspaceProgramElement: Hashable, Identifiable
 {
     public static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
@@ -28,6 +28,43 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     public var id = UUID()
     
     public init()
+    {
+        
+    }
+    
+    ///Inits workspace program element by appropriate codable structure.
+    public init(element_struct: WorkspaceProgramElementStruct)
+    {
+        if element_struct.identifier == identifier && element_struct.data.count == data_count
+        {
+            data_from_struct(element_struct)
+        }
+    }
+    
+    ///Inits workspace program element by appropriate identifier
+    public init(element_identifier: WorkspaceProgramElementIdentifier)
+    {
+        data_from_struct(WorkspaceProgramElementStruct(identifier: element_identifier, data: [String]()))
+    }
+    
+    ///Element type identifier
+    public var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return nil
+    }
+    
+    ///Element data components count for type
+    public var data_count: Int
+    {
+        return 0
+    }
+    
+    /**
+     Inits program element by struct.
+     - Parameters:
+        - struct: Appropriate codable struct.
+     */
+    public func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     {
         
     }
@@ -60,6 +97,13 @@ public class WorkspaceProgramElement: Codable, Hashable, Identifiable
     open var color: Color
     {
         return Color(.gray)
+    }
+    
+    //MARK: - Work with file system
+    ///Converts tool data to codable tool struct.
+    public var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct()
     }
 }
 
@@ -132,6 +176,48 @@ public class RobotPerformerElement: PerformerElement
     {
         return "r.square"
     }
+    
+    //File handling
+    //Data [name, x, y, z, r, p, w]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .robot_perofrmer
+    }
+    
+    public override var data_count: Int
+    {
+        return 7
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        object_name = element_struct.data[0]
+        
+        x_index = Int(element_struct.data[1]) ?? 0
+        y_index = Int(element_struct.data[2]) ?? 0
+        z_index = Int(element_struct.data[3]) ?? 0
+        
+        r_index = Int(element_struct.data[4]) ?? 0
+        p_index = Int(element_struct.data[5]) ?? 0
+        w_index = Int(element_struct.data[6]) ?? 0
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        var info = [String]()
+        
+        info.append(object_name)
+        
+        info.append(String(x_index))
+        info.append(String(y_index))
+        info.append(String(z_index))
+        
+        info.append(String(r_index))
+        info.append(String(p_index))
+        info.append(String(w_index))
+        
+        return WorkspaceProgramElementStruct(identifier: .robot_perofrmer, data: info)
+    }
 }
 
 ///Performs program or position on selected tool.
@@ -148,6 +234,29 @@ public class ToolPerformerElement: PerformerElement
     public override var image_name: String
     {
         return "hammer"
+    }
+    
+    //File handling
+    //Data [name, opcode]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .tool_performer
+    }
+    
+    public override var data_count: Int
+    {
+        return 2
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        object_name = element_struct.data[0]
+        opcode_index = Int(element_struct.data[1]) ?? 0
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        WorkspaceProgramElementStruct(identifier: .tool_performer, data: [object_name, String(opcode_index)])
     }
 }
 
@@ -183,6 +292,29 @@ public class MoverModifierElement: ModifierElement
     {
         return "square.on.square.dashed"
     }
+    
+    //File handling
+    //Data [from, to]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .mover_modifier
+    }
+    
+    public override var data_count: Int
+    {
+        return 2
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        from_index = Int(element_struct.data[0]) ?? 0
+        to_index = Int(element_struct.data[1]) ?? 0
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .mover_modifier, data: [String(from_index), String(to_index)])
+    }
 }
 
 ///Copies data from register to target register.
@@ -202,6 +334,29 @@ public class CopyModifierElement: ModifierElement
     public override var image_name: String
     {
         return "plus.square.on.square"
+    }
+    
+    //File handling
+    //Data [from, to]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .copy_modifier
+    }
+    
+    public override var data_count: Int
+    {
+        return 2
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        from_index = Int(element_struct.data[0]) ?? 0
+        to_index = Int(element_struct.data[1]) ?? 0
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .copy_modifier, data: [String(from_index), String(to_index)])
     }
 }
 
@@ -223,6 +378,29 @@ public class WriteModifierElement: ModifierElement
     {
         return "square.and.pencil"
     }
+    
+    //File handling
+    //Data [value, to]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .write_modifier
+    }
+    
+    public override var data_count: Int
+    {
+        return 2
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        value = Float(element_struct.data[0]) ?? 0
+        to_index = Int(element_struct.data[1]) ?? 0
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .write_modifier, data: [String(value), String(to_index)])
+    }
 }
 
 ///Cleares data in all registers.
@@ -236,6 +414,28 @@ public class ClearModifierElement: ModifierElement
     public override var image_name: String
     {
         return "clear"
+    }
+    
+    //File handling
+    //Data |nothing|
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .clear_modifier
+    }
+    
+    public override var data_count: Int
+    {
+        return 0
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        //Nothing...
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .clear_modifier, data: [String]())
     }
 }
 
@@ -253,6 +453,27 @@ public class ChangerModifierElement: ModifierElement
     public override var image_name: String
     {
         return "wand.and.rays"
+    }
+    
+    //File handling
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .changer_modifier
+    }
+    
+    public override var data_count: Int
+    {
+        return 1
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        module_name = element_struct.data[0]
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [module_name])
     }
 }
 
@@ -273,6 +494,29 @@ public class ObserverModifierElement: ModifierElement
     public override var image_name: String
     {
         return "loupe"
+    }
+    
+    //File handling
+    //Data [name, to]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .observer_modifier
+    }
+    
+    public override var data_count: Int
+    {
+        return 2
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        object_name = element_struct.data[0]
+        to_index = Int(element_struct.data[1]) ?? 0
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [object_name, String(to_index)])
     }
 }
 
@@ -297,7 +541,7 @@ public class ComparatorLogicElement: LogicElement
     public var value_index = 0
     
     ///An index of register with compared value.
-    public var second_value_index = 0
+    public var value2_index = 0
     
     ///A type of compare.
     public var compare_type: CompareType = .equal
@@ -310,12 +554,60 @@ public class ComparatorLogicElement: LogicElement
     
     public override var info: String
     {
-        return "Jump to \(target_mark_name) if value of \(value_index) \(compare_type.rawValue) value of \(second_value_index)"
+        return "Jump to \(target_mark_name) if value of \(value_index) \(compare_type.rawValue) value of \(value2_index)"
     }
     
     public override var image_name: String
     {
         return "arrowshape.bounce.forward"
+    }
+    
+    //File handling
+    //Data [compare, value, value2, target]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .comparator_logic
+    }
+    
+    public override var data_count: Int
+    {
+        return 4
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        compare_type = compare_from_string(element_struct.data[0])
+        
+        value_index = Int(element_struct.data[1]) ?? 0
+        value2_index = Int(element_struct.data[2]) ?? 0
+        
+        target_mark_name = element_struct.data[3]
+        
+        func compare_from_string(_ string: String) -> CompareType
+        {
+            switch string
+            {
+            case "=":
+                return .equal
+            case "≠":
+                return .unequal
+            case ">":
+                return .greater
+            case "⩾":
+                return .greater_equal
+            case "<":
+                return .less
+            case "⩽":
+                return .less_equal
+            default:
+                return .equal
+            }
+        }
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .comparator_logic, data: [compare_type.rawValue, String(value_index), String(value2_index), target_mark_name])
     }
 }
 
@@ -333,6 +625,28 @@ public class MarkLogicElement: LogicElement
     public override var image_name: String
     {
         return "record.circle"
+    }
+    
+    //File handling
+    //Data [name]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .mark_logic
+    }
+    
+    public override var data_count: Int
+    {
+        return 1
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        name = element_struct.data[0]
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .mark_logic, data: [name])
     }
 }
 
@@ -364,4 +678,44 @@ public enum CompareType: String, Codable, Equatable, CaseIterable
             return value1 <= value2
         }
     }
+}
+
+//MARK: - Tool structure for workspace preset document handling
+///A codable tool struct.
+public struct WorkspaceProgramElementStruct: Codable
+{
+    public var identifier: WorkspaceProgramElementIdentifier?
+    
+    public var data: [String]
+    
+    public init()
+    {
+        data = [String]()
+    }
+    
+    public init(identifier: WorkspaceProgramElementIdentifier, data: [String])
+    {
+        self.identifier = identifier
+        self.data = data
+    }
+}
+
+///A workspace program element type enum.
+public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
+{
+    //Performer
+    case robot_perofrmer
+    case tool_performer
+    
+    //Modifier
+    case mover_modifier
+    case copy_modifier
+    case write_modifier
+    case clear_modifier
+    case changer_modifier
+    case observer_modifier
+    
+    //Logic
+    case comparator_logic
+    case mark_logic
 }
