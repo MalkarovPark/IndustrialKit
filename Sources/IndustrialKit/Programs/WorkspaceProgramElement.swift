@@ -283,7 +283,7 @@ public class ToolPerformerElement: PerformerElement
         
         info.append(String(opcode_index))
         
-        return WorkspaceProgramElementStruct(identifier: .robot_perofrmer, data: info)
+        return WorkspaceProgramElementStruct(identifier: .tool_performer, data: info)
     }
 }
 
