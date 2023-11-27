@@ -116,14 +116,14 @@ public class PerformerElement: WorkspaceProgramElement
     ///Determines if workspace object is perform a single action.
     public var is_single_perfrom = true
     
+    ///Determines if workspace object is perform a program by index from registers.
+    public var is_program_by_index = false
+    
     ///A name of program to perfrom.
     public var program_name = ""
     
     ///An index of register with index of program to perform.
-    public var program_index_from = 0
-    
-    ///Determines if workspace object is perform a program by index from registers.
-    public var is_program_by_index = false
+    public var program_index = 0
     
     public override var info: String
     {
@@ -135,7 +135,7 @@ public class PerformerElement: WorkspaceProgramElement
             }
             else
             {
-                return "Program index from \(program_index_from)"
+                return "Program index from \(program_index)"
             }
         }
         else
@@ -178,7 +178,7 @@ public class RobotPerformerElement: PerformerElement
     }
     
     //File handling
-    //Data [name, x, y, z, r, p, w]
+    //Data [robot name, program name, program index, is single, is by index, x, y, z, r, p, w]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .robot_perofrmer
@@ -193,13 +193,18 @@ public class RobotPerformerElement: PerformerElement
     {
         object_name = element_struct.data[0]
         
-        x_index = Int(element_struct.data[1]) ?? 0
-        y_index = Int(element_struct.data[2]) ?? 0
-        z_index = Int(element_struct.data[3]) ?? 0
+        program_name = element_struct.data[1]
+        program_index = Int(element_struct.data[2]) ?? 0
+        is_single_perfrom = element_struct.data[3] == "true" ? true : false
+        is_program_by_index = element_struct.data[4] == "true" ? true : false
         
-        r_index = Int(element_struct.data[4]) ?? 0
-        p_index = Int(element_struct.data[5]) ?? 0
-        w_index = Int(element_struct.data[6]) ?? 0
+        x_index = Int(element_struct.data[5]) ?? 0
+        y_index = Int(element_struct.data[6]) ?? 0
+        z_index = Int(element_struct.data[7]) ?? 0
+        
+        r_index = Int(element_struct.data[8]) ?? 0
+        p_index = Int(element_struct.data[9]) ?? 0
+        w_index = Int(element_struct.data[10]) ?? 0
     }
     
     public override var file_info: WorkspaceProgramElementStruct
@@ -207,6 +212,10 @@ public class RobotPerformerElement: PerformerElement
         var info = [String]()
         
         info.append(object_name)
+        info.append(program_name)
+        info.append(String(program_index))
+        info.append(String(is_single_perfrom))
+        info.append(String(is_program_by_index))
         
         info.append(String(x_index))
         info.append(String(y_index))
@@ -237,7 +246,7 @@ public class ToolPerformerElement: PerformerElement
     }
     
     //File handling
-    //Data [name, opcode]
+    //Data [tool name, program index, program name, is single, is by index, opcode]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .tool_performer
@@ -251,12 +260,28 @@ public class ToolPerformerElement: PerformerElement
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     {
         object_name = element_struct.data[0]
-        opcode_index = Int(element_struct.data[1]) ?? 0
+        
+        program_name = element_struct.data[1]
+        program_index = Int(element_struct.data[2]) ?? 0
+        is_single_perfrom = element_struct.data[3] == "0" ? false : true
+        is_program_by_index = element_struct.data[4] == "0" ? false : true
+        
+        opcode_index = Int(element_struct.data[5]) ?? 0
     }
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        WorkspaceProgramElementStruct(identifier: .tool_performer, data: [object_name, String(opcode_index)])
+        var info = [String]()
+        
+        info.append(object_name)
+        info.append(program_name)
+        info.append(String(program_index))
+        info.append(String(is_single_perfrom))
+        info.append(String(is_program_by_index))
+        
+        info.append(String(opcode_index))
+        
+        return WorkspaceProgramElementStruct(identifier: .robot_perofrmer, data: info)
     }
 }
 
@@ -537,14 +562,14 @@ public class LogicElement: WorkspaceProgramElement
 ///Jumps to the specified mark when the conditions are met
 public class ComparatorLogicElement: LogicElement
 {
+    ///A type of compare.
+    public var compare_type: CompareType = .equal
+    
     ///An index of register with compared value.
     public var value_index = 0
     
     ///An index of register with compared value.
     public var value2_index = 0
-    
-    ///A type of compare.
-    public var compare_type: CompareType = .equal
     
     ///A name of the target mark.
     public var target_mark_name = ""

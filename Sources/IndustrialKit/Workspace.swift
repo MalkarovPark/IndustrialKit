@@ -1596,7 +1596,7 @@ public class Workspace: ObservableObject
                 }
                 else
                 {
-                    selected_robot.select_program(index: element.program_index_from)
+                    selected_robot.select_program(index: element.program_index)
                 }
                 
                 selected_robot.finish_handler = self.select_new_element
@@ -1632,7 +1632,7 @@ public class Workspace: ObservableObject
                 }
                 else
                 {
-                    selected_tool.select_program(index: element.program_index_from)
+                    selected_tool.select_program(index: element.program_index)
                 }
                 
                 selected_tool.finish_handler = self.select_new_element
@@ -2170,7 +2170,7 @@ public enum RotationComponents: Equatable, CaseIterable
     }
 }
 
-//MARK: - Structure for workspace preset document handling
+//MARK: - Structures for workspace preset document handling
 public struct WorkspacePreset: Codable
 {
     public var robots = [RobotStruct]()
