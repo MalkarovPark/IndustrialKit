@@ -114,7 +114,7 @@ public class PerformerElement: WorkspaceProgramElement
     public var object_name = ""
     
     ///Determines if workspace object is perform a single action.
-    public var is_single_perfrom = true
+    public var is_single_perfrom = false
     
     ///Determines if workspace object is perform a program by index from registers.
     public var is_program_by_index = false
@@ -195,8 +195,8 @@ public class RobotPerformerElement: PerformerElement
         
         program_name = element_struct.data[1]
         program_index = Int(element_struct.data[2]) ?? 0
-        is_single_perfrom = element_struct.data[3] == "true" ? true : false
-        is_program_by_index = element_struct.data[4] == "true" ? true : false
+        is_single_perfrom = Bool(element_struct.data[3]) ?? false
+        is_program_by_index = Bool(element_struct.data[4]) ?? false
         
         x_index = Int(element_struct.data[5]) ?? 0
         y_index = Int(element_struct.data[6]) ?? 0
@@ -212,6 +212,7 @@ public class RobotPerformerElement: PerformerElement
         var info = [String]()
         
         info.append(object_name)
+        
         info.append(program_name)
         info.append(String(program_index))
         info.append(String(is_single_perfrom))
@@ -263,8 +264,8 @@ public class ToolPerformerElement: PerformerElement
         
         program_name = element_struct.data[1]
         program_index = Int(element_struct.data[2]) ?? 0
-        is_single_perfrom = element_struct.data[3] == "0" ? false : true
-        is_program_by_index = element_struct.data[4] == "0" ? false : true
+        is_single_perfrom = Bool(element_struct.data[3]) ?? false
+        is_program_by_index = Bool(element_struct.data[4]) ?? false
         
         opcode_index = Int(element_struct.data[5]) ?? 0
     }
@@ -274,6 +275,7 @@ public class ToolPerformerElement: PerformerElement
         var info = [String]()
         
         info.append(object_name)
+        
         info.append(program_name)
         info.append(String(program_index))
         info.append(String(is_single_perfrom))
