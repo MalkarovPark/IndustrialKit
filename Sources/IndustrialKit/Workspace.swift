@@ -1598,7 +1598,7 @@ public class Workspace: ObservableObject
                 }
                 else
                 {
-                    selected_robot.select_program(index: element.program_index)
+                    selected_robot.select_program(index: Int(registers[element.program_index]))
                 }
                 
                 selected_robot.finish_handler = self.select_new_element
@@ -1634,7 +1634,7 @@ public class Workspace: ObservableObject
                 }
                 else
                 {
-                    selected_tool.select_program(index: element.program_index)
+                    selected_tool.select_program(index: Int(registers[element.program_index]))
                 }
                 
                 selected_tool.finish_handler = self.select_new_element
