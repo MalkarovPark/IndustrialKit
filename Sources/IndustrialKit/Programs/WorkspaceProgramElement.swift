@@ -127,20 +127,34 @@ public class PerformerElement: WorkspaceProgramElement
     
     public override var info: String
     {
-        if !is_single_perfrom
+        if object_name != ""
         {
-            if !is_program_by_index
+            if !is_single_perfrom
             {
-                return "\(object_name) – \(program_name)"
+                if !is_program_by_index
+                {
+                    if program_name != ""
+                    {
+                        return "\(object_name) – \(program_name)"
+                    }
+                    else
+                    {
+                        return "No programs to perform"
+                    }
+                }
+                else
+                {
+                    return "Program index from \(program_index)"
+                }
             }
             else
             {
-                return "Program index from \(program_index)"
+                return "Perform from registers"
             }
         }
         else
         {
-            return "Perform from registers"
+            return "No objects placed"
         }
     }
     
@@ -547,7 +561,14 @@ public class ComparatorLogicElement: LogicElement
     
     public override var info: String
     {
-        return "Jump to \(target_mark_name) if value of \(value_index) \(compare_type.rawValue) value of \(value2_index)"
+        if target_mark_name != ""
+        {
+            return "Jump to \(target_mark_name) if value of \(value_index) \(compare_type.rawValue) value of \(value2_index)"
+        }
+        else
+        {
+            return "No marks to jump"
+        }
     }
     
     public override var image_name: String
