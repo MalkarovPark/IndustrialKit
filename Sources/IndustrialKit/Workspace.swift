@@ -1424,7 +1424,7 @@ public class Workspace: ObservableObject
         switch element
         {
         case let performer_element as RobotPerformerElement:
-            perform_robot_by(element: performer_element, completion: select_new_element)
+            perform_robot_by(element: performer_element)
         case let performer_element as ToolPerformerElement:
             perform_tool_by(element: performer_element)
         case let mover_element as MoverModifierElement:
@@ -1462,6 +1462,126 @@ public class Workspace: ObservableObject
                 }
                 
                 registers = fixed_registers
+            }
+        }
+        
+        //MARK: - Elements processing
+        /**
+         Perform robot by element data.
+         - Parameters:
+            - element: A robot performer element.
+         */
+        func perform_robot_by(element: RobotPerformerElement)
+        {
+            if !element.is_single_perfrom
+            {
+                select_robot(name: element.object_name)
+                
+                if selected_robot_index != -1
+                {
+                    if !element.is_program_by_index
+                    {
+                        selected_robot.select_program(name: element.program_name)
+                    }
+                    else
+                    {
+                        selected_robot.select_program(index: element.program_index)
+                    }
+                    
+                    selected_robot.finish_handler = self.select_new_element
+                    selected_robot.start_pause_moving()
+                }
+                else
+                {
+                    select_new_element()
+                }
+            }
+            else
+            {
+                //Single robot perform
+            }
+        }
+        
+        /**
+         Perform tool by element data.
+         - Parameters:
+            - element: A tool performer element.
+         */
+        func perform_tool_by(element: ToolPerformerElement)
+        {
+            if !element.is_single_perfrom
+            {
+                select_tool(name: element.object_name)
+                
+                if selected_tool_index != -1
+                {
+                    if !element.is_program_by_index
+                    {
+                        selected_tool.select_program(name: element.program_name)
+                    }
+                    else
+                    {
+                        selected_tool.select_program(index: element.program_index)
+                    }
+                    
+                    selected_tool.finish_handler = self.select_new_element
+                    selected_tool.start_pause_performing()
+                }
+                else
+                {
+                    select_new_element()
+                }
+            }
+            else
+            {
+                //Single tool perform
+            }
+        }
+        
+        /**
+         Move value between registers.
+         - Parameters:
+            - element: A mover modifier element.
+         */
+        func move_by(element: MoverModifierElement)
+        {
+            registers[element.to_index] = registers[element.from_index]
+            if element.move_type == .move
+            {
+                registers[element.from_index] = 0
+            }
+        }
+        
+        /**
+         Write value from element to regiser.
+         - Parameters:
+            - element: A write modifier element.
+         */
+        func write_by(element: WriteModifierElement)
+        {
+            registers[element.to_index] = element.value
+        }
+        
+        /**
+         Pushes info from tool to register.
+         - Parameters:
+            - element: An observable modifier element.
+         */
+        func observe_by(element: ObserverModifierElement)
+        {
+            registers[element.to_index] = tool_by_name(element.object_name).info_code ?? 0
+        }
+        
+        /**
+         Jumps to program element by index.
+         - Parameters:
+            - index: An element index to jump.
+         */
+        func compare_by(element: ComparatorLogicElement)
+        {
+            if element.compare_type.compare(element.value_index, element.value2_index)
+            {
+                selected_element_index = element.target_element_index
             }
         }
     }
@@ -1574,113 +1694,6 @@ public class Workspace: ObservableObject
         }
     }
     
-    //MARK: - Elements processing
-    /**
-     Perform robot by element data.
-     - Parameters:
-        - element: A robot performer element.
-     */
-    private func perform_robot_by(element: RobotPerformerElement, completion: @escaping () -> Void)
-    {
-        if !element.is_single_perfrom
-        {
-            select_robot(name: element.object_name)
-            
-            if selected_robot_index != -1
-            {
-                if !element.is_program_by_index
-                {
-                    selected_robot.select_program(name: element.program_name)
-                }
-                else
-                {
-                    selected_robot.select_program(index: element.program_index)
-                }
-                
-                selected_robot.finish_handler = completion
-                selected_robot.start_pause_moving()
-            }
-            else
-            {
-                completion()
-            }
-        }
-        else
-        {
-            //Single robot perform
-        }
-    }
-    
-    /**
-     Perform tool by element data.
-     - Parameters:
-        - element: A tool performer element.
-     */
-    private func perform_tool_by(element: ToolPerformerElement)
-    {
-        if !element.is_single_perfrom
-        {
-            select_tool(name: element.object_name)
-            
-            if selected_tool_index != -1
-            {
-                if !element.is_program_by_index
-                {
-                    selected_tool.select_program(name: element.program_name)
-                }
-                else
-                {
-                    selected_tool.select_program(index: element.program_index)
-                }
-                
-                selected_tool.finish_handler = self.select_new_element
-                selected_tool.start_pause_performing()
-            }
-            else
-            {
-                select_new_element()
-            }
-        }
-        else
-        {
-            //Single tool perform
-        }
-    }
-    
-    /**
-     Move value between registers.
-     - Parameters:
-        - element: A mover modifier element.
-     */
-    private func move_by(element: MoverModifierElement)
-    {
-        registers[element.to_index] = registers[element.from_index]
-        if element.move_type == .move
-        {
-            registers[element.from_index] = 0
-        }
-    }
-    
-    /**
-     Write value from element to regiser.
-     - Parameters:
-        - element: A write modifier element.
-     */
-    private func write_by(element: WriteModifierElement)
-    {
-        registers[element.to_index] = element.value
-    }
-    
-    /**
-     Pushes info from tool to register.
-     - Parameters:
-        - element: An observable modifier element.
-     */
-    private func observe_by(element: ObserverModifierElement)
-    {
-        registers[element.to_index] = tool_by_name(element.object_name).info_code ?? 0
-    }
-    
     ///A changer modules names array.
     public static var changer_modules = [String]()
     
@@ -1700,19 +1713,6 @@ public class Workspace: ObservableObject
             }
      */
     public static var change_by: ((_ name: String, _ registers: inout [Float]) -> Void) = { name,registers in }
-    
-    /**
-     Jumps to program element by index.
-     - Parameters:
-        - index: An element index to jump.
-     */
-    private func compare_by(element: ComparatorLogicElement)
-    {
-        if element.compare_type.compare(element.value_index, element.value2_index)
-        {
-            selected_element_index = element.target_element_index
-        }
-    }
     
     ///Resets workspace performing.
     public func reset_performing()
