@@ -50,7 +50,7 @@ public class PositionPoint: Identifiable, Codable, Hashable
         self.w = 0
         
         self.move_type = .linear
-        self.move_speed = 10
+        self.move_speed = 100
     }
     
     /**
