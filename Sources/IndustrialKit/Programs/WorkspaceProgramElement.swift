@@ -699,10 +699,10 @@ public struct WorkspaceProgramElementStruct: Codable
     }
 }
 
-public enum ModifierCopyType: Codable, Equatable, CaseIterable
+public enum ModifierCopyType: String, Codable, Equatable, CaseIterable
 {
-    case duplicate
-    case move
+    case duplicate = "Duplicate"
+    case move = "Move"
 }
 
 ///A workspace program element type enum.
