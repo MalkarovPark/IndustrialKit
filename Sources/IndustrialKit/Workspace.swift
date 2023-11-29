@@ -1424,7 +1424,7 @@ public class Workspace: ObservableObject
         switch element
         {
         case let performer_element as RobotPerformerElement:
-            perform_robot_by(element: performer_element)
+            perform_robot_by(element: performer_element, completion: select_new_element)
         case let performer_element as ToolPerformerElement:
             perform_tool_by(element: performer_element)
         case let mover_element as MoverModifierElement:
@@ -1580,7 +1580,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - element: A robot performer element.
      */
-    private func perform_robot_by(element: RobotPerformerElement)
+    private func perform_robot_by(element: RobotPerformerElement, completion: @escaping () -> Void)
     {
         if !element.is_single_perfrom
         {
@@ -1597,12 +1597,12 @@ public class Workspace: ObservableObject
                     selected_robot.select_program(index: element.program_index)
                 }
                 
-                selected_robot.finish_handler = self.select_new_element
+                selected_robot.finish_handler = completion
                 selected_robot.start_pause_moving()
             }
             else
             {
-                select_new_element()
+                completion()
             }
         }
         else
