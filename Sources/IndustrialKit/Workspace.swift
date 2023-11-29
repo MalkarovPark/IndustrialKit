@@ -1434,7 +1434,6 @@ public class Workspace: ObservableObject
         case let changer_element as ChangerModifierElement:
             Workspace.change_by(changer_element.module_name, &registers)
             check_registers()
-            select_new_element()
         case is ClearModifierElement:
             clear_registers()
         case let observer_element as ObserverModifierElement:
@@ -1442,10 +1441,12 @@ public class Workspace: ObservableObject
         case let comparator_element as ComparatorLogicElement:
             compare_by(element: comparator_element)
         case is MarkLogicElement:
-            select_new_element()
+            break
         default:
-            select_new_element()
+            break
         }
+        
+        select_new_element()
         
         func check_registers()
         {
