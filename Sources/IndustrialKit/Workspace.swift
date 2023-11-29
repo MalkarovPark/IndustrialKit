@@ -1543,7 +1543,6 @@ public class Workspace: ObservableObject
     public func clear_registers()
     {
         registers = [Float](repeating: 0, count: 256)
-        perform_next_element()
     }
     
     /**
@@ -1660,8 +1659,6 @@ public class Workspace: ObservableObject
         {
             registers[element.from_index] = 0
         }
-        
-        perform_next_element()
     }
     
     /**
@@ -1715,8 +1712,6 @@ public class Workspace: ObservableObject
         {
             selected_element_index = element.target_element_index
         }
-        
-        perform_next_element()
     }
     
     ///Resets workspace performing.
