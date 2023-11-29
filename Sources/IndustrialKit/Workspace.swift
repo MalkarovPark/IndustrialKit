@@ -1429,24 +1429,28 @@ public class Workspace: ObservableObject
             perform_tool_by(element: performer_element)
         case let mover_element as MoverModifierElement:
             move_by(element: mover_element)
+            select_new_element()
         case let write_element as WriteModifierElement:
             write_by(element: write_element)
+            select_new_element()
         case let changer_element as ChangerModifierElement:
             Workspace.change_by(changer_element.module_name, &registers)
             check_registers()
+            select_new_element()
         case is ClearModifierElement:
             clear_registers()
+            select_new_element()
         case let observer_element as ObserverModifierElement:
             observe_by(element: observer_element)
+            select_new_element()
         case let comparator_element as ComparatorLogicElement:
             compare_by(element: comparator_element)
+            select_new_element()
         case is MarkLogicElement:
-            break
+            select_new_element()
         default:
-            break
+            select_new_element()
         }
-        
-        select_new_element()
         
         func check_registers()
         {
