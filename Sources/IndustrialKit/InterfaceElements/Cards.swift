@@ -500,11 +500,11 @@ public struct ElementCardView: View
     {
         ZStack
         {
-            if is_current
+            /*if is_current
             {
                 Rectangle()
                     .foregroundStyle(.mint.opacity(0.5))
-            }
+            }*/
             
             VStack
             {
