@@ -577,6 +577,7 @@ public class Robot: WorkspaceObject
         guard selected_program.points_count > 0
         else
         {
+            finish_handler()
             return
         }
         

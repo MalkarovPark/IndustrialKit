@@ -379,6 +379,7 @@ public class Tool: WorkspaceObject
         guard selected_program.codes_count > 0
         else
         {
+            finish_handler()
             return
         }
         
