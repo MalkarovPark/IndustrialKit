@@ -323,7 +323,7 @@ public class Robot: WorkspaceObject
     {
         get //Return positions program by selected index
         {
-            if programs.count > 0
+            if programs.count > 0 && selected_program_index < programs.count
             {
                 if selected_program_index < programs_count
                 {
