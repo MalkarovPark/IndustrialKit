@@ -247,7 +247,7 @@ public class ToolPerformerElement: PerformerElement
     }
     
     //File handling
-    //Data [tool name, program index, program name, is single, is by index, opcode]
+    //Data [tool name, program name, program index, is single, is by index, opcode]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .tool_performer
@@ -255,7 +255,7 @@ public class ToolPerformerElement: PerformerElement
     
     public override var data_count: Int
     {
-        return 2
+        return 6
     }
     
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
