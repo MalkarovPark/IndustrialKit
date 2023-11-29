@@ -315,13 +315,7 @@ public class MoverModifierElement: ModifierElement
     
     public override var info: String
     {
-        switch move_type
-        {
-        case .duplicate:
-            return "Duplicate from \(from_index) to \(to_index)"
-        case .move:
-            return "Move from \(from_index) to \(to_index)"
-        }
+        return "\(move_type.rawValue) from \(from_index) to \(to_index)"
     }
     
     public override var image_name: String
