@@ -1672,7 +1672,6 @@ public class Workspace: ObservableObject
     private func write_by(element: WriteModifierElement)
     {
         registers[element.to_index] = element.value
-        select_new_element()
     }
     
     /**
@@ -1683,7 +1682,6 @@ public class Workspace: ObservableObject
     private func observe_by(element: ObserverModifierElement)
     {
         registers[element.to_index] = tool_by_name(element.object_name).info_code ?? 0
-        select_new_element()
     }
     
     ///A changer modules names array.
@@ -1719,16 +1717,6 @@ public class Workspace: ObservableObject
         }
         
         perform_next_element()
-    }
-    
-    private func check_equal()
-    {
-        select_new_element()
-    }
-    
-    private func check_unequal()
-    {
-        select_new_element()
     }
     
     ///Resets workspace performing.
