@@ -304,7 +304,10 @@ public class ModifierElement: WorkspaceProgramElement
 ///Moves data between registers.
 public class MoverModifierElement: ModifierElement
 {
-    ///An index of value to move.
+    ///A type of copy
+    public var move_type: ModifierCopyType = .duplicate
+    
+    ///An index of value to copy.
     public var from_index = 0
     
     ///An index of target register.
@@ -312,12 +315,24 @@ public class MoverModifierElement: ModifierElement
     
     public override var info: String
     {
-        return "Move from \(from_index) to \(to_index)"
+        switch move_type
+        {
+        case .duplicate:
+            return "Duplicate from \(from_index) to \(to_index)"
+        case .move:
+            return "Move from \(from_index) to \(to_index)"
+        }
     }
     
     public override var image_name: String
     {
-        return "square.on.square.dashed"
+        switch move_type
+        {
+        case .duplicate:
+            return "plus.square.on.square"
+        case .move:
+            return "square.on.square.dashed"
+        }
     }
     
     //File handling
@@ -341,49 +356,6 @@ public class MoverModifierElement: ModifierElement
     public override var file_info: WorkspaceProgramElementStruct
     {
         return WorkspaceProgramElementStruct(identifier: .mover_modifier, data: [String(from_index), String(to_index)])
-    }
-}
-
-///Copies data from register to target register.
-public class CopyModifierElement: ModifierElement
-{
-    ///An index of value to copy.
-    public var from_index = 0
-    
-    ///An index of target register.
-    public var to_index = 0
-    
-    public override var info: String
-    {
-        return "Copy from \(from_index) to \(to_index)"
-    }
-    
-    public override var image_name: String
-    {
-        return "plus.square.on.square"
-    }
-    
-    //File handling
-    //Data [from, to]
-    public override var identifier: WorkspaceProgramElementIdentifier?
-    {
-        return .copy_modifier
-    }
-    
-    public override var data_count: Int
-    {
-        return 2
-    }
-    
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
-    {
-        from_index = Int(element_struct.data[0]) ?? 0
-        to_index = Int(element_struct.data[1]) ?? 0
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        return WorkspaceProgramElementStruct(identifier: .copy_modifier, data: [String(from_index), String(to_index)])
     }
 }
 
@@ -727,6 +699,12 @@ public struct WorkspaceProgramElementStruct: Codable
     }
 }
 
+public enum ModifierCopyType: Codable, Equatable, CaseIterable
+{
+    case duplicate
+    case move
+}
+
 ///A workspace program element type enum.
 public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
 {
@@ -736,7 +714,6 @@ public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
     
     //Modifier
     case mover_modifier
-    case copy_modifier
     case write_modifier
     case clear_modifier
     case changer_modifier

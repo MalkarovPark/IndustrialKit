@@ -1429,8 +1429,6 @@ public class Workspace: ObservableObject
             perform_tool_by(element: performer_element)
         case let mover_element as MoverModifierElement:
             move_by(element: mover_element)
-        case let copy_element as CopyModifierElement:
-            copy_by(element: copy_element)
         case let write_element as WriteModifierElement:
             write_by(element: write_element)
         case let changer_element as ChangerModifierElement:
@@ -1652,24 +1650,16 @@ public class Workspace: ObservableObject
     /**
      Move value between registers.
      - Parameters:
-        - element: An mover modifier element.
+        - element: A mover modifier element.
      */
     private func move_by(element: MoverModifierElement)
     {
         registers[element.to_index] = registers[element.from_index]
-        registers[element.from_index] = 0
+        if element.move_type == .move
+        {
+            registers[element.from_index] = 0
+        }
         
-        perform_next_element()
-    }
-    
-    /**
-     Copy value between registers.
-     - Parameters:
-        - element: An copy modifier element.
-     */
-    private func copy_by(element: CopyModifierElement)
-    {
-        registers[element.to_index] = registers[element.from_index]
         perform_next_element()
     }
     
