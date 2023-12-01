@@ -311,15 +311,15 @@ public class Tool: WorkspaceObject
     }
     
     ///An information output code.
-    public var info_code: Float?
+    public var info_output: [Float]?
     {
         if demo
         {
-            return model_controller.info_code
+            return model_controller.info_output
         }
         else
         {
-            return connector.info_code
+            return connector.info_output
         }
     }
     
@@ -581,7 +581,7 @@ public class Tool: WorkspaceObject
             model_controller.nodes_transform()
         }*/
         
-        model_controller.info_code = self.info_code
+        model_controller.info_output = self.info_output
         
         //Pass model controller to connector
         /*if update_model_by_connector
@@ -595,7 +595,7 @@ public class Tool: WorkspaceObject
     {
         model_controller.remove_all_model_actions()
         model_controller.nodes_disconnect()
-        model_controller.info_code = nil
+        model_controller.info_output = nil
         
         //connector.model_controller = nil
     }

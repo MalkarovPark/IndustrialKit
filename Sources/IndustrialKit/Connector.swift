@@ -329,7 +329,7 @@ open class ToolConnector: WorkspaceObjectConnector
     }
     
     ///Inforamation code updated by connector.
-    public var info_code: Float?
+    public var info_output: [Float]?
     
     ///A tool model controller.
     public var model_controller: ToolModelController?

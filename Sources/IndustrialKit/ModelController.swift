@@ -395,5 +395,5 @@ open class ToolModelController: ModelController
     }
     
     ///Inforamation code updated by model controller.
-    public var info_code: Float?
+    public var info_output: [Float]?
 }

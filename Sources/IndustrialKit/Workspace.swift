@@ -1682,7 +1682,7 @@ public class Workspace: ObservableObject
      */
     private func observe_by(element: ObserverModifierElement)
     {
-        registers[element.to_index] = tool_by_name(element.object_name).info_code ?? 0
+        //registers[element.to_index] = tool_by_name(element.object_name).info_output ?? 0
     }
     
     ///A changer modules names array.
