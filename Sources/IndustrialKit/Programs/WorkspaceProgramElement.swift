@@ -491,11 +491,12 @@ public class ObserverModifierElement: ModifierElement
     public var object_name = ""
     
     ///An index of target register.
-    public var to_index = 0
+    public var from_indices = [Int](repeating: 0, count: 8) //8 info elements to output
+    public var to_indices = [Int](repeating: 0, count: 8) //8 registers indices to input
     
     public override var info: String
     {
-        return "Observe form \(object_name) to \(to_index)"
+        return "Observe form \(object_name) of \(from_indices.map { String($0) }.joined(separator: ", ")) to \(to_indices.map { String($0) }.joined(separator: ", "))"
     }
     
     public override var image_name: String
@@ -504,7 +505,7 @@ public class ObserverModifierElement: ModifierElement
     }
     
     //File handling
-    //Data [name, to]
+    //Data [name, from indices, to indices]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .observer_modifier
@@ -512,18 +513,29 @@ public class ObserverModifierElement: ModifierElement
     
     public override var data_count: Int
     {
-        return 2
+        return 3
     }
     
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     {
         object_name = element_struct.data[0]
-        to_index = Int(element_struct.data[1]) ?? 0
+        from_indices = string_to_indices(element_struct.data[1])
+        to_indices = string_to_indices(element_struct.data[2])
     }
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [object_name, String(to_index)])
+        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [object_name, indices_to_string(from_indices), indices_to_string(to_indices)])
+    }
+    
+    private func string_to_indices(_ string: String) -> [Int]
+    {
+        return string.components(separatedBy: "|").compactMap { Int($0) }
+    }
+    
+    private func indices_to_string(_ indices: [Int]) -> String
+    {
+        return from_indices.map { String($0) }.joined(separator: "|")
     }
 }
 
