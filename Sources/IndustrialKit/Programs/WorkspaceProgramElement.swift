@@ -535,7 +535,7 @@ public class ObserverModifierElement: ModifierElement
     
     private func indices_to_string(_ indices: [Int]) -> String
     {
-        return from_indices.map { String($0) }.joined(separator: "|")
+        return indices.map { String($0) }.joined(separator: "|")
     }
 }
 
