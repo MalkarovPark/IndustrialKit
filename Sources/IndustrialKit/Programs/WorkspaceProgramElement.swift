@@ -427,7 +427,7 @@ public class CleanerModifierElement: ModifierElement
     //Data |nothing|
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
-        return .clener_modifier
+        return .cleaner_modifier
     }
     
     public override var data_count: Int
@@ -442,7 +442,7 @@ public class CleanerModifierElement: ModifierElement
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .clener_modifier, data: [String]())
+        return WorkspaceProgramElementStruct(identifier: .cleaner_modifier, data: [String]())
     }
 }
 

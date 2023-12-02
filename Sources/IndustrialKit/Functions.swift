@@ -230,7 +230,7 @@ public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct)
         return MoverModifierElement(element_struct: element_struct)
     case .writer_modifier:
         return WriterModifierElement(element_struct: element_struct)
-    case .clener_modifier:
+    case .cleaner_modifier:
         return CleanerModifierElement(element_struct: element_struct)
     case .changer_modifier:
         return ChangerModifierElement(element_struct: element_struct)
