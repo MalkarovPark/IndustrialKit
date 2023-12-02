@@ -491,8 +491,8 @@ public class ObserverModifierElement: ModifierElement
     public var object_name = ""
     
     ///An index of target register.
-    public var from_indices = [Int](repeating: 0, count: 4) //4 info elements to output
-    public var to_indices = [Int](repeating: 0, count: 4) //4 registers indices to input
+    public var from_indices = [Int]()
+    public var to_indices = [Int]()
     
     public override var info: String
     {
