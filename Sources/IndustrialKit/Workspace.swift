@@ -1430,14 +1430,14 @@ public class Workspace: ObservableObject
         case let mover_element as MoverModifierElement:
             move_by(element: mover_element)
             select_new_element()
-        case let write_element as WriteModifierElement:
+        case let write_element as WriterModifierElement:
             write_by(element: write_element)
             select_new_element()
         case let changer_element as ChangerModifierElement:
             Workspace.change_by(changer_element.module_name, &registers)
             check_registers()
             select_new_element()
-        case is ClearModifierElement:
+        case is CleanerModifierElement:
             clear_registers()
             select_new_element()
         case let observer_element as ObserverModifierElement:
@@ -1670,7 +1670,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - element: A write modifier element.
      */
-    private func write_by(element: WriteModifierElement)
+    private func write_by(element: WriterModifierElement)
     {
         registers[element.to_index] = element.value
     }

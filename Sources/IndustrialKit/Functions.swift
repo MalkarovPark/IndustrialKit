@@ -228,10 +228,10 @@ public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct)
         return ToolPerformerElement(element_struct: element_struct)
     case .mover_modifier:
         return MoverModifierElement(element_struct: element_struct)
-    case .write_modifier:
-        return WriteModifierElement(element_struct: element_struct)
-    case .clear_modifier:
-        return ClearModifierElement(element_struct: element_struct)
+    case .writer_modifier:
+        return WriterModifierElement(element_struct: element_struct)
+    case .clener_modifier:
+        return CleanerModifierElement(element_struct: element_struct)
     case .changer_modifier:
         return ChangerModifierElement(element_struct: element_struct)
     case .observer_modifier:

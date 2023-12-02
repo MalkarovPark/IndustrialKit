@@ -368,7 +368,7 @@ public class MoverModifierElement: ModifierElement
 }
 
 ///Writes data to selected register.
-public class WriteModifierElement: ModifierElement
+public class WriterModifierElement: ModifierElement
 {
     ///A writable value.
     public var value: Float = 0
@@ -390,7 +390,7 @@ public class WriteModifierElement: ModifierElement
     //Data [value, to]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
-        return .write_modifier
+        return .writer_modifier
     }
     
     public override var data_count: Int
@@ -406,12 +406,12 @@ public class WriteModifierElement: ModifierElement
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .write_modifier, data: [String(value), String(to_index)])
+        return WorkspaceProgramElementStruct(identifier: .writer_modifier, data: [String(value), String(to_index)])
     }
 }
 
 ///Cleares data in all registers.
-public class ClearModifierElement: ModifierElement
+public class CleanerModifierElement: ModifierElement
 {
     public override var info: String
     {
@@ -427,7 +427,7 @@ public class ClearModifierElement: ModifierElement
     //Data |nothing|
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
-        return .clear_modifier
+        return .clener_modifier
     }
     
     public override var data_count: Int
@@ -442,7 +442,7 @@ public class ClearModifierElement: ModifierElement
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .clear_modifier, data: [String]())
+        return WorkspaceProgramElementStruct(identifier: .clener_modifier, data: [String]())
     }
 }
 
@@ -525,7 +525,7 @@ public class ObserverModifierElement: ModifierElement
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [object_name, indices_to_string(from_indices), indices_to_string(to_indices)])
+        return WorkspaceProgramElementStruct(identifier: .observer_modifier, data: [object_name, indices_to_string(from_indices), indices_to_string(to_indices)])
     }
     
     private func string_to_indices(_ string: String) -> [Int]
@@ -741,8 +741,8 @@ public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
     
     //Modifier
     case mover_modifier
-    case write_modifier
-    case clear_modifier
+    case writer_modifier
+    case clener_modifier
     case changer_modifier
     case observer_modifier
     
