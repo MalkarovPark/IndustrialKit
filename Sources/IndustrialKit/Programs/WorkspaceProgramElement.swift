@@ -742,7 +742,7 @@ public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
     //Modifier
     case mover_modifier
     case writer_modifier
-    case clener_modifier
+    case cleaner_modifier
     case changer_modifier
     case observer_modifier
     
