@@ -1684,11 +1684,14 @@ public class Workspace: ObservableObject
     {
         let info_output = tool_by_name(element.object_name).info_output
         
-        for i in 0..<element.from_indices.count
+        if element.from_indices.count > 0
         {
-            if element.to_indices[i] <= 255 && element.to_indices[i] >= 0 && (element.from_indices[i] < info_output?.count ?? 0)
+            for i in 0..<element.from_indices.count
             {
-                registers[element.to_indices[i]] = info_output?[element.from_indices[i]] ?? 0
+                if element.to_indices[i] <= 255 && element.to_indices[i] >= 0 && (element.from_indices[i] < info_output?.count ?? 0)
+                {
+                    registers[element.to_indices[i]] = info_output?[element.from_indices[i]] ?? 0
+                }
             }
         }
     }

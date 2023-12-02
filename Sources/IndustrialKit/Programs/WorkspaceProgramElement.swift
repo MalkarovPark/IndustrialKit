@@ -496,7 +496,14 @@ public class ObserverModifierElement: ModifierElement
     
     public override var info: String
     {
-        return "Observe form \(object_name) of \(from_indices.map { String($0) }.joined(separator: ", ")) to \(to_indices.map { String($0) }.joined(separator: ", "))"
+        if from_indices.count > 0
+        {
+            return "Observe form \(object_name) of \(from_indices.map { String($0) }.joined(separator: ", ")) to \(to_indices.map { String($0) }.joined(separator: ", "))"
+        }
+        else
+        {
+            return "No items to observe"
+        }
     }
     
     public override var image_name: String
