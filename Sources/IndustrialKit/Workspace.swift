@@ -1235,7 +1235,7 @@ public class Workspace: ObservableObject
                         
                         if robot_by_name(element.object_name).programs_count > 0
                         {
-                            element.object_name = robot_by_name(element.object_name).programs_names.first!
+                            element.program_name = robot_by_name(element.object_name).programs_names.first!
                         }
                     }
                     else
@@ -1277,7 +1277,7 @@ public class Workspace: ObservableObject
                         
                         if tool_by_name(element.object_name).programs_count > 0
                         {
-                            element.object_name = tool_by_name(element.object_name).programs_names.first!
+                            element.program_name = tool_by_name(element.object_name).programs_names.first!
                         }
                     }
                     else
