@@ -1293,7 +1293,11 @@ public class Workspace: ObservableObject
                     element.object_name = tools.first?.name ?? "None"
                     if tools.first?.programs_count ?? 0 > 0
                     {
-                        element.object_name = tool_by_name(element.object_name).programs_names.first!
+                        element.program_name = tool_by_name(element.object_name).programs_names.first!
+                    }
+                    else
+                    {
+                        element.program_name = ""
                     }
                 }
                 else
