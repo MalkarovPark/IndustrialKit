@@ -1251,7 +1251,11 @@ public class Workspace: ObservableObject
                     element.object_name = robots.first?.name ?? "None"
                     if robots.first?.programs_count ?? 0 > 0
                     {
-                        element.object_name = robot_by_name(element.object_name).programs_names.first!
+                        element.program_name = robot_by_name(element.object_name).programs_names.first!
+                    }
+                    else
+                    {
+                        element.program_name = ""
                     }
                 }
                 else

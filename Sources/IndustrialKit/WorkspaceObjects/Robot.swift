@@ -232,7 +232,10 @@ public class Robot: WorkspaceObject
         }
         didSet
         {
-            update_points_model()
+            if selected_program_index != -1
+            {
+                update_points_model()
+            }
         }
     }
     
@@ -245,7 +248,10 @@ public class Robot: WorkspaceObject
     {
         program.name = mismatched_name(name: program.name!, names: programs_names)
         programs.append(program)
-        selected_program.visual_clear()
+        if selected_program_index != -1
+        {
+            selected_program.visual_clear()
+        }
     }
     
     /**
