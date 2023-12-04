@@ -1227,7 +1227,7 @@ public class Workspace: ObservableObject
         {
             if element.object_name != ""
             {
-                if self.robot_by_name(element.object_name).is_placed == false
+                if !self.robot_by_name(element.object_name).is_placed
                 {
                     if self.placed_robots_names.count > 0
                     {
@@ -1238,7 +1238,7 @@ public class Workspace: ObservableObject
                             element.program_name = robot_by_name(element.object_name).programs_names.first!
                         }
                     }
-                    else
+                    else if self.robot_by_name(element.object_name).programs_count == 0
                     {
                         element.object_name = ""
                     }
@@ -1289,7 +1289,7 @@ public class Workspace: ObservableObject
                             element.program_name = tool_by_name(element.object_name).programs_names.first!
                         }
                     }
-                    else
+                    else if self.tool_by_name(element.object_name).programs_count == 0
                     {
                         element.object_name = ""
                     }
