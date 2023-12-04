@@ -1243,7 +1243,7 @@ public class Workspace: ObservableObject
                         element.object_name = ""
                     }
                 }
-                else if self.robot_by_name(element.object_name).programs_count == 0
+                else if self.robot_by_name(element.object_name).selected_program.name == ""
                 {
                     no_robots_check()
                 }
@@ -1294,7 +1294,7 @@ public class Workspace: ObservableObject
                         element.object_name = ""
                     }
                 }
-                else if self.tool_by_name(element.object_name).programs_count == 0
+                else if self.tool_by_name(element.object_name).selected_program.name == ""
                 {
                     no_tools_check()
                 }
