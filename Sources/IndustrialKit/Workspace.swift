@@ -1238,12 +1238,12 @@ public class Workspace: ObservableObject
                             element.program_name = robot_by_name(element.object_name).programs_names.first!
                         }
                     }
-                    else if self.robot_by_name(element.object_name).programs_count == 0
+                    else
                     {
                         element.object_name = ""
                     }
                 }
-                else
+                else if self.robot_by_name(element.object_name).programs_count == 0
                 {
                     no_robots_check()
                 }
@@ -1289,12 +1289,12 @@ public class Workspace: ObservableObject
                             element.program_name = tool_by_name(element.object_name).programs_names.first!
                         }
                     }
-                    else if self.tool_by_name(element.object_name).programs_count == 0
+                    else
                     {
                         element.object_name = ""
                     }
                 }
-                else
+                else if self.tool_by_name(element.object_name).programs_count == 0
                 {
                     no_tools_check()
                 }
