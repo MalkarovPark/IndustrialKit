@@ -1243,8 +1243,17 @@ public class Workspace: ObservableObject
                         element.object_name = ""
                     }
                 }
+                else
+                {
+                    no_robots_check()
+                }
             }
             else
+            {
+                no_robots_check()
+            }
+            
+            func no_robots_check()
             {
                 if self.placed_robots_names.count > 0
                 {
@@ -1269,7 +1278,7 @@ public class Workspace: ObservableObject
         {
             if element.object_name != ""
             {
-                if self.tool_by_name(element.object_name).is_placed == false
+                if !self.tool_by_name(element.object_name).is_placed
                 {
                     if self.placed_tools_names.count > 0
                     {
@@ -1285,8 +1294,17 @@ public class Workspace: ObservableObject
                         element.object_name = ""
                     }
                 }
+                else
+                {
+                    no_tools_check()
+                }
             }
             else
+            {
+                no_tools_check()
+            }
+            
+            func no_tools_check()
             {
                 if self.placed_tools_names.count > 0
                 {
