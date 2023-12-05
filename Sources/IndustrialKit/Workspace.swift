@@ -1253,9 +1253,20 @@ public class Workspace: ObservableObject
             
             func program_check()
             {
-                if element.program_name == "" && checked_object.programs_count > 0
+                if checked_object.programs_count > 0
                 {
-                    element.program_name = checked_object.programs_names.first ?? ""
+                    if checked_object.programs_names.contains(element.program_name)
+                    {
+                        element.program_name = checked_object.programs_names.first ?? ""
+                    }
+                    else
+                    {
+                        element.program_name = ""
+                    }
+                }
+                else
+                {
+                    element.program_name = ""
                 }
             }
         }
@@ -1290,9 +1301,20 @@ public class Workspace: ObservableObject
             
             func program_check()
             {
-                if element.program_name == "" && checked_object.programs_count > 0
+                if checked_object.programs_count > 0
                 {
-                    element.program_name = checked_object.programs_names.first ?? ""
+                    if checked_object.programs_names.contains(element.program_name)
+                    {
+                        element.program_name = checked_object.programs_names.first ?? ""
+                    }
+                    else
+                    {
+                        element.program_name = ""
+                    }
+                }
+                else
+                {
+                    element.program_name = ""
                 }
             }
         }
