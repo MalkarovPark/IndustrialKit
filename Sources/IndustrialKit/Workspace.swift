@@ -1255,13 +1255,9 @@ public class Workspace: ObservableObject
             {
                 if checked_object.programs_count > 0
                 {
-                    if checked_object.programs_names.contains(element.program_name)
+                    if !checked_object.programs_names.contains(element.program_name)
                     {
                         element.program_name = checked_object.programs_names.first ?? ""
-                    }
-                    else
-                    {
-                        element.program_name = ""
                     }
                 }
                 else
@@ -1303,13 +1299,9 @@ public class Workspace: ObservableObject
             {
                 if checked_object.programs_count > 0
                 {
-                    if checked_object.programs_names.contains(element.program_name)
+                    if !checked_object.programs_names.contains(element.program_name)
                     {
                         element.program_name = checked_object.programs_names.first ?? ""
-                    }
-                    else
-                    {
-                        element.program_name = ""
                     }
                 }
                 else
