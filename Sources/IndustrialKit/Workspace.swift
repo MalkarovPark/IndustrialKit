@@ -267,7 +267,10 @@ public class Workspace: ObservableObject
         edited_object_node = SCNNode() //Remove old reference
         edited_object_node?.removeFromParentNode() //Remove old node
         
-        is_editing = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+        {
+            self.is_editing = false
+        }
     }
     
     ///Removes selected object model from workspace scene.
@@ -278,8 +281,11 @@ public class Workspace: ObservableObject
         edited_object_node?.removeFromParentNode() //Remove edited object node
         edited_object_node = SCNNode() //Remove scnnode link
         
-        is_editing = false
         deselect_object()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+        {
+            self.is_editing = false
+        }
     }
     
     public var selected_object_unavaliable: Bool?
