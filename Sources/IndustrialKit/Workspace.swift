@@ -1225,102 +1225,74 @@ public class Workspace: ObservableObject
         
         func robot_element_check(_ element: RobotPerformerElement) //Check element by selected robot exists
         {
-            if element.object_name != ""
+            var checked_object = robot_by_name(element.object_name)
+            
+            if checked_object.is_placed
             {
-                if !self.robot_by_name(element.object_name).is_placed
-                {
-                    if self.placed_robots_names.count > 0
-                    {
-                        element.object_name = self.placed_robots_names.first!
-                        
-                        if robot_by_name(element.object_name).programs_count > 0
-                        {
-                            element.program_name = robot_by_name(element.object_name).programs_names.first!
-                        }
-                    }
-                    else
-                    {
-                        element.object_name = ""
-                    }
-                }
-                else if self.robot_by_name(element.object_name).selected_program.name == ""
-                {
-                    no_robots_check()
-                }
+                program_check()
             }
             else
             {
-                no_robots_check()
+                objects_check()
             }
             
-            func no_robots_check()
+            func objects_check()
             {
-                if self.placed_robots_names.count > 0
+                if placed_tools_names.count > 0
                 {
-                    element.object_name = robots.first?.name ?? "None"
-                    if robots.first?.programs_count ?? 0 > 0
-                    {
-                        element.program_name = robot_by_name(element.object_name).programs_names.first!
-                    }
-                    else
-                    {
-                        element.program_name = ""
-                    }
+                    element.object_name = placed_robots_names.first ?? ""
+                    checked_object = robot_by_name(element.object_name)
+                    program_check()
                 }
                 else
                 {
                     element.object_name = ""
+                    element.program_name = ""
+                }
+            }
+            
+            func program_check()
+            {
+                if element.program_name == "" && checked_object.programs_count > 0
+                {
+                    element.program_name = checked_object.programs_names.first ?? ""
                 }
             }
         }
         
         func tool_element_check(_ element: ToolPerformerElement)
         {
-            if element.object_name != ""
+            var checked_object = tool_by_name(element.object_name)
+            
+            if checked_object.is_placed
             {
-                if !self.tool_by_name(element.object_name).is_placed
-                {
-                    if self.placed_tools_names.count > 0
-                    {
-                        element.object_name = self.placed_tools_names.first!
-                        
-                        if tool_by_name(element.object_name).programs_count > 0
-                        {
-                            element.program_name = tool_by_name(element.object_name).programs_names.first!
-                        }
-                    }
-                    else
-                    {
-                        element.object_name = ""
-                    }
-                }
-                else if self.tool_by_name(element.object_name).selected_program.name == ""
-                {
-                    no_tools_check()
-                }
+                program_check()
             }
             else
             {
-                no_tools_check()
+                objects_check()
             }
             
-            func no_tools_check()
+            func objects_check()
             {
-                if self.placed_tools_names.count > 0
+                if placed_tools_names.count > 0
                 {
-                    element.object_name = tools.first?.name ?? "None"
-                    if tools.first?.programs_count ?? 0 > 0
-                    {
-                        element.program_name = tool_by_name(element.object_name).programs_names.first!
-                    }
-                    else
-                    {
-                        element.program_name = ""
-                    }
+                    element.object_name = placed_tools_names.first ?? ""
+                    checked_object = tool_by_name(element.object_name)
+                    program_check()
                 }
                 else
                 {
                     element.object_name = ""
+                    element.program_name = ""
+                }
+            }
+            
+            func program_check()
+            {
+                if element.program_name == "" && checked_object.programs_count > 0
+                {
+                    element.program_name = checked_object.programs_names.first ?? ""
                 }
             }
         }
