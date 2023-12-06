@@ -250,7 +250,7 @@ public struct CircleDeleteButtonModifier: ViewModifier
 public struct SmallCardView: View
 {
     //View properties
-    @State public var color: Color
+    @Binding public var color: Color
     let image: UIImage?
     let node: SCNNode?
     @State public var title: String
@@ -262,9 +262,9 @@ public struct SmallCardView: View
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
-    public init(color: Color, image: UIImage?, title: String)
+    public init(color: Binding<Color>, image: UIImage?, title: String)
     {
-        self.color = color
+        self._color = color
         self.image = image
         self.node = nil
         self.title = title
@@ -275,9 +275,9 @@ public struct SmallCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, image: UIImage?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
+    public init(color: Binding<Color>, image: UIImage?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
     {
-        self.color = color
+        self._color = color
         self.image = image
         self.node = nil
         self.title = title
@@ -288,9 +288,9 @@ public struct SmallCardView: View
         self.on_rename = on_rename
     }
     
-    public init(color: Color, node: SCNNode?, title: String)
+    public init(color: Binding<Color>, node: SCNNode?, title: String)
     {
-        self.color = color
+        self._color = color
         self.image = nil
         self.node = node
         self.title = title
@@ -301,9 +301,9 @@ public struct SmallCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, node: SCNNode?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
+    public init(color: Binding<Color>, node: SCNNode?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
     {
-        self.color = color
+        self._color = color
         self.image = nil
         self.node = node
         self.title = title
@@ -577,7 +577,8 @@ struct Cards_Previews: PreviewProvider
                     .shadow(radius: 8)
                     .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
                     .padding([.horizontal, .top])
-                SmallCardView(color: .green, image: nil, title: "Title")
+                
+                SmallCardView(color: .constant(.green), image: nil, title: "Title")
                     .shadow(radius: 8)
                     .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
                     .padding()
@@ -592,7 +593,7 @@ struct Cards_Previews: PreviewProvider
                     .shadow(radius: 8)
                     .padding([.horizontal, .top])
                 
-                SmallCardView(color: .gray, node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), title: "Cube")
+                SmallCardView(color: .constant(.gray), node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), title: "Cube")
                     .shadow(radius: 8)
                     .padding()
             }
