@@ -269,7 +269,7 @@ public class Workspace: ObservableObject
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
         {
-            self.is_editing = false
+            self.in_visual_edit_mode = false
         }
     }
     
@@ -284,7 +284,7 @@ public class Workspace: ObservableObject
         deselect_object()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
         {
-            self.is_editing = false
+            self.in_visual_edit_mode = false
         }
     }
     
@@ -377,7 +377,7 @@ public class Workspace: ObservableObject
         }
         edited_object_node = node //Connect to tapped node
         
-        if is_selected
+        if any_object_selected
         {
             switch type //Switch new selected objec type
             {
@@ -497,7 +497,7 @@ public class Workspace: ObservableObject
     ///Deselects edited object node.
     public func deselect_object_for_edit()
     {
-        if is_selected
+        if any_object_selected
         {
             update_view()
             object_pointer_node?.isHidden = true
@@ -527,7 +527,7 @@ public class Workspace: ObservableObject
     ///Remove selected object.
     public func remove_selected_object()
     {
-        if is_selected
+        if any_object_selected
         {
             //Toggle selection state and deselect by object type
             switch selected_object_type
@@ -1907,8 +1907,8 @@ public class Workspace: ObservableObject
     }
     
     //MARK: - UI Functions
-    ///Determines whether the robot can be selected if it is open for editing.
-    public var is_editing = false
+    ///Determines whether the object can be selected if it is open for editing.
+    public var in_visual_edit_mode = false
     
     ///Force updates SwiftUI view.
     public func update_view()
@@ -1917,7 +1917,7 @@ public class Workspace: ObservableObject
     }
     
     ///Selection workspace object state.
-    public var is_selected: Bool
+    public var any_object_selected: Bool
     {
         if selected_robot_index == -1 && selected_part_index == -1 && selected_tool_index == -1
         {
@@ -1929,30 +1929,15 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///If add in view presented or not dismissed state.
-    public var add_in_view_dismissed = true
-    
-    ///Disabled add new object button.
-    public var add_in_view_disabled: Bool
-    {
-        if !is_selected || !add_in_view_dismissed || performed
-        {
-            return true
-        }
-        else
-        {
-            return false
-        }
-    }
-    
-    public func is_current_element(element: WorkspaceProgramElement) -> Bool //Get point color for inspector view
+    ///Determines whether a given program element is currently selected for performing.
+    public func is_current_element(element: WorkspaceProgramElement) -> Bool
     {
         var flag = false
-        let element_index = self.elements.firstIndex(of: element) //Number of selected code
+        let element_index = self.elements.firstIndex(of: element) //Index of selected code
         
         if performed
         {
-            if element_index == selected_element_index //Yellow color, if the tool is in the process of moving to the code
+            if element_index == selected_element_index
             {
                 flag = true
             }

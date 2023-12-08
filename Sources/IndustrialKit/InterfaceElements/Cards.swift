@@ -577,6 +577,7 @@ struct Cards_Previews: PreviewProvider
                     .shadow(radius: 8)
                     .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
                     .padding([.horizontal, .top])
+                
                 SmallCardView(color: .green, image: nil, title: "Title")
                     .shadow(radius: 8)
                     .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
