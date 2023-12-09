@@ -435,6 +435,7 @@ public class Robot: WorkspaceObject
     ///A time to point moving.
     public var move_time: Float?
     {
+        return 1
         if target_point_index == 0
         {
             let v: Float = 100
@@ -442,8 +443,7 @@ public class Robot: WorkspaceObject
             
             if v != 0
             {
-                //return s/v
-                return 1
+                return s/v
             }
             else
             {
