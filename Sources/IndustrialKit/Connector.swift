@@ -228,17 +228,23 @@ open class RobotConnector: WorkspaceObjectConnector
     private var moving_task = Task {}
     
     /**
-     Performs robot movement to point.
+     Performs movement on real robot by target position.
      
      - Parameters:
-        - point: The the target point that moving performed by the real robot.
+        - point: The target position performed by the real robot.
      */
     open func move_to(point: PositionPoint)
     {
         
     }
     
-    ///Performs movement to point with compleition handler.
+    /**
+     Performs movement on real robot by target position with completion handler.
+     
+     - Parameters:
+        - point: The target position performed by the real robot.
+        - completion: A completion function that is calls when the performing completes.
+     */
     public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
         canceled = false
@@ -301,17 +307,23 @@ open class ToolConnector: WorkspaceObjectConnector
     private var performing_task = Task {}
     
     /**
-     Performs node action by operation code.
+     Performs real tool by operation code value.
      
      - Parameters:
-        - code: The information code of the operation performed by the real tool.
+        - code: The operation code value of the operation performed by the real tool.
      */
     open func perform(code: Int)
     {
         
     }
     
-    ///Performs operation code with compleition handler.
+    /**
+     Performs real tool by operation code value with completion handler.
+     
+     - Parameters:
+        - code: The operation code value of the operation performed by the real tool.
+        - completion: A completion function that is calls when the performing completes.
+     */
     public func perform(code: Int, completion: @escaping () -> Void)
     {
         canceled = false

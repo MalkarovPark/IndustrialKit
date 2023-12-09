@@ -302,25 +302,25 @@ open class RobotModelController: ModelController
     }
     
     /**
-     Performs node action by target point with completion handler.
+     Performs robot model action by target position with completion handler.
      
      - Parameters:
-        - position: The target position performed by the tool visual model.
-        - completion: A completion block that is calls when the action completes.
+        - point: The target position performed by the robot visual model.
+        - completion: A completion function that is calls when the performing completes.
      */
-    public func nodes_move_to(position: PositionPoint, move_time: Float?, rotate_time: Float?, completion: @escaping () -> Void)
+    public func nodes_move_to(point: PositionPoint, move_time: Float?, rotate_time: Float?, completion: @escaping () -> Void)
     {
         self.moving_finished = false
         self.rotation_finished = false
         self.cancel_task = false
         
-        pointer_node?.runAction(position.moving(time: move_time ?? 1).position)
+        pointer_node?.runAction(point.moving(time: move_time ?? 1).position)
         {
             self.moving_finished = true
             check_completion()
         }
         
-        pointer_node_internal?.runAction(position.moving(time: rotate_time ?? 1).rotation)
+        pointer_node_internal?.runAction(point.moving(time: rotate_time ?? 1).rotation)
         {
             self.rotation_finished = true
             check_completion()
@@ -360,10 +360,10 @@ open class RobotModelController: ModelController
 open class ToolModelController: ModelController
 {
     /**
-     Performs node action by operation code.
+     Performs tool model action by operation code value.
      
      - Parameters:
-        - code: The information code of the operation performed by the tool visual model.
+        - code: The operation code value of the operation performed by the tool visual model.
      */
     open func nodes_perform(code: Int)
     {
@@ -371,11 +371,11 @@ open class ToolModelController: ModelController
     }
     
     /**
-     Performs node action by operation code with completion handler.
+     Performs tool model action by operation code value with completion handler.
      
      - Parameters:
-        - code: The information code of the operation performed by the tool visual model.
-        - completion: A completion block that is calls when the action completes.
+        - code: The operation code value of the operation performed by the tool visual model.
+        - completion: A completion function that is calls when the performing completes.
      */
     open func nodes_perform(code: Int, completion: @escaping () -> Void)
     {

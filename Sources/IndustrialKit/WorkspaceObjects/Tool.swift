@@ -367,12 +367,42 @@ public class Tool: WorkspaceObject
         }
     }
     
-    open func perform_operation(_ code: Int) //Single operation perform
+    //MARK: Performation cycle
+    /**
+     Performs tool by operation code value with completion handler.
+     
+     - Parameters:
+        - code: The operation code value of the operation performed by the tool.
+        - completion: A completion function that is calls when the performing completes.
+     */
+    public func perform(code: Int, completion: @escaping () -> Void)
     {
-        
+        if demo
+        {
+            //Move to point for virtual tool
+            model_controller.nodes_perform(code: code)
+            {
+                completion()
+            }
+        }
+        else
+        {
+            //Move to point for real tool
+            if connector.connected
+            {
+                connector.perform(code: code)
+                {
+                    completion()
+                }
+            }
+            else
+            {
+                //Skip operation if real tool is not connected
+                completion()
+            }
+        }
     }
     
-    //MARK: Performation cycle
     ///Selects codes and performs tool operation.
     public func start_pause_performing()
     {
@@ -401,7 +431,7 @@ public class Tool: WorkspaceObject
         
         func pause_handler()
         {
-            if demo == true
+            if demo
             {
                 model_controller.reset_model()
             }
@@ -418,49 +448,15 @@ public class Tool: WorkspaceObject
     {
         update_statistics = true
         
-        if demo
+        perform(code: selected_program.codes[selected_code_index].value)
         {
-            //Move to point for virtual tool
-            model_controller.nodes_perform(code: selected_program.codes[selected_code_index].value)
-            {
-                self.select_new_code()
-            }
+            self.select_new_code()
         }
-        else
-        {
-            //Move to point for real tool
-            if connector.connected
-            {
-                connector.perform(code: selected_program.codes[selected_code_index].value)
-                {
-                    self.select_new_code()
-                }
-            }
-            else
-            {
-                //Skip operation if real tool is not connected
-                select_new_code()
-            }
-        }
-    }
-    
-    ///Finish handler for operation code performation.
-    public var finish_handler: (() -> Void) = {}
-    
-    ///Clears finish handler.
-    public func clear_finish_handler()
-    {
-        finish_handler = {}
     }
     
     ///Set the new target operation code index.
     private func select_new_code()
     {
-        /*DispatchQueue.main.async
-        {
-            self.update_statistics_data()
-        }*/
-        
         update_statistics = false
         
         if performed
@@ -489,6 +485,15 @@ public class Tool: WorkspaceObject
             
             finish_handler()
         }
+    }
+    
+    ///Finish handler for operation code performation.
+    public var finish_handler: (() -> Void) = {}
+    
+    ///Clears finish handler.
+    public func clear_finish_handler()
+    {
+        finish_handler = {}
     }
     
     ///Resets tool operation performation.

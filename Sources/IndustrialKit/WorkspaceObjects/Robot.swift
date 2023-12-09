@@ -518,15 +518,21 @@ public class Robot: WorkspaceObject
     }
     
     //MARK: Performation cycle
-    ///Selects and performs robot to point movement.
-    public func move_to_next_point()
+    /**
+     Performs movement on robot by target position with completion handler.
+     
+     - Parameters:
+        - point: The target position performed by the robot.
+        - completion: A completion function that is calls when the performing completes.
+     */
+    public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
         if demo
         {
             //Move to point for virtual robot
-            model_controller.nodes_move_to(position: programs[selected_program_index].points[target_point_index], move_time: move_time, rotate_time: rotate_time)
+            model_controller.nodes_move_to(point: point, move_time: move_time, rotate_time: rotate_time)
             {
-                self.select_new_point()
+                completion()
             }
         }
         else
@@ -534,46 +540,15 @@ public class Robot: WorkspaceObject
             if connector.connected
             {
                 //Move to point for real robot
-                connector.move_to(point: programs[selected_program_index].points[target_point_index])
+                connector.move_to(point: point)
                 {
-                    self.select_new_point()
+                    completion()
                 }
             }
             else
             {
-                select_new_point()
+                completion()
             }
-        }
-    }
-    
-    ///Finish handler for to point moving.
-    public var finish_handler: (() -> Void) = {}
-    
-    ///Clears finish handler.
-    public func clear_finish_handler()
-    {
-        finish_handler = {}
-    }
-    
-    ///Set the new target point index.
-    private func select_new_point()
-    {
-        if target_point_index < selected_program.points_count - 1
-        {
-            //Select and move to next point
-            target_point_index += 1
-            move_to_next_point()
-        }
-        else
-        {
-            //Reset target point index if all points passed
-            target_point_index = 0
-            performed = false
-            moving_completed = true
-            update_model()
-            pointer_position_to_robot()
-            
-            finish_handler()
         }
     }
     
@@ -590,11 +565,6 @@ public class Robot: WorkspaceObject
         //Handling robot moving
         if !performed
         {
-            //Pass workcell parameters to model controller
-            /*model_controller.origin_location = origin_location
-            model_controller.origin_rotation = origin_rotation
-            model_controller.space_scale = space_scale*/
-            
             if !demo //Pass workcell parameters to model controller
             {
                 connector.origin_location = origin_location
@@ -625,12 +595,47 @@ public class Robot: WorkspaceObject
                 //Remove actions for real robot
                 connector.pause()
             }
-            
-            /*DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) //Delayed robot stop
-            {
-                self.update_model()
-            }*/
         }
+    }
+    
+    ///Performs robot to selected point movement and select next.
+    public func move_to_next_point()
+    {
+        move_to(point: programs[selected_program_index].points[target_point_index])
+        {
+            self.select_new_point()
+        }
+    }
+    
+    ///Set the new target point index.
+    private func select_new_point()
+    {
+        if target_point_index < selected_program.points_count - 1
+        {
+            //Select and move to next point
+            target_point_index += 1
+            move_to_next_point()
+        }
+        else
+        {
+            //Reset target point index if all points passed
+            target_point_index = 0
+            performed = false
+            moving_completed = true
+            update_model()
+            pointer_position_to_robot()
+            
+            finish_handler()
+        }
+    }
+    
+    ///Finish handler for to point moving.
+    public var finish_handler: (() -> Void) = {}
+    
+    ///Clears finish handler.
+    public func clear_finish_handler()
+    {
+        finish_handler = {}
     }
     
     ///Resets robot moving.
