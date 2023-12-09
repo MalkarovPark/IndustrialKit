@@ -435,10 +435,9 @@ public class Robot: WorkspaceObject
     ///A time to point moving.
     public var move_time: Float?
     {
-        return 10
         if target_point_index == 0
         {
-            let v: Float = 100
+            let v = selected_program.points[0].move_speed
             let s = distance_between_points(point1: selected_program.points[0], point2: PositionPoint(x: pointer_location[0], y: pointer_location[1], z: pointer_location[2]))
             
             if v != 0
