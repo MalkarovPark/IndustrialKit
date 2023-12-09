@@ -181,6 +181,9 @@ public class RobotPerformerElement: PerformerElement
     ///Index of *w* rotation component.
     public var w_index = 0
     
+    ///Index of movement speed.
+    //public var speed_index = 0
+    
     public override var title: String
     {
         return "Robot"
@@ -192,7 +195,7 @@ public class RobotPerformerElement: PerformerElement
     }
     
     //File handling
-    //Data [robot name, program name, program index, is single, is by index, x, y, z, r, p, w]
+    //Data [robot name, program name, program index, is single, is by index, x, y, z, r, p, w, speed]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .robot_perofrmer
@@ -219,6 +222,8 @@ public class RobotPerformerElement: PerformerElement
         r_index = Int(element_struct.data[8]) ?? 0
         p_index = Int(element_struct.data[9]) ?? 0
         w_index = Int(element_struct.data[10]) ?? 0
+        
+        //speed_index = Int(element_struct.data[11]) ?? 0
     }
     
     public override var file_info: WorkspaceProgramElementStruct
@@ -239,6 +244,8 @@ public class RobotPerformerElement: PerformerElement
         info.append(String(r_index))
         info.append(String(p_index))
         info.append(String(w_index))
+        
+        //info.append(String(speed_index))
         
         return WorkspaceProgramElementStruct(identifier: .robot_perofrmer, data: info)
     }
