@@ -455,9 +455,9 @@ public class Robot: WorkspaceObject
         
         func distance_between_points(point1: PositionPoint, point2: PositionPoint) -> Float
         {
-            let x_dist = abs(point2.x - point1.x)
-            let y_dist = abs(point2.y - point1.y)
-            let z_dist = abs(point2.z - point1.z)
+            let x_dist = point2.x - point1.x
+            let y_dist = point2.y - point1.y
+            let z_dist = point2.z - point1.z
             return sqrt(Float(x_dist * x_dist + y_dist * y_dist + z_dist * z_dist))
         }
     }
@@ -516,6 +516,7 @@ public class Robot: WorkspaceObject
         if demo
         {
             //Move to point for virtual robot
+            pointer_position_to_robot()
             model_controller.nodes_move_to(point: point, move_time: move_time, rotate_time: rotate_time)
             {
                 completion()
@@ -559,7 +560,7 @@ public class Robot: WorkspaceObject
             }
             
             //Move to next point if moving was stop
-            pointer_position_to_robot()
+            //pointer_position_to_robot()
             performed = true
             move_to_next_point()
         }
@@ -609,6 +610,7 @@ public class Robot: WorkspaceObject
             target_point_index = 0
             performed = false
             moving_completed = true
+            
             update_model()
             pointer_position_to_robot()
             
