@@ -1635,7 +1635,8 @@ public class Workspace: ObservableObject
                                                         z: registers[element.z_index],
                                                         r: registers[element.r_index],
                                                         p: registers[element.p_index],
-                                                        w: registers[element.w_index]))
+                                                        w: registers[element.w_index],
+                                                        move_speed: registers[element.speed_index]))
             {
                 self.select_new_element()
             }

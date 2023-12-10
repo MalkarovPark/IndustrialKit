@@ -182,7 +182,7 @@ public class RobotPerformerElement: PerformerElement
     public var w_index = 0
     
     ///Index of movement speed.
-    //public var speed_index = 0
+    public var speed_index = 0
     
     public override var title: String
     {
@@ -223,7 +223,7 @@ public class RobotPerformerElement: PerformerElement
         p_index = Int(element_struct.data[9]) ?? 0
         w_index = Int(element_struct.data[10]) ?? 0
         
-        //speed_index = Int(element_struct.data[11]) ?? 0
+        speed_index = Int(element_struct.data[11]) ?? 0
     }
     
     public override var file_info: WorkspaceProgramElementStruct
@@ -245,7 +245,7 @@ public class RobotPerformerElement: PerformerElement
         info.append(String(p_index))
         info.append(String(w_index))
         
-        //info.append(String(speed_index))
+        info.append(String(speed_index))
         
         return WorkspaceProgramElementStruct(identifier: .robot_perofrmer, data: info)
     }
