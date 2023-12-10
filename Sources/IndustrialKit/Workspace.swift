@@ -1650,10 +1650,10 @@ public class Workspace: ObservableObject
      */
     private func perform_tool_by(element: ToolPerformerElement)
     {
+        select_tool(name: element.object_name)
+        
         if !element.is_single_perfrom
         {
-            select_tool(name: element.object_name)
-            
             if selected_tool_index != -1
             {
                 if !element.is_program_by_index
