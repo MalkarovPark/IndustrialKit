@@ -432,62 +432,6 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///A time to point moving.
-    public var move_time: Float?
-    {
-        //Calculate time between target point and current position
-        let v = selected_program.points[target_point_index].move_speed
-        let s = distance_between_points(point1: selected_program.points[target_point_index], point2: PositionPoint(x: pointer_location[0],
-                                                                                                                   y: pointer_location[1],
-                                                                                                                   z: pointer_location[2]))
-        
-        if v != 0
-        {
-            return s / v
-        }
-        else
-        {
-            return 0 //Null time for first position
-        }
-        
-        func distance_between_points(point1: PositionPoint, point2: PositionPoint) -> Float
-        {
-            let x_dist = point1.x - point2.x
-            let y_dist = point1.y - point2.y
-            let z_dist = point1.z - point2.z
-            
-            return sqrt(Float(x_dist * x_dist + y_dist * y_dist + z_dist * z_dist))
-        }
-    }
-    
-    ///A time to point rotate.
-    public var rotate_time: Float?
-    {
-        let v = selected_program.points[target_point_index].move_speed
-        let point1 = selected_program.points[target_point_index]
-        let point2 = PositionPoint(x: 0,
-                                   y: 0,
-                                   z: 0,
-                                   r: pointer_rotation[0],
-                                   p: pointer_rotation[1],
-                                   w: pointer_rotation[2])
-        
-        let rotation_r = abs(point1.r - point2.r)
-        let rotation_p = abs(point1.p - point2.p)
-        let rotation_w = abs(point1.w - point2.w)
-        
-        let r = rotation_r + rotation_p + rotation_w
-        
-        if v != 0
-        {
-            return r / v
-        }
-        else
-        {
-            return 0 //Null time for first position
-        }
-    }
-    
     /**
      Demo state of robot.
      
@@ -538,7 +482,14 @@ public class Robot: WorkspaceObject
         {
             //Move to point for virtual robot
             pointer_position_to_robot()
-            model_controller.nodes_move_to(point: point, move_time: move_time, rotate_time: rotate_time)
+            model_controller.update_movement_time(point1: selected_program.points[target_point_index],
+                                                  point2: PositionPoint(x: pointer_location[0],
+                                                                        y: pointer_location[1],
+                                                                        z: pointer_location[2],
+                                                                        r: pointer_rotation[0],
+                                                                        p: pointer_rotation[1],
+                                                                        w: pointer_rotation[2]))
+            model_controller.nodes_move_to(point: point)
             {
                 completion()
             }

@@ -308,19 +308,25 @@ open class RobotModelController: ModelController
         - point: The target position performed by the robot visual model.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func nodes_move_to(point: PositionPoint, move_time: Float?, rotate_time: Float?, completion: @escaping () -> Void)
+    public func nodes_move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
         self.moving_finished = false
         self.rotation_finished = false
         self.cancel_task = false
         
-        pointer_node?.runAction(point.moving(time: move_time ?? 1).position)
+        let location_action = SCNAction.move(to: SCNVector3(point.y, point.z, point.x), duration: TimeInterval(location_time))
+        
+        let rotation_action_r = SCNAction.rotateTo(x: 0, y: 0, z: CGFloat(point.r.to_rad), duration: TimeInterval(rotation_time.r))
+        let rotation_action_p = SCNAction.rotateTo(x: CGFloat(point.p.to_rad), y: 0, z: 0, duration: TimeInterval(rotation_time.p))
+        let rotation_action_w = SCNAction.rotateTo(x: 0, y: CGFloat(point.w.to_rad), z: 0, duration: TimeInterval(rotation_time.w))
+        
+        pointer_node?.runAction(SCNAction.group([location_action, rotation_action_p, rotation_action_w]))
         {
             self.moving_finished = true
             check_completion()
         }
         
-        pointer_node_internal?.runAction(point.moving(time: rotate_time ?? 1).rotation)
+        pointer_node_internal?.runAction(rotation_action_r)
         {
             self.rotation_finished = true
             check_completion()
@@ -342,6 +348,59 @@ open class RobotModelController: ModelController
             }
         }
     }
+    
+    /**
+     Updates robot model movement time by end points distance.
+     
+     - Parameters:
+        - point1: The first target point.
+        - completion: The second target point.
+     */
+    public func update_movement_time(point1: PositionPoint, point2: PositionPoint)
+    {
+        //Calculate time between target point and current location
+        let v = point1.move_speed
+        let s = distance_between_points(point1: point1, point2: point2)
+        
+        if v != 0
+        {
+            location_time = s / v
+        }
+        else
+        {
+            location_time = 0
+        }
+        
+        //Calculate time between target point and current rotation
+        let rotation_r = abs(point1.r - point2.r)
+        let rotation_p = abs(point1.p - point2.p)
+        let rotation_w = abs(point1.w - point2.w)
+        
+        if v != 0
+        {
+            rotation_time.r = rotation_r / v
+            rotation_time.p = rotation_p / v
+            rotation_time.w = rotation_w / v
+        }
+        else
+        {
+            rotation_time.r = 0
+            rotation_time.p = 0
+            rotation_time.w = 0
+        }
+        
+        func distance_between_points(point1: PositionPoint, point2: PositionPoint) -> Float
+        {
+            let x_dist = point1.x - point2.x
+            let y_dist = point1.y - point2.y
+            let z_dist = point1.z - point2.z
+            
+            return sqrt(Float(x_dist * x_dist + y_dist * y_dist + z_dist * z_dist))
+        }
+    }
+    
+    private var location_time: Float = 0
+    private var rotation_time: (r: Float, p: Float, w: Float) = (0, 0, 0)
     
     private func remove_movement_actions()
     {
