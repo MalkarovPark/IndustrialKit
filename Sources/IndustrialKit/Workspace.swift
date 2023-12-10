@@ -1604,10 +1604,10 @@ public class Workspace: ObservableObject
      */
     private func perform_robot_by(element: RobotPerformerElement)
     {
+        select_robot(name: element.object_name)
+        
         if !element.is_single_perfrom
         {
-            select_robot(name: element.object_name)
-            
             if selected_robot_index != -1
             {
                 if !element.is_program_by_index
