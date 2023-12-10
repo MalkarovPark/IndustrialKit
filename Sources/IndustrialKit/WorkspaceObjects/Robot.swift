@@ -455,9 +455,9 @@ public class Robot: WorkspaceObject
         
         func distance_between_points(point1: PositionPoint, point2: PositionPoint) -> Float
         {
-            let x_dist = (point2.x - point1.x)
-            let y_dist = (point2.y - point1.y)
-            let z_dist = (point2.z - point1.z)
+            let x_dist = abs(point2.x - point1.x)
+            let y_dist = abs(point2.y - point1.y)
+            let z_dist = abs(point2.z - point1.z)
             return sqrt(Float(x_dist * x_dist + y_dist * y_dist + z_dist * z_dist))
         }
     }
