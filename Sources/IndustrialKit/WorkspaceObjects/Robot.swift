@@ -435,39 +435,22 @@ public class Robot: WorkspaceObject
     ///A time to point moving.
     public var move_time: Float?
     {
-        if target_point_index == 0
+        //Calculate time between target point and current position
+        let v = selected_program.points[target_point_index].move_speed
+        let s = distance_between_points(point1: selected_program.points[target_point_index], point2: PositionPoint(x: pointer_location[0],
+                                                                                                                   y: pointer_location[1],
+                                                                                                                   z: pointer_location[2],
+                                                                                                                   r: pointer_rotation[0],
+                                                                                                                   p: pointer_rotation[1],
+                                                                                                                   w: pointer_rotation[2]))
+        
+        if v != 0
         {
-            let v = selected_program.points[0].move_speed
-            let s = distance_between_points(point1: selected_program.points[0], point2: PositionPoint(x: pointer_location[0], y: pointer_location[1], z: pointer_location[2]))
-            
-            if v != 0
-            {
-                return s/v
-            }
-            else
-            {
-                return 0 //Null time for first position
-            }
+            return s/v
         }
         else
         {
-            //Calculate time between points
-            let v = selected_program.points[target_point_index].move_speed
-            let s = distance_between_points(point1: selected_program.points[target_point_index], point2: PositionPoint(x: pointer_location[0],
-                                                                                                                       y: pointer_location[1],
-                                                                                                                       z: pointer_location[2],
-                                                                                                                       r: pointer_rotation[0],
-                                                                                                                       p: pointer_rotation[1],
-                                                                                                                       w: pointer_rotation[2]))
-            
-            if v != 0
-            {
-                return s/v
-            }
-            else
-            {
-                return 0
-            }
+            return 0 //Null time for first position
         }
         
         func distance_between_points(point1: PositionPoint, point2: PositionPoint) -> Float
