@@ -482,7 +482,7 @@ public class Robot: WorkspaceObject
         {
             //Move to point for virtual robot
             pointer_position_to_robot()
-            model_controller.update_movement_time(point1: selected_program.points[target_point_index],
+            model_controller.update_movement_time(point1: point,
                                                   point2: PositionPoint(x: pointer_location[0],
                                                                         y: pointer_location[1],
                                                                         z: pointer_location[2],
