@@ -576,6 +576,7 @@ public class Robot: WorkspaceObject
             }
             
             //Move to next point if moving was stop
+            pointer_position_to_robot()
             performed = true
             move_to_next_point()
         }
