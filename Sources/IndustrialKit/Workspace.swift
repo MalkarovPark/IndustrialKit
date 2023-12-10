@@ -1244,7 +1244,7 @@ public class Workspace: ObservableObject
             
             func objects_check()
             {
-                if placed_tools_names.count > 0
+                if placed_robots_names.count > 0
                 {
                     element.object_name = placed_robots_names.first ?? ""
                     checked_object = robot_by_name(element.object_name)
