@@ -439,14 +439,11 @@ public class Robot: WorkspaceObject
         let v = selected_program.points[target_point_index].move_speed
         let s = distance_between_points(point1: selected_program.points[target_point_index], point2: PositionPoint(x: pointer_location[0],
                                                                                                                    y: pointer_location[1],
-                                                                                                                   z: pointer_location[2],
-                                                                                                                   r: pointer_rotation[0],
-                                                                                                                   p: pointer_rotation[1],
-                                                                                                                   w: pointer_rotation[2]))
+                                                                                                                   z: pointer_location[2]))
         
         if v != 0
         {
-            return s/v
+            return s / v
         }
         else
         {
@@ -455,9 +452,10 @@ public class Robot: WorkspaceObject
         
         func distance_between_points(point1: PositionPoint, point2: PositionPoint) -> Float
         {
-            let x_dist = point2.x - point1.x
-            let y_dist = point2.y - point1.y
-            let z_dist = point2.z - point1.z
+            let x_dist = point1.x - point2.x
+            let y_dist = point1.y - point2.y
+            let z_dist = point1.z - point2.z
+            
             return sqrt(Float(x_dist * x_dist + y_dist * y_dist + z_dist * z_dist))
         }
     }
@@ -465,7 +463,29 @@ public class Robot: WorkspaceObject
     ///A time to point rotate.
     public var rotate_time: Float?
     {
-        return 1
+        let v = selected_program.points[target_point_index].move_speed
+        let point1 = selected_program.points[target_point_index]
+        let point2 = PositionPoint(x: 0,
+                                   y: 0,
+                                   z: 0,
+                                   r: pointer_rotation[0],
+                                   p: pointer_rotation[1],
+                                   w: pointer_rotation[2])
+        
+        let rotation_r = abs(point1.r - point2.r)
+        let rotation_p = abs(point1.p - point2.p)
+        let rotation_w = abs(point1.w - point2.w)
+        
+        let r = rotation_r + rotation_p + rotation_w
+        
+        if v != 0
+        {
+            return r / v
+        }
+        else
+        {
+            return 0 //Null time for first position
+        }
     }
     
     /**
@@ -513,6 +533,7 @@ public class Robot: WorkspaceObject
      */
     public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
+        //pointer_position_to_robot()
         if demo
         {
             //Move to point for virtual robot
@@ -560,7 +581,6 @@ public class Robot: WorkspaceObject
             }
             
             //Move to next point if moving was stop
-            //pointer_position_to_robot()
             performed = true
             move_to_next_point()
         }
