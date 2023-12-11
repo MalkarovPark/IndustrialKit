@@ -1025,8 +1025,43 @@ public class Robot: WorkspaceObject
         position_points_shift()
     }
     
-    ///Shifts positions when reducing the workcell area.
-    private func position_points_shift()
+    /**
+     Shifts positions when reducing the robot workcell area.
+     
+     - Parameters:
+        - point: The position to which the shifting is applied.
+     */
+    public func point_shift(_ point: inout PositionPoint)
+    {
+        if point.x > Float(space_scale[0])
+        {
+            point.x = Float(space_scale[0])
+        }
+        else if point.x < 0
+        {
+            point.x = 0
+        }
+        
+        if point.y > Float(space_scale[1])
+        {
+            point.y = Float(space_scale[1])
+        }
+        else if point.y < 0
+        {
+            point.y = 0
+        }
+        
+        if point.z > Float(space_scale[2])
+        {
+            point.z = Float(space_scale[2])
+        }
+        else if point.z < 0
+        {
+            point.z = 0
+        }
+    }
+    
+    private func position_points_shift() //Shifts all positions
     {
         if programs_count > 0
         {
@@ -1034,22 +1069,9 @@ public class Robot: WorkspaceObject
             {
                 if program.points_count > 0
                 {
-                    for position_point in program.points
+                    for i in 0..<program.points.count
                     {
-                        if position_point.x > Float(space_scale[0])
-                        {
-                            position_point.x = Float(space_scale[0])
-                        }
-                        
-                        if position_point.y > Float(space_scale[1])
-                        {
-                            position_point.y = Float(space_scale[1])
-                        }
-                        
-                        if position_point.z > Float(space_scale[2])
-                        {
-                            position_point.z = Float(space_scale[2])
-                        }
+                        point_shift(&program.points[i])
                     }
                     
                     program.visual_build()
