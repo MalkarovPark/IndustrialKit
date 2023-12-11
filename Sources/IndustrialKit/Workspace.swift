@@ -1758,7 +1758,7 @@ public class Workspace: ObservableObject
      */
     private func compare_by(element: ComparatorLogicElement)
     {
-        if element.compare_type.compare(element.value_index, element.value2_index)
+        if element.compare_type.compare(registers[element.value_index], registers[element.value2_index])
         {
             selected_element_index = element.target_element_index
         }

@@ -700,7 +700,7 @@ public enum CompareType: String, Codable, Equatable, CaseIterable
     case less = "<"
     case less_equal = "⩽"
     
-    func compare(_ value1: Int, _ value2: Int) -> Bool
+    func compare(_ value1: Float, _ value2: Float) -> Bool
     {
         switch self
         {
