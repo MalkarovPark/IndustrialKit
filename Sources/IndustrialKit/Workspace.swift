@@ -1830,22 +1830,34 @@ public class Workspace: ObservableObject
         }
         
         //Set target element indexes of marks to jump elements.
-        var target_mark_name: String
+        var target_mark_name = String()
+        
         for element in elements
         {
+            if element is JumpLogicElement
+            {
+                target_mark_name = (element as! JumpLogicElement).target_mark_name
+            }
             if element is ComparatorLogicElement
             {
-                let comparator = element as! ComparatorLogicElement
-                target_mark_name = comparator.target_mark_name
-                if target_mark_name != ""
+                target_mark_name = (element as! ComparatorLogicElement).target_mark_name
+            }
+            
+            if target_mark_name != ""
+            {
+                for marks_association in marks_associations
                 {
-                    for marks_association in marks_associations
+                    if marks_association.0 == target_mark_name
                     {
-                        if marks_association.0 == target_mark_name
+                        if element is JumpLogicElement
                         {
-                            comparator.target_element_index = marks_association.1
-                            break
+                            (element as! JumpLogicElement).target_element_index = marks_association.1
                         }
+                        if element is ComparatorLogicElement
+                        {
+                            (element as! ComparatorLogicElement).target_element_index = marks_association.1
+                        }
+                        break
                     }
                 }
             }
