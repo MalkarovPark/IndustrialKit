@@ -567,7 +567,56 @@ public class LogicElement: WorkspaceProgramElement
     }
 }
 
-///Jumps to the specified mark when the conditions are met
+///Jumps to the specified mark.
+public class JumpLogicElement: LogicElement
+{
+    ///A name of the target mark.
+    public var target_mark_name = ""
+    
+    ///An index of the target mark element.
+    public var target_element_index = 0
+    
+    public override var info: String
+    {
+        if target_mark_name != ""
+        {
+            return "Jump to \(target_mark_name)"
+        }
+        else
+        {
+            return "No marks to jump"
+        }
+    }
+    
+    public override var image_name: String
+    {
+        return "arrowshape.zigzag.forward"
+    }
+    
+    //File handling
+    //Data [target]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .jump_logic
+    }
+    
+    public override var data_count: Int
+    {
+        return 1
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        target_mark_name = element_struct.data[0]
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .jump_logic, data: [target_mark_name])
+    }
+}
+
+///Jumps to the specified mark when the conditions are met.
 public class ComparatorLogicElement: LogicElement
 {
     ///A type of compare.
@@ -599,7 +648,7 @@ public class ComparatorLogicElement: LogicElement
     
     public override var image_name: String
     {
-        return "arrowshape.bounce.forward"
+        return "alt"
     }
     
     //File handling
@@ -761,6 +810,7 @@ public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
     case observer_modifier
     
     //Logic
+    case jump_logic
     case comparator_logic
     case mark_logic
 }

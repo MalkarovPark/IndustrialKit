@@ -1222,8 +1222,10 @@ public class Workspace: ObservableObject
                 observer_element_check(element as! ObserverModifierElement)
             case is ChangerModifierElement:
                 changer_element_check(element as! ChangerModifierElement)
+            case is JumpLogicElement:
+                jump_element_check(element as! JumpLogicElement)
             case is ComparatorLogicElement:
-                jump_element_check(element as! ComparatorLogicElement)
+                comparator_element_check(element as! ComparatorLogicElement)
             default:
                 break
             }
@@ -1344,7 +1346,17 @@ public class Workspace: ObservableObject
             }
         }
         
-        func jump_element_check(_ element: ComparatorLogicElement) //Check element by selected mark exists
+        func jump_element_check(_ element: JumpLogicElement)
+        {
+            mark_check(name: &element.target_mark_name)
+        }
+        
+        func comparator_element_check(_ element: ComparatorLogicElement) //Check element by selected mark exists
+        {
+            mark_check(name: &element.target_mark_name)
+        }
+        
+        func mark_check(name: inout String)
         {
             if marks_names.count > 0
             {
@@ -1352,7 +1364,7 @@ public class Workspace: ObservableObject
                 
                 for mark_name in self.marks_names
                 {
-                    if mark_name == element.target_mark_name
+                    if mark_name == name
                     {
                         mark_founded = true
                     }
@@ -1363,14 +1375,14 @@ public class Workspace: ObservableObject
                     }
                 }
                 
-                if mark_founded == false && element.target_mark_name == ""
+                if !mark_founded && name == ""
                 {
-                    element.target_mark_name = marks_names[0]
+                    name = marks_names[0]
                 }
             }
             else
             {
-                element.target_mark_name = ""
+                name = ""
             }
         }
     }
@@ -1463,6 +1475,9 @@ public class Workspace: ObservableObject
             select_new_element()
         case let observer_element as ObserverModifierElement:
             observe_by(element: observer_element)
+            select_new_element()
+        case let jump_element as JumpLogicElement:
+            jump_by(element: jump_element)
             select_new_element()
         case let comparator_element as ComparatorLogicElement:
             compare_by(element: comparator_element)
@@ -1753,6 +1768,16 @@ public class Workspace: ObservableObject
     
     /**
      Jumps to program element by index.
+     - Parameters:
+        - index: An element index to jump.
+     */
+    private func jump_by(element: JumpLogicElement)
+    {
+        selected_element_index = element.target_element_index
+    }
+    
+    /**
+     Jumps to program element by index if compare condition is met.
      - Parameters:
         - index: An element index to jump.
      */
