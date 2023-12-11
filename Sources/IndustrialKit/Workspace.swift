@@ -1466,15 +1466,18 @@ public class Workspace: ObservableObject
         case let write_element as WriterModifierElement:
             write_by(element: write_element)
             select_new_element()
+        case let math_element as MathModifierElement:
+            math_by(element: math_element)
+            select_new_element()
         case let changer_element as ChangerModifierElement:
             Workspace.change_by(changer_element.module_name, &registers)
             check_registers()
             select_new_element()
-        case is CleanerModifierElement:
-            clear_registers()
-            select_new_element()
         case let observer_element as ObserverModifierElement:
             observe_by(element: observer_element)
+            select_new_element()
+        case is CleanerModifierElement:
+            clear_registers()
             select_new_element()
         case let jump_element as JumpLogicElement:
             jump_by(element: jump_element)
