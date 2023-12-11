@@ -479,7 +479,7 @@ public class MathModifierElement: ModifierElement
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .comparator_logic, data: [operation.rawValue, String(value_index), String(value2_index)])
+        return WorkspaceProgramElementStruct(identifier: .math_modifier, data: [operation.rawValue, String(value_index), String(value2_index)])
     }
 }
 
