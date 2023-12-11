@@ -1727,7 +1727,7 @@ public class Workspace: ObservableObject
     
     private func math_by(element: MathModifierElement)
     {
-        element.operation_type.operation(&registers[element.value_index], registers[element.value2_index])
+        element.operation.operation(&registers[element.value_index], registers[element.value2_index])
     }
     
     /**

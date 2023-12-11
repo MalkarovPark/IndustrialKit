@@ -420,7 +420,7 @@ public class WriterModifierElement: ModifierElement
 public class MathModifierElement: ModifierElement
 {
     ///A type of compare.
-    public var operation_type: MathType = .add
+    public var operation: MathType = .add
     
     ///An index of register with compared value.
     public var value_index = 0
@@ -430,7 +430,7 @@ public class MathModifierElement: ModifierElement
     
     public override var info: String
     {
-        return "Value of \(value_index) \(operation_type.rawValue) value of \(value2_index)"
+        return "Value of \(value_index) \(operation.rawValue) value of \(value2_index)"
     }
     
     public override var image_name: String
@@ -452,7 +452,7 @@ public class MathModifierElement: ModifierElement
     
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     {
-        operation_type = operation_from_string(element_struct.data[0])
+        operation = operation_from_string(element_struct.data[0])
         
         value_index = Int(element_struct.data[1]) ?? 0
         value2_index = Int(element_struct.data[2]) ?? 0
@@ -479,7 +479,7 @@ public class MathModifierElement: ModifierElement
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .comparator_logic, data: [operation_type.rawValue, String(value_index), String(value2_index)])
+        return WorkspaceProgramElementStruct(identifier: .comparator_logic, data: [operation.rawValue, String(value_index), String(value2_index)])
     }
 }
 
