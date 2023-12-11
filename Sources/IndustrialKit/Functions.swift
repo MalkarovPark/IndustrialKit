@@ -236,6 +236,8 @@ public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct)
         return ChangerModifierElement(element_struct: element_struct)
     case .observer_modifier:
         return ObserverModifierElement(element_struct: element_struct)
+    case .jump_logic:
+        return JumpLogicElement(element_struct: element_struct)
     case .comparator_logic:
         return ComparatorLogicElement(element_struct: element_struct)
     case .mark_logic:
