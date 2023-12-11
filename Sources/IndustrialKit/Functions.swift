@@ -232,6 +232,8 @@ public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct)
         return WriterModifierElement(element_struct: element_struct)
     case .cleaner_modifier:
         return CleanerModifierElement(element_struct: element_struct)
+    case .math_modifier:
+        return MathModifierElement(element_struct: element_struct)
     case .changer_modifier:
         return ChangerModifierElement(element_struct: element_struct)
     case .observer_modifier:

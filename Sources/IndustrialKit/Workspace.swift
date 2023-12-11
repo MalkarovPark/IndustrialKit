@@ -1725,6 +1725,11 @@ public class Workspace: ObservableObject
         registers[element.to_index] = element.value
     }
     
+    private func math_by(element: MathModifierElement)
+    {
+        element.operation_type.operation(&registers[element.value_index], registers[element.value2_index])
+    }
+    
     /**
      Pushes info from tool to register.
      - Parameters:

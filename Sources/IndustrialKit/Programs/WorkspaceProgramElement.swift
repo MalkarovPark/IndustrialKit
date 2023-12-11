@@ -417,6 +417,99 @@ public class WriterModifierElement: ModifierElement
     }
 }
 
+public class MathModifierElement: ModifierElement
+{
+    ///A type of compare.
+    public var operation_type: MathType = .add
+    
+    ///An index of register with compared value.
+    public var value_index = 0
+    
+    ///An index of register with compared value.
+    public var value2_index = 0
+    
+    public override var info: String
+    {
+        return "Value of \(value_index) \(operation_type.rawValue) value of \(value2_index)"
+    }
+    
+    public override var image_name: String
+    {
+        return "function"
+    }
+    
+    //File handling
+    //Data [operation, value, value2]
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .math_modifier
+    }
+    
+    public override var data_count: Int
+    {
+        return 3
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        operation_type = operation_from_string(element_struct.data[0])
+        
+        value_index = Int(element_struct.data[1]) ?? 0
+        value2_index = Int(element_struct.data[2]) ?? 0
+        
+        func operation_from_string(_ string: String) -> MathType
+        {
+            switch string
+            {
+            case "+":
+                return .add
+            case "-":
+                return .substract
+            case "·":
+                return .multiply
+            case "÷":
+                return .divide
+            case "^":
+                return .power
+            default:
+                return .add
+            }
+        }
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .comparator_logic, data: [operation_type.rawValue, String(value_index), String(value2_index)])
+    }
+}
+
+///A math program element operation type enum.
+public enum MathType: String, Codable, Equatable, CaseIterable
+{
+    case add = "+"
+    case substract = "-"
+    case multiply = "·"
+    case divide = "÷"
+    case power = "^"
+    
+    func operation(_ value1: inout Float, _ value2: Float)
+    {
+        switch self
+        {
+        case .add:
+            value1 += value2
+        case .substract:
+            value1 -= value2
+        case .multiply:
+            value1 *= value2
+        case .divide:
+            value1 /= (value2 != 0 ? value2 : 1)
+        case .power:
+            value1 = pow(value1, value2)
+        }
+    }
+}
+
 ///Cleares data in all registers.
 public class CleanerModifierElement: ModifierElement
 {
@@ -700,6 +793,36 @@ public class ComparatorLogicElement: LogicElement
     }
 }
 
+///A logic program element compare type enum.
+public enum CompareType: String, Codable, Equatable, CaseIterable
+{
+    case equal = "="
+    case unequal = "≠"
+    case greater = ">"
+    case greater_equal = "⩾"
+    case less = "<"
+    case less_equal = "⩽"
+    
+    func compare(_ value1: Float, _ value2: Float) -> Bool
+    {
+        switch self
+        {
+        case .equal:
+            return value1 == value2
+        case .unequal:
+            return value1 != value2
+        case .greater:
+            return value1 > value2
+        case .greater_equal:
+            return value1 >= value2
+        case .less:
+            return value1 < value2
+        case .less_equal:
+            return value1 <= value2
+        }
+    }
+}
+
 ///A logic mark to jump.
 public class MarkLogicElement: LogicElement
 {
@@ -736,36 +859,6 @@ public class MarkLogicElement: LogicElement
     public override var file_info: WorkspaceProgramElementStruct
     {
         return WorkspaceProgramElementStruct(identifier: .mark_logic, data: [name])
-    }
-}
-
-///A logic program element type enum.
-public enum CompareType: String, Codable, Equatable, CaseIterable
-{
-    case equal = "="
-    case unequal = "≠"
-    case greater = ">"
-    case greater_equal = "⩾"
-    case less = "<"
-    case less_equal = "⩽"
-    
-    func compare(_ value1: Float, _ value2: Float) -> Bool
-    {
-        switch self
-        {
-        case .equal:
-            return value1 == value2
-        case .unequal:
-            return value1 != value2
-        case .greater:
-            return value1 > value2
-        case .greater_equal:
-            return value1 >= value2
-        case .less:
-            return value1 < value2
-        case .less_equal:
-            return value1 <= value2
-        }
     }
 }
 
@@ -806,6 +899,7 @@ public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
     case mover_modifier
     case writer_modifier
     case cleaner_modifier
+    case math_modifier
     case changer_modifier
     case observer_modifier
     
