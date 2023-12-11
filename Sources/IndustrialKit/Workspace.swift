@@ -1651,13 +1651,16 @@ public class Workspace: ObservableObject
         else
         {
             //Single robot perform
-            selected_robot.move_to(point: PositionPoint(x: registers[element.x_index],
-                                                        y: registers[element.y_index],
-                                                        z: registers[element.z_index],
-                                                        r: registers[element.r_index],
-                                                        p: registers[element.p_index],
-                                                        w: registers[element.w_index],
-                                                        move_speed: registers[element.speed_index]))
+            var target_point = PositionPoint(x: registers[element.x_index],
+                                             y: registers[element.y_index],
+                                             z: registers[element.z_index],
+                                             r: registers[element.r_index],
+                                             p: registers[element.p_index],
+                                             w: registers[element.w_index],
+                                             move_speed: registers[element.speed_index])
+            selected_robot.point_shift(&target_point)
+            
+            selected_robot.move_to(point: target_point)
             {
                 self.select_new_element()
             }
