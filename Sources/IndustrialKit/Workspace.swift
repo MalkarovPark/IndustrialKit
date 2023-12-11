@@ -1331,13 +1331,16 @@ public class Workspace: ObservableObject
         
         func changer_element_check(_ element: ChangerModifierElement)
         {
-            if Workspace.changer_modules.count > 0
+            if !Workspace.changer_modules.contains(element.module_name)
             {
-                element.module_name = Workspace.changer_modules.first!
-            }
-            else
-            {
-                element.module_name = "None"
+                if Workspace.changer_modules.count > 0
+                {
+                    element.module_name = Workspace.changer_modules.first!
+                }
+                else
+                {
+                    element.module_name = "None"
+                }
             }
         }
         
