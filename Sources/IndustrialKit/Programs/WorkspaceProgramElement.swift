@@ -510,42 +510,6 @@ public enum MathType: String, Codable, Equatable, CaseIterable
     }
 }
 
-///Cleares data in all registers.
-public class CleanerModifierElement: ModifierElement
-{
-    public override var info: String
-    {
-        return "Clear all registers"
-    }
-    
-    public override var image_name: String
-    {
-        return "clear"
-    }
-    
-    //File handling
-    //Data |nothing|
-    public override var identifier: WorkspaceProgramElementIdentifier?
-    {
-        return .cleaner_modifier
-    }
-    
-    public override var data_count: Int
-    {
-        return 0
-    }
-    
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
-    {
-        //Nothing...
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        return WorkspaceProgramElementStruct(identifier: .cleaner_modifier, data: [String]())
-    }
-}
-
 ///Changes registers by changer module.
 public class ChangerModifierElement: ModifierElement
 {
@@ -643,6 +607,42 @@ public class ObserverModifierElement: ModifierElement
     private func indices_to_string(_ indices: [Int]) -> String
     {
         return indices.map { String($0) }.joined(separator: "|")
+    }
+}
+
+///Cleares data in all registers.
+public class CleanerModifierElement: ModifierElement
+{
+    public override var info: String
+    {
+        return "Clear all registers"
+    }
+    
+    public override var image_name: String
+    {
+        return "clear"
+    }
+    
+    //File handling
+    //Data |nothing|
+    public override var identifier: WorkspaceProgramElementIdentifier?
+    {
+        return .cleaner_modifier
+    }
+    
+    public override var data_count: Int
+    {
+        return 0
+    }
+    
+    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    {
+        //Nothing...
+    }
+    
+    public override var file_info: WorkspaceProgramElementStruct
+    {
+        return WorkspaceProgramElementStruct(identifier: .cleaner_modifier, data: [String]())
     }
 }
 
@@ -898,10 +898,10 @@ public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
     //Modifier
     case mover_modifier
     case writer_modifier
-    case cleaner_modifier
     case math_modifier
     case changer_modifier
     case observer_modifier
+    case cleaner_modifier
     
     //Logic
     case jump_logic
