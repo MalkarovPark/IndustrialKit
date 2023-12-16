@@ -564,6 +564,69 @@ public struct ElementCardView: View
     }
 }
 
+public struct RegisterCardView: View
+{
+    @Binding var value: Float
+    
+    public var number: Int
+    public var color: Color
+    
+    public init(value: Binding<Float>, number: Int, color: Color)
+    {
+        self._value = value
+        self.number = number
+        self.color = color
+    }
+    
+    public var body: some View
+    {
+        ZStack
+        {
+            VStack
+            {
+                VStack(spacing: 0)
+                {
+                    ZStack
+                    {
+                        TextField("0", value: $value, format: .number)
+                            .font(.system(size: register_card_font_size))
+                            .multilineTextAlignment(.center)
+                            .textFieldStyle(.plain)
+                    }
+                    #if os(macOS)
+                    .frame(height: 48)
+                    #else
+                    .frame(height: 72)
+                    #endif
+                    .background(Color.clear)
+                    
+                    Rectangle()
+                        .foregroundColor(color)
+                    #if os(macOS)
+                        .frame(height: 32)
+                    #else
+                        .frame(height: 48)
+                    #endif
+                        .overlay(alignment: .leading)
+                        {
+                            Text("\(number)")
+                                .foregroundColor(.white)
+                                .padding(.leading, 8)
+                            #if os(iOS) || os(visionOS)
+                                .font(.system(size: 20))
+                            #endif
+                        }
+                        .shadow(radius: 2)
+                }
+            }
+            .background(.thinMaterial)
+        }
+        .frame(width: register_card_scale, height: register_card_scale)
+        .clipShape(RoundedRectangle(cornerRadius: 4.0, style: .continuous))
+        .shadow(radius: 4)
+    }
+}
+
 //MARK: - Cards preview
 struct Cards_Previews: PreviewProvider
 {
@@ -608,6 +671,12 @@ struct Cards_Previews: PreviewProvider
             }
             .padding(16)
             .frame(width: 320)
+            
+            VStack()
+            {
+                RegisterCardView(value: .constant(0), number: 0, color: .accentColor)
+                    .padding(16)
+            }
         }
     }
 }
