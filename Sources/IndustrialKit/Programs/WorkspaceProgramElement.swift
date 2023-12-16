@@ -198,7 +198,7 @@ public class RobotPerformerElement: PerformerElement
     //Data [robot name, program name, program index, is single, is by index, x, y, z, r, p, w, speed]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
-        return .robot_perofrmer
+        return .robot_performer
     }
     
     public override var data_count: Int
@@ -247,7 +247,7 @@ public class RobotPerformerElement: PerformerElement
         
         info.append(String(speed_index))
         
-        return WorkspaceProgramElementStruct(identifier: .robot_perofrmer, data: info)
+        return WorkspaceProgramElementStruct(identifier: .robot_performer, data: info)
     }
 }
 
@@ -892,7 +892,7 @@ public enum ModifierCopyType: String, Codable, Equatable, CaseIterable
 public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
 {
     //Performer
-    case robot_perofrmer
+    case robot_performer
     case tool_performer
     
     //Modifier

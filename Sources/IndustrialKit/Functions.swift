@@ -222,7 +222,7 @@ public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct)
 {
     switch element_struct.identifier
     {
-    case .robot_perofrmer:
+    case .robot_performer:
         return RobotPerformerElement(element_struct: element_struct)
     case .tool_performer:
         return ToolPerformerElement(element_struct: element_struct)
