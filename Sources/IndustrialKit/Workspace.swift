@@ -1574,7 +1574,7 @@ public class Workspace: ObservableObject
     }
     
     ///An array of pushed info data.
-    private var registers: [Float] = [Float](repeating: 0, count: 256)
+    public var registers: [Float] = [Float](repeating: 0, count: 256)
     
     ///An public array of info data registers.
     public var data_registers: [Float]
