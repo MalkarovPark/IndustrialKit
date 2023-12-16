@@ -203,7 +203,7 @@ public class RobotPerformerElement: PerformerElement
     
     public override var data_count: Int
     {
-        return 11
+        return 12
     }
     
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
