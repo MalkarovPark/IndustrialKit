@@ -1576,12 +1576,6 @@ public class Workspace: ObservableObject
     ///An array of pushed info data.
     public var registers: [Float] = [Float](repeating: 0, count: 256)
     
-    ///An public array of info data registers.
-    public var data_registers: [Float]
-    {
-        return registers
-    }
-    
     ///Clears all data registers.
     public func clear_registers()
     {
@@ -1596,7 +1590,7 @@ public class Workspace: ObservableObject
      */
     public func clear_register(_ index: Int)
     {
-        if index < 256 && index >= 0
+        if index < registers.count && index >= 0
         {
             registers[index] = 0
         }
@@ -1611,7 +1605,7 @@ public class Workspace: ObservableObject
      */
     public func update_register(_ index: Int, new_value: Float)
     {
-        if index < 256 && index >= 0
+        if index < registers.count && index >= 0
         {
             registers[index] = new_value
         }
