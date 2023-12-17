@@ -669,11 +669,6 @@ public class JumpLogicElement: LogicElement
     ///An index of the target mark element.
     public var target_element_index = 0
     
-    public override var title: String
-    {
-        return "Mark"
-    }
-    
     public override var info: String
     {
         if target_mark_name != ""
@@ -833,6 +828,11 @@ public class MarkLogicElement: LogicElement
 {
     ///A target mark name.
     public var name = "None"
+    
+    public override var title: String
+    {
+        return "Mark"
+    }
     
     public override var info: String
     {
