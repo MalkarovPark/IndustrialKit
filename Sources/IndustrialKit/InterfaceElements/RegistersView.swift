@@ -264,14 +264,95 @@ let register_card_font_size: CGFloat = 32
 
 let register_card_maximum = register_card_scale + register_card_spacing
 
-#Preview
+struct RegistersSelectors_PreviewsContainer: PreviewProvider
 {
-    RegistersView(registers: .constant([Float](repeating: 0, count: 256)))
-        .frame(width: 400, height: 512)
-}
+    struct Container: View
+    {
+        @State var registers = [Float](repeating: 0, count: 256)
+        
+        @State var index = [0]
+        @State var indices = [0, 0, 0]
+        
+        var body: some View
+        {
+            RegistersView_Previews(registers: $registers)
+            RegistersSelectors_Previews(index: $index, indices: $indices)
+        }
+    }
+    
+    static var previews: some View
+    {
+        Container()
+    }
+    
+    struct RegistersView_Previews: View
+    {
+        @Binding var registers: [Float]
+        
+        var body: some View
+        {
+            RegistersView(registers: $registers, colors: colors_by_seed(seed: 5433))
+                .frame(width: 420, height: 420)
+        }
+        
+        private func colors_by_seed(seed: Int) -> [Color]
+        {
+            var colors = [Color]()
 
-#Preview
-{
-    RegistersSelectorView(registers_count: 41, colors: [Color](repeating: .accentColor, count: 41), indices: .constant([Int](repeating: 0, count: 6)), names: ["X", "Y", "Z", "R", "P", "W"])
-        .environmentObject(Workspace())
+            srand48(seed)
+            
+            for _ in 0..<256
+            {
+                var color = [Double]()
+                for _ in 0..<3
+                {
+                    let random_number = Double(drand48() * Double(128) + 64)
+                    
+                    color.append(random_number)
+                }
+                colors.append(Color(red: color[0] / 255, green: color[1] / 255, blue: color[2] / 255))
+            }
+
+            return colors
+        }
+    }
+    
+    struct RegistersSelectors_Previews: View
+    {
+        @Binding var index: [Int]
+        @Binding var indices: [Int]
+        
+        var body: some View
+        {
+            VStack(spacing: 0)
+            {
+                RegistersSelector(text: "Select single", registers_count: 12, colors: colors_by_seed(seed: 5433), indices: $index, names: ["Value"])
+                    .padding([.horizontal, .top])
+                
+                RegistersSelector(text: "Select multiply", registers_count: 12, colors: colors_by_seed(seed: 5433), indices: $indices, names: ["X", "Y", "Z"])
+                    .padding()
+            }
+        }
+        
+        private func colors_by_seed(seed: Int) -> [Color]
+        {
+            var colors = [Color]()
+
+            srand48(seed)
+            
+            for _ in 0..<256
+            {
+                var color = [Double]()
+                for _ in 0..<3
+                {
+                    let random_number = Double(drand48() * Double(128) + 64)
+                    
+                    color.append(random_number)
+                }
+                colors.append(Color(red: color[0] / 255, green: color[1] / 255, blue: color[2] / 255))
+            }
+
+            return colors
+        }
+    }
 }

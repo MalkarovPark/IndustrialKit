@@ -632,6 +632,8 @@ struct Cards_Previews: PreviewProvider
 {
     static var previews: some View
     {
+        let element = MoverModifierElement(element_struct: WorkspaceProgramElementStruct(identifier: .mover_modifier, data: [String]()))
+        
         Group
         {
             VStack()
@@ -666,15 +668,15 @@ struct Cards_Previews: PreviewProvider
             
             VStack()
             {
-                ElementCardView(title: "Title", info: "Info", image: Image(systemName: "cube"), color: .green, is_current: true)
+                ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color, is_current: true)
                     .shadow(radius: 8)
             }
             .padding(16)
-            .frame(width: 320)
+            .frame(width: 288)
             
             VStack()
             {
-                RegisterCardView(value: .constant(0), number: 0, color: .accentColor)
+                RegisterCardView(value: .constant(0), number: 0, color: .green)
                     .padding(16)
             }
         }
