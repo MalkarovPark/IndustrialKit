@@ -182,70 +182,6 @@ public struct LargeCardView: View
     }
 }
 
-//MARK: Circle button for large card
-public struct CircleDeleteButtonModifier: ViewModifier
-{
-    @State private var delete_alert_presented = false
-    
-    let workspace: Workspace
-    
-    let object_item: WorkspaceObject
-    let objects: [WorkspaceObject]
-    let on_delete: (IndexSet) -> ()
-    
-    public var object_type_name: String
-    
-    public init(workspace: Workspace, object_item: WorkspaceObject, objects: [WorkspaceObject], on_delete: @escaping (IndexSet) -> (), object_type_name: String)
-    {
-        self.workspace = workspace
-        self.object_item = object_item
-        self.objects = objects
-        self.on_delete = on_delete
-        self.object_type_name = object_type_name
-    }
-    
-    public func body(content: Content) -> some View
-    {
-        content
-            .overlay(alignment: .topTrailing)
-        {
-            Spacer()
-            
-            ZStack
-            {
-                Image(systemName: "xmark")
-                    .padding(4.0)
-            }
-            .frame(width: 24, height: 24)
-            .background(.thinMaterial)
-            .clipShape(Circle())
-            .onTapGesture
-            {
-                delete_alert_presented = true
-            }
-            .padding(8.0)
-        }
-        .alert(isPresented: $delete_alert_presented)
-        {
-            Alert(
-                title: Text("Delete \(object_type_name)?"),
-                message: Text("Do you want to delete this \(object_type_name) – \(object_item.name)"),
-                primaryButton: .destructive(Text("Yes"), action: delete_object),
-                secondaryButton: .cancel(Text("No"))
-            )
-        }
-    }
-    
-    func delete_object()
-    {
-        if let index = objects.firstIndex(of: object_item)
-        {
-            self.on_delete(IndexSet(integer: index))
-            workspace.elements_check()
-        }
-    }
-}
-
 //MARK: - Small card view
 public struct SmallCardView: View
 {
@@ -402,67 +338,6 @@ public struct SmallCardView: View
         }
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
         //.shadow(radius: 8)
-    }
-}
-
-//MARK: Borderless button for small card
-public struct BorderlessDeleteButtonModifier: ViewModifier
-{
-    @State private var delete_alert_presented = false
-    
-    let workspace: Workspace
-    
-    let object_item: WorkspaceObject
-    let objects: [WorkspaceObject]
-    let on_delete: (IndexSet) -> ()
-    
-    public var object_type_name: String
-    
-    public init(workspace: Workspace, object_item: WorkspaceObject, objects: [WorkspaceObject], on_delete: @escaping (IndexSet) -> (), object_type_name: String)
-    {
-        self.workspace = workspace
-        self.object_item = object_item
-        self.objects = objects
-        self.on_delete = on_delete
-        self.object_type_name = object_type_name
-    }
-    
-    public func body(content: Content) -> some View
-    {
-        content
-            .overlay(alignment: .trailing)
-        {
-            ZStack
-            {
-                Image(systemName: "xmark")
-                    .foregroundColor(.white)
-                    .padding(4.0)
-            }
-            .frame(width: 24, height: 24)
-            .onTapGesture
-            {
-                delete_alert_presented = true
-            }
-            .padding(4.0)
-        }
-        .alert(isPresented: $delete_alert_presented)
-        {
-            Alert(
-                title: Text("Delete \(object_type_name)?"),
-                message: Text("Do you want to delete this \(object_type_name) – \(object_item.name)"),
-                primaryButton: .destructive(Text("Delete"), action: delete_object),
-                secondaryButton: .cancel(Text("Cancel"))
-            )
-        }
-    }
-    
-    func delete_object()
-    {
-        if let index = objects.firstIndex(of: object_item)
-        {
-            self.on_delete(IndexSet(integer: index))
-            workspace.elements_check()
-        }
     }
 }
 
@@ -640,12 +515,10 @@ struct Cards_Previews: PreviewProvider
             {
                 LargeCardView(color: .green, image: nil, title: "Title", subtitle: "Subtitle")
                     .shadow(radius: 8)
-                    .modifier(CircleDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "name"))
                     .padding([.horizontal, .top])
                 
                 SmallCardView(color: .green, image: nil, title: "Title")
                     .shadow(radius: 8)
-                    .modifier(BorderlessDeleteButtonModifier(workspace: Workspace(), object_item: WorkspaceObject(), objects: [WorkspaceObject](), on_delete: { IndexSet in }, object_type_name: "none"))
                     .padding()
             }
             .padding(4)
