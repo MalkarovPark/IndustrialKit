@@ -150,7 +150,6 @@ public struct LargeCardView: View
                                         edited_name = new_name
                                         title = new_name
                                         on_rename()
-                                        is_focused = false
                                         to_rename = false
                                     }
                                     .onExitCommand
@@ -166,7 +165,6 @@ public struct LargeCardView: View
                                     edited_name = new_name
                                     title = new_name
                                     on_rename()
-                                    is_focused = false
                                     to_rename = false
                                 })
                                     .textFieldStyle(.roundedBorder)
@@ -297,6 +295,10 @@ public struct SmallCardView: View
                                 {
                                     to_rename = false
                                 }
+                                .onAppear
+                                {
+                                    is_focused = true
+                                }
                             #else
                             TextField("Name", text: $new_name, onCommit: {
                                 edited_name = new_name
@@ -304,6 +306,10 @@ public struct SmallCardView: View
                                 on_rename()
                                 to_rename = false
                             })
+                            .onAppear
+                            {
+                                is_focused = true
+                            }
                             .focused($is_focused)
                             .labelsHidden()
                             .font(.headline)
