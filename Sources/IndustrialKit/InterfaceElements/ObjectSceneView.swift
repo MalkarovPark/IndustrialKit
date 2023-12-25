@@ -244,11 +244,6 @@ public typealias UIViewRepresentable = NSViewRepresentable
 public typealias UITapGestureRecognizer = NSClickGestureRecognizer
 #endif
 
-#Preview
-{
-    ObjectSceneView(node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
-}
-
 struct ObjectSceneView_PreviewsContainer: PreviewProvider
 {
     struct Container: View
