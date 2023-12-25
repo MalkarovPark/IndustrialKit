@@ -228,7 +228,10 @@ open class RobotModelController: ModelController
     ///Update robot manipulator parts positions by target point.
     public func update_robot()
     {
-        nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        if lengths.count == description_lengths_count
+        {
+            nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        }
     }
     
     ///Returns robot pointer position for nodes.
