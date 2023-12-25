@@ -50,95 +50,95 @@ public struct ChartsView: View
                             .font(.title2)
                             .padding([.top, .leading, .trailing])
                     }
+                    
+                    if charts_data![chart_selection].text_domain
+                    {
+                        switch charts_data![chart_selection].style
+                        {
+                        case .area:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    AreaMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        case .line:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    LineMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        case .bar:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    BarMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        default:
+                            Spacer()
+                        }
+                    }
+                    else
+                    {
+                        switch charts_data![chart_selection].style
+                        {
+                        case .area:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    AreaMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        case .line:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    LineMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        case .bar:
+                            Chart
+                            {
+                                ForEach(charts_data![chart_selection].data)
+                                {
+                                    BarMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
+                                    .foregroundStyle(by: .value("Type", $0.name))
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        default:
+                            Spacer()
+                        }
+                    }
                 }
                 else
                 {
                     Text(charts_data?.first?.name ?? "Statistics")
                         .font(.title2)
                         .padding([.top, .leading, .trailing])
-                }
-                
-                if charts_data![chart_selection].text_domain
-                {
-                    switch charts_data![chart_selection].style
-                    {
-                    case .area:
-                        Chart
-                        {
-                            ForEach(charts_data![chart_selection].data)
-                            {
-                                AreaMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
-                                .foregroundStyle(by: .value("Type", $0.name))
-                            }
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
-                    case .line:
-                        Chart
-                        {
-                            ForEach(charts_data![chart_selection].data)
-                            {
-                                LineMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
-                                .foregroundStyle(by: .value("Type", $0.name))
-                            }
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
-                    case .bar:
-                        Chart
-                        {
-                            ForEach(charts_data![chart_selection].data)
-                            {
-                                BarMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
-                                .foregroundStyle(by: .value("Type", $0.name))
-                            }
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
-                    default:
-                        Spacer()
-                    }
-                }
-                else
-                {
-                    switch charts_data![chart_selection].style
-                    {
-                    case .area:
-                        Chart
-                        {
-                            ForEach(charts_data![chart_selection].data)
-                            {
-                                AreaMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
-                                .foregroundStyle(by: .value("Type", $0.name))
-                            }
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
-                    case .line:
-                        Chart
-                        {
-                            ForEach(charts_data![chart_selection].data)
-                            {
-                                LineMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
-                                .foregroundStyle(by: .value("Type", $0.name))
-                            }
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
-                    case .bar:
-                        Chart
-                        {
-                            ForEach(charts_data![chart_selection].data)
-                            {
-                                BarMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
-                                .foregroundStyle(by: .value("Type", $0.name))
-                            }
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding()
-                    default:
-                        Spacer()
-                    }
                 }
             }
             else
@@ -149,14 +149,59 @@ public struct ChartsView: View
                 EmptyView()
             }
         }
+        .background(.white)
     }
 }
 
 //MARK: - Previews
-struct ChartsView_Previews: PreviewProvider
+struct ChartsView_PreviewsContainer: PreviewProvider
 {
+    struct Container: View
+    {
+        var body: some View
+        {
+            ChartsView_Previews()
+        }
+    }
+    
     static var previews: some View
     {
-        ChartsView(charts_data: .constant([WorkspaceObjectChart(name: "Chart 1", style: .line), WorkspaceObjectChart(name: "Chart 2", style: .line)]))
+        Container()
+    }
+    
+    struct ChartsView_Previews: View
+    {
+        @State var chart_data: [WorkspaceObjectChart]? = [WorkspaceObjectChart]()
+        @State var state_data: [StateItem]? = [StateItem]()
+        
+        var body: some View
+        {
+            ChartsView(charts_data: $chart_data)
+                .frame(width: 640, height: 480)
+                .onAppear
+                {
+                    chart_data?.append(WorkspaceObjectChart(name: "Location", style: .line))
+                    chart_data?.append(WorkspaceObjectChart(name: "Rotation", style: .line))
+                    
+                    for d in 0..<16
+                    {
+                        let position_point = PositionPoint(x: Float.random(in: 0...100), y: Float.random(in: 0...100), z: Float.random(in: 0...100), r: Float.random(in: -180...180), p: Float.random(in: -180...180), w: Float.random(in: -180...180))
+                        var axis_names = ["X", "Y", "Z"]
+                        var components = [position_point.x, position_point.z, position_point.y]
+                        for i in 0...axis_names.count - 1
+                        {
+                            chart_data?[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
+                        }
+                        
+                        //Update tool rotation chart
+                        axis_names = ["R", "P", "W"]
+                        components = [position_point.r, position_point.p, position_point.w]
+                        for i in 0...axis_names.count - 1
+                        {
+                            chart_data?[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
+                        }
+                    }
+                }
+        }
     }
 }

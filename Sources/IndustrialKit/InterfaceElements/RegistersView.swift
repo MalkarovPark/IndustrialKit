@@ -293,6 +293,7 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
         {
             RegistersView(registers: $registers, colors: colors_by_seed(seed: 5433))
                 .frame(width: 420, height: 420)
+                .background(.white)
         }
         
         private func colors_by_seed(seed: Int) -> [Color]
@@ -326,10 +327,10 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
         {
             VStack(spacing: 0)
             {
-                RegistersSelector(text: "Select single", registers_count: 12, colors: colors_by_seed(seed: 5433), indices: $index, names: ["Value"])
+                RegistersSelector(text: "Value of \(index[0])", registers_count: 12, colors: colors_by_seed(seed: 5433), indices: $index, names: ["Value"])
                     .padding([.horizontal, .top])
                 
-                RegistersSelector(text: "Select multiply", registers_count: 12, colors: colors_by_seed(seed: 5433), indices: $indices, names: ["X", "Y", "Z"])
+                RegistersSelector(text: "Location of X: \(indices[0]), Y: \(indices[1]), Z: \(indices[2])", registers_count: 12, colors: colors_by_seed(seed: 5433), indices: $indices, names: ["X", "Y", "Z"])
                     .padding()
             }
         }

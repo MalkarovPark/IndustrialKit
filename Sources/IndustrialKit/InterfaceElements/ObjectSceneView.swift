@@ -246,5 +246,35 @@ public typealias UITapGestureRecognizer = NSClickGestureRecognizer
 
 #Preview
 {
-    ObjectSceneView(node: SCNNode())
+    ObjectSceneView(node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
+}
+
+struct ObjectSceneView_PreviewsContainer: PreviewProvider
+{
+    struct Container: View
+    {
+        var body: some View
+        {
+            ObjectSceneView_Previews()
+        }
+    }
+    
+    static var previews: some View
+    {
+        Container()
+    }
+    
+    struct ObjectSceneView_Previews: View
+    {
+        @State var node = SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1))
+        
+        var body: some View
+        {
+            ObjectSceneView(node: node)
+                .onAppear
+                {
+                    node.geometry?.firstMaterial?.diffuse.contents = UIColor(red: 0.671, green: 0.533, blue: 1, alpha: 1)
+                }
+        }
+    }
 }

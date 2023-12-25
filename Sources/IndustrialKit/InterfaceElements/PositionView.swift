@@ -302,12 +302,13 @@ struct PositionView_Previews: PreviewProvider
         {
             HStack(spacing: 16)
             {
-                PositionView(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]))
+                PositionView(location: .constant([20, 40, 60]), rotation: .constant([0, 90, 0]))
             }
             .frame(width: 256)
             .padding()
             
-            PositionControl(location: .constant([0, 0, 0]), rotation: .constant([0, 0, 0]), scale: .constant([10, 10, 10]))
+            PositionControl(location: .constant([20, 40, 60]), rotation: .constant([0, 90, 0]), scale: .constant([100, 100, 100]))
+                .frame(width: 256)
         }
     }
 }

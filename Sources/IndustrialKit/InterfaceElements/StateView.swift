@@ -42,6 +42,7 @@ public struct StateView: View
                 EmptyView()
             }
         }
+        .background(.white)
     }
 }
 
@@ -71,11 +72,38 @@ struct StateItemView: View
 }
 
 //MARK: - Previews
-struct StateView_Previews: PreviewProvider
+struct StateView_PreviewsContainer: PreviewProvider
 {
+    struct Container: View
+    {
+        var body: some View
+        {
+            StateView_Previews()
+        }
+    }
+    
     static var previews: some View
     {
-        StateView(state_data: .constant([
-            StateItem(name: "Temperature", image: "thermometer", children: [StateItem(name: "Base", value: "70º"), StateItem(name: "Electrode", value: "150º")])]))
+        Container()
+    }
+    
+    struct StateView_Previews: View
+    {
+        @State var chart_data: [WorkspaceObjectChart]? = [WorkspaceObjectChart]()
+        @State var state_data: [StateItem]? = [StateItem]()
+        
+        var body: some View
+        {
+            StateView(state_data: $state_data)
+                .frame(width: 320, height: 240)
+                .onAppear
+                {
+                    state_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
+                    state_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
+                                         StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
+                    
+                    state_data?.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+                }
+        }
     }
 }
