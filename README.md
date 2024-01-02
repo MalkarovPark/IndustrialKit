@@ -3,7 +3,7 @@
 
 # IndustrialKit
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FMalkarovPark%2FIndustrialKit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/MalkarovPark/IndustrialKit) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FMalkarovPark%2FIndustrialKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/MalkarovPark/IndustrialKit) ![Xcode 14.1+](https://img.shields.io/badge/Xcode-14.1%2B-blue.svg) [![SPM](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FMalkarovPark%2FIndustrialKit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/MalkarovPark/IndustrialKit) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FMalkarovPark%2FIndustrialKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/MalkarovPark/IndustrialKit) ![Xcode 14.1+](https://img.shields.io/badge/Xcode-15.0%2B-blue.svg) [![SPM](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 
 IndustrialKit is an open source software platform for creating applications that enable the design and control of automated means of production. The framework provides modules that can be used out of the box, or extended and customized for more targeted use cases.
 
@@ -57,7 +57,9 @@ CareKit can be installed via SPM. Create a new Xcode project and navigate to `Fi
 
 The included sample app demonstrates a fully constructed IndustrialKit app: [RCWorkspace](https://github.com/MalkarovPark/Robotic-Complex-Workspace)
 
-![rcworkspace](https://github.com/MalkarovPark/IndustrialKit/assets/62340924/1b52f566-e49f-4f19-9c30-2d7b49339031)
+<p align="center">
+   <img width="1228" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/b7007142-d354-46f7-97de-9ed9e4dd4d1b">
+</p>
 
 
 # IndustrialKit <a name="industrialkit"></a>
@@ -138,6 +140,10 @@ Aliases for __NSImage__, __NSColor__ to use them as __UIImage__ and __UIColor__ 
 
 The built-in programming language of the IndustrialKit platform formalizes methods for robotic systems algoritmization and organizes unified connection and control of various robots and equipment tools.
 
+<p align="center">
+   <img width="168" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/2792a352-5574-4965-885d-cc69a27de9c2">
+</p>
+
 # IndustrialKitUI <a name="industrialkitui"></a>
 
 ### Object Scene View <a name="industrialkitui-objectsceneview"></a>
@@ -147,7 +153,7 @@ The simple view for SceneKit nodes. Initalises only by SCNNode and has transpare
 It has the functionality of double tap to reset camera position for macOS.
 
 <p align="center">
-  <img width="712" height="512" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/af8223de-82e1-4ab7-a194-16f6ce721478" />
+  <img width="712" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/af8223de-82e1-4ab7-a194-16f6ce721478" />
 </p>
 
 ### Cards <a name="industrialkitui-cards"></a>
@@ -159,19 +165,19 @@ Can be used in conjunction with objects inherited from WorkspaceObject. The card
 The small card has no subtitle.
 
 <p align="center">
-  <img width="672" height="335" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/f4335808-4442-4636-99a7-6a3f669de7a0" />
+  <img width="672" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/f4335808-4442-4636-99a7-6a3f669de7a0" />
 </p>
 
 The program element card. Marked if corresponding program element is performing.
 
 <p align="center">
-  <img width="304" height="127" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/ebc9cc09-01a1-44d3-8e20-94f2d54031c2" />
+  <img width="304" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/ebc9cc09-01a1-44d3-8e20-94f2d54031c2" />
 </p>
 
 The register card allows edit the register value.
 
 <p align="center">
-  <img width="128" height="127" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/4bae3f72-254f-47f8-9589-401f9df3620a" />
+  <img width="128" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/4bae3f72-254f-47f8-9589-401f9df3620a" />
 </p>
 
 ### Position View <a name="industrialkitui-positionview"></a>
@@ -184,7 +190,7 @@ The editing window contains two groups of three editable parameters:
 Each editable parameter consists of a field and an associated stepper. The described sequence of groups can be displayed in a vertical, horizontal or some other stack.
 
 <p align="center">
-  <img width="288" height="166" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/4f516989-ce57-4c0a-b519-4e90bd320e00" />
+  <img width="288" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/4f516989-ce57-4c0a-b519-4e90bd320e00" />
 </p>
 
 ### Position Control <a name="industrialkitui-positioncontrol"></a>
@@ -192,7 +198,7 @@ Each editable parameter consists of a field and an associated stepper. The descr
 Provides position editing with sliders. For location should set upper limits (lower limits have 0 value). Rotations are limited to the range -180º – 180º.
 
 <p align="center">
-  <img width="256" height="171" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/078ff7dc-6468-4d1d-b536-e1432979fedd" />
+  <img width="256" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/078ff7dc-6468-4d1d-b536-e1432979fedd" />
 </p>
 
 ### Registers Selector <a name="industrialkitui-registersselector"></a>
@@ -200,7 +206,7 @@ Provides position editing with sliders. For location should set upper limits (lo
 Pruposed for elements, registers from which they take data can be specified. This functionality is provided by the Registers Selector control. One or more registers can be selected.
 
 <p align="center">
-  <img width="680" height="680" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/0d600fa1-6a99-4129-9f5d-ab5a3572629a" />
+  <img width="680" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/0d600fa1-6a99-4129-9f5d-ab5a3572629a" />
 </p>
 
 ### Charts View <a name="industrialkitui-chartsview"></a>
@@ -208,7 +214,7 @@ Pruposed for elements, registers from which they take data can be specified. Thi
 Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to switch between them by segmented picker (if count of arrays of arrays is more than one). The type of chart is determined by its properties.
 
 <p align="center">
-  <img width="752" height="620" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/c869219d-4d1b-4c73-b1b8-bcd5ae27833d" />
+  <img width="752" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/c869219d-4d1b-4c73-b1b8-bcd5ae27833d" />
 </p>
 
 ### State View <a name="industrialkitui-stateview"></a>
@@ -216,7 +222,7 @@ Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to swit
 Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable [SF Symbols](https://developer.apple.com/sf-symbols/).
 
 <p align="center">
-  <img width="432" height="380" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/2a4edea7-bc3a-42d2-b8aa-d6e8c1ba00fd" />
+  <img width="432" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/2a4edea7-bc3a-42d2-b8aa-d6e8c1ba00fd" />
 </p>
 
 # Getting Help <a name="getting-help"></a>
