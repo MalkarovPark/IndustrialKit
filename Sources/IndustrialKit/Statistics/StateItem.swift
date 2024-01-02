@@ -7,6 +7,9 @@
 
 import Foundation
 
+/**
+ A storage for state info.
+ */
 public struct StateItem: Identifiable, Codable
 {
     public var id = UUID()

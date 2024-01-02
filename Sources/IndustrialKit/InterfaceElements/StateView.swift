@@ -102,7 +102,7 @@ struct StateView_PreviewsContainer: PreviewProvider
                     state_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
                                          StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
                     
-                    state_data?.append(StateItem(name: "Speed", value: "10 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+                    state_data?.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
                 }
         }
     }

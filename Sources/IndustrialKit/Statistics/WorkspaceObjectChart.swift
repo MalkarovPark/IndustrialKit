@@ -8,6 +8,9 @@
 import Foundation
 
 //MARK: - Chart class and structure
+/**
+ A storage for chart info.
+ */
 public class WorkspaceObjectChart: Identifiable, Codable, Hashable
 {
     public static func == (lhs: WorkspaceObjectChart, rhs: WorkspaceObjectChart) -> Bool
