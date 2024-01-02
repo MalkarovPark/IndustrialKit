@@ -222,7 +222,7 @@ Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to swit
 Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable [SF Symbols](https://developer.apple.com/sf-symbols/).
 
 <p align="center">
-  <img width="432" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/2a4edea7-bc3a-42d2-b8aa-d6e8c1ba00fd" />
+  <img width="432" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/106bb432-846d-494a-aa39-09ab6cfbcaba" />
 </p>
 
 # Getting Help <a name="getting-help"></a>
