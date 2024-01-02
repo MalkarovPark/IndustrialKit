@@ -1565,11 +1565,13 @@ public class Workspace: ObservableObject
         func pause_robot()
         {
             selected_robot.start_pause_moving()
+            deselect_robot()
         }
         
         func pause_tool()
         {
             selected_tool.start_pause_performing()
+            deselect_tool()
         }
     }
     
