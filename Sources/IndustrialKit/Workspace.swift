@@ -1367,15 +1367,11 @@ public class Workspace: ObservableObject
                     if mark_name == name
                     {
                         mark_founded = true
-                    }
-                    
-                    if mark_founded == true
-                    {
                         break
                     }
                 }
                 
-                if !mark_founded && name == ""
+                if !mark_founded //&& name == ""
                 {
                     name = marks_names[0]
                 }
