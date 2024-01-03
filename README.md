@@ -131,7 +131,7 @@ Added methods for Float and uses to convert radians to degrees – __to_deg__ an
 
 Provided new methods for __SCNNode__ – __remove_all_constraints__ to remove constraints and reset default position, __remove_all_child_nodes__ to remove all child nodes from this node.
 
-Extension for provide the __pngData__ missed methods for __UIImage__ (UIKit).
+Extension for provide the __pngData__ missed method for __UIImage__ (UIKit).
 
 Aliases for __NSImage__, __NSColor__ to use them as __UIImage__ and __UIColor__ respectively (AppKit).
 
