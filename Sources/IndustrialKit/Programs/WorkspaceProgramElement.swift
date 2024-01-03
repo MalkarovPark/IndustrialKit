@@ -351,7 +351,7 @@ public class MoverModifierElement: ModifierElement
     }
     
     //File handling
-    //Data [from, to]
+    //Data [type, from, to]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .mover_modifier
@@ -359,18 +359,32 @@ public class MoverModifierElement: ModifierElement
     
     public override var data_count: Int
     {
-        return 2
+        return 3
     }
     
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     {
-        from_index = Int(element_struct.data[0]) ?? 0
-        to_index = Int(element_struct.data[1]) ?? 0
+        move_type = type_from_string(element_struct.data[0])
+        from_index = Int(element_struct.data[1]) ?? 0
+        to_index = Int(element_struct.data[2]) ?? 0
+        
+        func type_from_string(_ string: String) -> ModifierCopyType
+        {
+            switch string
+            {
+            case "Duplicate":
+                return .duplicate
+            case "Move":
+                return .move
+            default:
+                return .duplicate
+            }
+        }
     }
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .mover_modifier, data: [String(from_index), String(to_index)])
+        return WorkspaceProgramElementStruct(identifier: .mover_modifier, data: [move_type.rawValue, String(from_index), String(to_index)])
     }
 }
 
