@@ -565,6 +565,9 @@ public class ChangerModifierElement: ModifierElement
 ///Pushes info code from tool to registers.
 public class ObserverModifierElement: ModifierElement
 {
+    ///A type of observed object
+    public var object_type: ObserverObjectType = .robot
+    
     ///A name of object to observe output.
     public var object_name = ""
     
@@ -590,7 +593,7 @@ public class ObserverModifierElement: ModifierElement
     }
     
     //File handling
-    //Data [name, from indices, to indices]
+    //Data [type, name, from indices, to indices]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .observer_modifier
@@ -598,19 +601,33 @@ public class ObserverModifierElement: ModifierElement
     
     public override var data_count: Int
     {
-        return 3
+        return 4
     }
     
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     {
-        object_name = element_struct.data[0]
-        from_indices = string_to_indices(element_struct.data[1])
-        to_indices = string_to_indices(element_struct.data[2])
+        object_type = type_from_string(element_struct.data[0])
+        object_name = element_struct.data[1]
+        from_indices = string_to_indices(element_struct.data[2])
+        to_indices = string_to_indices(element_struct.data[3])
+        
+        func type_from_string(_ string: String) -> ObserverObjectType
+        {
+            switch string
+            {
+            case "Robot":
+                return .robot
+            case "Tool":
+                return .tool
+            default:
+                return .robot
+            }
+        }
     }
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .observer_modifier, data: [object_name, indices_to_string(from_indices), indices_to_string(to_indices)])
+        return WorkspaceProgramElementStruct(identifier: .observer_modifier, data: [object_type.rawValue, object_name, indices_to_string(from_indices), indices_to_string(to_indices)])
     }
     
     private func string_to_indices(_ string: String) -> [Int]
@@ -905,6 +922,12 @@ public enum ModifierCopyType: String, Codable, Equatable, CaseIterable
 {
     case duplicate = "Duplicate"
     case move = "Move"
+}
+
+public enum ObserverObjectType: String, Codable, Equatable, CaseIterable
+{
+    case robot = "Robot"
+    case tool = "Tool"
 }
 
 ///A workspace program element type enum.
