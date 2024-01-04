@@ -1321,13 +1321,26 @@ public class Workspace: ObservableObject
         
         func observer_element_check(_ element: ObserverModifierElement)
         {
-            if self.placed_tools_names.count > 0
+            switch element.object_type
             {
-                element.object_name = self.placed_tools_names.first!
-            }
-            else
-            {
-                element.object_name = ""
+            case .robot:
+                if self.placed_robots_names.count > 0
+                {
+                    element.object_name = self.placed_robots_names.first!
+                }
+                else
+                {
+                    element.object_name = ""
+                }
+            case .tool:
+                if self.placed_tools_names.count > 0
+                {
+                    element.object_name = self.placed_tools_names.first!
+                }
+                else
+                {
+                    element.object_name = ""
+                }
             }
         }
         
