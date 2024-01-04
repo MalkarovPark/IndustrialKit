@@ -1748,7 +1748,7 @@ public class Workspace: ObservableObject
      */
     private func observe_by(element: ObserverModifierElement)
     {
-        var info_output: [Float]?
+        var info_output = [Float]()
         
         switch element.object_type
         {
@@ -1756,25 +1756,25 @@ public class Workspace: ObservableObject
             var pointer_position = robot_by_name(element.object_name).pointer_location
             for i in 0 ..< 3
             {
-                info_output?.append(pointer_position[i])
+                info_output.append(pointer_position[i])
             }
             
             pointer_position = robot_by_name(element.object_name).pointer_rotation
             for i in 0 ..< 3
             {
-                info_output?.append(pointer_position[i])
+                info_output.append(pointer_position[i])
             }
         case .tool:
-            info_output = tool_by_name(element.object_name).info_output
+            info_output = tool_by_name(element.object_name).info_output ?? [Float]()
         }
         
         if element.from_indices.count > 0
         {
             for i in 0..<element.from_indices.count
             {
-                if element.to_indices[i] <= 255 && element.to_indices[i] >= 0 && (element.from_indices[i] < info_output?.count ?? 0)
+                if element.to_indices[i] <= 255 && element.to_indices[i] >= 0 && (element.from_indices[i] < info_output.count)
                 {
-                    registers[element.to_indices[i]] = info_output?[element.from_indices[i]] ?? 0
+                    registers[element.to_indices[i]] = info_output[element.from_indices[i]]
                 }
             }
         }
