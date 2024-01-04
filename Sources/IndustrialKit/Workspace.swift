@@ -1753,6 +1753,8 @@ public class Workspace: ObservableObject
         switch element.object_type
         {
         case .robot:
+            robot_by_name(element.object_name).pointer_position_to_robot()
+            
             var pointer_position = robot_by_name(element.object_name).pointer_location
             for i in 0 ..< 3
             {

@@ -621,7 +621,7 @@ public class Robot: WorkspaceObject
     }
     
     ///Pass pointer position from model controller or connector to robot.
-    private func pointer_position_to_robot()
+    internal func pointer_position_to_robot()
     {
         if demo
         {
