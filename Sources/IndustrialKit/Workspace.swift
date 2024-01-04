@@ -1748,7 +1748,25 @@ public class Workspace: ObservableObject
      */
     private func observe_by(element: ObserverModifierElement)
     {
-        let info_output = tool_by_name(element.object_name).info_output
+        var info_output: [Float]?
+        
+        switch element.object_type
+        {
+        case .robot:
+            var pointer_position = robot_by_name(element.object_name).pointer_location
+            for i in 0 ..< 3
+            {
+                info_output?.append(pointer_position[i])
+            }
+            
+            pointer_position = robot_by_name(element.object_name).pointer_rotation
+            for i in 0 ..< 3
+            {
+                info_output?.append(pointer_position[i])
+            }
+        case .tool:
+            info_output = tool_by_name(element.object_name).info_output
+        }
         
         if element.from_indices.count > 0
         {
