@@ -41,7 +41,9 @@ public struct RegistersView: View
             {
                 ForEach(numbers, id: \.self)
                 { number in
-                    RegisterCardView(value: $registers[number], number: number, color: colors[number])
+                    let color_index = number % colors.count
+                    
+                    RegisterCardView(value: $registers[number], number: number, color: colors[color_index])
                         .id(number)
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
@@ -137,7 +139,9 @@ struct RegistersSelectorView: View
                 {
                     ForEach(registers_count, id: \.self)
                     { number in
-                        RegistersSelectorCardView(is_selected: $selections[number], number: number, color: colors[number], selection_text: texts[number])
+                        let color_index = number % colors.count
+                        
+                        RegistersSelectorCardView(is_selected: $selections[number], number: number, color: colors[color_index], selection_text: texts[number])
                         .onTapGesture
                         {
                             select_index(number)
