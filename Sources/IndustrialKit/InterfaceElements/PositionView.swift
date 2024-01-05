@@ -140,9 +140,6 @@ public struct PositionControl: View
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_value: $location[0], limit_min: .constant(0), limit_max: $scale[0])
                         }
-                        #if os(iOS)
-                        .presentationDetents([.height(96)])
-                        #endif
                         Slider(value: $location[0], in: 0.0...scale[0])
                             .padding(.trailing)
                     }
@@ -160,9 +157,6 @@ public struct PositionControl: View
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_value: $location[1], limit_min: .constant(0), limit_max: $scale[1])
                         }
-                        #if os(iOS)
-                        .presentationDetents([.height(96)])
-                        #endif
                         Slider(value: $location[1], in: 0.0...scale[1])
                             .padding(.trailing)
                     }
@@ -180,9 +174,6 @@ public struct PositionControl: View
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_value: $location[2], limit_min: .constant(0), limit_max: $scale[2])
                         }
-                        #if os(iOS)
-                        .presentationDetents([.height(96)])
-                        #endif
                         Slider(value: $location[2], in: 0.0...scale[2])
                             .padding(.trailing)
                     }
@@ -207,9 +198,6 @@ public struct PositionControl: View
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[0], parameter_value: $rotation[0], limit_min: .constant(-180), limit_max: .constant(180))
                         }
-                        #if os(iOS)
-                        .presentationDetents([.height(96)])
-                        #endif
                         Slider(value: $rotation[0], in: -180.0...180)
                             .padding(.trailing)
                     }
@@ -227,9 +215,6 @@ public struct PositionControl: View
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[1], parameter_value: $rotation[1], limit_min: .constant(-180), limit_max: .constant(180))
                         }
-                        #if os(iOS)
-                        .presentationDetents([.height(96)])
-                        #endif
                         Slider(value: $rotation[1], in: -180.0...180)
                             .padding(.trailing)
                     }
@@ -247,9 +232,6 @@ public struct PositionControl: View
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[2], parameter_value: $rotation[2], limit_min: .constant(-180), limit_max: .constant(180))
                         }
-                        #if os(iOS)
-                        .presentationDetents([.height(96)])
-                        #endif
                         Slider(value: $rotation[2], in: -180.0...180)
                             .padding(.trailing)
                     }
@@ -309,6 +291,9 @@ struct PositionParameterView: View
             #endif
         }
         .padding(8)
+        #if os(iOS)
+        .presentationDetents([.height(96)])
+        #endif
     }
 }
 
