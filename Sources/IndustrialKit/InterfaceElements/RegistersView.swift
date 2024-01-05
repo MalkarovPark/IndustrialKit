@@ -108,8 +108,8 @@ struct RegistersSelectorView: View
     @State var names: [String]
     
     @State private var current_parameter = 0
-    @State private var selections = [Bool](repeating: false, count: 256)
-    @State private var texts = [String](repeating: String(), count: 256)
+    @State private var selections: [Bool]
+    @State private var texts: [String]
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: 70, maximum: 70), spacing: 0)]
     
@@ -117,6 +117,9 @@ struct RegistersSelectorView: View
     {
         self.registers_count = (0...registers_count - 1).map { $0 }
         self.colors = colors
+        
+        self.selections = [Bool](repeating: false, count: registers_count)
+        self.texts = [String](repeating: String(), count: registers_count)
         
         self._indices = indices
         self.names = names
