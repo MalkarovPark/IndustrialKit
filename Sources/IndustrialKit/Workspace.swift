@@ -2014,7 +2014,7 @@ public class Workspace: ObservableObject
             elements.append(element_from_struct(element))
         }
         
-        registers = preset.registers
+        registers = preset.registers ?? [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
     //MARK: - UI Functions
@@ -2281,7 +2281,7 @@ public struct WorkspacePreset: Codable
     public var tools = [ToolStruct]()
     public var parts = [PartStruct]()
     
-    public var registers: [Float] = [Float](repeating: 0, count: 256)
+    public var registers: [Float]?
     
     public init()
     {
