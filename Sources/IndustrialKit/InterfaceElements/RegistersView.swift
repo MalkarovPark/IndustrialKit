@@ -118,8 +118,8 @@ struct RegistersSelectorView: View
         self.registers_count = (0...registers_count - 1).map { $0 }
         self.colors = colors
         
-        self.selections = [Bool](repeating: false, count: registers_count)
-        self.texts = [String](repeating: String(), count: registers_count)
+        self.selections = [Bool](repeating: false, count: registers_count - 1)
+        self.texts = [String](repeating: String(), count: registers_count - 1)
         
         self._indices = indices
         self.names = names
