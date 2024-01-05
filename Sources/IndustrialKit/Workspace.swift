@@ -1479,8 +1479,9 @@ public class Workspace: ObservableObject
             math_by(element: math_element)
             select_new_element()
         case let changer_element as ChangerModifierElement:
+            let registers_count = registers.count
             Workspace.change_by(changer_element.module_name, &registers)
-            check_registers()
+            check_registers(registers_count)
             select_new_element()
         case let observer_element as ObserverModifierElement:
             observe_by(element: observer_element)
@@ -1500,20 +1501,11 @@ public class Workspace: ObservableObject
             select_new_element()
         }
         
-        func check_registers()
+        func check_registers(_ reference_count: Int)
         {
-            if registers.count != 256
+            if registers.count != reference_count
             {
-                var fixed_registers = [Float](repeating: 0, count: 256)
-                for (index, value) in registers.enumerated()
-                {
-                    if index < self.registers.count
-                    {
-                        fixed_registers[index] = value
-                    }
-                }
-                
-                registers = fixed_registers
+                update_registers_count(reference_count)
             }
         }
     }
@@ -1584,13 +1576,38 @@ public class Workspace: ObservableObject
         }
     }
     
+    ///A default count of data registers in workspace.
+    public static var default_registers_count = 256
+    
     ///An array of pushed info data.
-    public var registers: [Float] = [Float](repeating: 0, count: 256)
+    public var registers: [Float] = [Float](repeating: 0, count: default_registers_count)
+    
+    private func input_registers(_ registers: [Float])
+    {
+        for (index, value) in registers.enumerated()
+        {
+            self.registers[index] = Float(value)
+        }
+    }
+    
+    /**
+     Updates count of data registers.
+     
+     - Parameters:
+        - new_count: A new count of registers.
+     */
+    public func update_registers_count(_ new_count: Int)
+    {
+        let old_registers = registers
+        registers = [Float](repeating: 0, count: new_count)
+        
+        input_registers(old_registers)
+    }
     
     ///Clears all data registers.
     public func clear_registers()
     {
-        registers = [Float](repeating: 0, count: 256)
+        registers = [Float](repeating: 0, count: registers.count)
     }
     
     /**
@@ -1990,10 +2007,7 @@ public class Workspace: ObservableObject
             elements.append(element_from_struct(element))
         }
         
-        for (index, value) in preset.registers.enumerated()
-        {
-            self.registers[index] = Float(value)
-        }
+        registers = preset.registers
     }
     
     //MARK: - UI Functions
