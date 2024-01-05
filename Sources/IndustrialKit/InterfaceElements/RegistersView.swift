@@ -118,8 +118,8 @@ struct RegistersSelectorView: View
         self.registers_count = (0...registers_count - 1).map { $0 }
         self.colors = colors
         
-        self.selections = [Bool](repeating: false, count: registers_count - 1)
-        self.texts = [String](repeating: String(), count: registers_count - 1)
+        self.selections = [Bool](repeating: false, count: registers_count)
+        self.texts = [String](repeating: String(), count: registers_count)
         
         self._indices = indices
         self.names = names
@@ -186,7 +186,7 @@ struct RegistersSelectorView: View
     
     private func update_selections()
     {
-        selections = [Bool](repeating: false, count: 256)
+        selections = [Bool](repeating: false, count: selections.count)
         
         for index in indices
         {
@@ -196,7 +196,7 @@ struct RegistersSelectorView: View
     
     private func update_texts()
     {
-        texts = [String](repeating: String(), count: 256)
+        texts = [String](repeating: String(), count: texts.count)
         
         for (index, value) in indices.enumerated()
         {
