@@ -1586,7 +1586,14 @@ public class Workspace: ObservableObject
     {
         for (index, value) in registers.enumerated()
         {
-            self.registers[index] = Float(value)
+            if index < self.registers.count
+            {
+                self.registers[index] = Float(value)
+            }
+            else
+            {
+                break
+            }
         }
     }
     
