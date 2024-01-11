@@ -82,14 +82,16 @@ extension Array where Element == Float
 {
     subscript(safe index: Int) -> Float
     {
-        get {
+        get
+        {
             guard index >= 0 && index < count else
             {
                 return 0
             }
             return self[index]
         }
-        set {
+        set
+        {
             guard index >= 0 && index < count else
             {
                 return

@@ -190,7 +190,14 @@ struct RegistersSelectorView: View
         
         for index in indices
         {
-            selections[index] = true
+            if index < selections.count
+            {
+                selections[index] = true
+            }
+            else
+            {
+                selections[selections.count - 1] = true
+            }
         }
     }
     
