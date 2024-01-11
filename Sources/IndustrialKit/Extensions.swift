@@ -76,3 +76,25 @@ public extension UIImage
     }
 }
 #endif
+
+//MARK: - Safe array access
+extension Array where Element == Float
+{
+    subscript(safe index: Int) -> Float
+    {
+        get {
+            guard index >= 0 && index < count else
+            {
+                return 0
+            }
+            return self[index]
+        }
+        set {
+            guard index >= 0 && index < count else
+            {
+                return
+            }
+            self[index] = newValue
+        }
+    }
+}

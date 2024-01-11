@@ -1588,7 +1588,7 @@ public class Workspace: ObservableObject
         {
             if index < self.registers.count
             {
-                self.registers[index] = Float(value)
+                self.registers[safe: index] = Float(value)
             }
             else
             {
@@ -1627,7 +1627,7 @@ public class Workspace: ObservableObject
     {
         if index < registers.count && index >= 0
         {
-            registers[index] = 0
+            registers[safe: index] = 0
         }
     }
     
@@ -1642,7 +1642,7 @@ public class Workspace: ObservableObject
     {
         if index < registers.count && index >= 0
         {
-            registers[index] = new_value
+            registers[safe: index] = new_value
         }
     }
     
@@ -1666,7 +1666,7 @@ public class Workspace: ObservableObject
                 }
                 else
                 {
-                    selected_robot.select_program(index: Int(registers[element.program_index]))
+                    selected_robot.select_program(index: Int(registers[safe: element.program_index]))
                 }
                 
                 selected_robot.finish_handler = self.select_new_element
@@ -1680,13 +1680,13 @@ public class Workspace: ObservableObject
         else
         {
             //Single robot perform
-            var target_point = PositionPoint(x: registers[element.x_index],
-                                             y: registers[element.y_index],
-                                             z: registers[element.z_index],
-                                             r: registers[element.r_index],
-                                             p: registers[element.p_index],
-                                             w: registers[element.w_index],
-                                             move_speed: registers[element.speed_index])
+            var target_point = PositionPoint(x: registers[safe: element.x_index],
+                                             y: registers[safe: element.y_index],
+                                             z: registers[safe: element.z_index],
+                                             r: registers[safe: element.r_index],
+                                             p: registers[safe: element.p_index],
+                                             w: registers[safe: element.w_index],
+                                             move_speed: registers[safe: element.speed_index])
             selected_robot.point_shift(&target_point)
             
             selected_robot.move_to(point: target_point)
@@ -1715,7 +1715,7 @@ public class Workspace: ObservableObject
                 }
                 else
                 {
-                    selected_tool.select_program(index: Int(registers[element.program_index]))
+                    selected_tool.select_program(index: Int(registers[safe: element.program_index]))
                 }
                 
                 selected_tool.finish_handler = self.select_new_element
@@ -1729,7 +1729,7 @@ public class Workspace: ObservableObject
         else
         {
             //Single tool perform
-            selected_tool.perform(code: Int(registers[element.opcode_index]))
+            selected_tool.perform(code: Int(registers[safe: element.opcode_index]))
             {
                 self.select_new_element()
             }
@@ -1743,10 +1743,10 @@ public class Workspace: ObservableObject
      */
     private func move_by(element: MoverModifierElement)
     {
-        registers[element.to_index] = registers[element.from_index]
+        registers[safe: element.to_index] = registers[safe: element.from_index]
         if element.move_type == .move
         {
-            registers[element.from_index] = 0
+            registers[safe: element.from_index] = 0
         }
     }
     
@@ -1757,12 +1757,12 @@ public class Workspace: ObservableObject
      */
     private func write_by(element: WriterModifierElement)
     {
-        registers[element.to_index] = element.value
+        registers[safe: element.to_index] = element.value
     }
     
     private func math_by(element: MathModifierElement)
     {
-        element.operation.operation(&registers[element.value_index], registers[element.value2_index])
+        element.operation.operation(&registers[safe: element.value_index], registers[safe: element.value2_index])
     }
     
     /**
@@ -1800,7 +1800,7 @@ public class Workspace: ObservableObject
             {
                 if element.to_indices[i] <= 255 && element.to_indices[i] >= 0 && (element.from_indices[i] < info_output.count)
                 {
-                    registers[element.to_indices[i]] = info_output[element.from_indices[i]]
+                    registers[safe: element.to_indices[i]] = info_output[element.from_indices[i]]
                 }
             }
         }
@@ -1843,7 +1843,7 @@ public class Workspace: ObservableObject
      */
     private func compare_by(element: ComparatorLogicElement)
     {
-        if element.compare_type.compare(registers[element.value_index], registers[element.value2_index])
+        if element.compare_type.compare(registers[safe: element.value_index], registers[safe: element.value2_index])
         {
             selected_element_index = element.target_element_index
         }
@@ -2310,10 +2310,10 @@ public struct WorkspacePreset: Codable
         {
             /*if index < self.registers.count
             {
-                self.registers[index] = value
+                self.registers[safe: index] = value
             }*/
             
-            self.registers[index] = value
+            self.registers[safe: index] = value
         }
     }*/
 }
