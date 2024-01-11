@@ -207,7 +207,14 @@ struct RegistersSelectorView: View
         
         for (index, value) in indices.enumerated()
         {
-            texts[value] += "\(names[index]) "
+            if value < texts.count
+            {
+                texts[value] += "\(names[index]) "
+            }
+            else
+            {
+                texts[texts.count - 1] += "\(names[index]) "
+            }
         }
         
         for index in texts.indices
