@@ -1691,6 +1691,7 @@ public class Workspace: ObservableObject
             
             selected_robot.move_to(point: target_point)
             {
+                self.selected_robot.pointer_position_to_robot()
                 self.select_new_element()
             }
         }
