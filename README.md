@@ -26,7 +26,7 @@ IndustrialKit is an open source software platform for creating applications that
     * [Model Controllers](#model-controllers)
     * [Functions](#functions)
     * [Extensions](#extensions)
-* [Ithi Macro Assembler](#IMA)
+* [Ithi Macro Assembler](#ima)
 * [IndustrialKitUI](#industrialkitui)
     * [Object Scene View](#industrialkitui-objectsceneview)
     * [Cards](#industrialkitui-cards)
@@ -135,7 +135,7 @@ Extension for provide the __pngData__ missed method for __UIImage__ (UIKit).
 
 Aliases for __NSImage__, __NSColor__ to use them as __UIImage__ and __UIColor__ respectively (AppKit).
 
-# [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="IMA"></a>
+# [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a>
 
 The built-in programming language of the IndustrialKit platform formalizes methods for robotic systems algoritmization and organizes unified connection and control of various robots and equipment tools.
 
