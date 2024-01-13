@@ -123,7 +123,9 @@ public class Robot: WorkspaceObject
                    origin_rotation: robot_struct.origin_rotation,
                    space_scale: robot_struct.space_scale)
         
-        read_programs(robot_struct: robot_struct) //Import programs if robot init by structure (from document file)
+        read_default_position(robot_struct.default_pointer_position)
+        
+        read_programs(robot_struct: robot_struct)
         read_connection_parameters(connector: connector, robot_struct.connection_parameters)
     }
     
@@ -431,6 +433,13 @@ public class Robot: WorkspaceObject
             update_rotation()
         }
     }
+    
+    /**
+     A robot default pointer position.
+     
+     Array with three angles – [*x*, *y*, *z*, *r*, *p*, *w*].
+     */
+    private var default_pointer_position: [Float]?
     
     /**
      Demo state of robot.
@@ -1265,6 +1274,7 @@ public class Robot: WorkspaceObject
                            is_placed: self.is_placed,
                            location: self.location,
                            rotation: self.rotation,
+                           default_pointer_position: self.default_pointer_position,
                            demo: self.demo,
                            connection_parameters: get_connection_parameters(connector: self.connector),
                            update_model_by_connector: self.update_model_by_connector,
@@ -1276,6 +1286,24 @@ public class Robot: WorkspaceObject
                            origin_location: self.origin_location,
                            origin_rotation: self.origin_rotation,
                            space_scale: self.space_scale)
+    }
+    
+    ///Gets default pointer position from array.
+    private func read_default_position(_ data: [Float]?)
+    {
+        if data?.count == 6
+        {
+            default_pointer_position = data
+            
+            guard let viewed_data = data
+            else
+            {
+                return
+            }
+            
+            pointer_location = [viewed_data[0], viewed_data[1], viewed_data[2]]
+            pointer_rotation = [viewed_data[3], viewed_data[4], viewed_data[5]]
+        }
     }
     
     ///Convert array of codable positions programs structs to robot programs.
@@ -1306,6 +1334,8 @@ public struct RobotStruct: Codable
     public var is_placed: Bool
     public var location: [Float]
     public var rotation: [Float]
+    
+    public var default_pointer_position: [Float]?
     
     public var demo: Bool
     public var connection_parameters: [String]?
