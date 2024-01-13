@@ -65,8 +65,6 @@ public extension UIImage
 {
     func pngData() -> Data?
     {
-        //image_data = newValue.tiffRepresentation ?? Data()
-        
         if let tiffRepresentation = self.tiffRepresentation, let bitmapImage = NSBitmapImageRep(data: tiffRepresentation)
         {
             return bitmapImage.representation(using: .png, properties: [:])
@@ -77,7 +75,7 @@ public extension UIImage
 }
 #endif
 
-//MARK: - Safe array access
+//MARK: - Safe access to array elements
 extension Array where Element == Float
 {
     subscript(safe index: Int) -> Float
