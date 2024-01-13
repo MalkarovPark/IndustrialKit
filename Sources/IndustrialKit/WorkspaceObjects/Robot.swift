@@ -441,6 +441,53 @@ public class Robot: WorkspaceObject
      */
     private var default_pointer_position: [Float]?
     
+    ///Sets default robot pointer position by current pointer position.
+    public func set_default_pointer_position()
+    {
+        default_pointer_position = [
+        pointer_location[0],
+        pointer_location[1],
+        pointer_location[2],
+        pointer_rotation[0],
+        pointer_rotation[1],
+        pointer_rotation[2]
+        ]
+    }
+    
+    ///Clears default robot pointer position.
+    public func clear_default_pointer_position()
+    {
+        default_pointer_position = nil
+    }
+    
+    ///Resets robot pointer to default position.
+    public func reset_pointer_to_default()
+    {
+        guard let viewed_data = default_pointer_position
+        else
+        {
+            return
+        }
+        
+        pointer_location = [viewed_data[0], viewed_data[1], viewed_data[2]]
+        pointer_rotation = [viewed_data[3], viewed_data[4], viewed_data[5]]
+        
+        update_model()
+    }
+    
+    ///Returns information about default pointer position avalibility of robot.
+    public var has_default_position: Bool
+    {
+        if default_pointer_position != nil
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
+    
     /**
      Demo state of robot.
      
