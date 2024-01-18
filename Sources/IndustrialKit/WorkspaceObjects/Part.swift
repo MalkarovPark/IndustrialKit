@@ -184,6 +184,13 @@ public class Part: WorkspaceObject
         }*/
     }
     
+    ///Inits part by name and scene name.
+    public init(name: String, scene_name: String)
+    {
+        super.init(name: name)
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)!
+    }
+    
     private func color_from_model()
     {
         if node != nil
