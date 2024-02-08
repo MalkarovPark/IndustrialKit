@@ -269,7 +269,11 @@ struct RegistersSelectorCardView: View
         }
         .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
         .frame(width: 64, height: 64)
+        #if !os(visionOS)
         .shadow(radius: 2)
+        #else
+        .frame(depth: 4)
+        #endif
     }
 }
 
@@ -313,8 +317,12 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
         var body: some View
         {
             RegistersView(registers: $registers, colors: colors_by_seed(seed: 5433))
+            #if !os(visionOS)
                 .frame(width: 420, height: 420)
                 .background(.white)
+            #else
+                .frame(width: 600, height: 600)
+            #endif
         }
         
         private func colors_by_seed(seed: Int) -> [Color]

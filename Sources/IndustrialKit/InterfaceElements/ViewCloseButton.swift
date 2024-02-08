@@ -51,6 +51,10 @@ public struct ViewCloseFuncButton: ViewModifier
                     Image(systemName: "xmark")
                 }
                 .buttonStyle(.bordered)
+                .buttonBorderShape(.circle)
+                #if os(visionOS)
+                .glassBackgroundEffect()
+                #endif
                 .keyboardShortcut(.cancelAction)
                 .padding()
             }

@@ -130,7 +130,11 @@ public struct LargeCardView: View
                                 .padding(.bottom, 8)
                                 .padding(.leading, 4)
                         }
+                        #if !os(visionOS)
                         .padding(.horizontal, 8)
+                        #else
+                        .padding(.horizontal, 32)
+                        #endif
                         Spacer()
                     }
                     else
@@ -184,8 +188,13 @@ public struct LargeCardView: View
                 .background(.thinMaterial)
             }
         }
+        #if !os(visionOS)
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        #endif
         .frame(height: 192)
+        #if os(visionOS)
+        .glassBackgroundEffect()
+        #endif
         //.shadow(radius: 8)
     }
 }
@@ -273,6 +282,9 @@ public struct SmallCardView: View
                             Text(title)
                                 .font(.headline)
                                 .padding()
+                            #if os(visionOS)
+                                .padding(.leading, 8)
+                            #endif
                             
                             Spacer()
                         }
@@ -314,6 +326,9 @@ public struct SmallCardView: View
                             .labelsHidden()
                             .font(.headline)
                             .padding()
+                            #if os(visionOS)
+                            .padding(.leading, 8)
+                            #endif
                             #endif
                         }
                         
@@ -352,7 +367,11 @@ public struct SmallCardView: View
             }
             .background(.thinMaterial)
         }
+        #if !os(visionOS)
         .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        #else
+        .glassBackgroundEffect()
+        #endif
         //.shadow(radius: 8)
     }
 }
@@ -507,14 +526,20 @@ public struct RegisterCardView: View
                                 .font(.system(size: 20))
                             #endif
                         }
+                    #if !os(visionOS)
                         .shadow(radius: 2)
+                    #endif
                 }
             }
             .background(.thinMaterial)
         }
         .frame(width: register_card_scale, height: register_card_scale)
         .clipShape(RoundedRectangle(cornerRadius: 4.0, style: .continuous))
+        #if !os(visionOS)
         .shadow(radius: 4)
+        #else
+        .frame(depth: 8)
+        #endif
     }
 }
 
@@ -530,11 +555,19 @@ struct Cards_Previews: PreviewProvider
             VStack()
             {
                 LargeCardView(color: .green, image: nil, title: "Title", subtitle: "Subtitle")
+                #if !os(visionOS)
                     .shadow(radius: 8)
+                #else
+                    .frame(depth: 24)
+                #endif
                     .padding([.horizontal, .top])
                 
                 SmallCardView(color: .green, image: nil, title: "Title")
+                #if !os(visionOS)
                     .shadow(radius: 8)
+                #else
+                    .frame(depth: 24)
+                #endif
                     .padding()
             }
             .padding(4)
@@ -544,11 +577,19 @@ struct Cards_Previews: PreviewProvider
             VStack()
             {
                 LargeCardView(color: .gray, node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), title: "Cube", subtitle: "Model")
+                #if !os(visionOS)
                     .shadow(radius: 8)
+                #else
+                    .frame(depth: 24)
+                #endif
                     .padding([.horizontal, .top])
                 
                 SmallCardView(color: .gray, node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), title: "Cube")
+                #if !os(visionOS)
                     .shadow(radius: 8)
+                #else
+                    .frame(depth: 24)
+                #endif
                     .padding()
             }
             .padding(4)
@@ -558,7 +599,11 @@ struct Cards_Previews: PreviewProvider
             VStack()
             {
                 ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color, is_current: true)
+                #if !os(visionOS)
                     .shadow(radius: 8)
+                #else
+                    .frame(depth: 24)
+                #endif
             }
             .padding(16)
             .frame(width: 288)
