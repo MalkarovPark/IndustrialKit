@@ -27,7 +27,11 @@ public struct ViewCloseButton: ViewModifier
                 }
                 .buttonStyle(.bordered)
                 .keyboardShortcut(.cancelAction)
+                .buttonBorderShape(.circle)
                 .padding()
+                #if os(visionOS)
+                .padding(8)
+                #endif
             }
     }
 }
