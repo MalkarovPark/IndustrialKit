@@ -55,7 +55,7 @@ public struct ViewCloseFuncButton: ViewModifier
                 .keyboardShortcut(.cancelAction)
                 .padding()
                 #if os(visionOS)
-                .padding()
+                .padding(8)
                 #endif
             }
     }
