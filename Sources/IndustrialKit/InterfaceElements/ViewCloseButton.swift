@@ -52,9 +52,6 @@ public struct ViewCloseFuncButton: ViewModifier
                 }
                 .buttonStyle(.bordered)
                 .buttonBorderShape(.circle)
-                #if os(visionOS)
-                .glassBackgroundEffect()
-                #endif
                 .keyboardShortcut(.cancelAction)
                 .padding()
             }
