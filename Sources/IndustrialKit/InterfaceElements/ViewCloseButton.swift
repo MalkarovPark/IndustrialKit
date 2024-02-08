@@ -28,7 +28,7 @@ public struct ViewCloseButton: ViewModifier
                 .buttonStyle(.bordered)
                 .keyboardShortcut(.cancelAction)
                 #if os(iOS)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
                 #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
@@ -61,7 +61,7 @@ public struct ViewCloseFuncButton: ViewModifier
                 }
                 .buttonStyle(.bordered)
                 #if os(iOS)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
                 #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
