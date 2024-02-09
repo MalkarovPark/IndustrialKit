@@ -5,6 +5,7 @@
 //  Created by Malkarov Park on 09.02.2024.
 //
 
+#if os(visionOS)
 import SwiftUI
 
 /**
@@ -21,7 +22,7 @@ public struct SpatialPendant: Scene
 {
     var window_id: String
     
-    public init(window_id: String = "pendant")
+    public init(window_id: String = SPendantDefaultId)
     {
         self.window_id = window_id
     }
@@ -35,6 +36,8 @@ public struct SpatialPendant: Scene
         .windowResizability(.contentSize)
     }
 }
+
+public let SPendantDefaultId = "pendant"
 
 private struct SpatialPendantView: View
 {
@@ -231,3 +234,4 @@ private struct AddProgramView: View
 {
     SpatialPendantView()
 }
+#endif
