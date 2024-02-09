@@ -22,7 +22,7 @@ public struct SpatialPendant: Scene
 {
     var window_id: String
     
-    public init(window_id: String = SPendantDefaultId)
+    public init(window_id: String = SPendantDefaultID)
     {
         self.window_id = window_id
     }
@@ -37,7 +37,8 @@ public struct SpatialPendant: Scene
     }
 }
 
-public let SPendantDefaultId = "pendant"
+///The default widow id of Spatial Pendant.
+public let SPendantDefaultID = "pendant"
 
 private struct SpatialPendantView: View
 {
