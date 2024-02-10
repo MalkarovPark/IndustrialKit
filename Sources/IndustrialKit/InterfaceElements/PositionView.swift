@@ -135,7 +135,7 @@ public struct PositionControl: View
                                 .foregroundColor(Color.accentColor)
                         }
                         .buttonStyle(.borderless)
-                        .frame(width: 64)
+                        .frame(width: button_width)
                         .popover(isPresented: $ppv_presented_location[0])
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_value: $location[0], limit_min: .constant(0), limit_max: $scale[0])
@@ -152,7 +152,7 @@ public struct PositionControl: View
                                 .foregroundColor(Color.accentColor)
                         }
                         .buttonStyle(.borderless)
-                        .frame(width: 64)
+                        .frame(width: button_width)
                         .popover(isPresented: $ppv_presented_location[1])
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_value: $location[1], limit_min: .constant(0), limit_max: $scale[1])
@@ -169,7 +169,7 @@ public struct PositionControl: View
                                 .foregroundColor(Color.accentColor)
                         }
                         .buttonStyle(.borderless)
-                        .frame(width: 64)
+                        .frame(width: button_width)
                         .popover(isPresented: $ppv_presented_location[2])
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_value: $location[2], limit_min: .constant(0), limit_max: $scale[2])
@@ -193,7 +193,7 @@ public struct PositionControl: View
                                 .foregroundColor(Color.accentColor)
                         }
                         .buttonStyle(.borderless)
-                        .frame(width: 64)
+                        .frame(width: button_width)
                         .popover(isPresented: $ppv_presented_rotation[0])
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[0], parameter_value: $rotation[0], limit_min: .constant(-180), limit_max: .constant(180))
@@ -210,7 +210,7 @@ public struct PositionControl: View
                                 .foregroundColor(Color.accentColor)
                         }
                         .buttonStyle(.borderless)
-                        .frame(width: 64)
+                        .frame(width: button_width)
                         .popover(isPresented: $ppv_presented_rotation[1])
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[1], parameter_value: $rotation[1], limit_min: .constant(-180), limit_max: .constant(180))
@@ -227,7 +227,7 @@ public struct PositionControl: View
                                 .foregroundColor(Color.accentColor)
                         }
                         .buttonStyle(.borderless)
-                        .frame(width: 64)
+                        .frame(width: button_width)
                         .popover(isPresented: $ppv_presented_rotation[2])
                         {
                             PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[2], parameter_value: $rotation[2], limit_min: .constant(-180), limit_max: .constant(180))
@@ -246,6 +246,12 @@ public struct PositionControl: View
         .padding()
     }
 }
+
+#if !os(visionOS)
+let button_width = 64.0
+#else
+let button_width = 128.0
+#endif
 
 struct PositionParameterView: View
 {
