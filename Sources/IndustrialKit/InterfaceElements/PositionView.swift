@@ -132,7 +132,9 @@ public struct PositionControl: View
                         Button(action: { ppv_presented_location[0].toggle() })
                         {
                             Text("X: " + String(format: "%.0f", location[0]))
+                            #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
+                            #endif
                         }
                         .buttonStyle(.borderless)
                         .frame(width: button_width)
@@ -149,7 +151,9 @@ public struct PositionControl: View
                         Button(action: { ppv_presented_location[1].toggle() })
                         {
                             Text("Y: " + String(format: "%.0f", location[1]))
+                            #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
+                            #endif
                         }
                         .buttonStyle(.borderless)
                         .frame(width: button_width)
@@ -166,7 +170,9 @@ public struct PositionControl: View
                         Button(action: { ppv_presented_location[2].toggle() })
                         {
                             Text("Z: " + String(format: "%.0f", location[2]))
+                            #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
+                            #endif
                         }
                         .buttonStyle(.borderless)
                         .frame(width: button_width)
@@ -190,7 +196,9 @@ public struct PositionControl: View
                         Button(action: { ppv_presented_rotation[0].toggle() })
                         {
                             Text("R: " + String(format: "%.0f", rotation[0]))
+                            #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
+                            #endif
                         }
                         .buttonStyle(.borderless)
                         .frame(width: button_width)
@@ -207,7 +215,9 @@ public struct PositionControl: View
                         Button(action: { ppv_presented_rotation[1].toggle() })
                         {
                             Text("P: " + String(format: "%.0f", rotation[1]))
+                            #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
+                            #endif
                         }
                         .buttonStyle(.borderless)
                         .frame(width: button_width)
@@ -224,7 +234,9 @@ public struct PositionControl: View
                         Button(action: { ppv_presented_rotation[2].toggle() })
                         {
                             Text("W: " + String(format: "%.0f", rotation[2]))
+                            #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
+                            #endif
                         }
                         .buttonStyle(.borderless)
                         .frame(width: button_width)
