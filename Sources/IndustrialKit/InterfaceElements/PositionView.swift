@@ -250,7 +250,7 @@ public struct PositionControl: View
 #if !os(visionOS)
 let button_width = 64.0
 #else
-let button_width = 128.0
+let button_width = 80.0
 #endif
 
 struct PositionParameterView: View
