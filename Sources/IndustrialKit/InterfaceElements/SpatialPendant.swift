@@ -21,10 +21,12 @@ import SwiftUI
 public struct SpatialPendant: Scene
 {
     var window_id: String
+    let pendant_controller: PendantController
     
-    public init(window_id: String = SPendantDefaultID)
+    public init(window_id: String = SPendantDefaultID, pendant_controller: PendantController)
     {
         self.window_id = window_id
+        self.pendant_controller = pendant_controller
     }
     
     @SceneBuilder public var body: some Scene
@@ -32,6 +34,8 @@ public struct SpatialPendant: Scene
         WindowGroup(id: window_id)
         {
             SpatialPendantView()
+                .environmentObject(pendant_controller)
+                .onDisappear(perform: pendant_controller.dismiss_pendant)
         }
         .windowResizability(.contentSize)
     }
@@ -229,6 +233,85 @@ private struct AddProgramView: View
             .padding(12)
         }
     }
+}
+
+/**
+ A class that provides integration between applications and the Spatial Pendant.
+ */
+@available(visionOS 1.0, *)
+@available(macOS, unavailable)
+@available(iOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+public class PendantController: ObservableObject
+{
+    //MARK: - Windows management
+    private var is_opened = false
+    
+    ///Opens s-pendant window.
+    public func open_pendant()
+    {
+        if !is_opened
+        {
+            open()
+            is_opened = true
+        }
+    }
+    
+    ///Dismiss s-pendant window.
+    public func dismiss_pendant()
+    {
+        if is_opened
+        {
+            dismiss()
+            is_opened = false
+        }
+    }
+    
+    /**
+     Resets the window management state on s-pendant disappear.
+     
+     > Set it to **onDisappear** method of the s-pendant view.
+     */
+    public func on_dismiss()
+    {
+        is_opened = false
+    }
+    
+    /**
+     Sets the s-pendant window control functions.
+     
+     - Parameters:
+        - open: An open window function.
+        - dismiss: A dismiss window function.
+     
+     Setted functions example.
+     
+            @Environment(\.openWindow) var openWindow
+            @Environment(\.dismissWindow) var dismissWindow
+            
+            ...
+            
+            pendant_controller.set_windows_functions
+            {
+                openWindow(id: SPendantDefaultID)
+            }
+            _:
+            {
+                dismissWindow(id: SPendantDefaultID)
+            }
+     */
+    public func set_windows_functions(_ open: @escaping () -> (), _ dismiss: @escaping () -> ())
+    {
+        self.open = open
+        self.dismiss = dismiss
+    }
+    
+    private var open = {}
+    private var dismiss = {}
+    
+    //MARK: - Data
+    @Published var text = String()
 }
 
 #Preview
