@@ -21,12 +21,15 @@ import SwiftUI
 public struct SpatialPendant: Scene
 {
     var window_id: String
-    let pendant_controller: PendantController
+    let controller: PendantController
+    let workspace: Workspace
     
-    public init(window_id: String = SPendantDefaultID, pendant_controller: PendantController)
+    public init(window_id: String = SPendantDefaultID, controller: PendantController, workspace: Workspace = Workspace())
     {
         self.window_id = window_id
-        self.pendant_controller = pendant_controller
+        self.controller = controller
+        
+        self.workspace = workspace
     }
     
     @SceneBuilder public var body: some Scene
@@ -34,8 +37,8 @@ public struct SpatialPendant: Scene
         WindowGroup(id: window_id)
         {
             SpatialPendantView()
-                .environmentObject(pendant_controller)
-                .onDisappear(perform: pendant_controller.dismiss_pendant)
+                .environmentObject(controller)
+                .onDisappear(perform: controller.dismiss_pendant)
         }
         .windowResizability(.contentSize)
     }
@@ -46,6 +49,8 @@ public let SPendantDefaultID = "pendant"
 
 private struct SpatialPendantView: View
 {
+    @EnvironmentObject var controller: PendantController
+    
     var body: some View
     {
         VStack(spacing: 0)
@@ -56,8 +61,6 @@ private struct SpatialPendantView: View
                     .bold()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
-            Spacer()
             
             HStack
             {
@@ -75,7 +78,6 @@ private struct SpatialPendantView: View
                         Image(systemName: "plus")
                             .resizable()
                             .imageScale(.large)
-                            //.scaledToFit()
                             .padding()
                     }
                     .frame(width: 64, height: 64)
@@ -130,7 +132,10 @@ private struct SpatialPendantView: View
         }
         .ornament(attachmentAnchor: .scene(.top))
         {
-            ProgramPicker()
+            if controller.selection == .robot || controller.selection == .tool
+            {
+                ProgramPicker()
+            }
         }
     }
 }
@@ -168,9 +173,7 @@ private struct ProgramPicker: View
             {
                 Image(systemName: "minus")
             }
-            //.disabled(base_workspace.selected_robot.programs_names.count == 0)
             .buttonBorderShape(.circle)
-            //.buttonStyle(.borderless)
             .padding(.horizontal)
             
             Button(action: { add_program_view_presented.toggle() })
@@ -178,7 +181,6 @@ private struct ProgramPicker: View
                 Image(systemName: "plus")
             }
             .buttonBorderShape(.circle)
-            //.buttonStyle(.borderless)
             .popover(isPresented: $add_program_view_presented)
             {
                 AddProgramView(add_program_view_presented: $add_program_view_presented)//, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
@@ -189,7 +191,7 @@ private struct ProgramPicker: View
     }
 }
 
-private struct AddProgramView: View
+struct AddProgramView: View
 {
     @Binding var add_program_view_presented: Bool
     //@Binding var document: Robotic_Complex_WorkspaceDocument
@@ -310,10 +312,42 @@ public class PendantController: ObservableObject
     private var open = {}
     private var dismiss = {}
     
+    //MARK: - Event functions
+    @Published var selection: pendant_selection_type = .none
+    
+    public func view_workspace()
+    {
+        selection = .workspace
+    }
+    
+    public func view_robot(name: String)
+    {
+        selection = .robot
+    }
+    
+    public func view_tool(name: String)
+    {
+        selection = .tool
+    }
+    
+    public func view_dismiss()
+    {
+        selection = .none
+    }
+    
     //MARK: - Data
     @Published var text = String()
 }
 
+public enum pendant_selection_type: Equatable, CaseIterable
+{
+    case none
+    case workspace
+    case robot
+    case tool
+}
+
+//MARK: - Previews
 #Preview
 {
     SpatialPendantView()
