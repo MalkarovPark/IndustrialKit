@@ -810,7 +810,7 @@ public class Tool: WorkspaceObject
         }
     }
     
-    private var codes_names = [String]()
+    public /*private*/ var codes_names = [String]()
     
     //MARK: - Work with file system
     ///Converts tool data to codable tool struct.
