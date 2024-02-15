@@ -264,7 +264,15 @@ private struct ProgramPicker: View
             .buttonBorderShape(.circle)
             .popover(isPresented: $add_program_view_presented)
             {
-                AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $workspace.selected_robot.selected_program_index)
+                switch controller.view_type
+                {
+                case .robot:
+                    AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $workspace.selected_robot.selected_program_index)
+                case .tool:
+                    AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $workspace.selected_tool.selected_program_index)
+                default:
+                    EmptyView()
+                }
             }
         }
         .padding()
