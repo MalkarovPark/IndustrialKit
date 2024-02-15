@@ -18,6 +18,11 @@ import Foundation
 @available(watchOS, unavailable)
 public class PendantController: ObservableObject
 {
+    public init()
+    {
+        
+    }
+    
     //MARK: - Windows management
     private var is_opened = false
     
