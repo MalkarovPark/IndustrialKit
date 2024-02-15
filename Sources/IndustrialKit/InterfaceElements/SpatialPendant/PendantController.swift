@@ -98,10 +98,20 @@ public class PendantController: ObservableObject
         view_type = .workspace
     }
     
+    public func view_robot()
+    {
+        view_type = .robot
+    }
+    
     public func view_robot(name: String)
     {
         workspace.select_robot(name: name)
         view_type = .robot
+    }
+    
+    public func view_tool()
+    {
+        view_type = .tool
     }
     
     public func view_tool(name: String)
