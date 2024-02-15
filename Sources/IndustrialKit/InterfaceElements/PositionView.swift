@@ -134,7 +134,6 @@ public struct PositionControl: View
                             Text("X: " + String(format: "%.0f", location[0]))
                             #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
-                                .frame(width: 128)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -154,7 +153,6 @@ public struct PositionControl: View
                             Text("Y: " + String(format: "%.0f", location[1]))
                             #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
-                                .frame(width: 128)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -174,7 +172,6 @@ public struct PositionControl: View
                             Text("Z: " + String(format: "%.0f", location[2]))
                             #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
-                                .frame(width: 128)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -201,7 +198,6 @@ public struct PositionControl: View
                             Text("R: " + String(format: "%.0f", rotation[0]))
                             #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
-                                .frame(width: 128)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -221,7 +217,6 @@ public struct PositionControl: View
                             Text("P: " + String(format: "%.0f", rotation[1]))
                             #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
-                                .frame(width: 128)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -241,7 +236,6 @@ public struct PositionControl: View
                             Text("W: " + String(format: "%.0f", rotation[2]))
                             #if !os(visionOS)
                                 .foregroundColor(Color.accentColor)
-                                .frame(width: 128)
                             #endif
                         }
                         .buttonStyle(.borderless)
@@ -268,7 +262,7 @@ public struct PositionControl: View
 #if !os(visionOS)
 let button_width = 64.0
 #else
-let button_width = 80.0
+let button_width = 96.0
 #endif
 
 struct PositionParameterView: View
