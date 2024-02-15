@@ -89,9 +89,9 @@ public class PendantController: ObservableObject
     private var dismiss = {}
     
     //MARK: - Event functions
-    @Published var view_type: pendant_selection_type? //pendant_view_type
+    @Published public var view_type: pendant_selection_type? //pendant_view_type
     
-    @Published var workspace = Workspace()
+    @Published public var workspace = Workspace()
     
     public func view_workspace()
     {
