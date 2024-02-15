@@ -38,6 +38,7 @@ public struct SpatialPendant: Scene
         {
             SpatialPendantView()
                 .environmentObject(controller)
+                .environmentObject(workspace)
                 .onDisappear(perform: controller.dismiss_pendant)
         }
         .windowResizability(.contentSize)
@@ -50,43 +51,75 @@ public let SPendantDefaultID = "pendant"
 private struct SpatialPendantView: View
 {
     @EnvironmentObject var controller: PendantController
+    @EnvironmentObject var workspace: Workspace
+    
+    @State private var detail_view_presented = false
     
     var body: some View
     {
         VStack(spacing: 0)
         {
-            HStack
+            VStack(spacing: 0)
             {
-                Text("Program")
-                    .bold()
+                Spacer(minLength: 72)
+                
+                switch controller.view_type
+                {
+                case .workspace:
+                    Text("Worksapce program")
+                        .bold()
+                        .padding()
+                case .robot:
+                    RobotProgramView()
+                    //Spacer(minLength: 64)
+                case .tool:
+                    ToolProgramView(tool: $workspace.selected_tool)
+                default:
+                    EmptyView()
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             HStack
             {
-                Text("Control")
-                    .bold()
+                switch controller.view_type
+                {
+                case .workspace:
+                    Text("Workspace")
+                        .bold()
+                case .robot:
+                    RobotControl()
+                case .tool:
+                    ToolControl()
+                default:
+                    Text("Control")
+                        .font(.system(size: 48, design: .rounded))
+                        .foregroundStyle(.quaternary)
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: 280)
             .background(.thinMaterial)
-            .overlay(alignment: .bottomTrailing)
+            .ornament(attachmentAnchor: .scene(.bottom)) //.overlay(alignment: .bottomTrailing)
             {
-                Button(action: {})
+                if controller.add_item_button_avaliable
                 {
-                    ZStack
+                    Button(action: add_item)
                     {
-                        Image(systemName: "plus")
-                            .resizable()
-                            .imageScale(.large)
-                            .padding()
+                        ZStack
+                        {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .imageScale(.large)
+                                .padding()
+                        }
+                        .frame(width: 64, height: 64)
                     }
-                    .frame(width: 64, height: 64)
+                    .buttonStyle(.borderless)
+                    .buttonBorderShape(.circle)
+                    .glassBackgroundEffect()
+                    .frame(depth: 24)
+                    .padding(32)
                 }
-                .buttonStyle(.borderless)
-                .buttonBorderShape(.circle)
-                .glassBackgroundEffect()
-                .frame(depth: 24)
-                .padding(32)
             }
         }
         .frame(width: 512, height: 828)
@@ -99,7 +132,7 @@ private struct SpatialPendantView: View
                     ZStack
                     {
                         Rectangle()
-                            .foregroundStyle(.red)
+                            .foregroundStyle(controller.view_type != nil ? .red : .secondary)
                             .glassBackgroundEffect()
                         Image(systemName: "stop")
                             .resizable()
@@ -130,21 +163,69 @@ private struct SpatialPendantView: View
             }
             .glassBackgroundEffect()
         }
+        .disabled(controller.view_type == nil)
         .ornament(attachmentAnchor: .scene(.top))
         {
-            if controller.selection == .robot || controller.selection == .tool
+            if controller.view_type == .robot
             {
-                ProgramPicker()
+                ProgramPicker(programs_names: workspace.selected_robot.programs_names, selected_program_index: $workspace.selected_robot.selected_program_index)
+            }
+            else if controller.view_type == .tool
+            {
+                ProgramPicker(programs_names: workspace.selected_tool.programs_names, selected_program_index: $workspace.selected_tool.selected_program_index)
             }
         }
+        .sheet(isPresented: $detail_view_presented)
+        {
+            DetailView(is_presented: $detail_view_presented)
+        }
+    }
+    
+    private func add_item()
+    {
+        switch controller.view_type
+        {
+        case .workspace:
+            add_workspace_item()
+        case .robot:
+            add_robot_item()
+        case .tool:
+            add_tool_item()
+        default:
+            break
+        }
+    }
+    
+    private func add_workspace_item()
+    {
+        
+    }
+    
+    private func add_robot_item()
+    {
+        workspace.selected_robot.selected_program.add_point(PositionPoint(x: workspace.selected_robot.pointer_location[0], y: workspace.selected_robot.pointer_location[1], z: workspace.selected_robot.pointer_location[2], r: workspace.selected_robot.pointer_rotation[0], p: workspace.selected_robot.pointer_rotation[1], w: workspace.selected_robot.pointer_rotation[2]))
+        
+        workspace.update_view()
+        //workspace.selected_robot.selected_program.add_point(<#T##point: PositionPoint##PositionPoint#>)
+    }
+    
+    private func add_tool_item()
+    {
+        workspace.selected_tool.selected_program.add_code(OperationCode(controller.new_opcode_value))
+        workspace.update_view()
     }
 }
 
+//MARK: - Program Picker
 private struct ProgramPicker: View
 {
     @State private var add_program_view_presented = false
-    @State private var programs_names = ["Circle", "Square"]
-    @State private var selected_program_index = 0
+    
+    let programs_names: [String]
+    @Binding var selected_program_index: Int
+    
+    @EnvironmentObject var controller: PendantController
+    @EnvironmentObject var workspace: Workspace
     
     var body: some View
     {
@@ -165,11 +246,11 @@ private struct ProgramPicker: View
                 }
             }
             .pickerStyle(.menu)
-            //.disabled(base_workspace.selected_robot.programs_names.count == 0)
+            .disabled(programs_names.count == 0)
             .frame(maxWidth: .infinity)
             .buttonStyle(.borderedProminent)
             
-            Button(action: {})
+            Button(action: delete_program)
             {
                 Image(systemName: "minus")
             }
@@ -183,24 +264,75 @@ private struct ProgramPicker: View
             .buttonBorderShape(.circle)
             .popover(isPresented: $add_program_view_presented)
             {
-                AddProgramView(add_program_view_presented: $add_program_view_presented)//, document: $document, selected_program_index: $base_workspace.selected_robot.selected_program_index)
+                AddProgramView(add_program_view_presented: $add_program_view_presented, selected_program_index: $workspace.selected_robot.selected_program_index)
             }
         }
         .padding()
         .glassBackgroundEffect()
     }
+    
+    private func delete_program()
+    {
+        switch controller.view_type
+        {
+        case .robot:
+            delete_positions_program()
+        case .tool:
+            delete_operations_program()
+        default:
+            break
+        }
+    }
+    
+    private func delete_positions_program()
+    {
+        if workspace.selected_robot.programs_names.count > 0
+        {
+            let current_spi = workspace.selected_robot.selected_program_index
+            workspace.selected_robot.delete_program(index: current_spi)
+            
+            if workspace.selected_robot.programs_names.count > 1 && current_spi > 0
+            {
+                workspace.selected_robot.selected_program_index = current_spi - 1
+            }
+            else
+            {
+                workspace.selected_robot.selected_program_index = 0
+            }
+        }
+    }
+    
+    private func delete_operations_program()
+    {
+        if programs_names.count > 0
+        {
+            let current_spi = selected_program_index
+            workspace.selected_tool.delete_program(index: current_spi)
+            
+            if programs_names.count > 1 && current_spi > 0
+            {
+                selected_program_index = current_spi - 1
+            }
+            else
+            {
+                selected_program_index = 0
+            }
+            
+            //update_data()
+        }
+    }
 }
 
-struct AddProgramView: View
+//MARK: - Add Program View
+private struct AddProgramView: View
 {
     @Binding var add_program_view_presented: Bool
-    //@Binding var document: Robotic_Complex_WorkspaceDocument
-    //@Binding var selected_program_index: Int
+    @Binding var selected_program_index: Int
     
     @State var new_program_name = ""
     
-    //@EnvironmentObject var base_workspace: Workspace
-    //@EnvironmentObject var app_state: AppState
+    @EnvironmentObject var controller: PendantController
+    @EnvironmentObject var workspace: Workspace
     
     var body: some View
     {
@@ -209,31 +341,47 @@ struct AddProgramView: View
             HStack(spacing: 12)
             {
                 TextField("Name", text: $new_program_name)
-                    .frame(minWidth: 128, maxWidth: 256)
-                #if os(iOS) || os(visionOS)
-                    .frame(idealWidth: 256)
+                    .frame(width: 256)
                     .textFieldStyle(.roundedBorder)
-                #endif
                 
                 Button("Add")
                 {
-                    if new_program_name == ""
-                    {
-                        new_program_name = "None"
-                    }
-                    
-                    /*base_workspace.selected_robot.add_program(PositionsProgram(name: new_program_name))
-                    selected_program_index = base_workspace.selected_robot.programs_names.count - 1
-                    
-                    document.preset.robots = base_workspace.file_data().robots
-                    app_state.get_scene_image = true
-                    add_program_view_presented.toggle()*/
+                    add_program(controller.view_type!)
                 }
                 .fixedSize()
                 .keyboardShortcut(.defaultAction)
             }
             .padding(12)
         }
+    }
+    
+    func add_program(_ type: pendant_selection_type)
+    {
+        switch type
+        {
+        case .robot:
+            if new_program_name == ""
+            {
+                new_program_name = "None"
+            }
+            
+            workspace.selected_robot.add_program(PositionsProgram(name: new_program_name))
+            selected_program_index = workspace.selected_robot.programs_names.count - 1
+        case .tool:
+            if new_program_name == ""
+            {
+                new_program_name = "None"
+            }
+            
+            workspace.selected_tool.add_program(OperationsProgram(name: new_program_name))
+            selected_program_index = workspace.selected_tool.programs_names.count - 1
+        default:
+            break
+        }
+        
+        //update_data()
+        workspace.update_view()
+        add_program_view_presented.toggle()
     }
 }
 

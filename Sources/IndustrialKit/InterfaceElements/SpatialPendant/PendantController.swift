@@ -84,35 +84,64 @@ public class PendantController: ObservableObject
     private var dismiss = {}
     
     //MARK: - Event functions
-    @Published var selection: pendant_selection_type = .none
+    @Published var view_type: pendant_selection_type? //pendant_view_type
+    
+    @Published var workspace = Workspace()
     
     public func view_workspace()
     {
-        selection = .workspace
+        view_type = .workspace
     }
     
     public func view_robot(name: String)
     {
-        selection = .robot
+        workspace.select_robot(name: name)
+        view_type = .robot
     }
     
     public func view_tool(name: String)
     {
-        selection = .tool
+        workspace.select_tool(name: name)
+        view_type = .tool
     }
     
     public func view_dismiss()
     {
-        selection = .none
+        if workspace.any_object_selected
+        {
+            workspace.deselect_object()
+        }
+        
+        view_type = nil
     }
     
-    //MARK: - Data
-    @Published var text = String()
+    //MARK: - UI functions
+    public var add_item_button_avaliable: Bool
+    {
+        switch view_type
+        {
+        case .workspace:
+            return true
+        case .robot:
+            return workspace.selected_robot.programs_count > 0
+        case .tool:
+            return workspace.selected_tool.programs_count > 0
+        case nil:
+            return false
+        }
+    }
+    
+    //MARK: - New data
+    @Published var new_opcode_value = Int()
+    
+    //MARK: - Document data
+    @Published var update_workspace_in_document = false
+    @Published var update_robot_in_document = false
+    @Published var update_tool_in_document = false
 }
 
 public enum pendant_selection_type: Equatable, CaseIterable
 {
-    case none
     case workspace
     case robot
     case tool
