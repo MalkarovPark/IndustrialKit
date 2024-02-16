@@ -8,6 +8,18 @@
 #if os(visionOS)
 import SwiftUI
 
+//MARK: - Workspace
+internal struct WorkspaceControl: View
+{
+    @EnvironmentObject var controller: PendantController
+    @EnvironmentObject var workspace: Workspace
+    
+    var body: some View
+    {
+        ElementControl(new_program_element: $controller.new_program_element)
+    }
+}
+
 //MARK: - Robot
 internal struct RobotControl: View
 {

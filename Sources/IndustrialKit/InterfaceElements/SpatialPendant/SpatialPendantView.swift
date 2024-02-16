@@ -82,8 +82,7 @@ private struct SpatialPendantView: View
                 switch controller.view_type
                 {
                 case .workspace:
-                    Text("Workspace")
-                        .bold()
+                    WorkspaceControl()
                 case .robot:
                     RobotControl()
                 case .tool:
