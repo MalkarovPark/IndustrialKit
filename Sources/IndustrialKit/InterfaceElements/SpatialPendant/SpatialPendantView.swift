@@ -193,7 +193,14 @@ private struct SpatialPendantView: View
     
     private func add_workspace_item()
     {
+        workspace.update_view()
+        //let new_program_element = app_state.new_program_element
         
+        //Add new program element and save to file
+        workspace.elements.append(element_from_struct(controller.new_program_element.file_info))
+        workspace.elements_check()
+        
+        //document.preset.elements = workspace.file_data().elements
     }
     
     private func add_robot_item()
