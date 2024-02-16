@@ -241,10 +241,10 @@ private struct SpatialPendantView: View
     private func start_pause_tool()
     {
         workspace.selected_tool.start_pause_performing()
-        /*DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
         {
             workspace.update_view()
-        }*/
+        }
     }
     
     private func reset_performing()
@@ -265,7 +265,7 @@ private struct SpatialPendantView: View
     private func reset_workspace()
     {
         workspace.reset_performing()
-        //workspace.update_view()
+        workspace.update_view()
     }
     
     private func reset_robot()
@@ -276,7 +276,7 @@ private struct SpatialPendantView: View
     private func reset_tool()
     {
         workspace.selected_tool.reset_performing()
-        //workspace.update_view()
+        workspace.update_view()
     }
 }
 
