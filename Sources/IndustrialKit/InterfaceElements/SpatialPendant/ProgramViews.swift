@@ -7,6 +7,421 @@
 
 #if os(visionOS)
 import SwiftUI
+import UniformTypeIdentifiers
+
+//MARK: - Workspace
+internal struct WorkspaceProgramView: View
+{
+    @State private var program_columns = Array(repeating: GridItem(.flexible()), count: 1)
+    @State private var dragged_element: WorkspaceProgramElement?
+    @State private var add_element_view_presented = false
+    
+    @EnvironmentObject var workspace: Workspace
+    
+    var body: some View
+    {
+        ScrollView
+        {
+            LazyVGrid(columns: program_columns)
+            {
+                ForEach(workspace.elements)
+                { element in
+                    ProgramElementItemView(elements: $workspace.elements, element: element, on_delete: remove_elements)
+                    .onDrag({
+                        self.dragged_element = element
+                        return NSItemProvider(object: element.id.uuidString as NSItemProviderWriting)
+                    }, preview: {
+                        ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color)
+                    })
+                    .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $workspace.elements, dragged_element: $dragged_element, workspace_elements: workspace.file_data().elements, element: element))
+                }
+                .padding(4)
+                
+                Spacer(minLength: 64)
+            }
+            .padding()
+            .disabled(workspace.performed)
+        }
+        .animation(.spring(), value: workspace.elements)
+    }
+    
+    func remove_elements(at offsets: IndexSet) //Remove program element function
+    {
+        withAnimation
+        {
+            workspace.elements.remove(atOffsets: offsets)
+        }
+        
+        //document.preset.elements = workspace.file_data().elements
+    }
+}
+
+internal struct WorkspaceDropDelegate : DropDelegate
+{
+    @Binding var elements : [WorkspaceProgramElement]
+    @Binding var dragged_element : WorkspaceProgramElement?
+    
+    @State var workspace_elements: [WorkspaceProgramElementStruct]
+    
+    let element: WorkspaceProgramElement
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        //update_data()
+        return true
+    }
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragged_element = self.dragged_element else
+        {
+            return
+        }
+        
+        if dragged_element != element
+        {
+            let from = elements.firstIndex(of: dragged_element)!
+            let to = elements.firstIndex(of: element)!
+            withAnimation(.default)
+            {
+                self.elements.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            }
+        }
+    }
+}
+
+internal struct ProgramElementItemView: View
+{
+    @Binding var elements: [WorkspaceProgramElement]
+    
+    @State var element: WorkspaceProgramElement
+    @State var element_view_presented = false
+    @State private var is_current = false
+    
+    @State private var is_deliting = false
+    
+    @EnvironmentObject var workspace: Workspace
+    
+    let on_delete: (IndexSet) -> ()
+    
+    var body: some View
+    {
+        ZStack
+        {
+            ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color, is_current: workspace.is_current_element(element: element))
+                .onTapGesture
+            {
+                element_view_presented = true
+            }
+            
+            if !is_deliting && !(element is CleanerModifierElement)
+            {
+                Rectangle()
+                    .foregroundStyle(.clear)
+                    .popover(isPresented: $element_view_presented,
+                             arrowEdge: .trailing)
+                    {
+                        EmptyView()
+                        //ElementView(element: $element, on_update: update_program_element)
+                    }
+            }
+        }
+        .disabled(is_deliting)
+        .contextMenu
+        {
+            Button(action: duplicate_program_element)
+            {
+                Label("Duplicate", systemImage: "square.on.square")
+            }
+            Button(role: .destructive, action: {
+                delete_program_element()
+            })
+            {
+                Label("Delete", systemImage: "xmark")
+            }
+        }
+    }
+    
+    //MARK: Program elements manage functions
+    private func update_program_element()
+    {
+        workspace.elements_check()
+        //document.preset.elements = workspace.file_data().elements
+    }
+    
+    private func duplicate_program_element()
+    {
+        let new_program_element_data = element.file_info
+        var new_program_element = WorkspaceProgramElement()
+        
+        switch new_program_element_data.identifier
+        {
+        case .robot_performer:
+            new_program_element = RobotPerformerElement(element_struct: new_program_element_data)
+        case .tool_performer:
+            new_program_element = ToolPerformerElement(element_struct: new_program_element_data)
+        case .mover_modifier:
+            new_program_element = MoverModifierElement(element_struct: new_program_element_data)
+        case .writer_modifier:
+            new_program_element = WriterModifierElement(element_struct: new_program_element_data)
+        case .math_modifier:
+            new_program_element = MathModifierElement(element_struct: new_program_element_data)
+        case .changer_modifier:
+            new_program_element = ChangerModifierElement(element_struct: new_program_element_data)
+        case .observer_modifier:
+            new_program_element = ObserverModifierElement(element_struct: new_program_element_data)
+        case .cleaner_modifier:
+            new_program_element = CleanerModifierElement(element_struct: new_program_element_data)
+        case .jump_logic:
+            new_program_element = JumpLogicElement(element_struct: new_program_element_data)
+        case .comparator_logic:
+            new_program_element = ComparatorLogicElement(element_struct: new_program_element_data)
+        case .mark_logic:
+            new_program_element = MarkLogicElement(element_struct: new_program_element_data)
+        case .none:
+            break
+        }
+        
+        workspace.elements.append(new_program_element)
+        
+        workspace.elements_check()
+        //document.preset.elements = workspace.file_data().elements
+    }
+    
+    private func delete_program_element()
+    {
+        is_deliting = true
+        if let index = elements.firstIndex(of: element)
+        {
+            self.on_delete(IndexSet(integer: index))
+            workspace.elements_check()
+        }
+        
+        workspace.update_view()
+        
+        element_view_presented.toggle()
+    }
+}
+
+internal struct ElementControl: View
+{
+    @Binding var new_program_element: WorkspaceProgramElement
+    
+    @State private var element_type: ProgramElementType = .perofrmer
+    @State private var performer_type: PerformerType = .robot
+    @State private var modifier_type: ModifierType = .mover
+    @State private var logic_type: LogicType = .comparator
+    
+    @EnvironmentObject var controller: PendantController
+    
+    var body: some View
+    {
+        HStack
+        {
+            //MARK: Type picker
+            Picker("Type", selection: $element_type)
+            {
+                ForEach(ProgramElementType.allCases, id: \.self)
+                { type in
+                    Text(type.rawValue).tag(type)
+                }
+                .onChange(of: element_type)
+                { _, _ in
+                    build_element()
+                }
+            }
+            .pickerStyle(.wheel)
+            .frame(width: 192)
+            .labelsHidden()
+            
+            //MARK: Subtype pickers cases
+            HStack
+            {
+                switch element_type
+                {
+                case .perofrmer:
+                    Picker("Type", selection: $performer_type)
+                    {
+                        ForEach(PerformerType.allCases, id: \.self)
+                        { type in
+                            Text(type.rawValue).tag(type)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(maxWidth: .infinity)
+                    .buttonStyle(.bordered)
+                    .onChange(of: performer_type) { _, _ in
+                        build_element()
+                    }
+                case .modifier:
+                    Picker("Type", selection: $modifier_type)
+                    {
+                        ForEach(ModifierType.allCases, id: \.self)
+                        { type in
+                            Text(type.rawValue).tag(type)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(maxWidth: .infinity)
+                    .buttonStyle(.bordered)
+                    .onChange(of: modifier_type) { _, _ in
+                        build_element()
+                    }
+                case .logic:
+                    Picker("Type", selection: $logic_type)
+                    {
+                        ForEach(LogicType.allCases, id: \.self)
+                        { type in
+                            Text(type.rawValue).tag(type)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(maxWidth: .infinity)
+                    .buttonStyle(.bordered)
+                    .onChange(of: logic_type) { _, _ in
+                        build_element()
+                    }
+                }
+            }
+            .labelsHidden()
+            .frame(width: 192)
+            
+            ZStack
+            {
+                controller.new_program_element.image
+                    .foregroundColor(.white)
+                    .imageScale(.large)
+                    .animation(.easeInOut(duration: 0.2), value: controller.new_program_element.image)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(controller.new_program_element.color)
+            .opacity(0.8)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .padding(16)
+            .animation(.easeInOut(duration: 0.2), value: controller.new_program_element.color)
+        }
+        .padding()
+        .onAppear(perform: get_parameters)
+    }
+    
+    private func get_parameters()
+    {
+        switch new_program_element.file_info.identifier
+        {
+        case .robot_performer:
+            element_type = .perofrmer
+            performer_type = .robot
+        case .tool_performer:
+            element_type = .perofrmer
+            performer_type = .tool
+        case .mover_modifier:
+            element_type = .modifier
+            modifier_type = .mover
+        case .writer_modifier:
+            element_type = .modifier
+            modifier_type = .writer
+        case .math_modifier:
+            element_type = .modifier
+            modifier_type = .math
+        case .changer_modifier:
+            element_type = .modifier
+            modifier_type = .changer
+        case .observer_modifier:
+            element_type = .modifier
+            modifier_type = .observer
+        case .cleaner_modifier:
+            element_type = .modifier
+            modifier_type = .cleaner
+        case .jump_logic:
+            element_type = .logic
+            logic_type = .jump
+        case .comparator_logic:
+            element_type = .logic
+            logic_type = .comparator
+        case .mark_logic:
+            element_type = .logic
+            logic_type = .mark
+        case .none:
+            break
+        }
+    }
+    
+    private func build_element()
+    {
+        switch element_type
+        {
+        case .perofrmer:
+            switch performer_type
+            {
+            case .robot:
+                new_program_element = RobotPerformerElement()
+            case .tool:
+                new_program_element = ToolPerformerElement()
+            }
+        case .modifier:
+            switch modifier_type
+            {
+            case .mover:
+                new_program_element = MoverModifierElement()
+            case .writer:
+                new_program_element = WriterModifierElement()
+            case .math:
+                new_program_element = MathModifierElement()
+            case .changer:
+                new_program_element = ChangerModifierElement()
+            case .observer:
+                new_program_element = ObserverModifierElement()
+            case .cleaner:
+                new_program_element = CleanerModifierElement()
+            }
+        case .logic:
+            switch logic_type
+            {
+            case .jump:
+                new_program_element = JumpLogicElement()
+            case .comparator:
+                new_program_element = ComparatorLogicElement()
+            case .mark:
+                new_program_element = MarkLogicElement()
+            }
+        }
+    }
+}
+
+//MARK: - Type enums
+///A program element type enum.
+public enum ProgramElementType: String, Codable, Equatable, CaseIterable
+{
+    case perofrmer = "Performer"
+    case modifier = "Modifier"
+    case logic = "Logic"
+}
+
+///A performer program element type enum.
+public enum PerformerType: String, Codable, Equatable, CaseIterable
+{
+    case robot = "Robot"
+    case tool = "Tool"
+}
+
+///A modifier program element type enum.
+public enum ModifierType: String, Codable, Equatable, CaseIterable
+{
+    case mover = "Mover"
+    case writer = "Writer"
+    case math = "Math"
+    case changer = "Changer"
+    case observer = "Observer"
+    case cleaner = "Cleaner"
+}
+
+///A logic program element type enum.
+public enum LogicType: String, Codable, Equatable, CaseIterable
+{
+    case jump = "Jump"
+    case comparator = "Comparator"
+    case mark = "Mark"
+}
 
 //MARK: - Robot
 internal struct RobotProgramView: View

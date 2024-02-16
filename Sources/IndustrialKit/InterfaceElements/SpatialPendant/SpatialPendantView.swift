@@ -66,12 +66,9 @@ private struct SpatialPendantView: View
                 switch controller.view_type
                 {
                 case .workspace:
-                    Text("Worksapce program")
-                        .bold()
-                        .padding()
+                    WorkspaceProgramView()
                 case .robot:
                     RobotProgramView()
-                    //Spacer(minLength: 64)
                 case .tool:
                     ToolProgramView(tool: $workspace.selected_tool)
                 default:
