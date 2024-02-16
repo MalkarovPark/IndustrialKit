@@ -89,7 +89,7 @@ internal struct WriterElementView: View
             HStack(spacing: 8)
             {
                 Text("Write")
-                    .frame(width: 34)
+                    .frame(width: 40)
                 TextField("0", value: $value, format: .number)
                     .textFieldStyle(.roundedBorder)
                 #if os(iOS) || os(visionOS)
