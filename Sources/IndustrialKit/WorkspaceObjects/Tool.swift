@@ -499,11 +499,14 @@ public class Tool: WorkspaceObject
     ///Resets tool operation performation.
     public func reset_performing()
     {
-        performed = false
-        performing_completed = false
-        selected_code_index = 0
-        
-        clear_chart_data()
+        if performed
+        {
+            performed = false
+            performing_completed = false
+            selected_code_index = 0
+            
+            clear_chart_data()
+        }
     }
     
     //MARK: - Connection functions

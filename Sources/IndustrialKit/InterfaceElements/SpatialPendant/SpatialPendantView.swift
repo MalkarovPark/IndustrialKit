@@ -137,7 +137,6 @@ private struct SpatialPendantView: View
                         Image(systemName: "stop")
                             .resizable()
                             .frame(width: 24, height: 24)
-                            //.scaledToFit()
                             .padding()
                     }
                     .frame(width: 64, height: 64)
@@ -206,13 +205,78 @@ private struct SpatialPendantView: View
         workspace.selected_robot.selected_program.add_point(PositionPoint(x: workspace.selected_robot.pointer_location[0], y: workspace.selected_robot.pointer_location[1], z: workspace.selected_robot.pointer_location[2], r: workspace.selected_robot.pointer_rotation[0], p: workspace.selected_robot.pointer_rotation[1], w: workspace.selected_robot.pointer_rotation[2]))
         
         workspace.update_view()
-        //workspace.selected_robot.selected_program.add_point(<#T##point: PositionPoint##PositionPoint#>)
     }
     
     private func add_tool_item()
     {
         workspace.selected_tool.selected_program.add_code(OperationCode(controller.new_opcode_value))
         workspace.update_view()
+    }
+    
+    private func start_pause_performing()
+    {
+        switch controller.view_type
+        {
+        case .workspace:
+            start_pause_workspace()
+        case .robot:
+            start_pause_robot()
+        case .tool:
+            start_pause_tool()
+        default:
+            break
+        }
+    }
+    
+    private func start_pause_workspace()
+    {
+        workspace.start_pause_performing()
+    }
+    
+    private func start_pause_robot()
+    {
+        workspace.selected_robot.start_pause_moving()
+    }
+    
+    private func start_pause_tool()
+    {
+        workspace.selected_tool.start_pause_performing()
+        /*DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+        {
+            workspace.update_view()
+        }*/
+    }
+    
+    private func reset_performing()
+    {
+        switch controller.view_type
+        {
+        case .workspace:
+            reset_workspace()
+        case .robot:
+            reset_robot()
+        case .tool:
+            reset_tool()
+        default:
+            break
+        }
+    }
+    
+    private func reset_workspace()
+    {
+        workspace.reset_performing()
+        //workspace.update_view()
+    }
+    
+    private func reset_robot()
+    {
+        workspace.selected_robot.reset_moving()
+    }
+    
+    private func reset_tool()
+    {
+        workspace.selected_tool.reset_performing()
+        //workspace.update_view()
     }
 }
 

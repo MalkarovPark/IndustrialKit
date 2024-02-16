@@ -1853,20 +1853,23 @@ public class Workspace: ObservableObject
     ///Resets workspace performing.
     public func reset_performing()
     {
-        pause_performing()
-        
-        switch selected_object_type
+        if performed
         {
-        case .robot:
-            selected_robot.reset_moving()
-        case .tool:
-            selected_tool.reset_performing()
-        default:
-            break
+            pause_performing()
+            
+            switch selected_object_type
+            {
+            case .robot:
+                selected_robot.reset_moving()
+            case .tool:
+                selected_tool.reset_performing()
+            default:
+                break
+            }
+            
+            performed = false //Enable workspace program edit
+            selected_element_index = 0 //Select first program element
         }
-        
-        performed = false //Enable workspace program edit
-        selected_element_index = 0 //Select first program element
     }
     
     ///Prepare workspace program to perform.
