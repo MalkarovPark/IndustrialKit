@@ -121,7 +121,13 @@ internal struct ProgramElementItemView: View
                     //.popover(isPresented: $element_view_presented, arrowEdge: .trailing)
                     .sheet(isPresented: $element_view_presented)
                     {
-                        ElementView(element: $element, on_update: update_program_element)
+                        VStack(spacing: 0)
+                        {
+                            Spacer(minLength: 72)
+                            
+                            ElementView(element: $element, on_update: update_program_element)
+                        }
+                        .modifier(ViewCloseButton(is_presented: $element_view_presented))
                     }
             }
         }
