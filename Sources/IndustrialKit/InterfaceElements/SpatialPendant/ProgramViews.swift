@@ -118,8 +118,8 @@ internal struct ProgramElementItemView: View
             {
                 Rectangle()
                     .foregroundStyle(.clear)
-                    .popover(isPresented: $element_view_presented,
-                             arrowEdge: .trailing)
+                    //.popover(isPresented: $element_view_presented, arrowEdge: .trailing)
+                    .sheet(isPresented: $element_view_presented)
                     {
                         ElementView(element: $element, on_update: update_program_element)
                     }
