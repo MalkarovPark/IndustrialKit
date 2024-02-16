@@ -127,7 +127,7 @@ private struct SpatialPendantView: View
         {
             VStack(spacing: 0)
             {
-                Button(action: {})
+                Button(action: reset_performing)
                 {
                     ZStack
                     {
@@ -145,7 +145,7 @@ private struct SpatialPendantView: View
                 .buttonBorderShape(.circle)
                 .padding([.horizontal, .top])
                 
-                Button(action: {})
+                Button(action: start_pause_performing)
                 {
                     ZStack
                     {
