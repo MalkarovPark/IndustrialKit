@@ -54,7 +54,7 @@ internal struct ToolControl: View
             }
             .disabled(workspace.selected_tool.codes_count == 0)
             .pickerStyle(.wheel)
-            .frame(maxWidth: 256)
+            .frame(maxWidth: 400)
         }
     }
 }
