@@ -121,8 +121,7 @@ internal struct ProgramElementItemView: View
                     .popover(isPresented: $element_view_presented,
                              arrowEdge: .trailing)
                     {
-                        EmptyView()
-                        //ElementView(element: $element, on_update: update_program_element)
+                        ElementView(element: $element, on_update: update_program_element)
                     }
             }
         }
@@ -200,6 +199,48 @@ internal struct ProgramElementItemView: View
         workspace.update_view()
         
         element_view_presented.toggle()
+    }
+}
+
+internal struct ElementView: View
+{
+    @Binding var element: WorkspaceProgramElement
+    
+    let on_update: () -> ()
+    
+    var body: some View
+    {
+        ZStack
+        {
+            switch element
+            {
+            case is RobotPerformerElement:
+                RobotPerformerElementView(element: $element, on_update: on_update)
+            case is ToolPerformerElement:
+                ToolPerformerElementView(element: $element, on_update: on_update)
+            case is MoverModifierElement:
+                MoverElementView(element: $element, on_update: on_update)
+            case is WriterModifierElement:
+                WriterElementView(element: $element, on_update: on_update)
+            case is MathModifierElement:
+                MathElementView(element: $element, on_update: on_update)
+            case is ChangerModifierElement:
+                ChangerElementView(element: $element, on_update: on_update)
+            case is ObserverModifierElement:
+                ObserverElementView(element: $element, on_update: on_update)
+            case is CleanerModifierElement:
+                EmptyView()
+            case is JumpLogicElement:
+                JumpElementView(element: $element, on_update: on_update)
+            case is ComparatorLogicElement:
+                ComparatorElementView(element: $element, on_update: on_update)
+            case is MarkLogicElement:
+                MarkLogicElementView(element: $element, on_update: on_update)
+            default:
+                EmptyView()
+            }
+        }
+        .padding()
     }
 }
 
@@ -388,7 +429,32 @@ internal struct ElementControl: View
     }
 }
 
-//MARK: - Type enums
+//MARK: View modifiers
+internal struct ListBorderer: ViewModifier
+{
+    public func body(content: Content) -> some View
+    {
+        content
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+internal struct PickerNamer: ViewModifier
+{
+    var name: String
+    
+    public func body(content: Content) -> some View
+    {
+        HStack(spacing: 0)
+        {
+            Text(name)
+                .padding(.trailing)
+            content
+        }
+    }
+}
+
+//MARK: Type enums
 ///A program element type enum.
 public enum ProgramElementType: String, Codable, Equatable, CaseIterable
 {
@@ -422,6 +488,29 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
     case comparator = "Comparator"
     case mark = "Mark"
 }
+
+private func colors_by_seed(seed: Int) -> [Color]
+{
+    var colors = [Color]()
+
+    srand48(seed)
+    
+    for _ in 0..<256
+    {
+        var color = [Double]()
+        for _ in 0..<3
+        {
+            let random_number = Double(drand48() * Double(128) + 64)
+            
+            color.append(random_number)
+        }
+        colors.append(Color(red: color[0] / 255, green: color[1] / 255, blue: color[2] / 255))
+    }
+
+    return colors
+}
+
+let registers_colors = colors_by_seed(seed: 5433)
 
 //MARK: - Robot
 internal struct RobotProgramView: View

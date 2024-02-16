@@ -384,8 +384,6 @@ public struct ElementCardView: View
     let color: Color
     let is_current: Bool
     
-    @EnvironmentObject var base_workspace: Workspace
-    
     public init(title: String, info: String, image: Image, color: Color, is_current: Bool)
     {
         self.color = color
