@@ -16,7 +16,10 @@ internal struct WorkspaceProgramView: View
     @State private var dragged_element: WorkspaceProgramElement?
     @State private var add_element_view_presented = false
     
+    @State private var appeared = false
+    
     @EnvironmentObject var workspace: Workspace
+    @EnvironmentObject var controller: PendantController
     
     var body: some View
     {
@@ -36,6 +39,17 @@ internal struct WorkspaceProgramView: View
                     .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $workspace.elements, dragged_element: $dragged_element, workspace_elements: workspace.file_data().elements, element: element))
                 }
                 .padding(4)
+                .onChange(of: workspace.elements)
+                {_, _ in
+                    if appeared
+                    {
+                        controller.elements_document_data_update.toggle()
+                    }
+                }
+                .onAppear
+                {
+                    appeared = true
+                }
                 
                 Spacer(minLength: 64)
             }
@@ -63,13 +77,10 @@ internal struct WorkspaceDropDelegate : DropDelegate
     
     @State var workspace_elements: [WorkspaceProgramElementStruct]
     
-    @EnvironmentObject var controller: PendantController
-    
     let element: WorkspaceProgramElement
     
     func performDrop(info: DropInfo) -> Bool
     {
-        controller.elements_document_data_update.toggle()
         return true
     }
     
