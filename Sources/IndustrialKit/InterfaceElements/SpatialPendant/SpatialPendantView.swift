@@ -200,7 +200,7 @@ private struct SpatialPendantView: View
         workspace.elements.append(element_from_struct(controller.new_program_element.file_info))
         workspace.elements_check()
         
-        //document.preset.elements = workspace.file_data().elements
+        controller.elements_document_data_update.toggle()
     }
     
     private func add_robot_item()
@@ -208,12 +208,15 @@ private struct SpatialPendantView: View
         workspace.selected_robot.selected_program.add_point(PositionPoint(x: workspace.selected_robot.pointer_location[0], y: workspace.selected_robot.pointer_location[1], z: workspace.selected_robot.pointer_location[2], r: workspace.selected_robot.pointer_rotation[0], p: workspace.selected_robot.pointer_rotation[1], w: workspace.selected_robot.pointer_rotation[2]))
         
         workspace.update_view()
+        controller.robots_document_data_update.toggle()
     }
     
     private func add_tool_item()
     {
         workspace.selected_tool.selected_program.add_code(OperationCode(controller.new_opcode_value))
+        
         workspace.update_view()
+        controller.tools_document_data_update.toggle()
     }
     
     private func start_pause_performing()
@@ -444,6 +447,8 @@ private struct AddProgramView: View
             
             workspace.selected_robot.add_program(PositionsProgram(name: new_program_name))
             selected_program_index = workspace.selected_robot.programs_names.count - 1
+            
+            controller.robots_document_data_update.toggle()
         case .tool:
             if new_program_name == ""
             {
@@ -452,11 +457,11 @@ private struct AddProgramView: View
             
             workspace.selected_tool.add_program(OperationsProgram(name: new_program_name))
             selected_program_index = workspace.selected_tool.programs_names.count - 1
+            
+            controller.tools_document_data_update.toggle()
         default:
             break
         }
-        
-        controller.elements_document_data_update.toggle()
         
         workspace.update_view()
         add_program_view_presented.toggle()
