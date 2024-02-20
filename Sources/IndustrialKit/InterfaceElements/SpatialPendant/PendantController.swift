@@ -36,7 +36,7 @@ public class PendantController: ObservableObject
         }
     }
     
-    ///Dismiss s-pendant window.
+    ///Dismisses s-pendant window.
     public func dismiss_pendant()
     {
         if is_opened
@@ -44,6 +44,21 @@ public class PendantController: ObservableObject
             dismiss()
             is_opened = false
         }
+    }
+    
+    ///Toggles s-pendant window.
+    public func toggle_pendant()
+    {
+        if !is_opened
+        {
+            open()
+        }
+        else
+        {
+            dismiss()
+        }
+        
+        is_opened.toggle()
     }
     
     /**
