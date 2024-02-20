@@ -149,7 +149,9 @@ public struct ChartsView: View
                 EmptyView()
             }
         }
+        #if !os(visionOS)
         .background(.white)
+        #endif
     }
 }
 

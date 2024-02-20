@@ -42,7 +42,9 @@ public struct StateView: View
                 EmptyView()
             }
         }
+        #if !os(visionOS)
         .background(.white)
+        #endif
     }
 }
 
