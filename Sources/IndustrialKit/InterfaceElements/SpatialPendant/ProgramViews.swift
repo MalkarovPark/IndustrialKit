@@ -206,6 +206,7 @@ internal struct ProgramElementItemView: View
         }
         
         workspace.update_view()
+        controller.elements_document_data_update.toggle()
         
         element_view_presented.toggle()
     }
