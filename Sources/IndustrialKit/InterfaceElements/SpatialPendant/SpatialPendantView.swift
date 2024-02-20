@@ -88,14 +88,15 @@ private struct SpatialPendantView: View
                 case .tool:
                     ToolControl()
                 default:
-                    Text("Control")
+                    EmptyView()
+                    /*Text("Control")
                         .font(.system(size: 48, design: .rounded))
-                        .foregroundStyle(.quaternary)
+                        .foregroundStyle(.quaternary)*/
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: 280)
             .background(.thinMaterial)
-            .ornament(attachmentAnchor: .scene(.bottom)) //.overlay(alignment: .bottomTrailing)
+            .ornament(attachmentAnchor: .scene(.bottom))
             {
                 if controller.add_item_button_avaliable
                 {
@@ -194,7 +195,6 @@ private struct SpatialPendantView: View
     private func add_workspace_item()
     {
         workspace.update_view()
-        //let new_program_element = app_state.new_program_element
         
         //Add new program element and save to file
         workspace.elements.append(element_from_struct(controller.new_program_element.file_info))
@@ -472,5 +472,7 @@ private struct AddProgramView: View
 #Preview
 {
     SpatialPendantView()
+        .environmentObject(PendantController())
+        .environmentObject(Workspace())
 }
 #endif
