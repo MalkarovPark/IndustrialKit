@@ -151,9 +151,9 @@ public class PendantController: ObservableObject
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
     
     //MARK: - Document handling
-    @Published var elements_document_data_update = false
-    @Published var robots_document_data_update = false
-    @Published var tools_document_data_update = false
+    @Published public var elements_document_data_update = false
+    @Published public var robots_document_data_update = false
+    @Published public var tools_document_data_update = false
     
     //MARK: - Document data
     @Published var update_workspace_in_document = false
