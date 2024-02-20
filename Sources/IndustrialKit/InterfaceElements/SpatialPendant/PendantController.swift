@@ -150,6 +150,11 @@ public class PendantController: ObservableObject
     @Published var new_opcode_value = Int()
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
     
+    //MARK: - Document handling
+    @Published var elements_document_data_update = false
+    @Published var robots_document_data_update = false
+    @Published var tools_document_data_update = false
+    
     //MARK: - Document data
     @Published var update_workspace_in_document = false
     @Published var update_robot_in_document = false

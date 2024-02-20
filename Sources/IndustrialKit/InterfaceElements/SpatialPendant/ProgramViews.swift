@@ -63,11 +63,13 @@ internal struct WorkspaceDropDelegate : DropDelegate
     
     @State var workspace_elements: [WorkspaceProgramElementStruct]
     
+    @EnvironmentObject var controller: PendantController
+    
     let element: WorkspaceProgramElement
     
     func performDrop(info: DropInfo) -> Bool
     {
-        //update_data()
+        controller.elements_document_data_update.toggle()
         return true
     }
     
@@ -100,6 +102,7 @@ internal struct ProgramElementItemView: View
     
     @State private var is_deliting = false
     
+    @EnvironmentObject var controller: PendantController
     @EnvironmentObject var workspace: Workspace
     
     let on_delete: (IndexSet) -> ()
@@ -151,7 +154,7 @@ internal struct ProgramElementItemView: View
     private func update_program_element()
     {
         workspace.elements_check()
-        //document.preset.elements = workspace.file_data().elements
+        controller.elements_document_data_update.toggle()
     }
     
     private func duplicate_program_element()
@@ -190,7 +193,7 @@ internal struct ProgramElementItemView: View
         workspace.elements.append(new_program_element)
         
         workspace.elements_check()
-        //document.preset.elements = workspace.file_data().elements
+        controller.elements_document_data_update.toggle()
     }
     
     private func delete_program_element()
@@ -546,7 +549,7 @@ internal struct RobotProgramView: View
                         .onDelete(perform: remove_points)
                         .onChange(of: workspace.robots)
                         { _, _ in
-                            //update_data()
+                            controller.robots_document_data_update.toggle()
                         }
                     }
                 }
@@ -560,7 +563,7 @@ internal struct RobotProgramView: View
     {
         workspace.selected_robot.selected_program.points.move(fromOffsets: source, toOffset: destination)
         workspace.selected_robot.selected_program.visual_build()
-        //update_data()
+        controller.robots_document_data_update.toggle()
     }
     
     private func remove_points(at offsets: IndexSet) //Remove robot point function
@@ -570,7 +573,7 @@ internal struct RobotProgramView: View
             workspace.selected_robot.selected_program.points.remove(atOffsets: offsets)
         }
         
-        //update_data()
+        controller.robots_document_data_update.toggle()
         workspace.update_view()
         workspace.selected_robot.selected_program.selected_point_index = -1
     }
@@ -590,7 +593,7 @@ internal struct RobotProgramView: View
                 workspace.selected_robot.selected_program_index = 0
             }
             
-            //update_data()
+            controller.robots_document_data_update.toggle()
             workspace.update_view()
         }
     }
@@ -599,7 +602,7 @@ internal struct RobotProgramView: View
     {
         workspace.selected_robot.selected_program.add_point(PositionPoint(x: workspace.selected_robot.pointer_location[0], y: workspace.selected_robot.pointer_location[1], z: workspace.selected_robot.pointer_location[2], r: workspace.selected_robot.pointer_rotation[0], p: workspace.selected_robot.pointer_rotation[1], w: workspace.selected_robot.pointer_rotation[2]))
         
-        //update_data()
+        controller.robots_document_data_update.toggle()
         workspace.update_view()
     }
 }
@@ -662,6 +665,7 @@ internal struct PositionPointView: View
     
     @State private var appeared = false
     
+    @EnvironmentObject var controller: PendantController
     @EnvironmentObject var workspace: Workspace
     
     let on_delete: (IndexSet) -> ()
@@ -767,7 +771,8 @@ internal struct PositionPointView: View
     {
         workspace.update_view()
         workspace.selected_robot.selected_program.visual_build()
-        //update_data()
+        
+        controller.robots_document_data_update.toggle()
     }
 }
 
@@ -801,7 +806,7 @@ internal struct ToolProgramView: View
                         .onDelete(perform: remove_codes)
                         .onChange(of: workspace.tools)
                         { _, _ in
-                            //update_data()
+                            controller.tools_document_data_update.toggle()
                         }
                     }
                 }
@@ -812,7 +817,7 @@ internal struct ToolProgramView: View
     func code_item_move(from source: IndexSet, to destination: Int)
     {
         tool.selected_program.codes.move(fromOffsets: source, toOffset: destination)
-        //update_data()
+        controller.tools_document_data_update.toggle()
     }
     
     func remove_codes(at offsets: IndexSet) //Remove tool operation function
@@ -822,7 +827,7 @@ internal struct ToolProgramView: View
             tool.selected_program.codes.remove(atOffsets: offsets)
         }
         
-        //update_data()
+        controller.tools_document_data_update.toggle()
     }
 }
 
@@ -867,6 +872,7 @@ internal struct OperationItemView: View
                 if update_data
                 {
                     code_item.value = new_code_value
+                    controller.tools_document_data_update.toggle()
                 }
             }
         }

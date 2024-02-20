@@ -374,6 +374,8 @@ private struct ProgramPicker: View
             {
                 workspace.selected_robot.selected_program_index = 0
             }
+            
+            controller.robots_document_data_update.toggle()
         }
     }
     
@@ -393,7 +395,7 @@ private struct ProgramPicker: View
                 selected_program_index = 0
             }
             
-            //update_data()
+            controller.tools_document_data_update.toggle()
         }
     }
 }
@@ -454,7 +456,8 @@ private struct AddProgramView: View
             break
         }
         
-        //update_data()
+        controller.elements_document_data_update.toggle()
+        
         workspace.update_view()
         add_program_view_presented.toggle()
     }
