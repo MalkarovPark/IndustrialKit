@@ -450,16 +450,20 @@ internal struct PositionItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(workspace.selected_robot.inspector_point_color(point: point_item)) //.gray)
+                .foregroundColor(workspace.selected_robot.inspector_point_color(point: point_item))
             
             Spacer()
             
-            HStack
+            HStack(spacing: 0)
             {
                 Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
                     //.font(.caption)
                 
+                Spacer()
+                
                 Divider()
+                
+                Spacer()
                 
                 Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
                     //.font(.caption)
