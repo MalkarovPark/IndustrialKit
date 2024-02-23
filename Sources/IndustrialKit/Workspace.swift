@@ -524,8 +524,8 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///Remove selected object.
-    public func remove_selected_object()
+    ///Unplaces selected object from workspace.
+    public func unplace_selected_object()
     {
         if any_object_selected
         {
