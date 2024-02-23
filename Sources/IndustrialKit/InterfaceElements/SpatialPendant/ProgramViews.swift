@@ -456,6 +456,8 @@ internal struct PositionItemView: View
             
             HStack(spacing: 0)
             {
+                Spacer()
+                
                 Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
                     //.font(.caption)
                 
@@ -467,6 +469,8 @@ internal struct PositionItemView: View
                 
                 Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
                     //.font(.caption)
+                
+                Spacer()
             }
             .popover(isPresented: $position_item_view_presented,
                      arrowEdge: .leading)
