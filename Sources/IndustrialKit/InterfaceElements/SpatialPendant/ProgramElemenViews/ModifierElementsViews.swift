@@ -417,7 +417,7 @@ internal struct ObserverElementView: View
                             }
                             .onDelete(perform: delete_item)
                         }
-                        .frame(width: 320, height: 256)
+                        .frame(width: 400, height: 256)
                         .modifier(ListBorderer())
                         .padding(.bottom)
                     }
@@ -487,7 +487,7 @@ internal struct ObserverElementView: View
                             }
                             .onDelete(perform: delete_item)
                         }
-                        .frame(width: 320, height: 256)
+                        .frame(width: 400, height: 256)
                         .modifier(ListBorderer())
                         .padding(.bottom)
                     }
