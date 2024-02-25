@@ -400,11 +400,48 @@ internal struct ObserverElementView: View
                             workspace.update_view()
                         }
                     }
-                    #if os(iOS) || os(visionOS)
                     .modifier(PickerNamer(name: "Name"))
-                    #endif
                     .disabled(workspace.placed_robots_names.count == 0)
                     .padding(.bottom)
+                }
+                
+                if workspace.placed_robots_names.count > 0
+                {
+                    if from_indices.count > 0
+                    {
+                        List
+                        {
+                            ForEach(from_indices.indices, id: \.self)
+                            { index in
+                                OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                            }
+                            .onDelete(perform: delete_item)
+                        }
+                        .frame(width: 320, height: 256)
+                        .modifier(ListBorderer())
+                        .padding(.bottom)
+                    }
+                    else
+                    {
+                        ZStack
+                        {
+                            Text("No items to ouput")
+                        }
+                        .frame(width: 256, height: 64)
+                        .padding(.bottom)
+                    }
+                    
+                    Button(action: add_item)
+                    {
+                        Text("Add")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
+                }
+                else
+                {
+                    Text("No robots placed")
                 }
             case .tool:
                 if workspace.placed_tools_names.count > 0
@@ -433,61 +470,49 @@ internal struct ObserverElementView: View
                             workspace.update_view()
                         }
                     }
-                    #if os(iOS) || os(visionOS)
                     .modifier(PickerNamer(name: "Name"))
-                    #endif
                     .disabled(workspace.placed_tools_names.count == 0)
                     .padding(.bottom)
                 }
-            }
-            if workspace.placed_tools_names.count > 0
-            {
-                if from_indices.count > 0
+                
+                if workspace.placed_tools_names.count > 0
                 {
-                    List
+                    if from_indices.count > 0
                     {
-                        ForEach(from_indices.indices, id: \.self)
-                        { index in
-                            OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                        List
+                        {
+                            ForEach(from_indices.indices, id: \.self)
+                            { index in
+                                OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                            }
+                            .onDelete(perform: delete_item)
                         }
-                        .onDelete(perform: delete_item)
+                        .frame(width: 320, height: 256)
+                        .modifier(ListBorderer())
+                        .padding(.bottom)
                     }
-                    #if os(macOS)
-                    .frame(width: 256, height: 256)
-                    #else
-                    .frame(width: 320, height: 256)
-                    #endif
-                    .modifier(ListBorderer())
-                    .padding(.bottom)
+                    else
+                    {
+                        ZStack
+                        {
+                            Text("No items to ouput")
+                        }
+                        .frame(width: 256, height: 64)
+                        .padding(.bottom)
+                    }
+                    
+                    Button(action: add_item)
+                    {
+                        Text("Add")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
                 }
                 else
                 {
-                    ZStack
-                    {
-                        #if os(macOS)
-                        Rectangle()
-                            .foregroundStyle(.white)
-                        #endif
-                        Text("No Items")
-                    }
-                    .frame(width: 256, height: 64)
-                    #if os(macOS)
-                    .modifier(ListBorderer())
-                    #endif
-                    .padding(.bottom)
+                    Text("No tools placed")
                 }
-                
-                Button(action: add_item)
-                {
-                    Text("Add")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
-            }
-            else
-            {
-                Text("No tools placed in this workspace")
             }
         }
         .onChange(of: object_type)
