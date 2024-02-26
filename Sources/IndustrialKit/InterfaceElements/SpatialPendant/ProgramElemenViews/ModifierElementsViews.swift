@@ -92,15 +92,13 @@ internal struct WriterElementView: View
                     .frame(width: 60)
                 TextField("0", value: $value, format: .number)
                     .textFieldStyle(.roundedBorder)
-                #if os(iOS) || os(visionOS)
                     .keyboardType(.decimalPad)
-                #endif
                 Stepper("Enter", value: $value, in: -1000...1000)
                     .labelsHidden()
             }
             .padding(.trailing)
             
-            RegistersSelector(text: "to: \(to_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
+            RegistersSelector(text: "to \(to_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
         }
         .onChange(of: value)
         { _, new_value in
@@ -301,12 +299,13 @@ internal struct OutputValueItmeView: View
     {
         HStack
         {
-            Text("From:")
+            Text("From")
             TextField("0", value: $from, format: .number)
             Stepper("Enter", value: $from, in: 0...10000)
                 .labelsHidden()
+                .keyboardType(.decimalPad)
             
-            RegistersSelector(text: "to: \(to)", registers_count: workspace.registers.count, colors: registers_colors, indices: binding_for_single($to), names: ["To"])
+            RegistersSelector(text: "to \(to)", registers_count: workspace.registers.count, colors: registers_colors, indices: binding_for_single($to), names: ["To"])
         }
     }
     

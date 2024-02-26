@@ -500,6 +500,9 @@ public struct RegisterCardView: View
                             .font(.system(size: register_card_font_size))
                             .multilineTextAlignment(.center)
                             .textFieldStyle(.plain)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
+                        #endif
                     }
                     #if os(macOS)
                     .frame(height: 48)

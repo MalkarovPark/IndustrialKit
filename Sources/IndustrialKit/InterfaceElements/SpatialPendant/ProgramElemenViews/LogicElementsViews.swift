@@ -34,7 +34,7 @@ internal struct JumpElementView: View
         {
             HStack
             {
-                Picker("jump to:", selection: $target_mark_name) //Target mark picker
+                Picker("Jump to", selection: $target_mark_name) //Target mark picker
                 {
                     if workspace.marks_names.count > 0
                     {
@@ -123,7 +123,7 @@ internal struct ComparatorElementView: View
             
             HStack
             {
-                Picker("Jump to:", selection: $target_mark_name) //Target mark picker
+                Picker("Jump to", selection: $target_mark_name) //Target mark picker
                 {
                     if workspace.marks_names.count > 0
                     {
