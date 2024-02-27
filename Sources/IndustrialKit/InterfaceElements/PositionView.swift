@@ -300,6 +300,7 @@ struct PositionParameterView: View
                 .frame(width: 64)
             #else
                 .frame(width: 128)
+                .keyboardType(.decimalPad)
             #endif
             
             Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
