@@ -65,8 +65,6 @@ internal struct WorkspaceProgramView: View
         {
             workspace.elements.remove(atOffsets: offsets)
         }
-        
-        //document.preset.elements = workspace.file_data().elements
     }
 }
 
@@ -95,6 +93,7 @@ internal struct WorkspaceDropDelegate : DropDelegate
         {
             let from = elements.firstIndex(of: dragged_element)!
             let to = elements.firstIndex(of: element)!
+            
             withAnimation(.default)
             {
                 self.elements.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
