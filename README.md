@@ -35,6 +35,7 @@ IndustrialKit is an open source software platform for creating applications that
     * [Registers Selector](#industrialkitui-registersselector)
     * [Charts View](#industrialkitui-chartsview)
     * [State View](#industrialkitui-stateview)
+    * [Spatial Pendant](#industrialkitui-spendant)
 * [Getting Help](#getting-help)
 * [License](#license)
 
@@ -222,6 +223,16 @@ Output statistics by the StateItem array. If the elements are nested within each
 
 <p align="center">
   <img width="432" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/106bb432-846d-494a-aa39-09ab6cfbcaba" />
+</p>
+
+### Spatial Pendant <a name="industrialkitui-spendant"></a>
+
+A universal UI control for programming and handling workspace and its constituent industrial equipment. Contents of this pendant vary depending on the specific selected object and its type – Workspace, Robot or Tool. Content of this control is blank if no suitable object is selected.
+
+The spatial pendant allows you to set the sequence of program elements and control their performing.
+
+<p align="center">
+  <img width="500" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/1741d4b2-34aa-4679-a2a4-d94a2b301406" />
 </p>
 
 # Getting Help <a name="getting-help"></a>
