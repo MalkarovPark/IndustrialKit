@@ -1068,7 +1068,7 @@ public class Workspace: ObservableObject
     private var is_part_selected = false
     
     ///Selected part.
-    public var selected_part: Part = Part(name: "None")
+    @Published var selected_part: Part = Part(name: "None")
     
     /**
      Selects part by index.
