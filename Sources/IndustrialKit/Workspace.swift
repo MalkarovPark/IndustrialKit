@@ -49,17 +49,17 @@ public class Workspace: ObservableObject
     ///A selected workspace object type value in industrial complex.
     public var selected_object_type: WorkspaceObjectType?
     {
-        if selected_robot_index > -1 && selected_part_index == -1 && selected_tool_index == -1
+        if selected_robot_index > -1 && !is_part_selected && selected_tool_index == -1
         {
             return .robot
         }
         
-        if selected_tool_index > -1 && selected_robot_index == -1 && selected_part_index == -1
+        if selected_tool_index > -1 && selected_robot_index == -1 && !is_part_selected
         {
             return .tool
         }
         
-        if selected_part_index > -1 && selected_robot_index == -1 && selected_tool_index == -1
+        if !is_part_selected && selected_robot_index == -1 && selected_tool_index == -1
         {
             return .part
         }
@@ -1065,30 +1065,10 @@ public class Workspace: ObservableObject
     }
     
     //MARK: Parts selection functions
-    private var selected_part_index = -1
+    private var is_part_selected = false
     
     ///Selected part.
-    public var selected_part: Part //Return part by selected index
-    {
-        get
-        {
-            if selected_part_index > -1 && selected_part_index < parts.count
-            {
-                return parts[selected_part_index]
-            }
-            else
-            {
-                return Part(name: "None")
-            }
-        }
-        set
-        {
-            if selected_part_index > -1
-            {
-                parts[selected_part_index] = newValue
-            }
-        }
-    }
+    public var selected_part: Part = Part(name: "None")
     
     /**
      Selects part by index.
@@ -1098,7 +1078,7 @@ public class Workspace: ObservableObject
      */
     public func select_part(index: Int)
     {
-        selected_part_index = index
+        selected_part = parts[index]
     }
     
     /**
@@ -1115,7 +1095,8 @@ public class Workspace: ObservableObject
     ///Deselects selected part.
     public func deselect_part()
     {
-        selected_part_index = -1
+        is_part_selected = false
+        selected_part = Part(name: "None")
     }
     
     /**
@@ -2034,7 +2015,7 @@ public class Workspace: ObservableObject
     ///Selection workspace object state.
     public var any_object_selected: Bool
     {
-        if selected_robot_index == -1 && selected_part_index == -1 && selected_tool_index == -1
+        if selected_robot_index == -1 && !is_part_selected && selected_tool_index == -1
         {
             return false
         }
