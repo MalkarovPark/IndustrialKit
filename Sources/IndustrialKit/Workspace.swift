@@ -1081,10 +1081,12 @@ public class Workspace: ObservableObject
         if index > -1 && index < parts.count
         {
             selected_part = parts[index]
+            is_part_selected = true
         }
         else
         {
             selected_part = Part(name: "None")
+            is_part_selected = false
         }
     }
     
