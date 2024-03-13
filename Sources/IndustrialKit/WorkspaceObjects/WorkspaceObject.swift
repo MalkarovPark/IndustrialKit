@@ -26,12 +26,6 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject/
         hasher.combine(name)
     }
     
-    /*open func copy(with zone: NSZone? = nil) -> Any
-    {
-        let copy = WorkspaceObject(name: self.name)
-        return copy
-    }*/
-    
     ///Object identifier.
     public var id = UUID()
     
@@ -140,7 +134,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject/
     {
         node = SCNNode()
         
-        if scene_internal_folder_address != nil && scene_node_name != nil // && scene_address != ""
+        if scene_internal_folder_address != nil && scene_node_name != nil
         {
             //Get model scene from application resources
             guard let new_scene = SCNScene(named: scene_internal_folder_address! + (scene_internal_folder_address != "" ? "/" : "") + scene_address)
@@ -151,7 +145,6 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject/
             }
             
             node = new_scene.rootNode.childNode(withName: scene_node_name!, recursively: false)!
-            //node = SCNScene(named: scene_internal_folder_address! + "/" + scene_address)!.rootNode.childNode(withName: scene_node_name!, recursively: false)!
         }
         else
         {

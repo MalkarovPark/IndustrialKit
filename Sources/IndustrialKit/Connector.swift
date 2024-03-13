@@ -252,7 +252,7 @@ open class RobotConnector: WorkspaceObjectConnector
         {
             self.move_to(point: point)
             
-            if canceled == false
+            if !canceled
             {
                 //canceled = true
                 completion()
@@ -331,7 +331,7 @@ open class ToolConnector: WorkspaceObjectConnector
         {
             self.perform(code: code)
             
-            if canceled == false
+            if !canceled
             {
                 //canceled = true
                 completion()

@@ -161,7 +161,7 @@ public class Workspace: ObservableObject
             select_robot(name: name) //Select robot in workspace
             workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!) //Get workcell from Workcell.scn and add it to Workspace.scn
             
-            edited_object_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
+            edited_object_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() //Connect to unit node in workspace scene
             
             edited_object_node?.name = name
             selected_robot.workcell_connect(scene: scene, name: name, connect_camera: false)
@@ -384,7 +384,7 @@ public class Workspace: ObservableObject
             case .robot:
                 if type == previous_selected_type
                 {
-                    if node.name! == selected_robot.name
+                    if node.name ?? "" == selected_robot.name
                     {
                         //Deselect already selected robot
                         deselect_robot()
@@ -405,7 +405,7 @@ public class Workspace: ObservableObject
             case .tool:
                 if type == previous_selected_type
                 {
-                    if node.name! == selected_tool.name
+                    if node.name ?? "" == selected_tool.name
                     {
                         //Deselect already selected tool
                         deselect_tool()
@@ -426,7 +426,7 @@ public class Workspace: ObservableObject
             case .part:
                 if type == previous_selected_type
                 {
-                    if node.name! == selected_part.name
+                    if node.name ?? "" == selected_part.name
                     {
                         //Deselect already selected part
                         deselect_part()
@@ -780,7 +780,7 @@ public class Workspace: ObservableObject
             var attached_robots_names = [String]()
             for tool in tools
             {
-                if tool.is_attached == true
+                if tool.is_attached
                 {
                     attached_robots_names.append(tool.attached_to ?? "")
                 }
@@ -1533,7 +1533,7 @@ public class Workspace: ObservableObject
         {
             selected_element_index = 0
             
-            if cycled == true
+            if cycled
             {
                 perform_next_element()
             }
@@ -2118,10 +2118,10 @@ public class Workspace: ObservableObject
             var connect_camera = true
             for robot in robots
             {
-                if robot.is_placed == true
+                if robot.is_placed
                 {
                     workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!)
-                    unit_node = workcells_node?.childNode(withName: "unit", recursively: false)! //Connect to unit node in workspace scene
+                    unit_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() //Connect to unit node in workspace scene
                     
                     unit_node?.name = robot.name //Select robot cell node
                     robot.workcell_connect(scene: scene, name: robot.name, connect_camera: connect_camera) //Connect to robot model, place manipulator

@@ -145,7 +145,7 @@ public class PositionsProgram: Identifiable, Equatable
             cone.eulerAngles.x = target_point_cone_rot[i][0]
             cone.eulerAngles.y = target_point_cone_rot[i][1]
             cone.eulerAngles.z = target_point_cone_rot[i][2]
-            cone_node.addChildNode(cone.copy() as! SCNNode)
+            cone_node.addChildNode(cone.copy() as? SCNNode ?? SCNNode())
         }
         
         return cone_node
@@ -184,7 +184,7 @@ public class PositionsProgram: Identifiable, Equatable
                         visual_point.geometry?.firstMaterial?.diffuse.contents = target_point_color
                     }
                     
-                    if is_first == true
+                    if is_first
                     {
                         //If point is first – save first location for the point-to-point line
                         pivot_points[0] = point_location
