@@ -1078,7 +1078,14 @@ public class Workspace: ObservableObject
      */
     public func select_part(index: Int)
     {
-        selected_part = parts[index]
+        if index > -1 && index < parts.count
+        {
+            selected_part = parts[index]
+        }
+        else
+        {
+            selected_part = Part(name: "None")
+        }
     }
     
     /**
