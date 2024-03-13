@@ -59,7 +59,7 @@ public class Workspace: ObservableObject
             return .tool
         }
         
-        if !is_part_selected && selected_robot_index == -1 && selected_tool_index == -1
+        if is_part_selected && selected_robot_index == -1 && selected_tool_index == -1
         {
             return .part
         }
