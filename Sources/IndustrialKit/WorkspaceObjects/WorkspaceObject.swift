@@ -14,7 +14,7 @@ import SwiftUI
  
  Industrial production objects are represented by equipment that provide technological operations performing.
  */
-open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject//, NSCopying
+open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject //, NSCopying
 {
     public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool //Identity condition by names
     {
@@ -35,7 +35,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject/
     ///Object init function.
     public init()
     {
-        //self.name = "None"
+        
     }
     
     /**
