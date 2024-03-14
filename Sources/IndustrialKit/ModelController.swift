@@ -2,7 +2,7 @@
 //  ModelController.swift
 //  IndustrialKit
 //
-//  Created by Malkarov Park on 11.11.2022.
+//  Created by Artem on 11.11.2022.
 //
 
 import Foundation

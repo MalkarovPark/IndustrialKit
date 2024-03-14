@@ -2,7 +2,7 @@
 //  Extensions.swift
 //  IndustrialKit
 //
-//  Created by Malkarov Park on 24.11.2022.
+//  Created by Artem on 24.11.2022.
 //
 
 import Foundation

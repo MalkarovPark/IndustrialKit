@@ -2,7 +2,7 @@
 //  WorkspaceObjectChart.swift
 //  IndustrialKit
 //
-//  Created by Malkarov Park on 03.12.2022.
+//  Created by Artem on 03.12.2022.
 //
 
 import Foundation

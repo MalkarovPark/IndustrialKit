@@ -2,7 +2,7 @@
 //  WorkspaceProgramElement.swift
 //  IndustrialKit
 //
-//  Created by Malkarov Park on 01.04.2022.
+//  Created by Artem on 01.04.2022.
 //
 
 import Foundation

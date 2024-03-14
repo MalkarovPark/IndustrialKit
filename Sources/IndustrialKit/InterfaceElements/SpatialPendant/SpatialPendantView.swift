@@ -2,7 +2,7 @@
 //  SwiftUIView.swift
 //  
 //
-//  Created by Malkarov Park on 09.02.2024.
+//  Created by Artem on 09.02.2024.
 //
 
 #if os(visionOS)

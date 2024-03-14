@@ -2,7 +2,7 @@
 //  PerformerElementsViews.swift
 //  Robotic Complex Workspace
 //
-//  Created by Malkarov Park on 26.11.2023.
+//  Created by Artem on 26.11.2023.
 //
 
 #if os(visionOS)

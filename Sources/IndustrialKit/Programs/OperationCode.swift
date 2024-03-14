@@ -2,7 +2,7 @@
 //  OperationCode.swift
 //  IndustrialKit
 //
-//  Created by Malkarov Park on 08.11.2022.
+//  Created by Artem on 08.11.2022.
 //
 
 import Foundation

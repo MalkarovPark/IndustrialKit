@@ -2,7 +2,7 @@
 //  File.swift
 //  
 //
-//  Created by Malkarov Park on 10.02.2024.
+//  Created by Artem on 10.02.2024.
 //
 
 #if os(visionOS)
