@@ -20,63 +20,7 @@ public struct ObjectSceneView: UIViewRepresentable
     private var inited_with_node = true
     
     //MARK: Init functions
-    public init(node: SCNNode)
-    {
-        self.viewed_scene = SCNScene()
-        self.node = node
-        
-        self.on_render = { _ in }
-        self.on_tap = { _, _ in }
-        
-        self.inited_with_node = true
-    }
-    
-    public init(node: SCNNode, on_render: @escaping (_ scene_view: SCNView) -> Void, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
-    {
-        self.viewed_scene = SCNScene()
-        self.node = node
-        
-        self.on_render = on_render
-        self.on_tap = on_tap
-        
-        self.inited_with_node = true
-    }
-    
-    public init(scene: SCNScene)
-    {
-        self.viewed_scene = scene
-        self.node = SCNNode()
-        
-        self.on_render = { _ in }
-        self.on_tap = { _, _ in }
-        
-        self.inited_with_scene = true
-    }
-    
-    public init(scene: SCNScene, on_render: @escaping (_ scene_view: SCNView) -> Void, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
-    {
-        self.viewed_scene = scene
-        self.node = SCNNode()
-        
-        self.on_render = on_render
-        self.on_tap = on_tap
-        
-        self.inited_with_scene = true
-    }
-    
-    public init(scene: SCNScene, node: SCNNode)
-    {
-        self.viewed_scene = scene
-        self.node = node
-        
-        self.on_render = { _ in }
-        self.on_tap = { _, _ in }
-        
-        self.inited_with_scene = true
-        self.inited_with_node = true
-    }
-    
-    public init(scene: SCNScene, node: SCNNode, on_render: @escaping (_ scene_view: SCNView) -> Void, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void)
+    public init(node: SCNNode = SCNNode(), scene: SCNScene = SCNScene(), on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in }, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
         self.viewed_scene = scene
         self.node = node
@@ -84,7 +28,6 @@ public struct ObjectSceneView: UIViewRepresentable
         self.on_render = on_render
         self.on_tap = on_tap
         
-        self.inited_with_scene = true
         self.inited_with_node = true
     }
     
