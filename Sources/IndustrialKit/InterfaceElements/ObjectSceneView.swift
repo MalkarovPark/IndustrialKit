@@ -16,8 +16,8 @@ public struct ObjectSceneView: UIViewRepresentable
     private let on_render: ((_ scene_view: SCNView) -> Void)
     private let on_tap: ((_ recognizer: UITapGestureRecognizer, _ scene_view: SCNView) -> Void)
     
-    private var inited_with_scene = true
-    private var inited_with_node = true
+    private var inited_with_scene = false
+    private var inited_with_node = false
     
     //MARK: Init functions
     public init(node: SCNNode, on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in }, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
@@ -29,6 +29,16 @@ public struct ObjectSceneView: UIViewRepresentable
         self.on_tap = on_tap
         self.inited_with_node = true
     }
+    
+    /*public init(node: SCNNode = SCNNode(), scene: SCNScene = SCNScene(), on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in }, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
+    {
+        self.node = node
+        self.viewed_scene = scene
+        
+        self.on_render = on_render
+        self.on_tap = on_tap
+        self.inited_with_node = true
+    }*/
     
     public init(scene: SCNScene, on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in }, on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
@@ -105,7 +115,7 @@ public struct ObjectSceneView: UIViewRepresentable
         {
             let camera_node = SCNNode()
             camera_node.camera = SCNCamera()
-            camera_node.position = SCNVector3(0, 0, 2)
+            //camera_node.position = SCNVector3(0, 0, 2)
             viewed_scene.rootNode.addChildNode(camera_node)
             scene_view.pointOfView = camera_node
         }
