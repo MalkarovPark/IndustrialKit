@@ -111,15 +111,6 @@ public struct ObjectSceneView: UIViewRepresentable
         
         scene_view.backgroundColor = UIColor.clear
         
-        if !inited_with_scene //&& inited_with_node
-        {
-            let camera_node = SCNNode()
-            camera_node.camera = SCNCamera()
-            //camera_node.position = SCNVector3(0, 0, 2)
-            viewed_scene.rootNode.addChildNode(camera_node)
-            scene_view.pointOfView = camera_node
-        }
-        
         return scn_scene(context: context)
     }
     #else
