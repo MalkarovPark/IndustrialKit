@@ -129,7 +129,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject 
         }
     }
     
-    ///Set workspace object nod by internal resource.
+    ///Set workspace object node by internal resource.
     private func node_by_internal()
     {
         node = SCNNode()
