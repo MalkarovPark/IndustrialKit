@@ -124,7 +124,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject 
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
             node_by_internal()
         }
     }

@@ -43,7 +43,8 @@ open class WorkspaceObjectModule: Codable
             var is_stale = false
             let url = try URL(resolvingBookmarkData: WorkspaceObjectModule.folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
             
-            guard !is_stale && scene_name != nil && node_name != nil else
+            guard !is_stale && scene_name != nil && node_name != nil
+            else
             {
                 return default_node
             }
