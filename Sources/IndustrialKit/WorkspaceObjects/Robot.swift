@@ -129,14 +129,24 @@ public class Robot: WorkspaceObject
         read_connection_parameters(connector: connector, robot_struct.connection_parameters)
     }
     
-    ///Inits robot by name, controller, connector and scene name.
+    ///Inits robot by name, controller, connector and SceneKit scene.
+    public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene: SCNScene)
+    {
+        super.init(name: name)
+        
+        self.model_controller = model_controller
+        self.connector = connector
+        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)!.clone()
+    }
+    
+    ///Inits robot by name, controller, connector and SceneKit scene name.
     public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene_name: String)
     {
         super.init(name: name)
         
         self.model_controller = model_controller
         self.connector = connector
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)!
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)!.clone()
     }
     
     ///Common init function.
