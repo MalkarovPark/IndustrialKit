@@ -136,7 +136,7 @@ public class Robot: WorkspaceObject
         
         self.model_controller = model_controller
         self.connector = connector
-        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)!.clone()
+        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
     }
     
     ///Inits robot by name, controller, connector and SceneKit scene name.
@@ -146,7 +146,7 @@ public class Robot: WorkspaceObject
         
         self.model_controller = model_controller
         self.connector = connector
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)!.clone()
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
     }
     
     ///Common init function.
