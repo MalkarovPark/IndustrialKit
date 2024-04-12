@@ -1,6 +1,6 @@
 //
-//  SwiftUIView.swift
-//  
+//  ViewCloseButton.swift
+//  IndustrialKit
 //
 //  Created by Artem on 06.11.2023.
 //

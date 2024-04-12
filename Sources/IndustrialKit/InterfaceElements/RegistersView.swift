@@ -1,6 +1,6 @@
 //
-//  SwiftUIView.swift
-//  
+//  RegistersView.swift
+//  IndustrialKit
 //
 //  Created by Artem on 16.12.2023.
 //

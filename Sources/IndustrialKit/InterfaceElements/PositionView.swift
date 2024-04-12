@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  PositionView.swift
 //  IndustrialKit
 //
 //  Created by Artem on 22.12.2022.

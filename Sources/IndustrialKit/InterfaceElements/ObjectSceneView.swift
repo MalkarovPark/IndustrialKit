@@ -1,6 +1,6 @@
 //
-//  SwiftUIView.swift
-//  
+//  ObjectSceneView.swift
+//  IndustialKit
 //
 //  Created by Artem on 06.11.2023.
 //
