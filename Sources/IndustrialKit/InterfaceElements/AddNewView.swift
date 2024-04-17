@@ -13,19 +13,19 @@ public struct AddNewView: View
     
     @State private var new_item_name = ""
     
-    private var on_item_add: (String) -> Void
+    private var add_item: (String) -> Void
     private var names: [String]?
     
-    public init(is_presented: Binding<Bool>, on_item_add: @escaping (String) -> Void)
+    public init(is_presented: Binding<Bool>, add_item: @escaping (String) -> Void)
     {
         self._is_presented = is_presented
-        self.on_item_add = on_item_add
+        self.add_item = add_item
     }
     
-    public init(is_presented: Binding<Bool>, names: [String], on_item_add: @escaping (String) -> Void)
+    public init(is_presented: Binding<Bool>, names: [String], add_item: @escaping (String) -> Void)
     {
         self._is_presented = is_presented
-        self.on_item_add = on_item_add
+        self.add_item = add_item
         self.names = names
     }
     
@@ -58,12 +58,12 @@ public struct AddNewView: View
             new_item_name = mismatched_name(name: new_item_name, names: names!)
         }
         
-        on_item_add(new_item_name)
+        add_item(new_item_name)
         is_presented = false
     }
 }
 
 #Preview
 {
-    AddNewView(is_presented: .constant(true), on_item_add: { _ in })
+    AddNewView(is_presented: .constant(true), add_item: { _ in })
 }
