@@ -120,7 +120,7 @@ public class IndustrialModule: Identifiable, Codable, Equatable
     var code = ""
 }*/
 
-public struct ToolModule: Equatable, Codable
+/*public struct ToolModule: Equatable, Codable
 {
     var name = ""
     
@@ -168,4 +168,4 @@ public struct OperationCode: Equatable, Codable
     //var code = ""
     var controller_code = ""
     var connector_code = ""
-}
+}*/
