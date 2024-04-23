@@ -92,7 +92,6 @@ public class PositionsProgram: Identifiable, Codable, Equatable
     }
     
     //MARK: - Visual functions
-    
     ///A node with all positions points model.
     public var positions_group = SCNNode()
     
