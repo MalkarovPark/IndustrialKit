@@ -898,7 +898,7 @@ public class MarkLogicElement: LogicElement
     }
 }
 
-//MARK: - Tool structure for workspace preset document handling
+//MARK: - ?
 ///A codable tool struct.
 public struct WorkspaceProgramElementStruct: Codable
 {

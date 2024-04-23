@@ -14,7 +14,7 @@ import SwiftUI
  
  Contains an array of positions and a custom name used for identification. Builds a visual model of the points with trajectory and provides actions for the robot model.
  */
-public class PositionsProgram: Identifiable, Equatable
+public class PositionsProgram: Identifiable, Codable, Equatable
 {
     public static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
     {
@@ -22,7 +22,7 @@ public class PositionsProgram: Identifiable, Equatable
     }
     
     ///A positions program name.
-    public var name: String?
+    public var name: String
     
     ///An array of positions points.
     public var points = [PositionPoint]()
@@ -44,15 +44,7 @@ public class PositionsProgram: Identifiable, Equatable
         self.name = name ?? "None"
     }
     
-    ///Inits positions program by codable positions program structure.
-    public init(program_struct: ProgramStruct)
-    {
-        self.name = program_struct.name
-        self.points = program_struct.points
-    }
-    
     //MARK: - Point manage functions
-    
     /**
      Add the new point to positions program.
      - Parameters:
@@ -152,7 +144,6 @@ public class PositionsProgram: Identifiable, Equatable
     }
     
     //MARK: Build points visual model
-    
     ///Builds visual model of positions program.
     public func visual_build()
     {
@@ -295,22 +286,25 @@ public class PositionsProgram: Identifiable, Equatable
     }
     
     //MARK: - Work with file system
-    
-    ///Returns a codable file structure for positions program.
-    public var file_info: ProgramStruct
+    private enum CodingKeys: String, CodingKey
     {
-        return ProgramStruct(name: name ?? "None", points: self.points)
+        case name
+        case points
     }
-}
-
-//MARK: - Program structure for workspace preset document handling
-
-///Codable struct for positions program.
-public struct ProgramStruct: Codable
-{
-    ///A positions program name.
-    var name: String
     
-    ///An array of positions points.
-    var points = [PositionPoint]()
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.name = try container.decode(String.self, forKey: .name)
+        self.points = try container.decode([PositionPoint].self, forKey: .points)
+    }
+    
+    public func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(name, forKey: .name)
+        try container.encode(points, forKey: .points)
+    }
 }

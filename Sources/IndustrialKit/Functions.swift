@@ -195,7 +195,7 @@ public func pass_robot_preferences(_ origin_location: Bool, _ origin_rotation: B
  */
 public func pass_positions_programs(names: [String], from: Robot, to: Robot)
 {
-    let programs = from.file_info.programs
+    let programs = from.programs
     
     for name in names
     {
@@ -203,7 +203,7 @@ public func pass_positions_programs(names: [String], from: Robot, to: Robot)
         {
             if program.name == name
             {
-                to.add_program(PositionsProgram(program_struct: program))
+                to.add_program(clone_codable(program)!)
             }
         }
     }
@@ -246,5 +246,20 @@ public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct)
         return MarkLogicElement(element_struct: element_struct)
     case .none:
         return WorkspaceProgramElement()
+    }
+}
+
+///Deep copy for codable objects.
+func clone_codable<T: Codable>(_ object: T) -> T?
+{
+    do
+    {
+        let encoded = try JSONEncoder().encode(object)
+        return try JSONDecoder().decode(T.self, from: encoded)
+    }
+    catch
+    {
+        print(error)
+        return nil
     }
 }

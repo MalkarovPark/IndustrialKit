@@ -230,7 +230,7 @@ public class Robot: WorkspaceObject
     
     //MARK: - Program manage functions
     ///An array of robot positions programs.
-    @Published private var programs = [PositionsProgram]()
+    @Published public var programs = [PositionsProgram]()
     
     ///A selected positions program index.
     public var selected_program_index = 0
@@ -258,7 +258,7 @@ public class Robot: WorkspaceObject
      */
     public func add_program(_ program: PositionsProgram)
     {
-        program.name = mismatched_name(name: program.name!, names: programs_names)
+        program.name = mismatched_name(name: program.name, names: programs_names)
         programs.append(program)
         if selected_program_index != -1
         {
@@ -1312,16 +1312,6 @@ public class Robot: WorkspaceObject
     ///Converts robot data to codable robot struct.
     public var file_info: RobotStruct
     {
-        //Convert robot programs set to ProgramStruct array
-        var programs_array = [ProgramStruct]()
-        if programs_count > 0
-        {
-            for program in programs
-            {
-                programs_array.append(program.file_info)
-            }
-        }
-        
         return RobotStruct(name: name,
                            manufacturer: manufacturer ?? "Manufacturer",
                            model: model ?? "Model",
@@ -1339,7 +1329,7 @@ public class Robot: WorkspaceObject
                            charts_data: self.charts_data,
                            state: self.state_data,
                            image_data: self.image_data ?? Data(),
-                           programs: programs_array,
+                           programs: self.programs,
                            origin_location: self.origin_location,
                            origin_rotation: self.origin_rotation,
                            space_scale: self.space_scale)
@@ -1368,9 +1358,9 @@ public class Robot: WorkspaceObject
     {
         if robot_struct.programs.count > 0
         {
-            for ProgramStruct in robot_struct.programs
+            for postions_program in robot_struct.programs
             {
-                programs.append(PositionsProgram(program_struct: ProgramStruct))
+                programs.append(postions_program)
             }
         }
     }
@@ -1403,7 +1393,7 @@ public struct RobotStruct: Codable
     public var state: [StateItem]?
     
     public var image_data: Data
-    public var programs: [ProgramStruct]
+    public var programs: [PositionsProgram]
     
     public var origin_location: [Float]
     public var origin_rotation: [Float]
