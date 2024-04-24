@@ -35,7 +35,11 @@ public struct AddNewView: View
         {
             TextField("Name", text: $new_item_name)
                 .padding(.trailing)
-                .frame(minWidth: 96)
+                .frame(minWidth: 128, maxWidth: 256)
+            #if os(iOS) || os(visionOS)
+                .frame(idealWidth: 256)
+                .textFieldStyle(.roundedBorder)
+            #endif
             
             Button("Add")
             {
