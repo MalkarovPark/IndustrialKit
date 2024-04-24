@@ -28,7 +28,9 @@ public class ChangerModule: IndustrialModule
         }
         else
         {
+            #if os(macOS)
             registers = external_change(registers: registers)
+            #endif
         }
     }
     
@@ -51,6 +53,7 @@ public class ChangerModule: IndustrialModule
      */
     @Published public var internal_code = String()
     
+    #if os(macOS)
     /**
      Performs register conversion within an external script.
      - Parameters:
@@ -81,6 +84,7 @@ public class ChangerModule: IndustrialModule
         let new_registers = output?.split(separator: " ").compactMap { Float($0) }
         return new_registers ?? []
     }
+    #endif
     
     //MARK: Init functions
     public override init(name: String = String(), description: String = String(), package_file_name: String = String())
