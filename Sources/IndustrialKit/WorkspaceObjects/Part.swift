@@ -398,11 +398,11 @@ public class Part: WorkspaceObject, Codable
         
         self.name = try container.decode(String.self, forKey: .name)
         
-        self.figure = try container.decode(String.self, forKey: .figure)
-        self.lengths = try container.decode([Float].self, forKey: .lengths)
+        self.figure = try container.decodeIfPresent(String.self, forKey: .figure)
+        self.lengths = try container.decodeIfPresent([Float].self, forKey: .lengths)
         
-        self.figure_color = try container.decode([Int].self, forKey: .figure_color)
-        self.material_name = try container.decode(String.self, forKey: .material_name)
+        self.figure_color = try container.decodeIfPresent([Int].self, forKey: .figure_color)
+        self.material_name = try container.decodeIfPresent(String.self, forKey: .material_name)
         self.physics_type = try container.decode(PhysicsType.self, forKey: .physics_type)
         
         self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
