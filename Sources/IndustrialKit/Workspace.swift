@@ -24,6 +24,17 @@ public class Workspace: ObservableObject
         registers = [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
+    ///Init with internal adresses.
+    public init(_ workcell_scene_adress: String = String(), _ robot_scene_adress: String = String(), _ tool_scene_adress: String = String(), _ part_scene_adress: String = String())
+    {
+        Workspace.workcell_scene_address = workcell_scene_adress
+        Robot.scene_folder = robot_scene_adress
+        Tool.scene_folder = tool_scene_adress
+        Part.scene_folder = part_scene_adress
+        
+        registers = [Float](repeating: 0, count: Workspace.default_registers_count)
+    }
+    
     //MARK: - Workspace objects data
     @Published public var robots = [Robot]()
     @Published public var elements = [WorkspaceProgramElement]()
