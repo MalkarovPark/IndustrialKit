@@ -2019,7 +2019,7 @@ public class Workspace: ObservableObject
         
         for part in preset.parts
         {
-            parts.append(part)
+            parts.append(clone_codable(part)!)
         }
         
         //Update workspace program elements data from file
