@@ -24,7 +24,7 @@ public class Workspace: ObservableObject
         registers = [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
-    ///Init with internal adresses.
+    /*///Init with internal adresses.
     public init(_ workcell_scene_adress: String = String(), _ robot_scene_adress: String = String(), _ tool_scene_adress: String = String(), _ part_scene_adress: String = String())
     {
         Workspace.workcell_scene_address = workcell_scene_adress
@@ -33,7 +33,7 @@ public class Workspace: ObservableObject
         Part.scene_folder = part_scene_adress
         
         registers = [Float](repeating: 0, count: Workspace.default_registers_count)
-    }
+    }*/
     
     //MARK: - Workspace objects data
     @Published public var robots = [Robot]()
@@ -1979,13 +1979,13 @@ public class Workspace: ObservableObject
     }
     
     ///File bookmark for robots models.
-    public var robots_bookmark: Data?
+    public static var robots_bookmark: Data?
     
     ///File bookmark for tools models.
-    public var tools_bookmark: Data?
+    public static var tools_bookmark: Data?
     
     ///File bookmark for parts models.
-    public var parts_bookmark: Data?
+    public static var parts_bookmark: Data?
     
     /**
      Imports file data to workspace from preset structure.
@@ -1997,7 +1997,7 @@ public class Workspace: ObservableObject
     {
         //Update robots data from file
         robots.removeAll()
-        Robot.folder_bookmark = robots_bookmark
+        Robot.folder_bookmark = Workspace.robots_bookmark
         
         for robot_struct in preset.robots
         {
@@ -2006,7 +2006,7 @@ public class Workspace: ObservableObject
         
         //Update tools data from file
         tools.removeAll()
-        Tool.folder_bookmark = tools_bookmark
+        Tool.folder_bookmark = Workspace.tools_bookmark
         
         for tool_struct in preset.tools
         {
@@ -2015,7 +2015,7 @@ public class Workspace: ObservableObject
         
         //Update parts data from file
         parts.removeAll()
-        Part.folder_bookmark = parts_bookmark
+        Part.folder_bookmark = Workspace.parts_bookmark
         
         for part in preset.parts
         {

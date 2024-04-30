@@ -134,9 +134,6 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject 
     {
         node = SCNNode()
         
-        print(scene_internal_folder_address)
-        print(scene_address)
-        
         if scene_internal_folder_address != nil && scene_node_name != nil
         {
             //Get model scene from application resources
