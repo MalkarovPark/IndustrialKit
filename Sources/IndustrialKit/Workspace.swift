@@ -1047,7 +1047,7 @@ public class Workspace: ObservableObject
 
             parts.append(Part())
 
-            parts[new_index] = Part(part_struct: parts[index].file_info)
+            parts[new_index] = clone_codable(parts[index]) ?? Part() //Part(part_struct: parts[index].file_info)
             parts[new_index].name = new_name
             parts[new_index].is_placed = false
         }
@@ -1934,7 +1934,7 @@ public class Workspace: ObservableObject
      
      - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
      */
-    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [PartStruct], elements: [WorkspaceProgramElementStruct], registers: [Float])
+    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [Part], elements: [WorkspaceProgramElementStruct], registers: [Float])
     {
         //Get robots info for save to file
         var robots_file_info = [RobotStruct]()
@@ -1951,10 +1951,10 @@ public class Workspace: ObservableObject
         }
         
         //Get parts info for save to file
-        var parts_file_info = [PartStruct]()
+        var parts_file_info = [Part]()
         for part in parts
         {
-            parts_file_info.append(part.file_info)
+            parts_file_info.append(part)
         }
         
         //Get workspace program elements info for save to file
@@ -2006,9 +2006,9 @@ public class Workspace: ObservableObject
         parts.removeAll()
         Part.folder_bookmark = parts_bookmark
         
-        for part_struct in preset.parts
+        for part in preset.parts
         {
-            parts.append(Part(part_struct: part_struct))
+            parts.append(part)
         }
         
         //Update workspace program elements data from file
@@ -2283,7 +2283,7 @@ public struct WorkspacePreset: Codable
     public var robots = [RobotStruct]()
     public var elements = [WorkspaceProgramElementStruct]()
     public var tools = [ToolStruct]()
-    public var parts = [PartStruct]()
+    public var parts = [Part]()
     
     public var registers: [Float]?
     
@@ -2292,10 +2292,10 @@ public struct WorkspacePreset: Codable
         robots = [RobotStruct]()
         elements = [WorkspaceProgramElementStruct]()
         tools = [ToolStruct]()
-        parts = [PartStruct]()
+        parts = [Part]()
     }
     
-    public init(robots: [RobotStruct], elements: [WorkspaceProgramElementStruct], tools: [ToolStruct], parts: [PartStruct])
+    public init(robots: [RobotStruct], elements: [WorkspaceProgramElementStruct], tools: [ToolStruct], parts: [Part])
     {
         self.robots = robots
         self.elements = elements

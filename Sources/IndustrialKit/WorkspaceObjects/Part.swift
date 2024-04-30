@@ -14,7 +14,7 @@ import SwiftUI
  
  Forms environment, and represent objects with which executing devices interact directly.
  */
-public class Part: WorkspaceObject
+public class Part: WorkspaceObject, Codable
 {
     private var figure: String? //Part figure name
     private var lengths: [Float]? //lengths for part without scene figure
@@ -148,40 +148,6 @@ public class Part: WorkspaceObject
                 physics_type = .ph_none
             }
         }
-    }
-    
-    ///Inits part by codable part structure.
-    public init(part_struct: PartStruct)
-    {
-        super.init()
-        init_by_struct(part_struct: part_struct)
-    }
-    
-    ///Common init part by struct function.
-    private func init_by_struct(part_struct: PartStruct)
-    {
-        self.name = part_struct.name
-        
-        self.figure = part_struct.figure
-        self.lengths = part_struct.lengths
-        
-        self.figure_color = part_struct.figure_color
-        self.material_name = part_struct.material_name
-        self.physics_type = part_struct.physics_type
-        
-        self.is_placed = part_struct.is_placed
-        self.location = part_struct.location
-        self.rotation = part_struct.rotation
-        
-        self.scene_address = part_struct.scene
-        
-        get_node_from_scene()
-        
-        color_to_model()
-        /*if scene_address != ""
-        {
-            color_from_model()
-        }*/
     }
     
     ///Inits part by name and scene name.
@@ -406,10 +372,67 @@ public class Part: WorkspaceObject
     }
     
     //MARK: - Work with file system
-    ///Codable file structure of part.
-    public var file_info: PartStruct
+    private enum CodingKeys: String, CodingKey
     {
-        return PartStruct(name: self.name, scene: self.scene_address, figure: self.figure ?? "box", lengths: self.lengths ?? [0, 0, 0], figure_color: self.figure_color ?? [0, 0, 0], material_name: self.material_name ?? "blinn", physics_type: self.physics_type, is_placed: self.is_placed, location: self.location, rotation: self.rotation)
+        case name
+        
+        case scene_address
+        
+        case figure
+        case lengths
+        
+        case figure_color
+        case material_name
+        case physics_type
+        
+        case is_placed
+        case location
+        case rotation
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        super.init()
+        
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.name = try container.decode(String.self, forKey: .name)
+        
+        self.figure = try container.decode(String.self, forKey: .figure)
+        self.lengths = try container.decode([Float].self, forKey: .lengths)
+        
+        self.figure_color = try container.decode([Int].self, forKey: .figure_color)
+        self.material_name = try container.decode(String.self, forKey: .material_name)
+        self.physics_type = try container.decode(PhysicsType.self, forKey: .physics_type)
+        
+        self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
+        self.location = try container.decode([Float].self, forKey: .location)
+        self.rotation = try container.decode([Float].self, forKey: .rotation)
+        
+        self.scene_address = try container.decode(String.self, forKey: .scene_address)
+        
+        get_node_from_scene()
+        color_to_model()
+    }
+    
+    public func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(name, forKey: .name)
+        
+        try container.encode(figure, forKey: .figure)
+        try container.encode(lengths, forKey: .lengths)
+        
+        try container.encode(figure_color, forKey: .figure_color)
+        try container.encode(material_name, forKey: .material_name)
+        try container.encode(physics_type, forKey: .physics_type)
+        
+        try container.encode(is_placed, forKey: .is_placed)
+        try container.encode(location, forKey: .location)
+        try container.encode(rotation, forKey: .rotation)
+        
+        try container.encode(scene_address, forKey: .scene_address)
     }
 }
 
@@ -419,24 +442,4 @@ public enum PhysicsType: String, Codable, Equatable, CaseIterable
     case ph_dynamic = "Dynamic"
     case ph_kinematic = "Kinematic"
     case ph_none = "None"
-}
-
-//MARK: - Part structure for workspace preset document handling
-///A codable part struct.
-public struct PartStruct: Codable
-{
-    var name: String
-    
-    var scene: String
-    
-    var figure: String
-    var lengths: [Float]
-    
-    var figure_color: [Int]
-    var material_name: String
-    var physics_type: PhysicsType
-    
-    var is_placed: Bool
-    var location: [Float]
-    var rotation: [Float]
 }
