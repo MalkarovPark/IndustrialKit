@@ -2008,7 +2008,10 @@ public class Workspace: ObservableObject
         
         for part in preset.parts
         {
-            parts.append(clone_codable(part)!) //Clone for reinitialization with deffered scene parameters.
+            part.get_node_from_scene()
+            part.color_to_model()
+            parts.append(part)
+            //parts.append(clone_codable(part)!) //Clone for reinitialization with deffered scene parameters.
         }
         
         //Update workspace program elements data from file
