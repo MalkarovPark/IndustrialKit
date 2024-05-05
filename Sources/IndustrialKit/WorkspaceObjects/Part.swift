@@ -187,7 +187,7 @@ public class Part: WorkspaceObject, Codable
     }
     
     ///Applies color to part node by components.
-    public func color_to_model()
+    private func color_to_model()
     {
         if node != nil
         {
@@ -411,8 +411,8 @@ public class Part: WorkspaceObject, Codable
         
         self.scene_address = try container.decode(String.self, forKey: .scene_address)
         
-        //get_node_from_scene()
-        //color_to_model()
+        get_node_from_scene()
+        color_to_model()
     }
     
     public func encode(to encoder: any Encoder) throws
