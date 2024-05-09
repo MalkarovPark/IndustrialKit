@@ -32,6 +32,22 @@ public class IndustrialModule: Identifiable, Codable, Equatable
      */
     @Published public var package_file_name: String
     
+    /**
+     An additional resources files names.
+     
+     Used to check files in a package and during the STC package compilation process.
+     
+     > Such as images, models etc.
+     */
+    @Published public var additional_resources_names: [String]?
+    
+    /**
+     An additional listing files names.
+     
+     Used to check files in a package and during the STC package compilation process.
+     */
+    @Published public var additional_listings_names: [String]?
+    
     public static var work_folder_bookmark: Data? ///A folder bookmark to resources access.
     
     open var extension_name: String { "module" } ///An object package extension name.
@@ -71,33 +87,31 @@ public class IndustrialModule: Identifiable, Codable, Equatable
         case name
         case description
         case package_file_name
+        case additional_resources_names
         case additional_listings_names
     }
     
     public required init(from decoder: any Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         self.name = try container.decode(String.self, forKey: .name)
         self.description = try container.decode(String.self, forKey: .description)
         self.package_file_name = try container.decode(String.self, forKey: .package_file_name)
+        self.additional_resources_names = try container.decodeIfPresent([String].self, forKey: .additional_resources_names)
         self.additional_listings_names = try container.decodeIfPresent([String].self, forKey: .additional_listings_names)
     }
     
     public func encode(to encoder: any Encoder) throws
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
         try container.encode(name, forKey: .name)
         try container.encode(description, forKey: .description)
         try container.encode(package_file_name, forKey: .package_file_name)
+        try container.encodeIfPresent(additional_resources_names, forKey: .additional_resources_names)
         try container.encodeIfPresent(additional_listings_names, forKey: .additional_listings_names)
     }
-    
-    /**
-     An additional listing files names.
-     
-     Used to check files in a package and during the STC package compilation process.
-     */
-    public var additional_listings_names: [String]?
 }
 
 //MARK: - Structures

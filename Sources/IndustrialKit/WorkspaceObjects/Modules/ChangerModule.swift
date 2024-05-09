@@ -86,7 +86,7 @@ public class ChangerModule: IndustrialModule
     }
     #endif
     
-    //MARK: Init functions
+    //MARK: - Work with file system
     public override init(name: String = String(), description: String = String(), package_file_name: String = String())
     {
         super.init(name: name, description: description, package_file_name: package_file_name)
