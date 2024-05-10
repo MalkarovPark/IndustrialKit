@@ -10,7 +10,7 @@ import Foundation
 public class ChangerModule: IndustrialModule
 {
     ///Defines the internal/external source of the changer code.
-    public var is_internal_change = true
+    @Published public var is_internal_change = true
     
     ///A main external code file name
     public var code_file_name: String { "Count" }
