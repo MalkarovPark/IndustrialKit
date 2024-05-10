@@ -12,7 +12,7 @@ import Foundation
  
  Sets parameters of the model and links them with the components of the package module.
  */
-public class IndustrialModule: Identifiable, Codable, Equatable
+public class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
 {
     public var id = UUID()
     
