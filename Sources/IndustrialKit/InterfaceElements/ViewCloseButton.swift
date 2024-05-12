@@ -59,9 +59,11 @@ public struct ViewCloseFuncButton: ViewModifier
                 {
                     Image(systemName: "xmark")
                 }
-                .buttonStyle(.bordered)
                 #if os(iOS)
+                //.foregroundStyle(.primary)
                 .modifier(ButtonBorderer())
+                #else
+                .buttonStyle(.bordered)
                 #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
