@@ -109,4 +109,34 @@ public struct ButtonBorderer: ViewModifier
             })
     }
 }
+
+public struct PickerBorderer: ViewModifier
+{
+    @State private var pressed = false
+    
+    public init()
+    {
+        
+    }
+    
+    public func body(content: Content) -> some View
+    {
+        content
+            .buttonStyle(.borderless)
+            .foregroundStyle(.primary)
+            .tint(.primary)
+            .background
+            {
+                Rectangle()
+                    .foregroundStyle(pressed ? Color.init(red: 0.914, green: 0.914, blue: 0.922) : Color.white)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .background(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .shadow(radius: 1)
+            .onLongPressGesture(perform: {}, onPressingChanged: { pressing in
+                pressed = pressing
+            })
+    }
+}
 #endif
