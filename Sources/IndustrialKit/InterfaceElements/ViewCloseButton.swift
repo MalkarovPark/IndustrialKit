@@ -59,7 +59,7 @@ public struct ViewCloseFuncButton: ViewModifier
                 {
                     Image(systemName: "xmark")
                     #if os(iOS)
-                        .padding()
+                        .padding(10)
                     #endif
                 }
                 #if os(iOS)
