@@ -58,9 +58,12 @@ public struct ViewCloseFuncButton: ViewModifier
                 Button(action: close_action)
                 {
                     Image(systemName: "xmark")
+                    #if os(iOS)
+                        .padding()
+                    #endif
                 }
                 #if os(iOS)
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
                 .foregroundStyle(.primary)
                 .modifier(ButtonBorderer())
                 #else
