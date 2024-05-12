@@ -82,7 +82,7 @@ public struct ViewCloseFuncButton: ViewModifier
 }
 
 #if os(iOS)
-struct ButtonBorderer: ViewModifier
+public struct ButtonBorderer: ViewModifier
 {
     public func body(content: Content) -> some View
     {
