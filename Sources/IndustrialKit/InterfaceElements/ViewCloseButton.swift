@@ -25,10 +25,12 @@ public struct ViewCloseButton: ViewModifier
                 {
                     Image(systemName: "xmark")
                 }
-                .buttonStyle(.bordered)
                 .keyboardShortcut(.cancelAction)
-                #if os(iOS)
-                .foregroundStyle(.primary)
+                #if !os(iOS)
+                .buttonStyle(.bordered)
+                #else
+                //.foregroundStyle(.primary)
+                .modifier(ButtonBorderer())
                 #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
@@ -58,16 +60,12 @@ public struct ViewCloseFuncButton: ViewModifier
                 Button(action: close_action)
                 {
                     Image(systemName: "xmark")
-                    #if os(iOS)
-                        .padding(10)
-                    #endif
                 }
-                #if os(iOS)
-                .buttonStyle(.borderless)
-                .foregroundStyle(.primary)
-                .modifier(ButtonBorderer())
-                #else
+                #if !os(iOS)
                 .buttonStyle(.bordered)
+                #else
+                //.foregroundStyle(.primary)
+                .modifier(ButtonBorderer())
                 #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
@@ -84,6 +82,8 @@ public struct ViewCloseFuncButton: ViewModifier
 #if os(iOS)
 public struct ButtonBorderer: ViewModifier
 {
+    @State private var pressed = false
+    
     public init()
     {
         
@@ -92,9 +92,21 @@ public struct ButtonBorderer: ViewModifier
     public func body(content: Content) -> some View
     {
         content
+            .buttonStyle(.bordered)
+            .foregroundStyle(.primary)
+            .tint(.white)
+            .background
+            {
+                Rectangle()
+                    .foregroundStyle(pressed ? Color.init(red: 0.914, green: 0.914, blue: 0.922) : Color.white)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
             .background(.white)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .shadow(radius: 1)
+            .onLongPressGesture(perform: {}, onPressingChanged: { pressing in
+                pressed = pressing
+            })
     }
 }
 #endif
