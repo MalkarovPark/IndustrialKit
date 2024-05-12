@@ -62,6 +62,7 @@ public struct ViewCloseFuncButton: ViewModifier
                 .buttonStyle(.bordered)
                 #if os(iOS)
                 .foregroundStyle(.primary)
+                .modifier(ButtonBorderer())
                 #endif
                 #if os(visionOS)
                 .buttonBorderShape(.circle)
@@ -74,3 +75,16 @@ public struct ViewCloseFuncButton: ViewModifier
             }
     }
 }
+
+#if os(iOS)
+struct ButtonBorderer: ViewModifier
+{
+    public func body(content: Content) -> some View
+    {
+        content
+            .background(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .shadow(radius: 1)
+    }
+}
+#endif
