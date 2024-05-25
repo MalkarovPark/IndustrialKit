@@ -155,7 +155,7 @@ open class WorkspaceObjectConnector: ObservableObject
     }
     
     ///Retruns perfroming state info.
-    open func state_data() -> [StateItem]?
+    open func states_data() -> [StateItem]?
     {
         return [StateItem]()
     }
@@ -167,7 +167,7 @@ open class WorkspaceObjectConnector: ObservableObject
     }
     
     ///Clears model state data.
-    open func clear_state_data()
+    open func clear_states_data()
     {
         
     }

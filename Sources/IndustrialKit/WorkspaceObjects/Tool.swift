@@ -93,7 +93,7 @@ public class Tool: WorkspaceObject
         
         self.get_statistics = tool_struct.get_statistics
         self.charts_data = tool_struct.charts_data
-        self.state_data = tool_struct.state
+        self.states_data = tool_struct.states_data
         
         self.codes = tool_struct.codes
         self.codes_names = tool_struct.names
@@ -624,7 +624,7 @@ public class Tool: WorkspaceObject
     public var charts_data: [WorkspaceObjectChart]?
     
     ///A tool state data.
-    public var state_data: [StateItem]?
+    public var states_data: [StateItem]?
     
     ///A statistics getting toggle.
     public var get_statistics = false
@@ -681,12 +681,12 @@ public class Tool: WorkspaceObject
         {
             if demo //Get statistic from model controller
             {
-                state_data = model_controller.state_data()
+                states_data = model_controller.state_data()
                 charts_data = model_controller.charts_data()
             }
             else //Get statistic from real robot
             {
-                state_data = connector.state_data()
+                states_data = connector.states_data()
                 charts_data = connector.charts_data()
             }
         }
@@ -713,7 +713,7 @@ public class Tool: WorkspaceObject
     ///Clears tool state data.
     public func clear_state_data()
     {
-        state_data = nil
+        states_data = nil
         
         if get_statistics
         {
@@ -723,7 +723,7 @@ public class Tool: WorkspaceObject
             }
             else
             {
-                connector.clear_state_data()
+                connector.clear_states_data()
             }
         }
     }
@@ -834,7 +834,7 @@ public class Tool: WorkspaceObject
                           update_model_by_connector: self.update_model_by_connector,
                           get_statistics: self.get_statistics,
                           charts_data: self.charts_data,
-                          state: self.state_data,
+                          states_data: self.states_data,
                           programs: self.programs,
                           module: self.module_name)
     }
@@ -864,7 +864,7 @@ public struct ToolStruct: Codable
     
     public var get_statistics: Bool
     public var charts_data: [WorkspaceObjectChart]?
-    public var state: [StateItem]?
+    public var states_data: [StateItem]?
     
     public var programs: [OperationsProgram]
     
