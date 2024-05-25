@@ -265,15 +265,6 @@ internal struct ElementView: View
 }
 
 //MARK: View modifiers
-internal struct ListBorderer: ViewModifier
-{
-    public func body(content: Content) -> some View
-    {
-        content
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-    }
-}
-
 internal struct PickerNamer: ViewModifier
 {
     var name: String

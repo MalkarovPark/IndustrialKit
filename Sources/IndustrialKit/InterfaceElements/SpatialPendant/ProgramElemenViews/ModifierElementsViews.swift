@@ -417,7 +417,7 @@ internal struct ObserverElementView: View
                             .onDelete(perform: delete_item)
                         }
                         .frame(width: 400, height: 256)
-                        .modifier(ListBorderer())
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .padding(.bottom)
                     }
                     else
@@ -487,7 +487,7 @@ internal struct ObserverElementView: View
                             .onDelete(perform: delete_item)
                         }
                         .frame(width: 400, height: 256)
-                        .modifier(ListBorderer())
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .padding(.bottom)
                     }
                     else
