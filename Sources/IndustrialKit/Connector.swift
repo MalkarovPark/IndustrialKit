@@ -155,7 +155,7 @@ open class WorkspaceObjectConnector: ObservableObject
     }
     
     ///Retruns perfroming state info.
-    open func state() -> [StateItem]?
+    open func state_data() -> [StateItem]?
     {
         return [StateItem]()
     }

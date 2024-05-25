@@ -1202,7 +1202,7 @@ public class Robot: WorkspaceObject
             }
             else //Get statistic from real robot
             {
-                state_data = connector.state()
+                state_data = connector.state_data()
                 charts_data = connector.charts_data()
             }
         }
