@@ -88,11 +88,6 @@ public class ChangerModule: IndustrialModule
     {
         try super.init(from: decoder)
     }
-    
-    override public func encode(to encoder: any Encoder) throws
-    {
-        try super.encode(to: encoder)
-    }
 }
 
 /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Additive Code@*//*@END_MENU_TOKEN@*/

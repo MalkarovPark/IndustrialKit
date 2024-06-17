@@ -134,7 +134,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
 /**
  A named text block of code that is inserted into a module during compilation.
  */
-public struct CodeItem: Codable, Equatable
+public class CodeItem: Codable, Equatable
 {
     public static func == (lhs: CodeItem, rhs: CodeItem) -> Bool
     {
@@ -147,6 +147,29 @@ public struct CodeItem: Codable, Equatable
         self.code = code
     }
     
-    public var name = String()
-    public var code = String()
+    @Published public var name = String()
+    @Published public var code = String()
+    
+    //MARK: Codable handling
+    enum CodingKeys: String, CodingKey
+    {
+        case name
+        case code
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.name = try container.decode(String.self, forKey: .name)
+        self.code = try container.decode(String.self, forKey: .code)
+    }
+    
+    public func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(name, forKey: .name)
+        try container.encode(code, forKey: .code)
+    }
 }
