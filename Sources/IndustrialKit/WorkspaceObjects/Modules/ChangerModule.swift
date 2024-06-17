@@ -9,9 +9,6 @@ import Foundation
 
 public class ChangerModule: IndustrialModule
 {
-    ///Defines the internal/external source of the changer code.
-    @Published public var is_internal_change = true
-    
     ///A main external code file name
     public var code_file_name: String { "Count" }
     
@@ -22,7 +19,7 @@ public class ChangerModule: IndustrialModule
      */
     public func change(registers: inout [Float])
     {
-        if is_internal_change
+        if is_internal
         {
             registers = internal_change(registers: registers)
         }
@@ -45,13 +42,6 @@ public class ChangerModule: IndustrialModule
     {
         /*@START_MENU_TOKEN@*/return [Float]()/*@END_MENU_TOKEN@*/
     }
-    
-    /**
-     An itnernal code file.
-     
-     Impliments to the *internal_change* function by compilation.
-     */
-    @Published public var internal_code = String()
     
     #if os(macOS)
     /**
@@ -87,39 +77,20 @@ public class ChangerModule: IndustrialModule
     #endif
     
     //MARK: - Work with file system
-    public override init(name: String = String(), description: String = String(), package_file_name: String = String())
-    {
-        super.init(name: name, description: description, package_file_name: package_file_name)
-    }
-    
     public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool(), internal_code: String = String())
     {
         super.init(name: name, description: description, package_file_name: package_file_name)
-        self.is_internal_change = is_internal_change
-        self.internal_code = internal_code
+        code_items = [CodeItem(name: "Change")]
     }
     
     //MARK: Codable handling
-    enum ChangerModuleCodingKeys: String, CodingKey
-    {
-        case is_internal_change
-        case internal_code
-    }
-    
     required public init(from decoder: any Decoder) throws
     {
-        let container = try decoder.container(keyedBy: ChangerModuleCodingKeys.self)
-        is_internal_change = try container.decode(Bool.self, forKey: .is_internal_change)
-        internal_code = try container.decode(String.self, forKey: .internal_code)
-        
         try super.init(from: decoder)
     }
     
     override public func encode(to encoder: any Encoder) throws
     {
-        var container = encoder.container(keyedBy: ChangerModuleCodingKeys.self)
-        try container.encode(is_internal_change, forKey: .is_internal_change)
-        try container.encode(internal_code, forKey: .internal_code)
         try super.encode(to: encoder)
     }
 }
