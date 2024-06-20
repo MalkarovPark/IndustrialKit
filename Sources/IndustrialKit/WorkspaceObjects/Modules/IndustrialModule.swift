@@ -28,6 +28,17 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     
     @Published public var code_items = [CodeItem]() ///Code lisitngs of module.
     
+    public var code_items_names: [String] ///Code items names.
+    {
+        var names = [String]()
+        for code_item in code_items
+        {
+            names.append(code_item.name)
+        }
+        
+        return names
+    }
+    
     //MARK: - File handling
     /**
      A module file name
