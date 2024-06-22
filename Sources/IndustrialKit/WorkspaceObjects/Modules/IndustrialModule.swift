@@ -52,16 +52,16 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
      
      Used to check files in a package and during the STC package compilation process.
      
-     > Such as images, models etc.
+     > Such as images, scenes etc.
      */
-    @Published public var additional_resources_names: [String]?
+    @Published public var components_names: [String]?
     
     /**
-     An additional listing files names.
+     A main scene file name of visual model.
      
-     Used to check files in a package and during the STC package compilation process.
+     > This, all other visual components are used by the main scene.
      */
-    @Published public var additional_listings_names: [String]?
+    @Published public var main_scene_name: String?
     
     public static var work_folder_bookmark: Data? ///A folder bookmark to resources access.
     
@@ -106,8 +106,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         case is_internal
         case code_items
         
-        case additional_resources_names
-        case additional_listings_names
+        case components_names
+        case main_scene_name
     }
     
     public required init(from decoder: any Decoder) throws
@@ -121,8 +121,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.is_internal = try container.decode(Bool.self, forKey: .is_internal)
         self.code_items = try container.decode([CodeItem].self, forKey: .code_items)
         
-        self.additional_resources_names = try container.decodeIfPresent([String].self, forKey: .additional_resources_names)
-        self.additional_listings_names = try container.decodeIfPresent([String].self, forKey: .additional_listings_names)
+        self.components_names = try container.decodeIfPresent([String].self, forKey: .components_names)
+        self.main_scene_name = try container.decodeIfPresent(String.self, forKey: .main_scene_name)
     }
     
     public func encode(to encoder: any Encoder) throws
@@ -136,8 +136,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         try container.encode(is_internal, forKey: .is_internal)
         try container.encode(code_items, forKey: .code_items)
         
-        try container.encodeIfPresent(additional_resources_names, forKey: .additional_resources_names)
-        try container.encodeIfPresent(additional_listings_names, forKey: .additional_listings_names)
+        try container.encodeIfPresent(components_names, forKey: .components_names)
+        try container.encodeIfPresent(main_scene_name, forKey: .main_scene_name)
     }
 }
 
