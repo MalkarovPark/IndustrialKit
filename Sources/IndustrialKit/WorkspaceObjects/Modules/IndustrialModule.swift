@@ -54,7 +54,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
      
      > Such as images, scenes etc.
      */
-    @Published public var components_names: [String]?
+    @Published public var resources_names: [String]?
     
     /**
      A main scene file name of visual model.
@@ -106,7 +106,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         case is_internal
         case code_items
         
-        case components_names
+        case resources_names
         case main_scene_name
     }
     
@@ -121,7 +121,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.is_internal = try container.decode(Bool.self, forKey: .is_internal)
         self.code_items = try container.decode([CodeItem].self, forKey: .code_items)
         
-        self.components_names = try container.decodeIfPresent([String].self, forKey: .components_names)
+        self.resources_names = try container.decodeIfPresent([String].self, forKey: .resources_names)
         self.main_scene_name = try container.decodeIfPresent(String.self, forKey: .main_scene_name)
     }
     
@@ -136,7 +136,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         try container.encode(is_internal, forKey: .is_internal)
         try container.encode(code_items, forKey: .code_items)
         
-        try container.encodeIfPresent(components_names, forKey: .components_names)
+        try container.encodeIfPresent(resources_names, forKey: .resources_names)
         try container.encodeIfPresent(main_scene_name, forKey: .main_scene_name)
     }
 }
