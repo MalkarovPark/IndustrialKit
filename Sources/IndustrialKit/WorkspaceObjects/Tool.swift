@@ -41,7 +41,7 @@ public class Tool: WorkspaceObject
             self.codes_names = dict.map { $0.key }
         }
         
-        if dictionary.keys.contains("Module") //Select model visual controller an connector
+        if dictionary.keys.contains("Module") //Select model visual controller and connector
         {
             self.module_name = dictionary["Module"] as? String ?? ""
             

@@ -1,6 +1,6 @@
 //
 //  PartModule.swift
-//  Industrial Builder
+//  IndustrialKit
 //
 //  Created by Artem on 11.04.2024.
 //

@@ -1,6 +1,6 @@
 //
 //  IndustrialModule.swift
-//  Industrial Builder
+//  IndustrialKit
 //
 //  Created by Artem on 11.04.2024.
 //
@@ -67,6 +67,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     
     open var extension_name: String { "module" } ///An object package extension name.
     
+    //MARK: - Init functions
     public init(name: String = String(), description: String = String(), package_file_name: String = String())
     {
         self.name = name

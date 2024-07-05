@@ -1,6 +1,6 @@
 //
 //  ChangerModule.swift
-//  Industrial Builder
+//  IndustrialKit
 //
 //  Created by Artem on 11.04.2024.
 //
@@ -76,8 +76,8 @@ public class ChangerModule: IndustrialModule
     }
     #endif
     
-    //MARK: - Work with file system
-    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool(), internal_code: String = String())
+    //MARK: - Init functions
+    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool())
     {
         super.init(name: name, description: description, package_file_name: package_file_name)
         code_items = [CodeItem(name: "Change")]
