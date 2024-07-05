@@ -77,10 +77,10 @@ public class ToolModule: IndustrialModule
  */
 public struct ToolOperation: Equatable, Codable
 {
-    var value: Int
-    var name: String
-    var symbol: String
-    var info: String
+    public var value: Int
+    public var name: String
+    public var symbol: String
+    public var info: String
     
     public init(value: Int = 0, name: String = "", symbol: String = "", info: String = "")
     {
