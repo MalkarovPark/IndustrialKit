@@ -1314,7 +1314,14 @@ public class Robot: WorkspaceObject
         Binding<[WorkspaceObjectChart]?>(
             get:
             {
-                self.model_controller.charts_data()
+                if self.demo
+                {
+                    self.model_controller.charts_data()
+                }
+                else
+                {
+                    self.connector.charts_data()
+                }
             },
             set:
             { value in
@@ -1329,7 +1336,14 @@ public class Robot: WorkspaceObject
         Binding<[StateItem]?>(
             get:
             {
-                self.model_controller.states_data()
+                if self.demo
+                {
+                    self.model_controller.states_data()
+                }
+                else
+                {
+                    self.connector.states_data()
+                }
             },
             set:
             { value in
