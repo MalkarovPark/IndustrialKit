@@ -1161,10 +1161,10 @@ public class Robot: WorkspaceObject
     
     //MARK: - Chart functions
     ///A robot charts data.
-    public var charts_data: [WorkspaceObjectChart]?
+    @Published public var charts_data: [WorkspaceObjectChart]?
     
     ///A robot state data.
-    public var state_data: [StateItem]?
+    @Published public var state_data: [StateItem]?
     
     ///A statistics getting toggle.
     public var get_statistics = false
