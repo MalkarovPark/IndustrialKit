@@ -158,6 +158,9 @@ open class RobotModelController: ModelController
         
     }
     
+    ///An update pointer node by position data flag.
+    private var update_pointer_node_position = true
+    
     /**
      A robot pointer location.
      
@@ -167,7 +170,7 @@ open class RobotModelController: ModelController
     {
         didSet
         {
-            update_location()
+            update_robot()
         }
     }
     
@@ -180,32 +183,8 @@ open class RobotModelController: ModelController
     {
         didSet
         {
-            update_rotation()
+            update_robot()
         }
-    }
-    
-    ///Sets robot pointer node location.
-    private func update_location()
-    {
-        pointer_node?.position = get_pointer_position().location
-        
-        update_robot()
-    }
-    
-    ///Sets robot pointer node rotation.
-    private func update_rotation()
-    {
-        #if os(macOS)
-        pointer_node?.eulerAngles.x = CGFloat(get_pointer_position().rot_y)
-        pointer_node?.eulerAngles.y = CGFloat(get_pointer_position().rot_z)
-        pointer_node_internal?.eulerAngles.z = CGFloat(get_pointer_position().rot_x)
-        #else
-        pointer_node?.eulerAngles.x = get_pointer_position().rot_y
-        pointer_node?.eulerAngles.y = get_pointer_position().rot_z
-        pointer_node_internal?.eulerAngles.z = get_pointer_position().rot_x
-        #endif
-        
-        update_robot()
     }
     
     /**
@@ -226,8 +205,30 @@ open class RobotModelController: ModelController
     public var space_scale = [Float](repeating: 200, count: 3)
     
     ///Update robot manipulator parts positions by target point.
-    private func update_robot()
+    private func update_robot() //_ update_pointer_node_position: Bool = true)
     {
+        let pointer_position = get_pointer_position()
+        
+        if update_pointer_node_position
+        {
+            pointer_node?.position = pointer_position.location //Set robot pointer node location.
+            
+            //Set robot pointer node rotation.
+            #if os(macOS)
+            pointer_node?.eulerAngles.x = CGFloat(pointer_position.rot_y)
+            pointer_node?.eulerAngles.y = CGFloat(pointer_position.rot_z)
+            pointer_node_internal?.eulerAngles.z = CGFloat(pointer_position.rot_x)
+            #else
+            pointer_node?.eulerAngles.x = pointer_position.rot_y
+            pointer_node?.eulerAngles.y = pointer_position.rot_z
+            pointer_node_internal?.eulerAngles.z = pointer_position.rot_x
+            #endif
+        }
+        else
+        {
+            update_pointer_node_position = true
+        }
+        
         if lengths.count == description_lengths_count
         {
             nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
@@ -247,22 +248,16 @@ open class RobotModelController: ModelController
     public var pointer_node_internal: SCNNode?
     
     /**
-     Updates robot model by current pointer position.
+     Updates robot model by current pointer node position.
      
      > Can be used within class, but for normal synchronization in SceneKit it is placed in the public protection level.
      */
     public func update_model() //Call from internal – nodes_move_to function
     {
-        //pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
-        //pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
+        pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
+        pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
         
-        let pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
-        let pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
-        
-        if lengths.count == description_lengths_count
-        {
-            nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-        }
+        update_pointer_node_position = false
     }
     
     /**
