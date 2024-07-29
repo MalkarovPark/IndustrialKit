@@ -1308,6 +1308,36 @@ public class Robot: WorkspaceObject
         return color
     }
     
+    ///Connects robot charts to UI.
+    public func charts_binding() -> Binding<[WorkspaceObjectChart]?>
+    {
+        Binding<[WorkspaceObjectChart]?>(
+            get:
+            {
+                self.model_controller.charts_data()
+            },
+            set:
+            { value in
+                self.charts_data = value
+            }
+        )
+    }
+    
+    ///Connects robot charts to UI.
+    public func state_binding() -> Binding<[StateItem]?>
+    {
+        Binding<[StateItem]?>(
+            get:
+            {
+                self.model_controller.state_data()
+            },
+            set:
+            { value in
+                self.state_data = value
+            }
+        )
+    }
+    
     //MARK: - Work with file system
     ///Converts robot data to codable robot struct.
     public var file_info: RobotStruct

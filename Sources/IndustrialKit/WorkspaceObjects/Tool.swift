@@ -815,6 +815,36 @@ public class Tool: WorkspaceObject
     
     public /*private*/ var codes_names = [String]()
     
+    ///Connects tool charts to UI.
+    public func charts_binding() -> Binding<[WorkspaceObjectChart]?>
+    {
+        Binding<[WorkspaceObjectChart]?>(
+            get:
+            {
+                self.model_controller.charts_data()
+            },
+            set:
+            { value in
+                self.charts_data = value
+            }
+        )
+    }
+    
+    ///Connects tool charts to UI.
+    public func state_binding() -> Binding<[StateItem]?>
+    {
+        Binding<[StateItem]?>(
+            get:
+            {
+                self.model_controller.state_data()
+            },
+            set:
+            { value in
+                self.states_data = value
+            }
+        )
+    }
+    
     //MARK: - Work with file system
     ///Converts tool data to codable tool struct.
     public var file_info: ToolStruct
