@@ -1199,8 +1199,7 @@ public class Robot: WorkspaceObject
             {
                 state_data = model_controller.state_data()
                 
-                charts_data?.append(WorkspaceObjectChart(name: "Tool Location", style: .line))
-                charts_data?.removeAll()
+                charts_data = [(WorkspaceObjectChart(name: "Tool Location", style: .line))]
                 charts_data = model_controller.charts_data()
             }
             else //Get statistic from real robot
