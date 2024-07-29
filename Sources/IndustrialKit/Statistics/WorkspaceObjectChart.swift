@@ -11,7 +11,7 @@ import Foundation
 /**
  A storage for chart info.
  */
-public class WorkspaceObjectChart: Identifiable, Codable, Hashable
+public class WorkspaceObjectChart: Identifiable, Codable, Hashable, ObservableObject
 {
     public static func == (lhs: WorkspaceObjectChart, rhs: WorkspaceObjectChart) -> Bool
     {
@@ -90,19 +90,8 @@ public class WorkspaceObjectChart: Identifiable, Codable, Hashable
     }
 }
 
-public class ChartDataItem: Identifiable, Codable, Hashable
+public class ChartDataItem: Identifiable, Codable
 {
-    //public var id = UUID()
-    public static func == (lhs: ChartDataItem, rhs: ChartDataItem) -> Bool
-    {
-        lhs.id == rhs.id
-    }
-    
-    public func hash(into hasher: inout Hasher)
-    {
-        hasher.combine(id)
-    }
-    
     @Published public var name: String
     
     @Published public var domain: [String: Float]
