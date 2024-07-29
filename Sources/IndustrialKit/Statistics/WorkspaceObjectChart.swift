@@ -92,7 +92,7 @@ public class WorkspaceObjectChart: Identifiable, Codable, Hashable
 
 public class ChartDataItem: Identifiable, Codable
 {
-    public var id = UUID()
+    //public var id = UUID()
     @Published public var name: String
     
     @Published public var domain: [String: Float]
