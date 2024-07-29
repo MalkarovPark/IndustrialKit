@@ -151,7 +151,7 @@ open class RobotModelController: ModelController
      Updates robot nodes by positional values.
      
      - Parameters:
-        - values: A robot nodes positional values.
+        - values: Robot nodes positional values.
      */
     open func nodes_update(values: [Float])
     {
@@ -226,7 +226,7 @@ open class RobotModelController: ModelController
     public var space_scale = [Float](repeating: 200, count: 3)
     
     ///Update robot manipulator parts positions by target point.
-    public func update_robot()
+    private func update_robot()
     {
         if lengths.count == description_lengths_count
         {
@@ -253,8 +253,16 @@ open class RobotModelController: ModelController
      */
     public func update_model() //Call from internal – nodes_move_to function
     {
-        pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
-        pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
+        //pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
+        //pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
+        
+        let pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
+        let pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
+        
+        if lengths.count == description_lengths_count
+        {
+            nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        }
     }
     
     /**
