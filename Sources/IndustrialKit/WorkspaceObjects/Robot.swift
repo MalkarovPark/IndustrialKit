@@ -1324,7 +1324,7 @@ public class Robot: WorkspaceObject
     }
     
     ///Connects robot charts to UI.
-    public func state_binding() -> Binding<[StateItem]?>
+    public func states_binding() -> Binding<[StateItem]?>
     {
         Binding<[StateItem]?>(
             get:
