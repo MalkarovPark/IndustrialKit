@@ -9,24 +9,24 @@ import SwiftUI
 
 public struct StateView: View
 {
-    @Binding public var state_data: [StateItem]?
+    @Binding public var states_data: [StateItem]?
     
-    public init(state_data: Binding<[StateItem]?>)
+    public init(states_data: Binding<[StateItem]?>)
     {
-        self._state_data = state_data
+        self._states_data = states_data
     }
     
     public var body: some View
     {
         VStack(spacing: 0)
         {
-            if state_data != nil
+            if states_data != nil
             {
                 Text("Statistics")
                     .font(.title2)
                     .padding()
                 
-                List(state_data!, children: \.children)
+                List(states_data!, children: \.children)
                 { item in
                     StateItemView(item: item)
                 }
@@ -92,19 +92,19 @@ struct StateView_PreviewsContainer: PreviewProvider
     struct StateView_Previews: View
     {
         @State var chart_data: [WorkspaceObjectChart]? = [WorkspaceObjectChart]()
-        @State var state_data: [StateItem]? = [StateItem]()
+        @State var states_data: [StateItem]? = [StateItem]()
         
         var body: some View
         {
-            StateView(state_data: $state_data)
+            StateView(states_data: $states_data)
                 .frame(width: 320, height: 240)
                 .onAppear
                 {
-                    state_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
-                    state_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
+                    states_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
+                    states_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
                                          StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
                     
-                    state_data?.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+                    states_data?.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
                 }
         }
     }

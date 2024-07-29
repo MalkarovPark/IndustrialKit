@@ -169,7 +169,7 @@ public class Robot: WorkspaceObject
         //Statistic value
         self.get_statistics = get_statistics
         self.charts_data = charts_data
-        self.state_data = state
+        self.states_data = state
         
         self.image_data = image_data
         self.origin_location = origin_location
@@ -1164,7 +1164,7 @@ public class Robot: WorkspaceObject
     @Published public var charts_data: [WorkspaceObjectChart]?
     
     ///A robot state data.
-    @Published public var state_data: [StateItem]?
+    @Published public var states_data: [StateItem]?
     
     ///A statistics getting toggle.
     public var get_statistics = false
@@ -1197,12 +1197,12 @@ public class Robot: WorkspaceObject
         {
             if demo //Get statistic from model controller
             {
-                state_data = model_controller.state_data()
+                states_data = model_controller.states_data()
                 charts_data = model_controller.charts_data()
             }
             else //Get statistic from real robot
             {
-                state_data = connector.states_data()
+                states_data = connector.states_data()
                 charts_data = connector.charts_data()
             }
         }
@@ -1227,15 +1227,15 @@ public class Robot: WorkspaceObject
     }
     
     ///Clears robot state data.
-    public func clear_state_data()
+    public func clear_states_data()
     {
-        state_data = nil
+        states_data = nil
         
         if get_statistics
         {
             if demo
             {
-                model_controller.clear_state_data()
+                model_controller.clear_states_data()
             }
             else
             {
@@ -1329,11 +1329,11 @@ public class Robot: WorkspaceObject
         Binding<[StateItem]?>(
             get:
             {
-                self.model_controller.state_data()
+                self.model_controller.states_data()
             },
             set:
             { value in
-                self.state_data = value
+                self.states_data = value
             }
         )
     }
@@ -1357,7 +1357,7 @@ public class Robot: WorkspaceObject
                            update_model_by_connector: self.update_model_by_connector,
                            get_statistics: self.get_statistics,
                            charts_data: self.charts_data,
-                           state: self.state_data,
+                           state: self.states_data,
                            image_data: self.image_data ?? Data(),
                            programs: self.programs,
                            origin_location: self.origin_location,

@@ -681,7 +681,7 @@ public class Tool: WorkspaceObject
         {
             if demo //Get statistic from model controller
             {
-                states_data = model_controller.state_data()
+                states_data = model_controller.states_data()
                 charts_data = model_controller.charts_data()
             }
             else //Get statistic from real robot
@@ -711,7 +711,7 @@ public class Tool: WorkspaceObject
     }
     
     ///Clears tool state data.
-    public func clear_state_data()
+    public func clear_states_data()
     {
         states_data = nil
         
@@ -719,7 +719,7 @@ public class Tool: WorkspaceObject
         {
             if demo
             {
-                model_controller.clear_state_data()
+                model_controller.clear_states_data()
             }
             else
             {
@@ -836,7 +836,7 @@ public class Tool: WorkspaceObject
         Binding<[StateItem]?>(
             get:
             {
-                self.model_controller.state_data()
+                self.model_controller.states_data()
             },
             set:
             { value in

@@ -67,7 +67,7 @@ open class ModelController
     }
     
     ///Retruns perfroming state info.
-    open func state_data() -> [StateItem]?
+    open func states_data() -> [StateItem]?
     {
         return [StateItem]()
     }
@@ -79,7 +79,7 @@ open class ModelController
     }
     
     ///Clears model state data.
-    open func clear_state_data()
+    open func clear_states_data()
     {
         
     }
