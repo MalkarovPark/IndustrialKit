@@ -681,13 +681,15 @@ public class Tool: WorkspaceObject
         {
             if demo //Get statistic from model controller
             {
-                states_data = model_controller.states_data()
-                charts_data = model_controller.charts_data()
+                model_controller.update_statistics_data()
+                states_data = model_controller.states_data
+                charts_data = model_controller.charts_data
             }
-            else //Get statistic from real robot
+            else //Get statistic from real tool
             {
-                states_data = connector.states_data()
-                charts_data = connector.charts_data()
+                connector.update_statistics_data()
+                states_data = connector.states_data
+                charts_data = connector.charts_data
             }
         }
     }
@@ -823,11 +825,11 @@ public class Tool: WorkspaceObject
             {
                 if self.demo
                 {
-                    self.model_controller.charts_data()
+                    self.model_controller.charts_data
                 }
                 else
                 {
-                    self.connector.charts_data()
+                    self.connector.charts_data
                 }
             },
             set:
@@ -845,11 +847,11 @@ public class Tool: WorkspaceObject
             {
                 if self.demo
                 {
-                    self.model_controller.states_data()
+                    self.model_controller.states_data
                 }
                 else
                 {
-                    self.connector.states_data()
+                    self.connector.states_data
                 }
             },
             set:

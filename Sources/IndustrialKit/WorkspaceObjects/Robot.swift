@@ -127,6 +127,8 @@ public class Robot: WorkspaceObject
         
         read_programs(robot_struct: robot_struct)
         read_connection_parameters(connector: connector, robot_struct.connection_parameters)
+        
+        model_controller.charts_data = charts_data
     }
     
     ///Inits robot by name, controller, connector and SceneKit scene.
@@ -1197,13 +1199,15 @@ public class Robot: WorkspaceObject
         {
             if demo //Get statistic from model controller
             {
-                states_data = model_controller.states_data()
-                charts_data = model_controller.charts_data()
+                model_controller.update_statistics_data()
+                states_data = model_controller.states_data
+                charts_data = model_controller.charts_data
             }
             else //Get statistic from real robot
             {
-                states_data = connector.states_data()
-                charts_data = connector.charts_data()
+                connector.update_statistics_data()
+                states_data = connector.states_data
+                charts_data = connector.charts_data
             }
         }
     }
@@ -1316,11 +1320,11 @@ public class Robot: WorkspaceObject
             {
                 if self.demo
                 {
-                    self.model_controller.charts_data()
+                    self.model_controller.charts_data
                 }
                 else
                 {
-                    self.connector.charts_data()
+                    self.connector.charts_data
                 }
             },
             set:
@@ -1338,11 +1342,11 @@ public class Robot: WorkspaceObject
             {
                 if self.demo
                 {
-                    self.model_controller.states_data()
+                    self.model_controller.states_data
                 }
                 else
                 {
-                    self.connector.states_data()
+                    self.connector.states_data
                 }
             },
             set:

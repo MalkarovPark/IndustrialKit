@@ -48,6 +48,7 @@ open class ModelController
         
     }
     
+    //MARK: Statistics handling
     ///A get statistics flag.
     public var get_statistics = false
     {
@@ -60,14 +61,27 @@ open class ModelController
         }
     }
     
-    ///Returns chart data.
-    open func charts_data() -> [WorkspaceObjectChart]?
+    ///Chart data.
+    @Published public var charts_data: [WorkspaceObjectChart]?
+    
+    ///Retruns perfroming state info.
+    @Published public var states_data: [StateItem]?
+    
+    ///Performs statistics data update.
+    public func update_statistics_data()
+    {
+        charts_data = updated_charts_data()
+        states_data = updated_states_data()
+    }
+    
+    ///Updates charts data.
+    open func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         return [WorkspaceObjectChart]()
     }
     
-    ///Retruns perfroming state info.
-    open func states_data() -> [StateItem]?
+    ///Updates perfroming state info.
+    open func updated_states_data() -> [StateItem]?
     {
         return [StateItem]()
     }
