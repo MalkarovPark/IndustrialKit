@@ -1198,6 +1198,9 @@ public class Robot: WorkspaceObject
             if demo //Get statistic from model controller
             {
                 state_data = model_controller.state_data()
+                
+                charts_data?.append(WorkspaceObjectChart(name: "", style: .line))
+                charts_data?.append(WorkspaceObjectChart(name: "", style: .line))
                 charts_data?.removeAll()
                 charts_data = model_controller.charts_data()
             }
