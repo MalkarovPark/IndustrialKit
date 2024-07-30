@@ -221,10 +221,10 @@ open class RobotModelController: ModelController
     ///Update robot manipulator parts positions by target point.
     private func update_robot() //_ update_pointer_node_position: Bool = true)
     {
-        let pointer_position = get_pointer_position()
-        
         if update_pointer_node_position
         {
+            let pointer_position = converted_pointer_position
+            
             pointer_node?.position = pointer_position.location //Set robot pointer node location.
             
             //Set robot pointer node rotation.
@@ -249,8 +249,8 @@ open class RobotModelController: ModelController
         }
     }
     
-    ///Returns robot pointer position for nodes.
-    private func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
+    ///Robot current pointer position data for nodes.
+    private var converted_pointer_position: (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
         return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
