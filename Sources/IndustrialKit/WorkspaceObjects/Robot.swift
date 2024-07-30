@@ -615,7 +615,7 @@ public class Robot: WorkspaceObject
         {
             if demo
             {
-                model_controller.reset_model()
+                model_controller.reset_nodes()
             }
             else
             {
@@ -673,7 +673,7 @@ public class Robot: WorkspaceObject
         {
             if demo
             {
-                model_controller.reset_model()
+                model_controller.reset_nodes()
             }
             else
             {
@@ -741,7 +741,7 @@ public class Robot: WorkspaceObject
             }
             else
             {
-                connector.model_controller?.reset_model()
+                connector.model_controller?.reset_nodes()
                 connector.model_controller = nil
             }
         }
@@ -882,7 +882,7 @@ public class Robot: WorkspaceObject
         // Connect robot parts
         self.tool_node = node?.childNode(withName: "tool", recursively: true)
         self.unit_node?.addChildNode(node ?? SCNNode())
-        model_controller.nodes_disconnect()
+        model_controller.disconnect_nodes()
         model_controller.nodes_connect(node ?? SCNNode(), pointer: self.pointer_node ?? SCNNode(), pointer_internal: self.pointer_node_internal ?? SCNNode())
         model_controller.transform_by_lengths(lengths)
 

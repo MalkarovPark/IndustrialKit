@@ -25,11 +25,11 @@ public class RobotModule: IndustrialModule
             CodeItem(name: "reset_states_data"),
             
             CodeItem(name: "update_nodes_lengths"),
+            CodeItem(name: "update_nodes"),
             CodeItem(name: "inverse_kinematic_calculation"),
-            CodeItem(name: "update_model"),
             
             //Connector
-            CodeItem(name: "connection_process"),
+            /*CodeItem(name: "connection_process"),
             CodeItem(name: "disconnection_process"),
             
             CodeItem(name: "move_to"),
@@ -38,7 +38,7 @@ public class RobotModule: IndustrialModule
             CodeItem(name: "updated_charts_data"),
             CodeItem(name: "updated_states_data"),
             CodeItem(name: "reset_charts_data"),
-            CodeItem(name: "reset_states_data"),
+            CodeItem(name: "reset_states_data"),*/
         ]
     }
     

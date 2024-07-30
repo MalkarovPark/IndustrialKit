@@ -28,24 +28,10 @@ public class ToolModule: IndustrialModule
             CodeItem(name: "reset_charts_data"),
             CodeItem(name: "reset_states_data"),
             
-            CodeItem(name: "update_model"),
+            CodeItem(name: "perform_nodes"),
             
             //Model Statistics
-            CodeItem(name: "model_charts_data"),
-            CodeItem(name: "model_clear_charts_data"),
-            CodeItem(name: "model_states_data"),
-            CodeItem(name: "model_clear_states_data"),
-            
-            CodeItem(name: "connection_process"),
-            CodeItem(name: "disconnection_process"),
-            
-            CodeItem(name: "perform"),
-            CodeItem(name: "pause_operations"),
-            
-            CodeItem(name: "charts_data"),
-            CodeItem(name: "clear_charts_data"),
-            CodeItem(name: "states_data"),
-            CodeItem(name: "clear_states_data")
+            //
         ]
     }
     

@@ -31,19 +31,19 @@ open class ModelController
      - Parameters:
         - node: A root node of workspace object model.
      */
-    open func nodes_connect(_ node: SCNNode)
+    open func connect_nodes(_ node: SCNNode)
     {
         
     }
     
     ///Removes all nodes in object model from controller.
-    public func nodes_disconnect()
+    public func disconnect_nodes()
     {
         nodes.removeAll()
     }
     
     ///Resets nodes position of connected visual model.
-    open func reset_model()
+    open func reset_nodes()
     {
         
     }
@@ -140,10 +140,10 @@ open class RobotModelController: ModelController
         - origin_location: The workcell origin location components – *x*, *y*, *z*.
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      */
-    public final func nodes_update(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
+    /*public final func update_nodes(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        update_model(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
-    }
+        update_nodes(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
+    }*/
     
     /**
      Calculates robot model nodes positions by target position.
@@ -167,7 +167,7 @@ open class RobotModelController: ModelController
      - Parameters:
         - values: Robot nodes positional values.
      */
-    open func update_model(values: [Float])
+    open func update_nodes(values: [Float])
     {
         
     }
@@ -184,7 +184,7 @@ open class RobotModelController: ModelController
     {
         didSet
         {
-            update_robot()
+            update_model()
         }
     }
     
@@ -197,7 +197,7 @@ open class RobotModelController: ModelController
     {
         didSet
         {
-            update_robot()
+            update_model()
         }
     }
     
@@ -219,7 +219,7 @@ open class RobotModelController: ModelController
     public var space_scale = [Float](repeating: 200, count: 3)
     
     ///Update robot manipulator parts positions by target point.
-    private func update_robot()
+    private func update_model()
     {
         if update_pointer_node_position
         {
@@ -245,7 +245,7 @@ open class RobotModelController: ModelController
         
         if lengths.count == description_lengths_count
         {
-            nodes_update(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+            update_nodes(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
         }
     }
     
@@ -268,10 +268,10 @@ open class RobotModelController: ModelController
      */
     public func update_by_pointer() //Call from internal – nodes_move_to function
     {
+        update_pointer_node_position = false
+        
         pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
-        
-        update_pointer_node_position = false
     }
     
     /**
@@ -284,12 +284,12 @@ open class RobotModelController: ModelController
      */
     public func nodes_connect(_ node: SCNNode, pointer: SCNNode, pointer_internal: SCNNode)
     {
-        nodes_connect(node)
+        connect_nodes(node)
         pointer_node = pointer
         pointer_node_internal = pointer_internal
     }
     
-    public override func nodes_disconnect()
+    public override func disconnect_nodes()
     {
         nodes.removeAll()
         pointer_node = SCNNode()
@@ -427,7 +427,7 @@ open class RobotModelController: ModelController
         pointer_node_internal?.removeAllActions()
     }
     
-    open override func reset_model()
+    open override func reset_nodes()
     {
         cancel_task = true
         remove_movement_actions()
@@ -469,7 +469,7 @@ open class ToolModelController: ModelController
             node.removeAllActions()
         }
         
-        reset_model()
+        reset_nodes()
     }
     
     ///Inforamation code updated by model controller.
