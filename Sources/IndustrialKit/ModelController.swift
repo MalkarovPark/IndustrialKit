@@ -266,7 +266,7 @@ open class RobotModelController: ModelController
      
      > Can be used within class, but for normal synchronization in SceneKit it is placed in the public protection level.
      */
-    public func update_model() //Call from internal – nodes_move_to function
+    public func update_by_pointer() //Call from internal – nodes_move_to function
     {
         pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]

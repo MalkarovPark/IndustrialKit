@@ -532,7 +532,7 @@ public class Robot: WorkspaceObject
     public func update_model()
     {
         update_statistics_data()
-        model_controller.update_model()
+        model_controller.update_by_pointer()
     }
     
     //MARK: Performation cycle
