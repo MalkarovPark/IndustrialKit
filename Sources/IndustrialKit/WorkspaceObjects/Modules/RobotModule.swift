@@ -13,17 +13,20 @@ public class RobotModule: IndustrialModule
     public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool())
     {
         super.init(name: name, description: description, package_file_name: package_file_name)
+        
         code_items = [
-            //Model Controller
+            //Controller
             CodeItem(name: "nodes_connect"),
-            CodeItem(name: "nodes_update"),
             CodeItem(name: "reset_model"),
             
-            //Model Statistics
-            CodeItem(name: "model_charts_data"),
-            CodeItem(name: "model_clear_charts_data"),
-            CodeItem(name: "model_states_data"),
-            CodeItem(name: "model_clear_states_data"),
+            CodeItem(name: "updated_charts_data"),
+            CodeItem(name: "updated_states_data"),
+            CodeItem(name: "reset_charts_data"),
+            CodeItem(name: "reset_states_data"),
+            
+            CodeItem(name: "update_nodes_lengths"),
+            CodeItem(name: "inverse_kinematic_calculation"),
+            CodeItem(name: "update_model"),
             
             //Connector
             CodeItem(name: "connection_process"),
@@ -32,11 +35,10 @@ public class RobotModule: IndustrialModule
             CodeItem(name: "move_to"),
             CodeItem(name: "pause_operations"),
             
-            //Model Statistics
-            CodeItem(name: "charts_data"),
-            CodeItem(name: "clear_charts_data"),
-            CodeItem(name: "states_data"),
-            CodeItem(name: "clear_states_data")
+            CodeItem(name: "updated_charts_data"),
+            CodeItem(name: "updated_states_data"),
+            CodeItem(name: "reset_charts_data"),
+            CodeItem(name: "reset_states_data"),
         ]
     }
     

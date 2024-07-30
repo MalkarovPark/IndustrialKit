@@ -701,7 +701,7 @@ public class Tool: WorkspaceObject
         {
             if demo
             {
-                model_controller.clear_charts_data()
+                model_controller.reset_charts_data()
             }
             else
             {
@@ -721,7 +721,7 @@ public class Tool: WorkspaceObject
         {
             if demo
             {
-                model_controller.clear_states_data()
+                model_controller.reset_states_data()
             }
             else
             {

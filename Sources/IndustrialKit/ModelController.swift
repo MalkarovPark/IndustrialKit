@@ -56,15 +56,15 @@ open class ModelController
         {
             if !get_statistics
             {
-                clear_charts_data()
+                reset_charts_data()
             }
         }
     }
     
-    ///Chart data.
+    ///Charts data.
     @Published public var charts_data: [WorkspaceObjectChart]?
     
-    ///Retruns perfroming state info.
+    ///States data.
     @Published public var states_data: [StateItem]?
     
     ///Performs statistics data update.
@@ -80,20 +80,20 @@ open class ModelController
         return [WorkspaceObjectChart]()
     }
     
-    ///Updates perfroming state info.
+    ///Updates states.
     open func updated_states_data() -> [StateItem]?
     {
         return [StateItem]()
     }
     
     ///Clears model chart data.
-    open func clear_charts_data()
+    open func reset_charts_data()
     {
         
     }
     
     ///Clears model state data.
-    open func clear_states_data()
+    open func reset_states_data()
     {
         
     }
@@ -140,9 +140,9 @@ open class RobotModelController: ModelController
         - origin_location: The workcell origin location components – *x*, *y*, *z*.
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      */
-    public final func nodes_update(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float])
+    public final func nodes_update(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        update_model(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_roation, origin_location: origin_location, origin_rotation: origin_rotation))
+        update_model(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
     }
     
     /**
@@ -219,7 +219,7 @@ open class RobotModelController: ModelController
     public var space_scale = [Float](repeating: 200, count: 3)
     
     ///Update robot manipulator parts positions by target point.
-    private func update_robot() //_ update_pointer_node_position: Bool = true)
+    private func update_robot()
     {
         if update_pointer_node_position
         {
@@ -245,7 +245,7 @@ open class RobotModelController: ModelController
         
         if lengths.count == description_lengths_count
         {
-            nodes_update(pointer_location: pointer_location, pointer_roation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+            nodes_update(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
         }
     }
     

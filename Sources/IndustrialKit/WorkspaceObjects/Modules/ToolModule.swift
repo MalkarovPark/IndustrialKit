@@ -19,10 +19,16 @@ public class ToolModule: IndustrialModule
         self.operation_codes = operation_codes
         
         code_items = [
-            //Model Controller
+            //Controller
             CodeItem(name: "nodes_connect"),
-            CodeItem(name: "nodes_perform"),
             CodeItem(name: "reset_model"),
+            
+            CodeItem(name: "updated_charts_data"),
+            CodeItem(name: "updated_states_data"),
+            CodeItem(name: "reset_charts_data"),
+            CodeItem(name: "reset_states_data"),
+            
+            CodeItem(name: "update_model"),
             
             //Model Statistics
             CodeItem(name: "model_charts_data"),
@@ -30,14 +36,12 @@ public class ToolModule: IndustrialModule
             CodeItem(name: "model_states_data"),
             CodeItem(name: "model_clear_states_data"),
             
-            //Connector
             CodeItem(name: "connection_process"),
             CodeItem(name: "disconnection_process"),
             
             CodeItem(name: "perform"),
             CodeItem(name: "pause_operations"),
             
-            //Model Statistics
             CodeItem(name: "charts_data"),
             CodeItem(name: "clear_charts_data"),
             CodeItem(name: "states_data"),
