@@ -142,7 +142,7 @@ open class RobotModelController: ModelController
      */
     public final func nodes_update(pointer_location: [Float], pointer_roation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        nodes_update(values: inverse_kinematic_calculate(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_roation, origin_location: origin_location, origin_rotation: origin_rotation))
+        update_model(values: inverse_kinematic_calculate(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_roation, origin_location: origin_location, origin_rotation: origin_rotation))
     }
     
     /**
@@ -167,7 +167,7 @@ open class RobotModelController: ModelController
      - Parameters:
         - values: Robot nodes positional values.
      */
-    open func nodes_update(values: [Float])
+    open func update_model(values: [Float])
     {
         
     }
