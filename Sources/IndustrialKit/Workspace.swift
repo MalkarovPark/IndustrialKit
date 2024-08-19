@@ -1655,6 +1655,7 @@ public class Workspace: ObservableObject
     private func perform_robot_by(element: RobotPerformerElement)
     {
         select_robot(name: element.object_name)
+        deselect_tool()
         
         if !element.is_single_perfrom
         {
@@ -1705,6 +1706,7 @@ public class Workspace: ObservableObject
     private func perform_tool_by(element: ToolPerformerElement)
     {
         select_tool(name: element.object_name)
+        deselect_robot()
         
         if !element.is_single_perfrom
         {
