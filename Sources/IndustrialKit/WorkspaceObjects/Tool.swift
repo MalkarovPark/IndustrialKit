@@ -446,7 +446,7 @@ public class Tool: WorkspaceObject
     ///Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
-        update_statistics = true
+        //update_statistics = true
         
         perform(code: selected_program.codes[selected_code_index].value)
         {
@@ -457,7 +457,7 @@ public class Tool: WorkspaceObject
     ///Set the new target operation code index.
     private func select_new_code()
     {
-        update_statistics = false
+        //update_statistics = false
         
         if performed
         {
@@ -644,7 +644,7 @@ public class Tool: WorkspaceObject
     
     private var get_statistics_task = Task {}
     
-    private var update_statistics = false
+    /*private var update_statistics = false
     {
         didSet
         {
@@ -664,7 +664,7 @@ public class Tool: WorkspaceObject
                 update_statistics_data()
             }
         }
-    }
+    }*/
     
     ///Index of chart element.
     private var chart_element_index = 0
