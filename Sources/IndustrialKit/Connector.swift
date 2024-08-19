@@ -144,7 +144,7 @@ open class WorkspaceObjectConnector: ObservableObject
         {
             if !get_statistics
             {
-                clear_charts_data()
+                reset_charts_data()
             }
         }
     }
@@ -175,13 +175,13 @@ open class WorkspaceObjectConnector: ObservableObject
     }
     
     ///Clears model chart data.
-    open func clear_charts_data()
+    open func reset_charts_data()
     {
         
     }
     
     ///Clears model state data.
-    open func clear_states_data()
+    open func reset_states_data()
     {
         
     }

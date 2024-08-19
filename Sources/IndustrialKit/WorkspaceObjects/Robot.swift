@@ -1225,7 +1225,7 @@ public class Robot: WorkspaceObject
             }
             else
             {
-                connector.clear_charts_data()
+                connector.reset_charts_data()
             }
         }
     }
@@ -1243,7 +1243,7 @@ public class Robot: WorkspaceObject
             }
             else
             {
-                connector.clear_states_data()
+                connector.reset_states_data()
             }
         }
     }

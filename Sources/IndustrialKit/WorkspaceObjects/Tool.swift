@@ -677,9 +677,9 @@ public class Tool: WorkspaceObject
             charts_data = [WorkspaceObjectChart]()
         }
         
-        get_statistics_task = Task
+        if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
-            if get_statistics && performed //Get data if robot is moving and statistic collection enabled
+            get_statistics_task = Task
             {
                 if demo //Get statistic from model controller
                 {
@@ -708,7 +708,7 @@ public class Tool: WorkspaceObject
             }
             else
             {
-                connector.clear_charts_data()
+                connector.reset_charts_data()
             }
             
             charts_data = nil
@@ -728,7 +728,7 @@ public class Tool: WorkspaceObject
             }
             else
             {
-                connector.clear_states_data()
+                connector.reset_states_data()
             }
         }
     }
