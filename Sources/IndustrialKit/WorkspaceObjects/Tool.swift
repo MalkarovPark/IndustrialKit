@@ -479,7 +479,7 @@ public class Tool: WorkspaceObject
         {
             //Reset target point index if all points passed
             selected_code_index = 0
-            update_statistics_data()
+            //update_statistics_data()
             performed = false
             performing_completed = true
             
@@ -677,19 +677,22 @@ public class Tool: WorkspaceObject
             charts_data = [WorkspaceObjectChart]()
         }
         
-        if get_statistics && performed //Get data if robot is moving and statistic collection enabled
+        get_statistics_task = Task
         {
-            if demo //Get statistic from model controller
+            if get_statistics && performed //Get data if robot is moving and statistic collection enabled
             {
-                model_controller.update_statistics_data()
-                states_data = model_controller.states_data
-                charts_data = model_controller.charts_data
-            }
-            else //Get statistic from real tool
-            {
-                connector.update_statistics_data()
-                states_data = connector.states_data
-                charts_data = connector.charts_data
+                if demo //Get statistic from model controller
+                {
+                    model_controller.update_statistics_data()
+                    states_data = model_controller.states_data
+                    charts_data = model_controller.charts_data
+                }
+                else //Get statistic from real tool
+                {
+                    connector.update_statistics_data()
+                    states_data = connector.states_data
+                    charts_data = connector.charts_data
+                }
             }
         }
     }
