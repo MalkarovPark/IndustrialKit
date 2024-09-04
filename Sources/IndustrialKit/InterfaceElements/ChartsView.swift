@@ -28,10 +28,6 @@ public struct ChartsView: View
                 {
                     if charts_data!.count > 1
                     {
-                        Text("Statistics")
-                            .font(.title2)
-                            .padding([.top, .leading, .trailing])
-                        
                         Picker("Statistics", selection: $chart_selection)
                         {
                             ForEach(0..<charts_data!.count, id: \.self)
@@ -46,8 +42,7 @@ public struct ChartsView: View
                     }
                     else
                     {
-                        Text("Statistics – \(charts_data!.first!.name)")
-                            .font(.title2)
+                        Text(charts_data!.first!.name)
                             .padding([.top, .leading, .trailing])
                     }
                     

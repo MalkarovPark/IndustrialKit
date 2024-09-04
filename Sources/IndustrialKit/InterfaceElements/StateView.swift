@@ -22,23 +22,15 @@ public struct StateView: View
         {
             if states_data != nil
             {
-                Text("Statistics")
-                    .font(.title2)
-                    .padding()
-                
                 List(states_data!, children: \.children)
                 { item in
                     StateItemView(item: item)
                 }
                 .listStyle(.plain)
-                .padding([.horizontal, .bottom])
+                .padding()
             }
             else
             {
-                Text("Statistics")
-                    .font(.title2)
-                    .padding([.horizontal, .top])
-                
                 EmptyView()
             }
         }
