@@ -15,14 +15,18 @@ public struct RegistersView: View
     
     private let numbers: [Int]
     
+    private let bottom_spacing: CGFloat
+    
     private let columns: [GridItem] = [.init(.adaptive(minimum: register_card_maximum, maximum: register_card_maximum), spacing: 0)]
     
-    public init(registers: Binding<[Float]>, colors: [Color])
+    public init(registers: Binding<[Float]>, colors: [Color], bottom_spacing: CGFloat = 0)
     {
         self._registers = registers
         self.numbers = (0...registers.count - 1).map { $0 }
         
         self.colors = colors
+        
+        self.bottom_spacing = bottom_spacing
     }
     
     public init(registers: Binding<[Float]>)
@@ -31,6 +35,8 @@ public struct RegistersView: View
         self.numbers = (0...registers.count - 1).map { $0 }
         
         self.colors = [Color](repeating: .accentColor, count: numbers.count)
+        
+        self.bottom_spacing = 0
     }
     
     public var body: some View
@@ -46,6 +52,11 @@ public struct RegistersView: View
                     RegisterCardView(value: $registers[number], number: number, color: colors[color_index])
                         .id(number)
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                }
+                
+                if bottom_spacing > 0
+                {
+                    Spacer(minLength: bottom_spacing)
                 }
             }
             .padding()
@@ -104,8 +115,6 @@ struct RegistersSelectorView: View
     private let registers_count: [Int]
     private let colors: [Color]
     
-    private var bottom_spacing: CGFloat
-    
     @Binding var indices: [Int]
     @State var names: [String]
     
@@ -115,12 +124,10 @@ struct RegistersSelectorView: View
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: 70, maximum: 70), spacing: 0)]
     
-    init(registers_count: Int, colors: [Color], indices: Binding<[Int]>, names: [String], bottom_space: CGFloat = 0)
+    init(registers_count: Int, colors: [Color], indices: Binding<[Int]>, names: [String])
     {
         self.registers_count = (0...registers_count - 1).map { $0 }
         self.colors = colors
-        
-        self.bottom_spacing = bottom_space
         
         self.selections = [Bool](repeating: false, count: registers_count)
         self.texts = [String](repeating: String(), count: registers_count)
@@ -153,11 +160,6 @@ struct RegistersSelectorView: View
                         {
                             select_index(number)
                         }
-                    }
-                    
-                    if bottom_spacing > 0
-                    {
-                        Spacer(minLength: bottom_spacing)
                     }
                 }
                 .padding()
