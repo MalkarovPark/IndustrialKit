@@ -101,8 +101,10 @@ public struct RegistersSelector: View
 
 struct RegistersSelectorView: View
 {
-    let registers_count: [Int]
-    let colors: [Color]
+    private let registers_count: [Int]
+    private let colors: [Color]
+    
+    private var bottom_spacing: CGFloat
     
     @Binding var indices: [Int]
     @State var names: [String]
@@ -113,10 +115,12 @@ struct RegistersSelectorView: View
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: 70, maximum: 70), spacing: 0)]
     
-    init(registers_count: Int, colors: [Color], indices: Binding<[Int]>, names: [String])
+    init(registers_count: Int, colors: [Color], indices: Binding<[Int]>, names: [String], bottom_space: CGFloat = 0)
     {
         self.registers_count = (0...registers_count - 1).map { $0 }
         self.colors = colors
+        
+        self.bottom_spacing = bottom_space
         
         self.selections = [Bool](repeating: false, count: registers_count)
         self.texts = [String](repeating: String(), count: registers_count)
@@ -149,6 +153,11 @@ struct RegistersSelectorView: View
                         {
                             select_index(number)
                         }
+                    }
+                    
+                    if bottom_spacing > 0
+                    {
+                        Spacer(minLength: bottom_spacing)
                     }
                 }
                 .padding()
