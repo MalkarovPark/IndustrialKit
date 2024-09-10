@@ -37,8 +37,19 @@ public class Tool: WorkspaceObject
         {
             let dict = dictionary["Codes"] as! [String : Int]
             
-            self.codes = dict.map { $0.value }
-            self.codes_names = dict.map { $0.key }
+            //ON DELETE
+            
+            let codes = dict.map { $0.value }
+            let codes_names = dict.map { $0.key }
+            
+            for code in codes
+            {
+                let info_names = codes_names[codes.firstIndex(of: code) ?? 0].components(separatedBy: "#")
+                
+                self.codes.append(OperationCodeInfo(value: code, name: info_names[0], symbol: info_names[1], info: ""))
+            }
+            
+            //TEMPONARY
         }
         
         if dictionary.keys.contains("Module") //Select model visual controller and connector
@@ -96,7 +107,6 @@ public class Tool: WorkspaceObject
         self.states_data = tool_struct.states_data
         
         self.codes = tool_struct.codes
-        self.codes_names = tool_struct.names
         
         self.scene_address = tool_struct.scene ?? ""
         self.programs = tool_struct.programs
@@ -165,6 +175,7 @@ public class Tool: WorkspaceObject
      - Scene Node
      - Tool Model Controller
      - Tool Connector
+     - Codes
      */
     public func module_import(_ module: ToolModule)
     {
@@ -318,13 +329,7 @@ public class Tool: WorkspaceObject
     
     //MARK: - Codes functions
     ///An array of avaliable operation codes values for tool.
-    public var codes = [Int]()
-    
-    ///An avaliable codes count.
-    public var codes_count: Int
-    {
-        return codes.count
-    }
+    public var codes = [OperationCodeInfo]()
     
     ///An information output code.
     public var info_output: [Float]?
@@ -796,42 +801,18 @@ public class Tool: WorkspaceObject
     }
     
     ///Apply corresponded label and SF Symbol to operation code.
-    public func code_info(_ code: Int) -> (label: String, image: Image)
+    public func code_info(_ value: Int) -> OperationCodeInfo
     {
-        var image = Image("")
-        
-        if codes_count > 0
+        let index = codes.firstIndex(where: { $0.value == value }) ?? -1
+        if codes.indices.contains(index)
         {
-            let info_names = codes_names[codes.firstIndex(of: code) ?? 0].components(separatedBy: "#")
-            
-            if info_names.count == 2
-            {
-                image = Image(systemName: info_names[1])
-            }
-            else
-            {
-                if info_names.count == 3
-                {
-                    image = Image(info_names[1])
-                }
-            }
-            
-            if info_names.count > 0
-            {
-                return (info_names[0], image)
-            }
-            else
-            {
-                return ("Unnamed", image)
-            }
+            return self.codes[index]
         }
         else
         {
-            return ("Unnamed", image)
+            return OperationCodeInfo()
         }
     }
-    
-    public /*private*/ var codes_names = [String]()
     
     ///Connects tool charts to UI.
     public func charts_binding() -> Binding<[WorkspaceObjectChart]?>
@@ -883,7 +864,6 @@ public class Tool: WorkspaceObject
     {
         return ToolStruct(name: self.name,
                           codes: self.codes,
-                          names: self.codes_names,
                           scene: self.scene_address,
                           lengths: self.lengths,
                           is_placed: self.is_placed,
@@ -902,13 +882,45 @@ public class Tool: WorkspaceObject
     }
 }
 
+/**
+ Provides information about the operating code.
+ 
+ An array of them determines the opcode values ​​available for a given model.
+ */
+public struct OperationCodeInfo: Equatable, Codable
+{
+    ///Operation code value.
+    public var value: Int
+    
+    ///Operation code name.
+    public var name: String
+    
+    ///Operation code symbol.
+    public var symbol: String
+    
+    ///Operation code info.
+    public var info: String
+    
+    public init(value: Int = 0, name: String = "", symbol: String = "", info: String = "")
+    {
+        self.value = value
+        self.name = name
+        self.symbol = symbol
+        self.info = info
+    }
+    
+    public var image: Image
+    {
+        return Image(systemName: symbol)
+    }
+}
+
 //MARK: - Tool structure for workspace preset document handling
 ///A codable tool struct.
 public struct ToolStruct: Codable
 {
     public var name: String?
-    public var codes: [Int]
-    public var names: [String]
+    public var codes: [OperationCodeInfo]
     
     public var scene: String?
     public var lengths: [Float]
