@@ -199,6 +199,20 @@ public class Part: WorkspaceObject, Codable
         }
     }
     
+    //MARK: - Module handling
+    /**
+     Sets modular components to object instance.
+     - Parameters:
+        - module: A part module.
+     
+     Set the following components:
+     - Scene Node
+     */
+    public func module_import(_ module: PartModule)
+    {
+        //<#code#>
+    }
+    
     //MARK: - Visual build functions
     public override var scene_node_name: String { "part" }
     

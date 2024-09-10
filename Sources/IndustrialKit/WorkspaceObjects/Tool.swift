@@ -155,6 +155,22 @@ public class Tool: WorkspaceObject
      */
     public static var select_modules: ((_ name: String, _ model_controller: inout ToolModelController, _ connector: inout ToolConnector) -> Void) = { name,controller,connector in }
     
+    //MARK: - Module handling
+    /**
+     Sets modular components to object instance.
+     - Parameters:
+        - module: A tool module.
+     
+     Set the following components:
+     - Scene Node
+     - Tool Model Controller
+     - Tool Connector
+     */
+    public func module_import(_ module: ToolModule)
+    {
+        //<#code#>
+    }
+    
     private func apply_statistics_flags()
     {
         model_controller.get_statistics = get_statistics
@@ -324,9 +340,6 @@ public class Tool: WorkspaceObject
     }
     
     //MARK: - Performing functions
-    ///A name of tool module to describe model controller and connector.
-    private var module_name = ""
-    
     ///A moving state of tool.
     public var performed = false
     

@@ -224,6 +224,22 @@ public class Robot: WorkspaceObject
      */
     public static var select_modules: ((_ name: String, _ model_controller: inout RobotModelController, _ connector: inout RobotConnector) -> Void) = { name,controller,connector in }
     
+    //MARK: - Module handling
+    /**
+     Sets modular components to object instance.
+     - Parameters:
+        - module: A robot module.
+     
+     Set the following components:
+     - Scene Node
+     - Robot Model Controller
+     - Robot Connector
+     */
+    public func module_import(_ module: RobotModule)
+    {
+        //<#code#>
+    }
+    
     private func apply_statistics_flags()
     {
         model_controller.get_statistics = get_statistics
@@ -380,7 +396,7 @@ public class Robot: WorkspaceObject
         {
             for program in programs
             {
-                prog_names.append(program.name ?? "None")
+                prog_names.append(program.name)
             }
         }
         return prog_names
@@ -393,9 +409,6 @@ public class Robot: WorkspaceObject
     }
     
     //MARK: - Moving functions
-    ///A name of robot module to describe model controller and connector.
-    private var module_name = ""
-    
     ///A drawing path flag.
     public var draw_path = false
     

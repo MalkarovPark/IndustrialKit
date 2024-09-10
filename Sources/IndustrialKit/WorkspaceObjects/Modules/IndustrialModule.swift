@@ -24,7 +24,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     @Published public var name = String() ///A module name.
     @Published public var description = String() ///An optional module description.
     
-    public var is_internal = false ///Defines the internal/external source of the changer code.
+    public var is_internal = false ///Defines the internal/external source of the code.
     
     @Published public var code_items = [CodeItem]() ///Code lisitngs of module.
     

@@ -32,6 +32,9 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject 
     ///Object name in workspace.
     public var name = String()
     
+    ///A name of module to describe scene, controller and connector.
+    public var module_name = ""
+    
     ///Object init function.
     public init()
     {
