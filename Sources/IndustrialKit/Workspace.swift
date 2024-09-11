@@ -2014,7 +2014,6 @@ public class Workspace: ObservableObject
             part.color_to_model()
             
             parts.append(part)
-            //parts.append(clone_codable(part)!) //Clone for reinitialization with deffered scene parameters.
         }
         
         //Update workspace program elements data from file

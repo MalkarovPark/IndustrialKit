@@ -123,6 +123,21 @@ public class Part: WorkspaceObject, Codable
         //<#code#>
     }
     
+    ///Imported part modules.
+    public static var modules = [PartModule]()
+    
+    override public func import_module_by_name(_ name: String)
+    {
+        guard let index = Part.modules.firstIndex(where: { $0.name == name })
+        else
+        {
+            return
+        }
+        
+        module_import(Part.modules[index])
+    }
+    
+    //MARK: - Deprecated
     ///Inits tool by model dictionary.
     private func init_by_dictionary(name: String, dictionary: [String: Any])
     {

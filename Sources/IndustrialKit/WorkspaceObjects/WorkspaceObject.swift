@@ -51,6 +51,17 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject 
         self.name = name
     }
     
+    //MARK: - Module handling
+    /**
+     Import module by name.
+     - Parameters:
+        - name: An instlled module name.
+     */
+    open func import_module_by_name(_ name: String)
+    {
+        
+    }
+    
     //MARK: - Object in workspace handling
     ///In workspace placement state.
     @Published public var is_placed = false

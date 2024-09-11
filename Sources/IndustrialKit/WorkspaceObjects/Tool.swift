@@ -195,6 +195,20 @@ public class Tool: WorkspaceObject
         //<#code#>
     }
     
+    ///Imported tool modules.
+    public static var modules = [ToolModule]()
+    
+    override public func import_module_by_name(_ name: String)
+    {
+        guard let index = Tool.modules.firstIndex(where: { $0.name == name })
+        else
+        {
+            return
+        }
+        
+        module_import(Tool.modules[index])
+    }
+    
     private func apply_statistics_flags()
     {
         model_controller.get_statistics = get_statistics
