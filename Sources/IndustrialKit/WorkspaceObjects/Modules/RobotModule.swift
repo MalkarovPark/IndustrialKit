@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SceneKit
 
 public class RobotModule: IndustrialModule
 {
@@ -42,7 +43,25 @@ public class RobotModule: IndustrialModule
         ]
     }
     
-    //MARK: Codable handling
+    //MARK: - Import functions
+    override public var scene: SCNScene
+    {
+        return SCNScene()
+    }
+    
+    ///A model controller of the robot model.
+    public var model_controller: RobotModelController
+    {
+        return RobotModelController()
+    }
+    
+    ///A connector of the robot model.
+    public var connector: RobotConnector
+    {
+        return RobotConnector()
+    }
+    
+    //MARK: - Codable handling
     public required init(from decoder: any Decoder) throws
     {
         try super.init(from: decoder)

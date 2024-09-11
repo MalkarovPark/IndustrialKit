@@ -6,8 +6,13 @@
 //
 
 import Foundation
+import SceneKit
 
 public class PartModule: IndustrialModule
 {
-    
+    //MARK: - Import functions
+    override public var scene: SCNScene
+    {
+        return SCNScene()
+    }
 }

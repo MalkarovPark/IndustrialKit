@@ -74,6 +74,23 @@ public class Part: WorkspaceObject, Codable
         super.init(name: name)
     }
     
+    ///Inits part by name and scene name.
+    public init(name: String, scene_name: String)
+    {
+        super.init(name: name)
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() //!
+    }
+    
+    ///Inits part by name and scene.
+    public init(name: String, scene: SCNScene)
+    {
+        super.init(name: name)
+        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
+    }
+    
+    //
+    //
+    
     ///Inits part by dictionary and use models folder.
     public init(name: String, dictionary: [String: Any])
     {
@@ -90,6 +107,20 @@ public class Part: WorkspaceObject, Codable
         {
             node_by_description()
         }
+    }
+    
+    //MARK: - Module handling
+    /**
+     Sets modular components to object instance.
+     - Parameters:
+        - module: A part module.
+     
+     Set the following components:
+     - Scene Node
+     */
+    public func module_import(_ module: PartModule)
+    {
+        //<#code#>
     }
     
     ///Inits tool by model dictionary.
@@ -150,13 +181,6 @@ public class Part: WorkspaceObject, Codable
         }
     }
     
-    ///Inits part by name and scene name.
-    public init(name: String, scene_name: String)
-    {
-        super.init(name: name)
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)!
-    }
-    
     private func color_from_model()
     {
         if node != nil
@@ -197,20 +221,6 @@ public class Part: WorkspaceObject, Codable
             node?.geometry?.firstMaterial?.diffuse.contents = UIColor(red: CGFloat(figure_color?[0] ?? 0) / 255, green: CGFloat(figure_color?[1] ?? 0) / 255, blue: CGFloat(figure_color?[2] ?? 0) / 255, alpha: 1)
             #endif
         }
-    }
-    
-    //MARK: - Module handling
-    /**
-     Sets modular components to object instance.
-     - Parameters:
-        - module: A part module.
-     
-     Set the following components:
-     - Scene Node
-     */
-    public func module_import(_ module: PartModule)
-    {
-        //<#code#>
     }
     
     //MARK: - Visual build functions

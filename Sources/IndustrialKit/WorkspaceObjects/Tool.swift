@@ -28,6 +28,29 @@ public class Tool: WorkspaceObject
         super.init(name: name)
     }
     
+    ///Inits tool by name, controller, connector and scene name.
+    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String)
+    {
+        super.init(name: name)
+        
+        self.model_controller = model_controller
+        self.connector = connector
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() //!
+    }
+    
+    ///Inits tool by name, controller, connector and scene.
+    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene)
+    {
+        super.init(name: name)
+        
+        self.model_controller = model_controller
+        self.connector = connector
+        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
+    }
+    
+    //
+    //
+    
     ///Inits tool by model dictionary.
     public init(name: String, dictionary: [String: Any])
     {
@@ -134,16 +157,6 @@ public class Tool: WorkspaceObject
         }
         
         read_connection_parameters(connector: self.connector, tool_struct.connection_parameters)
-    }
-    
-    ///Inits tool by name, controller, connector and scene name.
-    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String)
-    {
-        super.init(name: name)
-        
-        self.model_controller = model_controller
-        self.connector = connector
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)!
     }
     
     /**
@@ -883,9 +896,9 @@ public class Tool: WorkspaceObject
 }
 
 /**
- Provides information about the operating code.
+ Provides information about the operation code.
  
- An array of them determines the opcode values ​​available for a given model.
+ An array of them determines the opcode values ​​available for a given device.
  */
 public struct OperationCodeInfo: Equatable, Codable, Hashable
 {

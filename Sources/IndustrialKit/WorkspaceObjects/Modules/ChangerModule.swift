@@ -83,7 +83,7 @@ public class ChangerModule: IndustrialModule
         code_items = [CodeItem(name: "Change")]
     }
     
-    //MARK: Codable handling
+    //MARK: - Codable handling
     required public init(from decoder: any Decoder) throws
     {
         try super.init(from: decoder)

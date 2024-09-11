@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SceneKit
 
 /**
  A base class of industrial production object.
@@ -21,12 +22,17 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         lhs.name == rhs.name
     }
     
-    @Published public var name = String() ///A module name.
-    @Published public var description = String() ///An optional module description.
+    ///A module name.
+    @Published public var name = String()
     
-    public var is_internal = false ///Defines the internal/external source of the code.
+    ///An optional module description.
+    @Published public var description = String()
     
-    @Published public var code_items = [CodeItem]() ///Code lisitngs of module.
+    ///Defines the internal/external source of the code.
+    public var is_internal = false
+    
+    ///Code lisitngs of module.
+    @Published public var code_items = [CodeItem]()
     
     /*public var code_items_names: [String] ///Code items names.
     {
@@ -97,7 +103,14 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         }
     }
     
-    //MARK: Codable handling
+    //MARK: - Import functions
+    ///A scene passed to object.
+    open var scene: SCNScene
+    {
+        return SCNScene()
+    }
+    
+    //MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
         case name

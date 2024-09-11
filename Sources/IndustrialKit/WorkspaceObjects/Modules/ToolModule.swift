@@ -6,11 +6,10 @@
 //
 
 import Foundation
+import SceneKit
 
 public class ToolModule: IndustrialModule
 {
-    public var operation_codes = [OperationCodeInfo]()
-    
     //MARK: - Init functions
     public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
@@ -28,14 +27,32 @@ public class ToolModule: IndustrialModule
             CodeItem(name: "reset_charts_data"),
             CodeItem(name: "reset_states_data"),
             
-            CodeItem(name: "perform_nodes"),
-            
-            //Model Statistics
-            //
+            CodeItem(name: "perform_nodes")
         ]
     }
     
-    //MARK: Codable handling
+    //MARK: - Import functions
+    override public var scene: SCNScene
+    {
+        return SCNScene()
+    }
+    
+    ///A model controller of the tool model.
+    public var model_controller: ToolModelController
+    {
+        return ToolModelController()
+    }
+    
+    ///A connector of the tool model.
+    public var connector: ToolConnector
+    {
+        return ToolConnector()
+    }
+    
+    ///Operation codes of the tool model.
+    public var operation_codes = [OperationCodeInfo]()
+    
+    //MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
         case operation_codes
