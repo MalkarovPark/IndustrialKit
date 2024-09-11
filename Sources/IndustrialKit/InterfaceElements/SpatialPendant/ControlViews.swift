@@ -215,15 +215,15 @@ internal struct ToolControl: View
         {
             Picker("Code", selection: $controller.new_opcode_value)
             {
-                if workspace.selected_tool.codes_count > 0
+                if workspace.selected_tool.codes.count > 0
                 {
                     ForEach(workspace.selected_tool.codes, id:\.self)
                     { code in
                         HStack
                         {
-                            Text(workspace.selected_tool.code_info(code).label)
+                            Text(code.name)
                                 .font(.system(size: 24))
-                            workspace.selected_tool.code_info(code).image
+                            code.image
                                 .font(.system(size: 24))
                         }
                     }
@@ -234,7 +234,7 @@ internal struct ToolControl: View
                         .font(.title2)
                 }
             }
-            .disabled(workspace.selected_tool.codes_count == 0)
+            .disabled(workspace.selected_tool.codes.count == 0)
             .pickerStyle(.wheel)
             .frame(maxWidth: 400)
         }

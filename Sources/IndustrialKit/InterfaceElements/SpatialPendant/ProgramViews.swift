@@ -661,7 +661,7 @@ internal struct OperationItemView: View
     @Binding var codes: [OperationCode]
     
     @State var code_item: OperationCode
-    @State private var new_code_value = 0
+    @State private var new_code = OperationCodeInfo()
     @State private var update_data = false
     
     @EnvironmentObject var controller: PendantController
@@ -674,13 +674,13 @@ internal struct OperationItemView: View
             Image(systemName: "circle.fill")
                 .foregroundColor(workspace.selected_tool.inspector_code_color(code: code_item))
             
-            Picker("Code", selection: $new_code_value)
+            Picker("Code", selection: $new_code)
             {
-                if workspace.selected_tool.codes_count > 0
+                if workspace.selected_tool.codes.count > 0
                 {
                     ForEach(workspace.selected_tool.codes, id:\.self)
                     { code in
-                        Text(workspace.selected_tool.code_info(code).label)
+                        Text(code.name)
                     }
                 }
                 else
@@ -688,15 +688,15 @@ internal struct OperationItemView: View
                     Text("None")
                 }
             }
-            .disabled(workspace.selected_tool.codes_count == 0)
+            .disabled(workspace.selected_tool.codes.count == 0)
             .frame(maxWidth: .infinity)
             .pickerStyle(.menu)
             .labelsHidden()
-            .onChange(of: new_code_value)
+            .onChange(of: new_code)
             { _, new_value in
                 if update_data
                 {
-                    code_item.value = new_code_value
+                    code_item.value = new_code.value
                     controller.tools_document_data_update.toggle()
                 }
             }
@@ -704,7 +704,7 @@ internal struct OperationItemView: View
         .onAppear
         {
             update_data = false
-            new_code_value = code_item.value
+            new_code = workspace.selected_tool.code_info(code_item.value)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
             {

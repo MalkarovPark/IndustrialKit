@@ -117,7 +117,7 @@ internal struct RobotDetailView: View
 //MARK: - Robot
 internal struct ToolDetailView: View
 {
-    @State private var new_operation_code: Int = 0
+    @State private var new_operation_code = OperationCodeInfo()
     
     //@EnvironmentObject var controller: PendantController
     @EnvironmentObject var workspace: Workspace
@@ -128,15 +128,15 @@ internal struct ToolDetailView: View
         {
             Picker("Code", selection: $new_operation_code)
             {
-                if workspace.selected_tool.codes_count > 0
+                if workspace.selected_tool.codes.count > 0
                 {
                     ForEach(workspace.selected_tool.codes, id:\.self)
                     { code in
                         HStack
                         {
-                            Text(workspace.selected_tool.code_info(code).label)
+                            Text(code.name)
                                 .font(.title2)
-                            workspace.selected_tool.code_info(code).image
+                            code.image
                                 .font(.title2)
                         }
                     }
@@ -148,7 +148,7 @@ internal struct ToolDetailView: View
                         .padding()
                 }
             }
-            .disabled(workspace.selected_tool.codes_count == 0)
+            .disabled(workspace.selected_tool.codes.count == 0)
             .pickerStyle(.wheel)
             .frame(maxWidth: 256)
             .buttonStyle(.borderedProminent)
