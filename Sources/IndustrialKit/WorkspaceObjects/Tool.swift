@@ -887,7 +887,7 @@ public class Tool: WorkspaceObject
  
  An array of them determines the opcode values ​​available for a given model.
  */
-public struct OperationCodeInfo: Equatable, Codable
+public struct OperationCodeInfo: Equatable, Codable, Hashable
 {
     ///Operation code value.
     public var value: Int
