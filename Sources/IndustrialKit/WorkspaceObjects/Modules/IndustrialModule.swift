@@ -105,9 +105,9 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     
     //MARK: - Import functions
     ///A scene passed to object.
-    open var scene: SCNScene
+    open var node: SCNNode
     {
-        return SCNScene()
+        return SCNNode()
     }
     
     //MARK: - Codable handling

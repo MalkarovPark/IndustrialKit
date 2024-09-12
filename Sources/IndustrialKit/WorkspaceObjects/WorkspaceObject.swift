@@ -52,10 +52,13 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject 
     }
     
     //MARK: - Module handling
+    ///Modules folder access bookmark.
+    public static var modules_folder_bookmark: Data?
+    
     /**
      Import module by name.
      - Parameters:
-        - name: An instlled module name.
+        - name: An installed module name.
      */
     open func import_module_by_name(_ name: String)
     {

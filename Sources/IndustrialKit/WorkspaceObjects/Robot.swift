@@ -240,7 +240,10 @@ public class Robot: WorkspaceObject
      */
     public func module_import(_ module: RobotModule)
     {
-        //<#code#>
+        node = module.node
+        
+        model_controller = module.model_controller
+        connector = module.connector
     }
     
     ///Imported robot modules.

@@ -192,7 +192,12 @@ public class Tool: WorkspaceObject
      */
     public func module_import(_ module: ToolModule)
     {
-        //<#code#>
+        node = module.node
+        
+        model_controller = module.model_controller
+        connector = module.connector
+        
+        codes = module.codes
     }
     
     ///Imported tool modules.

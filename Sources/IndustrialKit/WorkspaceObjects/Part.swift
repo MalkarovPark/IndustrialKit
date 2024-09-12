@@ -120,7 +120,7 @@ public class Part: WorkspaceObject, Codable
      */
     public func module_import(_ module: PartModule)
     {
-        //<#code#>
+        node = module.node
     }
     
     ///Imported part modules.

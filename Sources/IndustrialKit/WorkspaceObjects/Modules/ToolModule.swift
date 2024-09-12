@@ -15,7 +15,7 @@ public class ToolModule: IndustrialModule
     {
         super.init(name: name, description: description, package_file_name: package_file_name)
         
-        self.operation_codes = operation_codes
+        self.codes = operation_codes
         
         code_items = [
             //Controller
@@ -32,9 +32,9 @@ public class ToolModule: IndustrialModule
     }
     
     //MARK: - Import functions
-    override public var scene: SCNScene
+    override public var node: SCNNode
     {
-        return SCNScene()
+        return SCNNode()
     }
     
     ///A model controller of the tool model.
@@ -50,7 +50,7 @@ public class ToolModule: IndustrialModule
     }
     
     ///Operation codes of the tool model.
-    public var operation_codes = [OperationCodeInfo]()
+    public var codes = [OperationCodeInfo]()
     
     //MARK: - Codable handling
     enum CodingKeys: String, CodingKey
@@ -62,7 +62,7 @@ public class ToolModule: IndustrialModule
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.operation_codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
+        self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
         
         try super.init(from: decoder)
     }
@@ -71,7 +71,7 @@ public class ToolModule: IndustrialModule
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(operation_codes, forKey: .operation_codes)
+        try container.encode(codes, forKey: .operation_codes)
         
         try super.encode(to: encoder)
     }

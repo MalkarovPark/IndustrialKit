@@ -560,6 +560,9 @@ public class ChangerModifierElement: ModifierElement
     {
         return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [module_name])
     }
+    
+    //MARK: - Module handling
+    
 }
 
 ///Pushes info code from tool to registers.

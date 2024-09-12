@@ -11,8 +11,8 @@ import SceneKit
 public class PartModule: IndustrialModule
 {
     //MARK: - Import functions
-    override public var scene: SCNScene
+    override public var node: SCNNode
     {
-        return SCNScene()
+        return SCNNode()
     }
 }

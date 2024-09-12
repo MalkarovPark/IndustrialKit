@@ -44,9 +44,9 @@ public class RobotModule: IndustrialModule
     }
     
     //MARK: - Import functions
-    override public var scene: SCNScene
+    override public var node: SCNNode
     {
-        return SCNScene()
+        return SCNNode()
     }
     
     ///A model controller of the robot model.
