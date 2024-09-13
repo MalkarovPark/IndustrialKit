@@ -562,7 +562,8 @@ public class ChangerModifierElement: ModifierElement
     }
     
     //MARK: - Module handling
-    
+    ///Imported changer modules.
+    public static var modules = [ChangerModule]()
 }
 
 ///Pushes info code from tool to registers.
