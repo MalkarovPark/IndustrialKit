@@ -342,3 +342,12 @@ open class RobotModelController: ModelController
         remove_movement_actions()
     }
 }
+
+//MARK: - External Controller
+public class ExternalRobotModelController: RobotModelController
+{
+    public init(_ module_name: String)
+    {
+        
+    }
+}

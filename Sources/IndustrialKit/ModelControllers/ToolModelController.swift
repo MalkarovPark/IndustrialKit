@@ -49,3 +49,12 @@ open class ToolModelController: ModelController
     ///Inforamation code updated by model controller.
     public var info_output: [Float]?
 }
+
+//MARK: - External Controller
+public class ExternalToolModelController: ToolModelController
+{
+    public init(_ module_name: String)
+    {
+        
+    }
+}

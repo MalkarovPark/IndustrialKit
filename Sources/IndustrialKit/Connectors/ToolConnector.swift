@@ -56,3 +56,12 @@ open class ToolConnector: WorkspaceObjectConnector
     ///A tool model controller.
     public var model_controller: ToolModelController?
 }
+
+//MARK: - External Connector
+public class ExternalToolConnector: ToolConnector
+{
+    public init(_ module_name: String)
+    {
+        
+    }
+}

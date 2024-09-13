@@ -11,9 +11,9 @@ import SceneKit
 public class ToolModule: IndustrialModule
 {
     //MARK: - Init functions
-    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo]())
+    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
-        super.init(name: name, description: description, package_file_name: package_file_name)
+        super.init(name: name, description: description, package_file_name: package_file_name, is_internal: is_internal)
         
         self.codes = operation_codes
         
@@ -40,13 +40,27 @@ public class ToolModule: IndustrialModule
     ///A model controller of the tool model.
     public var model_controller: ToolModelController
     {
-        return ToolModelController()
+        if is_internal
+        {
+            return ToolModelController()
+        }
+        else
+        {
+            return ExternalToolModelController(name)
+        }
     }
     
     ///A connector of the tool model.
     public var connector: ToolConnector
     {
-        return ToolConnector()
+        if is_internal
+        {
+            return ToolConnector()
+        }
+        else
+        {
+            return ExternalToolConnector(name)
+        }
     }
     
     ///Operation codes of the tool model.

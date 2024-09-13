@@ -84,3 +84,12 @@ open class RobotConnector: WorkspaceObjectConnector
     ///A robot cell box scale.
     public var space_scale = [Float](repeating: 200, count: 3)
 }
+
+//MARK: - External Connector
+public class ExternalRobotConnector: RobotConnector
+{
+    public init(_ module_name: String)
+    {
+        
+    }
+}

@@ -74,11 +74,12 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     open var extension_name: String { "module" } ///An object package extension name.
     
     //MARK: - Init functions
-    public init(name: String = String(), description: String = String(), package_file_name: String = String())
+    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = true)
     {
         self.name = name
         self.description = description
         self.package_file_name = package_file_name
+        self.is_internal = is_internal
     }
     
     public var internal_url: String? ///An adress to package contents access.

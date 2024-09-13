@@ -11,9 +11,9 @@ import SceneKit
 public class RobotModule: IndustrialModule
 {
     //MARK: - Init functions
-    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool())
+    public override init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool())
     {
-        super.init(name: name, description: description, package_file_name: package_file_name)
+        super.init(name: name, description: description, package_file_name: package_file_name, is_internal: is_internal)
         
         code_items = [
             //Controller
@@ -52,13 +52,27 @@ public class RobotModule: IndustrialModule
     ///A model controller of the robot model.
     public var model_controller: RobotModelController
     {
-        return RobotModelController()
+        if is_internal
+        {
+            return RobotModelController()
+        }
+        else
+        {
+            return ExternalRobotModelController(name)
+        }
     }
     
     ///A connector of the robot model.
     public var connector: RobotConnector
     {
-        return RobotConnector()
+        if is_internal
+        {
+            return RobotConnector()
+        }
+        else
+        {
+            return ExternalRobotConnector(name)
+        }
     }
     
     //MARK: - Codable handling
