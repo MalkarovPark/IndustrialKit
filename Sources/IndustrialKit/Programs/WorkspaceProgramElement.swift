@@ -562,9 +562,35 @@ public class ChangerModifierElement: ModifierElement
     }
     
     //MARK: - Module handling
+    /**
+     Sets modular components to object instance.
+     - Parameters:
+        - module: A part module.
+     
+     Set the following components:
+     - Scene Node
+     */
+    public func module_import(_ module: ChangerModule)
+    {
+        
+    }
+    
     ///Imported changer modules.
     public static var modules = [ChangerModule]()
+    
+    public func import_module_by_name(_ name: String)
+    {
+        guard let index = Changer.modules.firstIndex(where: { $0.name == name })
+        else
+        {
+            return
+        }
+        
+        module_import(Changer.modules[index])
+    }
 }
+
+typealias Changer = ChangerModifierElement
 
 ///Pushes info code from tool to registers.
 public class ObserverModifierElement: ModifierElement
