@@ -561,6 +561,8 @@ public class ChangerModifierElement: ModifierElement
         return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [module_name])
     }
     
+    public var change: ((_ registers: inout [Float]) -> Void) = { registers in }
+    
     //MARK: - Module handling
     /**
      Sets modular components to object instance.
@@ -568,11 +570,11 @@ public class ChangerModifierElement: ModifierElement
         - module: A part module.
      
      Set the following components:
-     - Scene Node
+     - Registers change function
      */
     public func module_import(_ module: ChangerModule)
     {
-        
+        change = module.change(registers:)
     }
     
     ///Imported changer modules.

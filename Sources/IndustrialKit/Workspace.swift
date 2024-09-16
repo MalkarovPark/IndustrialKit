@@ -1480,7 +1480,7 @@ public class Workspace: ObservableObject
             select_new_element()
         case let changer_element as ChangerModifierElement:
             let registers_count = registers.count
-            Workspace.change_by(changer_element.module_name, &registers)
+            changer_element.change(&registers)
             check_registers(registers_count)
             select_new_element()
         case let observer_element as ObserverModifierElement:
@@ -1811,23 +1811,6 @@ public class Workspace: ObservableObject
     
     ///A changer modules names array.
     public static var changer_modules = [String]()
-    
-    /**
-     Updates registers by changer module selected by name.
-    
-     Code example.
-     
-            switch name
-            {
-            case "Module Name":
-                //Algorythm
-            case "Module Name 2":
-                //Algorythm 2
-            default:
-                break
-            }
-     */
-    public static var change_by: ((_ name: String, _ registers: inout [Float]) -> Void) = { name,registers in }
     
     /**
      Jumps to program element by index.
