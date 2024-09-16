@@ -554,6 +554,7 @@ public class ChangerModifierElement: ModifierElement
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     {
         module_name = element_struct.data[0]
+        import_module_by_name(module_name)
     }
     
     public override var file_info: WorkspaceProgramElementStruct

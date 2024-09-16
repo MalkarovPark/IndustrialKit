@@ -26,6 +26,9 @@ public class Workspace: ObservableObject
     
     //MARK: - Workspace objects data
     @Published public var robots = [Robot]()
+    @Published public var tools = [Tool]()
+    @Published public var parts = [Part]()
+    
     @Published public var elements = [WorkspaceProgramElement]()
     {
         didSet
@@ -38,9 +41,6 @@ public class Workspace: ObservableObject
             }
         }
     }
-    
-    @Published public var tools = [Tool]()
-    @Published public var parts = [Part]()
     
     //MARK: - Workspace visual handling functions
     ///A SceneKit scene for complex visual model of workspace.

@@ -144,6 +144,9 @@ public class Tool: WorkspaceObject
         }
         
         self.module_name = tool_struct.module ?? ""
+        
+        import_module_by_name(module_name)
+        
         if module_name != ""
         {
             Tool.select_modules(module_name, &model_controller, &connector)

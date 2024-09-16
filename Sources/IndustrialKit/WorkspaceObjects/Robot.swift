@@ -149,8 +149,9 @@ public class Robot: WorkspaceObject
         read_default_position(robot_struct.default_pointer_position)
         
         read_programs(robot_struct: robot_struct)
-        read_connection_parameters(connector: connector, robot_struct.connection_parameters)
         
+        import_module_by_name(module_name)
+        read_connection_parameters(connector: connector, robot_struct.connection_parameters)
         model_controller.charts_data = charts_data
     }
     
