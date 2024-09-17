@@ -51,6 +51,13 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject 
         self.name = name
     }
     
+    ///Inits object by name and module name of installed module.
+    public init(name: String, module_name: String)
+    {
+        self.name = name
+        import_module_by_name(module_name)
+    }
+    
     //MARK: - Module handling
     ///Modules folder access bookmark.
     public static var modules_folder_bookmark: Data?

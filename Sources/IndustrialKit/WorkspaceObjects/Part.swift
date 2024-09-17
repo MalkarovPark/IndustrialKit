@@ -88,6 +88,13 @@ public class Part: WorkspaceObject, Codable
         self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
     }
     
+    ///Inits part by name and part module.
+    public init(name: String, module: PartModule)
+    {
+        super.init(name: name)
+        module_import(module)
+    }
+    
     //
     //
     
