@@ -32,7 +32,7 @@ open class ToolModule: IndustrialModule
     }
     
     //MARK: - Import functions
-    override public var node: SCNNode
+    override open var node: SCNNode
     {
         return SCNNode()
     }
