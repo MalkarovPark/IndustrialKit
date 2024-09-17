@@ -11,9 +11,20 @@ import SceneKit
 open class RobotModule: IndustrialModule
 {
     //MARK: - Init functions
-    public override init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool())
+    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool(), model_controller: RobotModelController = RobotModelController(), connector: RobotConnector = RobotConnector(), node: SCNNode)
     {
         super.init(name: name, description: description, package_file_name: package_file_name, is_internal: is_internal)
+        
+        if is_internal
+        {
+            self.connector = connector
+            self.model_controller = model_controller
+            self.node = node
+        }
+        else
+        {
+            external_import()
+        }
         
         code_items = [
             //Controller
@@ -43,41 +54,31 @@ open class RobotModule: IndustrialModule
         ]
     }
     
-    //MARK: - Import functions
-    override open var node: SCNNode
-    {
-        return SCNNode()
-    }
-    
+    //MARK: - Components
     ///A model controller of the robot model.
-    public var model_controller: RobotModelController
-    {
-        if is_internal
-        {
-            return RobotModelController()
-        }
-        else
-        {
-            return ExternalRobotModelController(name)
-        }
-    }
+    public var model_controller = RobotModelController()
     
     ///A connector of the robot model.
-    public var connector: RobotConnector
+    public var connector = RobotConnector()
+    
+    //MARK: - Import functions
+    override open func external_import()
     {
-        if is_internal
-        {
-            return RobotConnector()
-        }
-        else
-        {
-            return ExternalRobotConnector(name)
-        }
+        connector = ExternalRobotConnector(name)
+        model_controller = ExternalRobotModelController(name)
+        node = external_node
+    }
+    
+    override open var external_node: SCNNode
+    {
+        return SCNNode()
     }
     
     //MARK: - Codable handling
     public required init(from decoder: any Decoder) throws
     {
         try super.init(from: decoder)
+        
+        external_import()
     }
 }

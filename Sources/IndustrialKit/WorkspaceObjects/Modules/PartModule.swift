@@ -11,7 +11,12 @@ import SceneKit
 open class PartModule: IndustrialModule
 {
     //MARK: - Import functions
-    override open var node: SCNNode
+    override open func external_import()
+    {
+        self.node = external_node
+    }
+    
+    override open var external_node: SCNNode
     {
         return SCNNode()
     }

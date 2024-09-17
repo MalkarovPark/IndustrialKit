@@ -11,11 +11,22 @@ import SceneKit
 open class ToolModule: IndustrialModule
 {
     //MARK: - Init functions
-    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo]())
+    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode = SCNNode())
     {
         super.init(name: name, description: description, package_file_name: package_file_name, is_internal: is_internal)
         
-        self.codes = operation_codes
+        if is_internal
+        {
+            self.connector = connector
+            self.model_controller = model_controller
+            self.codes = operation_codes
+            self.node = node
+        }
+        else
+        {
+            external_import()
+            self.codes = operation_codes
+        }
         
         code_items = [
             //Controller
@@ -31,40 +42,29 @@ open class ToolModule: IndustrialModule
         ]
     }
     
-    //MARK: - Import functions
-    override open var node: SCNNode
-    {
-        return SCNNode()
-    }
-    
+    //MARK: - Components
     ///A model controller of the tool model.
-    public var model_controller: ToolModelController
-    {
-        if is_internal
-        {
-            return ToolModelController()
-        }
-        else
-        {
-            return ExternalToolModelController(name)
-        }
-    }
+    public var model_controller = ToolModelController()
     
     ///A connector of the tool model.
-    public var connector: ToolConnector
-    {
-        if is_internal
-        {
-            return ToolConnector()
-        }
-        else
-        {
-            return ExternalToolConnector(name)
-        }
-    }
+    public var connector = ToolConnector()
     
     ///Operation codes of the tool model.
     public var codes = [OperationCodeInfo]()
+    
+    //MARK: - Import functions
+    override open func external_import()
+    {
+        connector = ExternalToolConnector(name)
+        model_controller = ExternalToolModelController(name)
+        //codes = operation_codes
+        node = external_node
+    }
+    
+    override open var external_node: SCNNode
+    {
+        return SCNNode()
+    }
     
     //MARK: - Codable handling
     enum CodingKeys: String, CodingKey
@@ -79,6 +79,8 @@ open class ToolModule: IndustrialModule
         self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
         
         try super.init(from: decoder)
+        
+        external_import()
     }
     
     public override func encode(to encoder: any Encoder) throws
