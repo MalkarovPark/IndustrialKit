@@ -8,7 +8,7 @@
 import Foundation
 import SceneKit
 
-public class RobotModule: IndustrialModule
+open class RobotModule: IndustrialModule
 {
     //MARK: - Init functions
     public override init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool())

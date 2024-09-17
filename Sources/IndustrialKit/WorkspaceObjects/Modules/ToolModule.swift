@@ -8,7 +8,7 @@
 import Foundation
 import SceneKit
 
-public class ToolModule: IndustrialModule
+open class ToolModule: IndustrialModule
 {
     //MARK: - Init functions
     public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo]())

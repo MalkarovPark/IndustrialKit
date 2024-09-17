@@ -8,7 +8,7 @@
 import Foundation
 import SceneKit
 
-public class PartModule: IndustrialModule
+open class PartModule: IndustrialModule
 {
     //MARK: - Import functions
     override public var node: SCNNode

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class ChangerModule: IndustrialModule
+open class ChangerModule: IndustrialModule
 {
     ///A main external code file name
     public var code_file_name: String { "Count" }
