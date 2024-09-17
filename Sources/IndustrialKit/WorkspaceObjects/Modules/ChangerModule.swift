@@ -9,6 +9,14 @@ import Foundation
 
 open class ChangerModule: IndustrialModule
 {
+    //MARK: - Init functions
+    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool())
+    {
+        super.init(name: name, description: description, package_file_name: package_file_name)
+        code_items = [CodeItem(name: "Change")]
+    }
+    
+    //MARK: - Components
     ///A main external code file name
     public var code_file_name: String { "Count" }
     
@@ -75,13 +83,6 @@ open class ChangerModule: IndustrialModule
         return new_registers ?? []
     }
     #endif
-    
-    //MARK: - Init functions
-    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool())
-    {
-        super.init(name: name, description: description, package_file_name: package_file_name)
-        code_items = [CodeItem(name: "Change")]
-    }
     
     //MARK: - Codable handling
     required public init(from decoder: any Decoder) throws
