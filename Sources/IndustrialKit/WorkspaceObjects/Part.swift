@@ -418,11 +418,44 @@ public class Part: WorkspaceObject
     }
     
     //MARK: - Work with file system
+    enum CodingKeys: String, CodingKey
+    {
+        case physics_type
+        
+        /*case figure
+        case lengths
+        case figure_color
+        case material_name*/
+    }
+    
     public required init(from decoder: any Decoder) throws
     {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.physics_type = try container.decode(PhysicsType.self, forKey: .physics_type)
+        
+        /*self.figure = try container.decode(String.self, forKey: .figure)
+        self.lengths = try container.decode([Float].self, forKey: .lengths)
+        self.figure_color = try container.decode([Int].self, forKey: .figure_color)
+        self.material_name = try container.decode(String.self, forKey: .material_name)*/
+        
         try super.init(from: decoder)
         
-        color_to_model()
+        color_from_model()
+    }
+    
+    public override func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(physics_type, forKey: .physics_type)
+        
+        /*try container.encode(figure, forKey: .figure)
+        try container.encode(lengths, forKey: .lengths)
+        try container.encode(figure_color, forKey: .figure_color)
+        try container.encode(material_name, forKey: .material_name)*/
+        
+        try super.encode(to: encoder)
     }
 }
 
