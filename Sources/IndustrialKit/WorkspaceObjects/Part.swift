@@ -460,6 +460,7 @@ public class Part: WorkspaceObject, Codable
         //get_node_from_scene()
         //color_to_model()
         import_module_by_name(module_name)
+        color_to_model()
     }
     
     public func encode(to encoder: any Encoder) throws

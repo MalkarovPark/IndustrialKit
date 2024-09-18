@@ -1993,8 +1993,8 @@ public class Workspace: ObservableObject
         
         for part in preset.parts
         {
-            part.get_node_from_scene()
-            part.color_to_model()
+            //part.get_node_from_scene()
+            //part.color_to_model()
             
             parts.append(part)
         }
