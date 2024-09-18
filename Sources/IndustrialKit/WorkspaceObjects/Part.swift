@@ -128,6 +128,7 @@ public class Part: WorkspaceObject
     public func module_import(_ module: PartModule)
     {
         node = module.node
+        module_name = module.name
     }
     
     ///Imported part modules.
