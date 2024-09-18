@@ -162,6 +162,10 @@ public class Robot: WorkspaceObject
         model_controller.charts_data = charts_data
     }
     
+    public required init(from decoder: any Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
     ///Common init function.
     private func robot_init(name: String, manufacturer: String, model: String, lengths: [Float], module_name: String, scene: String, is_placed: Bool, location: [Float], rotation: [Float], demo: Bool, update_model_by_connector: Bool, get_statistics: Bool, charts_data: [WorkspaceObjectChart]?, state: [StateItem]?, image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
     {

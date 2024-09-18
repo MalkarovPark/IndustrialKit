@@ -14,7 +14,7 @@ import SwiftUI
  
  Forms environment, and represent objects with which executing devices interact directly.
  */
-public class Part: WorkspaceObject, Codable
+public class Part: WorkspaceObject
 {
     private var figure: String? //Part figure name
     private var lengths: [Float]? //lengths for part without scene figure
@@ -418,69 +418,11 @@ public class Part: WorkspaceObject, Codable
     }
     
     //MARK: - Work with file system
-    private enum CodingKeys: String, CodingKey
-    {
-        case name
-        
-        case scene_address
-        
-        case figure
-        case lengths
-        
-        case figure_color
-        case material_name
-        case physics_type
-        
-        case is_placed
-        case location
-        case rotation
-    }
-    
     public required init(from decoder: any Decoder) throws
     {
-        super.init()
+        try super.init(from: decoder)
         
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        self.name = try container.decode(String.self, forKey: .name)
-        
-        self.figure = try container.decodeIfPresent(String.self, forKey: .figure)
-        self.lengths = try container.decodeIfPresent([Float].self, forKey: .lengths)
-        
-        self.figure_color = try container.decodeIfPresent([Int].self, forKey: .figure_color)
-        self.material_name = try container.decodeIfPresent(String.self, forKey: .material_name)
-        self.physics_type = try container.decode(PhysicsType.self, forKey: .physics_type)
-        
-        self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
-        self.location = try container.decode([Float].self, forKey: .location)
-        self.rotation = try container.decode([Float].self, forKey: .rotation)
-        
-        self.scene_address = try container.decode(String.self, forKey: .scene_address)
-        
-        //get_node_from_scene()
-        //color_to_model()
-        import_module_by_name(module_name)
         color_to_model()
-    }
-    
-    public func encode(to encoder: any Encoder) throws
-    {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(name, forKey: .name)
-        
-        try container.encode(figure, forKey: .figure)
-        try container.encode(lengths, forKey: .lengths)
-        
-        try container.encode(figure_color, forKey: .figure_color)
-        try container.encode(material_name, forKey: .material_name)
-        try container.encode(physics_type, forKey: .physics_type)
-        
-        try container.encode(is_placed, forKey: .is_placed)
-        try container.encode(location, forKey: .location)
-        try container.encode(rotation, forKey: .rotation)
-        
-        try container.encode(scene_address, forKey: .scene_address)
     }
 }
 

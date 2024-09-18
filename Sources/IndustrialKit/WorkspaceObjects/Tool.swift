@@ -169,6 +169,10 @@ public class Tool: WorkspaceObject
         read_connection_parameters(connector: self.connector, tool_struct.connection_parameters)
     }
     
+    public required init(from decoder: any Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
     /**
      Model connector and contoller selection function for tool.
     

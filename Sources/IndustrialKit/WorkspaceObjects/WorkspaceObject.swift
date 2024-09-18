@@ -14,7 +14,7 @@ import SwiftUI
  
  Industrial production objects are represented by equipment that provide technological operations performing.
  */
-open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject //, NSCopying
+open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject, Codable //, NSCopying
 {
     public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool //Identity condition by names
     {
@@ -226,5 +226,46 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject 
     public func clear_preview()
     {
         image_data = nil
+    }
+    
+    //MARK: - Work with file system
+    private enum CodingKeys: String, CodingKey
+    {
+        case name
+        
+        case module_name
+        
+        case location
+        case rotation
+        case is_placed
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.name = try container.decode(String.self, forKey: .name)
+        
+        self.module_name = try container.decode(String.self, forKey: .module_name)
+        
+        self.location = try container.decode([Float].self, forKey: .location)
+        self.rotation = try container.decode([Float].self, forKey: .rotation)
+        self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
+        
+        //color_to_model()
+        import_module_by_name(module_name)
+    }
+    
+    public func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(name, forKey: .name)
+        
+        try container.encode(module_name, forKey: .module_name)
+        
+        try container.encode(location, forKey: .location)
+        try container.encode(rotation, forKey: .rotation)
+        try container.encode(is_placed, forKey: .is_placed)
     }
 }
