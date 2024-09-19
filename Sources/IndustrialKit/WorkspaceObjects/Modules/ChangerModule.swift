@@ -12,7 +12,7 @@ open class ChangerModule: IndustrialModule
     //MARK: - Init functions
     public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool())
     {
-        super.init(name: name, description: description, package_file_name: package_file_name)
+        super.init(name: name, description: description)
         code_items = [CodeItem(name: "Change")]
     }
     
@@ -69,7 +69,7 @@ open class ChangerModule: IndustrialModule
         
         let task = Process()
         task.launchPath = "/usr/bin/env"
-        task.arguments = ["swift", "\(internal_url)/Components/Code/\(package_file_name)/\(code_file_name).swift"] + registers.map { String($0) }
+        task.arguments = ["swift", "\(internal_url)/Components/Code/\(name)/\(code_file_name).swift"] + registers.map { String($0) }
         
         let pipe = Pipe()
         task.standardOutput = pipe

@@ -19,14 +19,6 @@ open class PartModule: IndustrialModule
         self.node = node
     }
     
-    ///External init.
-    public init(name: String = String(), package_file_name: String = String())
-    {
-        super.init(name: name, package_file_name: package_file_name, is_internal: false)
-        
-        external_import()
-    }
-    
     //MARK: - Import functions
     override open func external_import()
     {

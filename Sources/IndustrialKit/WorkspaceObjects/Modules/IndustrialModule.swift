@@ -47,13 +47,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     
     //MARK: - File handling
     /**
-     A module file name
-     
-     Uses for access contents of module package.
-     */
-    @Published public var package_file_name: String
-    
-    /**
      An additional resources files names.
      
      Used to check files in a package and during the STC package compilation process.
@@ -74,12 +67,19 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     open var extension_name: String { "module" } ///An object package extension name.
     
     //MARK: - Init functions
-    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = true)
+    public init(name: String = String(), description: String = String(), is_internal: Bool = true)
     {
         self.name = name
         self.description = description
-        self.package_file_name = package_file_name
         self.is_internal = is_internal
+    }
+    
+    ///External init.
+    public convenience init(external_name: String = String())
+    {
+        self.init(name: external_name)
+        
+        external_import()
     }
     
     public var internal_url: String? ///An adress to package contents access.
@@ -96,7 +96,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
                 return nil
             }
             
-            return "\(url.absoluteString)\(package_file_name).\(extension_name)/"
+            return "\(url.absoluteString)\(name).\(extension_name)/"
         }
         catch
         {
@@ -126,7 +126,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     {
         case name
         case description
-        case package_file_name
         
         case is_internal
         case code_items
@@ -141,7 +140,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         self.name = try container.decode(String.self, forKey: .name)
         self.description = try container.decode(String.self, forKey: .description)
-        self.package_file_name = try container.decode(String.self, forKey: .package_file_name)
         
         self.is_internal = try container.decode(Bool.self, forKey: .is_internal)
         self.code_items = try container.decode([CodeItem].self, forKey: .code_items)
@@ -156,7 +154,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         try container.encode(name, forKey: .name)
         try container.encode(description, forKey: .description)
-        try container.encode(package_file_name, forKey: .package_file_name)
         
         try container.encode(is_internal, forKey: .is_internal)
         try container.encode(code_items, forKey: .code_items)

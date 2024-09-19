@@ -13,7 +13,7 @@ open class ToolModule: IndustrialModule
     //MARK: - Init functions
     public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode = SCNNode())
     {
-        super.init(name: name, description: description, package_file_name: package_file_name, is_internal: is_internal)
+        super.init(name: name, description: description, is_internal: is_internal)
         
         if is_internal
         {
@@ -46,7 +46,7 @@ open class ToolModule: IndustrialModule
     ///External init.
     public init(name: String = String(), package_file_name: String = String())
     {
-        super.init(name: name, package_file_name: package_file_name, is_internal: false)
+        super.init(name: name, is_internal: false)
         
         external_import()
         
