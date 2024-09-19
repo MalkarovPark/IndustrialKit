@@ -12,7 +12,7 @@ open class PartModule: IndustrialModule
 {
     //MARK: - Init functions
     ///Internal init.
-    public init(name: String = String(), description: String = String(), node: SCNNode)
+    public init(name: String = String(), description: String = String(), node: SCNNode = SCNNode())
     {
         super.init(name: name, description: description, is_internal: true)
         
