@@ -43,14 +43,9 @@ open class ToolModule: IndustrialModule
         //code_items = default_code_items
     }
     
-    ///External init.
-    public init(name: String = String(), package_file_name: String = String())
+    public override init(external_name: String)
     {
-        super.init(name: name, is_internal: false)
-        
-        external_import()
-        
-        //code_items = default_code_items
+        super.init(external_name: external_name)
     }
     
     private var default_code_items = [

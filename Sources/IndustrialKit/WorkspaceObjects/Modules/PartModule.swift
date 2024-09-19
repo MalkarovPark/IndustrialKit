@@ -19,6 +19,11 @@ open class PartModule: IndustrialModule
         self.node = node
     }
     
+    public override init(external_name: String)
+    {
+        super.init(external_name: external_name)
+    }
+    
     //MARK: - Import functions
     override open func external_import()
     {

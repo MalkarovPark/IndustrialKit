@@ -75,9 +75,11 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }
     
     ///External init.
-    public convenience init(external_name: String = String())
+    public init(external_name: String = String())
     {
-        self.init(name: external_name)
+        self.name = external_name
+        self.description = String()
+        self.is_internal = false
         
         external_import()
     }

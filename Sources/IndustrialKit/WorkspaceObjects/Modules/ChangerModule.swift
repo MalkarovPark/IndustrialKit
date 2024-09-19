@@ -16,6 +16,14 @@ open class ChangerModule: IndustrialModule
         code_items = [CodeItem(name: "Change")]
     }
     
+    ///Internal Init
+    //
+    
+    public override init(external_name: String)
+    {
+        super.init(external_name: external_name)
+    }
+    
     //MARK: - Components
     ///A main external code file name
     public var code_file_name: String { "Count" }
@@ -83,6 +91,12 @@ open class ChangerModule: IndustrialModule
         return new_registers ?? []
     }
     #endif
+    
+    //MARK: - Import functions
+    override open func external_import()
+    {
+        self.node = external_node
+    }
     
     //MARK: - Codable handling
     required public init(from decoder: any Decoder) throws
