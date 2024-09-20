@@ -11,7 +11,7 @@ import SceneKit
 open class ToolModule: IndustrialModule
 {
     //MARK: - Init functions
-    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode = SCNNode())
+    /*public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode = SCNNode())
     {
         super.init(name: name, description: description, is_internal: is_internal)
         
@@ -29,7 +29,7 @@ open class ToolModule: IndustrialModule
         }
         
         code_items = default_code_items
-    }
+    }*/
     
     ///Internal init.
     public init(name: String = String(), description: String = String(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), node: SCNNode)
@@ -38,9 +38,10 @@ open class ToolModule: IndustrialModule
         
         self.connector = connector
         self.model_controller = model_controller
-        self.node = node
         
-        //code_items = default_code_items
+        self.code_items = default_code_items
+        
+        self.node = node
     }
     
     public override init(external_name: String)
