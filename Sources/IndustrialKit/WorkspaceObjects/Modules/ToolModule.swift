@@ -32,7 +32,7 @@ open class ToolModule: IndustrialModule
     }*/
     
     ///Internal init.
-    public init(name: String = String(), description: String = String(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), node: SCNNode)
+    public init(name: String = String(), description: String = String(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode)
     {
         super.init(name: name, description: description, is_internal: true)
         
