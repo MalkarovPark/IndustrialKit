@@ -55,143 +55,6 @@ public class Tool: WorkspaceObject
         module_import(module)
     }
     
-    //
-    //
-    
-    ///Inits tool by model dictionary.
-    public init(name: String, dictionary: [String: Any])
-    {
-        super.init()
-        
-        if dictionary.keys.contains("Codes") //Import tool opcodes values from dictionary
-        {
-            let dict = dictionary["Codes"] as! [String : Int]
-            
-            //ON DELETE
-            
-            let codes = dict.map { $0.value }
-            let codes_names = dict.map { $0.key }
-            
-            for code in codes
-            {
-                let info_names = codes_names[codes.firstIndex(of: code) ?? 0].components(separatedBy: "#")
-                
-                self.codes.append(OperationCodeInfo(value: code, name: info_names[0], symbol: info_names[1], info: ""))
-            }
-            
-            //TEMPONARY
-        }
-        
-        if dictionary.keys.contains("Module") //Select model visual controller and connector
-        {
-            self.module_name = dictionary["Module"] as? String ?? ""
-            
-            Tool.select_modules(module_name, &model_controller, &connector)
-            
-            if update_model_by_connector
-            {
-                connector.model_controller = model_controller
-            }
-            
-            apply_statistics_flags()
-        }
-        
-        if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it
-        {
-            self.scene_address = dictionary["Scene"] as? String ?? ""
-            get_node_from_scene()
-        }
-        else
-        {
-            node_by_description()
-        }
-        
-        if dictionary.keys.contains("Lengths") //Checking for the availability of lengths data property
-        {
-            let elements = dictionary["Lengths"] as! NSArray
-            
-            for element in elements //Add elements from NSArray to floats array
-            {
-                lengths.append((element as? Float) ?? 0)
-            }
-        }
-    }
-    
-    ///Inits tool by codable tool structure.
-    public init(tool_struct: ToolStruct)
-    {
-        super.init(name: tool_struct.name!)
-        
-        self.is_placed = tool_struct.is_placed
-        self.location = tool_struct.location
-        self.rotation = tool_struct.rotation
-        
-        self.is_attached = tool_struct.is_attached
-        self.attached_to = tool_struct.attached_to
-        
-        self.demo = tool_struct.demo
-        self.update_model_by_connector = tool_struct.update_model_by_connector
-        
-        self.get_statistics = tool_struct.get_statistics
-        self.charts_data = tool_struct.charts_data
-        self.states_data = tool_struct.states_data
-        
-        self.codes = tool_struct.codes
-        
-        self.scene_address = tool_struct.scene ?? ""
-        self.programs = tool_struct.programs
-        
-        if scene_address != ""
-        {
-            get_node_from_scene()
-        }
-        else
-        {
-            node_by_description()
-        }
-        
-        self.module_name = tool_struct.module ?? ""
-        
-        import_module_by_name(module_name)
-        
-        if module_name != ""
-        {
-            Tool.select_modules(module_name, &model_controller, &connector)
-            
-            if update_model_by_connector
-            {
-                connector.model_controller = model_controller
-            }
-            
-            apply_statistics_flags()
-        }
-        
-        read_connection_parameters(connector: self.connector, tool_struct.connection_parameters)
-    }
-    
-    public required init(from decoder: any Decoder) throws {
-        fatalError("init(from:) has not been implemented")
-    }
-    
-    /**
-     Model connector and contoller selection function for tool.
-    
-     Code example.
-     
-            switch name
-            {
-            case "Connector Name":
-                model_controller = ToolController()
-                connector = ToolConnector()
-            case "Connector Name 2":
-                model_controller = ToolController2()
-                connector = ToolConnector2()
-            default:
-                break
-            }
-     */
-    public static var select_modules: ((_ name: String, _ model_controller: inout ToolModelController, _ connector: inout ToolConnector) -> Void) = { name,controller,connector in }
-    
     //MARK: - Module handling
     /**
      Sets modular components to object instance.
@@ -621,7 +484,7 @@ public class Tool: WorkspaceObject
     //private var tool_parts = [SCNNode]()
     
     ///An array of tool parts lengths.
-    private var lengths = [Float]()
+    //private var lengths = [Float]()
     
     /**
      Connects to robot model in scene.
@@ -905,26 +768,67 @@ public class Tool: WorkspaceObject
     }
     
     //MARK: - Work with file system
-    ///Converts tool data to codable tool struct.
-    public var file_info: ToolStruct
+    enum CodingKeys: String, CodingKey
     {
-        return ToolStruct(name: self.name,
-                          codes: self.codes,
-                          scene: self.scene_address,
-                          lengths: self.lengths,
-                          is_placed: self.is_placed,
-                          location: self.location,
-                          rotation: self.rotation,
-                          is_attached: self.is_attached,
-                          attached_to: self.attached_to,
-                          demo: self.demo,
-                          connection_parameters: get_connection_parameters(connector: self.connector),
-                          update_model_by_connector: self.update_model_by_connector,
-                          get_statistics: self.get_statistics,
-                          charts_data: self.charts_data,
-                          states_data: self.states_data,
-                          programs: self.programs,
-                          module: self.module_name)
+        case codes
+        
+        case is_attached
+        case attached_to
+        
+        case demo
+        case connection_parameters
+        case update_model_by_connector
+        
+        case get_statistics
+        case charts_data
+        case states_data
+        
+        case programs
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.codes = try container.decode([OperationCodeInfo].self, forKey: .codes)
+        
+        self.is_attached = try container.decode(Bool.self, forKey: .is_attached)
+        self.attached_to = try container.decodeIfPresent(String.self, forKey: .attached_to)
+        
+        self.demo = try container.decode(Bool.self, forKey: .demo)
+        self.update_model_by_connector = try container.decode(Bool.self, forKey: .update_model_by_connector)
+        
+        self.get_statistics = try container.decode(Bool.self, forKey: .get_statistics)
+        self.charts_data = try container.decodeIfPresent([WorkspaceObjectChart].self, forKey: .charts_data)
+        self.states_data = try container.decodeIfPresent([StateItem].self, forKey: .states_data)
+        
+        self.programs = try container.decode([OperationsProgram].self, forKey: .programs)
+        
+        try super.init(from: decoder)
+        
+        read_connection_parameters(connector: self.connector, try container.decode([String].self, forKey: .connection_parameters))
+    }
+    
+    public override func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(codes, forKey: .codes)
+        
+        try container.encode(is_attached, forKey: .is_attached)
+        try container.encode(attached_to, forKey: .attached_to)
+        
+        try container.encode(demo, forKey: .demo)
+        try container.encode(get_connection_parameters(connector: self.connector), forKey: .connection_parameters)
+        try container.encode(update_model_by_connector, forKey: .update_model_by_connector)
+        
+        try container.encode(get_statistics, forKey: .get_statistics)
+        try container.encode(charts_data, forKey: .charts_data)
+        try container.encode(states_data, forKey: .states_data)
+        
+        try container.encode(programs, forKey: .programs)
+        
+        try super.encode(to: encoder)
     }
 }
 
@@ -959,34 +863,4 @@ public struct OperationCodeInfo: Equatable, Codable, Hashable
     {
         return Image(systemName: symbol)
     }
-}
-
-//MARK: - Tool structure for workspace preset document handling
-///A codable tool struct.
-public struct ToolStruct: Codable
-{
-    public var name: String?
-    public var codes: [OperationCodeInfo]
-    
-    public var scene: String?
-    public var lengths: [Float]
-    
-    public var is_placed: Bool
-    public var location: [Float]
-    public var rotation: [Float]
-    
-    public var is_attached: Bool
-    public var attached_to: String?
-    
-    public var demo: Bool
-    public var connection_parameters: [String]?
-    public var update_model_by_connector: Bool
-    
-    public var get_statistics: Bool
-    public var charts_data: [WorkspaceObjectChart]?
-    public var states_data: [StateItem]?
-    
-    public var programs: [OperationsProgram]
-    
-    public var module: String?
 }

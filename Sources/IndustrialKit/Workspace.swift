@@ -842,7 +842,7 @@ public class Workspace: ObservableObject
             
             tools.append(Tool())
             
-            tools[new_index] = Tool(tool_struct: tools[index].file_info)
+            tools[new_index] = clone_codable(tools[index]) ?? Tool() //Tool(tool_struct: tools[index].file_info)
             tools[new_index].name = new_name
             tools[new_index].is_placed = false
         }
@@ -1919,7 +1919,7 @@ public class Workspace: ObservableObject
      
      - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
      */
-    public func file_data() -> (robots: [RobotStruct], tools: [ToolStruct], parts: [Part], elements: [WorkspaceProgramElementStruct], registers: [Float])
+    public func file_data() -> (robots: [RobotStruct], tools: [Tool], parts: [Part], elements: [WorkspaceProgramElementStruct], registers: [Float])
     {
         //Get robots info for save to file
         var robots_file_info = [RobotStruct]()
@@ -1929,10 +1929,10 @@ public class Workspace: ObservableObject
         }
         
         //Get tools info for save to file
-        var tools_file_info = [ToolStruct]()
+        var tools_file_info = [Tool]()
         for tool in tools
         {
-            tools_file_info.append(tool.file_info)
+            tools_file_info.append(tool)
         }
         
         //Get parts info for save to file
@@ -1982,9 +1982,9 @@ public class Workspace: ObservableObject
         tools.removeAll()
         Tool.folder_bookmark = Workspace.tools_bookmark
         
-        for tool_struct in preset.tools
+        for tool in preset.tools
         {
-            tools.append(Tool(tool_struct: tool_struct))
+            tools.append(tool)
         }
         
         //Update parts data from file
@@ -2270,7 +2270,7 @@ public struct WorkspacePreset: Codable
 {
     public var robots = [RobotStruct]()
     public var elements = [WorkspaceProgramElementStruct]()
-    public var tools = [ToolStruct]()
+    public var tools = [Tool]()
     public var parts = [Part]()
     
     public var registers: [Float]?
@@ -2279,11 +2279,11 @@ public struct WorkspacePreset: Codable
     {
         robots = [RobotStruct]()
         elements = [WorkspaceProgramElementStruct]()
-        tools = [ToolStruct]()
+        tools = [Tool]()
         parts = [Part]()
     }
     
-    public init(robots: [RobotStruct], elements: [WorkspaceProgramElementStruct], tools: [ToolStruct], parts: [Part])
+    public init(robots: [RobotStruct], elements: [WorkspaceProgramElementStruct], tools: [Tool], parts: [Part])
     {
         self.robots = robots
         self.elements = elements
