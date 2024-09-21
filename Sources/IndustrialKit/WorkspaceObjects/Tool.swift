@@ -29,23 +29,29 @@ public class Tool: WorkspaceObject
     }
     
     ///Inits tool by name, controller, connector and scene name.
-    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String)
+    public init(name: String, scene_name: String, model_controller: ToolModelController, connector: ToolConnector, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
         
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() //!
+        
         self.model_controller = model_controller
         self.connector = connector
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() //!
+        
+        self.codes = codes
     }
     
     ///Inits tool by name, controller, connector and scene.
-    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene)
+    public init(name: String, scene: SCNScene, model_controller: ToolModelController, connector: ToolConnector, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
         
+        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
+        
         self.model_controller = model_controller
         self.connector = connector
-        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
+        
+        self.codes = codes
     }
     
     ///Inits part by name and part module.

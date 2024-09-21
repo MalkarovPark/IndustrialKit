@@ -42,6 +42,8 @@ open class ToolModule: IndustrialModule
         self.code_items = default_code_items
         
         self.node = node
+        
+        self.codes = operation_codes
     }
     
     public override init(external_name: String)
