@@ -95,27 +95,6 @@ public class Part: WorkspaceObject
         module_import(module)
     }
     
-    //
-    //
-    
-    ///Inits part by dictionary and use models folder.
-    public init(name: String, dictionary: [String: Any])
-    {
-        super.init()
-        init_by_dictionary(name: name, dictionary: dictionary)
-        
-        if dictionary.keys.contains("Scene") //If dictionary conatains scene address get node from it.
-        {
-            self.scene_address = dictionary["Scene"] as? String ?? ""
-            get_node_from_scene()
-            color_from_model()
-        }
-        else
-        {
-            node_by_description()
-        }
-    }
-    
     //MARK: - Module handling
     /**
      Sets modular components to object instance.
@@ -127,8 +106,9 @@ public class Part: WorkspaceObject
      */
     public func module_import(_ module: PartModule)
     {
-        node = module.node
         module_name = module.name
+        
+        node = module.node
     }
     
     ///Imported part modules.

@@ -69,6 +69,8 @@ public class Tool: WorkspaceObject
      */
     public func module_import(_ module: ToolModule)
     {
+        module_name = module.name
+        
         node = module.node
         
         model_controller = module.model_controller
