@@ -136,6 +136,8 @@ public class Robot: WorkspaceObject
      */
     public func module_import(_ module: RobotModule)
     {
+        module_name = module.name
+        
         node = module.node
         
         model_controller = module.model_controller
@@ -1267,7 +1269,6 @@ public class Robot: WorkspaceObject
     }
     
     //MARK: - Work with file system
-    
     enum CodingKeys: String, CodingKey
     {
         case default_pointer_location
