@@ -1973,9 +1973,9 @@ public class Workspace: ObservableObject
         robots.removeAll()
         Robot.folder_bookmark = Workspace.robots_bookmark
         
-        for robot_struct in preset.robots
+        for robot in preset.robots
         {
-            robots.append(Robot(robot_struct: robot_struct))
+            robots.append(robot)
         }
         
         //Update tools data from file
@@ -2268,7 +2268,7 @@ public enum RotationComponents: Equatable, CaseIterable
 //MARK: - Structures for workspace preset document handling
 public struct WorkspacePreset: Codable
 {
-    public var robots = [RobotStruct]()
+    public var robots = [Robot]()
     public var elements = [WorkspaceProgramElementStruct]()
     public var tools = [Tool]()
     public var parts = [Part]()
@@ -2277,13 +2277,13 @@ public struct WorkspacePreset: Codable
     
     public init()
     {
-        robots = [RobotStruct]()
+        robots = [Robot]()
         elements = [WorkspaceProgramElementStruct]()
         tools = [Tool]()
         parts = [Part]()
     }
     
-    public init(robots: [RobotStruct], elements: [WorkspaceProgramElementStruct], tools: [Tool], parts: [Part])
+    public init(robots: [Robot], elements: [WorkspaceProgramElementStruct], tools: [Tool], parts: [Part])
     {
         self.robots = robots
         self.elements = elements
