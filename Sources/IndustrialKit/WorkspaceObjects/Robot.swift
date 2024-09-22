@@ -1198,6 +1198,9 @@ public class Robot: WorkspaceObject
     //MARK: - Work with file system
     enum CodingKeys: String, CodingKey
     {
+        case origin_location
+        case origin_rotation
+        
         case default_pointer_location
         case default_pointer_rotation
         
@@ -1215,6 +1218,9 @@ public class Robot: WorkspaceObject
     public required init(from decoder: any Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.origin_location = try container.decode([Float].self, forKey: .origin_location)
+        self.origin_rotation = try container.decode([Float].self, forKey: .origin_rotation)
         
         self.default_pointer_location = try container.decodeIfPresent([Float].self, forKey: .default_pointer_location)
         self.default_pointer_rotation = try container.decodeIfPresent([Float].self, forKey: .default_pointer_rotation)
@@ -1236,6 +1242,9 @@ public class Robot: WorkspaceObject
     public override func encode(to encoder: any Encoder) throws
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(origin_location, forKey: .origin_location)
+        try container.encode(origin_rotation, forKey: .origin_rotation)
         
         try container.encode(default_pointer_location, forKey: .default_pointer_location)
         try container.encode(default_pointer_rotation, forKey: .default_pointer_rotation)
