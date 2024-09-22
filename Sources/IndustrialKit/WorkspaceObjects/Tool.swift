@@ -61,6 +61,11 @@ public class Tool: WorkspaceObject
         module_import(module)
     }
     
+    public override init(name: String, module_name: String)
+    {
+        super.init(name: name, module_name: module_name)
+    }
+    
     //MARK: - Module handling
     /**
      Sets modular components to object instance.

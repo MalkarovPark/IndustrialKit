@@ -32,7 +32,6 @@ public class Part: WorkspaceObject
             return .dynamic()
         case .ph_kinematic:
             let shape = SCNPhysicsShape(node: self.node ?? SCNNode(), options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron])
-            
             return SCNPhysicsBody(type: .kinematic, shape: shape)
             //return .kinematic()
         default:
@@ -93,6 +92,11 @@ public class Part: WorkspaceObject
     {
         super.init(name: name)
         module_import(module)
+    }
+    
+    public override init(name: String, module_name: String)
+    {
+        super.init(name: name, module_name: module_name)
     }
     
     //MARK: - Module handling
