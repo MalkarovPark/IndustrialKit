@@ -196,7 +196,7 @@ public class Part: WorkspaceObject
             let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? NSColor
             
             let components = node_color?.cgColor.components
-            figure_color = [Int((components?[0]) ?? (123 / 255) * 255), Int((components?[1]) ?? (123 / 255) * 255), Int((components?[2]) ?? (129 / 255) * 255)]
+            figure_color = [Int((components?[0]) ?? (74 / 255) * 255), Int((components?[1]) ?? (157 / 255) * 255), Int((components?[2]) ?? (183 / 255) * 255)]
             #else
             let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? UIColor
             
