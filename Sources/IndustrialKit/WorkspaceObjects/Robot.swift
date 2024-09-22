@@ -67,62 +67,6 @@ public class Robot: WorkspaceObject
         super.init(name: name, module_name: module_name)
     }
     
-    //
-    //
-    
-    ///Inits robot by codable robot structure.
-    public init(robot_struct: RobotStruct)
-    {
-        super.init()
-        robot_init(name: robot_struct.name,
-                   module_name: robot_struct.module,
-                   scene: robot_struct.scene,
-                   is_placed: robot_struct.is_placed,
-                   location: robot_struct.location,
-                   rotation: robot_struct.rotation,
-                   demo: robot_struct.demo,
-                   update_model_by_connector: robot_struct.update_model_by_connector,
-                   get_statistics: robot_struct.get_statistics,
-                   charts_data: robot_struct.charts_data,
-                   state: robot_struct.state, image_data: robot_struct.image_data,
-                   origin_location: robot_struct.origin_location,
-                   origin_rotation: robot_struct.origin_rotation,
-                   space_scale: robot_struct.space_scale)
-        
-        import_module_by_name(module_name)
-        read_connection_parameters(connector: connector, robot_struct.connection_parameters)
-        model_controller.charts_data = charts_data
-    }
-    
-    ///Common init function.
-    private func robot_init(name: String, module_name: String, scene: String, is_placed: Bool, location: [Float], rotation: [Float], demo: Bool, update_model_by_connector: Bool, get_statistics: Bool, charts_data: [WorkspaceObjectChart]?, state: [StateItem]?, image_data: Data, origin_location: [Float], origin_rotation: [Float], space_scale: [Float])
-    {
-        //Robot model names
-        self.name = name
-        
-        //Robot position in workspace
-        self.is_placed = is_placed
-        self.location = location
-        self.rotation = rotation
-        
-        //Demo info
-        self.demo = demo
-        self.update_model_by_connector = update_model_by_connector
-        
-        //Statistic value
-        self.get_statistics = get_statistics
-        self.charts_data = charts_data
-        self.states_data = state
-        
-        self.image_data = image_data
-        self.origin_location = origin_location
-        self.origin_rotation = origin_rotation
-        self.space_scale = space_scale
-        
-        //Robot controller and connector modules
-        self.module_name = module_name
-    }
-    
     //MARK: - Module handling
     /**
      Sets modular components to object instance.
@@ -1325,38 +1269,4 @@ public class Robot: WorkspaceObject
         
         try super.encode(to: encoder)
     }
-}
-
-//MARK: - Robot structure for workspace preset document handling
-///A codable robot struct.
-public struct RobotStruct: Codable
-{
-    public var name: String
-    public var manufacturer: String
-    public var model: String
-    
-    public var module: String
-    public var scene: String
-    public var lengths: [Float]
-    
-    public var is_placed: Bool
-    public var location: [Float]
-    public var rotation: [Float]
-    
-    public var default_pointer_position: [Float]?
-    
-    public var demo: Bool
-    public var connection_parameters: [String]?
-    public var update_model_by_connector: Bool
-    
-    public var get_statistics: Bool
-    public var charts_data: [WorkspaceObjectChart]?
-    public var state: [StateItem]?
-    
-    public var image_data: Data
-    public var programs: [PositionsProgram]
-    
-    public var origin_location: [Float]
-    public var origin_rotation: [Float]
-    public var space_scale: [Float]
 }
