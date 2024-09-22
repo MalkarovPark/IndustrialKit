@@ -21,12 +21,14 @@ public class Robot: WorkspaceObject
     public override init()
     {
         super.init()
+        set_default_cell_parameters()
     }
     
     ///Inits robot by name.
     public override init(name: String)
     {
         super.init(name: name)
+        set_default_cell_parameters()
     }
     
     ///Inits robot by name, controller, connector and SceneKit scene name.
@@ -40,6 +42,7 @@ public class Robot: WorkspaceObject
         self.connector = connector
         
         apply_statistics_flags()
+        set_default_cell_parameters()
     }
     
     ///Inits robot by name, controller, connector and SceneKit scene.
@@ -53,6 +56,7 @@ public class Robot: WorkspaceObject
         self.connector = connector
         
         apply_statistics_flags()
+        set_default_cell_parameters()
     }
     
     ///Inits part by name and part module.
@@ -65,6 +69,12 @@ public class Robot: WorkspaceObject
     public override init(name: String, module_name: String)
     {
         super.init(name: name, module_name: module_name)
+    }
+    
+    private func set_default_cell_parameters()
+    {
+        self.origin_location = [Robot.default_origin_location[0], Robot.default_origin_location[1], Robot.default_origin_location[2]]
+        self.space_scale = [Robot.default_space_scale[0], Robot.default_space_scale[1], Robot.default_space_scale[2]]
     }
     
     //MARK: - Module handling
@@ -87,6 +97,7 @@ public class Robot: WorkspaceObject
         model_controller = module.model_controller
         connector = module.connector
         
+        set_default_cell_parameters()
         apply_statistics_flags()
     }
     
