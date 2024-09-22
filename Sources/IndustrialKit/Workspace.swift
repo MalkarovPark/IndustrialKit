@@ -1346,7 +1346,7 @@ public class Workspace: ObservableObject
         
         func changer_element_check(_ element: ChangerModifierElement)
         {
-            if !Changer.internal_modules_list.contains(element.module_name)
+            /*if !Changer.internal_modules_list.contains(element.module_name)
             {
                 if Changer.internal_modules_list.count > 0
                 {
@@ -1367,7 +1367,7 @@ public class Workspace: ObservableObject
                 {
                     element.module_name = "None"
                 }
-            }
+            }*/
         }
         
         func jump_element_check(_ element: JumpLogicElement)
