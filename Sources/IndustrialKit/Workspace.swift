@@ -1346,11 +1346,22 @@ public class Workspace: ObservableObject
         
         func changer_element_check(_ element: ChangerModifierElement)
         {
-            if !Workspace.changer_modules.contains(element.module_name)
+            if !Changer.internal_modules_list.contains(element.module_name)
             {
-                if Workspace.changer_modules.count > 0
+                if Changer.internal_modules_list.count > 0
                 {
-                    element.module_name = Workspace.changer_modules.first!
+                    element.module_name = Changer.internal_modules_list.first!
+                }
+                else
+                {
+                    element.module_name = "None"
+                }
+            }
+            else if !Changer.external_modules_list.contains(element.module_name)
+            {
+                if Changer.external_modules_list.count > 0
+                {
+                    element.module_name = Changer.external_modules_list.first!
                 }
                 else
                 {
@@ -1808,9 +1819,6 @@ public class Workspace: ObservableObject
             }
         }
     }
-    
-    ///A changer modules names array.
-    public static var changer_modules = [String]()
     
     /**
      Jumps to program element by index.

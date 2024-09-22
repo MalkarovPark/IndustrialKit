@@ -582,6 +582,12 @@ public class ChangerModifierElement: ModifierElement
     ///Imported changer modules.
     public static var modules = [ChangerModule]()
     
+    ///A changer internal modules names array.
+    public static var internal_modules_list = [String]()
+    
+    ///A changer external modules names array.
+    public static var external_modules_list = [String]()
+    
     public func import_module_by_name(_ name: String)
     {
         guard let index = Changer.modules.firstIndex(where: { $0.name == name })
