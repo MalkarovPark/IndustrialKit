@@ -64,11 +64,15 @@ public class Robot: WorkspaceObject
     {
         super.init(name: name)
         module_import(module)
+        
+        set_default_cell_parameters()
     }
     
     public override init(name: String, module_name: String)
     {
         super.init(name: name, module_name: module_name)
+        
+        set_default_cell_parameters()
     }
     
     private func set_default_cell_parameters()
@@ -97,7 +101,6 @@ public class Robot: WorkspaceObject
         model_controller = module.model_controller
         connector = module.connector
         
-        set_default_cell_parameters()
         apply_statistics_flags()
     }
     
@@ -1200,6 +1203,7 @@ public class Robot: WorkspaceObject
     {
         case origin_location
         case origin_rotation
+        case space_scale
         
         case default_pointer_location
         case default_pointer_rotation
@@ -1221,6 +1225,7 @@ public class Robot: WorkspaceObject
         
         self.origin_location = try container.decode([Float].self, forKey: .origin_location)
         self.origin_rotation = try container.decode([Float].self, forKey: .origin_rotation)
+        self.space_scale = try container.decode([Float].self, forKey: .space_scale)
         
         self.default_pointer_location = try container.decodeIfPresent([Float].self, forKey: .default_pointer_location)
         self.default_pointer_rotation = try container.decodeIfPresent([Float].self, forKey: .default_pointer_rotation)
@@ -1245,6 +1250,7 @@ public class Robot: WorkspaceObject
         
         try container.encode(origin_location, forKey: .origin_location)
         try container.encode(origin_rotation, forKey: .origin_rotation)
+        try container.encode(space_scale, forKey: .space_scale)
         
         try container.encode(default_pointer_location, forKey: .default_pointer_location)
         try container.encode(default_pointer_rotation, forKey: .default_pointer_rotation)
