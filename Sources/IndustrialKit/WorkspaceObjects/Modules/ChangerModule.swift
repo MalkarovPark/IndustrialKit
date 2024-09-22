@@ -17,7 +17,12 @@ open class ChangerModule: IndustrialModule
     }
     
     ///Internal Init
-    //
+    public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) -> Void)
+    {
+        super.init(name: name, description: description, is_internal: true)
+        
+        self.change = change_func
+    }
     
     public override init(external_name: String)
     {
@@ -33,7 +38,9 @@ open class ChangerModule: IndustrialModule
      - Parameters:
         - registers: A changeable registers data.
      */
-    public func change(registers: inout [Float])
+    public var change: (inout [Float]) -> Void = { _ in }
+    
+    /*public func change(registers: inout [Float])
     {
         if is_internal
         {
@@ -45,7 +52,7 @@ open class ChangerModule: IndustrialModule
             registers = external_change(registers: registers)
             #endif
         }
-    }
+    }*/
     
     /**
      Performs register conversion within a class instance.
@@ -95,7 +102,7 @@ open class ChangerModule: IndustrialModule
     //MARK: - Import functions
     override open func external_import()
     {
-        self.node = external_node
+        //self.change = external_change()
     }
     
     //MARK: - Codable handling

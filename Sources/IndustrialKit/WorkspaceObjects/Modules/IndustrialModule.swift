@@ -123,6 +123,28 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         return SCNNode()
     }
     
+    /**
+     Builds model node by description without external scene.
+     
+     Name of the scene corresponds to name of the module.
+     */
+    open func node_by_description()
+    {
+        no_model_node()
+    }
+    
+    ///Builds a filler node for object without model description.
+    open func no_model_node()
+    {
+        //Build filler model node
+        node.geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
+        
+        node.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
+        node.geometry?.firstMaterial?.lightingModel = .physicallyBased
+        
+        //node.name = scene_node_name
+    }
+    
     //MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
@@ -208,3 +230,67 @@ public class CodeItem: Codable, Equatable
         try container.encode(code, forKey: .code)
     }
 }
+
+/*
+///Gets model node in scene imported from file.
+public func get_node_from_scene()
+{
+    do
+    {
+        //File access
+        var is_stale = false
+        let url = try URL(resolvingBookmarkData: WorkspaceObject.folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+        
+        guard !is_stale else
+        {
+            return
+        }
+        
+        if scene_address != "" //If scene address not empty, get node from it
+        {
+            do
+            {
+                self.node = try SCNScene(url: URL(string: url.absoluteString + scene_address)!).rootNode.childNode(withName: scene_node_name ?? "", recursively: false)?.clone()
+            }
+            catch
+            {
+                //print(error.localizedDescription)
+                node_by_internal() //If node could not imported, create node model by description
+            }
+        }
+        else
+        {
+            node_by_internal()
+        }
+    }
+    catch
+    {
+        //print(error.localizedDescription)
+        node_by_internal()
+    }
+}
+
+///Set workspace object node by internal resource.
+private func node_by_internal()
+{
+    node = SCNNode()
+    
+    if scene_internal_folder_address != nil && scene_node_name != nil
+    {
+        //Get model scene from application resources
+        guard let new_scene = SCNScene(named: scene_internal_folder_address! + (scene_internal_folder_address != "" ? "/" : "") + scene_address)
+        else
+        {
+            node_by_description()
+            return
+        }
+        
+        node = new_scene.rootNode.childNode(withName: scene_node_name!, recursively: false)!
+    }
+    else
+    {
+        //Get node by description
+        node_by_description()
+    }
+}
+*/

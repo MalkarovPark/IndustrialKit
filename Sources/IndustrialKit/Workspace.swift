@@ -1952,15 +1952,6 @@ public class Workspace: ObservableObject
         return(robots_file_info, tools_file_info, parts_file_info, elements_file_info, registers)
     }
     
-    ///File bookmark for robots models.
-    public static var robots_bookmark: Data?
-    
-    ///File bookmark for tools models.
-    public static var tools_bookmark: Data?
-    
-    ///File bookmark for parts models.
-    public static var parts_bookmark: Data?
-    
     /**
      Imports file data to workspace from preset structure.
      
@@ -1971,7 +1962,6 @@ public class Workspace: ObservableObject
     {
         //Update robots data from file
         robots.removeAll()
-        Robot.folder_bookmark = Workspace.robots_bookmark
         
         for robot in preset.robots
         {
@@ -1980,7 +1970,6 @@ public class Workspace: ObservableObject
         
         //Update tools data from file
         tools.removeAll()
-        Tool.folder_bookmark = Workspace.tools_bookmark
         
         for tool in preset.tools
         {
@@ -1989,7 +1978,6 @@ public class Workspace: ObservableObject
         
         //Update parts data from file
         parts.removeAll()
-        Part.folder_bookmark = Workspace.parts_bookmark
         
         for part in preset.parts
         {

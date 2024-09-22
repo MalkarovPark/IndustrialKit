@@ -600,11 +600,6 @@ public class Robot: WorkspaceObject
     //MARK: - Visual build functions
     public override var scene_node_name: String { "robot" }
     
-    public override var scene_internal_folder_address: String { Robot.scene_folder }
-    
-    ///An internal scene folder address.
-    public static var scene_folder = String()
-    
     ///A robot visual model controller.
     public var model_controller = RobotModelController()
     
@@ -626,29 +621,6 @@ public class Robot: WorkspaceObject
                 connector.model_controller?.reset_nodes()
                 connector.model_controller = nil
             }
-        }
-    }
-    
-    public override func node_by_description()
-    {
-        node = SCNNode()
-        
-        if module_name != ""
-        {
-            //Get default models by modules names
-            guard let new_scene = SCNScene(named: scene_internal_folder_address + (scene_internal_folder_address != "" ? "/" : "") + module_name + ".scn")
-            else
-            {
-                node_by_description()
-                return
-            }
-            
-            node = new_scene.rootNode.childNode(withName: scene_node_name, recursively: false)!
-            //node = SCNScene(named: scene_internal_folder_address + "/" + module_name + ".scn")!.rootNode.childNode(withName: scene_node_name, recursively: false)!
-        }
-        else
-        {
-            no_model_node()
         }
     }
     

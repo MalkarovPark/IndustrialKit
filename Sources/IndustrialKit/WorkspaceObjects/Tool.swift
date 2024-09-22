@@ -470,11 +470,6 @@ public class Tool: WorkspaceObject
     //MARK: - Visual build functions
     public override var scene_node_name: String { "tool" }
     
-    public override var scene_internal_folder_address: String { Tool.scene_folder }
-    
-    ///An internal scene folder address.
-    public static var scene_folder = String()
-    
     ///A tool visual model controller.
     private var model_controller = ToolModelController()
     

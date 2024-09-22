@@ -554,6 +554,7 @@ public class ChangerModifierElement: ModifierElement
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     {
         module_name = element_struct.data[0]
+        
         import_module_by_name(module_name)
     }
     
@@ -575,7 +576,7 @@ public class ChangerModifierElement: ModifierElement
      */
     public func module_import(_ module: ChangerModule)
     {
-        change = module.change(registers:)
+        change = module.change
     }
     
     ///Imported changer modules.
