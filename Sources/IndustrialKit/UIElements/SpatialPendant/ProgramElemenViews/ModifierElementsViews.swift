@@ -225,11 +225,22 @@ internal struct ChangerElementView: View
         {
             Picker("Module:", selection: $module_name) //Changer module picker
             {
-                if Workspace.changer_modules.count > 0
+                if Changer.internal_modules_list.count > 0
                 {
-                    ForEach(Workspace.changer_modules, id: \.self)
-                    { name in
-                        Text(name)
+                    Section(header: Text("Internal"))
+                    {
+                        ForEach(Changer.internal_modules_list, id: \.self)
+                        {
+                            Text($0).tag("\($0)")
+                        }
+                    }
+                    
+                    Section(header: Text("External"))
+                    {
+                        ForEach(Changer.external_modules_list, id: \.self)
+                        {
+                            Text($0).tag(".\($0)")
+                        }
                     }
                 }
                 else
