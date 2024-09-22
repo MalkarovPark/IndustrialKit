@@ -89,17 +89,9 @@ public class Robot: WorkspaceObject
                    origin_rotation: robot_struct.origin_rotation,
                    space_scale: robot_struct.space_scale)
         
-        read_default_position(robot_struct.default_pointer_position)
-        
-        read_programs(robot_struct: robot_struct)
-        
         import_module_by_name(module_name)
         read_connection_parameters(connector: connector, robot_struct.connection_parameters)
         model_controller.charts_data = charts_data
-    }
-    
-    public required init(from decoder: any Decoder) throws {
-        fatalError("init(from:) has not been implemented")
     }
     
     ///Common init function.
@@ -385,43 +377,37 @@ public class Robot: WorkspaceObject
         }
     }
     
-    /**
-     A robot default pointer position.
-     
-     Array with three angles – [*x*, *y*, *z*, *r*, *p*, *w*].
-     */
-    private var default_pointer_position: [Float]?
+    ///A robot default pointer location.
+    private var default_pointer_location: [Float]?
+    
+    ///A robot default pointer rotatioin.
+    private var default_pointer_rotation: [Float]?
     
     ///Sets default robot pointer position by current pointer position.
     public func set_default_pointer_position()
     {
-        default_pointer_position = [
-        pointer_location[0],
-        pointer_location[1],
-        pointer_location[2],
-        pointer_rotation[0],
-        pointer_rotation[1],
-        pointer_rotation[2]
-        ]
+        default_pointer_location = pointer_location
+        default_pointer_rotation = pointer_rotation
     }
     
     ///Clears default robot pointer position.
     public func clear_default_pointer_position()
     {
-        default_pointer_position = nil
+        default_pointer_location = nil
+        default_pointer_rotation = nil
     }
     
     ///Resets robot pointer to default position.
     public func reset_pointer_to_default()
     {
-        guard let viewed_data = default_pointer_position
+        guard let location = default_pointer_location, let rotation = default_pointer_rotation
         else
         {
             return
         }
         
-        pointer_location = [viewed_data[0], viewed_data[1], viewed_data[2]]
-        pointer_rotation = [viewed_data[3], viewed_data[4], viewed_data[5]]
+        pointer_location = location
+        pointer_rotation = rotation
         
         update_model()
     }
@@ -429,7 +415,7 @@ public class Robot: WorkspaceObject
     ///Returns information about default pointer position avalibility of robot.
     public var has_default_position: Bool
     {
-        if default_pointer_position != nil
+        if default_pointer_location != nil && default_pointer_rotation != nil
         {
             return true
         }
@@ -1281,60 +1267,62 @@ public class Robot: WorkspaceObject
     }
     
     //MARK: - Work with file system
-    ///Converts robot data to codable robot struct.
-    public var file_info: RobotStruct
+    
+    enum CodingKeys: String, CodingKey
     {
-        return RobotStruct(name: name,
-                           manufacturer: "Manufacturer",
-                           model: "Model",
-                           module: self.module_name,
-                           scene: self.scene_address,
-                           lengths: self.scene_address == "" ? self.lengths : [Float](),
-                           is_placed: self.is_placed,
-                           location: self.location,
-                           rotation: self.rotation,
-                           default_pointer_position: self.default_pointer_position,
-                           demo: self.demo,
-                           connection_parameters: get_connection_parameters(connector: self.connector),
-                           update_model_by_connector: self.update_model_by_connector,
-                           get_statistics: self.get_statistics,
-                           charts_data: self.charts_data,
-                           state: self.states_data,
-                           image_data: self.image_data ?? Data(),
-                           programs: self.programs,
-                           origin_location: self.origin_location,
-                           origin_rotation: self.origin_rotation,
-                           space_scale: self.space_scale)
+        case default_pointer_location
+        case default_pointer_rotation
+        
+        case demo
+        case connection_parameters
+        case update_model_by_connector
+        
+        case get_statistics
+        case charts_data
+        case states_data
+        
+        case programs
     }
     
-    ///Gets default pointer position from array.
-    private func read_default_position(_ data: [Float]?)
+    public required init(from decoder: any Decoder) throws
     {
-        if data?.count == 6
-        {
-            default_pointer_position = data
-            
-            guard let viewed_data = data
-            else
-            {
-                return
-            }
-            
-            pointer_location = [viewed_data[0], viewed_data[1], viewed_data[2]]
-            pointer_rotation = [viewed_data[3], viewed_data[4], viewed_data[5]]
-        }
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.default_pointer_location = try container.decodeIfPresent([Float].self, forKey: .default_pointer_location)
+        self.default_pointer_rotation = try container.decodeIfPresent([Float].self, forKey: .default_pointer_rotation)
+        
+        self.demo = try container.decode(Bool.self, forKey: .demo)
+        self.update_model_by_connector = try container.decode(Bool.self, forKey: .update_model_by_connector)
+        
+        self.get_statistics = try container.decode(Bool.self, forKey: .get_statistics)
+        self.charts_data = try container.decodeIfPresent([WorkspaceObjectChart].self, forKey: .charts_data)
+        self.states_data = try container.decodeIfPresent([StateItem].self, forKey: .states_data)
+        
+        self.programs = try container.decode([PositionsProgram].self, forKey: .programs)
+        
+        try super.init(from: decoder)
+        
+        read_connection_parameters(connector: self.connector, try container.decode([String].self, forKey: .connection_parameters))
     }
     
-    ///Convert array of codable positions programs structs to robot programs.
-    private func read_programs(robot_struct: RobotStruct)
+    public override func encode(to encoder: any Encoder) throws
     {
-        if robot_struct.programs.count > 0
-        {
-            for postions_program in robot_struct.programs
-            {
-                programs.append(postions_program)
-            }
-        }
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(default_pointer_location, forKey: .default_pointer_location)
+        try container.encode(default_pointer_rotation, forKey: .default_pointer_rotation)
+        
+        try container.encode(demo, forKey: .demo)
+        try container.encode(get_connection_parameters(connector: self.connector), forKey: .connection_parameters)
+        try container.encode(update_model_by_connector, forKey: .update_model_by_connector)
+        
+        try container.encode(get_statistics, forKey: .get_statistics)
+        try container.encode(charts_data, forKey: .charts_data)
+        try container.encode(states_data, forKey: .states_data)
+        
+        try container.encode(programs, forKey: .programs)
+        
+        try super.encode(to: encoder)
     }
 }
 

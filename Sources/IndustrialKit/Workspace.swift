@@ -634,7 +634,7 @@ public class Workspace: ObservableObject
             
             robots.append(Robot())
             
-            robots[new_index] = Robot(robot_struct: robots[index].file_info)
+            robots[new_index] = clone_codable(robots[index]) ?? Robot() //Robot(robot_struct: robots[index].file_info)
             robots[new_index].name = new_name
             robots[new_index].is_placed = false
         }
@@ -1919,13 +1919,13 @@ public class Workspace: ObservableObject
      
      - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
      */
-    public func file_data() -> (robots: [RobotStruct], tools: [Tool], parts: [Part], elements: [WorkspaceProgramElementStruct], registers: [Float])
+    public func file_data() -> (robots: [Robot], tools: [Tool], parts: [Part], elements: [WorkspaceProgramElementStruct], registers: [Float])
     {
         //Get robots info for save to file
-        var robots_file_info = [RobotStruct]()
+        var robots_file_info = [Robot]()
         for robot in robots
         {
-            robots_file_info.append(robot.file_info)
+            robots_file_info.append(robot)
         }
         
         //Get tools info for save to file

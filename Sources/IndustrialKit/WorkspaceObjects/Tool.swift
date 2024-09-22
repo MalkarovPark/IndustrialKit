@@ -687,7 +687,7 @@ public class Tool: WorkspaceObject
      */
     public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
     {
-        return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, self.image)
+        return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, self.image) //Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
     }
     
     /**
