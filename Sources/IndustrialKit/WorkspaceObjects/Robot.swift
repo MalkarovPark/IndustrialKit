@@ -431,6 +431,8 @@ public class Robot: WorkspaceObject
     public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
         //pointer_position_to_robot()
+        performed = true
+        
         if demo
         {
             //Move to point for virtual robot
@@ -445,6 +447,7 @@ public class Robot: WorkspaceObject
             model_controller.nodes_move_to(point: point)
             {
                 completion()
+                self.performed = false
             }
         }
         else
@@ -455,11 +458,13 @@ public class Robot: WorkspaceObject
                 connector.move_to(point: point)
                 {
                     completion()
+                    self.performed = false
                 }
             }
             else
             {
                 completion()
+                self.performed = false
             }
         }
     }
