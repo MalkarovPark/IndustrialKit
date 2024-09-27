@@ -447,7 +447,7 @@ public class Robot: WorkspaceObject
             model_controller.nodes_move_to(point: point)
             {
                 completion()
-                self.performed = false
+                //self.performed = false
             }
         }
         else
@@ -458,13 +458,13 @@ public class Robot: WorkspaceObject
                 connector.move_to(point: point)
                 {
                     completion()
-                    self.performed = false
+                    //self.performed = false
                 }
             }
             else
             {
                 completion()
-                self.performed = false
+                //self.performed = false
             }
         }
     }
