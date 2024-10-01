@@ -22,14 +22,11 @@ open class PartModule: IndustrialModule
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
-    }
-    
-    //MARK: - Import functions
-    override open func external_import()
-    {
+        
         self.node = external_node
     }
     
+    //MARK: - Import functions
     override open var external_node: SCNNode
     {
         return SCNNode()
@@ -39,7 +36,5 @@ open class PartModule: IndustrialModule
     public required init(from decoder: any Decoder) throws
     {
         try super.init(from: decoder)
-        
-        external_import()
     }
 }

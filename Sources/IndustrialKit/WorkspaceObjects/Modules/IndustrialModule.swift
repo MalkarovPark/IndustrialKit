@@ -80,8 +80,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.name = external_name
         self.description = String()
         self.is_internal = false
-        
-        external_import()
     }
     
     public var internal_url: String? ///An adress to package contents access.
@@ -111,12 +109,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     open var node = SCNNode()
     
     //MARK: - Import functions
-    ///Imports module components for external module.
-    open func external_import()
-    {
-        node = external_node
-    }
-    
     ///A scene of external module passed to object.
     open var external_node: SCNNode
     {

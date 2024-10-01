@@ -23,7 +23,9 @@ open class RobotModule: IndustrialModule
         }
         else
         {
-            external_import()
+            self.connector = ExternalRobotConnector(name)
+            self.model_controller = ExternalRobotModelController(name)
+            self.node = external_node
         }
         
         code_items = default_code_items
@@ -37,13 +39,16 @@ open class RobotModule: IndustrialModule
         self.connector = connector
         self.model_controller = model_controller
         self.node = node
-        
-        //code_items = default_code_items
     }
     
+    ///External init
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
+        
+        self.connector = ExternalRobotConnector(name)
+        self.model_controller = ExternalRobotModelController(name)
+        self.node = external_node
     }
     
     private var default_code_items = [
@@ -81,13 +86,6 @@ open class RobotModule: IndustrialModule
     public var connector = RobotConnector()
     
     //MARK: - Import functions
-    override open func external_import()
-    {
-        connector = ExternalRobotConnector(name)
-        model_controller = ExternalRobotModelController(name)
-        node = external_node
-    }
-    
     override open var external_node: SCNNode
     {
         return SCNNode()
@@ -97,7 +95,5 @@ open class RobotModule: IndustrialModule
     public required init(from decoder: any Decoder) throws
     {
         try super.init(from: decoder)
-        
-        external_import()
     }
 }

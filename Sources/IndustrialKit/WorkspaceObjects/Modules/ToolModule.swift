@@ -49,6 +49,11 @@ open class ToolModule: IndustrialModule
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
+        
+        self.connector = ExternalToolConnector(name)
+        self.model_controller = ExternalToolModelController(name)
+        //codes = operation_codes
+        self.node = external_node
     }
     
     private var default_code_items = [
@@ -74,15 +79,6 @@ open class ToolModule: IndustrialModule
     ///Operation codes of the tool model.
     public var codes = [OperationCodeInfo]()
     
-    //MARK: - Import functions
-    override open func external_import()
-    {
-        connector = ExternalToolConnector(name)
-        model_controller = ExternalToolModelController(name)
-        //codes = operation_codes
-        node = external_node
-    }
-    
     override open var external_node: SCNNode
     {
         return SCNNode()
@@ -101,8 +97,6 @@ open class ToolModule: IndustrialModule
         self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
         
         try super.init(from: decoder)
-        
-        external_import()
     }
     
     public override func encode(to encoder: any Encoder) throws

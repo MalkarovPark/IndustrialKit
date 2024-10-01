@@ -24,9 +24,12 @@ open class ChangerModule: IndustrialModule
         self.change = change_func
     }
     
+    ///External Init
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
+        
+        self.change = external_change_func
     }
     
     //MARK: - Components
@@ -74,12 +77,13 @@ open class ChangerModule: IndustrialModule
      
      The conversion occurs by executing code in an external swift file.
      */
-    private func external_change(registers: [Float]) -> [Float]
+    private func external_change_func(registers: inout [Float]) -> Void
     {
         guard let internal_url = internal_url
         else
         {
-            return [Float]()
+            registers = [Float]()
+            return
         }
         
         let task = Process()
@@ -95,15 +99,9 @@ open class ChangerModule: IndustrialModule
         
         //Converting the output back to a Float array
         let new_registers = output?.split(separator: " ").compactMap { Float($0) }
-        return new_registers ?? []
+        registers = new_registers ?? [Float]()
     }
     #endif
-    
-    //MARK: - Import functions
-    override open func external_import()
-    {
-        //self.change = external_change()
-    }
     
     //MARK: - Codable handling
     required public init(from decoder: any Decoder) throws
