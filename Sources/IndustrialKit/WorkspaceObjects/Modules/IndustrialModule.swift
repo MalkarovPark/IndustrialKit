@@ -215,7 +215,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
                     if let external_scene = scene_source.scene(options: nil)
                     {
                         print("Imported – \(external_scene)")
-                        node = external_scene.rootNode.clone()
+                        //node = external_scene.rootNode.clone()
+                        node = external_scene.rootNode.childNode(withName: "part", recursively: true)!.clone()
                     }
                 }
             }
