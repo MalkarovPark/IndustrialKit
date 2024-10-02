@@ -21,15 +21,13 @@ open class PartModule: IndustrialModule
     public init(name: String = String(), description: String = String(), node: SCNNode)
     {
         super.init(name: name, description: description)
-        
-        import_external_node(external_scene_url)
     }
     
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
         
-        self.node = external_node
+        import_external_node(external_scene_url)
     }
     
     //MARK: - Import functions
