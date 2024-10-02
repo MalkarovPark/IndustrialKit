@@ -21,6 +21,8 @@ open class PartModule: IndustrialModule
     public init(name: String = String(), description: String = String(), node: SCNNode)
     {
         super.init(name: name, description: description)
+        
+        self.node = node
     }
     
     public override init(external_name: String)
