@@ -29,7 +29,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     @Published public var description = String()
     
     ///Defines the internal/external source of the code.
-    public var is_internal = false
+    public var is_internal = false //!
     
     ///Code lisitngs of module.
     @Published public var code_items = [CodeItem]()
@@ -67,19 +67,29 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     open var extension_name: String { "module" } ///An object package extension name.
     
     //MARK: - Init functions
-    public init()
+    
+    /**
+     New module init.
+     
+     For new designed modules.
+     */
+    public init(new_name: String = String(), description: String = String())
     {
+        self.name = new_name
+        self.description = description
         
+        self.code_items = default_code_items
     }
     
+    //MARK: Module init for mount in app
+    ///Internal module init.
     public init(name: String = String(), description: String = String(), is_internal: Bool = true)
     {
         self.name = name
         self.description = description
-        self.is_internal = is_internal
     }
     
-    ///External init.
+    ///External module init.
     public init(external_name: String = String())
     {
         self.name = external_name
@@ -107,6 +117,13 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         {
             return nil
         }
+    }
+    
+    //MARK: - Designer functions
+    ///Default code items for module design process.
+    open var default_code_items: [CodeItem]
+    {
+        return [CodeItem]()
     }
     
     //MARK: - Components

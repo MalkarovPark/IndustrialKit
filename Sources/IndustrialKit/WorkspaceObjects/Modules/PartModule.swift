@@ -11,8 +11,14 @@ import SceneKit
 open class PartModule: IndustrialModule
 {
     //MARK: - Init functions
+    public override init(new_name: String = String(), description: String = String())
+    {
+        super.init(new_name: new_name, description: description)
+    }
+    
+    //MARK: Module init for mount in app
     ///Internal init.
-    public init(name: String = String(), description: String = String(), node: SCNNode = SCNNode())
+    public init(name: String = String(), description: String = String(), node: SCNNode)
     {
         super.init(name: name, description: description, is_internal: true)
         

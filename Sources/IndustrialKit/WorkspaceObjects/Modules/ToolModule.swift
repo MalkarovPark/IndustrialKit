@@ -11,26 +11,12 @@ import SceneKit
 open class ToolModule: IndustrialModule
 {
     //MARK: - Init functions
-    /*public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal: Bool = Bool(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode = SCNNode())
+    public override init(new_name: String = String(), description: String = String())
     {
-        super.init(name: name, description: description, is_internal: is_internal)
-        
-        if is_internal
-        {
-            self.connector = connector
-            self.model_controller = model_controller
-            self.codes = operation_codes
-            self.node = node
-        }
-        else
-        {
-            external_import()
-            self.codes = operation_codes
-        }
-        
-        code_items = default_code_items
-    }*/
+        super.init(new_name: new_name, description: description)
+    }
     
+    //MARK: Module init for mount in app
     ///Internal init.
     public init(name: String = String(), description: String = String(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode)
     {
@@ -38,8 +24,6 @@ open class ToolModule: IndustrialModule
         
         self.connector = connector
         self.model_controller = model_controller
-        
-        self.code_items = default_code_items
         
         self.node = node
         
@@ -56,18 +40,22 @@ open class ToolModule: IndustrialModule
         self.node = external_node
     }
     
-    private var default_code_items = [
-        //Controller
-        CodeItem(name: "nodes_connect"),
-        CodeItem(name: "reset_model"),
-        
-        CodeItem(name: "updated_charts_data"),
-        CodeItem(name: "updated_states_data"),
-        CodeItem(name: "reset_charts_data"),
-        CodeItem(name: "reset_states_data"),
-        
-        CodeItem(name: "perform_nodes")
-    ]
+    //MARK: - Designer functions
+    open override var default_code_items: [CodeItem]
+    {
+        return [
+            //Controller
+            CodeItem(name: "nodes_connect"),
+            CodeItem(name: "reset_model"),
+            
+            CodeItem(name: "updated_charts_data"),
+            CodeItem(name: "updated_states_data"),
+            CodeItem(name: "reset_charts_data"),
+            CodeItem(name: "reset_states_data"),
+            
+            CodeItem(name: "perform_nodes")
+        ]
+    }
     
     //MARK: - Components
     ///A model controller of the tool model.

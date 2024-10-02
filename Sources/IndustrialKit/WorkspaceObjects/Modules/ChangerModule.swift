@@ -10,13 +10,13 @@ import Foundation
 open class ChangerModule: IndustrialModule
 {
     //MARK: - Init functions
-    public init(name: String = String(), description: String = String(), package_file_name: String = String(), is_internal_change: Bool = Bool())
+    public override init(new_name: String = String(), description: String = String())
     {
-        super.init(name: name, description: description)
-        code_items = [CodeItem(name: "Change")]
+        super.init(new_name: new_name, description: description)
     }
     
-    ///Internal Init
+    //MARK: Module init for mount in app
+    ///Internal module init.
     public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) -> Void)
     {
         super.init(name: name, description: description, is_internal: true)
@@ -24,12 +24,17 @@ open class ChangerModule: IndustrialModule
         self.change = change_func
     }
     
-    ///External Init
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
         
         self.change = external_change_func
+    }
+    
+    //MARK: - Designer functions
+    open override var default_code_items: [CodeItem]
+    {
+        return [CodeItem(name: "Change")]
     }
     
     //MARK: - Components
