@@ -91,6 +91,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     {
         self.name = external_name
         self.description = String()
+        
+        //import_external_resources()
     }
     
     public var internal_url: String? ///An adress to package contents access.
@@ -153,6 +155,75 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         node.geometry?.firstMaterial?.lightingModel = .physicallyBased
         
         //node.name = scene_node_name
+    }
+    
+    ///Imports data from info header file of module.
+    /*open func import_external_resources()
+    {
+        //import_info()
+        //import_external_node(external_scene_url)
+    }*/
+    
+    public var external_scene_url: URL
+    {
+        do
+        {
+            var is_stale = false
+            var local_url = try URL(resolvingBookmarkData: WorkspaceObject.modules_folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+            
+            guard !is_stale else
+            {
+                return local_url
+            }
+            
+            local_url = local_url.appendingPathComponent("\(name).part/")
+            
+            let info_url = local_url.appendingPathComponent("Info")
+            
+            print(info_url)
+            
+            if FileManager.default.fileExists(atPath: info_url.path)
+            {
+                let module_info = try JSONDecoder().decode(IndustrialModule.self, from: try Data(contentsOf: info_url))
+                
+                if let main_scene_name = module_info.main_scene_name
+                {
+                    print("Model Name: \(main_scene_name)")
+                    return local_url.appendingPathComponent("Resources.scnassets/\(main_scene_name)")
+                    //import_external_node(local_url.appendingPathComponent("Resources.scnassets/\(main_scene_name)"))
+                }
+            }
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return URL(fileURLWithPath: "")
+    }
+    
+    public func import_external_node(_ scene_url: URL)
+    {
+        do
+        {
+            if FileManager.default.fileExists(atPath: scene_url.path)
+            {
+                let scene_data = try Data(contentsOf: scene_url)
+                
+                if let scene_source = SCNSceneSource(data: scene_data, options: nil)
+                {
+                    if let external_scene = scene_source.scene(options: nil)
+                    {
+                        print("Imported – \(external_scene)")
+                        node = external_scene.rootNode.clone()
+                    }
+                }
+            }
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
     }
     
     //MARK: - Codable handling

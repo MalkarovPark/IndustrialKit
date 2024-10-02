@@ -113,7 +113,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     open var scene_internal_folder_address: String? { nil }
     
     ///Folder access bookmark.
-    public static var folder_bookmark: Data?
+    //public static var folder_bookmark: Data?
     
     //MARK: - UI functions
     ///Universal data storage for NSImage or UIImage.

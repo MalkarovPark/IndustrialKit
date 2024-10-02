@@ -22,7 +22,7 @@ open class PartModule: IndustrialModule
     {
         super.init(name: name, description: description)
         
-        self.node = node
+        import_external_node(external_scene_url)
     }
     
     public override init(external_name: String)
@@ -33,10 +33,11 @@ open class PartModule: IndustrialModule
     }
     
     //MARK: - Import functions
-    override open var external_node: SCNNode
+    /*///Imports data from info header file of module.
+    override open func import_external_resources()
     {
-        return SCNNode()
-    }
+        
+    }*/
     
     //MARK: - Codable handling
     public required init(from decoder: any Decoder) throws
