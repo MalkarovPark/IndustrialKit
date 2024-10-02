@@ -28,9 +28,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     ///An optional module description.
     @Published public var description = String()
     
-    ///Defines the internal/external source of the code.
-    public var is_internal = false //!
-    
     ///Code lisitngs of module.
     @Published public var code_items = [CodeItem]()
     
@@ -81,7 +78,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.code_items = default_code_items
     }
     
-    //MARK: Module init for mount in app
+    //MARK: Module init for in-app mounting
     ///Internal module init.
     public init(name: String = String(), description: String = String(), is_internal: Bool = true)
     {
@@ -94,7 +91,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     {
         self.name = external_name
         self.description = String()
-        self.is_internal = false
     }
     
     public var internal_url: String? ///An adress to package contents access.
@@ -179,7 +175,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.name = try container.decode(String.self, forKey: .name)
         self.description = try container.decode(String.self, forKey: .description)
         
-        self.is_internal = try container.decode(Bool.self, forKey: .is_internal)
         self.code_items = try container.decode([CodeItem].self, forKey: .code_items)
         
         self.resources_names = try container.decodeIfPresent([String].self, forKey: .resources_names)
@@ -193,7 +188,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         try container.encode(name, forKey: .name)
         try container.encode(description, forKey: .description)
         
-        try container.encode(is_internal, forKey: .is_internal)
         try container.encode(code_items, forKey: .code_items)
         
         try container.encodeIfPresent(resources_names, forKey: .resources_names)

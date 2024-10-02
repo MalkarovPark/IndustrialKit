@@ -15,11 +15,11 @@ open class ChangerModule: IndustrialModule
         super.init(new_name: new_name, description: description)
     }
     
-    //MARK: Module init for mount in app
+    //MARK: Module init for in-app mounting
     ///Internal module init.
     public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) -> Void)
     {
-        super.init(name: name, description: description, is_internal: true)
+        super.init(name: name, description: description)
         
         self.change = change_func
     }
@@ -47,20 +47,6 @@ open class ChangerModule: IndustrialModule
         - registers: A changeable registers data.
      */
     public var change: (inout [Float]) -> Void = { _ in }
-    
-    /*public func change(registers: inout [Float])
-    {
-        if is_internal
-        {
-            registers = internal_change(registers: registers)
-        }
-        else
-        {
-            #if os(macOS)
-            registers = external_change(registers: registers)
-            #endif
-        }
-    }*/
     
     /**
      Performs register conversion within a class instance.

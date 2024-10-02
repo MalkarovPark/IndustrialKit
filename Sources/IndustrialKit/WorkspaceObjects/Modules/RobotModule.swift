@@ -16,11 +16,11 @@ open class RobotModule: IndustrialModule
         super.init(new_name: new_name, description: description)
     }
     
-    //MARK: Module init for mount in app
+    //MARK: Module init for in-app mounting
     ///Internal init.
     public init(name: String = String(), description: String = String(), model_controller: RobotModelController, connector: RobotConnector, node: SCNNode)
     {
-        super.init(name: name, description: description, is_internal: true)
+        super.init(name: name, description: description)
         
         self.connector = connector
         self.model_controller = model_controller
