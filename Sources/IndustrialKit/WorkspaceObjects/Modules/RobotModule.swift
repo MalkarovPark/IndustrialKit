@@ -32,9 +32,11 @@ open class RobotModule: IndustrialModule
     {
         super.init(external_name: external_name)
         
-        self.connector = ExternalRobotConnector(name)
+        /*self.connector = ExternalRobotConnector(name)
         self.model_controller = ExternalRobotModelController(name)
-        self.node = external_node
+        self.node = external_node*/
+        
+        components_import()
     }
     
     open override var default_code_items: [CodeItem]
@@ -55,15 +57,15 @@ open class RobotModule: IndustrialModule
             
             //Connector
             /*CodeItem(name: "connection_process"),
-            CodeItem(name: "disconnection_process"),
-            
-            CodeItem(name: "move_to"),
-            CodeItem(name: "pause_operations"),
-            
-            CodeItem(name: "updated_charts_data"),
-            CodeItem(name: "updated_states_data"),
-            CodeItem(name: "reset_charts_data"),
-            CodeItem(name: "reset_states_data"),*/
+             CodeItem(name: "disconnection_process"),
+             
+             CodeItem(name: "move_to"),
+             CodeItem(name: "pause_operations"),
+             
+             CodeItem(name: "updated_charts_data"),
+             CodeItem(name: "updated_states_data"),
+             CodeItem(name: "reset_charts_data"),
+             CodeItem(name: "reset_states_data"),*/
         ]
     }
     
@@ -74,15 +76,84 @@ open class RobotModule: IndustrialModule
     ///A connector of the robot model.
     public var connector = RobotConnector()
     
-    //MARK: - Import functions
-    override open var external_node: SCNNode
+    //MARK: - Linked components init
+    public var linked_model_module_name: String?
+    public var linked_connector_module_name: String?
+    public var linked_controller_module_name: String?
+    
+    ///Imports components from external or from other modules.
+    private func components_import()
     {
-        return SCNNode()
+        //Set visual model
+        if let linked_name = linked_connector_module_name
+        {
+            if let index = Robot.modules.firstIndex(where: { $0.name == linked_name })
+            {
+                node = Robot.modules[index].node
+            }
+        }
+        else
+        {
+            connector = ExternalRobotConnector(name)
+        }
+        
+        //Set contoller
+        if let linked_name = linked_controller_module_name
+        {
+            if let index = Robot.modules.firstIndex(where: { $0.name == linked_name })
+            {
+                model_controller = Robot.modules[index].model_controller
+            }
+        }
+        else
+        {
+            model_controller = ExternalRobotModelController(name)
+        }
+        
+        //Set connector
+        if let linked_name = linked_connector_module_name
+        {
+            if let index = Robot.modules.firstIndex(where: { $0.name == linked_name })
+            {
+                connector = Robot.modules[index].connector
+            }
+        }
+        else
+        {
+            node = external_node
+        }
     }
     
     //MARK: - Codable handling
+    enum CodingKeys: String, CodingKey
+    {
+        //Linked
+        case linked_model_module_name
+        case linked_connector_module_name
+        case linked_controller_module_name
+    }
+    
     public required init(from decoder: any Decoder) throws
     {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        //Linked
+        self.linked_model_module_name = try container.decodeIfPresent(String.self, forKey: .linked_model_module_name)
+        self.linked_connector_module_name = try container.decodeIfPresent(String.self, forKey: .linked_connector_module_name)
+        self.linked_controller_module_name = try container.decodeIfPresent(String.self, forKey: .linked_controller_module_name)
+        
         try super.init(from: decoder)
+    }
+    
+    public override func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        //Linked
+        try container.encode(linked_model_module_name, forKey: .linked_model_module_name)
+        try container.encode(linked_connector_module_name, forKey: .linked_connector_module_name)
+        try container.encode(linked_controller_module_name, forKey: .linked_controller_module_name)
+        
+        try super.encode(to: encoder)
     }
 }

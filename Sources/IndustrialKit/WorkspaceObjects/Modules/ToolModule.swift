@@ -34,10 +34,12 @@ open class ToolModule: IndustrialModule
     {
         super.init(external_name: external_name)
         
-        self.connector = ExternalToolConnector(name)
-        self.model_controller = ExternalToolModelController(name)
+        /*self.node = external_node
         //codes = operation_codes
-        self.node = external_node
+        self.model_controller = ExternalToolModelController(name)
+        self.connector = ExternalToolConnector(name)*/
+        
+        components_import()
     }
     
     //MARK: - Designer functions
@@ -72,10 +74,78 @@ open class ToolModule: IndustrialModule
         return SCNNode()
     }
     
+    //MARK: - Linked components init
+    public var linked_model_module_name: String?
+    public var linked_codes_module_name: String?
+    public var linked_connector_module_name: String?
+    public var linked_controller_module_name: String?
+    
+    ///Imports components from external or from other modules.
+    private func components_import()
+    {
+        //Set visual model from internal module
+        if let linked_name = linked_connector_module_name
+        {
+            if let index = Tool.modules.firstIndex(where: { $0.name == linked_name })
+            {
+                node = Tool.modules[index].node
+            }
+        }
+        else
+        {
+            node = external_node
+        }
+        
+        //Set codes from internal module
+        if let linked_name = linked_connector_module_name
+        {
+            if let index = Tool.modules.firstIndex(where: { $0.name == linked_name })
+            {
+                codes = Tool.modules[index].codes
+            }
+        }
+        else
+        {
+            
+        }
+        
+        //Set contoller from internal module
+        if let linked_name = linked_controller_module_name
+        {
+            if let index = Tool.modules.firstIndex(where: { $0.name == linked_name })
+            {
+                model_controller = Tool.modules[index].model_controller
+            }
+        }
+        else
+        {
+            model_controller = ExternalToolModelController(name)
+        }
+        
+        //Set connector from internal module
+        if let linked_name = linked_connector_module_name
+        {
+            if let index = Robot.modules.firstIndex(where: { $0.name == linked_name })
+            {
+                connector = Tool.modules[index].connector
+            }
+        }
+        else
+        {
+            connector = ExternalToolConnector(name)
+        }
+    }
+    
     //MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
         case operation_codes
+        
+        //Linked
+        case linked_model_module_name
+        case linked_codes_module_name
+        case linked_connector_module_name
+        case linked_controller_module_name
     }
     
     public required init(from decoder: any Decoder) throws
@@ -83,6 +153,12 @@ open class ToolModule: IndustrialModule
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
+        
+        //Linked
+        self.linked_model_module_name = try container.decodeIfPresent(String.self, forKey: .linked_model_module_name)
+        self.linked_codes_module_name = try container.decodeIfPresent(String.self, forKey: .linked_codes_module_name)
+        self.linked_connector_module_name = try container.decodeIfPresent(String.self, forKey: .linked_connector_module_name)
+        self.linked_controller_module_name = try container.decodeIfPresent(String.self, forKey: .linked_controller_module_name)
         
         try super.init(from: decoder)
     }
@@ -92,6 +168,12 @@ open class ToolModule: IndustrialModule
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(codes, forKey: .operation_codes)
+        
+        //Linked
+        try container.encode(linked_model_module_name, forKey: .linked_model_module_name)
+        try container.encode(linked_codes_module_name, forKey: .linked_codes_module_name)
+        try container.encode(linked_connector_module_name, forKey: .linked_connector_module_name)
+        try container.encode(linked_controller_module_name, forKey: .linked_controller_module_name)
         
         try super.encode(to: encoder)
     }
