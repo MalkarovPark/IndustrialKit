@@ -35,7 +35,7 @@ open class ToolModule: IndustrialModule
         super.init(external_name: external_name)
         
         /*self.node = external_node
-        //codes = operation_codes
+        codes = exterrnal_codes
         self.model_controller = ExternalToolModelController(name)
         self.connector = ExternalToolConnector(name)*/
         
@@ -74,6 +74,11 @@ open class ToolModule: IndustrialModule
         return SCNNode()
     }
     
+    public var external_codes: [OperationCodeInfo]
+    {
+        return [OperationCodeInfo]()
+    }
+    
     //MARK: - Linked components init
     public var linked_model_module_name: String?
     public var linked_codes_module_name: String?
@@ -106,7 +111,7 @@ open class ToolModule: IndustrialModule
         }
         else
         {
-            
+            codes = external_codes
         }
         
         //Set contoller from internal module

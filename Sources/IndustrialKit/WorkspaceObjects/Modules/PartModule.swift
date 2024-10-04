@@ -29,7 +29,7 @@ open class PartModule: IndustrialModule
     {
         super.init(external_name: external_name)
         
-        import_external_node(external_scene_url)
+        node = external_node
     }
     
     //MARK: - Import functions
@@ -38,6 +38,84 @@ open class PartModule: IndustrialModule
     {
         
     }*/
+    
+    open override var external_node: SCNNode
+    {
+        if let main_scene_name = external_module_info?.main_scene_name
+        {
+            do
+            {
+                let scene_url = local_url.appendingPathComponent("Resources.scnassets/\(main_scene_name)")
+                
+                if FileManager.default.fileExists(atPath: scene_url.path)
+                {
+                    let scene_data = try Data(contentsOf: scene_url)
+                    
+                    if let scene_source = SCNSceneSource(data: scene_data, options: nil)
+                    {
+                        if let external_scene = scene_source.scene(options: nil)
+                        {
+                            print("Imported – \(external_scene)")
+                            return external_scene.rootNode.childNode(withName: "part", recursively: true)!.clone()
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
+        
+        return SCNNode()
+    }
+    
+    public var external_module_info: PartModule?
+    {
+        do
+        {
+            var is_stale = false
+            
+            let info_url = local_url.appendingPathComponent("Info")
+            
+            print(info_url)
+            
+            if FileManager.default.fileExists(atPath: info_url.path)
+            {
+                return try JSONDecoder().decode(PartModule.self, from: try Data(contentsOf: info_url))
+            }
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return nil
+    }
+    
+    public var local_url: URL
+    {
+        do
+        {
+            var is_stale = false
+            var local_url = try URL(resolvingBookmarkData: WorkspaceObject.modules_folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+            
+            guard !is_stale else
+            {
+                return local_url
+            }
+            
+            local_url = local_url.appendingPathComponent("\(name).part/")
+            
+            return local_url
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return URL(filePath: "")
+    }
     
     //MARK: - Codable handling
     public required init(from decoder: any Decoder) throws
