@@ -22,7 +22,7 @@ open class PartModule: IndustrialModule
     {
         super.init(name: name, description: description)
         
-        self.node = node
+        self.node = node.deepClone()
     }
     
     public override init(external_name: String)
