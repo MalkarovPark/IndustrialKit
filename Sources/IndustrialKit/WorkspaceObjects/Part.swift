@@ -113,7 +113,7 @@ public class Part: WorkspaceObject
         module_name = module.name
         
         node = module.node
-        color_from_model()
+        //color_from_model()
     }
     
     ///Imported part modules.
