@@ -316,7 +316,7 @@ public class Part: WorkspaceObject
             figure_color = UIColor(newValue).to_hex()
             
             //Update color by components
-            //color_to_model()
+            color_to_model()
         }
     }
     
