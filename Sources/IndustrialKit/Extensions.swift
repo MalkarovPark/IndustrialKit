@@ -194,7 +194,7 @@ extension UIColor
 //MARK: - Deep SCNNode clone
 extension SCNNode
 {
-    func deepClone() -> SCNNode
+    func deep_clone() -> SCNNode
     {
         let clonedNode = self.clone()
         clonedNode.geometry = self.geometry?.copy() as? SCNGeometry
@@ -204,7 +204,7 @@ extension SCNNode
         }
         clonedNode.childNodes.forEach
         { childNode in
-            let clonedChild = childNode.deepClone()
+            let clonedChild = childNode.deep_clone()
             clonedNode.addChildNode(clonedChild)
         }
         return clonedNode
