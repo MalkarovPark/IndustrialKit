@@ -18,7 +18,7 @@ public class Part: WorkspaceObject
 {
     private var figure: String? //Part figure name
     private var lengths: [Float]? //lengths for part without scene figure
-    private var figure_color: [Int]? //Color for part without scene figure
+    private var figure_color: String? //Color hex for part without scene figure
     private var material_name: String? //Material for part without scene figure
     
     ///Physics body for part model node by physics type.
@@ -129,61 +129,17 @@ public class Part: WorkspaceObject
         module_import(Part.modules[index])
     }
     
-    //MARK: - Deprecated
-    ///Inits tool by model dictionary.
-    private func init_by_dictionary(name: String, dictionary: [String: Any])
+    private func color_import()
     {
-        self.name = name
-        
-        //Get values form dictionary
-        if dictionary.keys.contains("Figure")
+        if node != nil
         {
-            self.figure = dictionary["Figure"] as? String ?? ""
-        }
-        
-        if dictionary.keys.contains("Color")
-        {
-            var figure_color = [Int]()
-            let elements = dictionary["Color"] as! NSArray
-            
-            for element in elements //Add elements from NSArray to floats array
+            if figure_color != nil
             {
-                figure_color.append((element as? Int) ?? 0)
+                color_to_model()
             }
-            
-            self.figure_color = figure_color
-        }
-        
-        if dictionary.keys.contains("Material")
-        {
-            self.material_name = dictionary["Material"] as? String ?? ""
-        }
-        
-        if dictionary.keys.contains("Lengths")
-        {
-            var lengths = [Float]()
-            let elements = dictionary["Lengths"] as! NSArray
-            
-            for element in elements //Add elements from NSArray to floats array
+            else
             {
-                lengths.append((element as? Float) ?? 0)
-            }
-            
-            self.lengths = lengths
-        }
-        
-        if dictionary.keys.contains("Physics")
-        {
-            switch dictionary["Physics"] as? String ?? ""
-            {
-            case "static":
-                physics_type = .ph_static
-            case "dynamic":
-                physics_type = .ph_dynamic
-            case "kinematic":
-                physics_type = .ph_kinematic
-            default:
-                physics_type = .ph_none
+                color_from_model()
             }
         }
     }
@@ -192,28 +148,9 @@ public class Part: WorkspaceObject
     {
         if node != nil
         {
-            #if os(macOS)
-            let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? NSColor
-            
-            let components = node_color?.cgColor.components
-            figure_color = [Int((components?[0]) ?? (69 / 255) * 255), Int((components?[1]) ?? (60 / 255) * 255), Int((components?[2]) ?? (204 / 255) * 255)]
-            #else
             let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? UIColor
             
-            if let color = node_color
-            {
-                var red: CGFloat = 0
-                var green: CGFloat = 0
-                var blue: CGFloat = 0
-                
-                color.getRed(&red, green: &green, blue: &blue, alpha: nil)
-                figure_color = [Int(red * 255), Int(green * 255), Int(blue * 255)]
-            }
-            else
-            {
-                figure_color = [123, 123, 129]
-            }
-            #endif
+            figure_color = node_color?.to_hex()
         }
     }
     
@@ -222,11 +159,7 @@ public class Part: WorkspaceObject
     {
         if node != nil
         {
-            #if os(macOS)
-            node?.geometry?.firstMaterial?.diffuse.contents = NSColor(red: CGFloat(figure_color?[0] ?? 0) / 255, green: CGFloat(figure_color?[1] ?? 0) / 255, blue: CGFloat(figure_color?[2] ?? 0) / 255, alpha: 1)
-            #else
-            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(red: CGFloat(figure_color?[0] ?? 0) / 255, green: CGFloat(figure_color?[1] ?? 0) / 255, blue: CGFloat(figure_color?[2] ?? 0) / 255, alpha: 1)
-            #endif
+            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#000000")
         }
     }
     
@@ -375,16 +308,11 @@ public class Part: WorkspaceObject
     {
         get
         {
-            return Color(red: Double(figure_color?[0] ?? 0) / 255, green: Double(figure_color?[1] ?? 0) / 255, blue: Double(figure_color?[2] ?? 0) / 255)
+            return Color(hex: figure_color ?? "#000000")
         }
         set
         {
-            let viewed_color_components = UIColor(newValue).cgColor.components
-            
-            for i in 0..<(figure_color?.count ?? 3)
-            {
-                self.figure_color?[i] = Int((viewed_color_components?[i] ?? 0) * 255)
-            }
+            figure_color = UIColor(newValue).to_hex()
             
             //Update color by components
             color_to_model()
@@ -401,6 +329,7 @@ public class Part: WorkspaceObject
     enum CodingKeys: String, CodingKey
     {
         case physics_type
+        case figure_color
         
         /*case figure
         case lengths
@@ -412,16 +341,14 @@ public class Part: WorkspaceObject
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.physics_type = try container.decode(PhysicsType.self, forKey: .physics_type)
-        
-        /*self.figure = try container.decode(String.self, forKey: .figure)
-        self.lengths = try container.decode([Float].self, forKey: .lengths)
-        self.figure_color = try container.decode([Int].self, forKey: .figure_color)
-        self.material_name = try container.decode(String.self, forKey: .material_name)*/
-        
         try super.init(from: decoder)
         
-        color_from_model()
+        self.physics_type = try container.decode(PhysicsType.self, forKey: .physics_type)
+        self.figure_color = try container.decodeIfPresent(String.self, forKey: .figure_color)
+        
+        color_import()
+        
+        //color_from_model()
     }
     
     public override func encode(to encoder: any Encoder) throws
@@ -429,11 +356,7 @@ public class Part: WorkspaceObject
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(physics_type, forKey: .physics_type)
-        
-        /*try container.encode(figure, forKey: .figure)
-        try container.encode(lengths, forKey: .lengths)
         try container.encode(figure_color, forKey: .figure_color)
-        try container.encode(material_name, forKey: .material_name)*/
         
         try super.encode(to: encoder)
     }
