@@ -114,6 +114,7 @@ public class Part: WorkspaceObject
         
         //node = module.node.clone()
         node = module.node.deepClone()
+        color_from_model()
     }
     
     ///Imported part modules.
