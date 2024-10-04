@@ -112,8 +112,8 @@ public class Part: WorkspaceObject
     {
         module_name = module.name
         
-        node = module.node.clone()
-        //color_from_model()
+        //node = module.node.clone()
+        node = module.node.flattenedClone()
     }
     
     ///Imported part modules.
