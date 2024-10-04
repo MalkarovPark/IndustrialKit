@@ -128,6 +128,19 @@ extension UIColor
 {
     func to_hex() -> String?
     {
+        #if os(macOS)
+        let color = usingColorSpace(.deviceRGB) ?? self
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+
+        color.getRed(&r, green: &g, blue: &b, alpha: &a)
+
+        let rgb: Int = (Int)(r * 255) << 16 | (Int)(g * 255) << 8 | (Int)(b * 255)
+
+        return String(format:"#%06x", rgb).uppercased()
+        #else
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
@@ -138,6 +151,7 @@ extension UIColor
         let rgb: Int = (Int)(r * 255) << 16 | (Int)(g * 255) << 8 | (Int)(b * 255)
 
         return String(format:"#%06x", rgb).uppercased()
+        #endif
     }
 }
 
