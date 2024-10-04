@@ -136,7 +136,7 @@ public class Part: WorkspaceObject
         {
             if figure_color != nil
             {
-                //color_to_model()
+                color_to_model()
             }
             else
             {
@@ -160,7 +160,11 @@ public class Part: WorkspaceObject
     {
         if node != nil
         {
-            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#000000")
+            let new_node = node?.clone()
+            new_node.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#000000")
+            node = new_node
+            
+            //node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#000000")
         }
     }
     
