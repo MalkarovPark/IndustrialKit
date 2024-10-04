@@ -136,7 +136,7 @@ public class Part: WorkspaceObject
         {
             if figure_color != nil
             {
-                color_to_model()
+                //color_to_model()
             }
             else
             {
