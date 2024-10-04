@@ -160,11 +160,7 @@ public class Part: WorkspaceObject
     {
         if node != nil
         {
-            let new_node = node?.clone()
-            new_node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#000000")
-            node = new_node
-            
-            //node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#000000")
+            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#000000")
         }
     }
     
