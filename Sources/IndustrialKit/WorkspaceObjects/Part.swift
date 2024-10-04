@@ -77,7 +77,7 @@ public class Part: WorkspaceObject
     public init(name: String, scene_name: String)
     {
         super.init(name: name)
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() //!
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
     }
     
     ///Inits part by name and scene.
@@ -160,7 +160,7 @@ public class Part: WorkspaceObject
     {
         if node != nil
         {
-            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#000000")
+            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
         }
     }
     
@@ -309,7 +309,7 @@ public class Part: WorkspaceObject
     {
         get
         {
-            return Color(hex: figure_color ?? "#000000")
+            return Color(hex: figure_color ?? "#453CCC")
         }
         set
         {
@@ -331,11 +331,6 @@ public class Part: WorkspaceObject
     {
         case physics_type
         case figure_color
-        
-        /*case figure
-        case lengths
-        case figure_color
-        case material_name*/
     }
     
     public required init(from decoder: any Decoder) throws
@@ -348,8 +343,6 @@ public class Part: WorkspaceObject
         self.figure_color = try container.decodeIfPresent(String.self, forKey: .figure_color)
         
         color_import()
-        
-        //color_from_model()
     }
     
     public override func encode(to encoder: any Encoder) throws
