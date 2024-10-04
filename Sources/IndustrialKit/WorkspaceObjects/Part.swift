@@ -112,7 +112,7 @@ public class Part: WorkspaceObject
     {
         module_name = module.name
         
-        node = module.node
+        node = module.node.clone()
         //color_from_model()
     }
     

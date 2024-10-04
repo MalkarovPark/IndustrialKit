@@ -86,7 +86,7 @@ public class Tool: WorkspaceObject
     {
         module_name = module.name
         
-        node = module.node
+        node = module.node.clone()
         
         model_controller = module.model_controller
         connector = module.connector
