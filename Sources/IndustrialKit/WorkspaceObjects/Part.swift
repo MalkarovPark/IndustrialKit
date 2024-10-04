@@ -113,7 +113,7 @@ public class Part: WorkspaceObject
         module_name = module.name
         
         //node = module.node.clone()
-        node = module.node.flattenedClone()
+        node = module.node.deepClone()
     }
     
     ///Imported part modules.
@@ -369,4 +369,23 @@ public enum PhysicsType: String, Codable, Equatable, CaseIterable
     case ph_dynamic = "Dynamic"
     case ph_kinematic = "Kinematic"
     case ph_none = "None"
+}
+
+extension SCNNode
+{
+    func deepClone() -> SCNNode
+    {
+        let clonedNode = self.clone()
+        clonedNode.geometry = self.geometry?.copy() as? SCNGeometry
+        if let materials = self.geometry?.materials
+        {
+            clonedNode.geometry?.materials = materials.map { $0.copy() as! SCNMaterial }
+        }
+        clonedNode.childNodes.forEach
+        { childNode in
+            let clonedChild = childNode.deepClone()
+            clonedNode.addChildNode(clonedChild)
+        }
+        return clonedNode
+    }
 }
