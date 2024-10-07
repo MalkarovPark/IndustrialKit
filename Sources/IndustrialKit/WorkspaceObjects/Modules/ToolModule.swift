@@ -69,6 +69,50 @@ open class ToolModule: IndustrialModule
     ///Operation codes of the tool model.
     public var codes = [OperationCodeInfo]()
     
+    //MARK: - Import functions
+    open override var package_url: URL
+    {
+        do
+        {
+            var is_stale = false
+            var local_url = try URL(resolvingBookmarkData: WorkspaceObject.modules_folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+            
+            guard !is_stale else
+            {
+                return local_url
+            }
+            
+            local_url = local_url.appendingPathComponent("\(name).tool/")
+            
+            return local_url
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return URL(filePath: "")
+    }
+    
+    public var external_module_info: PartModule?
+    {
+        do
+        {
+            let info_url = package_url.appendingPathComponent("Info")
+            
+            if FileManager.default.fileExists(atPath: info_url.path)
+            {
+                return try JSONDecoder().decode(PartModule.self, from: try Data(contentsOf: info_url))
+            }
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return nil
+    }
+    
     override open var external_node: SCNNode
     {
         return SCNNode()

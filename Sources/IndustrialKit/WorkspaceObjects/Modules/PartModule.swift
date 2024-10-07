@@ -33,11 +33,48 @@ open class PartModule: IndustrialModule
     }
     
     //MARK: - Import functions
-    /*///Imports data from info header file of module.
-    override open func import_external_resources()
+    open override var package_url: URL
     {
+        do
+        {
+            var is_stale = false
+            var local_url = try URL(resolvingBookmarkData: WorkspaceObject.modules_folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+            
+            guard !is_stale else
+            {
+                return local_url
+            }
+            
+            local_url = local_url.appendingPathComponent("\(name).part/")
+            
+            return local_url
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
         
-    }*/
+        return URL(filePath: "")
+    }
+    
+    public var external_module_info: PartModule?
+    {
+        do
+        {
+            let info_url = package_url.appendingPathComponent("Info")
+            
+            if FileManager.default.fileExists(atPath: info_url.path)
+            {
+                return try JSONDecoder().decode(PartModule.self, from: try Data(contentsOf: info_url))
+            }
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return nil
+    }
     
     open override var external_node: SCNNode
     {
@@ -45,7 +82,7 @@ open class PartModule: IndustrialModule
         {
             do
             {
-                let scene_url = local_url.appendingPathComponent("Resources.scnassets/\(main_scene_name)")
+                let scene_url = package_url.appendingPathComponent("Resources.scnassets/\(main_scene_name)")
                 
                 if FileManager.default.fileExists(atPath: scene_url.path)
                 {
@@ -68,53 +105,6 @@ open class PartModule: IndustrialModule
         }
         
         return SCNNode()
-    }
-    
-    public var external_module_info: PartModule?
-    {
-        do
-        {
-            var is_stale = false
-            
-            let info_url = local_url.appendingPathComponent("Info")
-            
-            print(info_url)
-            
-            if FileManager.default.fileExists(atPath: info_url.path)
-            {
-                return try JSONDecoder().decode(PartModule.self, from: try Data(contentsOf: info_url))
-            }
-        }
-        catch
-        {
-            print(error.localizedDescription)
-        }
-        
-        return nil
-    }
-    
-    public var local_url: URL
-    {
-        do
-        {
-            var is_stale = false
-            var local_url = try URL(resolvingBookmarkData: WorkspaceObject.modules_folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
-            
-            guard !is_stale else
-            {
-                return local_url
-            }
-            
-            local_url = local_url.appendingPathComponent("\(name).part/")
-            
-            return local_url
-        }
-        catch
-        {
-            print(error.localizedDescription)
-        }
-        
-        return URL(filePath: "")
     }
     
     //MARK: - Codable handling

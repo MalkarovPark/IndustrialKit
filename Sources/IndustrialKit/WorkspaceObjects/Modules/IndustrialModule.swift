@@ -129,6 +129,12 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     open var node = SCNNode()
     
     //MARK: - Import functions
+    ///A module package url of external module.
+    open var package_url: URL
+    {
+        return URL(filePath: "")
+    }
+    
     ///A scene of external module passed to object.
     open var external_node: SCNNode
     {
