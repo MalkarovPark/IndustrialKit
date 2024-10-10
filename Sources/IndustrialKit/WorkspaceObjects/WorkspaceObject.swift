@@ -55,10 +55,10 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     }
     
     ///Inits object by name and module name of installed module.
-    public init(name: String, module_name: String)
+    public init(name: String, module_name: String, is_internal: Bool)
     {
         self.name = name
-        import_module_by_name(module_name)
+        import_module_by_name(module_name, is_internal: is_internal)
     }
     
     //MARK: - Module handling
@@ -70,7 +70,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
      - Parameters:
         - name: An installed module name.
      */
-    open func import_module_by_name(_ name: String, is_internal: Bool = true)
+    open func import_module_by_name(_ name: String, is_internal: Bool)
     {
         
     }
@@ -174,7 +174,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
         
         //color_to_model()
-        import_module_by_name(module_name)
+        import_module_by_name(module_name, is_internal: self.is_internal_module)
     }
     
     public func encode(to encoder: any Encoder) throws

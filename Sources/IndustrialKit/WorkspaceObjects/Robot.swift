@@ -68,9 +68,9 @@ public class Robot: WorkspaceObject
         set_default_cell_parameters()
     }
     
-    public override init(name: String, module_name: String)
+    public override init(name: String, module_name: String, is_internal: Bool)
     {
-        super.init(name: name, module_name: module_name)
+        super.init(name: name, module_name: module_name, is_internal: is_internal)
         
         set_default_cell_parameters()
     }

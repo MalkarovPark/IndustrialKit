@@ -65,9 +65,9 @@ public class Tool: WorkspaceObject
         module_import(module)
     }
     
-    public override init(name: String, module_name: String)
+    public override init(name: String, module_name: String, is_internal: Bool)
     {
-        super.init(name: name, module_name: module_name)
+        super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
     
     //MARK: - Module handling
