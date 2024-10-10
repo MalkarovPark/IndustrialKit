@@ -55,7 +55,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     }
     
     ///Inits object by name and module name of installed module.
-    public init(name: String, module_name: String, is_internal: Bool)
+    public init(name: String, module_name: String, is_internal: Bool = true)
     {
         self.name = name
         import_module_by_name(module_name, is_internal: is_internal)
