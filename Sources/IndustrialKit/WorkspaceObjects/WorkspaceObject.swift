@@ -58,6 +58,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     public init(name: String, module_name: String, is_internal: Bool = true)
     {
         self.name = name
+        self.is_internal_module = is_internal
         import_module_by_name(module_name, is_internal: is_internal)
     }
     
