@@ -96,18 +96,23 @@ public class Tool: WorkspaceObject
         codes = module.codes
     }
     
-    ///Imported tool modules.
-    public static var modules = [ToolModule]()
+    ///Imported internal tool modules.
+    public static var internal_modules = [ToolModule]()
     
-    override public func import_module_by_name(_ name: String)
+    ///Imported external tool modules.
+    public static var external_modules = [ToolModule]()
+    
+    public func import_module_by_name(_ name: String, is_internal: Bool = true)
     {
-        guard let index = Tool.modules.firstIndex(where: { $0.name == name })
+        let modules = is_internal ? Tool.internal_modules : Tool.external_modules
+        
+        guard let index = modules.firstIndex(where: { $0.name == name })
         else
         {
             return
         }
         
-        module_import(Tool.modules[index])
+        module_import(modules[index])
     }
     
     private func apply_statistics_flags()

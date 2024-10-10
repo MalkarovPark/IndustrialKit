@@ -35,6 +35,9 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     ///A name of module to describe scene, controller and connector.
     public var module_name = ""
     
+    ///A module access type identifier – external or internal.
+    public var is_internal_module: Bool = true
+    
     ///Object init function.
     public init()
     {
@@ -150,6 +153,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         case name
         
         case module_name
+        case is_internal_module
         
         case location
         case rotation
@@ -163,6 +167,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         self.name = try container.decode(String.self, forKey: .name)
         
         self.module_name = try container.decode(String.self, forKey: .module_name)
+        self.is_internal_module = try container.decodeIfPresent(Bool.self, forKey: .is_internal_module) ?? true //self.is_internal_module = try container.decode(Bool.self, forKey: .is_internal_module)
         
         self.location = try container.decode([Float].self, forKey: .location)
         self.rotation = try container.decode([Float].self, forKey: .rotation)
@@ -179,6 +184,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         try container.encode(name, forKey: .name)
         
         try container.encode(module_name, forKey: .module_name)
+        try container.encode(is_internal_module, forKey: .is_internal_module)
         
         try container.encode(location, forKey: .location)
         try container.encode(rotation, forKey: .rotation)

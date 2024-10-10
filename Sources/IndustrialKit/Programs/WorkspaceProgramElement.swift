@@ -579,8 +579,11 @@ public class ChangerModifierElement: ModifierElement
         change = module.change
     }
     
-    ///Imported changer modules.
-    public static var modules = [ChangerModule]()
+    ///Imported internal part modules.
+    public static var internal_modules = [ChangerModule]()
+    
+    ///Imported external part modules.
+    public static var external_modules = [ChangerModule]()
     
     ///A changer internal modules names array.
     public static var internal_modules_list = [String]()
@@ -588,15 +591,17 @@ public class ChangerModifierElement: ModifierElement
     ///A changer external modules names array.
     public static var external_modules_list = [String]()
     
-    public func import_module_by_name(_ name: String)
+    public func import_module_by_name(_ name: String, is_internal: Bool = true)
     {
-        guard let index = Changer.modules.firstIndex(where: { $0.name == name })
+        let modules = is_internal ? Changer.internal_modules : Changer.external_modules
+        
+        guard let index = modules.firstIndex(where: { $0.name == name })
         else
         {
             return
         }
         
-        module_import(Changer.modules[index])
+        module_import(modules[index])
     }
 }
 

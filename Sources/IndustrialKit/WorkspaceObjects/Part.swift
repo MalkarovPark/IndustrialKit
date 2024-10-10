@@ -117,18 +117,23 @@ public class Part: WorkspaceObject
         color_from_model()
     }
     
-    ///Imported part modules.
-    public static var modules = [PartModule]()
+    ///Imported internal part modules.
+    public static var internal_modules = [PartModule]()
     
-    override public func import_module_by_name(_ name: String)
+    ///Imported external part modules.
+    public static var external_modules = [PartModule]()
+    
+    public func import_module_by_name(_ name: String, is_internal: Bool = true)
     {
-        guard let index = Part.modules.firstIndex(where: { $0.name == name })
+        let modules = is_internal ? Part.internal_modules : Part.external_modules
+        
+        guard let index = modules.firstIndex(where: { $0.name == name })
         else
         {
             return
         }
         
-        module_import(Part.modules[index])
+        module_import(modules[index])
     }
     
     private func color_import()
