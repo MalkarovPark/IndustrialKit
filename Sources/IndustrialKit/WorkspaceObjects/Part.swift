@@ -123,7 +123,7 @@ public class Part: WorkspaceObject
     ///Imported external part modules.
     public static var external_modules = [PartModule]()
     
-    public func import_module_by_name(_ name: String, is_internal: Bool = true)
+    public override func import_module_by_name(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Part.internal_modules : Part.external_modules
         

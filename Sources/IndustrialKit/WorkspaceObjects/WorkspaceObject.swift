@@ -70,7 +70,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
      - Parameters:
         - name: An installed module name.
      */
-    open func import_module_by_name(_ name: String)
+    open func import_module_by_name(_ name: String, is_internal: Bool = true)
     {
         
     }
