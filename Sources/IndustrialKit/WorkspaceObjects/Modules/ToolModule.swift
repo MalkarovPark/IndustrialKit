@@ -135,9 +135,9 @@ open class ToolModule: IndustrialModule
         //Set visual model from internal module
         if let linked_name = linked_connector_module_name
         {
-            if let index = Tool.modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
-                node = Tool.modules[index].node
+                node = Tool.internal_modules[index].node
             }
         }
         else
@@ -148,9 +148,9 @@ open class ToolModule: IndustrialModule
         //Set codes from internal module
         if let linked_name = linked_connector_module_name
         {
-            if let index = Tool.modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
-                codes = Tool.modules[index].codes
+                codes = Tool.internal_modules[index].codes
             }
         }
         else
@@ -161,9 +161,9 @@ open class ToolModule: IndustrialModule
         //Set contoller from internal module
         if let linked_name = linked_controller_module_name
         {
-            if let index = Tool.modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
-                model_controller = Tool.modules[index].model_controller
+                model_controller = Tool.internal_modules[index].model_controller
             }
         }
         else
@@ -174,9 +174,9 @@ open class ToolModule: IndustrialModule
         //Set connector from internal module
         if let linked_name = linked_connector_module_name
         {
-            if let index = Robot.modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
-                connector = Tool.modules[index].connector
+                connector = Tool.internal_modules[index].connector
             }
         }
         else

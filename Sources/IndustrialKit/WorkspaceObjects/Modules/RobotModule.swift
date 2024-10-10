@@ -87,9 +87,9 @@ open class RobotModule: IndustrialModule
         //Set visual model
         if let linked_name = linked_connector_module_name
         {
-            if let index = Robot.modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
-                node = Robot.modules[index].node
+                node = Robot.internal_modules[index].node
             }
         }
         else
@@ -100,9 +100,9 @@ open class RobotModule: IndustrialModule
         //Set contoller
         if let linked_name = linked_controller_module_name
         {
-            if let index = Robot.modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
-                model_controller = Robot.modules[index].model_controller
+                model_controller = Robot.internal_modules[index].model_controller
             }
         }
         else
@@ -113,9 +113,9 @@ open class RobotModule: IndustrialModule
         //Set connector
         if let linked_name = linked_connector_module_name
         {
-            if let index = Robot.modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
-                connector = Robot.modules[index].connector
+                connector = Robot.internal_modules[index].connector
             }
         }
         else
