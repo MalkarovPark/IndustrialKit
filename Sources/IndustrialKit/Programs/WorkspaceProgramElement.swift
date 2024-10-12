@@ -572,7 +572,7 @@ public class ChangerModifierElement: ModifierElement
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [is_internal_module ? module_name : String(module_name.dropFirst())])
+        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [!is_internal_module ? module_name : String(module_name.dropFirst())])
     }
     
     public var change: ((_ registers: inout [Float]) -> Void) = { registers in }
