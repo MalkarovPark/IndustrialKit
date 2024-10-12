@@ -1347,12 +1347,9 @@ public class Workspace: ObservableObject
         func changer_element_check(_ element: ChangerModifierElement)
         {
             let is_internal = element.module_name.hasPrefix(".") ? false : true //Check external module by name with dot
-            if !is_internal
-            {
-                element.module_name = String(element.module_name.dropFirst()) //Remove point from name
-            }
             
-            element.import_module_by_name(element.module_name, is_internal: is_internal)
+            //Remove point from name and import as external if module name with point (as external)
+            element.import_module_by_name(is_internal ? element.module_name : String(element.module_name.dropFirst()), is_internal: is_internal)
             
             /*if !Changer.internal_modules_list.contains(element.module_name)
             {
