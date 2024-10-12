@@ -529,12 +529,12 @@ public class ChangerModifierElement: ModifierElement
 {
     ///A name of modifier module.
     public var module_name = ""
-    {
+    /*{
         didSet
         {
             import_module_by_name(module_name)
         }
-    }
+    }*/
     
     public override var info: String
     {
@@ -604,6 +604,7 @@ public class ChangerModifierElement: ModifierElement
         guard let index = modules.firstIndex(where: { $0.name == name })
         else
         {
+            change = { registers in }
             return
         }
         
