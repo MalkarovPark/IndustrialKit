@@ -529,6 +529,12 @@ public class ChangerModifierElement: ModifierElement
 {
     ///A name of modifier module.
     public var module_name = ""
+    {
+        didSet
+        {
+            import_module_by_name(module_name)
+        }
+    }
     
     public override var info: String
     {
