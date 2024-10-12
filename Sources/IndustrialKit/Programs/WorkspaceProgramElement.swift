@@ -536,6 +536,12 @@ public class ChangerModifierElement: ModifierElement
         }
     }*/
     
+    ///A module access type identifier – external or internal.
+    public var is_internal_module: Bool
+    {
+        return !module_name.hasPrefix(".") //Intrnal module has not dot "." in name
+    }
+    
     public override var info: String
     {
         return "Module – \(module_name)"
@@ -561,12 +567,12 @@ public class ChangerModifierElement: ModifierElement
     {
         module_name = element_struct.data[0]
         
-        import_module_by_name(module_name)
+        import_module_by_name(module_name, is_internal: is_internal_module)
     }
     
     public override var file_info: WorkspaceProgramElementStruct
     {
-        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [module_name])
+        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [is_internal_module ? module_name : String(module_name.dropFirst())])
     }
     
     public var change: ((_ registers: inout [Float]) -> Void) = { registers in }

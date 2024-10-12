@@ -36,7 +36,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     public var module_name = ""
     
     ///A module access type identifier – external or internal.
-    public var is_internal_module: Bool = true
+    public var is_internal_module = true
     
     ///Object init function.
     public init()
@@ -67,7 +67,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     public static var modules_folder_bookmark: Data?
     
     /**
-     Import module by name.
+     Imports module by name.
      - Parameters:
         - name: An installed module name.
      */
