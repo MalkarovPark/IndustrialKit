@@ -91,7 +91,7 @@ open class ChangerModule: IndustrialModule
             return
         }
         
-        registers = output.split(separator: " ").compactMap { Float($0) }
+        registers = output.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: " ").compactMap { Float($0) } //.split(separator: " ").compactMap { Float($0) }
     }
     #endif
     
