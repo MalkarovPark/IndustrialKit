@@ -49,9 +49,12 @@ public struct RegistersView: View
                 { number in
                     let color_index = number % colors.count
                     
-                    RegisterCardView(value: $registers[number], number: number, color: colors[color_index])
-                        .id(number)
-                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    if number < registers.count
+                    {
+                        RegisterCardView(value: $registers[number], number: number, color: colors[color_index])
+                            .id(number)
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    }
                 }
                 
                 if bottom_spacing > 0
