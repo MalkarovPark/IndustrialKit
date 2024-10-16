@@ -307,7 +307,7 @@ public class ChangerModifierElement: ModifierElement
     {
         let modules = is_internal ? Changer.internal_modules : Changer.external_modules
         
-        guard let index = modules.firstIndex(where: { is_internal ? $0.name == name : $0.name.dropFirst() == name }) //If external – drop "." before name
+        guard let index = modules.firstIndex(where: { is_internal ? $0.name == name : $0.name == name.dropFirst() }) //If external – drop "." before name
         else
         {
             change = { registers in }
