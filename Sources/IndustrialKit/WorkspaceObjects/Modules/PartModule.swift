@@ -45,7 +45,7 @@ open class PartModule: IndustrialModule
                 return local_url
             }
             
-            local_url = local_url.appendingPathComponent("\(name).part/")
+            local_url = local_url.appendingPathComponent("\(name).part")
             
             return local_url
         }
@@ -61,7 +61,7 @@ open class PartModule: IndustrialModule
     {
         do
         {
-            let info_url = package_url.appendingPathComponent("Info")
+            let info_url = package_url.appendingPathComponent("/Info")
             
             if FileManager.default.fileExists(atPath: info_url.path)
             {
@@ -82,7 +82,7 @@ open class PartModule: IndustrialModule
         {
             do
             {
-                let scene_url = package_url.appendingPathComponent("Resources.scnassets/\(main_scene_name)")
+                let scene_url = package_url.appendingPathComponent("/Resources.scnassets/\(main_scene_name)")
                 
                 if FileManager.default.fileExists(atPath: scene_url.path)
                 {

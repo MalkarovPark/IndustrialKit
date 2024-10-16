@@ -28,7 +28,9 @@ open class ChangerModule: IndustrialModule
     {
         super.init(external_name: external_name)
         
+        #if os(macOS)
         self.change = external_change_func
+        #endif
     }
     
     //MARK: - Designer functions
@@ -48,21 +50,9 @@ open class ChangerModule: IndustrialModule
      */
     public var change: (inout [Float]) -> Void = { _ in }
     
-    /**
-     Performs register conversion within a class instance.
-     - Parameters:
-        - registers: A changeable registers data.
-     
-     The contents of this function are specified in the listing and compiled in the application.
-     */
-    private func internal_change(registers: [Float]) -> [Float]
-    {
-        /*@START_MENU_TOKEN@*/return [Float]()/*@END_MENU_TOKEN@*/
-    }
-    
     #if os(macOS)
     /**
-     Performs register conversion within an external script.
+     Performs register data change within an external script.
      - Parameters:
         - registers: A changeable registers data.
      
@@ -70,27 +60,13 @@ open class ChangerModule: IndustrialModule
      */
     private func external_change_func(registers: inout [Float]) -> Void
     {
-        guard let internal_url = internal_url
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Changer"), with: registers.map { String($0) })
         else
         {
-            registers = [Float]()
             return
         }
         
-        let task = Process()
-        task.launchPath = "/usr/bin/env"
-        task.arguments = ["swift", "\(internal_url)/Components/Code/\(name)/\(code_file_name).swift"] + registers.map { String($0) }
-        
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.launch()
-        
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8)
-        
-        //Converting the output back to a Float array
-        let new_registers = output?.split(separator: " ").compactMap { Float($0) }
-        registers = new_registers ?? [Float]()
+        registers = output.split(separator: " ").compactMap { Float($0) }
     }
     #endif
     
@@ -100,21 +76,3 @@ open class ChangerModule: IndustrialModule
         try super.init(from: decoder)
     }
 }
-
-/*@START_MENU_TOKEN@*//*@PLACEHOLDER=Additive Code@*//*@END_MENU_TOKEN@*/
-
-//External code file example
-/*
-import Foundation
-
-if CommandLine.arguments.count > 1
-{
-    let inputNumbers = CommandLine.arguments.dropFirst().compactMap { Float($0) }
-    let transformedNumbers = inputNumbers.map { $0 * 2 }
-    print(transformedNumbers.map { String($0) }.joined(separator: " "))
-}
-else
-{
-    print("Ошибка: Необходимо передать массив чисел в качестве аргументов.")
-}
-*/

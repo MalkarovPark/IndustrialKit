@@ -82,7 +82,7 @@ open class ToolModule: IndustrialModule
                 return local_url
             }
             
-            local_url = local_url.appendingPathComponent("\(name).tool/")
+            local_url = local_url.appendingPathComponent("\(name).tool")
             
             return local_url
         }
@@ -98,7 +98,7 @@ open class ToolModule: IndustrialModule
     {
         do
         {
-            let info_url = package_url.appendingPathComponent("Info")
+            let info_url = package_url.appendingPathComponent("/Info")
             
             if FileManager.default.fileExists(atPath: info_url.path)
             {

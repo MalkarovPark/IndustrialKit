@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 
 /**
- Finds and update mismatched name.
+ Finds and updates mismatched name.
  
  - Parameters:
     - name: A checked name.
@@ -263,3 +263,51 @@ func clone_codable<T: Codable>(_ object: T) -> T?
         return nil
     }
 }
+
+#if os(macOS)
+//MARK: - Terminal Functions
+/**
+ Performs terminal command.
+ 
+ - Parameters:
+    - command: A terminal command.
+ 
+ - Returns: Command text output.
+ */
+@discardableResult
+func perform_terminal_command(_ command: String) throws -> String?
+{
+    let task = Process()
+    let pipe = Pipe()
+    
+    task.standardOutput = pipe
+    task.standardError = pipe
+    task.arguments = ["-c", command]
+    task.executableURL = URL(fileURLWithPath: "/bin/zsh")
+    task.standardInput = nil
+
+    try task.run()
+    
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    
+    return String(data: data, encoding: .utf8)
+}
+
+/**
+ Performs terminal app.
+ 
+ - Parameters:
+    - url: A terminal app url.
+    - arguments: A string array of arguments.
+ 
+ - Returns: Command text output.
+ */
+func perform_code(at url: URL, with arguments: [String]) -> String?
+{
+    let command = "'\(url.path)' \(arguments.joined(separator: " "))" //Combine file path and arguments into one string
+    
+    let result = try? perform_terminal_command(command)
+    
+    return result
+}
+#endif
