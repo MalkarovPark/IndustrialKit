@@ -33,6 +33,31 @@ open class ChangerModule: IndustrialModule
         #endif
     }
     
+    //MARK: - Import functions
+    open override var package_url: URL
+    {
+        do
+        {
+            var is_stale = false
+            var local_url = try URL(resolvingBookmarkData: WorkspaceObject.modules_folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+            
+            guard !is_stale else
+            {
+                return local_url
+            }
+            
+            local_url = local_url.appendingPathComponent("\(name).changer")
+            
+            return local_url
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return URL(filePath: "")
+    }
+    
     //MARK: - Designer functions
     open override var default_code_items: [CodeItem]
     {

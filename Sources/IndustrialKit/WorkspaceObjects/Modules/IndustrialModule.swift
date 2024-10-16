@@ -63,8 +63,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     
     open var extension_name: String { "module" } ///An object package extension name.
     
-    //MARK: - Init functions
-    
+    //MARK: - Init functions    
     /**
      New module init.
      
