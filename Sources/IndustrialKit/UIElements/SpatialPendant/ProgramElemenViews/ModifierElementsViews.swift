@@ -231,7 +231,7 @@ internal struct ChangerElementView: View
                     {
                         ForEach(Changer.internal_modules_list, id: \.self)
                         {
-                            Text($0).tag("\($0)")
+                            Text($0).tag($0)
                         }
                     }
                     
@@ -250,12 +250,12 @@ internal struct ChangerElementView: View
             }
             .onAppear
             {
-                if Workspace.changer_modules.count > 0 && module_name == ""
+                if Changer.internal_modules_list.count > 0 && module_name == ""
                 {
-                    module_name = Workspace.changer_modules[0]
+                    module_name = Changer.internal_modules_list[0]
                 }
             }
-            .disabled(Workspace.changer_modules.count == 0)
+            .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
         }
         .onChange(of: module_name)
         { _, new_value in
@@ -265,30 +265,39 @@ internal struct ChangerElementView: View
         #else
         VStack
         {
-            if Workspace.changer_modules.count > 0
+            Picker("Module:", selection: $module_name) //Changer module picker
             {
-                Text("Module:")
-                Picker("Module:", selection: $module_name) //Target mark picker
+                if Changer.internal_modules_list.count > 0
                 {
-                    ForEach(Workspace.changer_modules, id: \.self)
-                    { name in
-                        Text(name)
-                    }
-                }
-                .onAppear
-                {
-                    if Workspace.changer_modules.count > 0 && module_name == ""
+                    Section(header: Text("Internal"))
                     {
-                        module_name = Workspace.changer_modules[0]
+                        ForEach(Changer.internal_modules_list, id: \.self)
+                        {
+                            Text($0).tag($0)
+                        }
+                    }
+                    
+                    Section(header: Text("External"))
+                    {
+                        ForEach(Changer.external_modules_list, id: \.self)
+                        {
+                            Text($0).tag(".\($0)")
+                        }
                     }
                 }
-                .disabled(Workspace.changer_modules.count == 0)
-                .pickerStyle(.wheel)
+                else
+                {
+                    Text("None")
+                }
             }
-            else
+            .onAppear
             {
-                Text("No modules")
+                if Changer.internal_modules_list.count > 0 && module_name == ""
+                {
+                    module_name = Changer.internal_modules_list[0]
+                }
             }
+            .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
         }
         .onChange(of: module_name)
         { _, new_value in
