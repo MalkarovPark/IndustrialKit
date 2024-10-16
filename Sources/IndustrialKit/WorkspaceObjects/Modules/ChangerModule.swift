@@ -60,7 +60,7 @@ open class ChangerModule: IndustrialModule
      */
     private func external_change_func(registers: inout [Float]) -> Void
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Changer"), with: registers.map { String($0) })
+        guard let output: String = perform_code(at: URL(string: package_url.path() + "/Code/Changer")!, with: registers.map { String($0) })
         else
         {
             return
