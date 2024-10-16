@@ -300,7 +300,7 @@ func perform_terminal_command(_ command: String) throws -> String?
     - url: A terminal app url.
     - arguments: A string array of arguments.
  
- - Returns: Command text output.
+ - Returns: Terminal text output.
  */
 func perform_code(at url: URL, with arguments: [String]) -> String?
 {
