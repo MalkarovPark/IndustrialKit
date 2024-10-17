@@ -307,7 +307,7 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
 {
     struct Container: View
     {
-        @State var registers = [Float](repeating: 0, count: 256)
+        @State var registers = [Float](repeating: 0, count: 16)
         
         @State var index = [0]
         @State var indices = [0, 0, 0]
