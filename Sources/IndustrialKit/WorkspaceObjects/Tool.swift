@@ -58,7 +58,7 @@ public class Tool: WorkspaceObject
         self.codes = codes
     }
     
-    ///Inits part by name and part module.
+    ///Inits part by name and tool module.
     public init(name: String, module: ToolModule)
     {
         super.init(name: name)
@@ -89,6 +89,7 @@ public class Tool: WorkspaceObject
         node = module.node.clone()
         
         model_controller = module.model_controller
+        model_controller.nodes_names = module.nodes_names
         connector = module.connector
         
         apply_statistics_flags()
@@ -509,8 +510,8 @@ public class Tool: WorkspaceObject
      Connects to robot model in scene.
      - Parameters:
         - scene: A current scene.
-        - name: A robot name.
-        - connect_camera: Place camera to robot's camera node.
+        - name: A tool name.
+        - connect_camera: Place camera to tool's camera node.
      */
     public func workcell_connect(scene: SCNScene, name: String) //Connect tool parts from scene
     {
@@ -526,22 +527,10 @@ public class Tool: WorkspaceObject
             }
         }
         
-        model_controller.disconnect_nodes()
-        model_controller.connect_nodes(of: unit_node)// ?? SCNNode())
-        
-        /*if lengths.count > 0
-        {
-            model_controller.lengths = lengths
-            model_controller.nodes_transform()
-        }*/
+        //model_controller.disconnect_nodes()
+        model_controller.connect_nodes(of: unit_node)
         
         model_controller.info_output = self.info_output
-        
-        //Pass model controller to connector
-        /*if update_model_by_connector
-        {
-            connector.model_controller = model_controller
-        }*/
     }
     
     ///Disconnect tool model parts from workcell.

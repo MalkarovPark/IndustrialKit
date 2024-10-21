@@ -79,7 +79,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     
     //MARK: Module init for in-app mounting
     ///Internal module init.
-    public init(name: String = String(), description: String = String(), is_internal: Bool = true)
+    public init(name: String = String(), description: String = String())
     {
         self.name = name
         self.description = description

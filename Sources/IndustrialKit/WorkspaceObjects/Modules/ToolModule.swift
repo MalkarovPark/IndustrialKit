@@ -18,7 +18,7 @@ open class ToolModule: IndustrialModule
     
     //MARK: Module init for in-app mounting
     ///Internal init.
-    public init(name: String = String(), description: String = String(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode)
+    public init(name: String = String(), description: String = String(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode, nodes_names: [String] = [String]())
     {
         super.init(name: name, description: description)
         
@@ -28,6 +28,8 @@ open class ToolModule: IndustrialModule
         self.node = node
         
         self.codes = operation_codes
+        
+        self.nodes_names = nodes_names
     }
     
     public override init(external_name: String)
@@ -68,6 +70,13 @@ open class ToolModule: IndustrialModule
     
     ///Operation codes of the tool model.
     public var codes = [OperationCodeInfo]()
+    
+    /**
+     A sequence of nodes names nested within the main node.
+        
+     > Used by model controller for nested nodes access.
+     */
+    public var nodes_names = [String]()
     
     //MARK: - Import functions
     open override var package_url: URL
@@ -190,6 +199,8 @@ open class ToolModule: IndustrialModule
     {
         case operation_codes
         
+        case nodes_names
+        
         //Linked
         case linked_model_module_name
         case linked_codes_module_name
@@ -202,6 +213,8 @@ open class ToolModule: IndustrialModule
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
+        
+        self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
         
         //Linked
         self.linked_model_module_name = try container.decodeIfPresent(String.self, forKey: .linked_model_module_name)
@@ -217,6 +230,8 @@ open class ToolModule: IndustrialModule
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(codes, forKey: .operation_codes)
+        
+        try container.encode(nodes_names, forKey: .nodes_names)
         
         //Linked
         try container.encode(linked_model_module_name, forKey: .linked_model_module_name)

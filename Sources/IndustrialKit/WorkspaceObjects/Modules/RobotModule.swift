@@ -18,13 +18,15 @@ open class RobotModule: IndustrialModule
     
     //MARK: Module init for in-app mounting
     ///Internal init.
-    public init(name: String = String(), description: String = String(), model_controller: RobotModelController, connector: RobotConnector, node: SCNNode)
+    public init(name: String = String(), description: String = String(), model_controller: RobotModelController, connector: RobotConnector, node: SCNNode, nodes_names: [String] = [String]())
     {
         super.init(name: name, description: description)
         
         self.connector = connector
         self.model_controller = model_controller
         self.node = node
+        
+        self.nodes_names = nodes_names
     }
     
     ///External init
@@ -75,6 +77,13 @@ open class RobotModule: IndustrialModule
     
     ///A connector of the robot model.
     public var connector = RobotConnector()
+    
+    /**
+     A sequence of nodes names nested within the main node.
+        
+     > Used by model controller for nested nodes access.
+     */
+    public var nodes_names = [String]()
     
     //MARK: - Linked components init
     public var linked_model_module_name: String?
