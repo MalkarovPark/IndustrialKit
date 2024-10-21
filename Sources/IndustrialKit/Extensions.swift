@@ -212,7 +212,7 @@ extension SCNNode
 }
 
 //JSON string output of codable objects
-extension Encodable
+public extension Encodable
 {
     func json_string() -> String
     {
