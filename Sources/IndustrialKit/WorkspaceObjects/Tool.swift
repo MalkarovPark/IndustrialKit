@@ -527,7 +527,7 @@ public class Tool: WorkspaceObject
         }
         
         model_controller.disconnect_nodes()
-        model_controller.connect_nodes(unit_node)// ?? SCNNode())
+        model_controller.connect_nodes(of: unit_node)// ?? SCNNode())
         
         /*if lengths.count > 0
         {

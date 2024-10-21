@@ -193,7 +193,7 @@ open class RobotModelController: ModelController
      */
     public func nodes_connect(_ node: SCNNode, pointer: SCNNode, pointer_internal: SCNNode)
     {
-        connect_nodes(node)
+        connect_nodes(of: node)
         pointer_node = pointer
         pointer_node_internal = pointer_internal
     }

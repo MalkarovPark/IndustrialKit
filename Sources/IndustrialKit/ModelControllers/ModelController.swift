@@ -31,7 +31,7 @@ open class ModelController
      - Parameters:
         - node: A root node of workspace object model.
      */
-    open func connect_nodes(_ node: SCNNode)
+    open func connect_nodes(of node: SCNNode)
     {
         
     }
