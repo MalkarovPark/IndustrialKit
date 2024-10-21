@@ -14,6 +14,8 @@ open class ToolModelController: ModelController
     //!
     open override func connect_nodes(of node: SCNNode)
     {
+        nodes.removeAll()
+        
         for node_name in nodes_names
         {
             if let node = node.childNode(withName: node_name, recursively: true)
