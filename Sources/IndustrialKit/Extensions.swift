@@ -210,3 +210,29 @@ extension SCNNode
         return clonedNode
     }
 }
+
+//JSON string output of codable objects
+extension Encodable
+{
+    func json_string() -> String
+    {
+        var string = String()
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        
+        do
+        {
+            let json_data = try encoder.encode(self)
+            if let json_string = String(data: json_data, encoding: .utf8)
+            {
+                string = json_string
+            }
+        }
+        catch
+        {
+            string = "\(error)"
+        }
+        
+        return string
+    }
+}

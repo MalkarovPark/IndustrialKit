@@ -229,12 +229,6 @@ public class ChangerModifierElement: ModifierElement
 {
     ///A name of modifier module.
     public var module_name = ""
-    /*{
-        didSet
-        {
-            import_module_by_name(module_name)
-        }
-    }*/
     
     ///A module access type identifier – external or internal.
     public var is_internal_module: Bool
@@ -303,6 +297,12 @@ public class ChangerModifierElement: ModifierElement
     ///A changer external modules names array.
     public static var external_modules_list = [String]()
     
+    /**
+     Imports module by name.
+     - Parameters:
+        - name: An installed module name.
+        - is_internal: Is module internal or external.
+     */
     public func import_module_by_name(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Changer.internal_modules : Changer.external_modules

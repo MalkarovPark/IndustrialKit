@@ -174,13 +174,13 @@ open class WorkspaceObjectConnector: ObservableObject
         return [StateItem]()
     }
     
-    ///Clears model chart data.
+    ///Resets charts data to inital state.
     open func reset_charts_data()
     {
         
     }
     
-    ///Clears model state data.
+    ///Resets states data to inital state.
     open func reset_states_data()
     {
         
