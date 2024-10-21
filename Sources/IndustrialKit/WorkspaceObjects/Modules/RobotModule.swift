@@ -136,6 +136,8 @@ open class RobotModule: IndustrialModule
     //MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
+        case nodes_names
+        
         //Linked
         case linked_model_module_name
         case linked_connector_module_name
@@ -145,6 +147,8 @@ open class RobotModule: IndustrialModule
     public required init(from decoder: any Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
         
         //Linked
         self.linked_model_module_name = try container.decodeIfPresent(String.self, forKey: .linked_model_module_name)
@@ -157,6 +161,8 @@ open class RobotModule: IndustrialModule
     public override func encode(to encoder: any Encoder) throws
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(nodes_names, forKey: .nodes_names)
         
         //Linked
         try container.encode(linked_model_module_name, forKey: .linked_model_module_name)

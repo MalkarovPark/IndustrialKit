@@ -11,20 +11,6 @@ import SceneKit
 ///Provides control over visual model for robot.
 open class ToolModelController: ModelController
 {
-    //!
-    open override func connect_nodes(of node: SCNNode)
-    {
-        nodes.removeAll()
-        
-        for node_name in nodes_names
-        {
-            if let node = node.childNode(withName: node_name, recursively: true)
-            {
-                nodes.append(node)
-            }
-        }
-    }
-    //!
     /**
      Performs tool model action by operation code value.
      

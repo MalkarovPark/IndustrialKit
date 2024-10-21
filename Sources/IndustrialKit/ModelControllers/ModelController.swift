@@ -36,13 +36,15 @@ open class ModelController
      */
     open func connect_nodes(of node: SCNNode)
     {
-        /*for node_name in nodes_names
+        nodes.removeAll()
+        
+        for node_name in nodes_names
         {
             if let node = node.childNode(withName: node_name, recursively: true)
             {
                 nodes.append(node)
             }
-        }*/
+        }
     }
     
     ///Removes all nodes in object model from controller.
