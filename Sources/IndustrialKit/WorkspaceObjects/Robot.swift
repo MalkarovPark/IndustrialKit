@@ -99,6 +99,7 @@ public class Robot: WorkspaceObject
         node = module.node.clone()
         
         model_controller = module.model_controller
+        model_controller.nodes_names = module.nodes_names
         connector = module.connector
         
         apply_statistics_flags()
