@@ -23,6 +23,7 @@ open class WorkspaceObjectConnector: ObservableObject
         
     }
     
+    //MARK: - Connection handling
     ///A connection state.
     @Published public var connected: Bool = false
     
@@ -136,7 +137,7 @@ open class WorkspaceObjectConnector: ObservableObject
         
     }
     
-    //MARK: Statistics handling
+    //MARK: - Statistics handling
     ///A get statistics flag.
     public var get_statistics = false
     {
@@ -149,11 +150,23 @@ open class WorkspaceObjectConnector: ObservableObject
         }
     }
     
-    ///Chart data.
+    ///Charts data.
     @Published public var charts_data: [WorkspaceObjectChart]?
     
-    ///Retruns perfroming state info.
+    ///States data.
     @Published public var states_data: [StateItem]?
+    
+    ///Updates charts data.
+    open func updated_charts_data() -> [WorkspaceObjectChart]?
+    {
+        return [WorkspaceObjectChart]()
+    }
+    
+    ///Updates states.
+    open func updated_states_data() -> [StateItem]?
+    {
+        return [StateItem]()
+    }
     
     ///Performs statistics data update.
     public func update_statistics_data()
@@ -162,34 +175,34 @@ open class WorkspaceObjectConnector: ObservableObject
         states_data = updated_states_data()
     }
     
-    ///Updates charts data.
-    open func updated_charts_data() -> [WorkspaceObjectChart]?
+    ///Initial charts data.
+    open func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         return [WorkspaceObjectChart]()
     }
     
-    ///Updates perfroming state info.
-    open func updated_states_data() -> [StateItem]?
+    ///Initial states data.
+    open func initial_states_data() -> [StateItem]?
     {
         return [StateItem]()
     }
     
     ///Resets charts data to inital state.
-    open func reset_charts_data()
+    public func reset_charts_data()
     {
-        
+        charts_data = initial_charts_data()
     }
     
     ///Resets states data to inital state.
-    open func reset_states_data()
+    public func reset_states_data()
     {
-        
+        states_data = initial_states_data()
     }
     
     ///A flag of update model avalibility.
     @Published public var update_model = false
     
-    //MARK: UI functions
+    //MARK: - UI functions
     ///A failure result of connection.
     @Published public var connection_failure = false
     

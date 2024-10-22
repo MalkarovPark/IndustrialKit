@@ -17,6 +17,7 @@ import SceneKit
  */
 open class ModelController
 {
+    //MARK: - Scene handling
     ///Model nodes from connected root node.
     public var nodes = [SCNNode]()
     
@@ -59,7 +60,7 @@ open class ModelController
         
     }
     
-    //MARK: Statistics handling
+    //MARK: - Statistics handling
     ///A get statistics flag.
     public var get_statistics = false
     {
