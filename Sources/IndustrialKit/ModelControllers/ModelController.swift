@@ -78,13 +78,6 @@ open class ModelController
     ///States data.
     @Published public var states_data: [StateItem]?
     
-    ///Performs statistics data update.
-    public func update_statistics_data()
-    {
-        charts_data = updated_charts_data()
-        states_data = updated_states_data()
-    }
-    
     ///Updates charts data.
     open func updated_charts_data() -> [WorkspaceObjectChart]?
     {
@@ -97,15 +90,34 @@ open class ModelController
         return [StateItem]()
     }
     
-    ///Resets charts data to inital state.
-    open func reset_charts_data()
+    ///Performs statistics data update.
+    public func update_statistics_data()
     {
-        
+        charts_data = updated_charts_data()
+        states_data = updated_states_data()
+    }
+    
+    ///Initial charts data.
+    open func initial_charts_data() -> [WorkspaceObjectChart]?
+    {
+        return [WorkspaceObjectChart]()
+    }
+    
+    ///Initial states data.
+    open func initial_states_data() -> [StateItem]?
+    {
+        return [StateItem]()
+    }
+    
+    ///Resets charts data to inital state.
+    public func reset_charts_data()
+    {
+        charts_data = initial_charts_data()
     }
     
     ///Resets states data to inital state.
-    open func reset_states_data()
+    public func reset_states_data()
     {
-        
+        states_data = initial_states_data()
     }
 }
