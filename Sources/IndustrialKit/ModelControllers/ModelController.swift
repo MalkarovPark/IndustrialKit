@@ -17,14 +17,14 @@ import SceneKit
  */
 open class ModelController
 {
-    //MARK: - Scene handling
-    ///Model nodes from connected root node.
-    public var nodes = [SCNNode]()
-    
     public init()
     {
         
     }
+    
+    //MARK: - Scene handling
+    ///Model nodes from connected root node.
+    public var nodes = [SCNNode]()
     
     ///A sequence of nodes names nested within the main node used for model connection.
     public var nodes_names = [String]()

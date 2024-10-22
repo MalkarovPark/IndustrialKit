@@ -417,4 +417,62 @@ func string_to_action(from string: String) -> SCNAction?
     print("Invalid parameters for action: \(actionName)")
     return nil
 }
+
+/**
+ Sets the position or rotation of a node based on the provided string.
+ 
+ - Parameters:
+    - node: The `SCNNode` whose position or rotation is being set.
+    - string: A string representing the action and its parameters in the format `setPosition(x, y, z)` or `setRotation(r, p, w)`, where rotation is specified in degrees.
+ */
+func set_position(for node: SCNNode, from string: String)
+{
+    let components = string.split(separator: "(")
+    
+    guard components.count == 2 else
+    {
+        print("Invalid format")
+        return
+    }
+    
+    let action_name = String(components[0]).trimmingCharacters(in: .whitespacesAndNewlines)
+    let parameters_string = components[1].dropLast() // Remove closing parenthesis
+    
+    //Parse parameters
+    let parameters = parameters_string.split(separator: ",").map { param in
+        return param.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    switch action_name
+    {
+    case "setLocation":
+        if parameters.count == 3,
+           let x = Double(parameters[0]),
+           let y = Double(parameters[1]),
+           let z = Double(parameters[2])
+        {
+            node.position = SCNVector3(x, y, z)
+        }
+        else
+        {
+            print("Invalid parameters for position")
+        }
+        
+    case "setRotation":
+        if parameters.count == 3,
+           let roll = Double(parameters[0]),
+           let pitch = Double(parameters[1]),
+           let yaw = Double(parameters[2])
+        {
+            node.eulerAngles = SCNVector3(pitch * .pi / 180, yaw * .pi / 180, roll * .pi / 180) //Convert degrees to radians if necessary
+        }
+        else
+        {
+            print("Invalid parameters for rotation")
+        }
+        
+    default:
+        print("Action \(action_name) not supported")
+    }
+}
 #endif

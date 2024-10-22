@@ -103,7 +103,7 @@ open class ToolModule: IndustrialModule
         return URL(filePath: "")
     }
     
-    public var external_module_info: PartModule?
+    public var external_module_info: ToolModule?
     {
         do
         {
@@ -111,7 +111,7 @@ open class ToolModule: IndustrialModule
             
             if FileManager.default.fileExists(atPath: info_url.path)
             {
-                return try JSONDecoder().decode(PartModule.self, from: try Data(contentsOf: info_url))
+                return try JSONDecoder().decode(ToolModule.self, from: try Data(contentsOf: info_url))
             }
         }
         catch
@@ -177,7 +177,7 @@ open class ToolModule: IndustrialModule
         }
         else
         {
-            model_controller = ExternalToolModelController(name)
+            model_controller = ExternalToolModelController(name, package_url: package_url)
         }
         
         //Set connector from internal module
