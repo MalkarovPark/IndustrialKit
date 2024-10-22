@@ -310,4 +310,111 @@ func perform_code(at url: URL, with arguments: [String]) -> String?
     
     return result
 }
+
+/**
+ Converts a string to a SceneKit action.
+ 
+ - Parameters:
+    - string: A string representing the action and its parameters in the format `SCNActionName(param1, param2, ...)`.
+ 
+ - Returns: A `SCNAction` if the string can be successfully parsed, otherwise `nil`.
+ */
+func string_to_action(from string: String) -> SCNAction?
+{
+    let components = string.split(separator: "(")
+    
+    guard components.count == 2 else
+    {
+        print("Invalid format")
+        return nil
+    }
+    
+    let actionName = String(components[0]).trimmingCharacters(in: .whitespacesAndNewlines)
+    let parametersString = components[1].dropLast() //Remove closing parenthesis
+    
+    //Parse parameters
+    let parameters = parametersString.split(separator: ",").map { param in
+        return param.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    switch actionName
+    {
+    case "moveBy":
+        if parameters.count == 4,
+           let x = Double(parameters[0]),
+           let y = Double(parameters[1]),
+           let z = Double(parameters[2]),
+           let duration = Double(parameters[3])
+        {
+            return SCNAction.moveBy(x: CGFloat(x), y: CGFloat(y), z: CGFloat(z), duration: duration)
+        }
+    case "moveTo":
+        if parameters.count == 4,
+           let x = Double(parameters[0]),
+           let y = Double(parameters[1]),
+           let z = Double(parameters[2]),
+           let duration = Double(parameters[3])
+        {
+            return SCNAction.move(to: SCNVector3(x, y, z), duration: duration)
+        }
+    case "rotateBy":
+        if parameters.count == 4,
+           let x = Double(parameters[0]),
+           let y = Double(parameters[1]),
+           let z = Double(parameters[2]),
+           let duration = Double(parameters[3])
+        {
+            return SCNAction.rotateBy(x: CGFloat(x), y: CGFloat(y), z: CGFloat(z), duration: duration)
+        }
+    case "rotateTo":
+        if parameters.count == 4,
+           let x = Double(parameters[0]),
+           let y = Double(parameters[1]),
+           let z = Double(parameters[2]),
+           let duration = Double(parameters[3])
+        {
+            return SCNAction.rotateTo(x: CGFloat(x), y: CGFloat(y), z: CGFloat(z), duration: duration)
+        }
+    case "fadeIn":
+        if parameters.count == 1,
+           let duration = Double(parameters[0])
+        {
+            return SCNAction.fadeIn(duration: duration)
+        }
+    case "fadeOut":
+        if parameters.count == 1,
+           let duration = Double(parameters[0])
+        {
+            return SCNAction.fadeOut(duration: duration)
+        }
+    case "scaleBy":
+        if parameters.count == 2,
+           let scale = Double(parameters[0]),
+           let duration = Double(parameters[1])
+        {
+            return SCNAction.scale(by: CGFloat(scale), duration: duration)
+        }
+    case "scaleTo":
+        if parameters.count == 2,
+           let scale = Double(parameters[0]),
+           let duration = Double(parameters[1])
+        {
+            return SCNAction.scale(to: CGFloat(scale), duration: duration)
+        }
+    case "sequence":
+        //Format string: "sequence(action1, action2, ...)"
+        let actions = parameters.compactMap { string_to_action(from: $0) }
+        return SCNAction.sequence(actions)
+    case "group":
+        //Format string: "group(action1, action2, ...)"
+        let actions = parameters.compactMap { string_to_action(from: $0) }
+        return SCNAction.group(actions)
+    default:
+        print("Action \(actionName) not supported")
+        return nil
+    }
+    
+    print("Invalid parameters for action: \(actionName)")
+    return nil
+}
 #endif
