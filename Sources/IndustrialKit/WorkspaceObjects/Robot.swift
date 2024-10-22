@@ -1060,7 +1060,7 @@ public class Robot: WorkspaceObject
     {
         if charts_data == nil
         {
-            charts_data = [WorkspaceObjectChart]()
+            //charts_data = [WorkspaceObjectChart]()
         }
         
         if get_statistics && performed //Get data if robot is moving and statistic collection enabled
