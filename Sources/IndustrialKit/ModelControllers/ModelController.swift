@@ -24,6 +24,31 @@ open class ModelController
     
     //MARK: - Scene handling
     ///Model nodes from connected root node.
+    public var nodes = [String: SCNNode]()
+
+    ///A sequence of node names nested within the main node used for model connection.
+    public var nodes_names = [String]()
+
+    /**
+     Gets part nodes links from the model root node and adds them to the dictionary.
+     
+     - Parameters:
+        - node: The root node of the workspace object model.
+     */
+    open func connect_nodes(of node: SCNNode)
+    {
+        nodes.removeAll()
+        
+        for node_name in nodes_names
+        {
+            if let found_node = node.childNode(withName: node_name, recursively: true)
+            {
+                nodes[node_name] = found_node
+            }
+        }
+    }
+    
+    /*///Model nodes from connected root node.
     public var nodes = [SCNNode]()
     
     ///A sequence of nodes names nested within the main node used for model connection.
@@ -46,7 +71,7 @@ open class ModelController
                 nodes.append(node)
             }
         }
-    }
+    }*/
     
     ///Removes all nodes in object model from controller.
     public func disconnect_nodes()
