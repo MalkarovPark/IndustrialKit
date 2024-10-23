@@ -38,7 +38,7 @@ open class ToolModelController: ModelController
     ///Stops connected model actions performation.
     public final func remove_all_model_actions()
     {
-        for node in nodes //Remove all node actions
+        for (_, node) in nodes //Remove all node actions
         {
             node.removeAllActions()
         }

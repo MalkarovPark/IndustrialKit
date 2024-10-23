@@ -100,6 +100,14 @@ extension Array where Element == Float
     }
 }
 
+extension Dictionary where Key == String, Value == SCNNode
+{
+    subscript(safe key: String) -> SCNNode
+    {
+        return self[key] ?? SCNNode()
+    }
+}
+
 //MARK: - Color by hex import
 extension Color
 {
@@ -211,7 +219,7 @@ extension SCNNode
     }
 }
 
-//JSON string output of codable objects
+//MARK: -JSON string output of codable objects
 public extension Encodable
 {
     func json_string() -> String
