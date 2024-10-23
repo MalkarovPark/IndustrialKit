@@ -100,7 +100,7 @@ extension Array where Element == Float
     }
 }
 
-extension Dictionary where Key == String, Value == SCNNode
+public extension Dictionary where Key == String, Value == SCNNode
 {
     subscript(safe key: String) -> SCNNode
     {
