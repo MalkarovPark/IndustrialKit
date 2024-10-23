@@ -312,6 +312,37 @@ func perform_code(at url: URL, with arguments: [String]) -> String?
 }
 
 /**
+ Converts a JSON string to an instance of the specified Codable type.
+ 
+ - Parameters:
+    - string: A JSON string representing the object.
+ 
+ - Returns: An instance of the specified type if the string can be successfully parsed; otherwise, `nil`.
+ */
+func string_to_codable<T: Codable>(from string: String) -> T?
+{
+    //Convert the string to Data
+    guard let jsonData = string.data(using: .utf8)
+    else
+    {
+        return nil
+    }
+    
+    //Decode JSON into an instance of the specified type
+    let decoder = JSONDecoder()
+    do
+    {
+        let object = try decoder.decode(T.self, from: jsonData)
+        return object
+    }
+    catch
+    {
+        print(error)
+        return nil
+    }
+}
+
+/**
  Converts a string to a SceneKit action.
  
  - Parameters:

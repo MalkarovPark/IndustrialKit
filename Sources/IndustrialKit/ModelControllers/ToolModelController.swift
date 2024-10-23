@@ -79,6 +79,12 @@ public class ExternalToolModelController: ToolModelController
         {
             return nil
         }
+        
+        if let charts: [WorkspaceObjectChart] = string_to_codable(from: output)
+        {
+            return charts
+        }
+        
         return nil
     }
 
@@ -89,6 +95,12 @@ public class ExternalToolModelController: ToolModelController
         {
             return nil
         }
+        
+        if let states: [StateItem] = string_to_codable(from: output)
+        {
+            return states
+        }
+        
         return nil
     }
 
@@ -99,6 +111,12 @@ public class ExternalToolModelController: ToolModelController
         {
             return nil
         }
+        
+        if let charts: [WorkspaceObjectChart] = string_to_codable(from: output)
+        {
+            return charts
+        }
+        
         return nil
     }
 
@@ -109,6 +127,12 @@ public class ExternalToolModelController: ToolModelController
         {
             return nil
         }
+        
+        if let states: [StateItem] = string_to_codable(from: output)
+        {
+            return states
+        }
+        
         return nil
     }
 
@@ -119,6 +143,21 @@ public class ExternalToolModelController: ToolModelController
         else
         {
             return
+        }
+
+        //Split output into components
+        let components: [String] = output.split(separator: " ").map { String($0) }
+
+        //Check that output contains exactly two parameters
+        guard components.count == 2
+        else
+        {
+            return
+        }
+        
+        if let action = string_to_action(from: components[0])
+        {
+            nodes[safe: components[0]].runAction(action)
         }
     }
 }
