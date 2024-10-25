@@ -44,30 +44,8 @@ open class RobotModule: IndustrialModule
     open override var default_code_items: [CodeItem]
     {
         return [
-            //Controller
-            CodeItem(name: "nodes_connect"),
-            CodeItem(name: "reset_model"),
-            
-            CodeItem(name: "updated_charts_data"),
-            CodeItem(name: "updated_states_data"),
-            CodeItem(name: "reset_charts_data"),
-            CodeItem(name: "reset_states_data"),
-            
-            CodeItem(name: "update_nodes_lengths"),
-            CodeItem(name: "update_nodes"),
-            CodeItem(name: "inverse_kinematic_calculation"),
-            
-            //Connector
-            /*CodeItem(name: "connection_process"),
-             CodeItem(name: "disconnection_process"),
-             
-             CodeItem(name: "move_to"),
-             CodeItem(name: "pause_operations"),
-             
-             CodeItem(name: "updated_charts_data"),
-             CodeItem(name: "updated_states_data"),
-             CodeItem(name: "reset_charts_data"),
-             CodeItem(name: "reset_states_data"),*/
+            CodeItem(name: "Controller"),
+            CodeItem(name: "Connector")
         ]
     }
     

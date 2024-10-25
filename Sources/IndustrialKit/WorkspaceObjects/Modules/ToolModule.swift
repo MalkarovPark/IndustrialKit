@@ -48,16 +48,8 @@ open class ToolModule: IndustrialModule
     open override var default_code_items: [CodeItem]
     {
         return [
-            //Controller
-            CodeItem(name: "nodes_connect"),
-            CodeItem(name: "reset_model"),
-            
-            CodeItem(name: "updated_charts_data"),
-            CodeItem(name: "updated_states_data"),
-            CodeItem(name: "reset_charts_data"),
-            CodeItem(name: "reset_states_data"),
-            
-            CodeItem(name: "perform_nodes")
+            CodeItem(name: "Controller"),
+            CodeItem(name: "Connector")
         ]
     }
     
