@@ -32,7 +32,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     @Published public var code_items = [String: String]()
     
     ///Linked components from internal modules.
-    @Published public var linked_components = [String: String?]()
+    @Published public var linked_components = [String: String]()
     
     //MARK: - File handling
     /**
@@ -118,7 +118,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }
     
     ///Default linked modules of components.
-    open var default_linked_components: [String: String?]
+    open var default_linked_components: [String: String]
     {
         return [String: String]()
     }
@@ -191,7 +191,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.description = try container.decode(String.self, forKey: .description)
         
         self.code_items = try container.decode([String: String].self, forKey: .code_items)
-        self.linked_components = try container.decode([String: String?].self, forKey: .linked_components)
+        self.linked_components = try container.decode([String: String].self, forKey: .linked_components)
         
         self.resources_names = try container.decodeIfPresent([String].self, forKey: .resources_names)
         self.main_scene_name = try container.decodeIfPresent(String.self, forKey: .main_scene_name)

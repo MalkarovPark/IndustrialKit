@@ -61,7 +61,7 @@ open class RobotModule: IndustrialModule
     public var nodes_names = [String]()
     
     //MARK: - Linked components init
-    open override var default_linked_components: [String: String?]
+    open override var default_linked_components: [String: String]
     {
         return [
             "Model": String(),
@@ -74,7 +74,7 @@ open class RobotModule: IndustrialModule
     private func components_import()
     {
         //Set visual model
-        if let linked_name = linked_components["Model"]
+        if let linked_name = linked_components["Model"], linked_name.isEmpty
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -87,7 +87,7 @@ open class RobotModule: IndustrialModule
         }
         
         //Set contoller
-        if let linked_name = linked_components["Controller"]
+        if let linked_name = linked_components["Controller"], linked_name.isEmpty
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -100,7 +100,7 @@ open class RobotModule: IndustrialModule
         }
         
         //Set connector
-        if let linked_name = linked_components["Connector"]
+        if let linked_name = linked_components["Connector"], linked_name.isEmpty
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
