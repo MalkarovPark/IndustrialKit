@@ -77,25 +77,45 @@ public extension UIImage
 #endif
 
 //MARK: - Safe access to array elements
-extension Array where Element == Float
+public extension Array
 {
-    subscript(safe index: Int) -> Float
+    subscript(safe index: Int) -> Element?
     {
         get
         {
             guard index >= 0 && index < count else
             {
-                return 0
+                return nil
             }
             return self[index]
         }
         set
         {
-            guard index >= 0 && index < count else
+            guard let newValue = newValue, index >= 0 && index < count else
             {
                 return
             }
             self[index] = newValue
+        }
+    }
+}
+
+extension Array where Element == Float
+{
+    subscript(safe_float index: Int) -> Float
+    {
+        get
+        {
+            guard let saved = self[safe: index]
+            else
+            {
+                return 0
+            }
+            return saved
+        }
+        set
+        {
+            self[safe: index] = newValue
         }
     }
 }
@@ -219,7 +239,7 @@ extension SCNNode
     }
 }
 
-//MARK: -JSON string output of codable objects
+//MARK: - JSON string output of codable objects
 public extension Encodable
 {
     func json_string() -> String

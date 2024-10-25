@@ -1680,7 +1680,7 @@ public class Workspace: ObservableObject
                 }
                 else
                 {
-                    selected_robot.select_program(index: Int(registers[safe: element.program_index]))
+                    selected_robot.select_program(index: Int(registers[safe: element.program_index] ?? 0))
                 }
                 
                 selected_robot.finish_handler = self.select_new_element
@@ -1694,13 +1694,13 @@ public class Workspace: ObservableObject
         else
         {
             //Single robot perform
-            var target_point = PositionPoint(x: registers[safe: element.x_index],
-                                             y: registers[safe: element.y_index],
-                                             z: registers[safe: element.z_index],
-                                             r: registers[safe: element.r_index],
-                                             p: registers[safe: element.p_index],
-                                             w: registers[safe: element.w_index],
-                                             move_speed: registers[safe: element.speed_index])
+            var target_point = PositionPoint(x: registers[safe_float: element.x_index],
+                                             y: registers[safe_float: element.y_index],
+                                             z: registers[safe_float: element.z_index],
+                                             r: registers[safe_float: element.r_index],
+                                             p: registers[safe_float: element.p_index],
+                                             w: registers[safe_float: element.w_index],
+                                             move_speed: registers[safe_float: element.speed_index])
             selected_robot.point_shift(&target_point)
             
             selected_robot.move_to(point: target_point)
@@ -1731,7 +1731,7 @@ public class Workspace: ObservableObject
                 }
                 else
                 {
-                    selected_tool.select_program(index: Int(registers[safe: element.program_index]))
+                    selected_tool.select_program(index: Int(registers[safe: element.program_index] ?? 0))
                 }
                 
                 selected_tool.finish_handler = self.select_new_element
@@ -1745,7 +1745,7 @@ public class Workspace: ObservableObject
         else
         {
             //Single tool perform
-            selected_tool.perform(code: Int(registers[safe: element.opcode_index]))
+            selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
             {
                 self.select_new_element()
             }
@@ -1778,7 +1778,7 @@ public class Workspace: ObservableObject
     
     private func math_by(element: MathModifierElement)
     {
-        element.operation.operation(&registers[safe: element.value_index], registers[safe: element.value2_index])
+        element.operation.operation(&registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
     }
     
     /**
@@ -1839,7 +1839,7 @@ public class Workspace: ObservableObject
      */
     private func compare_by(element: ComparatorLogicElement)
     {
-        if element.compare_type.compare(registers[safe: element.value_index], registers[safe: element.value2_index])
+        if element.compare_type.compare(registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
         {
             selected_element_index = element.target_element_index
         }
