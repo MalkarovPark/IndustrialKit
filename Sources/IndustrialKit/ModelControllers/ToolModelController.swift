@@ -157,7 +157,7 @@ public class ExternalToolModelController: ToolModelController
         
         if let action = string_to_action(from: components[0])
         {
-            nodes[safe: components[0]].runAction(action)
+            nodes[safe: components[0], default: SCNNode()].runAction(action)
         }
     }
 }

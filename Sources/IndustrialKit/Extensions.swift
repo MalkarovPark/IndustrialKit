@@ -120,13 +120,20 @@ extension Array where Element == Float
     }
 }
 
-public extension Dictionary where Key == String, Value == SCNNode
+public extension Dictionary where Key == String
+{
+    subscript<T>(safe key: String, default defaultValue: T) -> T
+    {
+        return self[key] as? T ?? defaultValue
+    }
+}
+/*public extension Dictionary where Key == String, Value == SCNNode
 {
     subscript(safe key: String) -> SCNNode
     {
         return self[key] ?? SCNNode()
     }
-}
+}*/
 
 //MARK: - Color by hex import
 extension Color

@@ -122,7 +122,7 @@ open class ToolModule: IndustrialModule
     }
     
     //MARK: - Linked components init
-    open override var default_linked_components: [String: String?]
+    open override var default_linked_components: [String: String]
     {
         return [
             "Model": String(),
