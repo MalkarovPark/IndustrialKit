@@ -67,6 +67,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.description = description
         
         self.code_items = default_code_items
+        
+        self.linked_components = default_linked_components
     }
     
     //MARK: Module init for in-app mounting
