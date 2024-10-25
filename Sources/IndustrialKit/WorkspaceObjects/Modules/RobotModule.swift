@@ -41,12 +41,9 @@ open class RobotModule: IndustrialModule
         components_import()
     }
     
-    open override var default_code_items: [CodeItem]
+    open override var default_code_items: [String: String]
     {
-        return [
-            CodeItem(name: "Controller"),
-            CodeItem(name: "Connector")
-        ]
+        return ["Controller": String(), "Connector": String()]
     }
     
     //MARK: - Components
@@ -64,15 +61,20 @@ open class RobotModule: IndustrialModule
     public var nodes_names = [String]()
     
     //MARK: - Linked components init
-    public var linked_model_module_name: String?
-    public var linked_connector_module_name: String?
-    public var linked_controller_module_name: String?
+    open override var default_linked_components: [String: String?]
+    {
+        return [
+            "Model": String(),
+            "Controller": String(),
+            "Connector": String()
+        ]
+    }
     
     ///Imports components from external or from other modules.
     private func components_import()
     {
         //Set visual model
-        if let linked_name = linked_connector_module_name
+        if let linked_name = linked_components["Model"]
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -85,7 +87,7 @@ open class RobotModule: IndustrialModule
         }
         
         //Set contoller
-        if let linked_name = linked_controller_module_name
+        if let linked_name = linked_components["Controller"]
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -98,7 +100,7 @@ open class RobotModule: IndustrialModule
         }
         
         //Set connector
-        if let linked_name = linked_connector_module_name
+        if let linked_name = linked_components["Connector"]
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -128,11 +130,6 @@ open class RobotModule: IndustrialModule
         
         self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
         
-        //Linked
-        self.linked_model_module_name = try container.decodeIfPresent(String.self, forKey: .linked_model_module_name)
-        self.linked_connector_module_name = try container.decodeIfPresent(String.self, forKey: .linked_connector_module_name)
-        self.linked_controller_module_name = try container.decodeIfPresent(String.self, forKey: .linked_controller_module_name)
-        
         try super.init(from: decoder)
     }
     
@@ -141,11 +138,6 @@ open class RobotModule: IndustrialModule
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(nodes_names, forKey: .nodes_names)
-        
-        //Linked
-        try container.encode(linked_model_module_name, forKey: .linked_model_module_name)
-        try container.encode(linked_connector_module_name, forKey: .linked_connector_module_name)
-        try container.encode(linked_controller_module_name, forKey: .linked_controller_module_name)
         
         try super.encode(to: encoder)
     }

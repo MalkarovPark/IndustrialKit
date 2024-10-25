@@ -29,18 +29,10 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     @Published public var description = String()
     
     ///Code lisitngs of module.
-    @Published public var code_items = [CodeItem]()
+    @Published public var code_items = [String: String]()
     
-    /*public var code_items_names: [String] ///Code items names.
-    {
-        var names = [String]()
-        for code_item in code_items
-        {
-            names.append(code_item.name)
-        }
-        
-        return names
-    }*/
+    ///Linked components from internal modules.
+    @Published public var linked_components = [String: String?]()
     
     //MARK: - File handling
     /**
@@ -118,9 +110,15 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     
     //MARK: - Designer functions
     ///Default code items for module design process.
-    open var default_code_items: [CodeItem]
+    open var default_code_items: [String: String]
     {
-        return [CodeItem]()
+        return [String: String]()
+    }
+    
+    ///Default linked modules of components.
+    open var default_linked_components: [String: String?]
+    {
+        return [String: String]()
     }
     
     //MARK: - Components
@@ -177,6 +175,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         case is_internal
         case code_items
+        case linked_components
         
         case resources_names
         case main_scene_name
@@ -189,7 +188,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.name = try container.decode(String.self, forKey: .name)
         self.description = try container.decode(String.self, forKey: .description)
         
-        self.code_items = try container.decode([CodeItem].self, forKey: .code_items)
+        self.code_items = try container.decode([String: String].self, forKey: .code_items)
+        self.linked_components = try container.decode([String: String].self, forKey: .linked_components)
         
         self.resources_names = try container.decodeIfPresent([String].self, forKey: .resources_names)
         self.main_scene_name = try container.decodeIfPresent(String.self, forKey: .main_scene_name)
@@ -203,6 +203,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         try container.encode(description, forKey: .description)
         
         try container.encode(code_items, forKey: .code_items)
+        try container.encode(linked_components, forKey: .linked_components)
         
         try container.encodeIfPresent(resources_names, forKey: .resources_names)
         try container.encodeIfPresent(main_scene_name, forKey: .main_scene_name)

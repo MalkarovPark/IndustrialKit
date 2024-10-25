@@ -59,9 +59,9 @@ open class ChangerModule: IndustrialModule
     }
     
     //MARK: - Designer functions
-    open override var default_code_items: [CodeItem]
+    open override var default_code_items: [String: String]
     {
-        return [CodeItem(name: "Change")]
+        return ["Change": String()]
     }
     
     //MARK: - Components

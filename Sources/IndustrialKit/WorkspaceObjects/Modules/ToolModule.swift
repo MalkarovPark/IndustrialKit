@@ -45,12 +45,9 @@ open class ToolModule: IndustrialModule
     }
     
     //MARK: - Designer functions
-    open override var default_code_items: [CodeItem]
+    open override var default_code_items: [String: String]
     {
-        return [
-            CodeItem(name: "Controller"),
-            CodeItem(name: "Connector")
-        ]
+        return ["Controller": String(), "Connector": String()]
     }
     
     //MARK: - Components
@@ -125,16 +122,21 @@ open class ToolModule: IndustrialModule
     }
     
     //MARK: - Linked components init
-    public var linked_model_module_name: String?
-    public var linked_codes_module_name: String?
-    public var linked_connector_module_name: String?
-    public var linked_controller_module_name: String?
+    open override var default_linked_components: [String: String?]
+    {
+        return [
+            "Model": String(),
+            "Codes": String(),
+            "Controller": String(),
+            "Connector": String()
+        ]
+    }
     
     ///Imports components from external or from other modules.
     private func components_import()
     {
         //Set visual model from internal module
-        if let linked_name = linked_connector_module_name
+        if let linked_name = linked_components["Model"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -147,7 +149,7 @@ open class ToolModule: IndustrialModule
         }
         
         //Set codes from internal module
-        if let linked_name = linked_connector_module_name
+        if let linked_name = linked_components["Codes"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -160,7 +162,7 @@ open class ToolModule: IndustrialModule
         }
         
         //Set contoller from internal module
-        if let linked_name = linked_controller_module_name
+        if let linked_name = linked_components["Controller"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -173,7 +175,7 @@ open class ToolModule: IndustrialModule
         }
         
         //Set connector from internal module
-        if let linked_name = linked_connector_module_name
+        if let linked_name = linked_components["Connector"]
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -192,12 +194,6 @@ open class ToolModule: IndustrialModule
         case operation_codes
         
         case nodes_names
-        
-        //Linked
-        case linked_model_module_name
-        case linked_codes_module_name
-        case linked_connector_module_name
-        case linked_controller_module_name
     }
     
     public required init(from decoder: any Decoder) throws
@@ -207,12 +203,6 @@ open class ToolModule: IndustrialModule
         self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
         
         self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
-        
-        //Linked
-        self.linked_model_module_name = try container.decodeIfPresent(String.self, forKey: .linked_model_module_name)
-        self.linked_codes_module_name = try container.decodeIfPresent(String.self, forKey: .linked_codes_module_name)
-        self.linked_connector_module_name = try container.decodeIfPresent(String.self, forKey: .linked_connector_module_name)
-        self.linked_controller_module_name = try container.decodeIfPresent(String.self, forKey: .linked_controller_module_name)
         
         try super.init(from: decoder)
     }
@@ -224,12 +214,6 @@ open class ToolModule: IndustrialModule
         try container.encode(codes, forKey: .operation_codes)
         
         try container.encode(nodes_names, forKey: .nodes_names)
-        
-        //Linked
-        try container.encode(linked_model_module_name, forKey: .linked_model_module_name)
-        try container.encode(linked_codes_module_name, forKey: .linked_codes_module_name)
-        try container.encode(linked_connector_module_name, forKey: .linked_connector_module_name)
-        try container.encode(linked_controller_module_name, forKey: .linked_controller_module_name)
         
         try super.encode(to: encoder)
     }
