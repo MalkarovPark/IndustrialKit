@@ -271,3 +271,15 @@ public extension Encodable
         return string
     }
 }
+
+public extension View
+{
+    @ViewBuilder
+    func fitted() -> some View
+    {
+        if #available(macOS 15.0, iOS 18.0, visionOS 2.0, *)
+        {
+            self.presentationSizing(.fitted)
+        }
+    }
+}
