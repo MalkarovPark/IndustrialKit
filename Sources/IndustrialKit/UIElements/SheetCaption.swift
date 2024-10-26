@@ -61,6 +61,21 @@ public struct SheetCaption: ViewModifier
             
             content
         }
+        #if os(macOS)
+        .fitted()
+        #endif
+    }
+}
+
+extension View
+{
+    @ViewBuilder
+    func fitted() -> some View
+    {
+        if #available(macOS 15.0, *)
+        {
+            self.presentationSizing(.fitted)
+        }
     }
 }
 
