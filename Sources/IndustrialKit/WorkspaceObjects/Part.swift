@@ -166,20 +166,22 @@ public class Part: WorkspaceObject
     {
         if node != nil
         {
-            var viewed_node = node
+            var viewed_nodes = node?.childNodes ?? []
+            let color = UIColor(hex: figure_color ?? "#453CCC")
             
-            while viewed_node != nil
+            while !viewed_nodes.isEmpty
             {
-                if let geometry = viewed_node?.geometry
+                let current_node = viewed_nodes.removeFirst()
+                
+                if let geometry = current_node.geometry
                 {
-                    geometry.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
+                    geometry.firstMaterial?.diffuse.contents = color
                     break
                 }
-                else if viewed_node?.parent == nil
+                else
                 {
-                    break
+                    viewed_nodes.append(contentsOf: current_node.childNodes)
                 }
-                viewed_node = viewed_node?.parent
             }
             //node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
         }
