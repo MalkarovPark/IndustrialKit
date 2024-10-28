@@ -99,7 +99,7 @@ open class ToolModule: IndustrialModule
         return URL(filePath: "")
     }
     
-    public var external_module_info: ToolModule = ToolModule()
+    public var external_module_info: ToolModule?
     
     private func get_module_info() -> ToolModule?
     {
@@ -122,7 +122,7 @@ open class ToolModule: IndustrialModule
     
     override open var external_node: SCNNode
     {
-        if let main_scene_name = external_module_info.main_scene_name
+        if let main_scene_name = external_module_info?.main_scene_name
         {
             do
             {
@@ -153,7 +153,7 @@ open class ToolModule: IndustrialModule
     
     public var external_codes: [OperationCodeInfo]
     {
-        return external_module_info.codes
+        return external_module_info?.codes ?? [OperationCodeInfo]()
     }
     
     //MARK: - Linked components init
