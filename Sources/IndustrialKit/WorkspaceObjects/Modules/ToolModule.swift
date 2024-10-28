@@ -103,6 +103,7 @@ open class ToolModule: IndustrialModule
                 do
                 {
                     let data = try JSONDecoder().decode(ToolModule.self, from: try Data(contentsOf: info_url))
+                    print(data)
                     return data
                 }
                 catch
