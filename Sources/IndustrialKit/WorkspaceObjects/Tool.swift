@@ -814,7 +814,7 @@ public class Tool: WorkspaceObject
         
         try super.init(from: decoder)
         
-        //read_connection_parameters(connector: self.connector, try container.decode([String].self, forKey: .connection_parameters))
+        read_connection_parameters(connector: self.connector, try container.decodeIfPresent([String].self, forKey: .connection_parameters))
     }
     
     public override func encode(to encoder: any Encoder) throws
