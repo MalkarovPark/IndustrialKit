@@ -166,7 +166,7 @@ public class Part: WorkspaceObject
     {
         if node != nil
         {
-            var viewed_nodes = node?.childNodes ?? []
+            /*var viewed_nodes = node?.childNodes ?? []
             let color = UIColor(hex: figure_color ?? "#453CCC")
             
             while !viewed_nodes.isEmpty
@@ -182,8 +182,8 @@ public class Part: WorkspaceObject
                 {
                     viewed_nodes.append(contentsOf: current_node.childNodes)
                 }
-            }
-            //node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
+            }*/
+            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
         }
     }
     

@@ -93,8 +93,8 @@ open class PartModule: IndustrialModule
                         if let external_scene = scene_source.scene(options: nil)
                         {
                             print("Imported – \(external_scene)")
-                            return external_scene.rootNode.clone()
-                            //return external_scene.rootNode.childNode(withName: "part", recursively: true)!.clone()
+                            //return external_scene.rootNode.clone()
+                            return external_scene.rootNode.childNode(withName: "part", recursively: true)!.clone()
                         }
                     }
                 }
