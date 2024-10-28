@@ -65,7 +65,7 @@ open class ToolModule: IndustrialModule
         
      > Used by model controller for nested nodes access.
      */
-    public var nodes_names = [String]()
+    @Published public var nodes_names = [String]()
     
     //MARK: - Import functions
     open override var package_url: URL

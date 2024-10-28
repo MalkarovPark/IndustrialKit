@@ -58,7 +58,7 @@ open class RobotModule: IndustrialModule
         
      > Used by model controller for nested nodes access.
      */
-    public var nodes_names = [String]()
+    @Published public var nodes_names = [String]()
     
     //MARK: - Linked components init
     open override var default_linked_components: [String: String]
