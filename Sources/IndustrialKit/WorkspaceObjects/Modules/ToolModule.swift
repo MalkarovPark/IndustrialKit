@@ -100,17 +100,7 @@ open class ToolModule: IndustrialModule
             
             if FileManager.default.fileExists(atPath: info_url.path)
             {
-                do
-                {
-                    let data = try JSONDecoder().decode(ToolModule.self, from: try Data(contentsOf: info_url))
-                    print(data)
-                    return data
-                }
-                catch
-                {
-                    print(error.localizedDescription)
-                }
-                //return try JSONDecoder().decode(ToolModule.self, from: try Data(contentsOf: info_url))
+                return try JSONDecoder().decode(ToolModule.self, from: try Data(contentsOf: info_url))
             }
         }
         catch
