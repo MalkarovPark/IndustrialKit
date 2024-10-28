@@ -166,7 +166,22 @@ public class Part: WorkspaceObject
     {
         if node != nil
         {
-            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
+            var viewed_node = node
+            
+            while viewed_node != nil
+            {
+                if let geometry = viewed_node?.geometry
+                {
+                    geometry.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
+                    break
+                }
+                else if viewed_node?.parent == nil
+                {
+                    break
+                }
+                viewed_node = viewed_node?.parent
+            }
+            //node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
         }
     }
     

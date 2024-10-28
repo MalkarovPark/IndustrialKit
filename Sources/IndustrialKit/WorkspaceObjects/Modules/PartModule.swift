@@ -94,6 +94,7 @@ open class PartModule: IndustrialModule
                         {
                             print("Imported – \(external_scene)")
                             return external_scene.rootNode.clone()
+                            //return external_scene.rootNode.childNode(withName: "part", recursively: true)!.clone()
                         }
                     }
                 }
