@@ -137,7 +137,7 @@ public class ExternalToolModelController: ToolModelController
     }
 
     //MARK: Special
-    open override func nodes_perform(code: Int)
+    open override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
         guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["nodes_perform", "\(code)"])
         else
@@ -157,7 +157,7 @@ public class ExternalToolModelController: ToolModelController
         
         if let action = string_to_action(from: components[1])
         {
-            nodes[safe: components[0], default: SCNNode()].runAction(action)
+            nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: completion)
         }
     }
 }
