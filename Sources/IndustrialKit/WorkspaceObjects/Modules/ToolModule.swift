@@ -181,6 +181,9 @@ open class ToolModule: IndustrialModule
             node = external_node
         }
         
+        //Set nodes names to in-scene connection
+        nodes_names = external_module_info?.nodes_names ?? [String]()
+        
         //Set codes from internal module
         if let linked_name = linked_components["Codes"]
         {
