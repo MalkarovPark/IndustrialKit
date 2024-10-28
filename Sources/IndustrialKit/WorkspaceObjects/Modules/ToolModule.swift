@@ -113,6 +113,32 @@ open class ToolModule: IndustrialModule
     
     override open var external_node: SCNNode
     {
+        if let main_scene_name = external_module_info?.main_scene_name
+        {
+            do
+            {
+                let scene_url = package_url.appendingPathComponent("/Resources.scnassets/\(main_scene_name)")
+                
+                if FileManager.default.fileExists(atPath: scene_url.path)
+                {
+                    let scene_data = try Data(contentsOf: scene_url)
+                    
+                    if let scene_source = SCNSceneSource(data: scene_data, options: nil)
+                    {
+                        if let external_scene = scene_source.scene(options: nil)
+                        {
+                            print("Imported – \(external_scene)")
+                            return external_scene.rootNode.clone()
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
+        
         return SCNNode()
     }
     
