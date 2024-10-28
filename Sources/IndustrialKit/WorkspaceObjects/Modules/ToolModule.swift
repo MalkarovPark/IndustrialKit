@@ -32,8 +32,6 @@ open class ToolModule: IndustrialModule
         self.nodes_names = nodes_names
     }
     
-    private var info: ToolModule = ToolModule()
-    
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
