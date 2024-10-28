@@ -176,7 +176,7 @@ public class Part: WorkspaceObject
                 if let geometry = current_node.geometry
                 {
                     geometry.firstMaterial?.diffuse.contents = color
-                    break
+                    //break
                 }
                 else
                 {
