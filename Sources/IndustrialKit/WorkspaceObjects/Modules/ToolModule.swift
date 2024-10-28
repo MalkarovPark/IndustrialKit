@@ -32,16 +32,23 @@ open class ToolModule: IndustrialModule
         self.nodes_names = nodes_names
     }
     
+    private var info: ToolModule = ToolModule()
+    
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
+        
+        if let info = get_module_info()
+        {
+            external_module_info = info
+            
+            components_import()
+        }
         
         /*self.node = external_node
         codes = exterrnal_codes
         self.model_controller = ExternalToolModelController(name)
         self.connector = ExternalToolConnector(name)*/
-        
-        components_import()
     }
     
     //MARK: - Designer functions
@@ -92,7 +99,9 @@ open class ToolModule: IndustrialModule
         return URL(filePath: "")
     }
     
-    public var external_module_info: ToolModule?
+    public var external_module_info: ToolModule = ToolModule()
+    
+    private func get_module_info() -> ToolModule?
     {
         do
         {
@@ -113,7 +122,7 @@ open class ToolModule: IndustrialModule
     
     override open var external_node: SCNNode
     {
-        if let main_scene_name = external_module_info?.main_scene_name
+        if let main_scene_name = external_module_info.main_scene_name
         {
             do
             {
@@ -144,7 +153,7 @@ open class ToolModule: IndustrialModule
     
     public var external_codes: [OperationCodeInfo]
     {
-        return [OperationCodeInfo]()
+        return external_module_info.codes
     }
     
     //MARK: - Linked components init
