@@ -440,6 +440,8 @@ func string_to_action(from string: String) -> SCNAction?
         //Format string: "group(action1, action2, ...)"
         let actions = parameters.compactMap { string_to_action(from: $0) }
         return SCNAction.group(actions)
+    case "removeAllActions":
+        return SCNAction.run { node in node.removeAllActions() }
     default:
         print("Action \(actionName) not supported")
         return nil
