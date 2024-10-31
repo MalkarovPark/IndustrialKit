@@ -48,9 +48,9 @@ open class RobotModelController: ModelController
         - origin_location: The workcell origin location components – *x*, *y*, *z*.
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      */
-    public final func update_nodes(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
+    open func update_nodes(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        update_nodes(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
+        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
     }
     
     /**
@@ -75,7 +75,7 @@ open class RobotModelController: ModelController
      - Parameters:
         - values: Robot nodes positional values.
      */
-    open func update_nodes(values: [Float])
+    open func apply_nodes_positions(values: [Float])
     {
         
     }
@@ -153,8 +153,8 @@ open class RobotModelController: ModelController
         
         if lengths.count == description_lengths_count
         {
-            update_nodes(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
-            //update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+            //apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
+            update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
         }
     }
     
@@ -430,7 +430,8 @@ public class ExternalRobotModelController: RobotModelController
     }
 
     //MARK: Special
-    override open func update_nodes(values: [Float]) {
-        <#code#>
+    override open func apply_nodes_positions(values: [Float])
+    {
+        //<#code#>
     }
 }
