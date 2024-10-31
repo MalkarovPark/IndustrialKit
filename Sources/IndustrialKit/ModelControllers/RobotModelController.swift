@@ -346,8 +346,91 @@ open class RobotModelController: ModelController
 //MARK: - External Controller
 public class ExternalRobotModelController: RobotModelController
 {
-    public init(_ module_name: String)
+    public var module_name: String //External module name
+    public var package_url: URL //For access to code
+    
+    public init(_ module_name: String, package_url: URL)
     {
+        self.module_name = module_name
+        self.package_url = package_url
+    }
+    
+    //MARK: Base
+    open override func reset_nodes()
+    {
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["reset_nodes"])
+        else
+        {
+            return
+        }
+    }
+
+    open override func updated_charts_data() -> [WorkspaceObjectChart]?
+    {
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_charts_data"])
+        else
+        {
+            return nil
+        }
         
+        if let charts: [WorkspaceObjectChart] = string_to_codable(from: output)
+        {
+            return charts
+        }
+        
+        return nil
+    }
+
+    open override func updated_states_data() -> [StateItem]?
+    {
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_states_data"])
+        else
+        {
+            return nil
+        }
+        
+        if let states: [StateItem] = string_to_codable(from: output)
+        {
+            return states
+        }
+        
+        return nil
+    }
+
+    open override func initial_charts_data() -> [WorkspaceObjectChart]?
+    {
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
+        else
+        {
+            return nil
+        }
+        
+        if let charts: [WorkspaceObjectChart] = string_to_codable(from: output)
+        {
+            return charts
+        }
+        
+        return nil
+    }
+
+    open override func initial_states_data() -> [StateItem]?
+    {
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
+        else
+        {
+            return nil
+        }
+        
+        if let states: [StateItem] = string_to_codable(from: output)
+        {
+            return states
+        }
+        
+        return nil
+    }
+
+    //MARK: Special
+    override open func update_nodes(values: [Float]) {
+        <#code#>
     }
 }

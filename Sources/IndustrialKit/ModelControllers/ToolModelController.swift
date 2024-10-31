@@ -54,7 +54,7 @@ open class ToolModelController: ModelController
 public class ExternalToolModelController: ToolModelController
 {
     public var module_name: String //External module name
-    public var package_url: URL
+    public var package_url: URL //For access to code
     
     public init(_ module_name: String, package_url: URL)
     {

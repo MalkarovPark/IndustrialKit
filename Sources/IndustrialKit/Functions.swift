@@ -464,7 +464,8 @@ func set_position(for node: SCNNode, from string: String)
 {
     let components = string.split(separator: "(")
     
-    guard components.count == 2 else
+    guard components.count == 2
+    else
     {
         print("Invalid format")
         return
@@ -473,7 +474,7 @@ func set_position(for node: SCNNode, from string: String)
     let action_name = String(components[0]).trimmingCharacters(in: .whitespacesAndNewlines)
     let parameters_string = components[1].dropLast() // Remove closing parenthesis
     
-    //Parse parameters
+    // Parse parameters
     let parameters = parameters_string.split(separator: ",").map
     { param in
         return param.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -494,6 +495,39 @@ func set_position(for node: SCNNode, from string: String)
             print("Invalid parameters for location")
         }
         
+    case "setLocationX":
+        if parameters.count == 1,
+           let x = Float(parameters[0])
+        {
+            node.position.x = CGFloat(x)
+        }
+        else
+        {
+            print("Invalid parameters for setLocationX")
+        }
+        
+    case "setLocationY":
+        if parameters.count == 1,
+           let y = Float(parameters[0])
+        {
+            node.position.y = CGFloat(y)
+        }
+        else
+        {
+            print("Invalid parameters for setLocationY")
+        }
+        
+    case "setLocationZ":
+        if parameters.count == 1,
+           let z = Float(parameters[0])
+        {
+            node.position.z = CGFloat(z)
+        }
+        else
+        {
+            print("Invalid parameters for setLocationZ")
+        }
+        
     case "setRotation":
         if parameters.count == 3,
            let r = Float(parameters[0]),
@@ -505,6 +539,39 @@ func set_position(for node: SCNNode, from string: String)
         else
         {
             print("Invalid parameters for rotation")
+        }
+        
+    case "setRotationR":
+        if parameters.count == 1,
+           let r = Float(parameters[0])
+        {
+            node.eulerAngles.x = CGFloat(r.to_rad)
+        }
+        else
+        {
+            print("Invalid parameters for setRotationR")
+        }
+        
+    case "setRotationP":
+        if parameters.count == 1,
+           let p = Float(parameters[0])
+        {
+            node.eulerAngles.y = CGFloat(p.to_rad)
+        }
+        else
+        {
+            print("Invalid parameters for setRotationP")
+        }
+        
+    case "setRotationW":
+        if parameters.count == 1,
+           let w = Float(parameters[0])
+        {
+            node.eulerAngles.z = CGFloat(w.to_rad)
+        }
+        else
+        {
+            print("Invalid parameters for setRotationW")
         }
         
     case "setPosition":
@@ -521,7 +588,7 @@ func set_position(for node: SCNNode, from string: String)
         }
         else
         {
-            print("Invalid parameters for position")
+            print("Invalid parameters")
         }
         
     default:
