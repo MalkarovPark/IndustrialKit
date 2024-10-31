@@ -47,10 +47,26 @@ open class RobotModelController: ModelController
         - pointer_rotation: The target position rotation components – *r*, *p*, *w*.
         - origin_location: The workcell origin location components – *x*, *y*, *z*.
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
+     
+     > Pre-transforms the position in space depending on the tilt of the tool coordinate system.
      */
-    open func update_nodes(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
+    public func update_nodes(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
+        update_nodes_positions(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+    }
+    
+    /**
+     Updates nodes positions of robot model by positional values.
+     
+     - Parameters:
+        - pointer_location: The target position location components – *x*, *y*, *z*.
+        - pointer_rotation: The target position rotation components – *r*, *p*, *w*.
+        - origin_location: The workcell origin location components – *x*, *y*, *z*.
+        - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
+     */
+    open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
+    {
+        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
     }
     
     /**
@@ -363,6 +379,25 @@ public class ExternalRobotModelController: RobotModelController
         {
             return
         }
+
+        //Split the output into lines
+        let lines = output.split(separator: "\n").map { String($0) }
+
+        for line in lines
+        {
+            //Split the line by space to separate node name and action string
+            let components = line.split(separator: " ", maxSplits: 1).map { String($0) }
+            
+            //Ensure there are two components: the node name and the action string
+            guard components.count == 2
+            else
+            {
+                print("Invalid format for line: \(line)")
+                continue
+            }
+            
+            set_position(for: nodes[safe: components[0], default: SCNNode()], from: components[1])
+        }
     }
 
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
@@ -430,8 +465,31 @@ public class ExternalRobotModelController: RobotModelController
     }
 
     //MARK: Special
-    override open func apply_nodes_positions(values: [Float])
+    override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        //<#code#>
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
+        else
+        {
+            return
+        }
+
+        //Split the output into lines
+        let lines = output.split(separator: "\n").map { String($0) }
+
+        for line in lines
+        {
+            //Split the line by space to separate node name and action string
+            let components = line.split(separator: " ", maxSplits: 1).map { String($0) }
+            
+            //Ensure there are two components: the node name and the action string
+            guard components.count == 2
+            else
+            {
+                print("Invalid format for line: \(line)")
+                continue
+            }
+            
+            set_position(for: nodes[safe: components[0], default: SCNNode()], from: components[1])
+        }
     }
 }

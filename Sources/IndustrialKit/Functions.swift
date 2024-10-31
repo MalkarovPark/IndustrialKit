@@ -364,8 +364,9 @@ func string_to_action(from string: String) -> SCNAction?
     let parametersString = components[1].dropLast() //Remove closing parenthesis
     
     //Parse parameters
-    let parameters = parametersString.split(separator: ",").map { param in
-        return param.trimmingCharacters(in: .whitespacesAndNewlines)
+    let parameters = parametersString.split(separator: ",").map
+    { parameter in
+        return parameter.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     switch actionName
