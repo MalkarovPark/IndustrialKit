@@ -179,7 +179,6 @@ public class ExternalToolModelController: ToolModelController
             
             if let action = string_to_action(from: components[1])
             {
-                completed.append(false)
                 nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: { local_completion(index: i) })
             }
         }
@@ -193,20 +192,5 @@ public class ExternalToolModelController: ToolModelController
                 completion()
             }
         }
-
-        /*//Split output into components
-        let components: [String] = output.split(separator: " ").map { String($0) }
-
-        //Check that output contains exactly two parameters
-        guard components.count == 2
-        else
-        {
-            return
-        }
-        
-        if let action = string_to_action(from: components[1])
-        {
-            nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: completion)
-        }*/
     }
 }
