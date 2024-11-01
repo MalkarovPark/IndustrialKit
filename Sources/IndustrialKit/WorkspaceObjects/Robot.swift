@@ -753,7 +753,7 @@ public class Robot: WorkspaceObject
         model_controller.disconnect_nodes()
         model_controller.nodes_connect(node ?? SCNNode(), pointer: self.pointer_node ?? SCNNode(), pointer_internal: self.pointer_node_internal ?? SCNNode())
         model_controller.transform_by_lengths(lengths)
-
+        
         // Connect robot camera
         if connect_camera
         {

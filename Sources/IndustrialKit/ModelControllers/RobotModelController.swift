@@ -66,7 +66,7 @@ open class RobotModelController: ModelController
      */
     open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
+        //apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
     }
     
     /**
@@ -80,10 +80,10 @@ open class RobotModelController: ModelController
      
      - Returns: An array of float values describing the positions of nodes of the robot model.
      */
-    open func inverse_kinematic_calculation(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
+    /*open func inverse_kinematic_calculation(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
     {
         return [Float]()
-    }
+    }*/
     
     /**
      Updates robot nodes by positional values.
@@ -91,10 +91,10 @@ open class RobotModelController: ModelController
      - Parameters:
         - values: Robot nodes positional values.
      */
-    open func apply_nodes_positions(values: [Float])
+    /*open func apply_nodes_positions(values: [Float])
     {
         
-    }
+    }*/
     
     ///An update pointer node by position data flag.
     private var update_pointer_node_position = true
