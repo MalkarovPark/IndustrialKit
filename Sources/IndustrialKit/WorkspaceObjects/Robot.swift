@@ -859,7 +859,7 @@ public class Robot: WorkspaceObject
         #if os(macOS)
         space_node?.position.x = CGFloat(origin_location[1])
         
-        space_node?.position.y = pointer_node?.worldPosition.y ?? 0//CGFloat(origin_location[2]) + (tool_node?.worldPosition.y ?? 0)
+        space_node?.position.y = tool_node?.worldPosition.y ?? 0//CGFloat(origin_location[2]) + (tool_node?.worldPosition.y ?? 0)
         
         print(tool_node?.position.y ?? 0)
         print(tool_node?.worldPosition.y ?? 0)
