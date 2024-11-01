@@ -859,6 +859,8 @@ public class Robot: WorkspaceObject
         #if os(macOS)
         space_node?.position.x = CGFloat(origin_location[1])
         space_node?.position.y = CGFloat(origin_location[2]) + (tool_node?.position.y ?? 0)
+        print(tool_node?.position.y ?? 0)
+        print(vertical_length ?? 0)
         //space_node?.position.y = CGFloat(origin_location[2] + (vertical_length ?? 0)) //Add vertical base length
         space_node?.position.z = CGFloat(origin_location[0])
         
