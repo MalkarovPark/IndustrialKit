@@ -858,7 +858,9 @@ public class Robot: WorkspaceObject
         //MARK: Place workcell box
         #if os(macOS)
         space_node?.position.x = CGFloat(origin_location[1])
-        space_node?.position.y = CGFloat(origin_location[2]) + (tool_node?.worldPosition.y ?? 0)
+        
+        space_node?.position.y = tool_node?.worldPosition.y ?? 0//CGFloat(origin_location[2]) + (tool_node?.worldPosition.y ?? 0)
+        
         print(tool_node?.position.y ?? 0)
         print(tool_node?.worldPosition.y ?? 0)
         print(vertical_length ?? 0)
@@ -1281,5 +1283,22 @@ public class Robot: WorkspaceObject
         try container.encode(programs, forKey: .programs)
         
         try super.encode(to: encoder)
+    }
+}
+
+extension SCNNode
+{
+    /// Returns the position of the current node relative to another node in global coordinates.
+    /// - Parameter node: The node to which the position is relative.
+    /// - Returns: An `SCNVector3` vector representing the position of the current node relative to the specified node.
+    func position(relativeTo node: SCNNode) -> SCNVector3 {
+        let positionA = self.worldPosition
+        let positionB = node.worldPosition
+        
+        return SCNVector3(
+            positionA.x - positionB.x,
+            positionA.y - positionB.y,
+            positionA.z - positionB.z
+        )
     }
 }
