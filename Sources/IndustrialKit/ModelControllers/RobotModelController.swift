@@ -167,11 +167,12 @@ open class RobotModelController: ModelController
             update_pointer_node_position = true
         }
         
-        if lengths.count == description_lengths_count
+        update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        /*if lengths.count == description_lengths_count
         {
             //apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
             update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-        }
+        }*/
     }
     
     ///Robot current pointer position data for nodes.
