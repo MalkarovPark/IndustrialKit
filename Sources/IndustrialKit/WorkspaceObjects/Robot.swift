@@ -770,8 +770,8 @@ public class Robot: WorkspaceObject
         }
         
         //Place and scale cell box
-        robot_location_place()
-        update_space_scale() //Set space scale by connected robot parameters
+        //robot_location_place()
+        //update_space_scale() //Set space scale by connected robot parameters
         
         //Pass workcell parameters to model controller
         //model_controller.origin_location = origin_location
@@ -789,6 +789,9 @@ public class Robot: WorkspaceObject
         {
             connector.model_controller = model_controller
         }*/
+        
+        robot_location_place()
+        update_space_scale() //Set space scale by connected robot parameters
     }
     
     ///Sets robot pointer node location.
