@@ -770,8 +770,8 @@ public class Robot: WorkspaceObject
         }
         
         //Place and scale cell box
-        //robot_location_place()
-        //update_space_scale() //Set space scale by connected robot parameters
+        robot_location_place()
+        update_space_scale() //Set space scale by connected robot parameters
         
         //Pass workcell parameters to model controller
         //model_controller.origin_location = origin_location
@@ -789,9 +789,6 @@ public class Robot: WorkspaceObject
         {
             connector.model_controller = model_controller
         }*/
-        
-        robot_location_place()
-        update_space_scale() //Set space scale by connected robot parameters
     }
     
     ///Sets robot pointer node location.
@@ -856,18 +853,12 @@ public class Robot: WorkspaceObject
         model_controller.origin_location = origin_location
         model_controller.origin_rotation = origin_rotation
         
-        let vertical_length = model_controller.lengths.last
+        let vertical_length = model_controller.nodes["base"]?.position.y
         
         //MARK: Place workcell box
         #if os(macOS)
         space_node?.position.x = CGFloat(origin_location[1])
-        
-        space_node?.position.y = tool_node?.worldPosition.y ?? 0//CGFloat(origin_location[2]) + (tool_node?.worldPosition.y ?? 0)
-        
-        print(tool_node?.position.y ?? 0)
-        print(tool_node?.worldPosition.y ?? 0)
-        print(vertical_length ?? 0)
-        //space_node?.position.y = CGFloat(origin_location[2] + (vertical_length ?? 0)) //Add vertical base length
+        space_node?.position.y = CGFloat(origin_location[2]) + (vertical_length ?? 0) //Add vertical base length
         space_node?.position.z = CGFloat(origin_location[0])
         
         space_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
@@ -886,7 +877,7 @@ public class Robot: WorkspaceObject
         //MARK: Place camera
         #if os(macOS)
         camera_node?.position.x += CGFloat(origin_location[1])
-        camera_node?.position.y += CGFloat(origin_location[2] + (vertical_length ?? 0))
+        camera_node?.position.y += CGFloat(origin_location[2]) + (vertical_length ?? 0)
         camera_node?.position.z += CGFloat(origin_location[0])
         #else
         camera_node?.position.x += Float(origin_location[1])
@@ -1286,22 +1277,5 @@ public class Robot: WorkspaceObject
         try container.encode(programs, forKey: .programs)
         
         try super.encode(to: encoder)
-    }
-}
-
-extension SCNNode
-{
-    /// Returns the position of the current node relative to another node in global coordinates.
-    /// - Parameter node: The node to which the position is relative.
-    /// - Returns: An `SCNVector3` vector representing the position of the current node relative to the specified node.
-    func position(relativeTo node: SCNNode) -> SCNVector3 {
-        let positionA = self.worldPosition
-        let positionB = node.worldPosition
-        
-        return SCNVector3(
-            positionA.x - positionB.x,
-            positionA.y - positionB.y,
-            positionA.z - positionB.z
-        )
     }
 }
