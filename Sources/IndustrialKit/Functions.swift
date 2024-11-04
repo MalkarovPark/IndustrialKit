@@ -364,8 +364,9 @@ func string_to_action(from string: String) -> SCNAction?
     let parametersString = components[1].dropLast() //Remove closing parenthesis
     
     //Parse parameters
-    let parameters = parametersString.split(separator: ",").map { param in
-        return param.trimmingCharacters(in: .whitespacesAndNewlines)
+    let parameters = parametersString.split(separator: ",").map
+    { parameter in
+        return parameter.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     switch actionName
@@ -440,6 +441,8 @@ func string_to_action(from string: String) -> SCNAction?
         //Format string: "group(action1, action2, ...)"
         let actions = parameters.compactMap { string_to_action(from: $0) }
         return SCNAction.group(actions)
+    case "removeAllActions":
+        return SCNAction.run { node in node.removeAllActions() }
     default:
         print("Action \(actionName) not supported")
         return nil
@@ -454,13 +457,16 @@ func string_to_action(from string: String) -> SCNAction?
  
  - Parameters:
     - node: The `SCNNode` whose position or rotation is being set.
-    - string: A string representing the action and its parameters in the format `setPosition(x, y, z)` or `setRotation(r, p, w)`, where rotation is specified in degrees.
+    - string: A string representing the action and its parameters in the format `setLocation(x, y, z)`, `setRotation(r, p, w)` or setPosition(x, y, z, r, p, w)`.
+ 
+ > Rotation is specified in degrees.
  */
 func set_position(for node: SCNNode, from string: String)
 {
     let components = string.split(separator: "(")
     
-    guard components.count == 2 else
+    guard components.count == 2
+    else
     {
         print("Invalid format")
         return
@@ -469,8 +475,9 @@ func set_position(for node: SCNNode, from string: String)
     let action_name = String(components[0]).trimmingCharacters(in: .whitespacesAndNewlines)
     let parameters_string = components[1].dropLast() // Remove closing parenthesis
     
-    //Parse parameters
-    let parameters = parameters_string.split(separator: ",").map { param in
+    // Parse parameters
+    let parameters = parameters_string.split(separator: ",").map
+    { param in
         return param.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
@@ -478,28 +485,111 @@ func set_position(for node: SCNNode, from string: String)
     {
     case "setLocation":
         if parameters.count == 3,
-           let x = Double(parameters[0]),
-           let y = Double(parameters[1]),
-           let z = Double(parameters[2])
+           let x = Float(parameters[0]),
+           let y = Float(parameters[1]),
+           let z = Float(parameters[2])
         {
             node.position = SCNVector3(x, y, z)
         }
         else
         {
-            print("Invalid parameters for position")
+            print("Invalid parameters for location")
+        }
+        
+    case "setLocationX":
+        if parameters.count == 1,
+           let x = Float(parameters[0])
+        {
+            node.position.x = CGFloat(x)
+        }
+        else
+        {
+            print("Invalid parameters for setLocationX")
+        }
+        
+    case "setLocationY":
+        if parameters.count == 1,
+           let y = Float(parameters[0])
+        {
+            node.position.y = CGFloat(y)
+        }
+        else
+        {
+            print("Invalid parameters for setLocationY")
+        }
+        
+    case "setLocationZ":
+        if parameters.count == 1,
+           let z = Float(parameters[0])
+        {
+            node.position.z = CGFloat(z)
+        }
+        else
+        {
+            print("Invalid parameters for setLocationZ")
         }
         
     case "setRotation":
         if parameters.count == 3,
-           let roll = Double(parameters[0]),
-           let pitch = Double(parameters[1]),
-           let yaw = Double(parameters[2])
+           let r = Float(parameters[0]),
+           let p = Float(parameters[1]),
+           let w = Float(parameters[2])
         {
-            node.eulerAngles = SCNVector3(pitch * .pi / 180, yaw * .pi / 180, roll * .pi / 180) //Convert degrees to radians if necessary
+            node.eulerAngles = SCNVector3(r.to_rad, p.to_rad, w.to_rad)
         }
         else
         {
             print("Invalid parameters for rotation")
+        }
+        
+    case "setRotationR":
+        if parameters.count == 1,
+           let r = Float(parameters[0])
+        {
+            node.eulerAngles.x = CGFloat(r.to_rad)
+        }
+        else
+        {
+            print("Invalid parameters for setRotationR")
+        }
+        
+    case "setRotationP":
+        if parameters.count == 1,
+           let p = Float(parameters[0])
+        {
+            node.eulerAngles.y = CGFloat(p.to_rad)
+        }
+        else
+        {
+            print("Invalid parameters for setRotationP")
+        }
+        
+    case "setRotationW":
+        if parameters.count == 1,
+           let w = Float(parameters[0])
+        {
+            node.eulerAngles.z = CGFloat(w.to_rad)
+        }
+        else
+        {
+            print("Invalid parameters for setRotationW")
+        }
+        
+    case "setPosition":
+        if parameters.count == 6,
+           let x = Float(parameters[0]),
+           let y = Float(parameters[1]),
+           let z = Float(parameters[2]),
+           let r = Float(parameters[3]),
+           let p = Float(parameters[4]),
+           let w = Float(parameters[5])
+        {
+            node.position = SCNVector3(x, y, z)
+            node.eulerAngles = SCNVector3(r.to_rad, p.to_rad, w.to_rad)
+        }
+        else
+        {
+            print("Invalid parameters")
         }
         
     default:

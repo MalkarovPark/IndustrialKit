@@ -755,7 +755,7 @@ public class Robot: WorkspaceObject
         model_controller.disconnect_nodes()
         model_controller.nodes_connect(node ?? SCNNode(), pointer: self.pointer_node ?? SCNNode(), pointer_internal: self.pointer_node_internal ?? SCNNode())
         model_controller.transform_by_lengths(lengths)
-
+        
         // Connect robot camera
         if connect_camera
         {
@@ -855,12 +855,12 @@ public class Robot: WorkspaceObject
         model_controller.origin_location = origin_location
         model_controller.origin_rotation = origin_rotation
         
-        let vertical_length = model_controller.lengths.last
+        let vertical_length = model_controller.nodes["base"]?.position.y
         
         //MARK: Place workcell box
         #if os(macOS)
         space_node?.position.x = CGFloat(origin_location[1])
-        space_node?.position.y = CGFloat(origin_location[2] + (vertical_length ?? 0)) //Add vertical base length
+        space_node?.position.y = CGFloat(origin_location[2]) + (vertical_length ?? 0) //Add vertical base length
         space_node?.position.z = CGFloat(origin_location[0])
         
         space_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
@@ -879,7 +879,7 @@ public class Robot: WorkspaceObject
         //MARK: Place camera
         #if os(macOS)
         camera_node?.position.x += CGFloat(origin_location[1])
-        camera_node?.position.y += CGFloat(origin_location[2] + (vertical_length ?? 0))
+        camera_node?.position.y += CGFloat(origin_location[2]) + (vertical_length ?? 0)
         camera_node?.position.z += CGFloat(origin_location[0])
         #else
         camera_node?.position.x += Float(origin_location[1])

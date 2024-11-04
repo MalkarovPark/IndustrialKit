@@ -54,7 +54,7 @@ open class ToolModelController: ModelController
 public class ExternalToolModelController: ToolModelController
 {
     public var module_name: String //External module name
-    public var package_url: URL
+    public var package_url: URL //For access to code
     
     public init(_ module_name: String, package_url: URL)
     {
@@ -69,6 +69,21 @@ public class ExternalToolModelController: ToolModelController
         else
         {
             return
+        }
+
+        //Split output into components
+        let components: [String] = output.split(separator: " ").map { String($0) }
+
+        //Check that output contains exactly two parameters
+        guard components.count == 2
+        else
+        {
+            return
+        }
+        
+        if let action = string_to_action(from: components[1])
+        {
+            nodes[safe: components[0], default: SCNNode()].runAction(action)
         }
     }
 
@@ -145,19 +160,37 @@ public class ExternalToolModelController: ToolModelController
             return
         }
 
-        //Split output into components
-        let components: [String] = output.split(separator: " ").map { String($0) }
+        //Split the output into lines
+        let lines = output.split(separator: "\n").map { String($0) }
+        
+        var completed = [Bool](repeating: false, count: lines.count)
 
-        //Check that output contains exactly two parameters
-        guard components.count == 2
-        else
+        for i in 0..<lines.count //line in lines
         {
-            return
+            //Split output into components
+            let components: [String] = lines[i].split(separator: " ").map { String($0) }
+
+            //Check that output contains exactly two parameters
+            guard components.count == 2
+            else
+            {
+                return
+            }
+            
+            if let action = string_to_action(from: components[1])
+            {
+                nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: { local_completion(index: i) })
+            }
         }
         
-        if let action = string_to_action(from: components[1])
+        func local_completion(index: Int)
         {
-            nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: completion)
+            completed[index] = true
+            
+            if completed.allSatisfy({ $0 == true })
+            {
+                completion()
+            }
         }
     }
 }

@@ -60,6 +60,83 @@ open class RobotModule: IndustrialModule
      */
     @Published public var nodes_names = [String]()
     
+    //MARK: - Import functions
+    open override var package_url: URL
+    {
+        do
+        {
+            var is_stale = false
+            var local_url = try URL(resolvingBookmarkData: WorkspaceObject.modules_folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+            
+            guard !is_stale else
+            {
+                return local_url
+            }
+            
+            local_url = local_url.appendingPathComponent("\(name).robot")
+            
+            return local_url
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return URL(filePath: "")
+    }
+    
+    public var external_module_info: RobotModule?
+    
+    private func get_module_info() -> RobotModule?
+    {
+        do
+        {
+            let info_url = package_url.appendingPathComponent("/Info")
+            
+            if FileManager.default.fileExists(atPath: info_url.path)
+            {
+                return try JSONDecoder().decode(RobotModule.self, from: try Data(contentsOf: info_url))
+            }
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return nil
+    }
+    
+    override open var external_node: SCNNode
+    {
+        if let main_scene_name = external_module_info?.main_scene_name
+        {
+            do
+            {
+                let scene_url = package_url.appendingPathComponent("/Resources.scnassets/\(main_scene_name)")
+                
+                if FileManager.default.fileExists(atPath: scene_url.path)
+                {
+                    let scene_data = try Data(contentsOf: scene_url)
+                    
+                    if let scene_source = SCNSceneSource(data: scene_data, options: nil)
+                    {
+                        if let external_scene = scene_source.scene(options: nil)
+                        {
+                            print("Imported – \(external_scene)")
+                            return external_scene.rootNode.clone()
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
+        
+        return SCNNode()
+    }
+    
     //MARK: - Linked components init
     open override var default_linked_components: [String: String]
     {
@@ -96,7 +173,7 @@ open class RobotModule: IndustrialModule
         }
         else
         {
-            model_controller = ExternalRobotModelController(name)
+            model_controller = ExternalRobotModelController(name, package_url: package_url)
         }
         
         //Set connector

@@ -190,7 +190,6 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                             chart_data?[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
                         }
                         
-                        //Update tool rotation chart
                         axis_names = ["R", "P", "W"]
                         components = [position_point.r, position_point.p, position_point.w]
                         for i in 0...axis_names.count - 1
