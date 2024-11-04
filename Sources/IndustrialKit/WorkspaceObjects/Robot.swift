@@ -31,28 +31,30 @@ public class Robot: WorkspaceObject
         set_default_cell_parameters()
     }
     
-    ///Inits robot by name, controller, connector and SceneKit scene name.
-    public init(name: String, scene_name: String, model_controller: RobotModelController, connector: RobotConnector)
-    {
-        super.init(name: name)
-        
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
-        
-        self.model_controller = model_controller
-        self.connector = connector
-        
-        apply_statistics_flags()
-        set_default_cell_parameters()
-    }
-    
     ///Inits robot by name, controller, connector and SceneKit scene.
-    public init(name: String, scene: SCNScene, model_controller: RobotModelController, connector: RobotConnector)
+    public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene: SCNScene, nodes_names: [String])
     {
         super.init(name: name)
         
         self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
         
         self.model_controller = model_controller
+        self.model_controller.nodes_names = nodes_names
+        self.connector = connector
+        
+        apply_statistics_flags()
+        set_default_cell_parameters()
+    }
+    
+    ///Inits robot by name, controller, connector and SceneKit scene name.
+    public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene_name: String, nodes_names: [String])
+    {
+        super.init(name: name)
+        
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
+        
+        self.model_controller = model_controller
+        self.model_controller.nodes_names = nodes_names
         self.connector = connector
         
         apply_statistics_flags()

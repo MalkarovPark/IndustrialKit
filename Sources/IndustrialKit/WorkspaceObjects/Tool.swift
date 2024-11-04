@@ -28,14 +28,15 @@ public class Tool: WorkspaceObject
         super.init(name: name)
     }
     
-    ///Inits tool by name, controller, connector and scene name.
-    public init(name: String, scene_name: String, model_controller: ToolModelController, connector: ToolConnector, codes: [OperationCodeInfo] = [OperationCodeInfo]())
+    ///Inits tool by name, controller, connector and scene.
+    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene, nodes_names: [String], codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
         
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() //!
+        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
         
         self.model_controller = model_controller
+        self.model_controller.nodes_names = nodes_names
         self.connector = connector
         
         apply_statistics_flags()
@@ -43,14 +44,15 @@ public class Tool: WorkspaceObject
         self.codes = codes
     }
     
-    ///Inits tool by name, controller, connector and scene.
-    public init(name: String, scene: SCNScene, model_controller: ToolModelController, connector: ToolConnector, codes: [OperationCodeInfo] = [OperationCodeInfo]())
+    ///Inits tool by name, controller, connector and scene name.
+    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String, nodes_names: [String], codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
         
-        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() //!
         
         self.model_controller = model_controller
+        self.model_controller.nodes_names = nodes_names
         self.connector = connector
         
         apply_statistics_flags()
