@@ -668,9 +668,6 @@ public class Robot: WorkspaceObject
     ///Node for tool attachment.
     public var tool_node: SCNNode?
     
-    ///An array of robot parts lengths.
-    private var lengths = [Float]()
-    
     /**
      Connects to robot model in scene.
      - Parameters:
@@ -754,7 +751,6 @@ public class Robot: WorkspaceObject
         self.unit_node?.addChildNode(node ?? SCNNode())
         model_controller.disconnect_nodes()
         model_controller.nodes_connect(node ?? SCNNode(), pointer: self.pointer_node ?? SCNNode(), pointer_internal: self.pointer_node_internal ?? SCNNode())
-        model_controller.transform_by_lengths(lengths)
         
         // Connect robot camera
         if connect_camera
