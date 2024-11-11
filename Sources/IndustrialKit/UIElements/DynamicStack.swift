@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DynamicStack<Content: View>: View
+public struct DynamicStack<Content: View>: View
 {
     @ViewBuilder var content: () -> Content
     
@@ -17,7 +17,22 @@ struct DynamicStack<Content: View>: View
     var vertical_alignment = VerticalAlignment.center
     var spacing: CGFloat?
     
-    var body: some View
+    public init(
+        @ViewBuilder content: @escaping () -> Content,
+        is_compact: Binding<Bool>,
+        horizontal_alignment: HorizontalAlignment = .center,
+        vertical_alignment: VerticalAlignment = .center,
+        spacing: CGFloat? = nil
+    )
+    {
+        self.horizontal_alignment = horizontal_alignment
+        self.vertical_alignment = vertical_alignment
+        self.spacing = spacing
+        self._is_compact = is_compact
+        self.content = content
+    }
+    
+    public var body: some View
     {
         if is_compact
         {
