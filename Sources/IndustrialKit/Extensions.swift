@@ -246,6 +246,28 @@ extension SCNNode
     }
 }
 
+//MARK: - JSON data output of codable objects
+public extension Encodable
+{
+    func json_data() -> Data
+    {
+        var data = Data()
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        
+        do
+        {
+            data = try encoder.encode(self)
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+        
+        return data
+    }
+}
+
 //MARK: - JSON string output of codable objects
 public extension Encodable
 {
@@ -272,6 +294,7 @@ public extension Encodable
     }
 }
 
+//MARK: - Fitted sheet view for any platforms
 public extension View
 {
     @ViewBuilder
