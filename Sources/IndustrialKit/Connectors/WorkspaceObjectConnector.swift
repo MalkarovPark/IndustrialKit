@@ -23,6 +23,64 @@ open class WorkspaceObjectConnector: ObservableObject
         
     }
     
+    //MARK: - Connection parameters handling
+    public func import_connection_parameters_values(_ list: [String]?)
+    {
+        if list != nil && parameters.count > 0
+        {
+            if list?.count == parameters.count
+            {
+                for i in 0 ..< parameters.count
+                {
+                    switch parameters[i].value
+                    {
+                    case is String:
+                        parameters[i].value = list?[i] ?? ""
+                    case is Int:
+                        parameters[i].value = Int(list![i]) ?? 0
+                    case is Float:
+                        parameters[i].value = Float(list![i]) ?? 0
+                    case is Bool:
+                        parameters[i].value = list![i] == "true"
+                    default:
+                        break
+                    }
+                }
+            }
+        }
+    }
+    
+    public var connection_parameters_values: [String]?
+    {
+        if parameters.count > 0
+        {
+            var parameters_list = [String]()
+            
+            for parameter in parameters
+            {
+                switch parameter.value
+                {
+                case let value as String:
+                    parameters_list.append(value)
+                case let value as Int:
+                    parameters_list.append(String(value))
+                case let value as Float:
+                    parameters_list.append(String(value))
+                case let value as Bool:
+                    parameters_list.append(String(value))
+                default:
+                    break
+                }
+            }
+            
+            return parameters_list
+        }
+        else
+        {
+            return nil
+        }
+    }
+    
     //MARK: - Connection handling
     ///A connection state.
     @Published public var connected: Bool = false

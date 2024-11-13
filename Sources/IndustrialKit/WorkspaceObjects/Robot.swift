@@ -1250,7 +1250,7 @@ public class Robot: WorkspaceObject
         
         try super.init(from: decoder)
         
-        read_connection_parameters(connector: self.connector, try container.decode([String].self, forKey: .connection_parameters))
+        self.connector.import_connection_parameters_values(try container.decodeIfPresent([String].self, forKey: .connection_parameters))
     }
     
     public override func encode(to encoder: any Encoder) throws
@@ -1265,7 +1265,7 @@ public class Robot: WorkspaceObject
         try container.encode(default_pointer_rotation, forKey: .default_pointer_rotation)
         
         try container.encode(demo, forKey: .demo)
-        try container.encode(get_connection_parameters(connector: self.connector), forKey: .connection_parameters)
+        try container.encode(connector.connection_parameters_values, forKey: .connection_parameters)
         try container.encode(update_model_by_connector, forKey: .update_model_by_connector)
         
         try container.encode(get_statistics, forKey: .get_statistics)

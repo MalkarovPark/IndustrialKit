@@ -1,0 +1,350 @@
+//
+//  ConnectorView.swift
+//  IndustrialKit
+//
+//  Created by Artem on 13.11.2024.
+//
+
+import SwiftUI
+
+public struct ConnectorView: View
+{
+    @Binding var demo: Bool
+    @Binding var update_model: Bool
+    
+    @StateObject var connector: WorkspaceObjectConnector
+    
+    var update_file_data: () -> Void
+    
+    @State private var connected = false
+    @State private var toggle_enabled = true
+    
+    public init(demo: Binding<Bool>, update_model: Binding<Bool>, connector: @autoclosure @escaping () -> WorkspaceObjectConnector, update_file_data: @escaping () -> Void)
+    {
+        _demo = demo
+        _update_model = update_model
+        _connector = StateObject(wrappedValue: connector())
+        self.update_file_data = update_file_data
+    }
+    
+    public var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            VStack(spacing: 0)
+            {
+                List
+                {
+                    if connector.parameters.count > 0
+                    {
+                        ForEach($connector.parameters.indices, id: \.self)
+                        { index in
+                            ConnectionParameterView(parameter: $connector.parameters[index], update_file_data: update_file_data)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .modifier(ViewBorderer())
+                .overlay(alignment: .center)
+                {
+                    if !(connector.parameters.count > 0)
+                    {
+                        Text("No connection parameters")
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+            }
+            .controlSize(.regular)
+            .padding(.bottom)
+            
+            HStack(spacing: 0)
+            {
+                TextEditor(text: $connector.output)
+                
+                VStack
+                {
+                    Rectangle()
+                        .fill(.white)
+                }
+                .frame(width: 48)
+            }
+            .modifier(ViewBorderer())
+            .overlay(alignment: .topTrailing)
+            {
+                VStack(spacing: 0)
+                {
+                    Toggle(isOn: $connector.get_output)
+                    {
+                        Image(systemName: "text.append")
+                    }
+                    #if os(iOS)
+                    .buttonStyle(.bordered)
+                    #elseif os(visionOS)
+                    .buttonBorderShape(.circle)
+                    #endif
+                    .toggleStyle(.button)
+                    .padding(8)
+                    
+                    Button(action: {
+                        connector.clear_output()
+                    })
+                    {
+                        Image(systemName: "eraser")
+                    }
+                    #if os(iOS)
+                    .buttonStyle(.bordered)
+                    #elseif os(visionOS)
+                    .buttonBorderShape(.circle)
+                    #endif
+                    .toggleStyle(.button)
+                    .padding(.horizontal, 8)
+                }
+                .controlSize(.large)
+            }
+            .frame(maxWidth: .infinity, maxHeight: 112)
+            .backgroundStyle(.white)
+            .padding(.bottom)
+            
+            HStack(spacing: 0)
+            {
+                #if os(iOS) || os(visionOS)
+                Text("Demo")
+                    .padding(.trailing)
+                #endif
+                
+                Toggle(isOn: $demo)
+                {
+                    Text("Demo")
+                }
+                .toggleStyle(.switch)
+                #if os(iOS) || os(visionOS)
+                .tint(.accentColor)
+                .labelsHidden()
+                #endif
+                .onChange(of: demo)
+                { _, new_value in
+                    if new_value && connected
+                    {
+                        connected = false
+                        //connector.disconnect()
+                    }
+                }
+                
+                Spacer()
+                
+                Toggle(isOn: $update_model)
+                {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                }
+                .onChange(of: update_model)
+                { _, _ in
+                    update_file_data()
+                }
+                .disabled(demo)
+                #if os(macOS)
+                .controlSize(.large)
+                #else
+                .buttonStyle(.bordered)
+                #endif
+                #if os(visionOS)
+                .buttonBorderShape(.circle)
+                #endif
+                .toggleStyle(.button)
+                .padding(.trailing)
+                
+                Toggle(isOn: $connected)
+                {
+                    HStack
+                    {
+                        Text(connector.connection_button.label)
+                        Image(systemName: "circle.fill")
+                            .foregroundColor(connector.connection_button.color)
+                    }
+                }
+                .disabled(demo)
+                .toggleStyle(.button)
+                #if os(macOS)
+                .controlSize(.large)
+                #else
+                .buttonStyle(.bordered)
+                #endif
+                .onChange(of: connected)
+                { _, new_value in
+                    if !toggle_enabled
+                    {
+                        if new_value
+                        {
+                            connector.connect()
+                        }
+                        else
+                        {
+                            connector.disconnect()
+                        }
+                    }
+                }
+                .onChange(of: connector.connection_failure)
+                { _, new_value in
+                    if new_value
+                    {
+                        toggle_enabled = true
+                        connected = false
+                        toggle_enabled = false
+                    }
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear
+        {
+            connected = connector.connected
+            toggle_enabled = false
+        }
+        .controlSize(.regular)
+    }
+    
+    /*private func close_connector()
+    {
+        is_presented = false
+    }*/
+}
+
+public struct ConnectionParameterView: View
+{
+    @Binding var parameter: ConnectionParameter
+    
+    var update_file_data: () -> Void
+    
+    public init(parameter: Binding<ConnectionParameter>, update_file_data: @escaping () -> Void)
+    {
+        self._parameter = parameter
+        self.update_file_data = update_file_data
+    }
+
+    public var body: some View
+    {
+        HStack(spacing: 0)
+        {
+            Text(parameter.name)
+            
+            Spacer()
+            
+            switch parameter.value
+            {
+            case let stringValue as String:
+                TextField(parameter.name, text: Binding(
+                    get: { stringValue },
+                    set: { new_value in
+                        parameter.value = new_value
+                        update_file_data()
+                    }
+                ))
+                #if os(macOS)
+                    .textFieldStyle(.squareBorder)
+                #endif
+                    .labelsHidden()
+                
+            case let intValue as Int:
+                HStack
+                {
+                    TextField("0", value: Binding(
+                        get: { intValue },
+                        set: { new_value in
+                            parameter.value = new_value
+                            update_file_data()
+                        }
+                    ), format: .number)
+                    #if os(macOS)
+                        .textFieldStyle(.roundedBorder)
+                    #endif
+                    Stepper("", value: Binding(
+                        get: { intValue },
+                        set: { new_value in
+                            parameter.value = new_value
+                            update_file_data()
+                        }
+                    ), in: -1000...1000)
+                    .labelsHidden()
+                    .padding(.leading, 8)
+                }
+
+            case let floatValue as Float:
+                HStack
+                {
+                    TextField("0", value: Binding(
+                        get: { floatValue },
+                        set: { new_value in
+                            parameter.value = new_value
+                            update_file_data()
+                        }
+                    ), format: .number)
+                    #if os(macOS)
+                        .textFieldStyle(.roundedBorder)
+                    #endif
+                    Stepper("", value: Binding(
+                        get: { floatValue },
+                        set: { new_value in
+                            parameter.value = new_value
+                            update_file_data()
+                        }
+                    ), in: -1000...1000)
+                    .labelsHidden()
+                    .padding(.leading, 8)
+                }
+
+            case let boolValue as Bool:
+                Toggle(isOn: Binding(
+                    get: { boolValue },
+                    set: { new_value in
+                        parameter.value = new_value
+                        update_file_data()
+                    }
+                ))
+                {
+                    Text("Bool")
+                }
+                #if os(iOS) || os(visionOS)
+                    .tint(.accentColor)
+                #endif
+                .labelsHidden()
+
+            default:
+                Text("Unknown parameter")
+            }
+        }
+    }
+}
+
+struct ConnectorView_Previews: PreviewProvider
+{
+    static var previews: some View
+    {
+        Group
+        {
+            ConnectorView(demo: .constant(true), update_model: .constant(true), connector: Test_Connector(), update_file_data: {})
+                .environmentObject(Workspace())
+                .frame(width: 320)
+                //.environmentObject(AppState())
+            
+            /*ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")), update_file_data: {})
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Int", value: 8)), update_file_data: {})
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Float", value: Float(6))), update_file_data: {})
+            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Bool", value: true)), update_file_data: {})*/
+        }
+    }
+    
+    class Test_Connector: ToolConnector
+    {
+        override init()
+        {
+            super.init()
+            parameters = [
+                ConnectionParameter(name: "String", value: "Text"),
+                ConnectionParameter(name: "Int", value: 8),
+                ConnectionParameter(name: "Float", value: Float(6)),
+                ConnectionParameter(name: "Bool", value: true)
+            ]
+        }
+    }
+}
