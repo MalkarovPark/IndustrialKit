@@ -300,7 +300,7 @@ open class RobotModelController: ModelController
 public class ExternalRobotModelController: RobotModelController
 {
     //MARK: - Init functions
-    ///External module name.
+    ///An external module name.
     public var module_name: String
     
     ///For access to code.

@@ -54,7 +54,7 @@ open class ToolModelController: ModelController
 public class ExternalToolModelController: ToolModelController
 {
     //MARK: - Init functions
-    //External module name.
+    ///An external module name.
     public var module_name: String
     
     ///For access to code.

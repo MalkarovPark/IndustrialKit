@@ -69,7 +69,7 @@ open class ToolConnector: WorkspaceObjectConnector
 public class ExternalToolConnector: ToolConnector
 {
     //MARK: - Init functions
-    //External module name
+    ///An external module name
     public var module_name: String
     
     ///For access to code
@@ -79,6 +79,68 @@ public class ExternalToolConnector: ToolConnector
     {
         self.module_name = module_name
         self.package_url = package_url
+    }
+    
+    //MARK: - Connection
+    override open func connection_process() async -> Bool
+    {
+        //Perform connection
+        if let parameters = connection_parameters_values
+        {
+            guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["connect"] + (parameters).map { "\($0)" })
+            else
+            {
+                self.output += "Couldn't perform external exec"
+                
+                return false
+            }
+        }
+        else
+        {
+            guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["connect"])
+            else
+            {
+                if output != String()
+                {
+                    output += "\n"
+                }
+                
+                self.output += "Couldn't perform external exec"
+                
+                return false
+            }
+        }
+        
+        //Get output
+        if let range = output.range(of: "\"([^\"]*)\"", options: .regularExpression)
+        {
+            if output != String()
+            {
+                output += "\n"
+            }
+            
+            self.output += String(output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+        }
+        
+        if output.contains("<done>")
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
+    
+    override open func disconnection_process() async
+    {
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
+        else
+        {
+            self.output += "Couldn't perform external exec"
+            
+            return
+        }
     }
     
     //MARK: - Performing
