@@ -501,9 +501,7 @@ public class Robot: WorkspaceObject
         {
             if !demo //Pass workcell parameters to model controller
             {
-                connector.origin_location = origin_location
-                connector.origin_rotation = origin_rotation
-                connector.space_scale = space_scale
+                sync_connector_parameters()
             }
             
             //Move to next point if moving was stop
@@ -616,6 +614,14 @@ public class Robot: WorkspaceObject
     ///A robot connector.
     public var connector = RobotConnector()
     
+    private func sync_connector_parameters()
+    {
+        connector.origin_location = origin_location
+        connector.origin_rotation = origin_rotation
+        
+        connector.space_scale = space_scale
+    }
+    
     ///Disconnects from real robot.
     private func disconnect()
     {
@@ -629,6 +635,14 @@ public class Robot: WorkspaceObject
     
     ///A robot visual model controller.
     public var model_controller = RobotModelController()
+    
+    private func sync_model_controller_parameters()
+    {
+        model_controller.origin_location = origin_location
+        model_controller.origin_rotation = origin_rotation
+        
+        model_controller.space_scale = space_scale
+    }
     
     /**
      Updates robot visual model by model controller in connector.
@@ -859,8 +873,7 @@ public class Robot: WorkspaceObject
     ///Places cell workspace relative to manipulator.
     public func robot_location_place()
     {
-        model_controller.origin_location = origin_location
-        model_controller.origin_rotation = origin_rotation
+        sync_model_controller_parameters()
         
         let vertical_length = model_controller.nodes["base"]?.position.y
         
