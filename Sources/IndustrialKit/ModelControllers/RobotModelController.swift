@@ -12,7 +12,7 @@ import SceneKit
 open class RobotModelController: ModelController
 {
     /**
-     Updates robot model nodes by target position.
+     Updates nodes positions of robot model by target position and origin parameters.
      
      - Parameters:
         - pointer_location: The target position location components – *x*, *y*, *z*.
@@ -20,7 +20,7 @@ open class RobotModelController: ModelController
         - origin_location: The workcell origin location components – *x*, *y*, *z*.
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      
-     > Pre-transforms the position in space depending on the tilt of the tool coordinate system.
+     > Pre-transforms the position in space depending on the rotation of the tool coordinate system.
      */
     public func update_nodes(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
@@ -28,7 +28,7 @@ open class RobotModelController: ModelController
     }
     
     /**
-     Updates nodes positions of robot model by positional values.
+     Updates nodes positions of robot model by target position and origin parameters.
      
      - Parameters:
         - pointer_location: The target position location components – *x*, *y*, *z*.
@@ -38,24 +38,8 @@ open class RobotModelController: ModelController
      */
     open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
-        //apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
+        
     }
-    
-    /**
-     Calculates robot model nodes positions by target position.
-     
-     - Parameters:
-        - pointer_location: The target position location components – *x*, *y*, *z*.
-        - pointer_rotation: The target position rotation components – *r*, *p*, *w*.
-        - origin_location: The workcell origin location components – *x*, *y*, *z*.
-        - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
-     
-     - Returns: An array of float values describing the positions of nodes of the robot model.
-     */
-    /*open func inverse_kinematic_calculation(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float]) -> [Float]
-    {
-        return [Float]()
-    }*/
     
     /**
      Updates robot nodes by positional values.
@@ -140,11 +124,6 @@ open class RobotModelController: ModelController
         }
         
         update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-        /*if lengths.count == description_lengths_count
-        {
-            //apply_nodes_positions(values: inverse_kinematic_calculation(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation))
-            update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-        }*/
     }
     
     ///Robot current pointer position data for nodes.
@@ -320,8 +299,12 @@ open class RobotModelController: ModelController
 //MARK: - External Controller
 public class ExternalRobotModelController: RobotModelController
 {
-    public var module_name: String //External module name
-    public var package_url: URL //For access to code
+    //MARK: - Init functions
+    ///External module name.
+    public var module_name: String
+    
+    ///For access to code.
+    public var package_url: URL
     
     public init(_ module_name: String, package_url: URL)
     {

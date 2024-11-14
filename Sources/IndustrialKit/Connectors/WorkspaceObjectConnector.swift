@@ -257,6 +257,7 @@ open class WorkspaceObjectConnector: ObservableObject
         states_data = initial_states_data()
     }
     
+    //MARK: - Model handling
     ///A flag of update model avalibility.
     @Published public var update_model = false
     

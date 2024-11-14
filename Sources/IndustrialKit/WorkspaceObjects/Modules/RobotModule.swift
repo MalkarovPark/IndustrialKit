@@ -160,7 +160,7 @@ open class RobotModule: IndustrialModule
         }
         else
         {
-            connector = ExternalRobotConnector(name)
+            connector = ExternalRobotConnector(name, package_url: package_url)
         }
         
         //Set contoller

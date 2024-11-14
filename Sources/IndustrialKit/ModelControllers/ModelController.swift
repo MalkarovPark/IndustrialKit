@@ -48,31 +48,6 @@ open class ModelController
         }
     }
     
-    /*///Model nodes from connected root node.
-    public var nodes = [SCNNode]()
-    
-    ///A sequence of nodes names nested within the main node used for model connection.
-    public var nodes_names = [String]()
-    
-    /**
-     Gets parts nodes links from model root node and pass to array.
-     
-     - Parameters:
-        - node: A root node of workspace object model.
-     */
-    open func connect_nodes(of node: SCNNode)
-    {
-        nodes.removeAll()
-        
-        for node_name in nodes_names
-        {
-            if let node = node.childNode(withName: node_name, recursively: true)
-            {
-                nodes.append(node)
-            }
-        }
-    }*/
-    
     ///Removes all nodes in object model from controller.
     public func disconnect_nodes()
     {

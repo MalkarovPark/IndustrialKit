@@ -14,6 +14,7 @@ import Foundation
  */
 open class ToolConnector: WorkspaceObjectConnector
 {
+    //MARK: - Device handling
     private var performing_task = Task {}
     
     /**
@@ -53,6 +54,7 @@ open class ToolConnector: WorkspaceObjectConnector
     ///Inforamation code updated by connector.
     public var info_output: [Float]?
     
+    //MARK: - Model handling
     ///A tool model controller.
     public var model_controller: ToolModelController?
 }
@@ -60,8 +62,16 @@ open class ToolConnector: WorkspaceObjectConnector
 //MARK: - External Connector
 public class ExternalToolConnector: ToolConnector
 {
-    public init(_ module_name: String)
+    //MARK: - Init functions
+    //External module name
+    public var module_name: String
+    
+    ///For access to code
+    public var package_url: URL
+    
+    public init(_ module_name: String, package_url: URL)
     {
-        
+        self.module_name = module_name
+        self.package_url = package_url
     }
 }

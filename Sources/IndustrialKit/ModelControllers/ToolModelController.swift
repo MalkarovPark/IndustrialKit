@@ -53,8 +53,12 @@ open class ToolModelController: ModelController
 //MARK: - External Model Controller
 public class ExternalToolModelController: ToolModelController
 {
-    public var module_name: String //External module name
-    public var package_url: URL //For access to code
+    //MARK: - Init functions
+    //External module name.
+    public var module_name: String
+    
+    ///For access to code.
+    public var package_url: URL
     
     public init(_ module_name: String, package_url: URL)
     {

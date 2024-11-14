@@ -263,7 +263,7 @@ public class Tool: WorkspaceObject
         return programs.count
     }
     
-    //MARK: - Codes functions
+    //MARK: - Info codes functions
     ///An array of avaliable operation codes values for tool.
     public var codes = [OperationCodeInfo]()
     

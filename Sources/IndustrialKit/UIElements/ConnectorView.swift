@@ -320,18 +320,9 @@ struct ConnectorView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        Group
-        {
-            ConnectorView(demo: .constant(true), update_model: .constant(true), connector: Test_Connector(), update_file_data: {})
-                .environmentObject(Workspace())
-                .frame(width: 320)
-                //.environmentObject(AppState())
-            
-            /*ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "String", value: "Text")), update_file_data: {})
-            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Int", value: 8)), update_file_data: {})
-            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Float", value: Float(6))), update_file_data: {})
-            ConnectionParameterView(parameter: .constant(ConnectionParameter(name: "Bool", value: true)), update_file_data: {})*/
-        }
+        ConnectorView(demo: .constant(true), update_model: .constant(true), connector: Test_Connector(), update_file_data: {})
+            .environmentObject(Workspace())
+            .frame(width: 320)
     }
     
     class Test_Connector: ToolConnector

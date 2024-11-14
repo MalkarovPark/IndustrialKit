@@ -220,7 +220,7 @@ open class ToolModule: IndustrialModule
         }
         else
         {
-            connector = ExternalToolConnector(name)
+            connector = ExternalToolConnector(name, package_url: package_url)
         }
     }
     

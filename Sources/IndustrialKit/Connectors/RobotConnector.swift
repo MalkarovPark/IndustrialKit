@@ -14,6 +14,7 @@ import Foundation
  */
 open class RobotConnector: WorkspaceObjectConnector
 {
+    //MARK: - Device handling
     private var moving_task = Task {}
     
     /**
@@ -50,6 +51,7 @@ open class RobotConnector: WorkspaceObjectConnector
         }
     }
     
+    //MARK: - Model handling
     ///A robot model controller.
     public var model_controller: RobotModelController?
     
@@ -88,8 +90,16 @@ open class RobotConnector: WorkspaceObjectConnector
 //MARK: - External Connector
 public class ExternalRobotConnector: RobotConnector
 {
-    public init(_ module_name: String)
+    //MARK: - Init functions
+    //External module name
+    public var module_name: String
+    
+    ///For access to code
+    public var package_url: URL
+    
+    public init(_ module_name: String, package_url: URL)
     {
-        
+        self.module_name = module_name
+        self.package_url = package_url
     }
 }
