@@ -377,7 +377,7 @@ public class Robot: WorkspaceObject
         pointer_location = location
         pointer_rotation = rotation
         
-        update_model()
+        update()
     }
     
     ///Returns information about default pointer position avalibility of robot.
@@ -418,14 +418,23 @@ public class Robot: WorkspaceObject
     }
     
     /**
-     Updates robot model by current pointer position.
+     Updates robot statistics and model by current pointer position.
      
      > Placed in the public protection level for normal synchronization in SceneKit.
      */
-    public func update_model()
+    public func update()
     {
         update_statistics_data()
-        model_controller.update_by_pointer()
+        
+        //Modeling
+        if demo
+        {
+            model_controller.update_by_pointer()
+        }
+        else if update_model_by_connector
+        {
+            connector.sync_model()
+        }
     }
     
     //MARK: Performation cycle
@@ -518,7 +527,8 @@ public class Robot: WorkspaceObject
             else
             {
                 //Remove actions for real robot
-                connector.pause()
+                connector.canceled = true
+                connector.reset_device()
             }
         }
     }
@@ -548,7 +558,7 @@ public class Robot: WorkspaceObject
             performed = false
             moving_completed = true
             
-            update_model()
+            update()
             pointer_position_to_robot()
             
             finish_handler()
@@ -575,7 +585,8 @@ public class Robot: WorkspaceObject
             }
             else
             {
-                connector.pause()
+                connector.canceled = true
+                connector.reset_device()
             }
             
             pointer_position_to_robot()

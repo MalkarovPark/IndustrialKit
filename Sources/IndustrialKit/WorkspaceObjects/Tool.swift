@@ -321,6 +321,22 @@ public class Tool: WorkspaceObject
         }
     }
     
+    /**
+     Updates tool statistics and model by current pointer position.
+     
+     > Placed in the public protection level for normal synchronization in SceneKit.
+     */
+    public func update()
+    {
+        update_statistics_data()
+        
+        //Modeling
+        if !demo && update_model_by_connector
+        {
+            connector.sync_model()
+        }
+    }
+    
     //MARK: Performation cycle
     /**
      Performs tool by operation code value with completion handler.
@@ -392,7 +408,8 @@ public class Tool: WorkspaceObject
             else
             {
                 //Remove actions for real tool
-                connector.pause()
+                connector.canceled = true
+                connector.reset_device()
             }
         }
     }
@@ -455,6 +472,16 @@ public class Tool: WorkspaceObject
     {
         if performed
         {
+            if demo
+            {
+                model_controller.reset_nodes()
+            }
+            else
+            {
+                connector.canceled = true
+                connector.reset_device()
+            }
+            
             performed = false
             performing_completed = false
             selected_code_index = 0

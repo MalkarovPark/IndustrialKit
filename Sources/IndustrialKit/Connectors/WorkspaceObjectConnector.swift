@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SceneKit
 
 //MARK: - Workspace object connector
 /**
@@ -182,15 +183,8 @@ open class WorkspaceObjectConnector: ObservableObject
         self.objectWillChange.send()
     }
     
-    ///Pauses moving or operation code perfoming.
-    public func pause()
-    {
-        canceled = true
-        pause_operations()
-    }
-    
-    ///Additive operations by pause performation.
-    open func pause_operations()
+    ///Reset device perfoming.
+    open func reset_device()
     {
         
     }
@@ -260,6 +254,12 @@ open class WorkspaceObjectConnector: ObservableObject
     //MARK: - Model handling
     ///A flag of update model avalibility.
     @Published public var update_model = false
+    
+    ///Synchronizes model by real device state.
+    open func sync_model()
+    {
+        
+    }
     
     //MARK: - UI functions
     ///A failure result of connection.
