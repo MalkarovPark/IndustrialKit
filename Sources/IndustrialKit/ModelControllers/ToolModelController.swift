@@ -75,7 +75,40 @@ public class ExternalToolModelController: ToolModelController
             return
         }
 
-        //Split output into components
+        //Split the output into lines
+        let lines = output.split(separator: "\n").map { String($0) }
+        
+        var completed = [Bool](repeating: false, count: lines.count)
+
+        for i in 0..<lines.count //line in lines
+        {
+            //Split output into components
+            let components: [String] = lines[i].split(separator: " ").map { String($0) }
+
+            //Check that output contains exactly two parameters
+            guard components.count == 2
+            else
+            {
+                return
+            }
+            
+            if let action = string_to_action(from: components[1])
+            {
+                nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: { local_completion(index: i) })
+            }
+        }
+        
+        func local_completion(index: Int)
+        {
+            completed[index] = true
+            
+            if completed.allSatisfy({ $0 == true })
+            {
+                //completion()
+            }
+        }
+        
+        /*//Split output into components
         let components: [String] = output.split(separator: " ").map { String($0) }
 
         //Check that output contains exactly two parameters
@@ -88,7 +121,7 @@ public class ExternalToolModelController: ToolModelController
         if let action = string_to_action(from: components[1])
         {
             nodes[safe: components[0], default: SCNNode()].runAction(action)
-        }
+        }*/
     }
 
     open override func updated_charts_data() -> [WorkspaceObjectChart]?

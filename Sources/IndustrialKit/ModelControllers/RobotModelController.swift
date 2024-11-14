@@ -333,7 +333,6 @@ public class ExternalRobotModelController: RobotModelController
             guard components.count == 2
             else
             {
-                print("Invalid format for line: \(line)")
                 continue
             }
             
@@ -426,7 +425,6 @@ public class ExternalRobotModelController: RobotModelController
             guard components.count == 2
             else
             {
-                print("Invalid format for line: \(line)")
                 continue
             }
             
