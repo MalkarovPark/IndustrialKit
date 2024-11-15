@@ -54,11 +54,11 @@ open class WorkspaceObjectConnector: ObservableObject
     
     public var connection_parameters_values: [String]?
     {
-        if parameters.count > 0
+        if current_parameters.count > 0
         {
             var parameters_list = [String]()
             
-            for parameter in parameters
+            for parameter in current_parameters
             {
                 switch parameter.value
                 {
