@@ -32,22 +32,18 @@ open class RobotModule: IndustrialModule
     {
         super.init(name: name, description: description)
         
-        self.model_controller = model_controller
         self.node = node
+        self.model_controller = model_controller
         self.nodes_names = nodes_names
         
         self.connector = connector
-        self.connection_parameters = connection_parameters
+        self.connector.parameters = connection_parameters
     }
     
     ///External init
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
-        
-        /*self.connector = ExternalRobotConnector(name)
-        self.model_controller = ExternalRobotModelController(name)
-        self.node = external_node*/
         
         components_import()
     }
@@ -187,7 +183,7 @@ open class RobotModule: IndustrialModule
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
                 model_controller = Robot.internal_modules[index].model_controller
-                model_controller.nodes_names = Tool.internal_modules[index].nodes_names
+                model_controller.nodes_names = Robot.internal_modules[index].nodes_names
             }
         }
         else

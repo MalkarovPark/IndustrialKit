@@ -29,7 +29,7 @@ public class Tool: WorkspaceObject
     }
     
     ///Inits tool by name, controller, connector and scene.
-    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene, nodes_names: [String], codes: [OperationCodeInfo] = [OperationCodeInfo]())
+    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
         
@@ -44,7 +44,7 @@ public class Tool: WorkspaceObject
     }
     
     ///Inits tool by name, controller, connector and scene name.
-    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String, nodes_names: [String], codes: [OperationCodeInfo] = [OperationCodeInfo]())
+    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
         

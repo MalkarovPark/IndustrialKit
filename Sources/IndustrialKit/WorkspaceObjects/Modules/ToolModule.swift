@@ -28,19 +28,20 @@ open class ToolModule: IndustrialModule
         node: SCNNode,
         nodes_names: [String] = [String](),
         
-        connector: ToolConnector = ToolConnector()
+        connector: ToolConnector = ToolConnector(),
+        connection_parameters: [ConnectionParameter] = [ConnectionParameter]()
     )
     {
         super.init(name: name, description: description)
         
         self.codes = operation_codes
         
-        self.model_controller = model_controller
         self.node = node
-        self.nodes_names = nodes_names
+        self.model_controller = model_controller
+        self.model_controller.nodes_names = nodes_names
         
         self.connector = connector
-        self.connection_parameters = connection_parameters
+        self.connector.parameters = connection_parameters
     }
     
     public override init(external_name: String)
@@ -53,11 +54,6 @@ open class ToolModule: IndustrialModule
             
             components_import()
         }
-        
-        /*self.node = external_node
-        codes = exterrnal_codes
-        self.model_controller = ExternalToolModelController(name)
-        self.connector = ExternalToolConnector(name)*/
     }
     
     //MARK: - Designer functions
