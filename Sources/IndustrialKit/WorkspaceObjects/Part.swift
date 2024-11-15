@@ -62,7 +62,7 @@ public class Part: WorkspaceObject
         }
     }
     
-    //MARK: - Part init functions
+    //MARK: - Init functions
     public override init()
     {
         super.init()

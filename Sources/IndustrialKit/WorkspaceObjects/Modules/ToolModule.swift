@@ -22,11 +22,11 @@ open class ToolModule: IndustrialModule
         name: String = String(),
         description: String = String(),
         
+        node: SCNNode,
+        
         operation_codes: [OperationCodeInfo] = [OperationCodeInfo](),
         
         model_controller: ToolModelController = ToolModelController(),
-        node: SCNNode,
-        
         connector: ToolConnector = ToolConnector()
     )
     {

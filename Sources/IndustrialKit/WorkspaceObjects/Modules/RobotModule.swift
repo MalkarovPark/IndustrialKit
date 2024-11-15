@@ -22,9 +22,9 @@ open class RobotModule: IndustrialModule
         name: String = String(),
         description: String = String(),
         
-        model_controller: RobotModelController,
         node: SCNNode,
         
+        model_controller: RobotModelController,        
         connector: RobotConnector
     )
     {
