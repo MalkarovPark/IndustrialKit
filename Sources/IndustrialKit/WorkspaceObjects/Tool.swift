@@ -51,7 +51,6 @@ public class Tool: WorkspaceObject
         self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() //!
         
         self.model_controller = model_controller
-        self.model_controller.nodes_names = nodes_names
         self.connector = connector
         
         apply_statistics_flags()
@@ -90,7 +89,6 @@ public class Tool: WorkspaceObject
         node = module.node.clone()
         
         model_controller = module.model_controller
-        model_controller.nodes_names = module.nodes_names
         connector = module.connector
         
         apply_statistics_flags()
