@@ -18,7 +18,12 @@ open class PartModule: IndustrialModule
     
     //MARK: Module init for in-app mounting
     ///Internal init.
-    public init(name: String = String(), description: String = String(), node: SCNNode)
+    public init(
+        name: String = String(),
+        description: String = String(),
+        
+        node: SCNNode
+    )
     {
         super.init(name: name, description: description)
         

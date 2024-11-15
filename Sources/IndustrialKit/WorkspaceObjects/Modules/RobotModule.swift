@@ -18,15 +18,24 @@ open class RobotModule: IndustrialModule
     
     //MARK: Module init for in-app mounting
     ///Internal init.
-    public init(name: String = String(), description: String = String(), model_controller: RobotModelController, connector: RobotConnector, node: SCNNode, nodes_names: [String] = [String]())
+    public init(
+        name: String = String(),
+        description: String = String(),
+        
+        model_controller: RobotModelController,
+        node: SCNNode,
+        nodes_names: [String] = [String](),
+        
+        connector: RobotConnector
+    )
     {
         super.init(name: name, description: description)
         
-        self.connector = connector
         self.model_controller = model_controller
         self.node = node
-        
         self.nodes_names = nodes_names
+        
+        self.connector = connector
     }
     
     ///External init
@@ -59,6 +68,13 @@ open class RobotModule: IndustrialModule
      > Used by model controller for nested nodes access.
      */
     @Published public var nodes_names = [String]()
+    
+    /**
+     A sequence of connection parameters.
+        
+     > Used by connector.
+     */
+    @Published public var connection_parameters = [ConnectionParameter]()
     
     //MARK: - Import functions
     open override var package_url: URL
@@ -150,17 +166,17 @@ open class RobotModule: IndustrialModule
     ///Imports components from external or from other modules.
     private func components_import()
     {
-        //Set visual model
-        if let linked_name = linked_components["Model"], linked_name.isEmpty
+        //Set visual model from internal module
+        if let linked_name = linked_components["Model"]
         {
-            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
-                node = Robot.internal_modules[index].node
+                node = Tool.internal_modules[index].node
             }
         }
         else
         {
-            connector = ExternalRobotConnector(name, package_url: package_url)
+            node = external_node
         }
         
         //Set contoller
@@ -169,11 +185,13 @@ open class RobotModule: IndustrialModule
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
                 model_controller = Robot.internal_modules[index].model_controller
+                nodes_names = Tool.internal_modules[index].nodes_names
             }
         }
         else
         {
             model_controller = ExternalRobotModelController(name, package_url: package_url)
+            nodes_names = external_module_info?.nodes_names ?? [String]()
         }
         
         //Set connector
@@ -186,7 +204,7 @@ open class RobotModule: IndustrialModule
         }
         else
         {
-            node = external_node
+            connector = ExternalRobotConnector(name, package_url: package_url)
         }
     }
     
@@ -194,6 +212,7 @@ open class RobotModule: IndustrialModule
     enum CodingKeys: String, CodingKey
     {
         case nodes_names
+        case connection_parameters
         
         //Linked
         case linked_model_module_name
@@ -206,6 +225,7 @@ open class RobotModule: IndustrialModule
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
+        self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
         
         try super.init(from: decoder)
     }
@@ -215,6 +235,7 @@ open class RobotModule: IndustrialModule
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(nodes_names, forKey: .nodes_names)
+        try container.encode(connection_parameters, forKey: .connection_parameters)
         
         try super.encode(to: encoder)
     }

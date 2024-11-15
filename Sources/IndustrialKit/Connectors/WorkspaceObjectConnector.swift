@@ -19,9 +19,10 @@ import SceneKit
  */
 open class WorkspaceObjectConnector: ObservableObject
 {
+    //MARK: - Init functions
     public init()
     {
-        
+        self.parameters = self.default_parameters
     }
     
     //MARK: - Connection parameters handling
@@ -91,6 +92,12 @@ open class WorkspaceObjectConnector: ObservableObject
     
     ///An array of connection parameters.
     public var parameters = [ConnectionParameter]()
+    
+    ///An array of default connection parameters.
+    open var default_parameters: [ConnectionParameter]
+    {
+        return [ConnectionParameter]()
+    }
     
     /**
      A pause flag of performation.
@@ -304,7 +311,7 @@ open class WorkspaceObjectConnector: ObservableObject
 }
 
 //MARK: - Connector parameter
-public struct ConnectionParameter: Identifiable, Equatable
+public struct ConnectionParameter: Identifiable, Equatable, Codable
 {
     public static func == (lhs: ConnectionParameter, rhs: ConnectionParameter) -> Bool
     {
@@ -319,5 +326,64 @@ public struct ConnectionParameter: Identifiable, Equatable
     {
         self.name = name
         self.value = value
+    }
+    
+    //MARK: - Codable handling
+    private enum CodingKeys: String, CodingKey
+    {
+        case id
+        case name
+        case value_type
+        case value_string
+        case value_int
+        case value_float
+        case value_bool
+    }
+    
+    public init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        
+        let value_type = try container.decode(String.self, forKey: .value_type)
+        switch value_type
+        {
+        case "String":
+            value = try container.decode(String.self, forKey: .value_int)
+        case "Int":
+            value = try container.decode(Int.self, forKey: .value_int)
+        case "Float":
+            value = try container.decode(Float.self, forKey: .value_float)
+        case "Bool":
+            value = try container.decode(Bool.self, forKey: .value_bool)
+        default:
+            throw DecodingError.dataCorruptedError(forKey: .value_type, in: container, debugDescription: "Unknown type")
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        
+        switch value
+        {
+        case let value as String:
+            try container.encode("String", forKey: .value_type)
+            try container.encode(value, forKey: .value_int)
+        case let value as Int:
+            try container.encode("Int", forKey: .value_type)
+            try container.encode(value, forKey: .value_int)
+        case let value as Double:
+            try container.encode("Float", forKey: .value_type)
+            try container.encode(value, forKey: .value_float)
+        case let value as Bool:
+            try container.encode("Bool", forKey: .value_type)
+            try container.encode(value, forKey: .value_bool)
+        default:
+            throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: encoder.codingPath, debugDescription: "Unsupported type"))
+        }
     }
 }

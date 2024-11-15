@@ -18,18 +18,28 @@ open class ToolModule: IndustrialModule
     
     //MARK: Module init for in-app mounting
     ///Internal init.
-    public init(name: String = String(), description: String = String(), model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), operation_codes: [OperationCodeInfo] = [OperationCodeInfo](), node: SCNNode, nodes_names: [String] = [String]())
+    public init(
+        name: String = String(),
+        description: String = String(),
+        
+        operation_codes: [OperationCodeInfo] = [OperationCodeInfo](),
+        
+        model_controller: ToolModelController = ToolModelController(),
+        node: SCNNode,
+        nodes_names: [String] = [String](),
+        
+        connector: ToolConnector = ToolConnector()
+    )
     {
         super.init(name: name, description: description)
         
-        self.connector = connector
-        self.model_controller = model_controller
-        
-        self.node = node
-        
         self.codes = operation_codes
         
+        self.model_controller = model_controller
+        self.node = node
         self.nodes_names = nodes_names
+        
+        self.connector = connector        
     }
     
     public override init(external_name: String)
@@ -71,6 +81,13 @@ open class ToolModule: IndustrialModule
      > Used by model controller for nested nodes access.
      */
     @Published public var nodes_names = [String]()
+    
+    /**
+     A sequence of connection parameters.
+        
+     > Used by connector.
+     */
+    @Published public var connection_parameters = [ConnectionParameter]()
     
     //MARK: - Import functions
     open override var package_url: URL
@@ -168,7 +185,7 @@ open class ToolModule: IndustrialModule
     ///Imports components from external or from other modules.
     private func components_import()
     {
-        //Set visual model from internal module
+        //Set visual model
         if let linked_name = linked_components["Model"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -180,9 +197,6 @@ open class ToolModule: IndustrialModule
         {
             node = external_node
         }
-        
-        //Set nodes names to in-scene connection
-        nodes_names = external_module_info?.nodes_names ?? [String]()
         
         //Set codes from internal module
         if let linked_name = linked_components["Codes"]
@@ -203,11 +217,13 @@ open class ToolModule: IndustrialModule
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
                 model_controller = Tool.internal_modules[index].model_controller
+                nodes_names = Tool.internal_modules[index].nodes_names
             }
         }
         else
         {
             model_controller = ExternalToolModelController(name, package_url: package_url)
+            nodes_names = external_module_info?.nodes_names ?? [String]()
         }
         
         //Set connector from internal module
@@ -230,6 +246,7 @@ open class ToolModule: IndustrialModule
         case operation_codes
         
         case nodes_names
+        case connection_parameters
     }
     
     public required init(from decoder: any Decoder) throws
@@ -239,6 +256,7 @@ open class ToolModule: IndustrialModule
         self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
         
         self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
+        self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
         
         try super.init(from: decoder)
     }
@@ -250,6 +268,7 @@ open class ToolModule: IndustrialModule
         try container.encode(codes, forKey: .operation_codes)
         
         try container.encode(nodes_names, forKey: .nodes_names)
+        try container.encode(connection_parameters, forKey: .connection_parameters)
         
         try super.encode(to: encoder)
     }

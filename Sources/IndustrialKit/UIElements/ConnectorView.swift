@@ -320,21 +320,25 @@ struct ConnectorView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        ConnectorView(demo: .constant(true), update_model: .constant(true), connector: Test_Connector(), update_file_data: {})
-            .environmentObject(Workspace())
-            .frame(width: 320)
+        ConnectorView(
+            demo: .constant(true),
+            update_model: .constant(true),
+            connector: Test_Connector(),
+            update_file_data: {}
+        )
+        .environmentObject(Workspace())
+        .frame(width: 320)
     }
     
     class Test_Connector: ToolConnector
     {
-        override init()
+        override var default_parameters: [ConnectionParameter]
         {
-            super.init()
-            parameters = [
-                ConnectionParameter(name: "String", value: "Text"),
-                ConnectionParameter(name: "Int", value: 8),
-                ConnectionParameter(name: "Float", value: Float(6)),
-                ConnectionParameter(name: "Bool", value: true)
+            [
+                .init(name: "String", value: "Text"),
+                .init(name: "Int", value: 8),
+                .init(name: "Float", value: Float(6)),
+                .init(name: "Bool", value: true)
             ]
         }
     }
