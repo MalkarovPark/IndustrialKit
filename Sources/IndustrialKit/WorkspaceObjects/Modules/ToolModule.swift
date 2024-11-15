@@ -39,7 +39,8 @@ open class ToolModule: IndustrialModule
         self.node = node
         self.nodes_names = nodes_names
         
-        self.connector = connector        
+        self.connector = connector
+        self.connection_parameters = connection_parameters
     }
     
     public override init(external_name: String)
@@ -217,13 +218,13 @@ open class ToolModule: IndustrialModule
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
                 model_controller = Tool.internal_modules[index].model_controller
-                nodes_names = Tool.internal_modules[index].nodes_names
+                model_controller.nodes_names = Tool.internal_modules[index].nodes_names
             }
         }
         else
         {
             model_controller = ExternalToolModelController(name, package_url: package_url)
-            nodes_names = external_module_info?.nodes_names ?? [String]()
+            model_controller.nodes_names = external_module_info?.nodes_names ?? [String]()
         }
         
         //Set connector from internal module
@@ -232,11 +233,13 @@ open class ToolModule: IndustrialModule
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
                 connector = Tool.internal_modules[index].connector
+                connector.parameters = Tool.internal_modules[index].connection_parameters
             }
         }
         else
         {
             connector = ExternalToolConnector(name, package_url: package_url)
+            connector.parameters = external_module_info?.connection_parameters ?? [ConnectionParameter]()
         }
     }
     

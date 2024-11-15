@@ -36,7 +36,6 @@ public class Tool: WorkspaceObject
         self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
         
         self.model_controller = model_controller
-        self.model_controller.nodes_names = nodes_names
         self.connector = connector
         
         apply_statistics_flags()
