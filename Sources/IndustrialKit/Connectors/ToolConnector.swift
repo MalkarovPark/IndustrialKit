@@ -75,11 +75,27 @@ public class ExternalToolConnector: ToolConnector
     ///For access to code
     public var package_url: URL
     
-    public init(_ module_name: String, package_url: URL)
+    public init(_ module_name: String, package_url: URL, parameters: [ConnectionParameter])
     {
         self.module_name = module_name
         self.package_url = package_url
+        
+        self.external_parameters = parameters
     }
+    
+    ///An array of default connection parameters.
+    open var default_parameters: [ConnectionParameter]
+    {
+        return [ConnectionParameter]()
+    }
+    
+    //MARK: - Parameters import
+    override open var parameters: [ConnectionParameter]
+    {
+        return external_parameters
+    }
+    
+    public var external_parameters = [ConnectionParameter]()
     
     //MARK: - Connection
     override open func connection_process() async -> Bool

@@ -306,12 +306,23 @@ public class ExternalRobotModelController: RobotModelController
     ///For access to code.
     public var package_url: URL
     
-    public init(_ module_name: String, package_url: URL)
+    public init(_ module_name: String, package_url: URL, nodes_names: [String])
     {
         self.module_name = module_name
         self.package_url = package_url
+        
+        self.external_nodes_names = nodes_names
     }
     
+    //MARK: - Parameters import
+    override open var nodes_names: [String]
+    {
+        return external_nodes_names
+    }
+    
+    public var external_nodes_names = [String]()
+    
+    //MARK: - Code functions
     //MARK: Base
     open override func reset_nodes()
     {

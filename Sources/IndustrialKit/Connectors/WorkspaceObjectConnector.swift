@@ -22,28 +22,28 @@ open class WorkspaceObjectConnector: ObservableObject
     //MARK: - Init functions
     public init()
     {
-        self.parameters = self.default_parameters
+        current_parameters = parameters
     }
     
     //MARK: - Connection parameters handling
     public func import_connection_parameters_values(_ list: [String]?)
     {
-        if list != nil && parameters.count > 0
+        if list != nil && current_parameters.count > 0
         {
-            if list?.count == parameters.count
+            if list?.count == current_parameters.count
             {
-                for i in 0 ..< parameters.count
+                for i in 0 ..< current_parameters.count
                 {
-                    switch parameters[i].value
+                    switch current_parameters[i].value
                     {
                     case is String:
-                        parameters[i].value = list?[i] ?? ""
+                        current_parameters[i].value = list?[i] ?? ""
                     case is Int:
-                        parameters[i].value = Int(list![i]) ?? 0
+                        current_parameters[i].value = Int(list![i]) ?? 0
                     case is Float:
-                        parameters[i].value = Float(list![i]) ?? 0
+                        current_parameters[i].value = Float(list![i]) ?? 0
                     case is Bool:
-                        parameters[i].value = list![i] == "true"
+                        current_parameters[i].value = list![i] == "true"
                     default:
                         break
                     }
@@ -90,14 +90,14 @@ open class WorkspaceObjectConnector: ObservableObject
     ///A connection in updating process state.
     @Published public var connection_updating: Bool = false
     
-    ///An array of connection parameters.
-    public var parameters = [ConnectionParameter]()
-    
     ///An array of default connection parameters.
-    open var default_parameters: [ConnectionParameter]
+    open var parameters: [ConnectionParameter]
     {
         return [ConnectionParameter]()
     }
+    
+    ///An array of connection parameters.
+    @Published public var current_parameters = [ConnectionParameter]()
     
     /**
      A pause flag of performation.

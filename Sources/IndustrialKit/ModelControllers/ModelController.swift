@@ -27,7 +27,10 @@ open class ModelController
     public var nodes = [String: SCNNode]()
 
     ///A sequence of node names nested within the main node used for model connection.
-    public var nodes_names = [String]()
+    open var nodes_names: [String]
+    {
+        return [String]()
+    }
 
     /**
      Gets part nodes links from the model root node and adds them to the dictionary.

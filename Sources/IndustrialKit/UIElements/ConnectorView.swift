@@ -37,9 +37,9 @@ public struct ConnectorView: View
                 {
                     if connector.parameters.count > 0
                     {
-                        ForEach($connector.parameters.indices, id: \.self)
+                        ForEach($connector.current_parameters.indices, id: \.self)
                         { index in
-                            ConnectionParameterView(parameter: $connector.parameters[index], update_file_data: update_file_data)
+                            ConnectionParameterView(parameter: $connector.current_parameters[index], update_file_data: update_file_data)
                         }
                     }
                 }
@@ -332,7 +332,7 @@ struct ConnectorView_Previews: PreviewProvider
     
     class Test_Connector: ToolConnector
     {
-        override var default_parameters: [ConnectionParameter]
+        override var parameters: [ConnectionParameter]
         {
             [
                 .init(name: "String", value: "Text"),

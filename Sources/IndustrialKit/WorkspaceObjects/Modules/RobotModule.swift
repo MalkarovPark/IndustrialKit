@@ -24,20 +24,16 @@ open class RobotModule: IndustrialModule
         
         model_controller: RobotModelController,
         node: SCNNode,
-        nodes_names: [String] = [String](),
         
-        connector: RobotConnector,
-        connection_parameters: [ConnectionParameter] = [ConnectionParameter]()
+        connector: RobotConnector
     )
     {
         super.init(name: name, description: description)
         
         self.node = node
         self.model_controller = model_controller
-        self.nodes_names = nodes_names
         
         self.connector = connector
-        self.connector.parameters = connection_parameters
     }
     
     ///External init
@@ -183,13 +179,11 @@ open class RobotModule: IndustrialModule
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
                 model_controller = Robot.internal_modules[index].model_controller
-                model_controller.nodes_names = Robot.internal_modules[index].nodes_names
             }
         }
         else
         {
-            model_controller = ExternalRobotModelController(name, package_url: package_url)
-            model_controller.nodes_names = external_module_info?.nodes_names ?? [String]()
+            model_controller = ExternalRobotModelController(name, package_url: package_url, nodes_names: external_module_info?.nodes_names ?? [String]())
         }
         
         //Set connector
@@ -198,13 +192,11 @@ open class RobotModule: IndustrialModule
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
                 connector = Robot.internal_modules[index].connector
-                connector.parameters = Robot.internal_modules[index].connection_parameters
             }
         }
         else
         {
-            connector = ExternalRobotConnector(name, package_url: package_url)
-            connector.parameters = external_module_info?.connection_parameters ?? [ConnectionParameter]()
+            connector = ExternalRobotConnector(name, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
         }
     }
     
