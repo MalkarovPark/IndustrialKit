@@ -299,7 +299,7 @@ open class RobotModelController: ModelController
 //MARK: - External Controller
 public class ExternalRobotModelController: RobotModelController
 {
-    //MARK: - Init functions
+    //MARK: Init functions
     ///An external module name.
     public var module_name: String
     
@@ -314,7 +314,7 @@ public class ExternalRobotModelController: RobotModelController
         self.external_nodes_names = nodes_names
     }
     
-    //MARK: - Parameters import
+    //MARK: Parameters import
     override open var nodes_names: [String]
     {
         return external_nodes_names
@@ -322,8 +322,34 @@ public class ExternalRobotModelController: RobotModelController
     
     public var external_nodes_names = [String]()
     
-    //MARK: - Code functions
-    //MARK: Base
+    //MARK: Modeling
+    override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
+    {
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
+        else
+        {
+            return
+        }
+
+        //Split the output into lines
+        let lines = output.split(separator: "\n").map { String($0) }
+
+        for line in lines
+        {
+            //Split the line by space to separate node name and action string
+            let components = line.split(separator: " ", maxSplits: 1).map { String($0) }
+            
+            //Ensure there are two components: the node name and the action string
+            guard components.count == 2
+            else
+            {
+                continue
+            }
+            
+            set_position(for: nodes[safe: components[0], default: SCNNode()], from: components[1])
+        }
+    }
+    
     open override func reset_nodes()
     {
         guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["reset_nodes"])
@@ -350,7 +376,8 @@ public class ExternalRobotModelController: RobotModelController
             set_position(for: nodes[safe: components[0], default: SCNNode()], from: components[1])
         }
     }
-
+    
+    //MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_charts_data"])
@@ -413,33 +440,5 @@ public class ExternalRobotModelController: RobotModelController
         }
         
         return nil
-    }
-
-    //MARK: Special
-    override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
-    {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
-        else
-        {
-            return
-        }
-
-        //Split the output into lines
-        let lines = output.split(separator: "\n").map { String($0) }
-
-        for line in lines
-        {
-            //Split the line by space to separate node name and action string
-            let components = line.split(separator: " ", maxSplits: 1).map { String($0) }
-            
-            //Ensure there are two components: the node name and the action string
-            guard components.count == 2
-            else
-            {
-                continue
-            }
-            
-            set_position(for: nodes[safe: components[0], default: SCNNode()], from: components[1])
-        }
     }
 }

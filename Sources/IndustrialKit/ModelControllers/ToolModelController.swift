@@ -53,7 +53,7 @@ open class ToolModelController: ModelController
 //MARK: - External Model Controller
 public class ExternalToolModelController: ToolModelController
 {
-    //MARK: - Init functions
+    //MARK: Init functions
     ///An external module name.
     public var module_name: String
     
@@ -68,7 +68,7 @@ public class ExternalToolModelController: ToolModelController
         self.external_nodes_names = nodes_names
     }
     
-    //MARK: - Parameters import
+    //MARK: Parameters import
     override open var nodes_names: [String]
     {
         return external_nodes_names
@@ -76,8 +76,49 @@ public class ExternalToolModelController: ToolModelController
     
     public var external_nodes_names = [String]()
     
-    //MARK: - Code functions
-    //MARK: Base
+    //MARK: Performing
+    open override func nodes_perform(code: Int, completion: @escaping () -> Void)
+    {
+        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["nodes_perform", "\(code)"])
+        else
+        {
+            return
+        }
+
+        //Split the output into lines
+        let lines = output.split(separator: "\n").map { String($0) }
+        
+        var completed = [Bool](repeating: false, count: lines.count)
+
+        for i in 0..<lines.count //line in lines
+        {
+            //Split output into components
+            let components: [String] = lines[i].split(separator: " ").map { String($0) }
+
+            //Check that output contains exactly two parameters
+            guard components.count == 2
+            else
+            {
+                return
+            }
+            
+            if let action = string_to_action(from: components[1])
+            {
+                nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: { local_completion(index: i) })
+            }
+        }
+        
+        func local_completion(index: Int)
+        {
+            completed[index] = true
+            
+            if completed.allSatisfy({ $0 == true })
+            {
+                completion()
+            }
+        }
+    }
+    
     open override func reset_nodes()
     {
         guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["reset_nodes"])
@@ -134,7 +175,8 @@ public class ExternalToolModelController: ToolModelController
             nodes[safe: components[0], default: SCNNode()].runAction(action)
         }*/
     }
-
+    
+    //MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_charts_data"])
@@ -197,48 +239,5 @@ public class ExternalToolModelController: ToolModelController
         }
         
         return nil
-    }
-
-    //MARK: Special
-    open override func nodes_perform(code: Int, completion: @escaping () -> Void)
-    {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["nodes_perform", "\(code)"])
-        else
-        {
-            return
-        }
-
-        //Split the output into lines
-        let lines = output.split(separator: "\n").map { String($0) }
-        
-        var completed = [Bool](repeating: false, count: lines.count)
-
-        for i in 0..<lines.count //line in lines
-        {
-            //Split output into components
-            let components: [String] = lines[i].split(separator: " ").map { String($0) }
-
-            //Check that output contains exactly two parameters
-            guard components.count == 2
-            else
-            {
-                return
-            }
-            
-            if let action = string_to_action(from: components[1])
-            {
-                nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: { local_completion(index: i) })
-            }
-        }
-        
-        func local_completion(index: Int)
-        {
-            completed[index] = true
-            
-            if completed.allSatisfy({ $0 == true })
-            {
-                completion()
-            }
-        }
     }
 }

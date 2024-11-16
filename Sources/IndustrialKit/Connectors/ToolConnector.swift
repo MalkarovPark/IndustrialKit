@@ -68,7 +68,7 @@ open class ToolConnector: WorkspaceObjectConnector
 //MARK: - External Connector
 public class ExternalToolConnector: ToolConnector
 {
-    //MARK: - Init functions
+    //MARK: Init functions
     ///An external module name
     public var module_name: String
     
@@ -89,7 +89,7 @@ public class ExternalToolConnector: ToolConnector
         return [ConnectionParameter]()
     }
     
-    //MARK: - Parameters import
+    //MARK: Parameters import
     override open var parameters: [ConnectionParameter]
     {
         return external_parameters
@@ -97,48 +97,36 @@ public class ExternalToolConnector: ToolConnector
     
     public var external_parameters = [ConnectionParameter]()
     
-    //MARK: - Connection
+    //MARK: Connection
     override open func connection_process() async -> Bool
     {
         //Perform connection
-        if let parameters = connection_parameters_values
-        {
-            guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["connect"] + (parameters).map { "\($0)" })
-            else
-            {
-                self.output += "Couldn't perform external exec"
-                
-                return false
-            }
-        }
-        else
-        {
-            guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["connect"])
-            else
-            {
-                if output != String()
-                {
-                    output += "\n"
-                }
-                
-                self.output += "Couldn't perform external exec"
-                
-                return false
-            }
-        }
-        
-        //Get output
-        if let range = output.range(of: "\"([^\"]*)\"", options: .regularExpression)
+        let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
+
+        guard let terminal_output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: arguments) else
         {
             if output != String()
             {
                 output += "\n"
             }
             
-            self.output += String(output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+            self.output += "Couldn't perform external code"
+            return false
         }
         
-        if output.contains("<done>")
+        //Get output
+        if let range = terminal_output.range(of: "\"([^\"]*)\"", options: .regularExpression)
+        {
+            if output != String()
+            {
+                output += "\n"
+            }
+            
+            output += String(terminal_output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+        }
+        
+        //Get connection result
+        if terminal_output.contains("<done>")
         {
             return true
         }
@@ -150,16 +138,16 @@ public class ExternalToolConnector: ToolConnector
     
     override open func disconnection_process() async
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
+        guard let terminal_output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
         else
         {
-            self.output += "Couldn't perform external exec"
+            self.output += "Couldn't perform external code"
             
             return
         }
     }
     
-    //MARK: - Performing
+    //MARK: Performing
     open override func perform(code: Int, completion: @escaping () -> Void)
     {
         guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["perform", "\(code)"])
@@ -178,7 +166,7 @@ public class ExternalToolConnector: ToolConnector
         }
     }
     
-    //MARK: - Statistics
+    //MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_charts_data"])
@@ -243,7 +231,7 @@ public class ExternalToolConnector: ToolConnector
         return nil
     }
     
-    //MARK: - Modeling
+    //MARK: Modeling
     open override func sync_model()
     {
         guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["sync_model"])
@@ -255,8 +243,6 @@ public class ExternalToolConnector: ToolConnector
         //Split the output into lines
         let lines = output.split(separator: "\n").map { String($0) }
         
-        var completed = [Bool](repeating: false, count: lines.count)
-
         for i in 0..<lines.count //line in lines
         {
             //Split output into components
@@ -271,17 +257,7 @@ public class ExternalToolConnector: ToolConnector
             
             if let action = string_to_action(from: components[1])
             {
-                model_controller?.nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: { local_completion(index: i) })
-            }
-        }
-        
-        func local_completion(index: Int)
-        {
-            completed[index] = true
-            
-            if completed.allSatisfy({ $0 == true })
-            {
-                //completion()
+                model_controller?.nodes[safe: components[0], default: SCNNode()].runAction(action)
             }
         }
     }
