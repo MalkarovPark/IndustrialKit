@@ -45,6 +45,7 @@ public struct AddNewView: View
             {
                 name_perform()
             }
+            .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
         }
         .padding()
