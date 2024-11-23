@@ -49,6 +49,9 @@ public struct AddNewView: View
             .keyboardShortcut(.defaultAction)
         }
         .padding()
+        #if os(iOS)
+        .presentationDetents([.height(96)])
+        #endif
     }
     
     private func name_perform()
