@@ -296,6 +296,7 @@ open class RobotModelController: ModelController
     }
 }
 
+#if os(macOS)
 //MARK: - External Controller
 public class ExternalRobotModelController: RobotModelController
 {
@@ -442,3 +443,4 @@ public class ExternalRobotModelController: RobotModelController
         return nil
     }
 }
+#endif

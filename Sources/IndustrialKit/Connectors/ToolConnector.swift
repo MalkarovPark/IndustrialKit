@@ -65,6 +65,7 @@ open class ToolConnector: WorkspaceObjectConnector
     }
 }
 
+#if os(macOS)
 //MARK: - External Connector
 public class ExternalToolConnector: ToolConnector
 {
@@ -262,3 +263,4 @@ public class ExternalToolConnector: ToolConnector
         }
     }
 }
+#endif

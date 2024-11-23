@@ -183,7 +183,9 @@ open class RobotModule: IndustrialModule
         }
         else
         {
+            #if os(macOS)
             model_controller = ExternalRobotModelController(name, package_url: package_url, nodes_names: external_module_info?.nodes_names ?? [String]())
+            #endif
         }
         
         //Set connector
@@ -196,7 +198,9 @@ open class RobotModule: IndustrialModule
         }
         else
         {
+            #if os(macOS)
             connector = ExternalRobotConnector(name, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
+            #endif
         }
     }
     

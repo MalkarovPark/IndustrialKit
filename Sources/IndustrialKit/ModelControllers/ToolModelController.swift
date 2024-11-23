@@ -50,6 +50,7 @@ open class ToolModelController: ModelController
     public var info_output: [Float]?
 }
 
+#if os(macOS)
 //MARK: - External Model Controller
 public class ExternalToolModelController: ToolModelController
 {
@@ -241,3 +242,4 @@ public class ExternalToolModelController: ToolModelController
         return nil
     }
 }
+#endif

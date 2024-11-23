@@ -94,6 +94,7 @@ open class RobotConnector: WorkspaceObjectConnector
     }
 }
 
+#if os(macOS)
 //MARK: - External Connector
 public class ExternalRobotConnector: RobotConnector
 {
@@ -285,3 +286,4 @@ public class ExternalRobotConnector: RobotConnector
         }
     }
 }
+#endif

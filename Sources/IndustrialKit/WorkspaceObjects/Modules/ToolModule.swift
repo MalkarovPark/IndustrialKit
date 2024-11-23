@@ -214,7 +214,9 @@ open class ToolModule: IndustrialModule
         }
         else
         {
+            #if os(macOS)
             model_controller = ExternalToolModelController(name, package_url: package_url, nodes_names: external_module_info?.nodes_names ?? [String]())
+            #endif
         }
         
         //Set connector from internal module
@@ -227,7 +229,9 @@ open class ToolModule: IndustrialModule
         }
         else
         {
+            #if os(macOS)
             connector = ExternalToolConnector(name, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
+            #endif
         }
     }
     
