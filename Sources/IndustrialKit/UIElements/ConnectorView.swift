@@ -43,6 +43,7 @@ public struct ConnectorView: View
                         }
                     }
                 }
+                .listStyle(.plain)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .modifier(ViewBorderer())
                 .overlay(alignment: .center)
@@ -79,7 +80,7 @@ public struct ConnectorView: View
                         Image(systemName: "text.append")
                     }
                     #if os(iOS)
-                    .buttonStyle(.bordered)
+                    .modifier(ButtonBorderer())
                     #elseif os(visionOS)
                     .buttonBorderShape(.circle)
                     #endif
@@ -93,7 +94,7 @@ public struct ConnectorView: View
                         Image(systemName: "eraser")
                     }
                     #if os(iOS)
-                    .buttonStyle(.bordered)
+                    .modifier(ButtonBorderer())
                     #elseif os(visionOS)
                     .buttonBorderShape(.circle)
                     #endif
