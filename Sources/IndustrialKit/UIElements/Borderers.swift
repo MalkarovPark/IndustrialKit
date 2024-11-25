@@ -71,7 +71,7 @@ public struct ButtonBorderer: ViewModifier
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .background(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 7.5, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous)) //(cornerRadius: 7.5, style: .continuous))
             .shadow(radius: 1)
             .onLongPressGesture(perform: {}, onPressingChanged:
             { pressing in

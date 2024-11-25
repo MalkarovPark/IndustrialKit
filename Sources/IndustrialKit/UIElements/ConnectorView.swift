@@ -43,17 +43,19 @@ public struct ConnectorView: View
                         }
                     }
                 }
-                .listStyle(.plain)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .modifier(ViewBorderer())
-                .overlay(alignment: .center)
+                
+                Spacer()
+            }
+            .listStyle(.plain)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .modifier(ViewBorderer())
+            .overlay(alignment: .center)
+            {
+                if !(connector.parameters.count > 0)
                 {
-                    if !(connector.parameters.count > 0)
-                    {
-                        Text("No connection parameters")
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
+                    Text("No connection parameters")
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .controlSize(.regular)
@@ -101,7 +103,9 @@ public struct ConnectorView: View
                     .toggleStyle(.button)
                     .padding(.horizontal, 8)
                 }
+                #if !os(iOS)
                 .controlSize(.large)
+                #endif
             }
             .frame(maxWidth: .infinity, maxHeight: 112)
             .backgroundStyle(.white)
