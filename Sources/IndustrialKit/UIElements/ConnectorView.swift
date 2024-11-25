@@ -31,8 +31,13 @@ public struct ConnectorView: View
     {
         VStack(spacing: 0)
         {
-            VStack(spacing: 0)
+            ZStack
             {
+                #if os(iOS)
+                Rectangle()
+                    .foregroundStyle(.white)
+                #endif
+                
                 List
                 {
                     if connector.parameters.count > 0
@@ -43,10 +48,8 @@ public struct ConnectorView: View
                         }
                     }
                 }
-                
-                Spacer()
+                .listStyle(.plain)
             }
-            .listStyle(.plain)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .modifier(ViewBorderer())
             .overlay(alignment: .center)
