@@ -110,7 +110,7 @@ public class Robot: WorkspaceObject
     ///Imported external robot modules.
     public static var external_modules = [RobotModule]()
     
-    public override func import_module_by_name(_ name: String, is_internal: Bool = true)
+    public override func module_import_by_name(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Robot.internal_modules : Robot.external_modules
         

@@ -1346,7 +1346,7 @@ public class Workspace: ObservableObject
         
         func changer_element_check(_ element: ChangerModifierElement)
         {
-            element.import_module_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
+            element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
             
             /*if !Changer.internal_modules_list.contains(element.module_name)
             {

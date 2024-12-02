@@ -102,7 +102,7 @@ public class Tool: WorkspaceObject
     ///Imported external tool modules.
     public static var external_modules = [ToolModule]()
     
-    public override func import_module_by_name(_ name: String, is_internal: Bool = true)
+    public override func module_import_by_name(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Tool.internal_modules : Tool.external_modules
         

@@ -261,7 +261,7 @@ public class ChangerModifierElement: ModifierElement
     {
         module_name = element_struct.data[0]
         
-        import_module_by_name(module_name, is_internal: is_internal_module)
+        module_import_by_name(module_name, is_internal: is_internal_module)
     }
     
     public override var file_info: WorkspaceProgramElementStruct
@@ -303,7 +303,7 @@ public class ChangerModifierElement: ModifierElement
         - name: An installed module name.
         - is_internal: Is module internal or external.
      */
-    public func import_module_by_name(_ name: String, is_internal: Bool = true)
+    public func module_import_by_name(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Changer.internal_modules : Changer.external_modules
         
