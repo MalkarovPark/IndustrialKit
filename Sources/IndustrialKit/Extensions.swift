@@ -227,7 +227,7 @@ extension UIColor
 }
 
 //MARK: - Deep SCNNode clone
-extension SCNNode
+public extension SCNNode
 {
     func deep_clone() -> SCNNode
     {
