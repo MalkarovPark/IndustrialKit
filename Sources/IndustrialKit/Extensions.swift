@@ -135,7 +135,7 @@ public extension Dictionary where Key == String
         return self[key] as? SCNNode ?? defaultValue
     }
     
-    subscript(safeNode key: String) -> SCNNode
+    subscript(safe_node key: String) -> SCNNode
     {
         return self[key] as? SCNNode ?? SCNNode()
     }
