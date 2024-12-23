@@ -1484,10 +1484,8 @@ public class Workspace: ObservableObject
         //Performers
         case let performer_element as RobotPerformerElement:
             perform_robot(by: performer_element, completion: completion)
-            completion()
         case let performer_element as ToolPerformerElement:
             perform_tool(by: performer_element, completion: completion)
-            completion()
         //Modifiers
         case let mover_element as MoverModifierElement:
             move(by: mover_element)
