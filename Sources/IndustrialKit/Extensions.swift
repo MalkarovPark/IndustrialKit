@@ -130,7 +130,7 @@ extension Array where Element == Float
 
 public extension Dictionary where Key == String
 {
-    subscript(safeNode key: String, default defaultValue: SCNNode) -> SCNNode
+    subscript(safe_node key: String, default defaultValue: SCNNode) -> SCNNode
     {
         return self[key] as? SCNNode ?? defaultValue
     }
