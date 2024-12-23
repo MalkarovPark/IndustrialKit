@@ -50,7 +50,7 @@ public class PositionPoint: Identifiable, Codable, Hashable
         - move_type: A movement to point type.
         - move_speed: A movement to point speed.
      */
-    public init(x: Float = 0, y: Float = 0, z: Float = 0, r: Float = 0, p: Float = 0, w: Float = 0, move_type: MoveType = .linear, move_speed: Float = 100)
+    public init(x: Float = 0, y: Float = 0, z: Float = 0, r: Float = 0, p: Float = 0, w: Float = 0, move_speed: Float = 100, move_type: MoveType = .linear)
     {
         self.x = x
         self.y = y
@@ -60,8 +60,8 @@ public class PositionPoint: Identifiable, Codable, Hashable
         self.p = p
         self.w = w
         
-        self.move_type = move_type
         self.move_speed = move_speed
+        self.move_type = move_type
     }
 }
 

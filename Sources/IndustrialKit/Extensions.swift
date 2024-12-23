@@ -120,20 +120,26 @@ extension Array where Element == Float
     }
 }
 
+/*public extension Dictionary where Key == String
+{
+    subscript<T>(safe key: String, default defaultValue: T) -> T
+    {
+        return self[key] as? T ?? defaultValue
+    }
+}*/
+
 public extension Dictionary where Key == String
 {
     subscript<T>(safe key: String, default defaultValue: T) -> T
     {
         return self[key] as? T ?? defaultValue
     }
-}
-/*public extension Dictionary where Key == String, Value == SCNNode
-{
-    subscript(safe key: String) -> SCNNode
+    
+    subscript<T>(safe key: String) -> T where T: ExpressibleByNilLiteral
     {
-        return self[key] ?? SCNNode()
+        return self[key] as? T ?? T(nilLiteral: ())
     }
-}*/
+}
 
 //MARK: - Color by hex import
 extension Color

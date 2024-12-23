@@ -1474,45 +1474,45 @@ public class Workspace: ObservableObject
     ///Selects and performs program element by workspace.
     private func perform_next_element()
     {
-        let element = selected_program_element
-        
+        perform(selected_program_element, completion: select_new_element)
+    }
+    
+    public func perform(_ element: WorkspaceProgramElement, completion: @escaping () -> Void)
+    {
         switch element
         {
+        //Performers
         case let performer_element as RobotPerformerElement:
-            perform_robot_by(element: performer_element)
+            perform_robot(by: performer_element, completion: completion)
         case let performer_element as ToolPerformerElement:
-            perform_tool_by(element: performer_element)
+            perform_tool(by: performer_element, completion: completion)
+        //Modifiers
         case let mover_element as MoverModifierElement:
-            move_by(element: mover_element)
-            select_new_element()
+            move(by: mover_element)
         case let write_element as WriterModifierElement:
-            write_by(element: write_element)
-            select_new_element()
+            write(by: write_element)
         case let math_element as MathModifierElement:
-            math_by(element: math_element)
-            select_new_element()
+            math(by: math_element)
         case let changer_element as ChangerModifierElement:
             let registers_count = registers.count
             changer_element.change(&registers)
             check_registers(registers_count)
-            select_new_element()
         case let observer_element as ObserverModifierElement:
-            observe_by(element: observer_element)
-            select_new_element()
+            observe(by: observer_element)
         case is CleanerModifierElement:
             clear_registers()
-            select_new_element()
+        //Logic
         case let jump_element as JumpLogicElement:
-            jump_by(element: jump_element)
-            select_new_element()
+            jump(by: jump_element)
         case let comparator_element as ComparatorLogicElement:
-            compare_by(element: comparator_element)
-            select_new_element()
+            compare(by: comparator_element)
         case is MarkLogicElement:
-            select_new_element()
+            completion()
         default:
-            select_new_element()
+            completion()
         }
+        
+        completion()
         
         func check_registers(_ reference_count: Int)
         {
@@ -1665,7 +1665,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - element: A robot performer element.
      */
-    private func perform_robot_by(element: RobotPerformerElement)
+    private func perform_robot(by element: RobotPerformerElement, completion: @escaping () -> Void)
     {
         select_robot(name: element.object_name)
         deselect_tool()
@@ -1683,12 +1683,12 @@ public class Workspace: ObservableObject
                     selected_robot.select_program(index: Int(registers[safe: element.program_index] ?? 0))
                 }
                 
-                selected_robot.finish_handler = self.select_new_element
+                selected_robot.finish_handler = completion
                 selected_robot.start_pause_moving()
             }
             else
             {
-                select_new_element()
+                completion()
             }
         }
         else
@@ -1706,7 +1706,7 @@ public class Workspace: ObservableObject
             selected_robot.move_to(point: target_point)
             {
                 self.selected_robot.pointer_position_to_robot()
-                self.select_new_element()
+                completion()
             }
         }
     }
@@ -1716,7 +1716,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - element: A tool performer element.
      */
-    private func perform_tool_by(element: ToolPerformerElement)
+    private func perform_tool(by element: ToolPerformerElement, completion: @escaping () -> Void)
     {
         select_tool(name: element.object_name)
         deselect_robot()
@@ -1734,12 +1734,12 @@ public class Workspace: ObservableObject
                     selected_tool.select_program(index: Int(registers[safe: element.program_index] ?? 0))
                 }
                 
-                selected_tool.finish_handler = self.select_new_element
+                selected_tool.finish_handler = completion
                 selected_tool.start_pause_performing()
             }
             else
             {
-                select_new_element()
+                completion()
             }
         }
         else
@@ -1747,7 +1747,7 @@ public class Workspace: ObservableObject
             //Single tool perform
             selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
             {
-                self.select_new_element()
+                completion()
             }
         }
     }
@@ -1757,7 +1757,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - element: A mover modifier element.
      */
-    private func move_by(element: MoverModifierElement)
+    private func move(by element: MoverModifierElement)
     {
         registers[safe: element.to_index] = registers[safe: element.from_index]
         if element.move_type == .move
@@ -1771,12 +1771,12 @@ public class Workspace: ObservableObject
      - Parameters:
         - element: A write modifier element.
      */
-    private func write_by(element: WriterModifierElement)
+    private func write(by element: WriterModifierElement)
     {
         registers[safe: element.to_index] = element.value
     }
     
-    private func math_by(element: MathModifierElement)
+    private func math(by element: MathModifierElement)
     {
         element.operation.operation(&registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
     }
@@ -1786,7 +1786,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - element: An observable modifier element.
      */
-    private func observe_by(element: ObserverModifierElement)
+    private func observe(by element: ObserverModifierElement)
     {
         var info_output = [Float]()
         
@@ -1827,7 +1827,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - index: An element index to jump.
      */
-    private func jump_by(element: JumpLogicElement)
+    private func jump(by element: JumpLogicElement)
     {
         selected_element_index = element.target_element_index
     }
@@ -1837,7 +1837,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - index: An element index to jump.
      */
-    private func compare_by(element: ComparatorLogicElement)
+    private func compare(by element: ComparatorLogicElement)
     {
         if element.compare_type.compare(registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
         {
