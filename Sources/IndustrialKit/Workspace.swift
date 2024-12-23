@@ -1484,35 +1484,43 @@ public class Workspace: ObservableObject
         //Performers
         case let performer_element as RobotPerformerElement:
             perform_robot(by: performer_element, completion: completion)
+            completion()
         case let performer_element as ToolPerformerElement:
             perform_tool(by: performer_element, completion: completion)
+            completion()
         //Modifiers
         case let mover_element as MoverModifierElement:
             move(by: mover_element)
+            completion()
         case let write_element as WriterModifierElement:
             write(by: write_element)
+            completion()
         case let math_element as MathModifierElement:
             math(by: math_element)
+            completion()
         case let changer_element as ChangerModifierElement:
             let registers_count = registers.count
             changer_element.change(&registers)
             check_registers(registers_count)
+            completion()
         case let observer_element as ObserverModifierElement:
             observe(by: observer_element)
+            completion()
         case is CleanerModifierElement:
             clear_registers()
+            completion()
         //Logic
         case let jump_element as JumpLogicElement:
             jump(by: jump_element)
+            completion()
         case let comparator_element as ComparatorLogicElement:
             compare(by: comparator_element)
+            completion()
         case is MarkLogicElement:
             completion()
         default:
             completion()
         }
-        
-        completion()
         
         func check_registers(_ reference_count: Int)
         {
