@@ -327,7 +327,7 @@ public extension View
 }
 
 //MARK: - Code correction functions
-extension String
+public extension String
 {
     var code_correct_format: String
     {
