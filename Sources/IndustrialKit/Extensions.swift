@@ -325,3 +325,13 @@ public extension View
         }
     }
 }
+
+//MARK: - Code correction functions
+extension String
+{
+    var code_correct_format: String
+    {
+        let correctedName = self.replacingOccurrences(of: " ", with: "_")
+        return correctedName.prefix(1).rangeOfCharacter(from: .decimalDigits) != nil ? "_\(correctedName)" : correctedName
+    }
+}

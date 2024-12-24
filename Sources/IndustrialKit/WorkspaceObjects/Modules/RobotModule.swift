@@ -49,6 +49,8 @@ open class RobotModule: IndustrialModule
         return ["Controller": String(), "Connector": String()]
     }
     
+    open override var extension_name: String { "robot" }
+    
     //MARK: - Components
     ///A model controller of the robot model.
     public var model_controller = RobotModelController()

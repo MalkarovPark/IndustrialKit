@@ -1477,6 +1477,12 @@ public class Workspace: ObservableObject
         perform(selected_program_element, completion: select_new_element)
     }
     
+    /**
+     Performs program element on workspace.
+     
+     - Parameters:
+        - element: A workspace program element.
+     */
     public func perform(_ element: WorkspaceProgramElement, completion: @escaping () -> Void)
     {
         switch element

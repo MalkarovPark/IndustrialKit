@@ -37,6 +37,8 @@ open class PartModule: IndustrialModule
         node = external_node
     }
     
+    open override var extension_name: String { "part" }
+    
     //MARK: - Import functions
     open override var package_url: URL
     {

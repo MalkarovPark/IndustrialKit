@@ -33,6 +33,8 @@ open class ChangerModule: IndustrialModule
         #endif
     }
     
+    open override var extension_name: String { "changer" }
+    
     //MARK: - Import functions
     open override var package_url: URL
     {

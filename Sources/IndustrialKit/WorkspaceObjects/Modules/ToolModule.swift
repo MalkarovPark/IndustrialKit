@@ -52,6 +52,8 @@ open class ToolModule: IndustrialModule
         }
     }
     
+    open override var extension_name: String { "changer" }
+    
     //MARK: - Designer functions
     open override var default_code_items: [String: String]
     {

@@ -169,6 +169,9 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         //import_external_node(external_scene_url)
     }*/
     
+    //MARK: - Listing elements
+    open var class_name: String { name.code_correct_format } ///A class name of module code.
+    
     //MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
