@@ -170,7 +170,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }*/
     
     //MARK: - Listing elements
-    open var class_name: String { name.code_correct_format } ///A class name of module code.
     open var scene_code_name: String { (main_scene_name ?? "\(name).scn").code_correct_format } ///A class SCNScene variable name.
     
     //MARK: - Codable handling
