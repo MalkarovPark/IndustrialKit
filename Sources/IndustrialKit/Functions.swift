@@ -217,7 +217,7 @@ func clone_codable<T: Codable>(_ object: T) -> T?
  - Returns: Command text output.
  */
 @discardableResult
-func perform_terminal_command(_ command: String) throws -> String?
+public func perform_terminal_command(_ command: String) throws -> String?
 {
     let task = Process()
     let pipe = Pipe()
@@ -244,7 +244,7 @@ func perform_terminal_command(_ command: String) throws -> String?
  
  - Returns: Terminal text output.
  */
-func perform_code(at url: URL, with arguments: [String]) -> String?
+public func perform_code(at url: URL, with arguments: [String]) -> String?
 {
     let command = "'\(url.path)' \(arguments.joined(separator: " "))" //Combine file path and arguments into one string
     
@@ -261,7 +261,7 @@ func perform_code(at url: URL, with arguments: [String]) -> String?
  
  - Returns: An instance of the specified type if the string can be successfully parsed; otherwise, `nil`.
  */
-func string_to_codable<T: Codable>(from string: String) -> T?
+public func string_to_codable<T: Codable>(from string: String) -> T?
 {
     //Convert the string to Data
     guard let jsonData = string.data(using: .utf8)
@@ -292,7 +292,7 @@ func string_to_codable<T: Codable>(from string: String) -> T?
  
  - Returns: A `SCNAction` if the string can be successfully parsed, otherwise `nil`.
  */
-func string_to_action(from string: String) -> SCNAction?
+public func string_to_action(from string: String) -> SCNAction?
 {
     let components = string.split(separator: "(")
     
@@ -403,7 +403,7 @@ func string_to_action(from string: String) -> SCNAction?
  
  > Rotation is specified in degrees.
  */
-func set_position(for node: SCNNode, from string: String)
+public func set_position(for node: SCNNode, from string: String)
 {
     let components = string.split(separator: "(")
     
