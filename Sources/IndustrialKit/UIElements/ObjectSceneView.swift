@@ -98,7 +98,11 @@ public struct ObjectSceneView: UIViewRepresentable
     {
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
-        scene_view.scene?.background.contents = UIColor.clear
+        
+        if transparent
+        {
+            scene_view.scene?.background.contents = UIColor.clear
+        }
         
         if inited_with_node
         {
