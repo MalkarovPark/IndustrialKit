@@ -121,7 +121,7 @@ public struct ObjectSceneView: UIViewRepresentable
             #endif
         }
         
-        on_init(scene_view)
+        //on_init(scene_view)
         
         return scene_view
     }
