@@ -113,7 +113,7 @@ public struct ObjectSceneView: UIViewRepresentable
             //scene_view.scene?.rootNode.addChildNode(node.clone())
         }
         
-        on_init(scene_view)
+        //on_init(scene_view)
         
         if inited_with_scene
         {
