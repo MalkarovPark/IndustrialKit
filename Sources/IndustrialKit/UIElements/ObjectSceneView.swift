@@ -106,6 +106,8 @@ public struct ObjectSceneView: UIViewRepresentable
             #endif
         }
         
+        on_init(scene_view)
+        
         return scene_view
     }
     
@@ -136,8 +138,6 @@ public struct ObjectSceneView: UIViewRepresentable
             scene_view.pointOfView = camera_node
         }*/
         
-        on_init(scene_view)
-        
         return scn_scene(context: context)
     }
     #else
@@ -151,8 +151,6 @@ public struct ObjectSceneView: UIViewRepresentable
         scene_view.autoenablesDefaultLighting = true
         
         scene_view.backgroundColor = UIColor.clear
-        
-        on_init(scene_view)
         
         return scn_scene(context: context)
     }
