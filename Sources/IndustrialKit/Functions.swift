@@ -236,6 +236,57 @@ public func perform_terminal_command(_ command: String) throws -> String?
 }
 
 /**
+ Executes a terminal command and provides output asynchronously.
+
+ - Parameters:
+   - command: The terminal command.
+   - output_handler: A closure that is called with each chunk of output (stdout and stderr) as a String.
+        This closure is called multiple times, asynchronously, as the command produces output.
+                 
+ - Throws: An NSError with domain "TerminalCommandError" if the command exits with a non-zero status code.
+        The error's userInfo contains the localized description of the error and the termination status.
+ */
+public func perform_terminal_command(_ command: String,  output_handler: @escaping (String) -> Void) throws
+{
+    let task = Process()
+    let pipe = Pipe()
+    
+    task.standardOutput = pipe
+    task.standardError = pipe
+    task.arguments = ["-c", command]
+    task.executableURL = URL(fileURLWithPath: "/bin/zsh")
+    task.standardInput = nil
+    
+    let fileHandle = pipe.fileHandleForReading
+    
+    task.launch()
+    
+    
+    fileHandle.readabilityHandler =
+    { fileHandle in
+        let data = fileHandle.availableData
+        if data.isEmpty
+        {
+            return
+        }
+        if let output = String(data: data, encoding: .utf8)
+        {
+            output_handler(output)
+        }
+    }
+    
+    task.waitUntilExit()
+    
+    
+    if task.terminationStatus != 0
+    {
+        throw NSError(domain: "TerminalCommandError", code: Int(task.terminationStatus), userInfo: [NSLocalizedDescriptionKey: "Command failed with status \(task.terminationStatus)"])
+    }
+    
+    fileHandle.readabilityHandler = nil
+}
+
+/**
  Performs terminal app.
  
  - Parameters:
