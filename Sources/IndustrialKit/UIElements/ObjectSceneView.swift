@@ -26,8 +26,8 @@ public struct ObjectSceneView: UIViewRepresentable
     //MARK: Init functions
     public init(node: SCNNode,
                 transparent: Bool = true,
-                on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
+                on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
         self.viewed_scene = SCNScene()
@@ -54,8 +54,8 @@ public struct ObjectSceneView: UIViewRepresentable
     
     public init(scene: SCNScene,
                 transparent: Bool = true,
-                on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
+                on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
         self.viewed_scene = scene
@@ -73,8 +73,8 @@ public struct ObjectSceneView: UIViewRepresentable
     public init(scene: SCNScene,
                 node: SCNNode,
                 transparent: Bool = true,
-                on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
+                on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
         self.viewed_scene = scene
