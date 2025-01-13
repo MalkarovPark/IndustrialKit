@@ -18,14 +18,11 @@ public struct ObjectSceneView: UIViewRepresentable
     private let on_render: ((_ scene_view: SCNView) -> Void)
     private let on_tap: ((_ recognizer: UITapGestureRecognizer, _ scene_view: SCNView) -> Void)
     
-    private var transparent: Bool
-    
     private var inited_with_scene = false
     private var inited_with_node = false
     
     //MARK: Init functions
     public init(node: SCNNode,
-                transparent: Bool = true,
                 on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
@@ -36,8 +33,6 @@ public struct ObjectSceneView: UIViewRepresentable
         self.on_init = on_init
         self.on_render = on_render
         self.on_tap = on_tap
-        
-        self.transparent = transparent
         
         self.inited_with_node = true
     }
@@ -53,7 +48,6 @@ public struct ObjectSceneView: UIViewRepresentable
     }*/
     
     public init(scene: SCNScene,
-                transparent: Bool = true,
                 on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
@@ -65,14 +59,11 @@ public struct ObjectSceneView: UIViewRepresentable
         self.on_render = on_render
         self.on_tap = on_tap
         
-        self.transparent = transparent
-        
         self.inited_with_scene = true
     }
     
     public init(scene: SCNScene,
                 node: SCNNode,
-                transparent: Bool = true,
                 on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
@@ -83,8 +74,6 @@ public struct ObjectSceneView: UIViewRepresentable
         self.on_init = on_init
         self.on_render = on_render
         self.on_tap = on_tap
-        
-        self.transparent = transparent
         
         self.inited_with_node = true
         self.inited_with_scene = true
@@ -98,11 +87,7 @@ public struct ObjectSceneView: UIViewRepresentable
     {
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
-        
-        if transparent
-        {
-            scene_view.scene?.background.contents = UIColor.clear
-        }
+        scene_view.scene?.background.contents = UIColor.clear
         
         if inited_with_node
         {
@@ -120,8 +105,6 @@ public struct ObjectSceneView: UIViewRepresentable
             base_camera_position_node.rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
             #endif
         }
-        
-        //on_init(scene_view)
         
         return scene_view
     }
@@ -142,10 +125,7 @@ public struct ObjectSceneView: UIViewRepresentable
         scene_view.rendersContinuously = true
         scene_view.autoenablesDefaultLighting = true
         
-        if transparent
-        {
-            scene_view.backgroundColor = UIColor.clear
-        }
+        scene_view.backgroundColor = UIColor.clear
         
         /*if !inited_with_scene
         {
@@ -155,6 +135,8 @@ public struct ObjectSceneView: UIViewRepresentable
             viewed_scene.rootNode.addChildNode(camera_node)
             scene_view.pointOfView = camera_node
         }*/
+        
+        on_init(scene_view)
         
         return scn_scene(context: context)
     }
@@ -168,10 +150,9 @@ public struct ObjectSceneView: UIViewRepresentable
         scene_view.rendersContinuously = true
         scene_view.autoenablesDefaultLighting = true
         
-        if transparent
-        {
-            scene_view.backgroundColor = UIColor.clear
-        }
+        scene_view.backgroundColor = UIColor.clear
+        
+        on_init(scene_view)
         
         return scn_scene(context: context)
     }
