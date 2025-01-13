@@ -262,7 +262,7 @@ open class WorkspaceObjectConnector: ObservableObject
     ///A flag of update model avalibility.
     @Published public var update_model = false
     
-    ///Synchronizes model by real device state.
+    ///Synchronizes model with real device state.
     open func sync_model()
     {
         
