@@ -99,10 +99,7 @@ public struct ObjectSceneView: UIViewRepresentable
         scene_view.scene = viewed_scene
         scene_view.delegate = context.coordinator
         
-        if transparent
-        {
-            scene_view.scene?.background.contents = UIColor.clear
-        }
+        scene_view.scene?.background.contents = UIColor.clear
         
         if inited_with_node
         {
@@ -113,8 +110,6 @@ public struct ObjectSceneView: UIViewRepresentable
             //scene_view.scene?.rootNode.addChildNode(node.clone())
         }
         
-        //on_init(scene_view)
-        
         if inited_with_scene
         {
             #if os(macOS)
@@ -122,6 +117,8 @@ public struct ObjectSceneView: UIViewRepresentable
             base_camera_position_node.rotation = scene_view.pointOfView?.rotation ?? SCNVector4Zero
             #endif
         }
+        
+        on_init(scene_view)
         
         return scene_view
     }
@@ -142,10 +139,7 @@ public struct ObjectSceneView: UIViewRepresentable
         scene_view.rendersContinuously = true
         scene_view.autoenablesDefaultLighting = true
         
-        if transparent
-        {
-            scene_view.backgroundColor = UIColor.clear
-        }
+        scene_view.backgroundColor = UIColor.clear
         
         /*if !inited_with_scene
         {
@@ -168,10 +162,7 @@ public struct ObjectSceneView: UIViewRepresentable
         scene_view.rendersContinuously = true
         scene_view.autoenablesDefaultLighting = true
         
-        if transparent
-        {
-            scene_view.backgroundColor = UIColor.clear
-        }
+        scene_view.backgroundColor = UIColor.clear
         
         return scn_scene(context: context)
     }
