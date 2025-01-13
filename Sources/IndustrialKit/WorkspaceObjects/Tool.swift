@@ -319,9 +319,9 @@ public class Tool: WorkspaceObject
     }
     
     /**
-     Updates tool statistics and model by current pointer position.
+     Updates tool statistics and sync model by real device state.
      
-     > Placed in the public protection level for normal synchronization in SceneKit.
+     > Has the public protection level for provide external synchronization. A common practice is to it put in a *render* func of **SceneKit** Scene.
      */
     public func update()
     {

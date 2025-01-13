@@ -100,6 +100,29 @@ public class Workspace: ObservableObject
         }
     }
     
+    /**
+     Updates state of the current workspace elements.
+     
+     Here, various continuous processes are carried out in parallel – updating statistical data from real and virtual RTK devices, inverse kinematics of robot manipulators, etc.
+     
+     > Has the public protection level for provide external synchronization.
+     */
+    public func update()
+    {
+        switch selected_object_type
+        {
+        case .robot:
+            selected_robot.update()
+        case .tool:
+            selected_tool.update()
+        case .part:
+            break
+        case .none:
+            break
+        }
+    }
+    
+    //MARK: - Visual edit handling
     ///Sets new pointer position by selected workspace object.
     public func update_pointer()
     {

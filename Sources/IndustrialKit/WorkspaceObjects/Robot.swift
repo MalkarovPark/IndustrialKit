@@ -417,7 +417,7 @@ public class Robot: WorkspaceObject
     /**
      Updates robot statistics and model by current pointer position.
      
-     > Placed in the public protection level for normal synchronization in SceneKit.
+     > Has the public protection level for provide external synchronization. A common practice is to it put in a *render* func of **SceneKit** Scene.
      */
     public func update()
     {
