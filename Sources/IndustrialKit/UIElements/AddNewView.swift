@@ -45,7 +45,6 @@ public struct AddNewView: View
             {
                 name_perform()
             }
-            .foregroundStyle(Color.accentColor)
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
         }
