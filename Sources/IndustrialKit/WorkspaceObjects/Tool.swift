@@ -633,15 +633,16 @@ public class Tool: WorkspaceObject
     ///Update statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     public func update_statistics_data()
     {
+        
         if charts_data == nil
         {
             charts_data = [WorkspaceObjectChart]()
         }
         
-        if get_statistics && performed //Get data if robot is moving and statistic collection enabled
+        /*if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
             get_statistics_task = Task
-            { @MainActor in
+            {
                 if demo //Get statistic from model controller
                 {
                     model_controller.update_statistics_data()
@@ -653,6 +654,35 @@ public class Tool: WorkspaceObject
                     connector.update_statistics_data()
                     states_data = connector.states_data
                     charts_data = connector.charts_data
+                }
+            }
+        }*/
+        
+        Task
+        {
+            if demo
+            {
+                model_controller.update_statistics_data()
+                let new_states_data = model_controller.states_data
+                let new_charts_data = model_controller.charts_data
+                
+                await MainActor.run
+                {
+                    self.states_data = new_states_data
+                    self.charts_data = new_charts_data
+                }
+                
+            }
+            else
+            {
+                connector.update_statistics_data()
+                let new_states_data = connector.states_data
+                let new_charts_data = connector.charts_data
+                
+                await MainActor.run
+                {
+                    self.states_data = new_states_data
+                    self.charts_data = new_charts_data
                 }
             }
         }
