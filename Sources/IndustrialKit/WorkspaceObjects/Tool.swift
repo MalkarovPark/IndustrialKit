@@ -640,7 +640,19 @@ public class Tool: WorkspaceObject
         
         if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
-            get_statistics_task = Task
+            if demo //Get statistic from model controller
+            {
+                model_controller.update_statistics_data()
+                states_data = model_controller.states_data
+                charts_data = model_controller.charts_data
+            }
+            else //Get statistic from real tool
+            {
+                connector.update_statistics_data()
+                states_data = connector.states_data
+                charts_data = connector.charts_data
+            }
+            /*get_statistics_task = Task
             {
                 if demo //Get statistic from model controller
                 {
@@ -654,7 +666,7 @@ public class Tool: WorkspaceObject
                     states_data = connector.states_data
                     charts_data = connector.charts_data
                 }
-            }
+            }*/
         }
     }
     
