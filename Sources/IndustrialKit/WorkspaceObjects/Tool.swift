@@ -641,46 +641,33 @@ public class Tool: WorkspaceObject
     private var chart_element_index = 0
     
     ///Update statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
-    public func update_statistics_data() {
-        if charts_data == nil {
-            charts_data = [WorkspaceObjectChart]()
-        }
-
-        if get_statistics && performed {
-            DispatchQueue.global(qos: .background).async { [weak self] in
-                guard let self = self else { return }
-
-                if self.demo {
-                    model_controller.update_statistics_data()
-                    let newStatesData = model_controller.states_data
-                    let newChartsData = model_controller.charts_data
-                    
-                    DispatchQueue.main.async {
-                      self.states_data = newStatesData
-                      self.charts_data = newChartsData
-                    }
-
-                } else {
-                    connector.update_statistics_data()
-                    let newStatesData = connector.states_data
-                    let newChartsData = connector.charts_data
-                    
-                    DispatchQueue.main.async {
-                        self.states_data = newStatesData
-                        self.charts_data = newChartsData
-                    }
-                }
-            }
-        }
-    }
-    /*public func update_statistics_data()
+    public func update_statistics_data()
     {
         if charts_data == nil
         {
             charts_data = [WorkspaceObjectChart]()
         }
         
-        if get_statistics && performed //Get data if robot is moving and statistic collection enabled
+        if get_statistics && performed
+        {
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                guard let self = self else { return }
+
+                if self.demo //Get statistic from model controller
+                {
+                    self.model_controller.update_statistics_data()
+                    self.states_data = model_controller.states_data
+                    self.charts_data = model_controller.charts_data
+                }
+                else //Get statistic from real tool
+                {
+                    self.connector.update_statistics_data()
+                    self.states_data = connector.states_data
+                    self.charts_data = connector.charts_data
+                }
+            }
+        }
+        /*if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
             get_statistics_task = Task
             {
@@ -699,8 +686,8 @@ public class Tool: WorkspaceObject
                 
                 //get_statistics_task.cancel()
             }
-        }
-    }*/
+        }*/
+    }
     
     ///Clears tool chart data.
     public func clear_chart_data()
