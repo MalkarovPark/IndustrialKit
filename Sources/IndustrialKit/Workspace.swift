@@ -112,16 +112,23 @@ public class Workspace: ObservableObject
      */
     public func update()
     {
-        switch selected_object_type
+        if updated
         {
-        case .robot:
-            selected_robot.update()
-        case .tool:
-            selected_tool.update()
-        case .part:
-            break
-        case .none:
-            break
+            updated = false
+            
+            switch selected_object_type
+            {
+            case .robot:
+                selected_robot.update()
+            case .tool:
+                selected_tool.update()
+            case .part:
+                break
+            case .none:
+                break
+            }
+            
+            updated = true
         }
     }
     
