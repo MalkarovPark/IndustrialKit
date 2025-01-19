@@ -414,6 +414,9 @@ public class Robot: WorkspaceObject
         return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
     
+    ///A flag that prevents concurrent execution of the update function.
+    private var updated = true
+    
     /**
      Updates robot statistics and model by current pointer position.
      
@@ -421,16 +424,23 @@ public class Robot: WorkspaceObject
      */
     public func update()
     {
-        update_statistics_data()
-        
-        //Modeling
-        if demo
+        if updated
         {
-            model_controller.update_by_pointer()
-        }
-        else if update_model_by_connector
-        {
-            connector.sync_model()
+            updated = false
+            
+            update_statistics_data()
+            
+            //Modeling
+            if demo
+            {
+                model_controller.update_by_pointer()
+            }
+            else if update_model_by_connector
+            {
+                connector.sync_model()
+            }
+            
+            updated = true
         }
     }
     

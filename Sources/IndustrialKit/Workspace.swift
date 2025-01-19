@@ -100,6 +100,9 @@ public class Workspace: ObservableObject
         }
     }
     
+    ///A flag that prevents concurrent execution of the update function.
+    private var updated = true
+    
     /**
      Updates state of the current workspace elements.
      
