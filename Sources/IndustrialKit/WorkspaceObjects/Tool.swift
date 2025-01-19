@@ -648,7 +648,20 @@ public class Tool: WorkspaceObject
             charts_data = [WorkspaceObjectChart]()
         }
         
-        if get_statistics && performed
+        if self.demo //Get statistic from model controller
+        {
+            self.model_controller.update_statistics_data()
+            self.states_data = model_controller.states_data
+            self.charts_data = model_controller.charts_data
+        }
+        else //Get statistic from real tool
+        {
+            self.connector.update_statistics_data()
+            self.states_data = connector.states_data
+            self.charts_data = connector.charts_data
+        }
+        
+        /*if get_statistics && performed
         {
             DispatchQueue.global(qos: .background).async { [weak self] in
                 guard let self = self else { return }
@@ -666,7 +679,8 @@ public class Tool: WorkspaceObject
                     self.charts_data = connector.charts_data
                 }
             }
-        }
+        }*/
+        
         /*if get_statistics && performed //Get data if robot is moving and statistic collection enabled
         {
             get_statistics_task = Task
