@@ -631,7 +631,39 @@ public class Tool: WorkspaceObject
     private var chart_element_index = 0
     
     ///Update statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
-    public func update_statistics_data()
+    public func update_statistics_data() {
+        if charts_data == nil {
+            charts_data = [WorkspaceObjectChart]()
+        }
+
+        if get_statistics && performed {
+            Task { [weak self] in
+                guard let self = self else { return } // Проверка на nil после захвата
+
+                if self.demo {
+                    self.model_controller.update_statistics_data()
+                    let newStatesData = self.model_controller.states_data
+                    let newChartsData = self.model_controller.charts_data
+
+                    await MainActor.run {
+                      self.states_data = newStatesData
+                      self.charts_data = newChartsData
+                     }
+                    
+                } else {
+                    self.connector.update_statistics_data()
+                    let newStatesData = self.connector.states_data
+                    let newChartsData = self.connector.charts_data
+
+                    await MainActor.run {
+                        self.states_data = newStatesData
+                        self.charts_data = newChartsData
+                    }
+                }
+            }
+        }
+    }
+    /*public func update_statistics_data()
     {
         
         if charts_data == nil
@@ -686,7 +718,7 @@ public class Tool: WorkspaceObject
                 }
             }
         }
-    }
+    }*/
     
     ///Clears tool chart data.
     public func clear_chart_data()
