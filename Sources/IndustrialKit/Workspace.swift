@@ -102,7 +102,7 @@ public class Workspace: ObservableObject
     
     //MARK: - Workspace update handling
     ///A flag that prevents concurrent execution of the update function.
-    private var updated = false
+    /*private var updated = false
     
     private var task: Task<Void, Never>?
     
@@ -155,7 +155,7 @@ public class Workspace: ObservableObject
         case .none:
             break
         }
-    }
+    }*/
     
     //MARK: - Visual edit handling
     ///Sets new pointer position by selected workspace object.

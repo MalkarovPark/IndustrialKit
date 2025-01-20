@@ -103,6 +103,64 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     ///Object rotation components – *r*, *p*, *w*.
     public var rotation = [Float](repeating: 0, count: 3)
     
+    //MARK: - Update functions
+    /// Flag indicating whether the update loop is active.
+    private var updated = false
+    
+    /// The task responsible for executing the update loop.
+    private var update_task: Task<Void, Never>?
+    
+    /**
+     Starts the update loop.
+     
+     This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
+     */
+    public func perform_update()
+    {
+        updated = true
+        
+        update_task = Task
+        {
+            while updated
+            {
+                try? await Task.sleep(nanoseconds: 1_000_000_0)
+                await MainActor.run
+                {
+                    self.update()
+                }
+                
+                if(update_task == nil)
+                {
+                    return
+                }
+            }
+        }
+    }
+    
+    /**
+     Stops the update loop.
+     
+     This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
+     */
+    public func disable_update()
+    {
+        updated = false
+        update_task?.cancel()
+        update_task = nil
+    }
+    
+    /**
+     Called repeatedly within the update loop to perform updates.
+     
+     This function is called on the main thread by the `perform_update()` function as long as the `updated` flag is `true`. Subclasses should override this method to implement their specific update logic.
+     
+     > This function is called frequently, so it's crucial to keep its execution time as short as possible to avoid performance issues.
+     */
+    open func update()
+    {
+        
+    }
+    
     //MARK: - Visual functions
     ///Scene file address.
     public var scene_address = ""

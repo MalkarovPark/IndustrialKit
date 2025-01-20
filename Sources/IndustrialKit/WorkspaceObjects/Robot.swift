@@ -414,15 +414,9 @@ public class Robot: WorkspaceObject
         return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
     
-    ///A flag that prevents concurrent execution of the update function.
-    //private var updated = true
-    
-    /**
-     Updates robot statistics and model by current pointer position.
-     
-     > Has the public protection level for provide external synchronization. A common practice is to it put in a *render* func of **SceneKit** Scene.
-     */
-    public func update()
+    //MARK: Update functions
+    ///Updates robot statistics and model by current pointer position.
+    public override func update()
     {
         update_statistics_data()
         
@@ -435,25 +429,6 @@ public class Robot: WorkspaceObject
         {
             connector.sync_model()
         }
-        
-        /*if updated
-        {
-            updated = false
-            
-            update_statistics_data()
-            
-            //Modeling
-            if demo
-            {
-                model_controller.update_by_pointer()
-            }
-            else if update_model_by_connector
-            {
-                connector.sync_model()
-            }
-            
-            updated = true
-        }*/
     }
     
     //MARK: Performation cycle
@@ -515,7 +490,7 @@ public class Robot: WorkspaceObject
             return
         }
         
-        //Handling robot moving
+        //Robot moving handling
         if !performed
         {
             if !demo //Pass workcell parameters to model controller
@@ -553,8 +528,12 @@ public class Robot: WorkspaceObject
     ///Performs robot to selected point movement and select next.
     public func move_to_next_point()
     {
+        perform_update()
+        
         move_to(point: programs[selected_program_index].points[target_point_index])
         {
+            self.disable_update()
+            
             self.select_new_point()
         }
     }

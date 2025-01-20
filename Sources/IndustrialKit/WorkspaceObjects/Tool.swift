@@ -318,15 +318,9 @@ public class Tool: WorkspaceObject
         }
     }
     
-    ///A flag that prevents concurrent execution of the update function.
-    //private var updated = true
-    
-    /**
-     Updates tool statistics and sync model by real device state.
-     
-     > Has the public protection level for provide external synchronization. A common practice is to it put in a *render* func of **SceneKit** Scene.
-     */
-    public func update()
+    //MARK: Update functions
+    ///Updates tool statistics and sync model by real device state.
+    public override func update()
     {
         update_statistics_data()
         
@@ -335,21 +329,6 @@ public class Tool: WorkspaceObject
         {
             connector.sync_model()
         }
-        
-        /*if updated
-        {
-            updated = false
-            
-            update_statistics_data()
-            
-            //Modeling
-            if !demo && update_model_by_connector
-            {
-                connector.sync_model()
-            }
-            
-            updated = true
-        }*/
     }
     
     //MARK: Performation cycle
@@ -432,10 +411,12 @@ public class Tool: WorkspaceObject
     ///Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
-        //update_statistics = true
+        perform_update()
         
         perform(code: selected_program.codes[selected_code_index].value)
         {
+            disable_update()
+            
             self.select_new_code()
         }
     }
