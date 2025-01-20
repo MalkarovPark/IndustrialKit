@@ -130,7 +130,7 @@ public class Workspace: ObservableObject
      */
     public func update()
     {
-        sleep(UInt32(0.01))
+        sleep(UInt32(0.1))
         
         if updated
         {
