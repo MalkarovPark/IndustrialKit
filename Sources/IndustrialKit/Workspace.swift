@@ -141,9 +141,11 @@ public class Workspace: ObservableObject
                 selected_tool.update()
                 update()
             case .part:
+                sleep(1)
                 update()
                 //break
             case .none:
+                sleep(1)
                 update()
                 //break
             }
