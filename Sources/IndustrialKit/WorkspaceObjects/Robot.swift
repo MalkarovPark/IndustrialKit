@@ -528,12 +528,8 @@ public class Robot: WorkspaceObject
     ///Performs robot to selected point movement and select next.
     public func move_to_next_point()
     {
-        perform_update()
-        
         move_to(point: programs[selected_program_index].points[target_point_index])
         {
-            self.disable_update()
-            
             self.select_new_point()
         }
     }

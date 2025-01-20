@@ -411,12 +411,8 @@ public class Tool: WorkspaceObject
     ///Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
-        perform_update()
-        
         perform(code: selected_program.codes[selected_code_index].value)
         {
-            self.disable_update()
-            
             self.select_new_code()
         }
     }
