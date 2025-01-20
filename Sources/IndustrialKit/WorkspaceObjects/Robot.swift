@@ -418,7 +418,10 @@ public class Robot: WorkspaceObject
     ///Updates robot statistics and model by current pointer position.
     public override func update()
     {
-        update_statistics_data()
+        if performed
+        {
+            update_statistics_data()
+        }
         
         //Modeling
         if demo

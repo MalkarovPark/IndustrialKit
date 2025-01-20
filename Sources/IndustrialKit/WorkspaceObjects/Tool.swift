@@ -322,7 +322,10 @@ public class Tool: WorkspaceObject
     ///Updates tool statistics and sync model by real device state.
     public override func update()
     {
-        update_statistics_data()
+        if performed
+        {
+            update_statistics_data()
+        }
         
         //Modeling
         if !demo && update_model_by_connector
@@ -598,30 +601,6 @@ public class Tool: WorkspaceObject
         }
     }
     
-    private var get_statistics_task = Task {}
-    
-    /*private var update_statistics = false
-    {
-        didSet
-        {
-            if update_statistics
-            {
-                perform_statistics()
-            }
-        }
-    }
-    
-    private func perform_statistics()
-    {
-        get_statistics_task = Task
-        {
-            while update_statistics
-            {
-                update_statistics_data()
-            }
-        }
-    }*/
-    
     ///Index of chart element.
     private var chart_element_index = 0
     
@@ -645,47 +624,6 @@ public class Tool: WorkspaceObject
             self.states_data = connector.states_data
             self.charts_data = connector.charts_data
         }
-        
-        /*if get_statistics && performed
-        {
-            DispatchQueue.global(qos: .background).async { [weak self] in
-                guard let self = self else { return }
-
-                if self.demo //Get statistic from model controller
-                {
-                    self.model_controller.update_statistics_data()
-                    self.states_data = model_controller.states_data
-                    self.charts_data = model_controller.charts_data
-                }
-                else //Get statistic from real tool
-                {
-                    self.connector.update_statistics_data()
-                    self.states_data = connector.states_data
-                    self.charts_data = connector.charts_data
-                }
-            }
-        }*/
-        
-        /*if get_statistics && performed //Get data if robot is moving and statistic collection enabled
-        {
-            get_statistics_task = Task
-            {
-                if demo //Get statistic from model controller
-                {
-                    model_controller.update_statistics_data()
-                    states_data = model_controller.states_data
-                    charts_data = model_controller.charts_data
-                }
-                else //Get statistic from real tool
-                {
-                    connector.update_statistics_data()
-                    states_data = connector.states_data
-                    charts_data = connector.charts_data
-                }
-                
-                //get_statistics_task.cancel()
-            }
-        }*/
     }
     
     ///Clears tool chart data.
