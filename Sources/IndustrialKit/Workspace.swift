@@ -108,15 +108,10 @@ public class Workspace: ObservableObject
     public func perform_update()
     {
         updated = true
-        DispatchQueue.global(qos: .background).async
-        {
-            self.update()
-        }
-        
-        /*update_task = Task
+        update_task = Task
         {
             update()
-        }*/
+        }
         //update()
     }
     
