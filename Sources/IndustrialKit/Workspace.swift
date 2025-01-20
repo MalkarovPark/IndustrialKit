@@ -114,7 +114,7 @@ public class Workspace: ObservableObject
         {
             while updated
             {
-                try? await Task.sleep(nanoseconds: 1_000_000_00)
+                try? await Task.sleep(nanoseconds: 1_000_000_0)
                 await MainActor.run
                 {
                     self.update()
