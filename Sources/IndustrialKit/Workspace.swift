@@ -130,6 +130,8 @@ public class Workspace: ObservableObject
      */
     public func update()
     {
+        sleep(1)
+        
         if updated
         {
             switch selected_object_type
@@ -141,11 +143,9 @@ public class Workspace: ObservableObject
                 selected_tool.update()
                 update()
             case .part:
-                sleep(1)
                 update()
                 //break
             case .none:
-                sleep(1)
                 update()
                 //break
             }
