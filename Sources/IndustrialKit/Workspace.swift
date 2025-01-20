@@ -100,25 +100,39 @@ public class Workspace: ObservableObject
         }
     }
     
+    //MARK: - Workspace update handling
     ///A flag that prevents concurrent execution of the update function.
-    public var updated = false
+    private var updated = false
     
-    private var update_task = Task {}
+    private var task: Task<Void, Never>?
     
     public func perform_update()
     {
         updated = true
-        update_task = Task
+        
+        task = Task
         {
-            update()
+            while updated
+            {
+                try? await Task.sleep(nanoseconds: 1_000_000_00)
+                await MainActor.run
+                {
+                    self.update()
+                }
+                
+                if(task == nil)
+                {
+                    return
+                }
+            }
         }
-        //update()
     }
     
     public func disable_update()
     {
         updated = false
-        update_task.cancel()
+        task?.cancel()
+        task = nil
     }
     
     /**
@@ -130,25 +144,16 @@ public class Workspace: ObservableObject
      */
     public func update()
     {
-        sleep(UInt32(0.1))
-        
-        if updated
+        switch selected_object_type
         {
-            switch selected_object_type
-            {
-            case .robot:
-                selected_robot.update()
-                update()
-            case .tool:
-                selected_tool.update()
-                update()
-            case .part:
-                update()
-                //break
-            case .none:
-                update()
-                //break
-            }
+        case .robot:
+            selected_robot.update()
+        case .tool:
+            selected_tool.update()
+        case .part:
+            break
+        case .none:
+            break
         }
     }
     
