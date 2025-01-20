@@ -103,15 +103,22 @@ public class Workspace: ObservableObject
     ///A flag that prevents concurrent execution of the update function.
     public var updated = false
     
+    private var update_task = Task {}
+    
     public func perform_update()
     {
         updated = true
-        update()
+        update_task = Task
+        {
+            update()
+        }
+        //update()
     }
     
     public func disable_update()
     {
         updated = false
+        update_task.cancel()
     }
     
     /**
