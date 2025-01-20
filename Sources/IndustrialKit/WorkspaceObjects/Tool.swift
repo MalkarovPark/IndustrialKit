@@ -319,7 +319,7 @@ public class Tool: WorkspaceObject
     }
     
     ///A flag that prevents concurrent execution of the update function.
-    private var updated = true
+    //private var updated = true
     
     /**
      Updates tool statistics and sync model by real device state.
@@ -328,7 +328,15 @@ public class Tool: WorkspaceObject
      */
     public func update()
     {
-        if updated
+        update_statistics_data()
+        
+        //Modeling
+        if !demo && update_model_by_connector
+        {
+            connector.sync_model()
+        }
+        
+        /*if updated
         {
             updated = false
             
@@ -341,7 +349,7 @@ public class Tool: WorkspaceObject
             }
             
             updated = true
-        }
+        }*/
     }
     
     //MARK: Performation cycle

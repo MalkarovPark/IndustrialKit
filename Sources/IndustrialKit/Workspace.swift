@@ -103,6 +103,17 @@ public class Workspace: ObservableObject
     ///A flag that prevents concurrent execution of the update function.
     private var updated = true
     
+    public func perform_update()
+    {
+        updated = true
+        update()
+    }
+    
+    public func disable_update()
+    {
+        updated = false
+    }
+    
     /**
      Updates state of the current workspace elements.
      
@@ -114,21 +125,21 @@ public class Workspace: ObservableObject
     {
         if updated
         {
-            updated = false
-            
             switch selected_object_type
             {
             case .robot:
                 selected_robot.update()
+                update()
             case .tool:
                 selected_tool.update()
+                update()
             case .part:
-                break
+                update()
+                //break
             case .none:
-                break
+                update()
+                //break
             }
-            
-            updated = true
         }
     }
     

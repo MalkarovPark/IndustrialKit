@@ -415,7 +415,7 @@ public class Robot: WorkspaceObject
     }
     
     ///A flag that prevents concurrent execution of the update function.
-    private var updated = true
+    //private var updated = true
     
     /**
      Updates robot statistics and model by current pointer position.
@@ -424,7 +424,19 @@ public class Robot: WorkspaceObject
      */
     public func update()
     {
-        if updated
+        update_statistics_data()
+        
+        //Modeling
+        if demo
+        {
+            model_controller.update_by_pointer()
+        }
+        else if update_model_by_connector
+        {
+            connector.sync_model()
+        }
+        
+        /*if updated
         {
             updated = false
             
@@ -441,7 +453,7 @@ public class Robot: WorkspaceObject
             }
             
             updated = true
-        }
+        }*/
     }
     
     //MARK: Performation cycle
