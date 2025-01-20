@@ -102,15 +102,23 @@ public class Workspace: ObservableObject
     
     //MARK: - Workspace update handling
     ///A flag that prevents concurrent execution of the update function.
-    /*private var updated = false
+    //MARK: - Update functions
+    /// Flag indicating whether the update loop is active.
+    private var updated = false
     
-    private var task: Task<Void, Never>?
+    /// The task responsible for executing the update loop.
+    private var update_task: Task<Void, Never>?
     
+    /**
+     Starts the update loop.
+     
+     This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
+     */
     public func perform_update()
     {
         updated = true
         
-        task = Task
+        update_task = Task
         {
             while updated
             {
@@ -120,7 +128,7 @@ public class Workspace: ObservableObject
                     self.update()
                 }
                 
-                if(task == nil)
+                if(update_task == nil)
                 {
                     return
                 }
@@ -128,19 +136,24 @@ public class Workspace: ObservableObject
         }
     }
     
+    /**
+     Stops the update loop.
+     
+     This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
+     */
     public func disable_update()
     {
         updated = false
-        task?.cancel()
-        task = nil
+        update_task?.cancel()
+        update_task = nil
     }
     
     /**
-     Updates state of the current workspace elements.
+     Called repeatedly within the update loop to perform updates.
      
-     Here, various continuous processes are carried out in parallel – updating statistical data from real and virtual RTK devices, inverse kinematics of robot manipulators, etc.
+     This function is called on the main thread by the `perform_update()` function as long as the `updated` flag is `true`. Subclasses should override this method to implement their specific update logic.
      
-     > Has the public protection level for provide external synchronization.
+     > This function is called frequently, so it's crucial to keep its execution time as short as possible to avoid performance issues.
      */
     public func update()
     {
@@ -155,7 +168,7 @@ public class Workspace: ObservableObject
         case .none:
             break
         }
-    }*/
+    }
     
     //MARK: - Visual edit handling
     ///Sets new pointer position by selected workspace object.
