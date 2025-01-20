@@ -415,7 +415,7 @@ public class Tool: WorkspaceObject
         
         perform(code: selected_program.codes[selected_code_index].value)
         {
-            disable_update()
+            self.disable_update()
             
             self.select_new_code()
         }
