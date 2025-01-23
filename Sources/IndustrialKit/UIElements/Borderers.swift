@@ -38,7 +38,11 @@ public struct ListBorderer: ViewModifier
         ZStack
         {
             Rectangle()
+            #if !os(visionOS)
                 .foregroundColor(.white)
+            #else
+                .foregroundStyle(.thinMaterial)
+            #endif
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             content

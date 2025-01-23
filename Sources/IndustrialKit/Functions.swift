@@ -214,7 +214,7 @@ func clone_codable<T: Codable>(_ object: T) -> T?
  - Parameters:
     - command: A terminal command.
  
- - Returns: Command text output.
+ - Returns: Text of command output.
  */
 @discardableResult
 public func perform_terminal_command(_ command: String) throws -> String?
@@ -236,12 +236,14 @@ public func perform_terminal_command(_ command: String) throws -> String?
 }
 
 /**
- Executes a terminal command and provides output asynchronously.
+ Performs a terminal command and provides output asynchronously.
 
  - Parameters:
-   - command: The terminal command.
+   - command: A terminal command.
    - output_handler: A closure that is called with each chunk of output (stdout and stderr) as a String.
         This closure is called multiple times, asynchronously, as the command produces output.
+ 
+ - Returns: Text of command output.
                  
  - Throws: An NSError with domain "TerminalCommandError" if the command exits with a non-zero status code.
         The error's userInfo contains the localized description of the error and the termination status.
@@ -276,7 +278,6 @@ public func perform_terminal_command(_ command: String,  output_handler: @escapi
     }
     
     task.waitUntilExit()
-    
     
     if task.terminationStatus != 0
     {
