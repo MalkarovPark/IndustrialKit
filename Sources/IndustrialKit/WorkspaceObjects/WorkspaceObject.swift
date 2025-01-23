@@ -104,11 +104,14 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     public var rotation = [Float](repeating: 0, count: 3)
     
     //MARK: - Update functions
-    /// Flag indicating whether the update loop is active.
+    ///Flag indicating whether the update loop is active.
     private var updated = false
     
-    /// The task responsible for executing the update loop.
+    ///The task responsible for executing the update loop.
     private var update_task: Task<Void, Never>?
+    
+    ///The interval between updates in nanoseconds.
+    public static var update_interval: UInt64 = 1_000_000_0
     
     /**
      Starts the update loop.
@@ -123,7 +126,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         {
             while updated
             {
-                try? await Task.sleep(nanoseconds: 1_000_000_0)
+                try? await Task.sleep(nanoseconds: WorkspaceObject.update_interval)
                 await MainActor.run
                 {
                     self.update()

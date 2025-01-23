@@ -109,6 +109,9 @@ public class Workspace: ObservableObject
     /// The task responsible for executing the update loop.
     private var update_task: Task<Void, Never>?
     
+    ///The interval between updates in nanoseconds.
+    public static var update_interval: UInt64 = 1_000_000_0
+    
     /**
      Starts the update loop.
      
@@ -122,7 +125,7 @@ public class Workspace: ObservableObject
         {
             while updated
             {
-                try? await Task.sleep(nanoseconds: 1_000_000_0)
+                try? await Task.sleep(nanoseconds: Workspace.update_interval)
                 await MainActor.run
                 {
                     self.update()
