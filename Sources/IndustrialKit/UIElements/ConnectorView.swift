@@ -71,11 +71,20 @@ public struct ConnectorView: View
                 VStack
                 {
                     Rectangle()
+                    //#if !os(visionOS)
                         .fill(.white)
+                    //#endif
                 }
+                #if !os(visionOS)
                 .frame(width: 48)
+                #else
+                .frame(width: 96)
+                #endif
             }
             .modifier(ViewBorderer())
+            #if os(visionOS)
+            .frame(height: 128)
+            #endif
             .overlay(alignment: .topTrailing)
             {
                 VStack(spacing: 0)
