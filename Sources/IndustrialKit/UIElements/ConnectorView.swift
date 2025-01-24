@@ -78,10 +78,12 @@ public struct ConnectorView: View
                 #if !os(visionOS)
                 .frame(width: 48)
                 #else
-                .frame(width: 64)
+                .frame(width: 72)
                 #endif
             }
+            #if !os(visionOS)
             .modifier(ViewBorderer())
+            #endif
             #if os(visionOS)
             .frame(height: 128)
             #endif
