@@ -78,7 +78,7 @@ public struct ConnectorView: View
                 #if !os(visionOS)
                 .frame(width: 48)
                 #else
-                .frame(width: 80)
+                .frame(width: 64)
                 #endif
             }
             .modifier(ViewBorderer())
@@ -120,7 +120,9 @@ public struct ConnectorView: View
                 #endif
             }
             .frame(maxWidth: .infinity, maxHeight: 112)
+            #if !os(visionOS)
             .backgroundStyle(.white)
+            #endif
             .padding(.bottom)
             
             HStack(spacing: 0)
