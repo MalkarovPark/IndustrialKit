@@ -13,7 +13,7 @@ public struct SheetCaption: ViewModifier
     
     let label: String
     
-    public init(is_presented: Binding<Bool>, label: String)
+    public init(is_presented: Binding<Bool>, label: String = String())
     {
         self._is_presented = is_presented
         self.label = label
