@@ -132,10 +132,10 @@ internal struct ProgramElementItemView: View
                 Rectangle()
                     .foregroundStyle(.clear)
                     //.popover(isPresented: $element_view_presented, arrowEdge: .trailing)
-                    //.sheet(isPresented: $element_view_presented)
-                    .popover(isPresented: $element_view_presented, arrowEdge: .trailing)
+                    .sheet(isPresented: $element_view_presented)
                     {
                         ElementView(element: $element, on_update: update_program_element)
+                            .modifier(SheetCaption(is_presented: $element_view_presented, label: ""))
                         /*VStack(spacing: 0)
                         {
                             Spacer(minLength: 72)
