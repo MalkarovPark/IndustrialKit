@@ -135,7 +135,6 @@ internal struct ProgramElementItemView: View
                     .sheet(isPresented: $element_view_presented)
                     {
                         ElementView(element: $element, on_update: update_program_element)
-                            .frame(maxWidth: 128)
                             .modifier(SheetCaption(is_presented: $element_view_presented))
                         /*VStack(spacing: 0)
                         {

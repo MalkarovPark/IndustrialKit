@@ -61,7 +61,7 @@ public struct SheetCaption: ViewModifier
             
             content
         }
-        #if os(macOS)
+        #if os(macOS) || os(visionOS)
         .fitted()
         #endif
     }
