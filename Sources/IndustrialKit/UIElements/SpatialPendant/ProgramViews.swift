@@ -132,15 +132,17 @@ internal struct ProgramElementItemView: View
                 Rectangle()
                     .foregroundStyle(.clear)
                     //.popover(isPresented: $element_view_presented, arrowEdge: .trailing)
-                    .sheet(isPresented: $element_view_presented)
+                    //.sheet(isPresented: $element_view_presented)
+                    .popover(isPresented: $element_view_presented, arrowEdge: .trailing)
                     {
-                        VStack(spacing: 0)
+                        ElementView(element: $element, on_update: update_program_element)
+                        /*VStack(spacing: 0)
                         {
                             Spacer(minLength: 72)
                             
                             ElementView(element: $element, on_update: update_program_element)
                         }
-                        .modifier(ViewCloseButton(is_presented: $element_view_presented))
+                        .modifier(ViewCloseButton(is_presented: $element_view_presented))*/
                     }
             }
         }
