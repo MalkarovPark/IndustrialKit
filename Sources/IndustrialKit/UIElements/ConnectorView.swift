@@ -71,14 +71,14 @@ public struct ConnectorView: View
                 VStack
                 {
                     Rectangle()
-                    //#if !os(visionOS)
+                    #if !os(visionOS)
                         .fill(.white)
-                    //#endif
+                    #endif
                 }
                 #if !os(visionOS)
                 .frame(width: 48)
                 #else
-                .frame(width: 96)
+                .frame(width: 80)
                 #endif
             }
             .modifier(ViewBorderer())
