@@ -73,17 +73,17 @@ public struct ConnectorView: View
                     Rectangle()
                     #if !os(visionOS)
                         .fill(.white)
+                    #else
+                        .fill(.clear)
                     #endif
                 }
                 #if !os(visionOS)
                 .frame(width: 48)
                 #else
-                .frame(width: 72)
+                .frame(width: 68)
                 #endif
             }
-            #if !os(visionOS)
             .modifier(ViewBorderer())
-            #endif
             #if os(visionOS)
             .frame(height: 128)
             #endif
