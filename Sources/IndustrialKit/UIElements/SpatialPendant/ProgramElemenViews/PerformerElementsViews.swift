@@ -117,7 +117,7 @@ internal struct RobotPerformerElementView: View
                         
                         if is_program_by_index
                         {
-                            RegistersSelector(text: "From \(program_index_from[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $program_index_from, names: ["Program"])
+                            RegistersSelector(text: "From: \(program_index_from[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $program_index_from, names: ["Program"])
                         }
                         else
                         {
@@ -140,7 +140,7 @@ internal struct RobotPerformerElementView: View
                         }
                     }
                     .padding(.top)
-                    #if os(iOS) || os(visionOS)
+                    #if !os(macOS)
                     .frame(minWidth: 256)
                     #endif
                 }
@@ -296,7 +296,7 @@ internal struct ToolPerformerElementView: View
                         
                         if is_program_by_index
                         {
-                            RegistersSelector(text: "From \(program_index_from[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $program_index_from, names: ["Program"])
+                            RegistersSelector(text: "From: \(program_index_from[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $program_index_from, names: ["Program"])
                         }
                         else
                         {
@@ -319,7 +319,7 @@ internal struct ToolPerformerElementView: View
                         }
                     }
                     .padding(.top)
-                    #if os(iOS) || os(visionOS)
+                    #if !os(macOS)
                     .frame(minWidth: 256)
                     #endif
                 }

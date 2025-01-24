@@ -89,10 +89,12 @@ internal struct WriterElementView: View
             HStack(spacing: 8)
             {
                 Text("Write")
-                    .frame(width: 60)
+                    .frame(width: 34)
                 TextField("0", value: $value, format: .number)
                     .textFieldStyle(.roundedBorder)
+                #if !os(macOS)
                     .keyboardType(.decimalPad)
+                #endif
                 Stepper("Enter", value: $value, in: -1000...1000)
                     .labelsHidden()
             }
@@ -152,7 +154,7 @@ internal struct MathElementView: View
             .popover(isPresented: $picker_is_presented)
             {
                 MathTypePicker(operation: $operation)
-                #if os(iOS) || os(visionOS)
+                #if !os(macOS)
                     .presentationDetents([.height(96)])
                 #endif
             }
@@ -210,7 +212,7 @@ internal struct ChangerElementView: View
     {
         self._element = element
         
-        _module_name = State(initialValue: (_element.wrappedValue as! ChangerModifierElement).module_name)
+        _module_name = State(initialValue: (_element.wrappedValue as! Changer).module_name)
         
         self.on_update = on_update
     }
@@ -323,7 +325,9 @@ internal struct OutputValueItmeView: View
             TextField("0", value: $from, format: .number)
             Stepper("Enter", value: $from, in: 0...10000)
                 .labelsHidden()
+            #if !os(macOS)
                 .keyboardType(.decimalPad)
+            #endif
             
             RegistersSelector(text: "to \(to)", registers_count: workspace.registers.count, colors: registers_colors, indices: binding_for_single($to), names: ["To"])
         }
@@ -419,7 +423,9 @@ internal struct ObserverElementView: View
                             workspace.update_view()
                         }
                     }
+                    #if !os(macOS)
                     .modifier(PickerNamer(name: "Name"))
+                    #endif
                     .disabled(workspace.placed_robots_names.count == 0)
                     .padding(.bottom)
                 }
@@ -433,20 +439,37 @@ internal struct ObserverElementView: View
                             ForEach(from_indices.indices, id: \.self)
                             { index in
                                 OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                                    .contextMenu
+                                    {
+                                        Button(role: .destructive)
+                                        {
+                                            delete_items(at: IndexSet(integer: index))
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
                             }
-                            .onDelete(perform: delete_item)
+                            .onDelete(perform: delete_items)
                         }
-                        .frame(width: 400, height: 256)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        #if os(macOS)
+                        .frame(width: 256, height: 256)
+                        #else
+                        .frame(width: 320, height: 256)
+                        #endif
+                        .modifier(ListBorderer())
                         .padding(.bottom)
                     }
                     else
                     {
                         ZStack
                         {
+                            Rectangle()
+                                .foregroundStyle(.white)
+                            
                             Text("No items to ouput")
                         }
                         .frame(width: 256, height: 64)
+                        .modifier(ListBorderer())
                         .padding(.bottom)
                     }
                     
@@ -489,7 +512,9 @@ internal struct ObserverElementView: View
                             workspace.update_view()
                         }
                     }
+                    #if !os(macOS)
                     .modifier(PickerNamer(name: "Name"))
+                    #endif
                     .disabled(workspace.placed_tools_names.count == 0)
                     .padding(.bottom)
                 }
@@ -503,20 +528,37 @@ internal struct ObserverElementView: View
                             ForEach(from_indices.indices, id: \.self)
                             { index in
                                 OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
+                                    .contextMenu
+                                    {
+                                        Button(role: .destructive)
+                                        {
+                                            delete_items(at: IndexSet(integer: index))
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
                             }
-                            .onDelete(perform: delete_item)
+                            .onDelete(perform: delete_items)
                         }
-                        .frame(width: 400, height: 256)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        #if os(macOS)
+                        .frame(width: 256, height: 256)
+                        #else
+                        .frame(width: 320, height: 256)
+                        #endif
+                        .modifier(ListBorderer())
                         .padding(.bottom)
                     }
                     else
                     {
                         ZStack
                         {
+                            Rectangle()
+                                .foregroundStyle(.white)
+                            
                             Text("No items to ouput")
                         }
                         .frame(width: 256, height: 64)
+                        .modifier(ListBorderer())
                         .padding(.bottom)
                     }
                     
@@ -584,7 +626,7 @@ internal struct ObserverElementView: View
         to_indices.append(0)
     }
     
-    func delete_item(at offsets: IndexSet)
+    func delete_items(at offsets: IndexSet)
     {
         from_indices.remove(atOffsets: offsets)
         to_indices.remove(atOffsets: offsets)

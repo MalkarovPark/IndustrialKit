@@ -34,7 +34,9 @@ internal struct JumpElementView: View
         {
             HStack
             {
+                #if !os(macOS)
                 Text("Jump to")
+                #endif
                 
                 Picker("Jump to", selection: $target_mark_name) //Target mark picker
                 {
@@ -112,7 +114,7 @@ internal struct ComparatorElementView: View
                 .popover(isPresented: $picker_is_presented)
                 {
                     CompareTypePicker(compare_type: $compare_type)
-                    #if os(iOS) || os(visionOS)
+                    #if !os(macOS)
                         .presentationDetents([.height(96)])
                     #endif
                 }
@@ -125,7 +127,9 @@ internal struct ComparatorElementView: View
             
             HStack
             {
+                #if !os(macOS)
                 Text("jump to")
+                #endif
                 
                 Picker("jump to", selection: $target_mark_name) //Target mark picker
                 {
