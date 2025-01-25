@@ -363,6 +363,9 @@ public struct RegistersDataView: View
                         .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
                         {
                             RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)
+                            {
+                                save_registers()
+                            }
                             #if os(iOS)
                             .presentationDetents([.height(96)])
                             #endif
@@ -389,11 +392,11 @@ public struct RegistersDataView: View
         controller.registers_document_data_update.toggle()
     }*/
     
-    private func update_registers_count()
+    /*private func update_registers_count()
     {
         workspace.update_registers_count(Workspace.default_registers_count)
         save_registers()
-    }
+    }*/
     
     #if os(macOS)
     let default_popover_edge: Edge = .top
@@ -409,7 +412,7 @@ private struct RegistersCountView: View
     
     @EnvironmentObject var workspace: Workspace
     
-    //let additive_func: () -> ()
+    let save_registers: () -> ()
     
     var body: some View
     {
@@ -464,6 +467,7 @@ private struct RegistersCountView: View
         if registers_count > 0
         {
             workspace.update_registers_count(registers_count)
+            save_registers()
         }
     }
 }
