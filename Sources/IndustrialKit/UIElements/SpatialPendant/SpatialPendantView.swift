@@ -40,6 +40,7 @@ public struct SpatialPendant: Scene
                 .environmentObject(controller)
                 .environmentObject(workspace)
                 .onDisappear(perform: controller.dismiss_pendant)
+                .scaleEffect(0.5)
         }
         .windowResizability(.contentSize)
     }
