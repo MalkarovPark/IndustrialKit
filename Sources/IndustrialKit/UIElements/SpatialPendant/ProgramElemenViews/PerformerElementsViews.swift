@@ -5,10 +5,9 @@
 //  Created by Artem on 26.11.2023.
 //
 
-#if os(visionOS)
 import SwiftUI
 
-internal struct RobotPerformerElementView: View
+public struct RobotPerformerElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -27,7 +26,7 @@ internal struct RobotPerformerElementView: View
     
     let on_update: () -> ()
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         
@@ -44,7 +43,7 @@ internal struct RobotPerformerElementView: View
         self.on_update = on_update
     }
     
-    var body: some View
+    public var body: some View
     {
         VStack(spacing: 0)
         {
@@ -197,7 +196,7 @@ internal struct RobotPerformerElementView: View
     }
 }
 
-internal struct ToolPerformerElementView: View
+public struct ToolPerformerElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -214,7 +213,7 @@ internal struct ToolPerformerElementView: View
     
     let on_update: () -> ()
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         
@@ -229,7 +228,7 @@ internal struct ToolPerformerElementView: View
         self.on_update = on_update
     }
     
-    var body: some View
+    public var body: some View
     {
         VStack(spacing: 0)
         {
@@ -373,4 +372,3 @@ internal struct ToolPerformerElementView: View
     ToolPerformerElementView(element: .constant(ToolPerformerElement()), on_update: {})
         .environmentObject(Workspace())
 }
-#endif

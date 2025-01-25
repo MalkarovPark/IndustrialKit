@@ -5,10 +5,9 @@
 //  Created by Artem on 26.11.2023.
 //
 
-#if os(visionOS)
 import SwiftUI
 
-internal struct JumpElementView: View
+public struct JumpElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -19,7 +18,7 @@ internal struct JumpElementView: View
     
     let on_update: () -> ()
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         
@@ -28,7 +27,7 @@ internal struct JumpElementView: View
         self.on_update = on_update
     }
     
-    var body: some View
+    public var body: some View
     {
         VStack(spacing: 0)
         {
@@ -71,7 +70,7 @@ internal struct JumpElementView: View
     }
 }
 
-internal struct ComparatorElementView: View
+public struct ComparatorElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -97,7 +96,7 @@ internal struct ComparatorElementView: View
         self.on_update = on_update
     }
     
-    var body: some View
+    public var body: some View
     {
         VStack(spacing: 0)
         {
@@ -179,11 +178,16 @@ internal struct ComparatorElementView: View
     }
 }
 
-internal struct CompareTypePicker: View
+public struct CompareTypePicker: View
 {
     @Binding var compare_type: CompareType
     
-    var body: some View
+    public init(compare_type: Binding<CompareType>)
+    {
+        self._compare_type = compare_type
+    }
+    
+    public var body: some View
     {
         Picker("Compare", selection: $compare_type)
         {
@@ -198,7 +202,7 @@ internal struct CompareTypePicker: View
     }
 }
 
-internal struct MarkLogicElementView: View
+public struct MarkLogicElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -206,14 +210,14 @@ internal struct MarkLogicElementView: View
     
     let on_update: () -> ()
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         _name = State(initialValue: (_element.wrappedValue as! MarkLogicElement).name)
         self.on_update = on_update
     }
     
-    var body: some View
+    public var body: some View
     {
         HStack
         {
@@ -242,4 +246,3 @@ internal struct MarkLogicElementView: View
         .environmentObject(Workspace())
         .frame(width: 256)
 }
-#endif

@@ -5,10 +5,9 @@
 //  Created by Artem on 26.11.2023.
 //
 
-#if os(visionOS)
 import SwiftUI
 
-internal struct MoverElementView: View
+public struct MoverElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -17,9 +16,9 @@ internal struct MoverElementView: View
     @State private var move_type: ModifierCopyType = .duplicate
     @State private var indices = [Int]()
     
-    let on_update: () -> ()
+    private let on_update: () -> ()
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         
@@ -29,7 +28,7 @@ internal struct MoverElementView: View
         self.on_update = on_update
     }
     
-    var body: some View
+    public var body: some View
     {
         HStack(spacing: 0)
         {
@@ -61,7 +60,7 @@ internal struct MoverElementView: View
     }
 }
 
-internal struct WriterElementView: View
+public struct WriterElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -70,9 +69,9 @@ internal struct WriterElementView: View
     @State private var value: Float = 0
     @State private var to_index = [Int]()
     
-    let on_update: () -> ()
+    private let on_update: () -> ()
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         
@@ -82,7 +81,7 @@ internal struct WriterElementView: View
         self.on_update = on_update
     }
     
-    var body: some View
+    public var body: some View
     {
         HStack(spacing: 0)
         {
@@ -119,7 +118,7 @@ internal struct WriterElementView: View
     }
 }
 
-internal struct MathElementView: View
+public struct MathElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -129,11 +128,11 @@ internal struct MathElementView: View
     @State var value_index = [Int]()
     @State var value2_index = [Int]()
     
-    let on_update: () -> ()
-    
     @State private var picker_is_presented = false
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    private let on_update: () -> ()
+    
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         
@@ -143,7 +142,8 @@ internal struct MathElementView: View
         
         self.on_update = on_update
     }
-    var body: some View
+    
+    public var body: some View
     {
         HStack(spacing: 8)
         {
@@ -185,11 +185,16 @@ internal struct MathElementView: View
     }
 }
 
-internal struct MathTypePicker: View
+public struct MathTypePicker: View
 {
     @Binding var operation: MathType
     
-    var body: some View
+    public init(operation: Binding<MathType>)
+    {
+        self._operation = operation
+    }
+    
+    public var body: some View
     {
         Picker("Operation", selection: $operation)
         {
@@ -204,15 +209,17 @@ internal struct MathTypePicker: View
     }
 }
 
-internal struct ChangerElementView: View
+public struct ChangerElementView: View
 {
+    @EnvironmentObject var workspace: Workspace
+    
     @Binding var element: WorkspaceProgramElement
     
     @State private var module_name = String()
     
     let on_update: () -> ()
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         
@@ -221,9 +228,7 @@ internal struct ChangerElementView: View
         self.on_update = on_update
     }
     
-    @EnvironmentObject var workspace: Workspace
-    
-    var body: some View
+    public var body: some View
     {
         //MARK: Changer subview
         #if os(macOS)
@@ -314,14 +319,14 @@ internal struct ChangerElementView: View
     }
 }
 
-internal struct OutputValueItmeView: View
+public struct OutputValueItmeView: View
 {
     @EnvironmentObject var workspace: Workspace
     
     @Binding var from: Int
     @Binding var to: Int
     
-    var body: some View
+    public var body: some View
     {
         HStack
         {
@@ -355,7 +360,7 @@ internal struct OutputValueItmeView: View
     }
 }
 
-internal struct ObserverElementView: View
+public struct ObserverElementView: View
 {
     @Binding var element: WorkspaceProgramElement
     
@@ -364,9 +369,13 @@ internal struct ObserverElementView: View
     @State private var from_indices = [Int]()
     @State private var to_indices = [Int]()
     
-    let on_update: () -> ()
+    private let on_update: () -> ()
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    @EnvironmentObject var workspace: Workspace
+    
+    @State private var viewed_object: WorkspaceObject?
+    
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         
@@ -378,11 +387,7 @@ internal struct ObserverElementView: View
         self.on_update = on_update
     }
     
-    @EnvironmentObject var workspace: Workspace
-    
-    @State private var viewed_object: WorkspaceObject?
-    
-    var body: some View
+    public var body: some View
     {
         //MARK: tool subview
         VStack(spacing: 0)
@@ -659,4 +664,3 @@ internal struct ObserverElementView: View
     ObserverElementView(element: .constant(ObserverModifierElement()), on_update: {})
         .environmentObject(Workspace())
 }
-#endif
