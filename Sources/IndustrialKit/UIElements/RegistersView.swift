@@ -392,6 +392,7 @@ public struct RegistersDataView: View
     private func update_registers_count()
     {
         workspace.update_registers_count(Workspace.default_registers_count)
+        save_registers()
     }
     
     #if os(macOS)
@@ -576,4 +577,11 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
             return colors
         }
     }
+}
+
+#Preview
+{
+    RegistersDataView(is_presented: .constant(true))
+        .environmentObject(Workspace())
+        .frame(width: 400)
 }
