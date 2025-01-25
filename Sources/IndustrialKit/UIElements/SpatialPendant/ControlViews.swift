@@ -209,11 +209,13 @@ internal struct ToolControl: View
     @EnvironmentObject var controller: PendantController
     @EnvironmentObject var workspace: Workspace
     
+    @State private var new_operation_code = OperationCodeInfo()
+    
     var body: some View
     {
         VStack
         {
-            Picker("Code", selection: $controller.new_opcode_value)
+            Picker("Code", selection: $new_operation_code)
             {
                 if workspace.selected_tool.codes.count > 0
                 {
@@ -237,6 +239,13 @@ internal struct ToolControl: View
             .disabled(workspace.selected_tool.codes.count == 0)
             .pickerStyle(.wheel)
             .frame(maxWidth: 400)
+        }
+        .onAppear
+        {
+            if workspace.selected_tool.codes.count > 0
+            {
+                new_operation_code = workspace.selected_tool.codes.first ?? OperationCodeInfo()
+            }
         }
     }
 }

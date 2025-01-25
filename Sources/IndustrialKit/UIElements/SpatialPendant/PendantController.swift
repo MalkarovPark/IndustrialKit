@@ -162,7 +162,7 @@ public class PendantController: ObservableObject
     }
     
     //MARK: - New data
-    @Published var new_opcode_value = Int()
+    //@Published var new_operation_code = OperationCodeInfo()
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
     
     //MARK: - Document handling
