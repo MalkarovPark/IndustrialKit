@@ -1675,11 +1675,11 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///A default count of data registers in workspace.
+    ///A default count of data registers for workspace.
     public static var default_registers_count = 256
     
-    ///An array of pushed info data.
-    public var registers: [Float]// = [Float](repeating: 0, count: Workspace.default_registers_count)
+    ///An array of data registers of workspace.
+    @Published public var registers: [Float]// = [Float](repeating: 0, count: Workspace.default_registers_count)
     
     private func input_registers(_ registers: [Float])
     {
