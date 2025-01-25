@@ -296,6 +296,7 @@ private struct SpatialPendantView: View
 //MARK: - Workspace toolbar view
 private struct WorkspaceToolbar: View
 {
+    @EnvironmentObject var controller: PendantController
     @EnvironmentObject var workspace: Workspace
     
     @State private var registers_view_presented = false
@@ -331,199 +332,18 @@ private struct WorkspaceToolbar: View
         .sheet(isPresented: $registers_view_presented)
         {
             RegistersDataView(is_presented: $registers_view_presented)
-                .onDisappear()
-                {
-                    registers_view_presented = false
-                }
+            {
+                controller.registers_document_data_update.toggle()
+            }
+            .onDisappear()
+            {
+                registers_view_presented = false
+            }
             #if os(macOS)
                 .frame(width: 420, height: 480)
             #elseif os(visionOS)
                 .frame(width: 600, height: 600)
             #endif
-        }
-    }
-}
-
-private struct RegistersDataView: View
-{
-    @Binding var is_presented: Bool
-    
-    @State private var update_toggle = false
-    @State private var is_registers_count_presented = false
-    
-    @EnvironmentObject var controller: PendantController
-    @EnvironmentObject var workspace: Workspace
-    
-    var body: some View
-    {
-        VStack(spacing: 0)
-        {
-            RegistersView(registers: $workspace.registers, colors: registers_colors, bottom_spacing: 40)
-                .modifier(DoubleModifier(update_toggle: $update_toggle))
-                .overlay(alignment: .bottom)
-                {
-                    HStack(spacing: 0)
-                    {
-                        Button(role: .destructive, action: clear_registers)
-                        {
-                            Image(systemName: "eraser")
-                                .padding()
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        
-                        Divider()
-                        
-                        Button(action: save_registers)
-                        {
-                            Image(systemName: "arrow.down.doc")
-                                .padding()
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        
-                        Divider()
-                        
-                        Button(action: { is_registers_count_presented = true })
-                        {
-                            Image(systemName: "square.grid.2x2")
-                                .padding()
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
-                        {
-                            RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)
-                            {
-                                update_toggle.toggle()
-                            }
-                            #if os(iOS)
-                            .presentationDetents([.height(96)])
-                            #endif
-                        }
-                    }
-                    .background(.bar)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .shadow(radius: 4)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding()
-                }
-        }
-        .controlSize(.large)
-        .modifier(SheetCaption(is_presented: $is_presented, label: "Registers"))
-    }
-    
-    private func clear_registers()
-    {
-        workspace.clear_registers()
-        update_toggle.toggle()
-    }
-    
-    private func save_registers()
-    {
-        controller.registers_document_data_update.toggle()
-    }
-    
-    private func update_registers_count()
-    {
-        workspace.update_registers_count(Workspace.default_registers_count)
-        update_toggle.toggle()
-    }
-    
-    #if os(macOS)
-    let default_popover_edge: Edge = .top
-    #else
-    let default_popover_edge: Edge = .bottom
-    #endif
-}
-
-private struct RegistersCountView: View
-{
-    @Binding var is_presented: Bool
-    @State var registers_count: Int
-    
-    @EnvironmentObject var workspace: Workspace
-    
-    let additive_func: () -> ()
-    
-    var body: some View
-    {
-        HStack(spacing: 8)
-        {
-            Button(action: {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                {
-                    registers_count = Workspace.default_registers_count
-                    update_count()
-                }
-            })
-            {
-                Image(systemName: "arrow.counterclockwise")
-            }
-            .buttonStyle(.borderedProminent)
-            #if os(macOS)
-            .foregroundColor(Color.white)
-            #else
-            .padding(.leading, 8)
-            #endif
-            
-            TextField("\(Workspace.default_registers_count)", value: $registers_count, format: .number)
-                .textFieldStyle(.roundedBorder)
-                .onSubmit {
-                    update_count()
-                    additive_func()
-                }
-            #if os(macOS)
-                .frame(width: 64)
-            #else
-                .frame(width: 128)
-            #endif
-            
-            Stepper("Enter", value: $registers_count, in: 1...1000)
-                .labelsHidden()
-            #if os(iOS) || os(visionOS)
-                .padding(.trailing, 8)
-            #endif
-        }
-        /*.onChange(of: registers_count)
-        { _, _ in
-            update_count()
-            additive_func()
-        }*/
-        .padding(8)
-        .controlSize(.regular)
-    }
-    
-    private func update_count()
-    {
-        if registers_count > 0
-        {
-            workspace.update_registers_count(registers_count)
-        }
-    }
-}
-
-private struct DoubleModifier: ViewModifier
-{
-    @Binding var update_toggle: Bool
-    
-    func body(content: Content) -> some View
-    {
-        if update_toggle
-        {
-            content
-                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-        }
-        else
-        {
-            content
-                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
         }
     }
 }
