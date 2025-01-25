@@ -266,22 +266,6 @@ internal struct ElementView: View
     }
 }
 
-//MARK: View modifiers
-internal struct PickerNamer: ViewModifier
-{
-    var name: String
-    
-    public func body(content: Content) -> some View
-    {
-        HStack(spacing: 0)
-        {
-            Text(name)
-                .padding(.trailing)
-            content
-        }
-    }
-}
-
 //MARK: Type enums
 ///A program element type enum.
 public enum ProgramElementType: String, Codable, Equatable, CaseIterable
