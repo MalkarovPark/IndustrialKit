@@ -160,16 +160,17 @@ private struct SpatialPendantView: View
         .disabled(controller.view_type == nil)
         .ornament(attachmentAnchor: .scene(.top))
         {
-            switch controller.view_type
+            if controller.view_type == .robot
             {
-            case .workspace:
-                <#code#>
-            case .robot:
                 ProgramPicker(programs_names: workspace.selected_robot.programs_names, selected_program_index: $workspace.selected_robot.selected_program_index)
-            case .tool:
+            }
+            else if controller.view_type == .tool
+            {
                 ProgramPicker(programs_names: workspace.selected_tool.programs_names, selected_program_index: $workspace.selected_tool.selected_program_index)
-            case .none:
-                //<#code#>
+            }
+            else if controller.view_type == .workspace
+            {
+                WorkspaceToolbar()
             }
             
             /*if controller.view_type == .robot
