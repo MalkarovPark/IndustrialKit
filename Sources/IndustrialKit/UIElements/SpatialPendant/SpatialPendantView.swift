@@ -213,7 +213,7 @@ private struct SpatialPendantView: View
     
     private func add_tool_item()
     {
-        workspace.selected_tool.selected_program.add_code(OperationCode(controller.new_opcode_value))
+        workspace.selected_tool.selected_program.add_code(OperationCode(controller.new_operation_code.value))
         
         workspace.update_view()
         controller.tools_document_data_update.toggle()
