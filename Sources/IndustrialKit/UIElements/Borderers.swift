@@ -52,7 +52,7 @@ public struct ListBorderer: ViewModifier
     }
 }
 
-#if os(iOS)
+#if !os(macOS)
 public struct ButtonBorderer: ViewModifier
 {
     @State private var pressed = false
