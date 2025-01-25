@@ -82,9 +82,9 @@ public struct ComparatorElementView: View
     @EnvironmentObject var workspace: Workspace
     @State private var picker_is_presented = false
     
-    let on_update: () -> ()
+    private let on_update: () -> ()
     
-    init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
     {
         self._element = element
         
