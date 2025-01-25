@@ -149,17 +149,17 @@ internal struct ToolDetailView: View
                 }
             }
             .disabled(workspace.selected_tool.codes.count == 0)
-            .pickerStyle(.wheel)
+            //.pickerStyle(.wheel)
             .frame(maxWidth: 256)
             .buttonStyle(.borderedProminent)
         }
-        .onAppear
+        /*.onAppear
         {
             if workspace.selected_tool.codes.count > 0
             {
                 new_operation_code = workspace.selected_tool.codes.first ?? OperationCodeInfo()
             }
-        }
+        }*/
     }
 }
 
