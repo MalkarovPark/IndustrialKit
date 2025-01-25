@@ -308,6 +308,8 @@ private struct WorkspaceToolbar: View
             {
                 Label("Registers", systemImage: "number")
             }
+            .labelsHidden()
+            .buttonBorderShape(.circle)
             .padding(.trailing)
             
             Button(action: { workspace.cycled.toggle() })
@@ -321,9 +323,11 @@ private struct WorkspaceToolbar: View
                     Label("Cycle", systemImage: "repeat.1")
                 }
             }
+            .labelsHidden()
             .buttonBorderShape(.circle)
-            .padding(.trailing)
         }
+        .padding()
+        .glassBackgroundEffect()
         .sheet(isPresented: $registers_view_presented)
         {
             RegistersDataView(is_presented: $registers_view_presented)
