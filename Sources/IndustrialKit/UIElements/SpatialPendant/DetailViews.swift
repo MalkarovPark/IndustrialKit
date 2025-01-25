@@ -5,6 +5,7 @@
 //  Created by Artem on 15.02.2024.
 //
 
+/*
 #if os(visionOS)
 import SwiftUI
 
@@ -183,3 +184,4 @@ internal struct ToolDetailView: View
     ToolDetailView()
 }
 #endif
+*/

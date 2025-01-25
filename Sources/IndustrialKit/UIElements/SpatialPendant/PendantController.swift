@@ -167,6 +167,7 @@ public class PendantController: ObservableObject
     
     //MARK: - Document handling
     @Published public var elements_document_data_update = false
+    @Published public var registers_document_data_update = false
     @Published public var robots_document_data_update = false
     @Published public var tools_document_data_update = false
     
