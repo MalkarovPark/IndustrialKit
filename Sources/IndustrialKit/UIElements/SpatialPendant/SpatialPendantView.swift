@@ -306,7 +306,7 @@ private struct WorkspaceToolbar: View
         {
             Button(action: { registers_view_presented = true })
             {
-                Label("Registers", systemImage: "number")
+                Image(systemName: "number")
             }
             .labelsHidden()
             .buttonBorderShape(.circle)
@@ -316,11 +316,11 @@ private struct WorkspaceToolbar: View
             {
                 if workspace.cycled
                 {
-                    Label("Cycle", systemImage: "repeat")
+                    Image(systemName: "repeat")
                 }
                 else
                 {
-                    Label("Cycle", systemImage: "repeat.1")
+                    Image(systemName: "repeat.1")
                 }
             }
             .labelsHidden()
