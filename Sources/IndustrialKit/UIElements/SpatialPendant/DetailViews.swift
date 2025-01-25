@@ -153,6 +153,13 @@ internal struct ToolDetailView: View
             .frame(maxWidth: 256)
             .buttonStyle(.borderedProminent)
         }
+        .onAppear
+        {
+            if workspace.selected_tool.codes.count > 0
+            {
+                new_operation_code = workspace.selected_tool.codes.first ?? OperationCodeInfo()
+            }
+        }
     }
 }
 
