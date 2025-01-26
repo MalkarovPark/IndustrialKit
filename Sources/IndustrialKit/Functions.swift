@@ -297,7 +297,7 @@ public func perform_terminal_command(_ command: String,  output_handler: @escapi
  
  - Returns: Terminal text output.
  */
-public func perform_code(at url: URL, with arguments: [String]) -> String?
+public func perform_terminal_app(at url: URL, with arguments: [String]) -> String?
 {
     let command = "'\(url.path)' \(arguments.joined(separator: " "))" //Combine file path and arguments into one string
     

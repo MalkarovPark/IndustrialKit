@@ -127,7 +127,7 @@ public class ExternalRobotConnector: RobotConnector
         //Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
 
-        guard let terminal_output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: arguments) else
+        guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: arguments) else
         {
             if output != String()
             {
@@ -162,7 +162,7 @@ public class ExternalRobotConnector: RobotConnector
     
     override open func disconnection_process() async
     {
-        guard let terminal_output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
+        guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
         else
         {
             self.output += "Couldn't perform external code"
@@ -177,7 +177,7 @@ public class ExternalRobotConnector: RobotConnector
         let pointer_location = [point.x, point.y, point.z]
         let pointer_rotation = [point.r, point.p, point.w]
         
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
         else
         {
             return
@@ -186,7 +186,7 @@ public class ExternalRobotConnector: RobotConnector
     
     open override func reset_device()
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["reset_device"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["reset_device"])
         else
         {
             return
@@ -196,7 +196,7 @@ public class ExternalRobotConnector: RobotConnector
     //MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_charts_data"])
         else
         {
             return nil
@@ -212,7 +212,7 @@ public class ExternalRobotConnector: RobotConnector
     
     open override func updated_states_data() -> [StateItem]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_states_data"])
         else
         {
             return nil
@@ -228,7 +228,7 @@ public class ExternalRobotConnector: RobotConnector
 
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
         else
         {
             return nil
@@ -244,7 +244,7 @@ public class ExternalRobotConnector: RobotConnector
 
     open override func initial_states_data() -> [StateItem]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
         else
         {
             return nil
@@ -261,7 +261,7 @@ public class ExternalRobotConnector: RobotConnector
     //MARK: Modeling
     open override func sync_model()
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["sync_model"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["sync_model"])
         else
         {
             return

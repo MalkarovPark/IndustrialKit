@@ -80,7 +80,7 @@ public class ExternalToolModelController: ToolModelController
     //MARK: Performing
     open override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["nodes_perform", "\(code)"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["nodes_perform", "\(code)"])
         else
         {
             return
@@ -122,7 +122,7 @@ public class ExternalToolModelController: ToolModelController
     
     open override func reset_nodes()
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["reset_nodes"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["reset_nodes"])
         else
         {
             return
@@ -180,7 +180,7 @@ public class ExternalToolModelController: ToolModelController
     //MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_charts_data"])
         else
         {
             return nil
@@ -196,7 +196,7 @@ public class ExternalToolModelController: ToolModelController
 
     open override func updated_states_data() -> [StateItem]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_states_data"])
         else
         {
             return nil
@@ -212,7 +212,7 @@ public class ExternalToolModelController: ToolModelController
 
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
         else
         {
             return nil
@@ -228,7 +228,7 @@ public class ExternalToolModelController: ToolModelController
 
     open override func initial_states_data() -> [StateItem]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
         else
         {
             return nil

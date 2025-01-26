@@ -104,7 +104,7 @@ public class ExternalToolConnector: ToolConnector
         //Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
 
-        guard let terminal_output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: arguments) else
+        guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: arguments) else
         {
             if output != String()
             {
@@ -139,7 +139,7 @@ public class ExternalToolConnector: ToolConnector
     
     override open func disconnection_process() async
     {
-        guard let terminal_output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
+        guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
         else
         {
             self.output += "Couldn't perform external code"
@@ -151,7 +151,7 @@ public class ExternalToolConnector: ToolConnector
     //MARK: Performing
     open override func perform(code: Int, completion: @escaping () -> Void)
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["perform", "\(code)"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["perform", "\(code)"])
         else
         {
             return
@@ -160,7 +160,7 @@ public class ExternalToolConnector: ToolConnector
     
     open override func reset_device()
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["reset_device"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["reset_device"])
         else
         {
             return
@@ -170,7 +170,7 @@ public class ExternalToolConnector: ToolConnector
     //MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_charts_data"])
         else
         {
             return nil
@@ -186,7 +186,7 @@ public class ExternalToolConnector: ToolConnector
     
     open override func updated_states_data() -> [StateItem]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_states_data"])
         else
         {
             return nil
@@ -202,7 +202,7 @@ public class ExternalToolConnector: ToolConnector
 
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
         else
         {
             return nil
@@ -218,7 +218,7 @@ public class ExternalToolConnector: ToolConnector
 
     open override func initial_states_data() -> [StateItem]?
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
         else
         {
             return nil
@@ -235,7 +235,7 @@ public class ExternalToolConnector: ToolConnector
     //MARK: Modeling
     open override func sync_model()
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Controller"), with: ["sync_model"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["sync_model"])
         else
         {
             return

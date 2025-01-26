@@ -87,7 +87,7 @@ open class ChangerModule: IndustrialModule
      */
     private func external_change_func(registers: inout [Float]) -> Void
     {
-        guard let output: String = perform_code(at: package_url.appendingPathComponent("/Code/Change"), with: registers.map { String($0) })
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Change"), with: registers.map { String($0) })
         else
         {
             return
