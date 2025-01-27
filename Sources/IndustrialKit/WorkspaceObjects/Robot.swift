@@ -303,9 +303,9 @@ public class Robot: WorkspaceObject
      
      This flag set if the robot has passed all positions.
      
-     > Used for indication in GUI.
+     > Used for indication in UI.
      */
-    public var moving_completed = false
+    @Published public var moving_completed = false
     
     ///An Index of target point in points array.
     public var target_point_index = 0
