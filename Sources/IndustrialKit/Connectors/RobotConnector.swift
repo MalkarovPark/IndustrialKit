@@ -122,7 +122,7 @@ public class ExternalRobotConnector: RobotConnector
     public var external_parameters = [ConnectionParameter]()
     
     //MARK: Connection
-    override open func connection_process() /*async*/ -> Bool
+    override open func connection_process() async -> Bool
     {
         //Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])

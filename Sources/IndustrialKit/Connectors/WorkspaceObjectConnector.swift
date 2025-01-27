@@ -119,21 +119,21 @@ open class WorkspaceObjectConnector: ObservableObject
         {
             connection_updating = true
             
-            DispatchQueue.global(qos: .background).async
+            /*DispatchQueue.global(qos: .background).async
             {
                 self.connected = self.connection_process()
                 self.connection_updating = false
                 
                 self.connection_failure = !self.connected
-            }
+            }*/
             
-            /*connection_task = Task
+            connection_task = Task
             {
                 connected = await connection_process()
                 connection_updating = false
                 
                 connection_failure = !connected
-            }*/
+            }
         }
     }
     
@@ -158,7 +158,7 @@ open class WorkspaceObjectConnector: ObservableObject
         }
     }
     
-    open func connection_process() /*async*/ -> Bool
+    open func connection_process() async -> Bool
     {
         return true
     }
