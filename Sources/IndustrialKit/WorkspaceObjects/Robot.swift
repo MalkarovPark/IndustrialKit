@@ -305,7 +305,7 @@ public class Robot: WorkspaceObject
      
      > Used for indication in UI.
      */
-    @Published public var moving_completed = false
+    public var moving_completed = false
     
     ///An Index of target point in points array.
     public var target_point_index = 0
