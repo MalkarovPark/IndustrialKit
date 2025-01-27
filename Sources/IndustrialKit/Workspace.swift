@@ -2184,6 +2184,11 @@ public class Workspace: ObservableObject
         place_objects(scene: scene)
     }
     
+    public func connect_local()
+    {
+        connect_scene(self.scene)
+    }
+    
     private func place_objects(scene: SCNScene)
     {
         //Nodes for placement operations
