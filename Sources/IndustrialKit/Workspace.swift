@@ -24,6 +24,13 @@ public class Workspace: ObservableObject
         registers = [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
+    public init(scene: SCNScene)
+    {
+        registers = [Float](repeating: 0, count: Workspace.default_registers_count)
+        
+        self.scene = scene
+    }
+    
     //MARK: - Workspace objects data
     @Published public var robots = [Robot]()
     @Published public var tools = [Tool]()
