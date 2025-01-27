@@ -403,35 +403,45 @@ internal struct PositionItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(workspace.selected_robot.inspector_point_color(point: point_item))
+                .foregroundColor(workspace.selected_robot.inspector_point_color(point: point_item)) //.gray)
             
-            Spacer()
+            //Spacer()
             
-            HStack(spacing: 0)
+            ZStack(alignment: .center)
             {
-                Spacer()
-                
-                Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
-                    //.font(.caption)
-                
-                Spacer()
-                
-                Divider()
-                
-                Spacer()
-                
-                Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
-                    //.font(.caption)
-                
-                Spacer()
+                Rectangle()
+                    .frame(maxWidth: .infinity, maxHeight: 256)
+                    .overlay
+                    {
+                        HStack(spacing: 0)
+                        {
+                            Spacer()
+                            
+                            Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
+                                .font(.system(size: 8))
+                                .frame(width: 96)
+                            
+                            Spacer()
+                            
+                            Divider()
+                            
+                            Spacer()
+                            
+                            Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
+                                .font(.system(size: 8))
+                                .frame(width: 96)
+                            
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
             }
+            .frame(height: 24)
             .popover(isPresented: $position_item_view_presented,
                      arrowEdge: .leading)
             {
                 PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
             }
-            
-            Spacer()
         }
         .onTapGesture
         {
