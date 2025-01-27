@@ -330,6 +330,7 @@ public struct RegistersDataView: View
                         Button(role: .destructive, action: clear_registers)
                         {
                             Image(systemName: "eraser")
+                                .frame(width: 16, height: 16)
                                 .padding()
                         }
                         .buttonStyle(.borderless)
@@ -342,6 +343,7 @@ public struct RegistersDataView: View
                         Button(action: save_registers)
                         {
                             Image(systemName: "arrow.down.doc")
+                                .frame(width: 16, height: 16)
                                 .padding()
                         }
                         .buttonStyle(.borderless)
@@ -354,6 +356,7 @@ public struct RegistersDataView: View
                         Button(action: { is_registers_count_presented = true })
                         {
                             Image(systemName: "square.grid.2x2")
+                                .frame(width: 16, height: 16)
                                 .padding()
                         }
                         .buttonStyle(.borderless)
