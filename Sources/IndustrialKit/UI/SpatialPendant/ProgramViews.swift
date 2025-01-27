@@ -410,6 +410,7 @@ internal struct PositionItemView: View
             ZStack(alignment: .center)
             {
                 Rectangle()
+                    .foregroundStyle(.clear)
                     .frame(maxWidth: .infinity, maxHeight: 256)
                     .overlay
                     {
