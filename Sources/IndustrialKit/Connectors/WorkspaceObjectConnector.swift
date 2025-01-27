@@ -25,6 +25,11 @@ open class WorkspaceObjectConnector: ObservableObject
         current_parameters = parameters
     }
     
+    deinit
+    {
+        disconnect()
+    }
+    
     //MARK: - Connection parameters handling
     public func import_connection_parameters_values(_ list: [String]?)
     {
