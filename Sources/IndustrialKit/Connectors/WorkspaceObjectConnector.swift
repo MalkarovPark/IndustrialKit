@@ -142,8 +142,8 @@ open class WorkspaceObjectConnector: ObservableObject
                 if connection_failure
                 {
                     //try? await Task.sleep(nanoseconds: UInt64(200_000_000))
-                    //usleep(200000)
-                    sleep(1)
+                    usleep(500000)
+                    //sleep(1)
                     
                     connection_failure = false
                 }
