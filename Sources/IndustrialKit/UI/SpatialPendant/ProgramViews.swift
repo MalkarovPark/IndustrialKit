@@ -419,7 +419,7 @@ internal struct PositionItemView: View
                             Spacer()
                             
                             Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
-                                .font(.system(size: 8))
+                                //.font(.system(size: 8))
                                 .frame(width: 96)
                             
                             Spacer()
@@ -429,7 +429,7 @@ internal struct PositionItemView: View
                             Spacer()
                             
                             Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
-                                .font(.system(size: 8))
+                                //.font(.system(size: 8))
                                 .frame(width: 96)
                             
                             Spacer()
