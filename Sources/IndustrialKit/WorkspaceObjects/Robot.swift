@@ -1174,9 +1174,9 @@ public class Robot: WorkspaceObject
      
      Color sets by the manufacturer name.
      */
-    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) //Get info for robot card view
     {
-        return("\(self.name)", "Model – \(self.module_name)", .green, self.image)
+        return("\(self.name)", "Model – \(self.module_name)", .green, UIImage(), SCNNode())
     }
     
     /**

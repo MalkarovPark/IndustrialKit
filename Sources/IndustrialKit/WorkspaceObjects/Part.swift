@@ -344,9 +344,9 @@ public class Part: WorkspaceObject
     }
     
     ///Returns info for part card view.
-    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) //Get info for robot card view
     {
-        return("\(self.name)", "Subtitle", self.color, UIImage())
+        return("\(self.name)", "Subtitle", self.color, UIImage(), self.node ?? SCNNode())
     }
     
     //MARK: - Work with file system

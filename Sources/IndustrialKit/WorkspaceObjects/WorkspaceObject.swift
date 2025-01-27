@@ -181,10 +181,10 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     //public static var folder_bookmark: Data?
     
     //MARK: - UI functions
-    ///Universal data storage for NSImage or UIImage.
-    public var image_data: Data? = nil
+    /*///Universal data storage for NSImage or UIImage.
+    public var image_data: Data? = nil*/
     
-    ///Workspace object preview image.
+    /*///Workspace object preview image.
     public var image: UIImage
     {
         get
@@ -195,19 +195,19 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         {
             image_data = newValue.pngData() ?? Data() //Convert UIImage to image data
         }
-    }
+    }*/
     
     ///Returns info for object card view (with UIImage).
-    public var card_info: (title: String, subtitle: String, color: Color, image: UIImage)
+    open var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode)
     {
-        return("Title", "Subtitle", Color.clear, UIImage())
+        return("Title", "Subtitle", Color.clear, UIImage(), SCNNode())
     }
     
     ///Clears preview image in object.
-    public func clear_preview()
+    /*public func clear_preview()
     {
         image_data = nil
-    }
+    }*/
     
     //MARK: - Work with file system
     private enum CodingKeys: String, CodingKey
