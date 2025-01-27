@@ -138,6 +138,12 @@ open class WorkspaceObjectConnector: ObservableObject
                 connection_updating = false
                 
                 connection_failure = !connected
+                
+                if connection_failure
+                {
+                    sleep(UInt32(0.2))
+                    connection_failure = false
+                }
             }
         }
     }
