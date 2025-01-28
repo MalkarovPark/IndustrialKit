@@ -98,7 +98,8 @@ public class Robot: WorkspaceObject
         
         node = module.node.clone()
         
-        model_controller = module.model_controller
+        let controller = module.model_controller
+        model_controller = controller //module.model_controller
         connector = module.connector
         
         apply_statistics_flags()
