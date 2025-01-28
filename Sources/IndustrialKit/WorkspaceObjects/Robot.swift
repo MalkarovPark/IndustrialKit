@@ -98,10 +98,7 @@ public class Robot: WorkspaceObject
         
         node = module.node.clone()
         
-        let modules = [ModelController](repeating: module.model_controller, count: 2)
-        model_controller = modules.last as! RobotModelController
-        
-        //model_controller = module.model_controller
+        model_controller = module.model_controller
         connector = module.connector
         
         apply_statistics_flags()

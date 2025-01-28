@@ -224,7 +224,7 @@ open class ToolModule: IndustrialModule
         //Set connector from internal module
         if let linked_name = linked_components["Connector"]
         {
-            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
                 connector = Tool.internal_modules[index].connector
             }
