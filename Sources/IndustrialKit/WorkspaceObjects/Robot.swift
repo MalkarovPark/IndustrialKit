@@ -98,6 +98,7 @@ public class Robot: WorkspaceObject
         
         node = module.node.clone()
         
+        print(module.model_controller.nodes_names)
         model_controller = module.model_controller.copy() as! RobotModelController
         print(model_controller.nodes_names)
         connector = module.connector
