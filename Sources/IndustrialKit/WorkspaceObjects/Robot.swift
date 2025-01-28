@@ -98,10 +98,34 @@ public class Robot: WorkspaceObject
         
         node = module.node.clone()
         
-        model_controller = module.model_controller
+        model_controller = deepCopyRobotModelController(original: module.model_controller)//module.model_controller
         connector = module.connector
         
         apply_statistics_flags()
+    }
+    
+    func deepCopyRobotModelController(original: RobotModelController) -> RobotModelController {
+        let copiedController = RobotModelController()
+
+        copiedController.pointer_location = original.pointer_location
+        copiedController.pointer_rotation = original.pointer_rotation
+        copiedController.origin_location = original.origin_location
+        copiedController.origin_rotation = original.origin_rotation
+        copiedController.space_scale = original.space_scale
+
+        if let pointerNode = original.pointer_node {
+            copiedController.pointer_node = pointerNode.copy() as? SCNNode
+        }
+        if let pointerNodeInternal = original.pointer_node_internal {
+            copiedController.pointer_node_internal = pointerNodeInternal.copy() as? SCNNode
+        }
+
+        /*copiedController.update_pointer_node_position = original.update_pointer_node_position
+        copiedController.cancel_task = original.cancel_task
+        copiedController.moving_finished = original.moving_finished
+        copiedController.rotation_finished = original.rotation_finished*/
+
+        return copiedController
     }
     
     ///Imported internal robot modules.
