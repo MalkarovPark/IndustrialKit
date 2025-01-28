@@ -294,20 +294,6 @@ open class RobotModelController: ModelController
         cancel_task = true
         remove_movement_actions()
     }
-    
-    open override func clone() -> RobotModelController
-    {
-        let copy = RobotModelController()
-        copy.pointer_location = self.pointer_location
-        copy.pointer_rotation = self.pointer_rotation
-        copy.origin_location = self.origin_location
-        copy.origin_rotation = self.origin_rotation
-        copy.space_scale = self.space_scale
-        copy.pointer_node = self.pointer_node//?.clone()
-        copy.pointer_node_internal = self.pointer_node_internal//?.clone()
-        copy.update_pointer_node_position = self.update_pointer_node_position
-        return copy
-    }
 }
 
 #if os(macOS)
