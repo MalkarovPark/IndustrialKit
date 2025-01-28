@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 
 ///Provides control over visual model for robot.
-open class RobotModelController: ModelController
+open class RobotModelController: ModelController, NSCopying
 {
     /**
      Updates nodes positions of robot model by target position and origin parameters.
@@ -293,6 +293,32 @@ open class RobotModelController: ModelController
     {
         cancel_task = true
         remove_movement_actions()
+    }
+    
+    ///
+    
+    public func copy(with zone: NSZone? = nil) -> Any
+    {
+        let copy = RobotModelController()
+        
+        copy.pointer_location = self.pointer_location
+        copy.pointer_rotation = self.pointer_rotation
+        copy.origin_location = self.origin_location
+        copy.origin_rotation = self.origin_rotation
+        copy.space_scale = self.space_scale
+        
+        copy.update_pointer_node_position = self.update_pointer_node_position
+        
+        if let pointerNode = self.pointer_node
+        {
+            copy.pointer_node = pointerNode.copy() as? SCNNode
+        }
+        if let pointerNodeInternal = self.pointer_node_internal
+        {
+            copy.pointer_node_internal = pointerNodeInternal.copy() as? SCNNode
+        }
+        
+        return copy
     }
 }
 
