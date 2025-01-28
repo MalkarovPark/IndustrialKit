@@ -98,7 +98,7 @@ public class Robot: WorkspaceObject
         
         node = module.node.clone()
         
-        model_controller = module.model_controller.copy() as! RobotModelController
+        model_controller = module.model_controller.clone()
         connector = module.connector
         
         apply_statistics_flags()

@@ -15,7 +15,7 @@ import SceneKit
  Controller can add SCNAction or update position, angles for any nodes nested in object visual model root node.
  > Model controller does not build the visual model, but can change it according to instance's lengths.
  */
-open class ModelController: NSCopying
+open class ModelController//: NSCopying
 {
     // MARK: - Initialization
     public init() { }
@@ -141,24 +141,18 @@ open class ModelController: NSCopying
         states_data = initial_states_data()
     }
     
-    // MARK: - NSCopying Protocol
+    // MARK: - Cloning Method
     /**
-     Creates a deep copy of the current instance. Conforms to the `NSCopying` protocol.
+     Creates a copy of the current instance. This method is intended to be overridden by subclasses if specific copy behavior is needed.
      
-     - Parameter zone: The zone in which to allocate the copy. Default is `nil`.
-     - Returns: A new `ModelController` instance that is a copy of the current instance.
+     - Returns: A new instance of the current class with copied properties.
      */
-    public func copy(with zone: NSZone? = nil) -> ModelController
+    open func clone() -> ModelController
     {
         let copy = ModelController()
         
-        // Copy the nodes dictionary (note: SCNNode is a reference type, so this is not a deep copy).
         copy.nodes = self.nodes
-        
-        // Copy the statistics flag.
         copy.get_statistics = self.get_statistics
-        
-        // Copy charts and states data. This is shallow copying; ensure deep copying if needed.
         copy.charts_data = self.charts_data
         copy.states_data = self.states_data
         

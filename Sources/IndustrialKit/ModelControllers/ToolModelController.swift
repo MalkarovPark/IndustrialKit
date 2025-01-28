@@ -48,6 +48,16 @@ open class ToolModelController: ModelController
     
     ///Inforamation code updated by model controller.
     public var info_output: [Float]?
+    
+    open func copy() -> ToolModelController
+    {
+        let copy = ToolModelController()
+        
+        copy.info_output = self.info_output
+        copy.nodes = self.nodes
+        
+        return copy
+    }
 }
 
 #if os(macOS)
