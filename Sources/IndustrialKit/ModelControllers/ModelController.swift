@@ -148,7 +148,7 @@ open class ModelController: NSCopying
      - Parameter zone: The zone in which to allocate the copy. Default is `nil`.
      - Returns: A new `ModelController` instance that is a copy of the current instance.
      */
-    public func copy(with zone: NSZone? = nil) -> Any
+    public func copy(with zone: NSZone? = nil) -> ModelController
     {
         let copy = ModelController()
         
