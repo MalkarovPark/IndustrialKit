@@ -306,17 +306,8 @@ open class RobotModelController: ModelController, NSCopying
         copy.origin_location = self.origin_location
         copy.origin_rotation = self.origin_rotation
         copy.space_scale = self.space_scale
-        
         copy.update_pointer_node_position = self.update_pointer_node_position
-        
-        if let pointerNode = self.pointer_node
-        {
-            copy.pointer_node = pointerNode.copy() as? SCNNode
-        }
-        if let pointerNodeInternal = self.pointer_node_internal
-        {
-            copy.pointer_node_internal = pointerNodeInternal.copy() as? SCNNode
-        }
+        //copy.nodes_names = self.nodes_names
         
         return copy
     }
