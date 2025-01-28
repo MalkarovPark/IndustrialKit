@@ -297,7 +297,7 @@ open class RobotModelController: ModelController
     
     ///
     
-    public override func copy(with zone: NSZone? = nil) -> Any
+    /*public override func copy(with zone: NSZone? = nil) -> Any
     {
         let copy = RobotModelController()
         
@@ -320,7 +320,7 @@ open class RobotModelController: ModelController
         //copy manually and make sure the correct nodes are copied.
         
         return copy
-    }
+    }*/
 }
 
 #if os(macOS)
