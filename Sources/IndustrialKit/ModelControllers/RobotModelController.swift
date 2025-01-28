@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 
 ///Provides control over visual model for robot.
-open class RobotModelController: ModelController, NSCopying
+open class RobotModelController: ModelController
 {
     /**
      Updates nodes positions of robot model by target position and origin parameters.
@@ -297,17 +297,27 @@ open class RobotModelController: ModelController, NSCopying
     
     ///
     
-    public func copy(with zone: NSZone? = nil) -> Any
+    public override func copy(with zone: NSZone? = nil) -> Any
     {
         let copy = RobotModelController()
         
+        //Copy from superclass
+        let superCopy = super.copy(with: zone) as! ModelController
+        copy.nodes = superCopy.nodes
+        copy.get_statistics = superCopy.get_statistics
+        copy.charts_data = superCopy.charts_data
+        copy.states_data = superCopy.states_data
+        
+        //Copy from current class
+        copy.update_pointer_node_position = self.update_pointer_node_position
         copy.pointer_location = self.pointer_location
         copy.pointer_rotation = self.pointer_rotation
         copy.origin_location = self.origin_location
         copy.origin_rotation = self.origin_rotation
         copy.space_scale = self.space_scale
-        copy.update_pointer_node_position = self.update_pointer_node_position
-        //copy.nodes_names = self.nodes_names
+        
+        //Note: Do not copy pointer_node and pointer_node_internal, if those need deep copy, you should
+        //copy manually and make sure the correct nodes are copied.
         
         return copy
     }
