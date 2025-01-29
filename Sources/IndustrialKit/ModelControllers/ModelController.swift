@@ -17,7 +17,7 @@ import SceneKit
  */
 open class ModelController: NSCopying
 {
-    public init()
+    required public init()
     {
         
     }
@@ -127,7 +127,7 @@ open class ModelController: NSCopying
     
     open func copy(with zone: NSZone? = nil) -> Any
     {
-        let copy = type(of: self)//.init()
+        let copy = type(of: self).init() as! Self
         /*copy.nodes = self.nodes // Copy the dictionary of SCNNodes. Note: This copies the dictionary, not the SCNNodes themselfs.
         copy.get_statistics = self.get_statistics // Copy primitive type.
         copy.charts_data = self.charts_data
