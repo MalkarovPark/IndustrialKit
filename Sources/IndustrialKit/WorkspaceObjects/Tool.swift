@@ -88,8 +88,26 @@ public class Tool: WorkspaceObject
         
         node = module.node.clone()
         
-        model_controller = module.model_controller.copy() as! ToolModelController
-        connector = module.connector.copy() as! ToolConnector
+        if !(module.model_controller is ExternalToolModelController)
+        {
+            model_controller = module.model_controller.copy() as! ToolModelController
+        }
+        else
+        {
+            model_controller = module.model_controller
+        }
+        
+        if !(module.connector is ExternalToolConnector)
+        {
+            model_controller = module.model_controller.copy() as! ToolModelController
+        }
+        else
+        {
+            model_controller = module.model_controller
+        }
+        
+        //model_controller = module.model_controller.copy() as! ToolModelController
+        //connector = module.connector.copy() as! ToolConnector
         
         apply_statistics_flags()
         

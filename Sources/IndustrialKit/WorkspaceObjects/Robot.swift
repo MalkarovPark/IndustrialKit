@@ -98,8 +98,26 @@ public class Robot: WorkspaceObject
         
         node = module.node.clone()
         
-        model_controller = module.model_controller.copy() as! RobotModelController
-        connector = module.connector.copy() as! RobotConnector
+        if !(module.model_controller is ExternalRobotModelController)
+        {
+            model_controller = module.model_controller.copy() as! RobotModelController
+        }
+        else
+        {
+            model_controller = module.model_controller
+        }
+        
+        if !(module.connector is ExternalRobotConnector)
+        {
+            model_controller = module.model_controller.copy() as! RobotModelController
+        }
+        else
+        {
+            model_controller = module.model_controller
+        }
+        
+        //model_controller = module.model_controller.copy() as! RobotModelController
+        //connector = module.connector.copy() as! RobotConnector
         
         apply_statistics_flags()
     }
