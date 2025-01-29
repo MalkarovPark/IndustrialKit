@@ -302,7 +302,7 @@ public class ExternalRobotModelController: RobotModelController
 {
     //MARK: Init functions
     ///An external module name.
-    public var module_name: String
+    public var module_name: String = ""
     
     ///For access to code.
     public var package_url: URL
