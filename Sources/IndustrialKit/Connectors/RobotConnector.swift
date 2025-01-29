@@ -115,7 +115,9 @@ public class ExternalRobotConnector: RobotConnector
     
     required init()
     {
-        fatalError("init() has not been implemented")
+        self.module_name = ""
+        self.package_url = URL(fileURLWithPath: "")
+        //fatalError("init() has not been implemented")
     }
     
     //MARK: Parameters import

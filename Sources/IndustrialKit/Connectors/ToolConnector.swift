@@ -86,7 +86,9 @@ public class ExternalToolConnector: ToolConnector
     
     required init()
     {
-        fatalError("init() has not been implemented")
+        self.module_name = ""
+        self.package_url = URL(fileURLWithPath: "")
+        //fatalError("init() has not been implemented")
     }
     
     ///An array of default connection parameters.
