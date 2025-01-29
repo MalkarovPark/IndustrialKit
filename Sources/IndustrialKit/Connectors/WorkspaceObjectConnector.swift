@@ -17,10 +17,10 @@ import SceneKit
  
  Control functions are specialized for subtypes by workspace objects.
  */
-open class WorkspaceObjectConnector: ObservableObject
+open class WorkspaceObjectConnector: ObservableObject, NSCopying
 {
     //MARK: - Init functions
-    public init()
+    required public init()
     {
         current_parameters = parameters
     }
@@ -28,6 +28,12 @@ open class WorkspaceObjectConnector: ObservableObject
     deinit
     {
         disconnect()
+    }
+    
+    ///Copy model controller instance.
+    open func copy(with zone: NSZone? = nil) -> Any
+    {
+        return type(of: self).init() as! Self
     }
     
     //MARK: - Connection parameters handling

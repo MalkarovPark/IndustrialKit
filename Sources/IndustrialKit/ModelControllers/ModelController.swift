@@ -22,6 +22,12 @@ open class ModelController: NSCopying
         
     }
     
+    ///Copy model controller instance.
+    open func copy(with zone: NSZone? = nil) -> Any
+    {
+        return type(of: self).init() as! Self
+    }
+    
     //MARK: - Scene handling
     ///Model nodes from connected root node.
     public var nodes = [String: SCNNode]()
@@ -123,15 +129,5 @@ open class ModelController: NSCopying
     public func reset_states_data()
     {
         states_data = initial_states_data()
-    }
-    
-    open func copy(with zone: NSZone? = nil) -> Any
-    {
-        let copy = type(of: self).init() as! Self
-        /*copy.nodes = self.nodes // Copy the dictionary of SCNNodes. Note: This copies the dictionary, not the SCNNodes themselfs.
-        copy.get_statistics = self.get_statistics // Copy primitive type.
-        copy.charts_data = self.charts_data
-        copy.states_data = self.states_data*/
-        return copy
     }
 }

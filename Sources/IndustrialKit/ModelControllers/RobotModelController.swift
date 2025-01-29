@@ -294,33 +294,6 @@ open class RobotModelController: ModelController
         cancel_task = true
         remove_movement_actions()
     }
-    
-    ///
-    
-    /*public override func copy(with zone: NSZone? = nil) -> Any
-    {
-        let copy = RobotModelController()
-        
-        //Copy from superclass
-        let superCopy = super.copy(with: zone) as! ModelController
-        copy.nodes = superCopy.nodes
-        copy.get_statistics = superCopy.get_statistics
-        copy.charts_data = superCopy.charts_data
-        copy.states_data = superCopy.states_data
-        
-        //Copy from current class
-        copy.update_pointer_node_position = self.update_pointer_node_position
-        copy.pointer_location = self.pointer_location
-        copy.pointer_rotation = self.pointer_rotation
-        copy.origin_location = self.origin_location
-        copy.origin_rotation = self.origin_rotation
-        copy.space_scale = self.space_scale
-        
-        //Note: Do not copy pointer_node and pointer_node_internal, if those need deep copy, you should
-        //copy manually and make sure the correct nodes are copied.
-        
-        return copy
-    }*/
 }
 
 #if os(macOS)
