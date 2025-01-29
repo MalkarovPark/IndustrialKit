@@ -56,10 +56,10 @@ public class ExternalToolModelController: ToolModelController
 {
     //MARK: Init functions
     ///An external module name.
-    public var module_name: String = ""
+    public var module_name: String
     
     ///For access to code.
-    public var package_url: URL = URL(fileURLWithPath: "")
+    public var package_url: URL
     
     public init(_ module_name: String, package_url: URL, nodes_names: [String])
     {
@@ -71,7 +71,9 @@ public class ExternalToolModelController: ToolModelController
     
     required init()
     {
-        fatalError("init() has not been implemented")
+        self.module_name = ""
+        self.package_url = URL(fileURLWithPath: "")
+        //fatalError("init() has not been implemented")
     }
     
     //MARK: Parameters import
