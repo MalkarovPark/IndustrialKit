@@ -69,21 +69,12 @@ public class ExternalToolModelController: ToolModelController
         self.external_nodes_names = nodes_names
     }
     
-    required init() {
-        fatalError("init() has not been implemented")
-    }
-    
-    open override func copy(with zone: NSZone? = nil) -> Any
-    {
-        return type(of: self).init() as! Self
-    }
-    
-    /*required init()
+    required init()
     {
         self.module_name = ""
         self.package_url = URL(fileURLWithPath: "")
         //fatalError("init() has not been implemented")
-    }*/
+    }
     
     //MARK: Parameters import
     override open var nodes_names: [String]
