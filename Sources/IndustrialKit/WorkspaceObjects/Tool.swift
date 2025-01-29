@@ -88,8 +88,8 @@ public class Tool: WorkspaceObject
         
         node = module.node.clone()
         
-        model_controller = module.model_controller
-        connector = module.connector
+        model_controller = module.model_controller.copy() as! ToolModelController
+        connector = module.connector.copy() as! ToolConnector
         
         apply_statistics_flags()
         

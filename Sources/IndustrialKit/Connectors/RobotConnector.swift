@@ -113,6 +113,11 @@ public class ExternalRobotConnector: RobotConnector
         self.external_parameters = parameters
     }
     
+    required init()
+    {
+        fatalError("init() has not been implemented")
+    }
+    
     //MARK: Parameters import
     override open var parameters: [ConnectionParameter]
     {

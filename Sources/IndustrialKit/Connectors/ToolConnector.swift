@@ -84,6 +84,11 @@ public class ExternalToolConnector: ToolConnector
         self.external_parameters = parameters
     }
     
+    required init()
+    {
+        fatalError("init() has not been implemented")
+    }
+    
     ///An array of default connection parameters.
     open var default_parameters: [ConnectionParameter]
     {
