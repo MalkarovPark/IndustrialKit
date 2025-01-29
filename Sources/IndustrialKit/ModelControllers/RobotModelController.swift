@@ -305,7 +305,7 @@ public class ExternalRobotModelController: RobotModelController
     public var module_name: String = ""
     
     ///For access to code.
-    public var package_url: URL
+    public var package_url: URL = URL(fileURLWithPath: "")
     
     public init(_ module_name: String, package_url: URL, nodes_names: [String])
     {
