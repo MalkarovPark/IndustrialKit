@@ -94,7 +94,6 @@ open class RobotConnector: WorkspaceObjectConnector
     }
 }
 
-#if os(macOS)
 //MARK: - External Connector
 public class ExternalRobotConnector: RobotConnector
 {
@@ -131,6 +130,7 @@ public class ExternalRobotConnector: RobotConnector
     //MARK: Connection
     override open func connection_process() async -> Bool
     {
+        #if os(macOS)
         //Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
 
@@ -165,22 +165,27 @@ public class ExternalRobotConnector: RobotConnector
         {
             return false
         }
+        #else
+        return false
+        #endif
     }
     
     override open func disconnection_process() async
     {
+        #if os(macOS)
         guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
         else
         {
             self.output += "Couldn't perform external code"
-            
             return
         }
+        #endif
     }
     
     //MARK: Performing
     override open func move_to(point: PositionPoint)
     {
+        #if os(macOS)
         let pointer_location = [point.x, point.y, point.z]
         let pointer_rotation = [point.r, point.p, point.w]
         
@@ -189,20 +194,24 @@ public class ExternalRobotConnector: RobotConnector
         {
             return
         }
+        #endif
     }
     
     open override func reset_device()
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["reset_device"])
         else
         {
             return
         }
+        #endif
     }
     
     //MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_charts_data"])
         else
         {
@@ -213,12 +222,14 @@ public class ExternalRobotConnector: RobotConnector
         {
             return charts
         }
+        #endif
         
         return nil
     }
     
     open override func updated_states_data() -> [StateItem]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_states_data"])
         else
         {
@@ -229,12 +240,14 @@ public class ExternalRobotConnector: RobotConnector
         {
             return states
         }
+        #endif
         
         return nil
     }
 
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
         else
         {
@@ -245,12 +258,14 @@ public class ExternalRobotConnector: RobotConnector
         {
             return charts
         }
+        #endif
         
         return nil
     }
 
     open override func initial_states_data() -> [StateItem]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
         else
         {
@@ -261,6 +276,7 @@ public class ExternalRobotConnector: RobotConnector
         {
             return states
         }
+        #endif
         
         return nil
     }
@@ -268,6 +284,7 @@ public class ExternalRobotConnector: RobotConnector
     //MARK: Modeling
     open override func sync_model()
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["sync_model"])
         else
         {
@@ -291,6 +308,6 @@ public class ExternalRobotConnector: RobotConnector
             
             set_position(for: model_controller?.nodes[safe: components[0], default: SCNNode()] ?? SCNNode(), from: components[1])
         }
+        #endif
     }
 }
-#endif

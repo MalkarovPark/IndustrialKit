@@ -296,7 +296,6 @@ open class RobotModelController: ModelController
     }
 }
 
-#if os(macOS)
 //MARK: - External Controller
 public class ExternalRobotModelController: RobotModelController
 {
@@ -333,6 +332,7 @@ public class ExternalRobotModelController: RobotModelController
     //MARK: Modeling
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
         else
         {
@@ -356,10 +356,12 @@ public class ExternalRobotModelController: RobotModelController
             
             set_position(for: nodes[safe: components[0], default: SCNNode()], from: components[1])
         }
+        #endif
     }
     
     open override func reset_nodes()
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["reset_nodes"])
         else
         {
@@ -383,11 +385,13 @@ public class ExternalRobotModelController: RobotModelController
             
             set_position(for: nodes[safe: components[0], default: SCNNode()], from: components[1])
         }
+        #endif
     }
     
     //MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_charts_data"])
         else
         {
@@ -398,12 +402,14 @@ public class ExternalRobotModelController: RobotModelController
         {
             return charts
         }
+        #endif
         
         return nil
     }
 
     open override func updated_states_data() -> [StateItem]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_states_data"])
         else
         {
@@ -414,12 +420,14 @@ public class ExternalRobotModelController: RobotModelController
         {
             return states
         }
+        #endif
         
         return nil
     }
 
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
         else
         {
@@ -430,12 +438,14 @@ public class ExternalRobotModelController: RobotModelController
         {
             return charts
         }
+        #endif
         
         return nil
     }
 
     open override func initial_states_data() -> [StateItem]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
         else
         {
@@ -446,8 +456,8 @@ public class ExternalRobotModelController: RobotModelController
         {
             return states
         }
+        #endif
         
         return nil
     }
 }
-#endif

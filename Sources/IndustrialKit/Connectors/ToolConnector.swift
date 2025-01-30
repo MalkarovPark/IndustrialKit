@@ -65,7 +65,6 @@ open class ToolConnector: WorkspaceObjectConnector
     }
 }
 
-#if os(macOS)
 //MARK: - External Connector
 public class ExternalToolConnector: ToolConnector
 {
@@ -108,9 +107,10 @@ public class ExternalToolConnector: ToolConnector
     //MARK: Connection
     override open func connection_process() async -> Bool
     {
+        #if os(macOS)
         //Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
-
+        
         guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: arguments) else
         {
             if output != String()
@@ -142,41 +142,50 @@ public class ExternalToolConnector: ToolConnector
         {
             return false
         }
+        #else
+        return false
+        #endif
     }
     
     override open func disconnection_process() async
     {
+        #if os(macOS)
         guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
         else
         {
             self.output += "Couldn't perform external code"
-            
             return
         }
+        #endif
     }
     
     //MARK: Performing
     open override func perform(code: Int, completion: @escaping () -> Void)
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["perform", "\(code)"])
         else
         {
             return
         }
+        #endif
     }
     
     open override func reset_device()
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["reset_device"])
         else
         {
             return
         }
+        #endif
     }
     
     //MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_charts_data"])
         else
         {
@@ -187,12 +196,14 @@ public class ExternalToolConnector: ToolConnector
         {
             return charts
         }
+        #endif
         
         return nil
     }
     
     open override func updated_states_data() -> [StateItem]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_states_data"])
         else
         {
@@ -203,12 +214,14 @@ public class ExternalToolConnector: ToolConnector
         {
             return states
         }
+        #endif
         
         return nil
     }
 
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
         else
         {
@@ -219,12 +232,14 @@ public class ExternalToolConnector: ToolConnector
         {
             return charts
         }
+        #endif
         
         return nil
     }
 
     open override func initial_states_data() -> [StateItem]?
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
         else
         {
@@ -235,6 +250,7 @@ public class ExternalToolConnector: ToolConnector
         {
             return states
         }
+        #endif
         
         return nil
     }
@@ -242,6 +258,7 @@ public class ExternalToolConnector: ToolConnector
     //MARK: Modeling
     open override func sync_model()
     {
+        #if os(macOS)
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["sync_model"])
         else
         {
@@ -268,6 +285,6 @@ public class ExternalToolConnector: ToolConnector
                 model_controller?.nodes[safe: components[0], default: SCNNode()].runAction(action)
             }
         }
+        #endif
     }
 }
-#endif
