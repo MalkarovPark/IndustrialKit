@@ -206,7 +206,7 @@ Provides position editing with sliders. For location should set upper limits (lo
 
 ### Registers View <a name="industrialkitui-registersview"></a>
 
-Pruposed for elements, registers from which they take data can be specified. This functionality is provided by the Registers Selector control. One or more registers can be selected.
+View for editing the Workspace memory of the robotic technological complex.
 
 <p align="center">
   <img width="468" alt="registers_view" src="https://github.com/user-attachments/assets/b2c2f15e-71f8-40b3-930c-8c12b247b00f" />
