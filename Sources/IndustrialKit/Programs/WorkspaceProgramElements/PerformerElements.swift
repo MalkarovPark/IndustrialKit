@@ -90,7 +90,7 @@ public class RobotPerformerElement: PerformerElement
         return "Robot"
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "r.square"
     }
@@ -163,7 +163,7 @@ public class ToolPerformerElement: PerformerElement
         return "Tool"
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "hammer"
     }

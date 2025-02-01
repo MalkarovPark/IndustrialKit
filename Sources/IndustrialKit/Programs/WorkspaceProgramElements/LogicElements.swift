@@ -43,7 +43,7 @@ public class JumpLogicElement: LogicElement
         }
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "arrowshape.zigzag.forward"
     }
@@ -101,7 +101,7 @@ public class ComparatorLogicElement: LogicElement
         }
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "alt"
     }
@@ -201,7 +201,7 @@ public class MarkLogicElement: LogicElement
         return name
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "record.circle"
     }

@@ -39,7 +39,7 @@ public class MoverModifierElement: ModifierElement
         return "\(move_type.rawValue) from \(from_index) to \(to_index)"
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         switch move_type
         {
@@ -102,7 +102,7 @@ public class WriterModifierElement: ModifierElement
         return "Write \(value) to \(to_index)"
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "square.and.pencil"
     }
@@ -147,7 +147,7 @@ public class MathModifierElement: ModifierElement
         return "Value of \(value_index) \(operation.rawValue) value of \(value2_index)"
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "function"
     }
@@ -241,7 +241,7 @@ public class ChangerModifierElement: ModifierElement
         return "Module – \(is_internal_module ? module_name : String(module_name.dropFirst()))"
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "wand.and.rays"
     }
@@ -345,7 +345,7 @@ public class ObserverModifierElement: ModifierElement
         }
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "loupe"
     }
@@ -407,7 +407,7 @@ public class CleanerModifierElement: ModifierElement
         return "Clear all registers"
     }
     
-    public override var image_name: String
+    public override var symbol_name: String
     {
         return "clear"
     }

@@ -82,7 +82,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable
     }
     
     ///An image name for program element card.
-    open var image_name: String
+    open var symbol_name: String
     {
         return "app"
     }
@@ -90,7 +90,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable
     ///An image for program element card.
     public var image: Image
     {
-        return Image(systemName: image_name)
+        return Image(systemName: symbol_name)
     }
     
     ///A color for the program element card.
