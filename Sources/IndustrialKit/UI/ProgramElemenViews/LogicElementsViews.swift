@@ -233,16 +233,76 @@ public struct MarkLogicElementView: View
     }
 }
 
-#Preview
+//MARK: - Previews
+struct IMALogicPreviewsContainer: PreviewProvider
 {
-    ComparatorElementView(element: .constant(ComparatorLogicElement()), on_update: {})
-        .environmentObject(Workspace())
-        .frame(width: 256)
-}
+    static var previews: some View
+    {
+        LogicContainer()
+    }
 
-#Preview
-{
-    MarkLogicElementView(element: .constant(MarkLogicElement()), on_update: {})
-        .environmentObject(Workspace())
-        .frame(width: 256)
+    struct LogicContainer: View
+    {
+        @StateObject var workspace = Workspace()
+
+        var body: some View
+        {
+            ZStack
+            {
+                Rectangle()
+                    .foregroundStyle(.white)
+                
+                LogicView()
+                    .environmentObject(workspace)
+            }
+        }
+    }
+
+    struct LogicView: View
+    {
+        @EnvironmentObject var workspace: Workspace
+        var mark = MarkLogicElement()
+        
+        var body: some View
+        {
+            VStack(alignment: .leading, spacing: 8)
+            {
+                /*Text("Logic")
+                    .font(.custom("Line Seed Sans", size: 20))
+                    .foregroundStyle(.gray)
+                    .fontWeight(.medium)
+                    .opacity(0.75)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding([.horizontal, .top], 8)*/
+
+                HStack
+                {
+                    ComparatorElementView(element: .constant(ComparatorLogicElement()), on_update: {})
+                        .padding()
+                        .frame(width: 256)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .shadow(radius: 8)
+                        .padding()
+
+                    MarkLogicElementView(element: .constant(mark), on_update: {})
+                        .padding()
+                        .frame(width: 256)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .shadow(radius: 8)
+                        .padding()
+                }
+                
+                Spacer()
+            }
+            .padding(8)
+            .onAppear
+            {
+                mark.name = "Cycle"
+                
+                workspace.elements.append(mark)
+            }
+        }
+    }
 }

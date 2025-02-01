@@ -234,9 +234,9 @@ public struct ChangerElementView: View
         #if os(macOS)
         HStack
         {
-            Picker("Module:", selection: $module_name) //Changer module picker
+            Picker("Module", selection: $module_name) //Changer module picker
             {
-                if Changer.internal_modules_list.count > 0
+                if Changer.internal_modules_list.count > 0 || Changer.external_modules_list.count > 0
                 {
                     Section(header: Text("Internal"))
                     {
@@ -276,7 +276,7 @@ public struct ChangerElementView: View
         #else
         VStack
         {
-            Picker("Module:", selection: $module_name) //Changer module picker
+            Picker("Module", selection: $module_name) //Changer module picker
             {
                 if Changer.internal_modules_list.count > 0
                 {
@@ -460,11 +460,12 @@ public struct ObserverElementView: View
                             }
                             .onDelete(perform: delete_items)
                         }
-                        #if os(macOS)
-                        .frame(width: 256, height: 256)
+                        .frame(minHeight: 160)
+                        /*#if os(macOS)
+                        .frame(height: 256) //(width: 256, height: 256)
                         #else
                         .frame(width: 320, height: 256)
-                        #endif
+                        #endif*/
                         .modifier(ListBorderer())
                         .padding(.bottom)
                     }
@@ -477,7 +478,7 @@ public struct ObserverElementView: View
                             
                             Text("No items to ouput")
                         }
-                        .frame(width: 256, height: 64)
+                        .frame(height: 64) //(width: 256, height: 256)
                         .modifier(ListBorderer())
                         .padding(.bottom)
                     }
@@ -549,11 +550,12 @@ public struct ObserverElementView: View
                             }
                             .onDelete(perform: delete_items)
                         }
-                        #if os(macOS)
-                        .frame(width: 256, height: 256)
+                        .frame(minHeight: 160)
+                        /*#if os(macOS)
+                        .frame(height: 256) //(width: 256, height: 256)
                         #else
                         .frame(width: 320, height: 256)
-                        #endif
+                        #endif*/
                         .modifier(ListBorderer())
                         .padding(.bottom)
                     }
@@ -566,7 +568,7 @@ public struct ObserverElementView: View
                             
                             Text("No items to ouput")
                         }
-                        .frame(width: 256, height: 64)
+                        .frame(height: 64) //(width: 256, height: 256)
                         .modifier(ListBorderer())
                         .padding(.bottom)
                     }
@@ -642,25 +644,115 @@ public struct ObserverElementView: View
     }
 }
 
-#Preview
+//MARK: - Previews
+struct IMAModifiersPreviewsContainer: PreviewProvider
 {
-    MoverElementView(element: .constant(MoverModifierElement()), on_update: {})
-        .environmentObject(Workspace())
-}
+    static var previews: some View
+    {
+        ModifiersContainer()
+            .frame(height: 512)
+    }
 
-#Preview
-{
-    ChangerElementView(element: .constant(ChangerModifierElement()), on_update: {})
-}
+    struct ModifiersContainer: View
+    {
+        @StateObject var workspace = Workspace()
 
-#Preview
-{
-    WriterElementView(element: .constant(WriterModifierElement()), on_update: {})
-        .environmentObject(Workspace())
-}
+        var body: some View
+        {
+            ZStack
+            {
+                Rectangle()
+                    .foregroundStyle(.white)
+                
+                ModifiersView()
+                    .environmentObject(workspace)
+                    .onAppear
+                {
+                    let robot = Robot(name: "6DOF")
+                    robot.is_placed = true
+                    robot.add_program(PositionsProgram(name: "Square"))
+                    
+                    let tool = Tool(name: "Gripper")
+                    tool.is_placed = true
+                    tool.add_program(OperationsProgram(name: "Close"))
+                    
+                    workspace.robots.append(robot)
+                    workspace.tools.append(tool)
+                    
+                    Changer.internal_modules_list.append("Forces To Position")
+                }
+            }
+        }
+    }
 
-#Preview
-{
-    ObserverElementView(element: .constant(ObserverModifierElement()), on_update: {})
-        .environmentObject(Workspace())
+    struct ModifiersView: View
+    {
+        var body: some View
+        {
+            VStack(alignment: .leading, spacing: 8)
+            {
+                /*Text("Modifiers")
+                    .font(.custom("Line Seed Sans", size: 20))
+                    .foregroundStyle(.pink)
+                    .fontWeight(.medium)
+                    .opacity(0.75)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding([.horizontal, .top], 8)*/
+
+                HStack
+                {
+                    MoverElementView(element: .constant(MoverModifierElement()), on_update: {})
+                        .padding()
+                        .frame(width: 256)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .shadow(radius: 8)
+                        .padding()
+
+                    ChangerElementView(element: .constant(ChangerModifierElement()), on_update: {})
+                        .padding()
+                        .frame(width: 256)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .shadow(radius: 8)
+                        .padding()
+                }
+
+                HStack
+                {
+                    ObserverElementView(element: .constant(ObserverModifierElement()), on_update: {})
+                        .padding()
+                        .frame(width: 256)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .shadow(radius: 8)
+                        .padding()
+                    
+                    VStack
+                    {
+                        WriterElementView(element: .constant(WriterModifierElement()), on_update: {})
+                            .padding()
+                            .frame(width: 256)
+                            .background(.bar)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .shadow(radius: 8)
+                            .padding()
+
+                        MathElementView(element: .constant(MathModifierElement()), on_update: {})
+                            .padding()
+                            .frame(width: 256)
+                            .background(.bar)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .shadow(radius: 8)
+                            .padding()
+                        
+                        Spacer()
+                    }
+                }
+                
+                Spacer()
+            }
+            .padding(8)
+        }
+    }
 }

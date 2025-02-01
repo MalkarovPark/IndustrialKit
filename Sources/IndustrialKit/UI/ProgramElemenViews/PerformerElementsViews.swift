@@ -361,14 +361,80 @@ public struct ToolPerformerElementView: View
     }
 }
 
-#Preview
+//MARK: - Previews
+struct IMAPerformersPreviewsContainer: PreviewProvider
 {
-    RobotPerformerElementView(element: .constant(RobotPerformerElement()), on_update: {})
-        .environmentObject(Workspace())
-}
+    static var previews: some View
+    {
+        PerformersContainer()
+    }
 
-#Preview
-{
-    ToolPerformerElementView(element: .constant(ToolPerformerElement()), on_update: {})
-        .environmentObject(Workspace())
+    struct PerformersContainer: View
+    {
+        @StateObject var workspace = Workspace()
+
+        var body: some View
+        {
+            ZStack
+            {
+                Rectangle()
+                    .foregroundStyle(.white)
+                
+                PerformersView()
+                    .environmentObject(workspace)
+                    .onAppear
+                {
+                    let robot = Robot(name: "6DOF")
+                    robot.is_placed = true
+                    robot.add_program(PositionsProgram(name: "Square"))
+                    
+                    let tool = Tool(name: "Gripper")
+                    tool.is_placed = true
+                    tool.add_program(OperationsProgram(name: "Close"))
+                    
+                    workspace.robots.append(robot)
+                    workspace.tools.append(tool)
+                }
+            }
+        }
+    }
+
+    struct PerformersView: View
+    {
+        var body: some View
+        {
+            VStack(alignment: .leading, spacing: 8)
+            {
+                /*Text("Performers")
+                    .font(.custom("Line Seed Sans", size: 20))
+                    .foregroundStyle(.green)
+                    .fontWeight(.medium)
+                    .opacity(0.75)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding([.horizontal, .top], 8)*/
+
+                HStack
+                {
+                    RobotPerformerElementView(element: .constant(RobotPerformerElement()), on_update: {})
+                        .padding()
+                        .frame(width: 256)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .shadow(radius: 8)
+                        .padding()
+
+                    ToolPerformerElementView(element: .constant(ToolPerformerElement()), on_update: {})
+                        .padding()
+                        .frame(width: 256)
+                        .background(.bar)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .shadow(radius: 8)
+                        .padding()
+                }
+                
+                Spacer()
+            }
+            .padding(8)
+        }
+    }
 }
