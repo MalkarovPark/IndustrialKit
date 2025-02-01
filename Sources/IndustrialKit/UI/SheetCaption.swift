@@ -69,10 +69,20 @@ public struct SheetCaption: ViewModifier
 
 #Preview
 {
+    @Previewable @State var is_presented: Bool = false
+    
     VStack()
     {
-        EmptyView()
+        Button("View Sheet")
+        {
+            is_presented = true
+        }
+        .sheet(isPresented: $is_presented)
+        {
+            EmptyView()
+                .frame(width: 320, height: 240)
+                .modifier(SheetCaption(is_presented: $is_presented, label: "Label"))
+        }
     }
-    .frame(width: 320, height: 240)
-    .modifier(SheetCaption(is_presented: .constant(true), label: "Text"))
+    .frame(width: 640, height: 480)
 }

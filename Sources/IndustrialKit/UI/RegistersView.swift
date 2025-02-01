@@ -501,6 +501,7 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
         {
             RegistersView_Previews(registers: $registers)
             RegistersSelectors_Previews(index: $index, indices: $indices)
+            RegistersDataPreview()
         }
     }
     
@@ -584,11 +585,26 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
             return colors
         }
     }
-}
-
-#Preview
-{
-    RegistersDataView(is_presented: .constant(true))
-        .environmentObject(Workspace())
-        .frame(width: 400)
+    
+    struct RegistersDataPreview: View
+    {
+        @State private var is_presented: Bool = false
+        
+        var body: some View
+        {
+            ZStack
+            {
+                Rectangle()
+                    .foregroundStyle(.white)
+                
+                RegistersDataView(is_presented: $is_presented)
+                    .frame(width: 420, height: 480)
+                    .environmentObject(Workspace())
+                    .background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .shadow(radius: 8)
+                    .padding(32)
+            }
+        }
+    }
 }

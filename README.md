@@ -33,7 +33,9 @@ IndustrialKit is an open source software platform for creating applications that
     * [Cards](#industrialkitui-cards)
     * [Position View](#industrialkitui-positionview)
     * [Position Control](#industrialkitui-positioncontrol)
+    * [Registers View](#industrialkitui-registersview)
     * [Registers Selector](#industrialkitui-registersselector)
+    * [Program Elements Views](#industrialkitui-programelementsviews)
     * [Charts View](#industrialkitui-chartsview)
     * [State View](#industrialkitui-stateview)
     * [Spatial Pendant](#industrialkitui-spendant)
@@ -202,12 +204,30 @@ Provides position editing with sliders. For location should set upper limits (lo
   <img width="256" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/078ff7dc-6468-4d1d-b536-e1432979fedd" />
 </p>
 
+### Registers View <a name="industrialkitui-registersview"></a>
+
+Pruposed for elements, registers from which they take data can be specified. This functionality is provided by the Registers Selector control. One or more registers can be selected.
+
+<p align="center">
+  <img width="468" alt="registers_view" src="https://github.com/user-attachments/assets/b2c2f15e-71f8-40b3-930c-8c12b247b00f" />
+</p>
+
 ### Registers Selector <a name="industrialkitui-registersselector"></a>
 
 Pruposed for elements, registers from which they take data can be specified. This functionality is provided by the Registers Selector control. One or more registers can be selected.
 
 <p align="center">
   <img width="680" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/0d600fa1-6a99-4129-9f5d-ab5a3572629a" />
+</p>
+
+### Program Elements Views <a name="industrialkitui-programelementsviews"></a>
+
+Views for editing different types of IMA software elements – Performers, Modifiers and Logic.
+
+<p align="center">
+  <img width="600" alt="performers_views" src="https://github.com/user-attachments/assets/be0b7cac-b2d3-4fcf-a92d-39abc78f7968" />
+  <img width="600" alt="modifier_views" src="https://github.com/user-attachments/assets/93b0fe5c-91cc-49f0-a0b3-538fd7d3c980" />
+  <img width="600" alt="logic_views" src="https://github.com/user-attachments/assets/6d970534-6006-4740-9114-a7b44d9407d0" />
 </p>
 
 ### Charts View <a name="industrialkitui-chartsview"></a>
