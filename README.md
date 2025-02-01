@@ -53,9 +53,9 @@ The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS, visionO
 
 ### Installation with SPM
 
-CareKit can be installed via SPM. Create a new Xcode project and navigate to `File > Swift Packages > Add Package Dependency`. Enter the url `https://github.com/MalkarovPark/IndustrialKit` and tap `Next`. Select the `main` branch, and on the next screen, check off the packages as needed.
+CareKit can be installed via SPM. Create a new Xcode project and navigate to `File > Add Package Dependences`. Enter the url `https://github.com/MalkarovPark/IndustrialKit` and select the `main` branch. Next select targeted project and tap `Add Package`.
 
-<img width="1000" alt="embedded-framework" src="https://user-images.githubusercontent.com/62340924/207657493-af8eae06-1e02-4c3d-a330-730225a19306.png">
+<img width="1208" alt="package_installation" src="https://github.com/user-attachments/assets/88ab8206-b5aa-48d4-bb5c-3ed6b85cc528" />
 
 ### [Robotic Complex Workspace App](https://github.com/MalkarovPark/Robotic-Complex-Workspace) <a name="rcworkspace-app"></a>
 
@@ -235,7 +235,7 @@ Views for editing different types of IMA software elements – Performers, Modif
 Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to switch between them by segmented picker (if count of arrays of arrays is more than one). The type of chart is determined by its properties.
 
 <p align="center">
-  <img width="752" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/c869219d-4d1b-4c73-b1b8-bcd5ae27833d" />
+  <img width="752" src="https://github.com/user-attachments/assets/97db690a-662c-4fe4-8468-880818460865" />
 </p>
 
 ### State View <a name="industrialkitui-stateview"></a>
@@ -243,7 +243,7 @@ Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to swit
 Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable [SF Symbols](https://developer.apple.com/sf-symbols/).
 
 <p align="center">
-  <img width="432" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/106bb432-846d-494a-aa39-09ab6cfbcaba" />
+  <img width="432" src="https://github.com/user-attachments/assets/2b092b07-67b7-4da7-a1c1-a56769d2e021" />
 </p>
 
 ### Spatial Pendant <a name="industrialkitui-spendant"></a>
