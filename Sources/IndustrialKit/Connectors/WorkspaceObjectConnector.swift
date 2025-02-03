@@ -404,7 +404,7 @@ public struct ConnectionParameter: Identifiable, Equatable, Codable
         case let value as Int:
             try container.encode("Int", forKey: .value_type)
             try container.encode(value, forKey: .value_int)
-        case let value as Double:
+        case let value as Float:
             try container.encode("Float", forKey: .value_type)
             try container.encode(value, forKey: .value_float)
         case let value as Bool:
