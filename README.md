@@ -222,7 +222,7 @@ Pruposed for elements, registers from which they take data can be specified. Thi
 
 ### Program Elements Views <a name="industrialkitui-programelementsviews"></a>
 
-Views for editing different types of IMA software elements – Performers, Modifiers and Logic.
+Views for editing different types of IMA program elements – Performers, Modifiers and Logic.
 
 <p align="center">
   <img width="600" alt="performers_views" src="https://github.com/user-attachments/assets/be0b7cac-b2d3-4fcf-a92d-39abc78f7968" />
