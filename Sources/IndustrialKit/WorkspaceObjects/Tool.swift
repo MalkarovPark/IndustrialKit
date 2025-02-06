@@ -99,11 +99,11 @@ public class Tool: WorkspaceObject
         
         if !(module.connector is ExternalToolConnector)
         {
-            model_controller = module.model_controller.copy() as! ToolModelController
+            connector = module.connector.copy() as! ToolConnector
         }
         else
         {
-            model_controller = module.model_controller
+            connector = module.connector
         }
         
         //model_controller = module.model_controller.copy() as! ToolModelController

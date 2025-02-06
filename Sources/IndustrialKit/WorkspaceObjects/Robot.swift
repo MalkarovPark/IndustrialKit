@@ -109,11 +109,11 @@ public class Robot: WorkspaceObject
         
         if !(module.connector is ExternalRobotConnector)
         {
-            model_controller = module.model_controller.copy() as! RobotModelController
+            connector = module.connector.copy() as! RobotConnector
         }
         else
         {
-            model_controller = module.model_controller
+            connector = module.connector
         }
         
         //model_controller = module.model_controller.copy() as! RobotModelController
