@@ -271,7 +271,7 @@ open class RobotModelController: ModelController
             }
             rotation_time.p = rotation_p / v
             
-            if rotation_p == 0
+            if rotation_w == 0
             {
                 rotation_w = abs(point1.w - point2.w)
             }
