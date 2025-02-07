@@ -253,9 +253,9 @@ open class RobotModelController: ModelController
         }
         
         //Calculate time between target point and current rotation
-        var rotation_r = abs(point1.y - point2.y)
+        var rotation_r = sqrt(pow(point1.y - point2.y, 2) + pow(point1.z - point2.z, 2))
         var rotation_p = sqrt(pow(point1.x - point2.x, 2) + pow(point1.z - point2.z, 2))
-        var rotation_w = abs(point1.y - point2.y)
+        var rotation_w = sqrt(pow(point1.x - point2.x, 2) + pow(point1.y - point2.y, 2))
         
         if v != 0
         {
