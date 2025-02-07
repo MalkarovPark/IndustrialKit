@@ -253,9 +253,9 @@ open class RobotModelController: ModelController
         }
         
         //Calculate time between target point and current rotation
-        let rotation_r = abs(point1.r - point2.r)
-        let rotation_p = abs(point1.p - point2.p)
-        let rotation_w = abs(point1.w - point2.w)
+        let rotation_r = abs(point1.y - point2.y)
+        let rotation_p = sqrt(abs(point1.x - point2.x) + abs(point1.z - point2.z))
+        let rotation_w = abs(point1.y - point2.y)
         
         if v != 0
         {
@@ -276,7 +276,7 @@ open class RobotModelController: ModelController
             let y_dist = point1.y - point2.y
             let z_dist = point1.z - point2.z
             
-            return sqrt(Float(x_dist * x_dist + y_dist * y_dist + z_dist * z_dist))
+            return sqrt(x_dist * x_dist + y_dist * y_dist + z_dist * z_dist)
         }
     }
     
