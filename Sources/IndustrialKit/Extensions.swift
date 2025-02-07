@@ -335,3 +335,14 @@ public extension String
         return correctedName.prefix(1).rangeOfCharacter(from: .decimalDigits) != nil ? "_\(correctedName)" : correctedName
     }
 }
+
+//MARK: - Inspector modifier for visionOS
+#if os(visionOS)
+extension View
+{
+    func inspector<InspectorContent: View>(isPresented: Binding<Bool>, @ViewBuilder inspectorContent: @escaping () -> InspectorContent) -> some View
+    {
+        self.modifier(InspectorModifier(isPresented: isPresented, inspectorContent: inspectorContent))
+    }
+}
+#endif
