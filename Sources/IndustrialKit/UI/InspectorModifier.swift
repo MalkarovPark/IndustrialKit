@@ -7,13 +7,14 @@
 
 #if os(visionOS)
 import Foundation
+import SwiftUI
 
-struct InspectorModifier<InspectorContent: View>: ViewModifier
+public struct InspectorModifier<InspectorContent: View>: ViewModifier
 {
     @Binding var isPresented: Bool
     let inspectorContent: () -> InspectorContent
 
-    func body(content: Content) -> some View
+    public func body(content: Content) -> some View
     {
         ZStack(alignment: .trailing)
         {
