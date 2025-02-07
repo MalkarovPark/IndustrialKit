@@ -338,7 +338,7 @@ public extension String
 
 //MARK: - Inspector modifier for visionOS
 #if os(visionOS)
-extension View
+public extension View
 {
     func inspector<InspectorContent: View>(isPresented: Binding<Bool>, @ViewBuilder inspectorContent: @escaping () -> InspectorContent) -> some View
     {
