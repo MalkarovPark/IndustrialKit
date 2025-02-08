@@ -90,7 +90,7 @@ open class RobotConnector: WorkspaceObjectConnector
     
     override open func sync_model()
     {
-        //model_controller?.nodes[safe: "Node", default: SCNNode()].runAction(SCNAction())
+        
     }
 }
 

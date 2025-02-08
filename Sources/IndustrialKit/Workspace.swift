@@ -2254,10 +2254,7 @@ public class Workspace: ObservableObject
                     else
                     {
                         tool_node?.constraints = [SCNConstraint]()
-                        //clear_constranints(node: tool_node ?? SCNNode())
                         tool_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(tool.attached_to ?? "").tool_node))
-                        //tool_node?.position.x += 1
-                        //tool_node?.position.x -= 1
                     }
                 }
             }

@@ -41,17 +41,6 @@ open class RobotModelController: ModelController
         
     }
     
-    /**
-     Updates robot nodes by positional values.
-     
-     - Parameters:
-        - values: Robot nodes positional values.
-     */
-    /*open func apply_nodes_positions(values: [Float])
-    {
-        
-    }*/
-    
     ///An update pointer node by position data flag.
     private var update_pointer_node_position = true
     
@@ -171,8 +160,6 @@ open class RobotModelController: ModelController
         nodes.removeAll()
         pointer_node = SCNNode()
     }
-    
-    //private var moving_task = Task {}
     
     ///Cancel perform flag.
     private var cancel_task = false
@@ -332,7 +319,6 @@ public class ExternalRobotModelController: RobotModelController
     {
         self.module_name = ""
         self.package_url = URL(fileURLWithPath: "")
-        //fatalError("init() has not been implemented")
     }
     
     //MARK: Parameters import

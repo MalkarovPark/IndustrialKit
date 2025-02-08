@@ -134,7 +134,6 @@ open class RobotModule: IndustrialModule
                     {
                         if let external_scene = scene_source.scene(options: nil)
                         {
-                            print("Imported – \(external_scene)")
                             return external_scene.rootNode.clone()
                         }
                     }

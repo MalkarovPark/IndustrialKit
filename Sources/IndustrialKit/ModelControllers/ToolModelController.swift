@@ -72,7 +72,6 @@ public class ExternalToolModelController: ToolModelController
     {
         self.module_name = ""
         self.package_url = URL(fileURLWithPath: "")
-        //fatalError("init() has not been implemented")
     }
     
     //MARK: Parameters import
@@ -165,27 +164,7 @@ public class ExternalToolModelController: ToolModelController
         func local_completion(index: Int)
         {
             completed[index] = true
-            
-            if completed.allSatisfy({ $0 == true })
-            {
-                //completion()
-            }
         }
-        
-        /*//Split output into components
-        let components: [String] = output.split(separator: " ").map { String($0) }
-
-        //Check that output contains exactly two parameters
-        guard components.count == 2
-        else
-        {
-            return
-        }
-        
-        if let action = string_to_action(from: components[1])
-        {
-            nodes[safe: components[0], default: SCNNode()].runAction(action)
-        }*/
         #endif
     }
     
