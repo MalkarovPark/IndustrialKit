@@ -7,7 +7,6 @@
 
 import Foundation
 
-//MARK: - Chart class and structure
 /**
  A storage for chart info.
  */

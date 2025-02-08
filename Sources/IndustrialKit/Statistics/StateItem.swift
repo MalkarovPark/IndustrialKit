@@ -1,5 +1,5 @@
 //
-//  WorkspaceObjectChart.swift
+//  StateItem.swift
 //  IndustrialKit
 //
 //  Created by Artem on 08.12.2022.
