@@ -232,10 +232,10 @@ public class Workspace: ObservableObject
             deselect_tool()
             
             // Get new node
-            select_robot(name: name) // Select robot in workspace
+            select_robot(name: name) // Select robot in the workspace
             workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!) // Get workcell from Workcell.scn and add it to Workspace.scn
             
-            edited_object_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in workspace scene
+            edited_object_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
             
             edited_object_node?.name = name
             selected_robot.workcell_connect(scene: scene, name: name, connect_camera: false)
@@ -273,7 +273,7 @@ public class Workspace: ObservableObject
         update_pointer()
     }
     
-    /// Updates model position of selected object in workspace scene by its positional values.
+    /// Updates model position of selected object in the workspace scene by its positional values.
     public func update_object_position()
     {
         // Get position by selected object type
@@ -311,7 +311,7 @@ public class Workspace: ObservableObject
         #endif
     }
     
-    /// Places object in workspace.
+    /// Places object in the workspace.
     public func place_viewed_object()
     {
         switch selected_object_type
@@ -401,7 +401,7 @@ public class Workspace: ObservableObject
         return unavaliable
     }
     
-    /// Process object node selection in workspace scene.
+    /// Process object node selection in the workspace scene.
     public func select_object_in_scene(result: SCNHitTestResult)
     {
         // print(result.localCoordinates)
@@ -660,7 +660,7 @@ public class Workspace: ObservableObject
     
     // MARK: - Robots handling functions
     // MARK: Robots manage functions
-    /// Adds robot in workspace.
+    /// Adds robot in the workspace.
     public func add_robot(_ robot: Robot)
     {
         robot.name = mismatched_name(name: robot.name, names: robots_names)
@@ -694,7 +694,7 @@ public class Workspace: ObservableObject
     }
     
     /**
-     Duplicates robot in workspace.
+     Duplicates robot in the workspace.
      
      - Parameters:
         - index: An index of robot to be duplicated.
@@ -715,7 +715,7 @@ public class Workspace: ObservableObject
     }
     
     /**
-     Duplicates robot in workspace.
+     Duplicates robot in the workspace.
      
      - Parameters:
         - name: A name of robot to be duplicated.
@@ -801,7 +801,7 @@ public class Workspace: ObservableObject
         // return self.robots[robot_index_by_name(name)]
     }
     
-    /// Names of all robots in workspace.
+    /// Names of all robots in the workspace.
     public var robots_names: [String]
     {
         var robots_names = [String]()
@@ -815,7 +815,7 @@ public class Workspace: ObservableObject
         return robots_names
     }
     
-    /// Names of robots avaliable to place in workspace.
+    /// Names of robots avaliable to place in the workspace.
     public var avaliable_robots_names: [String]
     {
         var names = [String]()
@@ -829,7 +829,7 @@ public class Workspace: ObservableObject
         return names
     }
     
-    /// Names of robots placed in workspace.
+    /// Names of robots placed in the workspace.
     public var placed_robots_names: [String] // Array of robots names added to workspace
     {
         var names = [String]()
@@ -868,7 +868,7 @@ public class Workspace: ObservableObject
     
     // MARK: - Tools handling functions
     // MARK: Tools manage funcions
-    /// Adds tool in workspace.
+    /// Adds tool in the workspace.
     public func add_tool(_ tool: Tool)
     {
         tool.name = mismatched_name(name: tool.name, names: tools_names)
@@ -902,7 +902,7 @@ public class Workspace: ObservableObject
     }
     
     /**
-     Duplicates tool in workspace.
+     Duplicates tool in the workspace.
      
      - Parameters:
         - index: An index of tool to be duplicated.
@@ -923,7 +923,7 @@ public class Workspace: ObservableObject
     }
     
     /**
-     Duplicates tool in workspace.
+     Duplicates tool in the workspace.
      
      - Parameters:
         - name: A name of tool to be duplicated.
@@ -1008,8 +1008,8 @@ public class Workspace: ObservableObject
         // return self.tools[tool_index_by_name(name)]
     }
     
-    /// Names of all tools in workspace.
-    public var tools_names: [String] // Get names of all tools in workspace
+    /// Names of all tools in the workspace.
+    public var tools_names: [String] // Get names of all tools in the workspace
     {
         var names = [String]()
         if tools.count > 0
@@ -1022,7 +1022,7 @@ public class Workspace: ObservableObject
         return names
     }
     
-    /// Names of tools avaliable to place in workspace.
+    /// Names of tools avaliable to place in the workspace.
     public var avaliable_tools_names: [String]
     {
         var names = [String]()
@@ -1036,7 +1036,7 @@ public class Workspace: ObservableObject
         return names
     }
     
-    /// Names of tools placed in workspace.
+    /// Names of tools placed in the workspace.
     public var placed_tools_names: [String] // Array of robots names added to workspace
     {
         var names = [String]()
@@ -1065,7 +1065,7 @@ public class Workspace: ObservableObject
         edited_object_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(robot_name).tool_node))
     }
     
-    /// Removes attachment for edited tool and reset it position in workspace.
+    /// Removes attachment for edited tool and reset it position in the workspace.
     public func remove_attachment()
     {
         edited_object_node?.remove_all_constraints()
@@ -1074,7 +1074,7 @@ public class Workspace: ObservableObject
     
     // MARK: - Parts handling functions
     // MARK: Parts manage funcions
-    /// Adds part in workspace.
+    /// Adds part in the workspace.
     public func add_part(_ part: Part)
     {
         part.name = mismatched_name(name: part.name, names: parts_names)
@@ -1107,7 +1107,7 @@ public class Workspace: ObservableObject
     }
     
     /**
-     Duplicates part in workspace.
+     Duplicates part in the workspace.
      
      - Parameters:
         - index: An index of part to be duplicated.
@@ -1128,7 +1128,7 @@ public class Workspace: ObservableObject
     }
     
     /**
-     Duplicates part in workspace.
+     Duplicates part in the workspace.
      
      - Parameters:
         - name: A name of part to be duplicated.
@@ -1213,7 +1213,7 @@ public class Workspace: ObservableObject
         // return self.parts[part_index_by_name(name)]
     }
     
-    /// Names of all parts in workspace.
+    /// Names of all parts in the workspace.
     public var parts_names: [String]
     {
         var parts_names = [String]()
@@ -1227,7 +1227,7 @@ public class Workspace: ObservableObject
         return parts_names
     }
     
-    /// Names of parts avaliable to place in workspace.
+    /// Names of parts avaliable to place in the workspace.
     public var avaliable_parts_names: [String]
     {
         var names = [String]()
@@ -1241,7 +1241,7 @@ public class Workspace: ObservableObject
         return names
     }
     
-    /// Names of parts placed in workspace.
+    /// Names of parts placed in the workspace.
     public var placed_parts_names: [String] // Array of robots names added to workspace
     {
         var names = [String]()
@@ -1257,7 +1257,7 @@ public class Workspace: ObservableObject
     
     // MARK: - Control program functions
     // MARK: Workspace program elements handling
-    /// All marks in workspace program.
+    /// All marks in the workspace program.
     public var marks_names: [String]
     {
         var marks_names = [String]()
@@ -2184,8 +2184,8 @@ public class Workspace: ObservableObject
         var tool_node: SCNNode?
         var part_node: SCNNode?
         
-        // Place robots
-        if self.avaliable_robots_names.count < self.robots.count // If there are placed robots in workspace
+        // Placing robots
+        if self.avaliable_robots_names.count < self.robots.count // If there are placed robots in the workspace
         {
             var connect_camera = true
             for robot in robots
@@ -2193,7 +2193,7 @@ public class Workspace: ObservableObject
                 if robot.is_placed
                 {
                     workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!)
-                    unit_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in workspace scene
+                    unit_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
                     
                     unit_node?.name = robot.name // Select robot cell node
                     robot.workcell_connect(scene: scene, name: robot.name, connect_camera: connect_camera) // Connect to robot model, place manipulator
@@ -2221,8 +2221,8 @@ public class Workspace: ObservableObject
             }
         }
         
-        // Place tools
-        if self.avaliable_tools_names.count < self.tools.count // If there are placed tools in workspace
+        // Placing tools
+        if self.avaliable_tools_names.count < self.tools.count // If there are placed tools in the workspace
         {
             for tool in tools
             {
@@ -2260,8 +2260,8 @@ public class Workspace: ObservableObject
             }
         }
         
-        // Place parts
-        if self.avaliable_parts_names.count < self.parts.count // If there are placed parts in workspace
+        // Placing parts
+        if self.avaliable_parts_names.count < self.parts.count // If there are placed parts in the workspace
         {
             for part in parts
             {
@@ -2371,22 +2371,4 @@ public struct WorkspacePreset: Codable
         self.tools = tools
         self.parts = parts
     }
-    
-    /*public init(robots: [RobotStruct], elements: [WorkspaceProgramElementStruct], tools: [ToolStruct], parts: [PartStruct], registers: [Int])
-    {
-        self.robots = robots
-        self.elements = elements
-        self.tools = tools
-        self.parts = parts
-        
-        for (index, value) in registers.enumerated()
-        {
-            /*if index < self.registers.count
-            {
-                self.registers[safe: index] = value
-            }*/
-            
-            self.registers[safe: index] = value
-        }
-    }*/
 }
