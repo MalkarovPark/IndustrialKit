@@ -35,10 +35,10 @@ open class ToolModelController: ModelController
         completion()
     }
     
-    ///Stops connected model actions performation.
+    /// Stops connected model actions performation.
     public final func remove_all_model_actions()
     {
-        for (_, node) in nodes //Remove all node actions
+        for (_, node) in nodes // Remove all node actions
         {
             node.removeAllActions()
         }
@@ -46,18 +46,18 @@ open class ToolModelController: ModelController
         reset_nodes()
     }
     
-    ///Inforamation code updated by model controller.
+    /// Inforamation code updated by model controller.
     public var info_output: [Float]?
 }
 
 //MARK: - External Model Controller
 public class ExternalToolModelController: ToolModelController
 {
-    //MARK: Init functions
-    ///An external module name.
+    // MARK: Init functions
+    /// An external module name.
     public var module_name: String
     
-    ///For access to code.
+    /// For access to code.
     public var package_url: URL
     
     public init(_ module_name: String, package_url: URL, nodes_names: [String])
@@ -74,7 +74,7 @@ public class ExternalToolModelController: ToolModelController
         self.package_url = URL(fileURLWithPath: "")
     }
     
-    //MARK: Parameters import
+    // MARK: Parameters import
     override open var nodes_names: [String]
     {
         return external_nodes_names
@@ -82,7 +82,7 @@ public class ExternalToolModelController: ToolModelController
     
     public var external_nodes_names = [String]()
     
-    //MARK: Performing
+    // MARK: Performing
     open override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
@@ -92,17 +92,17 @@ public class ExternalToolModelController: ToolModelController
             return
         }
 
-        //Split the output into lines
+        // Split the output into lines
         let lines = output.split(separator: "\n").map { String($0) }
         
         var completed = [Bool](repeating: false, count: lines.count)
 
-        for i in 0..<lines.count //line in lines
+        for i in 0..<lines.count // line in lines
         {
-            //Split output into components
+            // Split output into components
             let components: [String] = lines[i].split(separator: " ").map { String($0) }
 
-            //Check that output contains exactly two parameters
+            // Check that output contains exactly two parameters
             guard components.count == 2
             else
             {
@@ -138,17 +138,17 @@ public class ExternalToolModelController: ToolModelController
             return
         }
 
-        //Split the output into lines
+        // Split the output into lines
         let lines = output.split(separator: "\n").map { String($0) }
         
         var completed = [Bool](repeating: false, count: lines.count)
 
-        for i in 0..<lines.count //line in lines
+        for i in 0..<lines.count // line in lines
         {
-            //Split output into components
+            // Split output into components
             let components: [String] = lines[i].split(separator: " ").map { String($0) }
 
-            //Check that output contains exactly two parameters
+            // Check that output contains exactly two parameters
             guard components.count == 2
             else
             {
@@ -168,7 +168,7 @@ public class ExternalToolModelController: ToolModelController
         #endif
     }
     
-    //MARK: Statistics
+    // MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)

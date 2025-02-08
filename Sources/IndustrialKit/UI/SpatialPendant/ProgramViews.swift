@@ -1,6 +1,6 @@
 //
-//  SwiftUIView.swift
-//  
+//  ProgramViews.swift
+//  IndustrialKit
 //
 //  Created by Artem on 15.02.2024.
 //
@@ -59,7 +59,7 @@ internal struct WorkspaceProgramView: View
         .animation(.spring(), value: workspace.elements)
     }
     
-    func remove_elements(at offsets: IndexSet) //Remove program element function
+    func remove_elements(at offsets: IndexSet) // Remove program element function
     {
         withAnimation
         {
@@ -131,7 +131,7 @@ internal struct ProgramElementItemView: View
             {
                 Rectangle()
                     .foregroundStyle(.clear)
-                    //.popover(isPresented: $element_view_presented, arrowEdge: .trailing)
+                    // .popover(isPresented: $element_view_presented, arrowEdge: .trailing)
                     .sheet(isPresented: $element_view_presented)
                     {
                         ElementView(element: $element, on_update: update_program_element)
@@ -162,7 +162,7 @@ internal struct ProgramElementItemView: View
         }
     }
     
-    //MARK: Program elements manage functions
+    // MARK: Program elements manage functions
     private func update_program_element()
     {
         workspace.elements_check()
@@ -346,7 +346,7 @@ internal struct RobotProgramView: View
         controller.robots_document_data_update.toggle()
     }
     
-    private func remove_points(at offsets: IndexSet) //Remove robot point function
+    private func remove_points(at offsets: IndexSet) // Remove robot point function
     {
         withAnimation
         {
@@ -403,9 +403,9 @@ internal struct PositionItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(workspace.selected_robot.inspector_point_color(point: point_item)) //.gray)
+                .foregroundColor(workspace.selected_robot.inspector_point_color(point: point_item)) // .gray)
             
-            //Spacer()
+            // Spacer()
             
             ZStack(alignment: .center)
             {
@@ -545,7 +545,7 @@ internal struct PositionPointView: View
         }
     }
     
-    //MARK: Point manage functions
+    // MARK: Point manage functions
     func update_point_location()
     {
         point_item.x = item_view_pos_location[0]
@@ -619,7 +619,7 @@ internal struct ToolProgramView: View
         controller.tools_document_data_update.toggle()
     }
     
-    func remove_codes(at offsets: IndexSet) //Remove tool operation function
+    func remove_codes(at offsets: IndexSet) // Remove tool operation function
     {
         withAnimation
         {

@@ -49,8 +49,8 @@ public struct RobotPerformerElementView: View
         {
             if workspace.placed_robots_names.count > 0
             {
-                //MARK: Robot subview
-                Picker("Name", selection: $object_name) //Robot picker
+                // MARK: Robot subview
+                Picker("Name", selection: $object_name) // Robot picker
                 {
                     ForEach(workspace.placed_robots_names, id: \.self)
                     { name in
@@ -120,7 +120,7 @@ public struct RobotPerformerElementView: View
                         }
                         else
                         {
-                            Picker("Program", selection: $program_name) //Robot program picker
+                            Picker("Program", selection: $program_name) // Robot program picker
                             {
                                 if workspace.robot_by_name(object_name).programs_names.count > 0
                                 {
@@ -234,8 +234,8 @@ public struct ToolPerformerElementView: View
         {
             if workspace.placed_tools_names.count > 0
             {
-                //MARK: Robot subview
-                Picker("Name", selection: $object_name) //Robot picker
+                // MARK: Robot subview
+                Picker("Name", selection: $object_name) // Robot picker
                 {
                     ForEach(workspace.placed_tools_names, id: \.self)
                     { name in
@@ -299,7 +299,7 @@ public struct ToolPerformerElementView: View
                         }
                         else
                         {
-                            Picker("Program", selection: $program_name) //Robot program picker
+                            Picker("Program", selection: $program_name) // Robot program picker
                             {
                                 if workspace.tool_by_name(object_name).programs_names.count > 0
                                 {

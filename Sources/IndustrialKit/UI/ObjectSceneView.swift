@@ -23,7 +23,7 @@ public struct ObjectSceneView: UIViewRepresentable
     private var inited_with_scene = false
     private var inited_with_node = false
     
-    //MARK: Init functions
+    // MARK: Init functions
     public init(node: SCNNode,
                 transparent: Bool = true,
                 on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
@@ -110,7 +110,7 @@ public struct ObjectSceneView: UIViewRepresentable
             new_node.name = "Node"
             
             scene_view.scene?.rootNode.addChildNode(new_node)
-            //scene_view.scene?.rootNode.addChildNode(node.clone())
+            // scene_view.scene?.rootNode.addChildNode(node.clone())
         }
         
         if inited_with_scene
@@ -126,14 +126,14 @@ public struct ObjectSceneView: UIViewRepresentable
         return scene_view
     }
     
-    //MARK: Scene functions
+    // MARK: Scene functions
     #if os(macOS)
     public func makeNSView(context: Context) -> SCNView
     {
-        //Add gesture recognizer
+        // Add gesture recognizer
         scene_view.addGestureRecognizer(UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:))))
         
-        //Add reset double tap recognizer for macOS
+        // Add reset double tap recognizer for macOS
         let double_tap_gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_reset_double_tap(_:)))
         double_tap_gesture.numberOfClicksRequired = 2
         scene_view.addGestureRecognizer(double_tap_gesture)
@@ -161,7 +161,7 @@ public struct ObjectSceneView: UIViewRepresentable
     #else
     public func makeUIView(context: Context) -> SCNView
     {
-        //Add gesture recognizer
+        // Add gesture recognizer
         scene_view.addGestureRecognizer(UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:))))
         
         scene_view.allowsCameraControl = true

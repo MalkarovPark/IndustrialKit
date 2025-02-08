@@ -52,16 +52,16 @@ public func mismatched_name(name: String, names: [String]) -> String
 public func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float]
 {
     let new_x, new_y, new_z: Float
-    if origin_rotation.reduce(0, +) > 0 //If at least one rotation angle of the origin is not equal to zero
+    if origin_rotation.reduce(0, +) > 0 // If at least one rotation angle of the origin is not equal to zero
     {
-        //Calculate new values for coordinates components by origin rotation angles
+        // Calculate new values for coordinates components by origin rotation angles
         new_x = pointer_location[0] * cos(origin_rotation[1].to_rad) * cos(origin_rotation[2].to_rad) + pointer_location[2] * sin(origin_rotation[1].to_rad) - pointer_location[1] * sin(origin_rotation[2].to_rad)
         new_y = pointer_location[1] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[2].to_rad) - pointer_location[2] * sin(origin_rotation[0].to_rad) + pointer_location[0] * sin(origin_rotation[2].to_rad)
         new_z = pointer_location[2] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[1].to_rad) + pointer_location[1] * sin(origin_rotation[0].to_rad) - pointer_location[0] * sin(origin_rotation[1].to_rad)
     }
     else
     {
-        //Return original values
+        // Return original values
         new_x = pointer_location[0]
         new_y = pointer_location[1]
         new_z = pointer_location[2]
@@ -88,7 +88,7 @@ public func apply_bit_mask(node: SCNNode, _ value: Int)
 }
 
 //MARK: - Conversion functions for space parameters
-public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] //Scaling lengths by divider
+public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] // Scaling lengths by divider
 {
     var new_numbers = [Float]()
     for number in numbers
@@ -299,7 +299,7 @@ public func perform_terminal_command(_ command: String,  output_handler: @escapi
  */
 public func perform_terminal_app(at url: URL, with arguments: [String]) -> String?
 {
-    let command = "'\(url.path)' \(arguments.joined(separator: " "))" //Combine file path and arguments into one string
+    let command = "'\(url.path)' \(arguments.joined(separator: " "))" // Combine file path and arguments into one string
     
     let result = try? perform_terminal_command(command)
     
@@ -316,14 +316,14 @@ public func perform_terminal_app(at url: URL, with arguments: [String]) -> Strin
  */
 public func string_to_codable<T: Codable>(from string: String) -> T?
 {
-    //Convert the string to Data
+    // Convert the string to Data
     guard let jsonData = string.data(using: .utf8)
     else
     {
         return nil
     }
     
-    //Decode JSON into an instance of the specified type
+    // Decode JSON into an instance of the specified type
     let decoder = JSONDecoder()
     do
     {
@@ -356,9 +356,9 @@ public func string_to_action(from string: String) -> SCNAction?
     }
     
     let actionName = String(components[0]).trimmingCharacters(in: .whitespacesAndNewlines)
-    let parametersString = components[1].dropLast() //Remove closing parenthesis
+    let parametersString = components[1].dropLast() // Remove closing parenthesis
     
-    //Parse parameters
+    // Parse parameters
     let parameters = parametersString.split(separator: ",").map
     { parameter in
         return parameter.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -429,11 +429,11 @@ public func string_to_action(from string: String) -> SCNAction?
             return SCNAction.scale(to: CGFloat(scale), duration: duration)
         }
     case "sequence":
-        //Format string: "sequence(action1, action2, ...)"
+        // Format string: "sequence(action1, action2, ...)"
         let actions = parameters.compactMap { string_to_action(from: $0) }
         return SCNAction.sequence(actions)
     case "group":
-        //Format string: "group(action1, action2, ...)"
+        // Format string: "group(action1, action2, ...)"
         let actions = parameters.compactMap { string_to_action(from: $0) }
         return SCNAction.group(actions)
     case "removeAllActions":

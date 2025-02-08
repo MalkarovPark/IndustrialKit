@@ -18,17 +18,17 @@ public class PositionsProgram: Identifiable, Codable, Equatable
 {
     public static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
     {
-        return lhs.name == rhs.name //Identity condition by names
+        return lhs.name == rhs.name // Identity condition by names
     }
     
-    ///A positions program name.
+    /// A positions program name.
     public var name: String
     
-    ///An array of positions points.
+    /// An array of positions points.
     public var points = [PositionPoint]()
     
-    //MARK: - Positions program init functions
-    ///Creates a new positions program.
+    // MARK: - Positions program init functions
+    /// Creates a new positions program.
     public init()
     {
         self.name = "None"
@@ -44,7 +44,7 @@ public class PositionsProgram: Identifiable, Codable, Equatable
         self.name = name ?? "None"
     }
     
-    //MARK: - Point manage functions
+    // MARK: - Point manage functions
     /**
      Add the new point to positions program.
      - Parameters:
@@ -64,7 +64,7 @@ public class PositionsProgram: Identifiable, Codable, Equatable
      */
     public func update_point(number: Int, _ point: PositionPoint)
     {
-        if points.indices.contains(number) //Checking for the presence of a point with a given number to update
+        if points.indices.contains(number) // Checking for the presence of a point with a given number to update
         {
             points[number] = point
             visual_build()
@@ -85,26 +85,26 @@ public class PositionsProgram: Identifiable, Codable, Equatable
         }
     }
     
-    ///Returns the positions points count.
+    /// Returns the positions points count.
     public var points_count: Int
     {
         return points.count
     }
     
-    //MARK: - Visual functions
-    ///A node with all positions points model.
+    // MARK: - Visual functions
+    /// A node with all positions points model.
     public var positions_group = SCNNode()
     
-    ///An index of selected point for edit.
+    /// An index of selected point for edit.
     public var selected_point_index = -1
     {
         didSet
         {
-            visual_build() //Update positions model fot selected point color changing
+            visual_build() // Update positions model fot selected point color changing
         }
     }
     
-    //Define colors for path and points of program
+    // Define colors for path and points of program
     #if os(macOS)
     private let target_point_color = NSColor.systemPurple
     private let target_point_cone_colors = [NSColor.systemIndigo, NSColor.systemPink, NSColor.systemTeal]
@@ -121,13 +121,13 @@ public class PositionsProgram: Identifiable, Codable, Equatable
     private let cylinder_color = UIColor.white
     #endif
     
-    ///Returns a cone node for point.
+    /// Returns a cone node for point.
     private var cone_node: SCNNode
     {
-        //Building cones showing tool rotation at point
+        // Building cones showing tool rotation at point
         let cone_node = SCNNode()
         
-        for i in 0..<3 //Set point conical arrows for points
+        for i in 0..<3 // Set point conical arrows for points
         {
             let cone = SCNNode()
             cone.geometry = SCNCone(topRadius: 0, bottomRadius: 2, height: 4)
@@ -142,29 +142,29 @@ public class PositionsProgram: Identifiable, Codable, Equatable
         return cone_node
     }
     
-    //MARK: Build points visual model
-    ///Builds visual model of positions program.
+    // MARK: Build points visual model
+    /// Builds visual model of positions program.
     public func visual_build()
     {
         visual_clear()
         
         if points.count > 0
         {
-            //MARK: Build positions points in robot cell
+            // MARK: Build positions points in robot cell
             var point_location = SCNVector3()
             if points.count > 1
             {
                 var is_first = true
-                var pivot_points = [SCNVector3(), SCNVector3()] //Positions for point-to-point line
+                var pivot_points = [SCNVector3(), SCNVector3()] // Positions for point-to-point line
                 var point_index = 0
                 
                 for point in points
                 {
-                    var visual_point = SCNNode() //Create the point node
+                    var visual_point = SCNNode() // Create the point node
                     
                     node_by_data(node: &visual_point, point: point, location: &point_location)
                     
-                    //Change point node color by selection state
+                    // Change point node color by selection state
                     if point_index == selected_point_index
                     {
                         visual_point.geometry?.firstMaterial?.diffuse.contents = selected_point_color
@@ -176,38 +176,38 @@ public class PositionsProgram: Identifiable, Codable, Equatable
                     
                     if is_first
                     {
-                        //If point is first – save first location for the point-to-point line
+                        // If point is first – save first location for the point-to-point line
                         pivot_points[0] = point_location
                         is_first = false
                     }
                     else
                     {
-                        //If point is not first – build point-to-point line between the neighboring points
+                        // If point is not first – build point-to-point line between the neighboring points
                         #if os(macOS)
                         pivot_points[1] = SCNVector3(point_location.x + CGFloat.random(in: -0.001..<0.001), point_location.y + CGFloat.random(in: -0.001..<0.001), point_location.z + CGFloat.random(in: -0.001..<0.001))
                         #else
                         pivot_points[1] = SCNVector3(point_location.x + Float.random(in: -0.001..<0.001), point_location.y + Float.random(in: -0.001..<0.001), point_location.z + Float.random(in: -0.001..<0.001))
                         #endif
                         
-                        positions_group.addChildNode(build_ptp_line(from: simd_float3(pivot_points[0]), to: simd_float3(pivot_points[1]))) //Add point-to-point line model to the positions node
-                        pivot_points[0] = pivot_points[1] //Update first point for point-to-point line
+                        positions_group.addChildNode(build_ptp_line(from: simd_float3(pivot_points[0]), to: simd_float3(pivot_points[1]))) // Add point-to-point line model to the positions node
+                        pivot_points[0] = pivot_points[1] // Update first point for point-to-point line
                     }
                     
-                    positions_group.addChildNode(visual_point.clone()) //Add point model with point-to-point line to points model
-                    point_index += 1 //Increment index
+                    positions_group.addChildNode(visual_point.clone()) // Add point model with point-to-point line to points model
+                    point_index += 1 // Increment index
                 }
             }
             else
             {
-                //MARK: If there is only one point
-                var visual_point = SCNNode() //Create the point node
-                visual_point.geometry = SCNSphere(radius: 4) //Add sphere geometry to the point node
+                // MARK: If there is only one point
+                var visual_point = SCNNode() // Create the point node
+                visual_point.geometry = SCNSphere(radius: 4) // Add sphere geometry to the point node
                 
-                let point = points.first ?? PositionPoint() //Get first point data
+                let point = points.first ?? PositionPoint() // Get first point data
                 
                 node_by_data(node: &visual_point, point: point, location: &point_location)
                 
-                //Change point node color by selection state
+                // Change point node color by selection state
                 if selected_point_index == 0
                 {
                     visual_point.geometry?.firstMaterial?.diffuse.contents = selected_point_color
@@ -221,7 +221,7 @@ public class PositionsProgram: Identifiable, Codable, Equatable
             }
         }
         
-        func build_ptp_line(from: simd_float3, to: simd_float3) -> SCNNode //Build line between the neighboring points
+        func build_ptp_line(from: simd_float3, to: simd_float3) -> SCNNode // Build line between the neighboring points
         {
             let vector = to - from
             let height = simd_length(vector)
@@ -229,7 +229,7 @@ public class PositionsProgram: Identifiable, Codable, Equatable
             let cylinder = SCNCylinder(radius: 2, height: CGFloat(height))
             
             cylinder.firstMaterial?.diffuse.contents = cylinder_color
-            //cylinder.firstMaterial?.transparency = 0.5
+            // cylinder.firstMaterial?.transparency = 0.5
             
             let line_node = SCNNode(geometry: cylinder)
             
@@ -244,11 +244,11 @@ public class PositionsProgram: Identifiable, Codable, Equatable
             return line_node
         }
         
-        func node_by_data(node: inout SCNNode, point: PositionPoint, location: inout SCNVector3) //Add geometry for position point node by position data
+        func node_by_data(node: inout SCNNode, point: PositionPoint, location: inout SCNVector3) // Add geometry for position point node by position data
         {
-            node.geometry = SCNSphere(radius: 4) //Add sphere geometry to the point node
+            node.geometry = SCNSphere(radius: 4) // Add sphere geometry to the point node
             
-            //Set point node location
+            // Set point node location
             #if os(macOS)
             location = SCNVector3(x: CGFloat(point.y) - 100, y: CGFloat(point.z) - 100, z: CGFloat(point.x) - 100)
             #else
@@ -256,18 +256,18 @@ public class PositionsProgram: Identifiable, Codable, Equatable
             #endif
             node.position = location
             
-            let internal_cone_node = cone_node.clone() //Add cones for point rotated by position in point rotation
+            let internal_cone_node = cone_node.clone() // Add cones for point rotated by position in point rotation
             
-            //Rotate cone node by roll angle
+            // Rotate cone node by roll angle
             #if os(macOS)
             internal_cone_node.eulerAngles.z = CGFloat(point.r.to_rad)
             #else
             internal_cone_node.eulerAngles.z = point.r.to_rad
             #endif
             
-            node.addChildNode(internal_cone_node) //Add cone model to point
+            node.addChildNode(internal_cone_node) // Add cone model to point
             
-            //Rotate point node by pitch and yaw angles
+            // Rotate point node by pitch and yaw angles
             #if os(macOS)
             node.eulerAngles.x = CGFloat(point.p.to_rad)
             node.eulerAngles.y = CGFloat(point.w.to_rad)
@@ -278,13 +278,13 @@ public class PositionsProgram: Identifiable, Codable, Equatable
         }
     }
     
-    ///Removes positions points models from cell.
+    /// Removes positions points models from cell.
     public func visual_clear()
     {
         positions_group.remove_all_child_nodes()
     }
     
-    //MARK: - Work with file system
+    // MARK: - Work with file system
     private enum CodingKeys: String, CodingKey
     {
         case name

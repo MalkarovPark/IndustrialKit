@@ -25,13 +25,13 @@ public class ModifierElement: WorkspaceProgramElement
 ///Moves data between registers.
 public class MoverModifierElement: ModifierElement
 {
-    ///A type of copy
+    /// A type of copy
     public var move_type: ModifierCopyType = .duplicate
     
-    ///An index of value to copy.
+    /// An index of value to copy.
     public var from_index = 0
     
-    ///An index of target register.
+    /// An index of target register.
     public var to_index = 0
     
     public override var info: String
@@ -50,8 +50,8 @@ public class MoverModifierElement: ModifierElement
         }
     }
     
-    //File handling
-    //Data [type, from, to]
+    // File handling
+    // Data [type, from, to]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .mover_modifier
@@ -91,10 +91,10 @@ public class MoverModifierElement: ModifierElement
 ///Writes data to selected register.
 public class WriterModifierElement: ModifierElement
 {
-    ///A writable value.
+    /// A writable value.
     public var value: Float = 0
     
-    ///An index of register to write.
+    /// An index of register to write.
     public var to_index = 0
     
     public override var info: String
@@ -107,8 +107,8 @@ public class WriterModifierElement: ModifierElement
         return "square.and.pencil"
     }
     
-    //File handling
-    //Data [value, to]
+    // File handling
+    // Data [value, to]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .writer_modifier
@@ -133,13 +133,13 @@ public class WriterModifierElement: ModifierElement
 
 public class MathModifierElement: ModifierElement
 {
-    ///A type of compare.
+    /// A type of compare.
     public var operation: MathType = .add
     
-    ///An index of register with compared value.
+    /// An index of register with compared value.
     public var value_index = 0
     
-    ///An index of register with compared value.
+    /// An index of register with compared value.
     public var value2_index = 0
     
     public override var info: String
@@ -152,8 +152,8 @@ public class MathModifierElement: ModifierElement
         return "function"
     }
     
-    //File handling
-    //Data [operation, value, value2]
+    // File handling
+    // Data [operation, value, value2]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .math_modifier
@@ -227,13 +227,13 @@ public enum MathType: String, Codable, Equatable, CaseIterable
 ///Changes registers by changer module.
 public class ChangerModifierElement: ModifierElement
 {
-    ///A name of modifier module.
+    /// A name of modifier module.
     public var module_name = ""
     
-    ///A module access type identifier – external or internal.
+    /// A module access type identifier – external or internal.
     public var is_internal_module: Bool
     {
-        return !module_name.hasPrefix(".") //Intrnal module has not dot "." in name
+        return !module_name.hasPrefix(".") // Intrnal module has not dot "." in name
     }
     
     public override var info: String
@@ -246,7 +246,7 @@ public class ChangerModifierElement: ModifierElement
         return "wand.and.rays"
     }
     
-    //File handling
+    // File handling
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .changer_modifier
@@ -271,7 +271,7 @@ public class ChangerModifierElement: ModifierElement
     
     public var change: ((_ registers: inout [Float]) -> Void) = { registers in }
     
-    //MARK: - Module handling
+    // MARK: - Module handling
     /**
      Sets modular components to object instance.
      - Parameters:
@@ -285,16 +285,16 @@ public class ChangerModifierElement: ModifierElement
         change = module.change
     }
     
-    ///Imported internal part modules.
+    /// Imported internal part modules.
     public static var internal_modules = [ChangerModule]()
     
-    ///Imported external part modules.
+    /// Imported external part modules.
     public static var external_modules = [ChangerModule]()
     
-    ///A changer internal modules names array.
+    /// A changer internal modules names array.
     public static var internal_modules_list = [String]()
     
-    ///A changer external modules names array.
+    /// A changer external modules names array.
     public static var external_modules_list = [String]()
     
     /**
@@ -307,7 +307,7 @@ public class ChangerModifierElement: ModifierElement
     {
         let modules = is_internal ? Changer.internal_modules : Changer.external_modules
         
-        guard let index = modules.firstIndex(where: { is_internal ? $0.name == name : $0.name == name.dropFirst() }) //If external – drop "." before name
+        guard let index = modules.firstIndex(where: { is_internal ? $0.name == name : $0.name == name.dropFirst() }) // If external – drop "." before name
         else
         {
             change = { registers in }
@@ -323,13 +323,13 @@ typealias Changer = ChangerModifierElement
 ///Pushes info code from tool to registers.
 public class ObserverModifierElement: ModifierElement
 {
-    ///A type of observed object
+    /// A type of observed object
     public var object_type: ObserverObjectType = .robot
     
-    ///A name of object to observe output.
+    /// A name of object to observe output.
     public var object_name = ""
     
-    ///An index of target register.
+    /// An index of target register.
     public var from_indices = [Int]()
     public var to_indices = [Int]()
     
@@ -350,8 +350,8 @@ public class ObserverModifierElement: ModifierElement
         return "loupe"
     }
     
-    //File handling
-    //Data [type, name, from indices, to indices]
+    // File handling
+    // Data [type, name, from indices, to indices]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .observer_modifier
@@ -412,8 +412,8 @@ public class CleanerModifierElement: ModifierElement
         return "clear"
     }
     
-    //File handling
-    //Data |nothing|
+    // File handling
+    // Data |nothing|
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .cleaner_modifier
@@ -426,7 +426,7 @@ public class CleanerModifierElement: ModifierElement
     
     public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     {
-        //Nothing...
+        // Nothing...
     }
     
     public override var file_info: WorkspaceProgramElementStruct

@@ -41,7 +41,7 @@ open class RobotModelController: ModelController
         
     }
     
-    ///An update pointer node by position data flag.
+    /// An update pointer node by position data flag.
     private var update_pointer_node_position = true
     
     /**
@@ -84,19 +84,19 @@ open class RobotModelController: ModelController
      */
     public var origin_rotation = [Float](repeating: 0, count: 3)
     
-    ///A robot cell box scale.
+    /// A robot cell box scale.
     public var space_scale = [Float](repeating: 200, count: 3)
     
-    ///Update robot manipulator parts positions by target point.
+    /// Update robot manipulator parts positions by target point.
     private func update_model()
     {
         if update_pointer_node_position
         {
             let pointer_position = converted_pointer_position
             
-            pointer_node?.position = pointer_position.location //Set robot pointer node location.
+            pointer_node?.position = pointer_position.location // Set robot pointer node location.
             
-            //Set robot pointer node rotation.
+            // Set robot pointer node rotation.
             #if os(macOS)
             pointer_node?.eulerAngles.x = CGFloat(pointer_position.rot_y)
             pointer_node?.eulerAngles.y = CGFloat(pointer_position.rot_z)
@@ -115,16 +115,16 @@ open class RobotModelController: ModelController
         update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
-    ///Robot current pointer position data for nodes.
+    /// Robot current pointer position data for nodes.
     private var converted_pointer_position: (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
         return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
     
-    ///Robot teach pointer.
+    /// Robot teach pointer.
     public var pointer_node: SCNNode?
     
-    ///Node for internal element.
+    /// Node for internal element.
     public var pointer_node_internal: SCNNode?
     
     /**
@@ -132,7 +132,7 @@ open class RobotModelController: ModelController
      
      > Can be used within class, but for normal synchronization in SceneKit it is placed in the public protection level.
      */
-    public func update_by_pointer() //Call from internal – nodes_move_to function
+    public func update_by_pointer() // Call from internal – nodes_move_to function
     {
         update_pointer_node_position = false
         
@@ -161,13 +161,13 @@ open class RobotModelController: ModelController
         pointer_node = SCNNode()
     }
     
-    ///Cancel perform flag.
+    /// Cancel perform flag.
     private var cancel_task = false
     
-    ///Moving finished flag.
+    /// Moving finished flag.
     private var moving_finished = false
     
-    ///Rotation finished flag.
+    /// Rotation finished flag.
     private var rotation_finished = false
     
     /**
@@ -207,7 +207,7 @@ open class RobotModelController: ModelController
                 if self.cancel_task
                 {
                     self.remove_movement_actions()
-                    //self.cancel_task = false
+                    // self.cancel_task = false
                 }
                 else
                 {
@@ -226,7 +226,7 @@ open class RobotModelController: ModelController
      */
     public func update_movement_time(point1: PositionPoint, point2: PositionPoint)
     {
-        //Calculate time between target point and current location
+        // Calculate time between target point and current location
         let v = point1.move_speed
         let s = distance_between_points(point1: point1, point2: point2)
         
@@ -239,7 +239,7 @@ open class RobotModelController: ModelController
             location_time = 0
         }
         
-        //Calculate time between target point and current rotation
+        // Calculate time between target point and current rotation
         var rotation_r = sqrt(pow(point1.y - point2.y, 2) + pow(point1.z - point2.z, 2))
         var rotation_p = sqrt(pow(point1.x - point2.x, 2) + pow(point1.z - point2.z, 2))
         var rotation_w = sqrt(pow(point1.x - point2.x, 2) + pow(point1.y - point2.y, 2))
@@ -300,11 +300,11 @@ open class RobotModelController: ModelController
 //MARK: - External Controller
 public class ExternalRobotModelController: RobotModelController
 {
-    //MARK: Init functions
-    ///An external module name.
+    // MARK: Init functions
+    /// An external module name.
     public var module_name: String
     
-    ///For access to code.
+    /// For access to code.
     public var package_url: URL
     
     public init(_ module_name: String, package_url: URL, nodes_names: [String])
@@ -321,7 +321,7 @@ public class ExternalRobotModelController: RobotModelController
         self.package_url = URL(fileURLWithPath: "")
     }
     
-    //MARK: Parameters import
+    // MARK: Parameters import
     override open var nodes_names: [String]
     {
         return external_nodes_names
@@ -329,7 +329,7 @@ public class ExternalRobotModelController: RobotModelController
     
     public var external_nodes_names = [String]()
     
-    //MARK: Modeling
+    // MARK: Modeling
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
         #if os(macOS)
@@ -339,15 +339,15 @@ public class ExternalRobotModelController: RobotModelController
             return
         }
 
-        //Split the output into lines
+        // Split the output into lines
         let lines = output.split(separator: "\n").map { String($0) }
 
         for line in lines
         {
-            //Split the line by space to separate node name and action string
+            // Split the line by space to separate node name and action string
             let components = line.split(separator: " ", maxSplits: 1).map { String($0) }
             
-            //Ensure there are two components: the node name and the action string
+            // Ensure there are two components: the node name and the action string
             guard components.count == 2
             else
             {
@@ -368,15 +368,15 @@ public class ExternalRobotModelController: RobotModelController
             return
         }
         
-        //Split the output into lines
+        // Split the output into lines
         let lines = output.split(separator: "\n").map { String($0) }
 
         for line in lines
         {
-            //Split the line by space to separate node name and action string
+            // Split the line by space to separate node name and action string
             let components = line.split(separator: " ", maxSplits: 1).map { String($0) }
             
-            //Ensure there are two components: the node name and the action string
+            // Ensure there are two components: the node name and the action string
             guard components.count == 2
             else
             {
@@ -388,7 +388,7 @@ public class ExternalRobotModelController: RobotModelController
         #endif
     }
     
-    //MARK: Statistics
+    // MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)

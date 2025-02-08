@@ -1,6 +1,6 @@
 //
-//  SwiftUIView.swift
-//  
+//  ControlViews.swift
+//  IndustrialKit
 //
 //  Created by Artem on 15.02.2024.
 //
@@ -22,7 +22,7 @@ internal struct WorkspaceControl: View
     {
         HStack
         {
-            //MARK: Type picker
+            // MARK: Type picker
             Picker("Type", selection: $element_type)
             {
                 ForEach(ProgramElementType.allCases, id: \.self)
@@ -38,7 +38,7 @@ internal struct WorkspaceControl: View
             .frame(width: 192)
             .labelsHidden()
             
-            //MARK: Subtype pickers cases
+            // MARK: Subtype pickers cases
             HStack
             {
                 switch element_type

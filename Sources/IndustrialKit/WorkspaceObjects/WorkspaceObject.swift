@@ -14,9 +14,9 @@ import SwiftUI
  
  Industrial production objects are represented by equipment that provide technological operations performing.
  */
-open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject, Codable //, NSCopying
+open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject, Codable // , NSCopying
 {
-    public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool //Identity condition by names
+    public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool // Identity condition by names
     {
         return lhs.name == rhs.name
     }
@@ -26,19 +26,19 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         hasher.combine(name)
     }
     
-    ///Object identifier.
+    /// Object identifier.
     public var id = UUID()
     
-    ///Object name in workspace.
+    /// Object name in workspace.
     public var name = String()
     
-    ///A name of module to describe scene, controller and connector.
+    /// A name of module to describe scene, controller and connector.
     public var module_name = ""
     
-    ///A module access type identifier – external or internal.
+    /// A module access type identifier – external or internal.
     public var is_internal_module = true
     
-    ///Object init function.
+    /// Object init function.
     public init()
     {
         
@@ -54,7 +54,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         self.name = name
     }
     
-    ///Inits object by name and module name of installed module.
+    /// Inits object by name and module name of installed module.
     public init(name: String, module_name: String, is_internal: Bool = true)
     {
         self.name = name
@@ -62,8 +62,8 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         module_import_by_name(module_name, is_internal: is_internal)
     }
     
-    //MARK: - Module handling
-    ///Modules folder access bookmark.
+    // MARK: - Module handling
+    /// Modules folder access bookmark.
     public static var modules_folder_bookmark: Data?
     
     /**
@@ -76,8 +76,8 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         
     }
     
-    //MARK: - Object in workspace handling
-    ///In workspace placement state.
+    // MARK: - Object in workspace handling
+    /// In workspace placement state.
     @Published public var is_placed = false
     {
         didSet
@@ -91,26 +91,26 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         }
     }
     
-    ///Additional operations after remowing an object from the workspace.
+    /// Additional operations after remowing an object from the workspace.
     open func on_remove()
     {
         
     }
     
-    ///Object location components – *x*, *y*, *z*.
+    /// Object location components – *x*, *y*, *z*.
     public var location = [Float](repeating: 0, count: 3)
     
-    ///Object rotation components – *r*, *p*, *w*.
+    /// Object rotation components – *r*, *p*, *w*.
     public var rotation = [Float](repeating: 0, count: 3)
     
-    //MARK: - Update functions
-    ///Flag indicating whether the update loop is active.
+    // MARK: - Update functions
+    /// Flag indicating whether the update loop is active.
     private var updated = false
     
-    ///The task responsible for executing the update loop.
+    /// The task responsible for executing the update loop.
     private var update_task: Task<Void, Never>?
     
-    ///The interval between updates in nanoseconds.
+    /// The interval between updates in nanoseconds.
     public static var update_interval: UInt64 = 1_000_000_0
     
     /**
@@ -164,23 +164,23 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         
     }
     
-    //MARK: - Visual functions
-    ///Scene file address.
+    // MARK: - Visual functions
+    /// Scene file address.
     public var scene_address = ""
     
-    ///Connected object scene node.
+    /// Connected object scene node.
     public var node: SCNNode?
     
-    ///Name of node for connect to instance node variable.
+    /// Name of node for connect to instance node variable.
     open var scene_node_name: String? { nil }
     
-    ///Addres of internal folder with workspace objects scenes.
+    /// Addres of internal folder with workspace objects scenes.
     open var scene_internal_folder_address: String? { nil }
     
-    ///Folder access bookmark.
-    //public static var folder_bookmark: Data?
+    /// Folder access bookmark.
+    // public static var folder_bookmark: Data?
     
-    //MARK: - UI functions
+    // MARK: - UI functions
     /*///Universal data storage for NSImage or UIImage.
     public var image_data: Data? = nil*/
     
@@ -189,27 +189,27 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     {
         get
         {
-            return UIImage(data: image_data ?? Data()) ?? UIImage() //Retrun UIImage from image data
+            return UIImage(data: image_data ?? Data()) ?? UIImage() // Retrun UIImage from image data
         }
         set
         {
-            image_data = newValue.pngData() ?? Data() //Convert UIImage to image data
+            image_data = newValue.pngData() ?? Data() // Convert UIImage to image data
         }
     }*/
     
-    ///Returns info for object card view (with UIImage).
+    /// Returns info for object card view (with UIImage).
     open var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode)
     {
         return("Title", "Subtitle", Color.clear, UIImage(), SCNNode())
     }
     
-    ///Clears preview image in object.
+    /// Clears preview image in object.
     /*public func clear_preview()
     {
         image_data = nil
     }*/
     
-    //MARK: - Work with file system
+    // MARK: - Work with file system
     private enum CodingKeys: String, CodingKey
     {
         case name
@@ -229,13 +229,13 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         self.name = try container.decode(String.self, forKey: .name)
         
         self.module_name = try container.decode(String.self, forKey: .module_name)
-        self.is_internal_module = try container.decodeIfPresent(Bool.self, forKey: .is_internal_module) ?? true //self.is_internal_module = try container.decode(Bool.self, forKey: .is_internal_module)
+        self.is_internal_module = try container.decodeIfPresent(Bool.self, forKey: .is_internal_module) ?? true // self.is_internal_module = try container.decode(Bool.self, forKey: .is_internal_module)
         
         self.location = try container.decode([Float].self, forKey: .location)
         self.rotation = try container.decode([Float].self, forKey: .rotation)
         self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
         
-        //color_to_model()
+        // color_to_model()
         module_import_by_name(module_name, is_internal: self.is_internal_module)
     }
     

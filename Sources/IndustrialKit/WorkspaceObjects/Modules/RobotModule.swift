@@ -10,14 +10,14 @@ import SceneKit
 
 open class RobotModule: IndustrialModule
 {
-    //MARK: - Init functions
+    // MARK: - Init functions
     public override init(new_name: String = String(), description: String = String())
     {
         super.init(new_name: new_name, description: description)
     }
     
-    //MARK: Module init for in-app mounting
-    ///Internal init.
+    // MARK: Module init for in-app mounting
+    /// Internal init.
     public init(
         name: String = String(),
         description: String = String(),
@@ -36,7 +36,7 @@ open class RobotModule: IndustrialModule
         self.connector = connector
     }
     
-    ///External init
+    /// External init
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
@@ -51,11 +51,11 @@ open class RobotModule: IndustrialModule
     
     open override var extension_name: String { "robot" }
     
-    //MARK: - Components
-    ///A model controller of the robot model.
+    // MARK: - Components
+    /// A model controller of the robot model.
     public var model_controller = RobotModelController()
     
-    ///A connector of the robot model.
+    /// A connector of the robot model.
     public var connector = RobotConnector()
     
     /**
@@ -72,7 +72,7 @@ open class RobotModule: IndustrialModule
      */
     @Published public var connection_parameters = [ConnectionParameter]()
     
-    //MARK: - Import functions
+    // MARK: - Import functions
     open override var package_url: URL
     {
         do
@@ -148,7 +148,7 @@ open class RobotModule: IndustrialModule
         return SCNNode()
     }
     
-    //MARK: - Linked components init
+    // MARK: - Linked components init
     open override var default_linked_components: [String: String]
     {
         return [
@@ -158,10 +158,10 @@ open class RobotModule: IndustrialModule
         ]
     }
     
-    ///Imports components from external or from other modules.
+    /// Imports components from external or from other modules.
     private func components_import()
     {
-        //Set visual model from internal module
+        // Set visual model from internal module
         if let linked_name = linked_components["Model"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -174,7 +174,7 @@ open class RobotModule: IndustrialModule
             node = external_node
         }
         
-        //Set contoller
+        // Set contoller
         if let linked_name = linked_components["Controller"], linked_name.isEmpty
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -189,7 +189,7 @@ open class RobotModule: IndustrialModule
             #endif
         }
         
-        //Set connector
+        // Set connector
         if let linked_name = linked_components["Connector"], linked_name.isEmpty
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -205,13 +205,13 @@ open class RobotModule: IndustrialModule
         }
     }
     
-    //MARK: - Codable handling
+    // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
         case nodes_names
         case connection_parameters
         
-        //Linked
+        // Linked
         case linked_model_module_name
         case linked_connector_module_name
         case linked_controller_module_name

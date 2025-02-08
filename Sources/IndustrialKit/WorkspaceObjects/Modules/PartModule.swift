@@ -10,14 +10,14 @@ import SceneKit
 
 open class PartModule: IndustrialModule
 {
-    //MARK: - Init functions
+    // MARK: - Init functions
     public override init(new_name: String = String(), description: String = String())
     {
         super.init(new_name: new_name, description: description)
     }
     
-    //MARK: Module init for in-app mounting
-    ///Internal init.
+    // MARK: Module init for in-app mounting
+    /// Internal init.
     public init(
         name: String = String(),
         description: String = String(),
@@ -39,7 +39,7 @@ open class PartModule: IndustrialModule
     
     open override var extension_name: String { "part" }
     
-    //MARK: - Import functions
+    // MARK: - Import functions
     open override var package_url: URL
     {
         do
@@ -113,7 +113,7 @@ open class PartModule: IndustrialModule
         return SCNNode()
     }
     
-    //MARK: - Codable handling
+    // MARK: - Codable handling
     public required init(from decoder: any Decoder) throws
     {
         try super.init(from: decoder)

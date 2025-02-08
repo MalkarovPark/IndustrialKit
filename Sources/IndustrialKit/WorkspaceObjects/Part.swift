@@ -16,12 +16,12 @@ import SwiftUI
  */
 public class Part: WorkspaceObject
 {
-    private var figure: String? //Part figure name
-    private var lengths: [Float]? //lengths for part without scene figure
-    private var figure_color: String? //Color hex for part without scene figure
-    private var material_name: String? //Material for part without scene figure
+    private var figure: String? // Part figure name
+    private var lengths: [Float]? // lengths for part without scene figure
+    private var figure_color: String? // Color hex for part without scene figure
+    private var material_name: String? // Material for part without scene figure
     
-    ///Physics body for part model node by physics type.
+    /// Physics body for part model node by physics type.
     public var physics: SCNPhysicsBody?
     {
         switch physics_type
@@ -33,7 +33,7 @@ public class Part: WorkspaceObject
         case .ph_kinematic:
             let shape = SCNPhysicsShape(node: self.node ?? SCNNode(), options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron])
             return SCNPhysicsBody(type: .kinematic, shape: shape)
-            //return .kinematic()
+            // return .kinematic()
         default:
             return .none
         }
@@ -44,25 +44,25 @@ public class Part: WorkspaceObject
      
      > This variable is codable.
      */
-    public var physics_type: PhysicsType = PhysicsType.ph_none //Physic body type
+    public var physics_type: PhysicsType = PhysicsType.ph_none // Physic body type
     
-    ///The state of physics calculation for part node.
+    /// The state of physics calculation for part node.
     public var enable_physics = false
     {
         didSet
         {
             if enable_physics
             {
-                node?.physicsBody = physics //Return original physics
+                node?.physicsBody = physics // Return original physics
             }
             else
             {
-                node?.physicsBody = nil //Remove physic body
+                node?.physicsBody = nil // Remove physic body
             }
         }
     }
     
-    //MARK: - Init functions
+    // MARK: - Init functions
     public override init()
     {
         super.init()
@@ -73,21 +73,21 @@ public class Part: WorkspaceObject
         super.init(name: name)
     }
     
-    ///Inits part by name and scene name.
+    /// Inits part by name and scene name.
     public init(name: String, scene_name: String)
     {
         super.init(name: name)
         self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
     }
     
-    ///Inits part by name and scene.
+    /// Inits part by name and scene.
     public init(name: String, scene: SCNScene)
     {
         super.init(name: name)
         self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
     }
     
-    ///Inits part by name and part module.
+    /// Inits part by name and part module.
     public init(name: String, module: PartModule)
     {
         super.init(name: name)
@@ -99,7 +99,7 @@ public class Part: WorkspaceObject
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
     
-    //MARK: - Module handling
+    // MARK: - Module handling
     /**
      Sets modular components to object instance.
      - Parameters:
@@ -112,15 +112,15 @@ public class Part: WorkspaceObject
     {
         module_name = module.name
         
-        //node = module.node.clone()
+        // node = module.node.clone()
         node = module.node.deep_clone()
         color_from_model()
     }
     
-    ///Imported internal part modules.
+    /// Imported internal part modules.
     public static var internal_modules = [PartModule]()
     
-    ///Imported external part modules.
+    /// Imported external part modules.
     public static var external_modules = [PartModule]()
     
     public override func module_import_by_name(_ name: String, is_internal: Bool = true)
@@ -161,7 +161,7 @@ public class Part: WorkspaceObject
         }
     }
     
-    ///Applies color to part node by components.
+    /// Applies color to part node by components.
     public func color_to_model()
     {
         if node != nil
@@ -176,7 +176,7 @@ public class Part: WorkspaceObject
                 if let geometry = current_node.geometry
                 {
                     geometry.firstMaterial?.diffuse.contents = color
-                    //break
+                    // break
                 }
                 else
                 {
@@ -187,21 +187,21 @@ public class Part: WorkspaceObject
         }
     }
     
-    //MARK: - Visual build functions
+    // MARK: - Visual build functions
     public override var scene_node_name: String { "part" }
     
     public func node_by_description()
     {
         node = SCNNode()
         
-        //Convert Float array to GFloat array
+        // Convert Float array to GFloat array
         var lengths = [CGFloat]()
         for length in self.lengths ?? []
         {
             lengths.append(CGFloat(length))
         }
         
-        //Set geometry
+        // Set geometry
         var geometry: SCNGeometry?
         switch figure
         {
@@ -217,7 +217,7 @@ public class Part: WorkspaceObject
         case "box":
             if lengths.count >= 3 && lengths.count <= 4
             {
-                geometry = SCNBox(width: lengths[0], height: lengths[1], length: lengths[2], chamferRadius: lengths.count == 3 ? 0 : lengths[3]) //If lengths 4 – set chamer radius by element 3
+                geometry = SCNBox(width: lengths[0], height: lengths[1], length: lengths[2], chamferRadius: lengths.count == 3 ? 0 : lengths[3]) // If lengths 4 – set chamer radius by element 3
             }
             else
             {
@@ -291,10 +291,10 @@ public class Part: WorkspaceObject
         }
         node?.geometry = geometry
         
-        //Set color by components
+        // Set color by components
         color_to_model()
         
-        //Set shading type
+        // Set shading type
         switch material_name
         {
         case "blinn":
@@ -316,8 +316,8 @@ public class Part: WorkspaceObject
         node?.name = "part"
     }
     
-    //MARK: Part in workspace handling
-    ///Resets model postion.
+    // MARK: Part in workspace handling
+    /// Resets model postion.
     public func model_position_reset()
     {
         node?.position = SCNVector3(0, 0, 0)
@@ -326,8 +326,8 @@ public class Part: WorkspaceObject
         node?.rotation.z = 0
     }
     
-    //MARK: - UI functions
-    ///Part model color.
+    // MARK: - UI functions
+    /// Part model color.
     public var color: Color
     {
         get
@@ -338,18 +338,18 @@ public class Part: WorkspaceObject
         {
             figure_color = UIColor(newValue).to_hex()
             
-            //Update color by components
+            // Update color by components
             color_to_model()
         }
     }
     
-    ///Returns info for part card view.
-    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) //Get info for robot card view
+    /// Returns info for part card view.
+    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
     {
         return("\(self.name)", "Subtitle", self.color, UIImage(), self.node ?? SCNNode())
     }
     
-    //MARK: - Work with file system
+    // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
     {
         case physics_type

@@ -10,14 +10,14 @@ import SceneKit
 
 open class ToolModule: IndustrialModule
 {
-    //MARK: - Init functions
+    // MARK: - Init functions
     public override init(new_name: String = String(), description: String = String())
     {
         super.init(new_name: new_name, description: description)
     }
     
-    //MARK: Module init for in-app mounting
-    ///Internal init.
+    // MARK: Module init for in-app mounting
+    /// Internal init.
     public init(
         name: String = String(),
         description: String = String(),
@@ -54,20 +54,20 @@ open class ToolModule: IndustrialModule
     
     open override var extension_name: String { "tool" }
     
-    //MARK: - Designer functions
+    // MARK: - Designer functions
     open override var default_code_items: [String: String]
     {
         return ["Controller": String(), "Connector": String()]
     }
     
-    //MARK: - Components
-    ///A model controller of the tool model.
+    // MARK: - Components
+    /// A model controller of the tool model.
     public var model_controller = ToolModelController()
     
-    ///A connector of the tool model.
+    /// A connector of the tool model.
     public var connector = ToolConnector()
     
-    ///Operation codes of the tool model.
+    /// Operation codes of the tool model.
     public var codes = [OperationCodeInfo]()
     
     /**
@@ -84,7 +84,7 @@ open class ToolModule: IndustrialModule
      */
     @Published public var connection_parameters = [ConnectionParameter]()
     
-    //MARK: - Import functions
+    // MARK: - Import functions
     open override var package_url: URL
     {
         do
@@ -165,7 +165,7 @@ open class ToolModule: IndustrialModule
         return external_module_info?.codes ?? [OperationCodeInfo]()
     }
     
-    //MARK: - Linked components init
+    // MARK: - Linked components init
     open override var default_linked_components: [String: String]
     {
         return [
@@ -176,10 +176,10 @@ open class ToolModule: IndustrialModule
         ]
     }
     
-    ///Imports components from external or from other modules.
+    /// Imports components from external or from other modules.
     private func components_import()
     {
-        //Set visual model
+        // Set visual model
         if let linked_name = linked_components["Model"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -192,7 +192,7 @@ open class ToolModule: IndustrialModule
             node = external_node
         }
         
-        //Set codes from internal module
+        // Set codes from internal module
         if let linked_name = linked_components["Codes"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -205,7 +205,7 @@ open class ToolModule: IndustrialModule
             codes = external_codes
         }
         
-        //Set contoller from internal module
+        // Set contoller from internal module
         if let linked_name = linked_components["Controller"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -220,7 +220,7 @@ open class ToolModule: IndustrialModule
             #endif
         }
         
-        //Set connector from internal module
+        // Set connector from internal module
         if let linked_name = linked_components["Connector"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -236,7 +236,7 @@ open class ToolModule: IndustrialModule
         }
     }
     
-    //MARK: - Codable handling
+    // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
         case operation_codes

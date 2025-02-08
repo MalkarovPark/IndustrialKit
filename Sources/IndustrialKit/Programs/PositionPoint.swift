@@ -25,19 +25,19 @@ public class PositionPoint: Identifiable, Codable, Hashable
         hasher.combine(id)
     }
     
-    ///A point location component.
+    /// A point location component.
     public var x, y, z: Float
     
-    ///A point rotation component.
+    /// A point rotation component.
     public var r, p, w: Float
     
-    ///Type of moving to point.
+    /// Type of moving to point.
     public var move_type: MoveType
     
-    ///Moving to point speed.
+    /// Moving to point speed.
     public var move_speed: Float
     
-    //MARK: - Init functions
+    // MARK: - Init functions
     /**
      Creates a point with location and rotation values and move type.
      - Parameters:

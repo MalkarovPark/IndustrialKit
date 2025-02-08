@@ -29,7 +29,7 @@ public extension Float
 //MARK: - SCNNode edit extensions
 public extension SCNNode
 {
-    ///Removes all constrains from node.
+    /// Removes all constrains from node.
     func remove_all_constraints()
     {
         guard self.constraints != nil
@@ -40,9 +40,9 @@ public extension SCNNode
         
         if self.constraints?.count ?? 0 > 0
         {
-            self.constraints?.removeAll() //Remove constraint
+            self.constraints?.removeAll() // Remove constraint
             
-            //Update position
+            // Update position
             self.position.x += 1
             self.position.x -= 1
             self.rotation.x += 1
@@ -50,7 +50,7 @@ public extension SCNNode
         }
     }
     
-    ///Removes all child nodes from node.
+    /// Removes all child nodes from node.
     func remove_all_child_nodes()
     {
         self.childNodes.forEach { $0.removeFromParentNode() }

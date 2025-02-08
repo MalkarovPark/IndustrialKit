@@ -230,11 +230,11 @@ public struct ChangerElementView: View
     
     public var body: some View
     {
-        //MARK: Changer subview
+        // MARK: Changer subview
         #if os(macOS)
         HStack
         {
-            Picker("Module", selection: $module_name) //Changer module picker
+            Picker("Module", selection: $module_name) // Changer module picker
             {
                 if Changer.internal_modules_list.count > 0 || Changer.external_modules_list.count > 0
                 {
@@ -276,7 +276,7 @@ public struct ChangerElementView: View
         #else
         VStack
         {
-            Picker("Module", selection: $module_name) //Changer module picker
+            Picker("Module", selection: $module_name) // Changer module picker
             {
                 if Changer.internal_modules_list.count > 0
                 {
@@ -389,7 +389,7 @@ public struct ObserverElementView: View
     
     public var body: some View
     {
-        //MARK: tool subview
+        // MARK: tool subview
         VStack(spacing: 0)
         {
             Picker("Type", selection: $object_type)
@@ -408,7 +408,7 @@ public struct ObserverElementView: View
             case .robot:
                 if workspace.placed_robots_names.count > 0
                 {
-                    Picker("Name", selection: $object_name) //robot picker
+                    Picker("Name", selection: $object_name) // robot picker
                     {
                         ForEach(workspace.placed_robots_names, id: \.self)
                         { name in
@@ -462,7 +462,7 @@ public struct ObserverElementView: View
                         }
                         .frame(minHeight: 160)
                         /*#if os(macOS)
-                        .frame(height: 256) //(width: 256, height: 256)
+                        .frame(height: 256) // (width: 256, height: 256)
                         #else
                         .frame(width: 320, height: 256)
                         #endif*/
@@ -478,7 +478,7 @@ public struct ObserverElementView: View
                             
                             Text("No items to ouput")
                         }
-                        .frame(height: 64) //(width: 256, height: 256)
+                        .frame(height: 64) // (width: 256, height: 256)
                         .modifier(ListBorderer())
                         .padding(.bottom)
                     }
@@ -498,7 +498,7 @@ public struct ObserverElementView: View
             case .tool:
                 if workspace.placed_tools_names.count > 0
                 {
-                    Picker("Name", selection: $object_name) //tool picker
+                    Picker("Name", selection: $object_name) // tool picker
                     {
                         ForEach(workspace.placed_tools_names, id: \.self)
                         { name in
@@ -552,7 +552,7 @@ public struct ObserverElementView: View
                         }
                         .frame(minHeight: 160)
                         /*#if os(macOS)
-                        .frame(height: 256) //(width: 256, height: 256)
+                        .frame(height: 256) // (width: 256, height: 256)
                         #else
                         .frame(width: 320, height: 256)
                         #endif*/
@@ -568,7 +568,7 @@ public struct ObserverElementView: View
                             
                             Text("No items to ouput")
                         }
-                        .frame(height: 64) //(width: 256, height: 256)
+                        .frame(height: 64) // (width: 256, height: 256)
                         .modifier(ListBorderer())
                         .padding(.bottom)
                     }

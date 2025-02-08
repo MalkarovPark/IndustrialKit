@@ -16,19 +16,19 @@ import SwiftUI
  */
 public class Tool: WorkspaceObject
 {
-    //MARK: - Init functions
+    // MARK: - Init functions
     public override init()
     {
         super.init()
     }
     
-    ///Inits tool by name.
+    /// Inits tool by name.
     public override init(name: String)
     {
         super.init(name: name)
     }
     
-    ///Inits tool by name, controller, connector and scene.
+    /// Inits tool by name, controller, connector and scene.
     public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
@@ -43,12 +43,12 @@ public class Tool: WorkspaceObject
         self.codes = codes
     }
     
-    ///Inits tool by name, controller, connector and scene name.
+    /// Inits tool by name, controller, connector and scene name.
     public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
         
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() //!
+        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() // !
         
         self.model_controller = model_controller
         self.connector = connector
@@ -58,7 +58,7 @@ public class Tool: WorkspaceObject
         self.codes = codes
     }
     
-    ///Inits part by name and tool module.
+    /// Inits part by name and tool module.
     public init(name: String, module: ToolModule)
     {
         super.init(name: name)
@@ -70,7 +70,7 @@ public class Tool: WorkspaceObject
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
     
-    //MARK: - Module handling
+    // MARK: - Module handling
     /**
      Sets modular components to object instance.
      - Parameters:
@@ -106,18 +106,18 @@ public class Tool: WorkspaceObject
             connector = module.connector
         }
         
-        //model_controller = module.model_controller.copy() as! ToolModelController
-        //connector = module.connector.copy() as! ToolConnector
+        // model_controller = module.model_controller.copy() as! ToolModelController
+        // connector = module.connector.copy() as! ToolConnector
         
         apply_statistics_flags()
         
         codes = module.codes
     }
     
-    ///Imported internal tool modules.
+    /// Imported internal tool modules.
     public static var internal_modules = [ToolModule]()
     
-    ///Imported external tool modules.
+    /// Imported external tool modules.
     public static var external_modules = [ToolModule]()
     
     public override func module_import_by_name(_ name: String, is_internal: Bool = true)
@@ -139,16 +139,16 @@ public class Tool: WorkspaceObject
         connector.get_statistics = get_statistics
     }
     
-    //MARK: - Program manage functions
-    ///An array of tool operations programs.
+    // MARK: - Program manage functions
+    /// An array of tool operations programs.
     @Published private var programs = [OperationsProgram]()
     
-    ///A selected operations program index.
+    /// A selected operations program index.
     public var selected_program_index = 0
     {
         willSet
         {
-            //Stop tool performing before program change
+            // Stop tool performing before program change
             reset_performing()
         }
     }
@@ -170,9 +170,9 @@ public class Tool: WorkspaceObject
         - index: Updated program index.
         - program: A new tool operations program.
      */
-    public func update_program(index: Int, _ program: OperationsProgram) //Update program by index
+    public func update_program(index: Int, _ program: OperationsProgram) // Update program by index
     {
-        if programs.indices.contains(index) //Checking for the presence of a position program with a given number to update
+        if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
         {
             programs[index] = program
         }
@@ -184,7 +184,7 @@ public class Tool: WorkspaceObject
         - name: Updated program name.
         - program: A new tool operations program.
      */
-    public func update_program(name: String, _ program: OperationsProgram) //Update program by name
+    public func update_program(name: String, _ program: OperationsProgram) // Update program by name
     {
         update_program(index: index_by_name(name: name), program)
     }
@@ -194,9 +194,9 @@ public class Tool: WorkspaceObject
      - Parameters:
         - index: Deleted program index.
      */
-    public func delete_program(index: Int) //Delete program by index
+    public func delete_program(index: Int) // Delete program by index
     {
-        if programs.indices.contains(index) //Checking for the presence of a position program with a given number to delete
+        if programs.indices.contains(index) // Checking for the presence of a position program with a given number to delete
         {
             programs.remove(at: index)
         }
@@ -207,7 +207,7 @@ public class Tool: WorkspaceObject
      - Parameters:
         - name: Deleted program name.
      */
-    public func delete_program(name: String) //Delete program by name
+    public func delete_program(name: String) // Delete program by name
     {
         delete_program(index: index_by_name(name: name))
     }
@@ -217,7 +217,7 @@ public class Tool: WorkspaceObject
      - Parameters:
         - index: Selected program index.
      */
-    public func select_program(index: Int) //Delete program by index
+    public func select_program(index: Int) // Delete program by index
     {
         selected_program_index = index
     }
@@ -227,15 +227,15 @@ public class Tool: WorkspaceObject
      - Parameters:
         - name: Selected program name.
      */
-    public func select_program(name: String) //Select program by name
+    public func select_program(name: String) // Select program by name
     {
         select_program(index: index_by_name(name: name))
     }
     
-    ///A selected operations program.
+    /// A selected operations program.
     public var selected_program: OperationsProgram
     {
-        get //Return positions program by selected index
+        get // Return positions program by selected index
         {
             if programs.count > 0 && selected_program_index < programs.count
             {
@@ -252,14 +252,14 @@ public class Tool: WorkspaceObject
         }
     }
     
-    ///Returns index by program name.
-    private func index_by_name(name: String) -> Int //Get index of program by name
+    /// Returns index by program name.
+    private func index_by_name(name: String) -> Int // Get index of program by name
     {
         return programs.firstIndex(of: OperationsProgram(name: name)) ?? -1
     }
     
-    ///All operations programs names in tool.
-    public var programs_names: [String] //Get all names of programs in tool
+    /// All operations programs names in tool.
+    public var programs_names: [String] // Get all names of programs in tool
     {
         var prog_names = [String]()
         if programs.count > 0
@@ -272,17 +272,17 @@ public class Tool: WorkspaceObject
         return prog_names
     }
     
-    ///A operations programs coount in tool.
+    /// A operations programs coount in tool.
     public var programs_count: Int
     {
         return programs.count
     }
     
-    //MARK: - Info codes functions
-    ///An array of avaliable operation codes values for tool.
+    // MARK: - Info codes functions
+    /// An array of avaliable operation codes values for tool.
     public var codes = [OperationCodeInfo]()
     
-    ///An information output code.
+    /// An information output code.
     public var info_output: [Float]?
     {
         if demo
@@ -295,8 +295,8 @@ public class Tool: WorkspaceObject
         }
     }
     
-    //MARK: - Performing functions
-    ///A moving state of tool.
+    // MARK: - Performing functions
+    /// A moving state of tool.
     public var performed = false
     
     /**
@@ -308,7 +308,7 @@ public class Tool: WorkspaceObject
      */
     public var performing_completed = false
     
-    ///An Index of target code in operation codes array.
+    /// An Index of target code in operation codes array.
     public var selected_code_index = 0
     
     /**
@@ -336,8 +336,8 @@ public class Tool: WorkspaceObject
         }
     }
     
-    //MARK: Update functions
-    ///Updates tool statistics and sync model by real device state.
+    // MARK: Update functions
+    /// Updates tool statistics and sync model by real device state.
     public override func update()
     {
         if performed
@@ -345,14 +345,14 @@ public class Tool: WorkspaceObject
             update_statistics_data()
         }
         
-        //Modeling
+        // Modeling
         if !demo && update_model_by_connector
         {
             connector.sync_model()
         }
     }
     
-    //MARK: Performation cycle
+    // MARK: Performation cycle
     /**
      Performs tool by operation code value with completion handler.
      
@@ -364,7 +364,7 @@ public class Tool: WorkspaceObject
     {
         if demo
         {
-            //Move to point for virtual tool
+            // Move to point for virtual tool
             model_controller.nodes_perform(code: code)
             {
                 completion()
@@ -372,7 +372,7 @@ public class Tool: WorkspaceObject
         }
         else
         {
-            //Move to point for real tool
+            // Move to point for real tool
             if connector.connected
             {
                 connector.perform(code: code)
@@ -382,13 +382,13 @@ public class Tool: WorkspaceObject
             }
             else
             {
-                //Skip operation if real tool is not connected
+                // Skip operation if real tool is not connected
                 completion()
             }
         }
     }
     
-    ///Selects codes and performs tool operation.
+    /// Selects codes and performs tool operation.
     public func start_pause_performing()
     {
         guard selected_program.codes_count > 0
@@ -398,10 +398,10 @@ public class Tool: WorkspaceObject
             return
         }
         
-        //Handling tool performing
+        // Handling tool performing
         if !performed
         {
-            //Move to next point if moving was stop
+            // Move to next point if moving was stop
             performed = true
             perform_next_code()
             
@@ -409,7 +409,7 @@ public class Tool: WorkspaceObject
         }
         else
         {
-            //Pause moving if tool perform
+            // Pause moving if tool perform
             performed = false
             pause_handler()
         }
@@ -422,14 +422,14 @@ public class Tool: WorkspaceObject
             }
             else
             {
-                //Remove actions for real tool
+                // Remove actions for real tool
                 connector.canceled = true
                 connector.reset_device()
             }
         }
     }
     
-    ///Selects a code and performs the corresponding operation.
+    /// Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
         perform(code: selected_program.codes[selected_code_index].value)
@@ -438,10 +438,10 @@ public class Tool: WorkspaceObject
         }
     }
     
-    ///Set the new target operation code index.
+    /// Set the new target operation code index.
     private func select_new_code()
     {
-        //update_statistics = false
+        // update_statistics = false
         
         if performed
         {
@@ -456,14 +456,14 @@ public class Tool: WorkspaceObject
         
         if selected_code_index < selected_program.codes_count
         {
-            //Select and move to next point
+            // Select and move to next point
             perform_next_code()
         }
         else
         {
-            //Reset target point index if all points passed
+            // Reset target point index if all points passed
             selected_code_index = 0
-            //update_statistics_data()
+            // update_statistics_data()
             performed = false
             performing_completed = true
             
@@ -471,16 +471,16 @@ public class Tool: WorkspaceObject
         }
     }
     
-    ///Finish handler for operation code performation.
+    /// Finish handler for operation code performation.
     public var finish_handler: (() -> Void) = {}
     
-    ///Clears finish handler.
+    /// Clears finish handler.
     public func clear_finish_handler()
     {
         finish_handler = {}
     }
     
-    ///Resets tool operation performation.
+    /// Resets tool operation performation.
     public func reset_performing()
     {
         if performed
@@ -503,22 +503,22 @@ public class Tool: WorkspaceObject
         }
     }
     
-    //MARK: - Connection functions
-    ///A tool connector.
+    // MARK: - Connection functions
+    /// A tool connector.
     public var connector = ToolConnector()
     
-    ///Disconnects from real tool.
+    /// Disconnects from real tool.
     private func disconnect()
     {
-        //connector.update_model = false
+        // connector.update_model = false
         connector.model_controller = nil
         connector.disconnect()
     }
     
-    //MARK: - Visual build functions
+    // MARK: - Visual build functions
     public override var scene_node_name: String { "tool" }
     
-    ///A tool visual model controller.
+    /// A tool visual model controller.
     private var model_controller = ToolModelController()
     
     /**
@@ -542,11 +542,11 @@ public class Tool: WorkspaceObject
         }
     }
     
-    ///An array of connected tool parts.
-    //private var tool_parts = [SCNNode]()
+    /// An array of connected tool parts.
+    // private var tool_parts = [SCNNode]()
     
-    ///An array of tool parts lengths.
-    //private var lengths = [Float]()
+    /// An array of tool parts lengths.
+    // private var lengths = [Float]()
     
     /**
      Connects to robot model in scene.
@@ -555,9 +555,9 @@ public class Tool: WorkspaceObject
         - name: A tool name.
         - connect_camera: Place camera to tool's camera node.
      */
-    public func workcell_connect(scene: SCNScene, name: String) //Connect tool parts from scene
+    public func workcell_connect(scene: SCNScene, name: String) // Connect tool parts from scene
     {
-        //let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
+        // let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         var unit_node = SCNNode()
         var stopped = false
         scene.rootNode.enumerateChildNodes
@@ -569,26 +569,26 @@ public class Tool: WorkspaceObject
             }
         }
         
-        //model_controller.disconnect_nodes()
+        // model_controller.disconnect_nodes()
         model_controller.connect_nodes(of: unit_node)
         
         model_controller.info_output = self.info_output
     }
     
-    ///Disconnect tool model parts from workcell.
+    /// Disconnect tool model parts from workcell.
     public func workcell_disconnect()
     {
         model_controller.remove_all_model_actions()
         model_controller.disconnect_nodes()
         model_controller.info_output = nil
         
-        //connector.model_controller = nil
+        // connector.model_controller = nil
     }
     
-    ///A flag determines if tool is attached to the robot manipulator.
+    /// A flag determines if tool is attached to the robot manipulator.
     public var is_attached = false
     
-    ///A name of the robot that the tool is attached to.
+    /// A name of the robot that the tool is attached to.
     public var attached_to: String?
     
     override public func on_remove()
@@ -596,14 +596,14 @@ public class Tool: WorkspaceObject
         attached_to = nil
     }
     
-    //MARK: - Chart functions
-    ///A tool charts data.
+    // MARK: - Chart functions
+    /// A tool charts data.
     public var charts_data: [WorkspaceObjectChart]?
     
-    ///A tool state data.
+    /// A tool state data.
     public var states_data: [StateItem]?
     
-    ///A statistics getting toggle.
+    /// A statistics getting toggle.
     public var get_statistics = false
     {
         didSet
@@ -619,10 +619,10 @@ public class Tool: WorkspaceObject
         }
     }
     
-    ///Index of chart element.
+    /// Index of chart element.
     private var chart_element_index = 0
     
-    ///Update statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
+    /// Update statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     public func update_statistics_data()
     {
         if charts_data == nil
@@ -630,13 +630,13 @@ public class Tool: WorkspaceObject
             charts_data = [WorkspaceObjectChart]()
         }
         
-        if self.demo //Get statistic from model controller
+        if self.demo // Get statistic from model controller
         {
             self.model_controller.update_statistics_data()
             self.states_data = model_controller.states_data
             self.charts_data = model_controller.charts_data
         }
-        else //Get statistic from real tool
+        else // Get statistic from real tool
         {
             self.connector.update_statistics_data()
             self.states_data = connector.states_data
@@ -644,7 +644,7 @@ public class Tool: WorkspaceObject
         }
     }
     
-    ///Clears tool chart data.
+    /// Clears tool chart data.
     public func clear_chart_data()
     {
         if get_statistics
@@ -662,7 +662,7 @@ public class Tool: WorkspaceObject
         }
     }
     
-    ///Clears tool state data.
+    /// Clears tool state data.
     public func clear_states_data()
     {
         states_data = nil
@@ -680,15 +680,15 @@ public class Tool: WorkspaceObject
         }
     }
     
-    //MARK: - UI functions
+    // MARK: - UI functions
     /**
      Returns info for tool card view.
      
      Output avaliable codes count. If their number is zero, the instrument is listed as *static*.
      */
-    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode) // Get info for robot card view
     {
-        return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, UIImage(), node: SCNNode()) //Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
+        return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, UIImage(), node: SCNNode()) // Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
     }
     
     /**
@@ -701,18 +701,18 @@ public class Tool: WorkspaceObject
      */
     public func inspector_code_color(code: OperationCode) -> Color
     {
-        var color = Color.gray //Gray point color if the robot is not reching the code
-        let code_index = self.selected_program.codes.firstIndex(of: code) //Number of selected code
+        var color = Color.gray // Gray point color if the robot is not reching the code
+        let code_index = self.selected_program.codes.firstIndex(of: code) // Number of selected code
         
         if performed
         {
-            if code_index == selected_code_index //Yellow color, if the tool is in the process of moving to the code
+            if code_index == selected_code_index // Yellow color, if the tool is in the process of moving to the code
             {
                 color = .yellow
             }
             else
             {
-                if code_index ?? 0 < selected_code_index //Green color, if the tool has reached this code
+                if code_index ?? 0 < selected_code_index // Green color, if the tool has reached this code
                 {
                     color = .green
                 }
@@ -720,7 +720,7 @@ public class Tool: WorkspaceObject
         }
         else
         {
-            if performing_completed //Green color, if the robot has passed all codes
+            if performing_completed // Green color, if the robot has passed all codes
             {
                 color = .green
             }
@@ -729,7 +729,7 @@ public class Tool: WorkspaceObject
         return color
     }
     
-    ///Apply corresponded label and SF Symbol to operation code.
+    /// Apply corresponded label and SF Symbol to operation code.
     public func code_info(_ value: Int) -> OperationCodeInfo
     {
         let index = codes.firstIndex(where: { $0.value == value }) ?? -1
@@ -743,7 +743,7 @@ public class Tool: WorkspaceObject
         }
     }
     
-    ///Connects tool charts to UI.
+    /// Connects tool charts to UI.
     public func charts_binding() -> Binding<[WorkspaceObjectChart]?>
     {
         Binding<[WorkspaceObjectChart]?>(
@@ -765,7 +765,7 @@ public class Tool: WorkspaceObject
         )
     }
     
-    ///Connects tool charts to UI.
+    /// Connects tool charts to UI.
     public func states_binding() -> Binding<[StateItem]?>
     {
         Binding<[StateItem]?>(
@@ -787,7 +787,7 @@ public class Tool: WorkspaceObject
         )
     }
     
-    //MARK: - Work with file system
+    // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
     {
         case codes
@@ -859,16 +859,16 @@ public class Tool: WorkspaceObject
  */
 public struct OperationCodeInfo: Equatable, Codable, Hashable
 {
-    ///Operation code value.
+    /// Operation code value.
     public var value: Int
     
-    ///Operation code name.
+    /// Operation code name.
     public var name: String
     
-    ///Operation code symbol.
+    /// Operation code symbol.
     public var symbol: String
     
-    ///Operation code info.
+    /// Operation code info.
     public var info: String
     
     public init(value: Int = 0, name: String = "", symbol: String = "", info: String = "")

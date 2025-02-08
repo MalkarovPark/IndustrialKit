@@ -22,17 +22,17 @@ open class ModelController: NSCopying
         
     }
     
-    ///Copy model controller instance.
+    /// Copy model controller instance.
     open func copy(with zone: NSZone? = nil) -> Any
     {
         return type(of: self).init() as! Self
     }
     
-    //MARK: - Scene handling
-    ///Model nodes from connected root node.
+    // MARK: - Scene handling
+    /// Model nodes from connected root node.
     public var nodes = [String: SCNNode]()
 
-    ///A sequence of node names nested within the main node used for model connection.
+    /// A sequence of node names nested within the main node used for model connection.
     open var nodes_names: [String]
     {
         return [String]()
@@ -57,20 +57,20 @@ open class ModelController: NSCopying
         }
     }
     
-    ///Removes all nodes in object model from controller.
+    /// Removes all nodes in object model from controller.
     public func disconnect_nodes()
     {
         nodes.removeAll()
     }
     
-    ///Resets nodes position of connected visual model.
+    /// Resets nodes position of connected visual model.
     open func reset_nodes()
     {
         
     }
     
-    //MARK: - Statistics handling
-    ///A get statistics flag.
+    // MARK: - Statistics handling
+    /// A get statistics flag.
     public var get_statistics = false
     {
         didSet
@@ -82,50 +82,50 @@ open class ModelController: NSCopying
         }
     }
     
-    ///Charts data.
+    /// Charts data.
     @Published public var charts_data: [WorkspaceObjectChart]?
     
-    ///States data.
+    /// States data.
     @Published public var states_data: [StateItem]?
     
-    ///Updates charts data.
+    /// Updates charts data.
     open func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         return [WorkspaceObjectChart]()
     }
     
-    ///Updates states.
+    /// Updates states.
     open func updated_states_data() -> [StateItem]?
     {
         return [StateItem]()
     }
     
-    ///Performs statistics data update.
+    /// Performs statistics data update.
     public func update_statistics_data()
     {
         charts_data = updated_charts_data()
         states_data = updated_states_data()
     }
     
-    ///Initial charts data.
+    /// Initial charts data.
     open func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         return [WorkspaceObjectChart]()
     }
     
-    ///Initial states data.
+    /// Initial states data.
     open func initial_states_data() -> [StateItem]?
     {
         return [StateItem]()
     }
     
-    ///Resets charts data to inital state.
+    /// Resets charts data to inital state.
     public func reset_charts_data()
     {
         charts_data = initial_charts_data()
     }
     
-    ///Resets states data to inital state.
+    /// Resets states data to inital state.
     public func reset_states_data()
     {
         states_data = initial_states_data()

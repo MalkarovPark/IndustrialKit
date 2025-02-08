@@ -15,7 +15,7 @@ import SceneKit
  */
 open class ToolConnector: WorkspaceObjectConnector
 {
-    //MARK: - Device handling
+    // MARK: - Device handling
     private var performing_task = Task {}
     
     /**
@@ -45,34 +45,34 @@ open class ToolConnector: WorkspaceObjectConnector
             
             if !canceled
             {
-                //canceled = true
+                // canceled = true
                 completion()
             }
             canceled = false
         }
     }
     
-    ///Inforamation code updated by connector.
+    /// Inforamation code updated by connector.
     public var info_output: [Float]?
     
-    //MARK: - Model handling
-    ///A tool model controller.
+    // MARK: - Model handling
+    /// A tool model controller.
     public var model_controller: ToolModelController?
     
     override open func sync_model()
     {
-        //model_controller?.nodes[safe: "Node", default: SCNNode()].runAction(SCNAction())
+        // model_controller?.nodes[safe: "Node", default: SCNNode()].runAction(SCNAction())
     }
 }
 
 //MARK: - External Connector
 public class ExternalToolConnector: ToolConnector
 {
-    //MARK: Init functions
-    ///An external module name
+    // MARK: Init functions
+    /// An external module name
     public var module_name: String
     
-    ///For access to code
+    /// For access to code
     public var package_url: URL
     
     public init(_ module_name: String, package_url: URL, parameters: [ConnectionParameter])
@@ -87,16 +87,16 @@ public class ExternalToolConnector: ToolConnector
     {
         self.module_name = ""
         self.package_url = URL(fileURLWithPath: "")
-        //fatalError("init() has not been implemented")
+        // fatalError("init() has not been implemented")
     }
     
-    ///An array of default connection parameters.
+    /// An array of default connection parameters.
     open var default_parameters: [ConnectionParameter]
     {
         return [ConnectionParameter]()
     }
     
-    //MARK: Parameters import
+    // MARK: Parameters import
     override open var parameters: [ConnectionParameter]
     {
         return external_parameters
@@ -104,11 +104,11 @@ public class ExternalToolConnector: ToolConnector
     
     public var external_parameters = [ConnectionParameter]()
     
-    //MARK: Connection
+    // MARK: Connection
     override open func connection_process() async -> Bool
     {
         #if os(macOS)
-        //Perform connection
+        // Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
         
         guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: arguments) else
@@ -122,7 +122,7 @@ public class ExternalToolConnector: ToolConnector
             return false
         }
         
-        //Get output
+        // Get output
         if let range = terminal_output.range(of: "\"([^\"]*)\"", options: .regularExpression)
         {
             if output != String()
@@ -133,7 +133,7 @@ public class ExternalToolConnector: ToolConnector
             output += String(terminal_output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
         }
         
-        //Get connection result
+        // Get connection result
         if terminal_output.contains("<done>")
         {
             return true
@@ -159,7 +159,7 @@ public class ExternalToolConnector: ToolConnector
         #endif
     }
     
-    //MARK: Performing
+    // MARK: Performing
     open override func perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
@@ -182,7 +182,7 @@ public class ExternalToolConnector: ToolConnector
         #endif
     }
     
-    //MARK: Statistics
+    // MARK: Statistics
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
@@ -255,7 +255,7 @@ public class ExternalToolConnector: ToolConnector
         return nil
     }
     
-    //MARK: Modeling
+    // MARK: Modeling
     open override func sync_model()
     {
         #if os(macOS)
@@ -265,15 +265,15 @@ public class ExternalToolConnector: ToolConnector
             return
         }
         
-        //Split the output into lines
+        // Split the output into lines
         let lines = output.split(separator: "\n").map { String($0) }
         
-        for i in 0..<lines.count //line in lines
+        for i in 0..<lines.count // line in lines
         {
-            //Split output into components
+            // Split output into components
             let components: [String] = lines[i].split(separator: " ").map { String($0) }
 
-            //Check that output contains exactly two parameters
+            // Check that output contains exactly two parameters
             guard components.count == 2
             else
             {

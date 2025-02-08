@@ -24,7 +24,7 @@ public class OperationCode: Identifiable, Codable, Hashable
         hasher.combine(id)
     }
     
-    ///Operation code value.
+    /// Operation code value.
     public var value = 0
     
     /**

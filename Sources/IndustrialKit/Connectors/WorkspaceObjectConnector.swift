@@ -19,7 +19,7 @@ import SceneKit
  */
 open class WorkspaceObjectConnector: ObservableObject, NSCopying
 {
-    //MARK: - Init functions
+    // MARK: - Init functions
     required public init()
     {
         current_parameters = parameters
@@ -30,13 +30,13 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
         disconnect()
     }
     
-    ///Copy model controller instance.
+    /// Copy model controller instance.
     open func copy(with zone: NSZone? = nil) -> Any
     {
         return type(of: self).init() as! Self
     }
     
-    //MARK: - Connection parameters handling
+    // MARK: - Connection parameters handling
     public func import_connection_parameters_values(_ list: [String]?)
     {
         if list != nil && current_parameters.count > 0
@@ -94,20 +94,20 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
         }
     }
     
-    //MARK: - Connection handling
-    ///A connection state.
+    // MARK: - Connection handling
+    /// A connection state.
     @Published public var connected: Bool = false
     
-    ///A connection in updating process state.
+    /// A connection in updating process state.
     @Published public var connection_updating: Bool = false
     
-    ///An array of default connection parameters.
+    /// An array of default connection parameters.
     open var parameters: [ConnectionParameter]
     {
         return [ConnectionParameter]()
     }
     
-    ///An array of connection parameters.
+    /// An array of connection parameters.
     @Published public var current_parameters = [ConnectionParameter]()
     
     /**
@@ -120,7 +120,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
     private var connection_task = Task {}
     private var disconnection_task = Task {}
     
-    ///Connects instance to real workspace object.
+    /// Connects instance to real workspace object.
     public func connect()
     {
         disconnection_task.cancel()
@@ -147,9 +147,9 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
                 
                 if connection_failure
                 {
-                    //try? await Task.sleep(nanoseconds: UInt64(200_000_000))
+                    // try? await Task.sleep(nanoseconds: UInt64(200_000_000))
                     usleep(500000)
-                    //sleep(1)
+                    // sleep(1)
                     
                     connection_failure = false
                 }
@@ -157,7 +157,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
         }
     }
     
-    ///Disconnects real workspace object from instance.
+    /// Disconnects real workspace object from instance.
     public func disconnect()
     {
         connection_task.cancel()
@@ -185,15 +185,15 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
     
     open func disconnection_process() async // -> Bool
     {
-        //return false
+        // return false
     }
     
-    ///A get output flag.
+    /// A get output flag.
     @Published public var get_output = false
     
     private var connector_output_data = String()
     
-    ///A connection output data.
+    /// A connection output data.
     public var output: String
     {
         get
@@ -211,21 +211,21 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
         }
     }
     
-    ///Clears connectiopn output data.
+    /// Clears connectiopn output data.
     public func clear_output()
     {
         output = String()
         self.objectWillChange.send()
     }
     
-    ///Reset device perfoming.
+    /// Reset device perfoming.
     open func reset_device()
     {
         
     }
     
-    //MARK: - Statistics handling
-    ///A get statistics flag.
+    // MARK: - Statistics handling
+    /// A get statistics flag.
     public var get_statistics = false
     {
         didSet
@@ -237,71 +237,71 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
         }
     }
     
-    ///Charts data.
+    /// Charts data.
     @Published public var charts_data: [WorkspaceObjectChart]?
     
-    ///States data.
+    /// States data.
     @Published public var states_data: [StateItem]?
     
-    ///Updates charts data.
+    /// Updates charts data.
     open func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         return [WorkspaceObjectChart]()
     }
     
-    ///Updates states.
+    /// Updates states.
     open func updated_states_data() -> [StateItem]?
     {
         return [StateItem]()
     }
     
-    ///Performs statistics data update.
+    /// Performs statistics data update.
     public func update_statistics_data()
     {
         charts_data = updated_charts_data()
         states_data = updated_states_data()
     }
     
-    ///Initial charts data.
+    /// Initial charts data.
     open func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         return [WorkspaceObjectChart]()
     }
     
-    ///Initial states data.
+    /// Initial states data.
     open func initial_states_data() -> [StateItem]?
     {
         return [StateItem]()
     }
     
-    ///Resets charts data to inital state.
+    /// Resets charts data to inital state.
     public func reset_charts_data()
     {
         charts_data = initial_charts_data()
     }
     
-    ///Resets states data to inital state.
+    /// Resets states data to inital state.
     public func reset_states_data()
     {
         states_data = initial_states_data()
     }
     
-    //MARK: - Model handling
-    ///A flag of update model avalibility.
+    // MARK: - Model handling
+    /// A flag of update model avalibility.
     @Published public var update_model = false
     
-    ///Synchronizes model with real device state.
+    /// Synchronizes model with real device state.
     open func sync_model()
     {
         
     }
     
-    //MARK: - UI functions
-    ///A failure result of connection.
+    // MARK: - UI functions
+    /// A failure result of connection.
     @Published public var connection_failure = false
     
-    ///Data for connection button.
-    /// - Returns: Button label and light color – *label*, *color*.
+    /// Data for connection button.
+    ///  - Returns: Button label and light color – *label*, *color*.
     public var connection_button: (label: String, color: Color)
     {
         var label = String()
@@ -356,7 +356,7 @@ public struct ConnectionParameter: Identifiable, Equatable, Codable
         self.value = value
     }
     
-    //MARK: - Codable handling
+    // MARK: - Codable handling
     private enum CodingKeys: String, CodingKey
     {
         case id

@@ -37,7 +37,7 @@ public struct JumpElementView: View
                 Text("Jump to")
                 #endif
                 
-                Picker("Jump to", selection: $target_mark_name) //Target mark picker
+                Picker("Jump to", selection: $target_mark_name) // Target mark picker
                 {
                     if workspace.marks_names.count > 0
                     {
@@ -130,7 +130,7 @@ public struct ComparatorElementView: View
                 Text("jump to")
                 #endif
                 
-                Picker("jump to", selection: $target_mark_name) //Target mark picker
+                Picker("jump to", selection: $target_mark_name) // Target mark picker
                 {
                     if workspace.marks_names.count > 0
                     {
@@ -222,7 +222,7 @@ public struct MarkLogicElementView: View
         HStack
         {
             Text("Name")
-            TextField("Mark name", text: $name) //Mark name field
+            TextField("Mark name", text: $name) // Mark name field
                 .textFieldStyle(.roundedBorder)
         }
         .onChange(of: name)

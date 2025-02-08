@@ -18,13 +18,13 @@ import SwiftUI
  */
 public class Workspace: ObservableObject
 {
-    //MARK: - Init functions
+    // MARK: - Init functions
     public init()
     {
         registers = [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
-    //MARK: - Workspace objects data
+    // MARK: - Workspace objects data
     @Published public var robots = [Robot]()
     @Published public var tools = [Tool]()
     @Published public var parts = [Part]()
@@ -33,20 +33,20 @@ public class Workspace: ObservableObject
     {
         didSet
         {
-            //Reset performing if elements array was changed
+            // Reset performing if elements array was changed
             if elements.count > 0
             {
-                performed = false //Enable workspace program edit
-                selected_element_index = 0 //Select first program element
+                performed = false // Enable workspace program edit
+                selected_element_index = 0 // Select first program element
             }
         }
     }
     
-    //MARK: - Workspace visual handling functions
-    ///A SceneKit scene for complex visual model of workspace.
+    // MARK: - Workspace visual handling functions
+    /// A SceneKit scene for complex visual model of workspace.
     public var scene = SCNScene()
     
-    ///A selected workspace object type value in industrial complex.
+    /// A selected workspace object type value in industrial complex.
     public var selected_object_type: WorkspaceObjectType?
     {
         if selected_robot_index > -1 && selected_part_index == -1 && selected_tool_index == -1
@@ -67,7 +67,7 @@ public class Workspace: ObservableObject
         return nil
     }
     
-    ///Selected workspace object.
+    /// Selected workspace object.
     public var selected_object: WorkspaceObject?
     {
         get
@@ -100,16 +100,16 @@ public class Workspace: ObservableObject
         }
     }
     
-    //MARK: - Workspace update handling
-    ///A flag that prevents concurrent execution of the update function.
-    //MARK: - Update functions
-    /// Flag indicating whether the update loop is active.
+    // MARK: - Workspace update handling
+    /// A flag that prevents concurrent execution of the update function.
+    // MARK: - Update functions
+    ///  Flag indicating whether the update loop is active.
     private var updated = false
     
-    /// The task responsible for executing the update loop.
+    ///  The task responsible for executing the update loop.
     private var update_task: Task<Void, Never>?
     
-    ///The interval between updates in nanoseconds.
+    /// The interval between updates in nanoseconds.
     public static var update_interval: UInt64 = 1_000_000_0
     
     /**
@@ -173,39 +173,39 @@ public class Workspace: ObservableObject
         }
     }
     
-    //MARK: - Visual edit handling
-    ///Sets new pointer position by selected workspace object.
+    // MARK: - Visual edit handling
+    /// Sets new pointer position by selected workspace object.
     public func update_pointer()
     {
         update_object_pointer_position(by_node: edited_object_node ?? SCNNode())
     }
     
-    ///Updates opject selection pointer position.
+    /// Updates opject selection pointer position.
     private func update_object_pointer_position(by_node: SCNNode)
     {
-        //Remove old and add new constraint
+        // Remove old and add new constraint
         object_pointer_node?.constraints?.removeAll()
         object_pointer_node?.constraints?.append(SCNReplicatorConstraint(target: by_node))
         
-        //Refresh pointer node position
+        // Refresh pointer node position
         object_pointer_node?.position.x += 1
         object_pointer_node?.position.x -= 1
-        //object_pointer_node?.rotation.x += 1
-        //object_pointer_node?.rotation.x -= 1
+        // object_pointer_node?.rotation.x += 1
+        // object_pointer_node?.rotation.x -= 1
         
-        object_pointer_node?.isHidden = false //Unhide pointer node
+        object_pointer_node?.isHidden = false // Unhide pointer node
     }
     
-    ///A link to edited object node.
+    /// A link to edited object node.
     public var edited_object_node: SCNNode?
     
-    ///A workcell scene adress.
+    /// A workcell scene adress.
     public static var workcell_scene_address = String()
     
-    ///Gets new object node model for previewing position.
+    /// Gets new object node model for previewing position.
     public func view_object_node(type: WorkspaceObjectType, name: String)
     {
-        //Reset dismissed object by type
+        // Reset dismissed object by type
         switch selected_object_type
         {
         case .robot:
@@ -221,31 +221,31 @@ public class Workspace: ObservableObject
             break
         }
         
-        edited_object_node?.removeFromParentNode() //Remove old node
-        edited_object_node = SCNNode() //Remove old reference
+        edited_object_node?.removeFromParentNode() // Remove old node
+        edited_object_node = SCNNode() // Remove old reference
         
         switch type
         {
         case .robot:
-            //Deselect other
+            // Deselect other
             deselect_part()
             deselect_tool()
             
-            //Get new node
-            select_robot(name: name) //Select robot in workspace
-            workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!) //Get workcell from Workcell.scn and add it to Workspace.scn
+            // Get new node
+            select_robot(name: name) // Select robot in workspace
+            workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!) // Get workcell from Workcell.scn and add it to Workspace.scn
             
-            edited_object_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() //Connect to unit node in workspace scene
+            edited_object_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in workspace scene
             
             edited_object_node?.name = name
             selected_robot.workcell_connect(scene: scene, name: name, connect_camera: false)
             selected_robot.update()
         case .tool:
-            //Deselect other
+            // Deselect other
             deselect_robot()
             deselect_part()
             
-            //Get new node
+            // Get new node
             select_tool(name: name)
             
             edited_object_node = selected_tool.node?.clone()
@@ -254,11 +254,11 @@ public class Workspace: ObservableObject
             tools_node?.addChildNode(edited_object_node ?? SCNNode())
             selected_tool.workcell_connect(scene: scene, name: name)
         case .part:
-            //Deselect other
+            // Deselect other
             deselect_robot()
             deselect_tool()
             
-            //Get new node
+            // Get new node
             select_part(name: name)
             selected_part.model_position_reset()
             
@@ -268,15 +268,15 @@ public class Workspace: ObservableObject
             parts_node?.addChildNode(edited_object_node ?? SCNNode())
         }
         
-        //Unhide pointer and move to object position
+        // Unhide pointer and move to object position
         object_pointer_node?.isHidden = false
         update_pointer()
     }
     
-    ///Updates model position of selected object in workspace scene by its positional values.
+    /// Updates model position of selected object in workspace scene by its positional values.
     public func update_object_position()
     {
-        //Get position by selected object type
+        // Get position by selected object type
         var location = [Float](repeating: 0, count: 3)
         var rotation = [Float](repeating: 0, count: 3)
         
@@ -295,7 +295,7 @@ public class Workspace: ObservableObject
             break
         }
         
-        //Apply position to node
+        // Apply position to node
         #if os(macOS)
         edited_object_node?.worldPosition = SCNVector3(x: CGFloat(location[1]), y: CGFloat(location[2]), z: CGFloat(location[0]))
         
@@ -311,35 +311,35 @@ public class Workspace: ObservableObject
         #endif
     }
     
-    ///Places object in workspace.
+    /// Places object in workspace.
     public func place_viewed_object()
     {
         switch selected_object_type
         {
         case .robot:
             selected_robot.is_placed = true
-            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.robot_bit_mask) //Apply category bit mask
+            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.robot_bit_mask) // Apply category bit mask
             
             deselect_robot()
         case .tool:
             selected_tool.is_placed = true
-            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.tool_bit_mask) //Apply category bit mask
+            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.tool_bit_mask) // Apply category bit mask
             
             deselect_tool()
         case.part:
             selected_part.is_placed = true
             
-            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.part_bit_mask) //Apply category bit mask
-            edited_object_node?.physicsBody = selected_part.physics //Apply physics
+            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.part_bit_mask) // Apply category bit mask
+            edited_object_node?.physicsBody = selected_part.physics // Apply physics
             
             deselect_part()
         default:
             break
         }
         
-        //Disconnecting from edited node
-        edited_object_node = SCNNode() //Remove old reference
-        edited_object_node?.removeFromParentNode() //Remove old node
+        // Disconnecting from edited node
+        edited_object_node = SCNNode() // Remove old reference
+        edited_object_node?.removeFromParentNode() // Remove old node
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
         {
@@ -347,13 +347,13 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///Removes selected object model from workspace scene.
+    /// Removes selected object model from workspace scene.
     public func dismiss_object()
     {
         object_pointer_node?.isHidden = true
         
-        edited_object_node?.removeFromParentNode() //Remove edited object node
-        edited_object_node = SCNNode() //Remove scnnode link
+        edited_object_node?.removeFromParentNode() // Remove edited object node
+        edited_object_node = SCNNode() // Remove scnnode link
         
         deselect_object()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
@@ -401,14 +401,14 @@ public class Workspace: ObservableObject
         return unavaliable
     }
     
-    ///Process object node selection in workspace scene.
+    /// Process object node selection in workspace scene.
     public func select_object_in_scene(result: SCNHitTestResult)
     {
-        //print(result.localCoordinates)
-        //print("🍮 tapped – \(result.node.name!), category \(result.node.categoryBitMask)")
+        // print(result.localCoordinates)
+        // print("🍮 tapped – \(result.node.name!), category \(result.node.categoryBitMask)")
         var object_node: SCNNode?
         
-        switch result.node.categoryBitMask //Switch object node bit mask
+        switch result.node.categoryBitMask // Switch object node bit mask
         {
         case Workspace.robot_bit_mask:
             object_node = main_object_node(result_node: result.node, object_bit_mask: Workspace.robot_bit_mask)
@@ -424,7 +424,7 @@ public class Workspace: ObservableObject
         }
         update_view()
         
-        func main_object_node(result_node: SCNNode, object_bit_mask: Int) -> SCNNode //Find top level node of selectable object
+        func main_object_node(result_node: SCNNode, object_bit_mask: Int) -> SCNNode // Find top level node of selectable object
         {
             var current_node = result_node
             var saved_node = SCNNode()
@@ -439,34 +439,34 @@ public class Workspace: ObservableObject
         }
     }
     
-    private var previous_selected_type: WorkspaceObjectType = .robot //Current selected object type for new selection
+    private var previous_selected_type: WorkspaceObjectType = .robot // Current selected object type for new selection
     
-    private func select_object_for_edit(node: SCNNode, type: WorkspaceObjectType) //Create editable node with name
+    private func select_object_for_edit(node: SCNNode, type: WorkspaceObjectType) // Create editable node with name
     {
-        //Connect to old part node
+        // Connect to old part node
         var old_part_node = SCNNode()
         if selected_object_type == .part
         {
             old_part_node = edited_object_node!
         }
-        edited_object_node = node //Connect to tapped node
+        edited_object_node = node // Connect to tapped node
         
         if any_object_selected
         {
-            switch type //Switch new selected objec type
+            switch type // Switch new selected objec type
             {
             case .robot:
                 if type == previous_selected_type
                 {
                     if node.name ?? "" == selected_robot.name
                     {
-                        //Deselect already selected robot
+                        // Deselect already selected robot
                         deselect_robot()
                         object_pointer_node?.isHidden = true
                     }
                     else
                     {
-                        //Change selected to new robot
+                        // Change selected to new robot
                         select_robot(name: node.name!)
                         update_pointer()
                     }
@@ -481,13 +481,13 @@ public class Workspace: ObservableObject
                 {
                     if node.name ?? "" == selected_tool.name
                     {
-                        //Deselect already selected tool
+                        // Deselect already selected tool
                         deselect_tool()
                         object_pointer_node?.isHidden = true
                     }
                     else
                     {
-                        //Change selected to new tool
+                        // Change selected to new tool
                         select_tool(name: node.name!)
                         update_pointer()
                     }
@@ -502,20 +502,20 @@ public class Workspace: ObservableObject
                 {
                     if node.name ?? "" == selected_part.name
                     {
-                        //Deselect already selected part
+                        // Deselect already selected part
                         deselect_part()
                         edited_object_node?.physicsBody = selected_part.physics
                         object_pointer_node?.isHidden = true
                     }
                     else
                     {
-                        old_part_node.physicsBody = selected_part.physics //Enable physics for deselctable node
+                        old_part_node.physicsBody = selected_part.physics // Enable physics for deselctable node
                         
-                        //Change selected to new part
+                        // Change selected to new part
                         select_part(name: node.name!)
                         update_pointer()
                         
-                        edited_object_node?.physicsBody = .none //Disable physics physics for selected node
+                        edited_object_node?.physicsBody = .none // Disable physics physics for selected node
                     }
                 }
                 else
@@ -530,10 +530,10 @@ public class Workspace: ObservableObject
         }
         else
         {
-            select_new() //If nothing object selected – select new
+            select_new() // If nothing object selected – select new
         }
         
-        func select_new() //Select new object by type
+        func select_new() // Select new object by type
         {
             switch type
             {
@@ -545,7 +545,7 @@ public class Workspace: ObservableObject
                 select_part(name: node.name!)
                 edited_object_node?.physicsBody = .none
                 
-                //Get part node position after physics calculation
+                // Get part node position after physics calculation
                 #if os(macOS)
                 selected_part.location = [Float((edited_object_node?.presentation.worldPosition.z)!), Float((edited_object_node?.presentation.worldPosition.x)!), Float((edited_object_node?.presentation.worldPosition.y)!)]
                 selected_part.rotation = [Float((edited_object_node?.presentation.eulerAngles.z)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.x)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.y)!).to_deg]
@@ -555,7 +555,7 @@ public class Workspace: ObservableObject
                 #endif
             }
             
-            //Unhide pointer and move to object position
+            // Unhide pointer and move to object position
             object_pointer_node?.isHidden = false
             update_pointer()
         }
@@ -568,7 +568,7 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///Deselects edited object node.
+    /// Deselects edited object node.
     public func deselect_object_for_edit()
     {
         if any_object_selected
@@ -592,18 +592,18 @@ public class Workspace: ObservableObject
                 break
             }
             
-            //Disconnect from edited node
-            edited_object_node = SCNNode() //Remove old reference
-            //edited_object_node?.removeFromParentNode() //Remove old node
+            // Disconnect from edited node
+            edited_object_node = SCNNode() // Remove old reference
+            // edited_object_node?.removeFromParentNode() // Remove old node
         }
     }
     
-    ///Unplaces selected object from workspace.
+    /// Unplaces selected object from workspace.
     public func unplace_selected_object()
     {
         if any_object_selected
         {
-            //Toggle selection state and deselect by object type
+            // Toggle selection state and deselect by object type
             switch selected_object_type
             {
             case .robot:
@@ -623,14 +623,14 @@ public class Workspace: ObservableObject
             }
         }
         
-        //Disconnect from edited node
-        edited_object_node?.removeFromParentNode() //Remove old node
-        edited_object_node = SCNNode() //Remove old reference
+        // Disconnect from edited node
+        edited_object_node?.removeFromParentNode() // Remove old node
+        edited_object_node = SCNNode() // Remove old reference
         
         object_pointer_node?.isHidden = true
     }
     
-    ///Deselects selected object.
+    /// Deselects selected object.
     public func deselect_object()
     {
         switch selected_object_type
@@ -658,9 +658,9 @@ public class Workspace: ObservableObject
         return objects.firstIndex(where: { $0.name == name }) ?? -1
     }
     
-    //MARK: - Robots handling functions
-    //MARK: Robots manage functions
-    ///Adds robot in workspace.
+    // MARK: - Robots handling functions
+    // MARK: Robots manage functions
+    /// Adds robot in workspace.
     public func add_robot(_ robot: Robot)
     {
         robot.name = mismatched_name(name: robot.name, names: robots_names)
@@ -708,7 +708,7 @@ public class Workspace: ObservableObject
             
             robots.append(Robot())
             
-            robots[new_index] = clone_codable(robots[index]) ?? Robot() //Robot(robot_struct: robots[index].file_info)
+            robots[new_index] = clone_codable(robots[index]) ?? Robot() // Robot(robot_struct: robots[index].file_info)
             robots[new_index].name = new_name
             robots[new_index].is_placed = false
         }
@@ -725,7 +725,7 @@ public class Workspace: ObservableObject
         duplicate_robot(index: index_by_name(name, objects: robots))
     }
     
-    //MARK: Robot selection functions
+    // MARK: Robot selection functions
     private var selected_robot_index = -1
     
     /**
@@ -750,13 +750,13 @@ public class Workspace: ObservableObject
         select_robot(index: index_by_name(name, objects: robots))
     }
     
-    ///Deselects selected robot.
+    /// Deselects selected robot.
     public func deselect_robot()
     {
         selected_robot_index = -1
     }
     
-    ///Selected robot.
+    /// Selected robot.
     public var selected_robot: Robot
     {
         get
@@ -779,7 +779,7 @@ public class Workspace: ObservableObject
         }
     }
     
-    //MARK: Robots naming
+    // MARK: Robots naming
     /**
      Returns robot by name.
      
@@ -798,10 +798,10 @@ public class Workspace: ObservableObject
             return Robot()
         }
         
-        //return self.robots[robot_index_by_name(name)]
+        // return self.robots[robot_index_by_name(name)]
     }
     
-    ///Names of all robots in workspace.
+    /// Names of all robots in workspace.
     public var robots_names: [String]
     {
         var robots_names = [String]()
@@ -815,7 +815,7 @@ public class Workspace: ObservableObject
         return robots_names
     }
     
-    ///Names of robots avaliable to place in workspace.
+    /// Names of robots avaliable to place in workspace.
     public var avaliable_robots_names: [String]
     {
         var names = [String]()
@@ -829,8 +829,8 @@ public class Workspace: ObservableObject
         return names
     }
     
-    ///Names of robots placed in workspace.
-    public var placed_robots_names: [String] //Array of robots names added to workspace
+    /// Names of robots placed in workspace.
+    public var placed_robots_names: [String] // Array of robots names added to workspace
     {
         var names = [String]()
         for robot in robots
@@ -843,14 +843,14 @@ public class Workspace: ObservableObject
         return names
     }
     
-    ///Names of robots avaliable to tool attachment.
+    /// Names of robots avaliable to tool attachment.
     public var attachable_robots_names: [String]
     {
         var names = placed_robots_names
         
         if names.count > 0
         {
-            //Find attached robots names by tools
+            // Find attached robots names by tools
             var attached_robots_names = [String]()
             for tool in tools
             {
@@ -860,15 +860,15 @@ public class Workspace: ObservableObject
                 }
             }
             
-            names = names.filter{ !attached_robots_names.contains($0) } //Substract attached robots names from all placed robots
+            names = names.filter{ !attached_robots_names.contains($0) } // Substract attached robots names from all placed robots
         }
         
         return names
     }
     
-    //MARK: - Tools handling functions
-    //MARK: Tools manage funcions
-    ///Adds tool in workspace.
+    // MARK: - Tools handling functions
+    // MARK: Tools manage funcions
+    /// Adds tool in workspace.
     public func add_tool(_ tool: Tool)
     {
         tool.name = mismatched_name(name: tool.name, names: tools_names)
@@ -916,7 +916,7 @@ public class Workspace: ObservableObject
             
             tools.append(Tool())
             
-            tools[new_index] = clone_codable(tools[index]) ?? Tool() //Tool(tool_struct: tools[index].file_info)
+            tools[new_index] = clone_codable(tools[index]) ?? Tool() // Tool(tool_struct: tools[index].file_info)
             tools[new_index].name = new_name
             tools[new_index].is_placed = false
         }
@@ -933,10 +933,10 @@ public class Workspace: ObservableObject
         duplicate_tool(index: index_by_name(name, objects: tools))
     }
 
-    //MARK: Tools selection functions
+    // MARK: Tools selection functions
     private var selected_tool_index = -1
     
-    ///Selected tool.
+    /// Selected tool.
     public var selected_tool: Tool
     {
         get
@@ -965,7 +965,7 @@ public class Workspace: ObservableObject
      - Parameters:
         - index: An index of tool to be selected.
      */
-    public func select_tool(index: Int) //Select tool by number
+    public func select_tool(index: Int) // Select tool by number
     {
         selected_tool_index = index
     }
@@ -976,12 +976,12 @@ public class Workspace: ObservableObject
      - Parameters:
         - name: A name of tool to be selected.
      */
-    public func select_tool(name: String) //Select tool by name
+    public func select_tool(name: String) // Select tool by name
     {
         select_tool(index: index_by_name(name, objects: tools))
     }
     
-    ///Deselects selected tool.
+    /// Deselects selected tool.
     public func deselect_tool()
     {
         selected_tool_index = -1
@@ -1005,11 +1005,11 @@ public class Workspace: ObservableObject
             return Tool()
         }
         
-        //return self.tools[tool_index_by_name(name)]
+        // return self.tools[tool_index_by_name(name)]
     }
     
-    ///Names of all tools in workspace.
-    public var tools_names: [String] //Get names of all tools in workspace
+    /// Names of all tools in workspace.
+    public var tools_names: [String] // Get names of all tools in workspace
     {
         var names = [String]()
         if tools.count > 0
@@ -1022,7 +1022,7 @@ public class Workspace: ObservableObject
         return names
     }
     
-    ///Names of tools avaliable to place in workspace.
+    /// Names of tools avaliable to place in workspace.
     public var avaliable_tools_names: [String]
     {
         var names = [String]()
@@ -1036,8 +1036,8 @@ public class Workspace: ObservableObject
         return names
     }
     
-    ///Names of tools placed in workspace.
-    public var placed_tools_names: [String] //Array of robots names added to workspace
+    /// Names of tools placed in workspace.
+    public var placed_tools_names: [String] // Array of robots names added to workspace
     {
         var names = [String]()
         for tool in tools
@@ -1050,7 +1050,7 @@ public class Workspace: ObservableObject
         return names
     }
     
-    //MARK: Tool attachment functions
+    // MARK: Tool attachment functions
     /**
      Attaches tool to robot.
      
@@ -1065,16 +1065,16 @@ public class Workspace: ObservableObject
         edited_object_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(robot_name).tool_node))
     }
     
-    ///Removes attachment for edited tool and reset it position in workspace.
+    /// Removes attachment for edited tool and reset it position in workspace.
     public func remove_attachment()
     {
         edited_object_node?.remove_all_constraints()
         selected_tool.attached_to = nil
     }
     
-    //MARK: - Parts handling functions
-    //MARK: Parts manage funcions
-    ///Adds part in workspace.
+    // MARK: - Parts handling functions
+    // MARK: Parts manage funcions
+    /// Adds part in workspace.
     public func add_part(_ part: Part)
     {
         part.name = mismatched_name(name: part.name, names: parts_names)
@@ -1121,7 +1121,7 @@ public class Workspace: ObservableObject
 
             parts.append(Part())
 
-            parts[new_index] = clone_codable(parts[index]) ?? Part() //Part(part_struct: parts[index].file_info)
+            parts[new_index] = clone_codable(parts[index]) ?? Part() // Part(part_struct: parts[index].file_info)
             parts[new_index].name = new_name
             parts[new_index].is_placed = false
         }
@@ -1138,11 +1138,11 @@ public class Workspace: ObservableObject
         duplicate_part(index: index_by_name(name, objects: parts))
     }
     
-    //MARK: Parts selection functions
+    // MARK: Parts selection functions
     private var selected_part_index = -1
     
-    ///Selected part.
-    public var selected_part: Part //Return part by selected index
+    /// Selected part.
+    public var selected_part: Part // Return part by selected index
     {
         get
         {
@@ -1186,7 +1186,7 @@ public class Workspace: ObservableObject
         select_part(index: index_by_name(name, objects: parts))
     }
     
-    ///Deselects selected part.
+    /// Deselects selected part.
     public func deselect_part()
     {
         selected_part_index = -1
@@ -1210,10 +1210,10 @@ public class Workspace: ObservableObject
             return Part()
         }
         
-        //return self.parts[part_index_by_name(name)]
+        // return self.parts[part_index_by_name(name)]
     }
     
-    ///Names of all parts in workspace.
+    /// Names of all parts in workspace.
     public var parts_names: [String]
     {
         var parts_names = [String]()
@@ -1227,7 +1227,7 @@ public class Workspace: ObservableObject
         return parts_names
     }
     
-    ///Names of parts avaliable to place in workspace.
+    /// Names of parts avaliable to place in workspace.
     public var avaliable_parts_names: [String]
     {
         var names = [String]()
@@ -1241,8 +1241,8 @@ public class Workspace: ObservableObject
         return names
     }
     
-    ///Names of parts placed in workspace.
-    public var placed_parts_names: [String] //Array of robots names added to workspace
+    /// Names of parts placed in workspace.
+    public var placed_parts_names: [String] // Array of robots names added to workspace
     {
         var names = [String]()
         for part in parts
@@ -1255,9 +1255,9 @@ public class Workspace: ObservableObject
         return names
     }
     
-    //MARK: - Control program functions
-    //MARK: Workspace program elements handling
-    ///All marks in workspace program.
+    // MARK: - Control program functions
+    // MARK: Workspace program elements handling
+    /// All marks in workspace program.
     public var marks_names: [String]
     {
         var marks_names = [String]()
@@ -1272,7 +1272,7 @@ public class Workspace: ObservableObject
         return marks_names
     }
     
-    ///Deletes program element by number.
+    /// Deletes program element by number.
     public func delete_element(index: Int)
     {
         if elements.indices.contains(index)
@@ -1281,7 +1281,7 @@ public class Workspace: ObservableObject
         }
     }
     
-    //MARK: Workspace progem elements checking functions
+    // MARK: Workspace progem elements checking functions
     public func elements_check()
     {
         for element in elements
@@ -1305,7 +1305,7 @@ public class Workspace: ObservableObject
             }
         }
         
-        func robot_element_check(_ element: RobotPerformerElement) //Check element by selected robot exists
+        func robot_element_check(_ element: RobotPerformerElement) // Check element by selected robot exists
         {
             var checked_object = robot_by_name(element.object_name)
             
@@ -1451,7 +1451,7 @@ public class Workspace: ObservableObject
             mark_check(name: &element.target_mark_name)
         }
         
-        func comparator_element_check(_ element: ComparatorLogicElement) //Check element by selected mark exists
+        func comparator_element_check(_ element: ComparatorLogicElement) // Check element by selected mark exists
         {
             mark_check(name: &element.target_mark_name)
         }
@@ -1471,7 +1471,7 @@ public class Workspace: ObservableObject
                     }
                 }
                 
-                if !mark_founded //&& name == ""
+                if !mark_founded // && name == ""
                 {
                     name = marks_names[0]
                 }
@@ -1483,14 +1483,14 @@ public class Workspace: ObservableObject
         }
     }
     
-    //MARK: Performation functions
-    ///Program performating cycle state.
+    // MARK: Performation functions
+    /// Program performating cycle state.
     @Published public var cycled = false
     
-    ///Workspace performing state.
+    /// Workspace performing state.
     public var performed = false
     
-    ///An Index of target element in control program array.
+    /// An Index of target element in control program array.
     private var selected_element_index = 0
     
     /**
@@ -1500,7 +1500,7 @@ public class Workspace: ObservableObject
      */
     public var element_changed = false
     
-    ///Selects program element and performs by workcell.
+    /// Selects program element and performs by workcell.
     public func start_pause_performing()
     {
         guard elements.count > 0
@@ -1516,14 +1516,14 @@ public class Workspace: ObservableObject
         
         prepare_program()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) //Delayed view update
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) // Delayed view update
         {
             self.update_view()
         }
         
         if !performed
         {
-            //Move to next point if moving was stop
+            // Move to next point if moving was stop
             performed = true
             
             perform_next_element()
@@ -1531,21 +1531,21 @@ public class Workspace: ObservableObject
         }
         else
         {
-            //Remove all action if moving was perform
+            // Remove all action if moving was perform
             performed = false
             
-            //Stop perfomed objects
+            // Stop perfomed objects
             pause_performing()
         }
     }
     
-    ///A selected workspace program element.
+    /// A selected workspace program element.
     private var selected_program_element: WorkspaceProgramElement
     {
         return elements[selected_element_index]
     }
     
-    ///Selects and performs program element by workspace.
+    /// Selects and performs program element by workspace.
     private func perform_next_element()
     {
         perform(selected_program_element, completion: select_new_element)
@@ -1561,12 +1561,12 @@ public class Workspace: ObservableObject
     {
         switch element
         {
-        //Performers
+        // Performers
         case let performer_element as RobotPerformerElement:
             perform_robot(by: performer_element, completion: completion)
         case let performer_element as ToolPerformerElement:
             perform_tool(by: performer_element, completion: completion)
-        //Modifiers
+        // Modifiers
         case let mover_element as MoverModifierElement:
             move(by: mover_element)
             completion()
@@ -1587,7 +1587,7 @@ public class Workspace: ObservableObject
         case is CleanerModifierElement:
             clear_registers()
             completion()
-        //Logic
+        // Logic
         case let jump_element as JumpLogicElement:
             jump(by: jump_element)
             completion()
@@ -1609,7 +1609,7 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///Set the new target program element index.
+    /// Set the new target program element index.
     private func select_new_element()
     {
         if performed
@@ -1625,7 +1625,7 @@ public class Workspace: ObservableObject
         
         if selected_element_index < elements.count
         {
-            //Select and move to next point
+            // Select and move to next point
             perform_next_element()
         }
         else
@@ -1642,12 +1642,12 @@ public class Workspace: ObservableObject
                 
                 deselect_robot()
                 deselect_tool()
-                //update_view()
+                // update_view()
             }
         }
     }
     
-    ///Pauses program element performing.
+    /// Pauses program element performing.
     public func pause_performing()
     {
         let element = selected_program_element
@@ -1675,10 +1675,10 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///A default count of data registers for workspace.
+    /// A default count of data registers for workspace.
     public static var default_registers_count = 256
     
-    ///An array of data registers of workspace.
+    /// An array of data registers of workspace.
     @Published public var registers: [Float]// = [Float](repeating: 0, count: Workspace.default_registers_count)
     
     private func input_registers(_ registers: [Float])
@@ -1710,7 +1710,7 @@ public class Workspace: ObservableObject
         input_registers(old_registers)
     }
     
-    ///Clears all data registers.
+    /// Clears all data registers.
     public func clear_registers()
     {
         registers = [Float](repeating: 0, count: registers.count)
@@ -1745,7 +1745,7 @@ public class Workspace: ObservableObject
         }
     }
     
-    //MARK: - Elements processing
+    // MARK: - Elements processing
     /**
      Perform robot by element data.
      - Parameters:
@@ -1779,7 +1779,7 @@ public class Workspace: ObservableObject
         }
         else
         {
-            //Single robot perform
+            // Single robot perform
             var target_point = PositionPoint(x: registers[safe_float: element.x_index],
                                              y: registers[safe_float: element.y_index],
                                              z: registers[safe_float: element.z_index],
@@ -1830,7 +1830,7 @@ public class Workspace: ObservableObject
         }
         else
         {
-            //Single tool perform
+            // Single tool perform
             selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
             {
                 completion()
@@ -1931,7 +1931,7 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///Resets workspace performing.
+    /// Resets workspace performing.
     public func reset_performing()
     {
         if performed
@@ -1948,21 +1948,21 @@ public class Workspace: ObservableObject
                 break
             }
             
-            performed = false //Enable workspace program edit
-            selected_element_index = 0 //Select first program element
+            performed = false // Enable workspace program edit
+            selected_element_index = 0 // Select first program element
         }
     }
     
-    ///Prepare workspace program to perform.
+    /// Prepare workspace program to perform.
     private func prepare_program()
     {
         defining_elements_indexes()
     }
     
-    ///Define program element indexes.
+    /// Define program element indexes.
     private func defining_elements_indexes()
     {
-        //Find mark elements indexes
+        // Find mark elements indexes
         var marks_associations = [(String, Int)]()
         var element = WorkspaceProgramElement()
         for i in 0..<elements.count
@@ -1974,7 +1974,7 @@ public class Workspace: ObservableObject
             }
         }
         
-        //Set target element indexes of marks to jump elements.
+        // Set target element indexes of marks to jump elements.
         var target_mark_name = String()
         
         for element in elements
@@ -2009,7 +2009,7 @@ public class Workspace: ObservableObject
         }
     }
     
-    //MARK: - Work with file system
+    // MARK: - Work with file system
     /**
      Returns arrays of document structures by workspace objects type.
      
@@ -2017,28 +2017,28 @@ public class Workspace: ObservableObject
      */
     public func file_data() -> (robots: [Robot], tools: [Tool], parts: [Part], elements: [WorkspaceProgramElementStruct], registers: [Float])
     {
-        //Get robots info for save to file
+        // Get robots info for save to file
         var robots_file_info = [Robot]()
         for robot in robots
         {
             robots_file_info.append(robot)
         }
         
-        //Get tools info for save to file
+        // Get tools info for save to file
         var tools_file_info = [Tool]()
         for tool in tools
         {
             tools_file_info.append(tool)
         }
         
-        //Get parts info for save to file
+        // Get parts info for save to file
         var parts_file_info = [Part]()
         for part in parts
         {
             parts_file_info.append(part)
         }
         
-        //Get workspace program elements info for save to file
+        // Get workspace program elements info for save to file
         var elements_file_info = [WorkspaceProgramElementStruct]()
         for element in elements
         {
@@ -2056,7 +2056,7 @@ public class Workspace: ObservableObject
      */
     public func file_view(preset: WorkspacePreset)
     {
-        //Update robots data from file
+        // Update robots data from file
         robots.removeAll()
         
         for robot in preset.robots
@@ -2064,7 +2064,7 @@ public class Workspace: ObservableObject
             robots.append(robot)
         }
         
-        //Update tools data from file
+        // Update tools data from file
         tools.removeAll()
         
         for tool in preset.tools
@@ -2072,18 +2072,18 @@ public class Workspace: ObservableObject
             tools.append(tool)
         }
         
-        //Update parts data from file
+        // Update parts data from file
         parts.removeAll()
         
         for part in preset.parts
         {
-            //part.get_node_from_scene()
-            //part.color_to_model()
+            // part.get_node_from_scene()
+            // part.color_to_model()
             
             parts.append(part)
         }
         
-        //Update workspace program elements data from file
+        // Update workspace program elements data from file
         elements.removeAll()
         for element in preset.elements
         {
@@ -2093,17 +2093,17 @@ public class Workspace: ObservableObject
         registers = preset.registers ?? [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
-    //MARK: - UI Functions
-    ///Determines whether the object can be selected if it is open for editing.
+    // MARK: - UI Functions
+    /// Determines whether the object can be selected if it is open for editing.
     public var in_visual_edit_mode = false
     
-    ///Force updates SwiftUI view.
+    /// Force updates SwiftUI view.
     public func update_view()
     {
         self.objectWillChange.send()
     }
     
-    ///Selection workspace object state.
+    /// Selection workspace object state.
     public var any_object_selected: Bool
     {
         if selected_robot_index == -1 && selected_part_index == -1 && selected_tool_index == -1
@@ -2116,11 +2116,11 @@ public class Workspace: ObservableObject
         }
     }
     
-    ///Determines whether a given program element is currently selected for performing.
+    /// Determines whether a given program element is currently selected for performing.
     public func is_current_element(element: WorkspaceProgramElement) -> Bool
     {
         var flag = false
-        let element_index = self.elements.firstIndex(of: element) //Index of selected code
+        let element_index = self.elements.firstIndex(of: element) // Index of selected code
         
         if performed
         {
@@ -2133,32 +2133,32 @@ public class Workspace: ObservableObject
         return flag
     }
     
-    //MARK: - Visual functions
-    ///Scene camera node.
+    // MARK: - Visual functions
+    /// Scene camera node.
     public var camera_node: SCNNode?
     
-    ///Robots workcells node.
+    /// Robots workcells node.
     public var workcells_node: SCNNode?
     
-    ///Tools node.
+    /// Tools node.
     public var tools_node: SCNNode?
     
-    ///Parts node.
+    /// Parts node.
     public var parts_node: SCNNode?
     
-    ///Viusal object pointer node.
+    /// Viusal object pointer node.
     public var object_pointer_node: SCNNode?
     
-    ///Robot node category bit mask.
+    /// Robot node category bit mask.
     public static var robot_bit_mask = 2
     
-    ///Tool node category bit mask.
+    /// Tool node category bit mask.
     public static var tool_bit_mask = 4
     
-    ///Part node category bit mask.
+    /// Part node category bit mask.
     public static var part_bit_mask = 6
     
-    ///Connects and places objects to workspace scene.
+    /// Connects and places objects to workspace scene.
     public func connect_scene(_ scene: SCNScene)
     {
         deselect_robot()
@@ -2179,13 +2179,13 @@ public class Workspace: ObservableObject
     
     private func place_objects(scene: SCNScene)
     {
-        //Nodes for placement operations
+        // Nodes for placement operations
         var unit_node: SCNNode?
         var tool_node: SCNNode?
         var part_node: SCNNode?
         
-        //Place robots
-        if self.avaliable_robots_names.count < self.robots.count //If there are placed robots in workspace
+        // Place robots
+        if self.avaliable_robots_names.count < self.robots.count // If there are placed robots in workspace
         {
             var connect_camera = true
             for robot in robots
@@ -2193,17 +2193,17 @@ public class Workspace: ObservableObject
                 if robot.is_placed
                 {
                     workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!)
-                    unit_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() //Connect to unit node in workspace scene
+                    unit_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in workspace scene
                     
-                    unit_node?.name = robot.name //Select robot cell node
-                    robot.workcell_connect(scene: scene, name: robot.name, connect_camera: connect_camera) //Connect to robot model, place manipulator
-                    robot.update() //Update robot by current position
+                    unit_node?.name = robot.name // Select robot cell node
+                    robot.workcell_connect(scene: scene, name: robot.name, connect_camera: connect_camera) // Connect to robot model, place manipulator
+                    robot.update() // Update robot by current position
                     
                     apply_bit_mask(node: robot.unit_node ?? SCNNode(), Workspace.robot_bit_mask)
                     
-                    connect_camera = false //Disable camera connect for next robots in array
+                    connect_camera = false // Disable camera connect for next robots in array
                     
-                    //Set robot cell node position
+                    // Set robot cell node position
                     #if os(macOS)
                     unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.location[1]), y: CGFloat(robot.location[2]), z: CGFloat(robot.location[0]))
                     
@@ -2221,8 +2221,8 @@ public class Workspace: ObservableObject
             }
         }
         
-        //Place tools
-        if self.avaliable_tools_names.count < self.tools.count //If there are placed tools in workspace
+        // Place tools
+        if self.avaliable_tools_names.count < self.tools.count // If there are placed tools in workspace
         {
             for tool in tools
             {
@@ -2232,11 +2232,11 @@ public class Workspace: ObservableObject
                     apply_bit_mask(node: tool_node ?? SCNNode(), Workspace.tool_bit_mask)
                     tool_node?.name = tool.name
                     tools_node?.addChildNode(tool_node ?? SCNNode())
-                    tool.workcell_connect(scene: scene, name: tool.name) //Connect to robot model, place manipulator
+                    tool.workcell_connect(scene: scene, name: tool.name) // Connect to robot model, place manipulator
                     
                     if !tool.is_attached
                     {
-                        //Set tool node position
+                        // Set tool node position
                         #if os(macOS)
                         tool_node?.position = SCNVector3(x: CGFloat(tool.location[1]), y: CGFloat(tool.location[2]), z: CGFloat(tool.location[0]))
                         
@@ -2260,8 +2260,8 @@ public class Workspace: ObservableObject
             }
         }
         
-        //Place parts
-        if self.avaliable_parts_names.count < self.parts.count //If there are placed parts in workspace
+        // Place parts
+        if self.avaliable_parts_names.count < self.parts.count // If there are placed parts in workspace
         {
             for part in parts
             {
@@ -2273,7 +2273,7 @@ public class Workspace: ObservableObject
                     part_node?.name = part.name
                     parts_node?.addChildNode(part_node ?? SCNNode())
                     
-                    //Set part node position
+                    // Set part node position
                     #if os(macOS)
                     part_node?.position = SCNVector3(x: CGFloat(part.location[1]), y: CGFloat(part.location[2]), z: CGFloat(part.location[0]))
                     

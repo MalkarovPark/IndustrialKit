@@ -9,14 +9,14 @@ import Foundation
 
 open class ChangerModule: IndustrialModule
 {
-    //MARK: - Init functions
+    // MARK: - Init functions
     public override init(new_name: String = String(), description: String = String())
     {
         super.init(new_name: new_name, description: description)
     }
     
-    //MARK: Module init for in-app mounting
-    ///Internal module init.
+    // MARK: Module init for in-app mounting
+    /// Internal module init.
     public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) -> Void)
     {
         super.init(name: name, description: description)
@@ -35,7 +35,7 @@ open class ChangerModule: IndustrialModule
     
     open override var extension_name: String { "changer" }
     
-    //MARK: - Import functions
+    // MARK: - Import functions
     open override var package_url: URL
     {
         do
@@ -60,14 +60,14 @@ open class ChangerModule: IndustrialModule
         return URL(filePath: "")
     }
     
-    //MARK: - Designer functions
+    // MARK: - Designer functions
     open override var default_code_items: [String: String]
     {
         return ["Change": String()]
     }
     
-    //MARK: - Components
-    ///A main external code file name
+    // MARK: - Components
+    /// A main external code file name
     public var code_file_name: String { "Count" }
     
     /**
@@ -93,11 +93,11 @@ open class ChangerModule: IndustrialModule
             return
         }
         
-        registers = output.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: " ").compactMap { Float($0) } //.split(separator: " ").compactMap { Float($0) }
+        registers = output.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: " ").compactMap { Float($0) } // .split(separator: " ").compactMap { Float($0) }
     }
     #endif
     
-    //MARK: - Codable handling
+    // MARK: - Codable handling
     required public init(from decoder: any Decoder) throws
     {
         try super.init(from: decoder)

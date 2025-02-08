@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  PendantController.swift
+//  IndustrialKit
 //
 //  Created by Artem on 10.02.2024.
 //
@@ -23,10 +23,10 @@ public class PendantController: ObservableObject
         
     }
     
-    //MARK: - Windows management
+    // MARK: - Windows management
     private var is_opened = false
     
-    ///Opens s-pendant window.
+    /// Opens s-pendant window.
     public func open_pendant()
     {
         if !is_opened
@@ -36,7 +36,7 @@ public class PendantController: ObservableObject
         }
     }
     
-    ///Dismisses s-pendant window.
+    /// Dismisses s-pendant window.
     public func dismiss_pendant()
     {
         if is_opened
@@ -46,7 +46,7 @@ public class PendantController: ObservableObject
         }
     }
     
-    ///Toggles s-pendant window.
+    /// Toggles s-pendant window.
     public func toggle_pendant()
     {
         if !is_opened
@@ -103,8 +103,8 @@ public class PendantController: ObservableObject
     private var open = {}
     private var dismiss = {}
     
-    //MARK: - Event functions
-    @Published public var view_type: pendant_selection_type? //pendant_view_type
+    // MARK: - Event functions
+    @Published public var view_type: pendant_selection_type? // pendant_view_type
     
     @Published public var workspace = Workspace()
     
@@ -145,7 +145,7 @@ public class PendantController: ObservableObject
         view_type = nil
     }
     
-    //MARK: - UI functions
+    // MARK: - UI functions
     public var add_item_button_avaliable: Bool
     {
         switch view_type
@@ -161,17 +161,17 @@ public class PendantController: ObservableObject
         }
     }
     
-    //MARK: - New data
+    // MARK: - New data
     @Published var new_operation_code = OperationCodeInfo()
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
     
-    //MARK: - Document handling
+    // MARK: - Document handling
     @Published public var elements_document_data_update = false
     @Published public var registers_document_data_update = false
     @Published public var robots_document_data_update = false
     @Published public var tools_document_data_update = false
     
-    //MARK: - Document data
+    // MARK: - Document data
     @Published var update_workspace_in_document = false
     @Published var update_robot_in_document = false
     @Published var update_tool_in_document = false

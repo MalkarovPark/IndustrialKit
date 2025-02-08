@@ -1,6 +1,6 @@
 //
-//  SwiftUIView.swift
-//  
+//  SpatialPendantView.swift
+//  IndustrialKit
 //
 //  Created by Artem on 09.02.2024.
 //
@@ -203,7 +203,7 @@ private struct SpatialPendantView: View
     {
         workspace.update_view()
         
-        //Add new program element and save to file
+        // Add new program element and save to file
         workspace.elements.append(element_from_struct(controller.new_program_element.file_info))
         workspace.elements_check()
         

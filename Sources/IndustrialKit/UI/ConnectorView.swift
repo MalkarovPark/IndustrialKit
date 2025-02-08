@@ -148,7 +148,7 @@ public struct ConnectorView: View
                     if new_value && connected
                     {
                         connected = false
-                        //connector.disconnect()
+                        // connector.disconnect()
                     }
                 }
                 

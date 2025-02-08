@@ -11,14 +11,14 @@ import SceneKit
 //MARK: - Large card view
 public struct LargeCardView: View
 {
-    //View parameters
+    // View parameters
     @State public var color: Color
     let image: UIImage?
     let node: SCNNode?
     @State public var title: String
     @State public var subtitle: String
     
-    //Rename parameters
+    // Rename parameters
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
     @State private var new_name: String
@@ -195,20 +195,20 @@ public struct LargeCardView: View
         #if os(visionOS)
         .glassBackgroundEffect()
         #endif
-        //.shadow(radius: 8)
+        // .shadow(radius: 8)
     }
 }
 
 //MARK: - Small card view
 public struct SmallCardView: View
 {
-    //View properties
+    // View properties
     @State public var color: Color
     let image: UIImage?
     let node: SCNNode?
     @State public var title: String
     
-    //Rename properties
+    // Rename properties
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
     @State private var new_name: String
@@ -372,7 +372,7 @@ public struct SmallCardView: View
         #else
         .glassBackgroundEffect()
         #endif
-        //.shadow(radius: 8)
+        // .shadow(radius: 8)
     }
 }
 
@@ -457,7 +457,7 @@ public struct ElementCardView: View
         }
         .frame(height: 80)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        //.shadow(radius: 8)
+        // .shadow(radius: 8)
         .overlay(alignment: .topTrailing)
         {
             if is_current
@@ -573,7 +573,7 @@ struct Cards_Previews: PreviewProvider
             }
             .padding(4)
             .frame(width: 320)
-            //.background(.white)
+            // .background(.white)
             
             VStack()
             {
@@ -595,7 +595,7 @@ struct Cards_Previews: PreviewProvider
             }
             .padding(4)
             .frame(width: 320)
-            //.background(.white)
+            // .background(.white)
             
             VStack()
             {
@@ -616,6 +616,6 @@ struct Cards_Previews: PreviewProvider
             }
         }
         .padding(8)
-        //.background(.white)
+        // .background(.white)
     }
 }

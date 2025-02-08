@@ -25,10 +25,10 @@ public class LogicElement: WorkspaceProgramElement
 ///Jumps to the specified mark.
 public class JumpLogicElement: LogicElement
 {
-    ///A name of the target mark.
+    /// A name of the target mark.
     public var target_mark_name = ""
     
-    ///An index of the target mark element.
+    /// An index of the target mark element.
     public var target_element_index = 0
     
     public override var info: String
@@ -48,8 +48,8 @@ public class JumpLogicElement: LogicElement
         return "arrowshape.zigzag.forward"
     }
     
-    //File handling
-    //Data [target]
+    // File handling
+    // Data [target]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .jump_logic
@@ -74,19 +74,19 @@ public class JumpLogicElement: LogicElement
 ///Jumps to the specified mark when the conditions are met.
 public class ComparatorLogicElement: LogicElement
 {
-    ///A type of compare.
+    /// A type of compare.
     public var compare_type: CompareType = .equal
     
-    ///An index of register with compared value.
+    /// An index of register with compared value.
     public var value_index = 0
     
-    ///An index of register with compared value.
+    /// An index of register with compared value.
     public var value2_index = 0
     
-    ///A name of the target mark.
+    /// A name of the target mark.
     public var target_mark_name = ""
     
-    ///An index of the target mark element.
+    /// An index of the target mark element.
     public var target_element_index = 0
     
     public override var info: String
@@ -106,8 +106,8 @@ public class ComparatorLogicElement: LogicElement
         return "alt"
     }
     
-    //File handling
-    //Data [compare, value, value2, target]
+    // File handling
+    // Data [compare, value, value2, target]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .comparator_logic
@@ -188,7 +188,7 @@ public enum CompareType: String, Codable, Equatable, CaseIterable
 ///A logic mark to jump.
 public class MarkLogicElement: LogicElement
 {
-    ///A target mark name.
+    /// A target mark name.
     public var name = "None"
     
     public override var title: String
@@ -206,8 +206,8 @@ public class MarkLogicElement: LogicElement
         return "record.circle"
     }
     
-    //File handling
-    //Data [name]
+    // File handling
+    // Data [name]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .mark_logic

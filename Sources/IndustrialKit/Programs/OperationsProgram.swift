@@ -16,7 +16,7 @@ public class OperationsProgram: Identifiable, Codable, Hashable
 {
     public static func == (lhs: OperationsProgram, rhs: OperationsProgram) -> Bool
     {
-        return lhs.name == rhs.name //Identity condition by names
+        return lhs.name == rhs.name // Identity condition by names
     }
     
     public func hash(into hasher: inout Hasher)
@@ -24,15 +24,15 @@ public class OperationsProgram: Identifiable, Codable, Hashable
         hasher.combine(id)
     }
     
-    ///An operations program name
+    /// An operations program name
     public var name: String?
     
-    ///An array of opertaions codes.
+    /// An array of opertaions codes.
     public var codes = [OperationCode]()
     
-    //MARK: - Init functions
+    // MARK: - Init functions
     
-    ///Creates a new operations program.
+    /// Creates a new operations program.
     public init()
     {
         self.name = "None"
@@ -48,7 +48,7 @@ public class OperationsProgram: Identifiable, Codable, Hashable
         self.name = name ?? "None"
     }
     
-    //MARK: - Code manage functions
+    // MARK: - Code manage functions
     
     /**
      Add the new code to opertaions program.
@@ -89,7 +89,7 @@ public class OperationsProgram: Identifiable, Codable, Hashable
         }
     }
     
-    ///Returns the operations codes count.
+    /// Returns the operations codes count.
     public var codes_count: Int
     {
         return codes.count

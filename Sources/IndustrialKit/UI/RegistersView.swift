@@ -285,7 +285,7 @@ private struct RegistersSelectorCardView: View
                         .foregroundStyle(.primary)
                         .minimumScaleFactor(0.5)
                         .padding(8)
-                        //.lineLimit(1)
+                        // .lineLimit(1)
                 }
                 .frame(width: 64, height: 64)
                 .background(.regularMaterial)
@@ -442,7 +442,7 @@ private struct RegistersCountView: View
                 .textFieldStyle(.roundedBorder)
                 .onSubmit {
                     update_count()
-                    //additive_func()
+                    // additive_func()
                 }
             #if os(macOS)
                 .frame(width: 64)

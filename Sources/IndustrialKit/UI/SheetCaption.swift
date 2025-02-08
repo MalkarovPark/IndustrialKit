@@ -2,7 +2,7 @@
 //  SheetCaption.swift
 //  IndustrialKit
 //
-//  Created by Artem Malkarov on 04.09.2024.
+//  Created by Artem on 04.09.2024.
 //
 
 import SwiftUI

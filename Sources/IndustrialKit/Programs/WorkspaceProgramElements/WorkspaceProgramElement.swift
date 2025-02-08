@@ -17,7 +17,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable
 {
     public static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
-        return lhs.id == rhs.id //Identity condition by id plus element type
+        return lhs.id == rhs.id // Identity condition by id plus element type
     }
     
     public func hash(into hasher: inout Hasher)
@@ -32,7 +32,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable
         
     }
     
-    ///Inits workspace program element by appropriate codable structure.
+    /// Inits workspace program element by appropriate codable structure.
     public init(element_struct: WorkspaceProgramElementStruct)
     {
         if element_struct.identifier == identifier && element_struct.data.count == data_count
@@ -41,19 +41,19 @@ public class WorkspaceProgramElement: Hashable, Identifiable
         }
     }
     
-    ///Inits workspace program element by appropriate identifier
+    /// Inits workspace program element by appropriate identifier
     public init(element_identifier: WorkspaceProgramElementIdentifier)
     {
         data_from_struct(WorkspaceProgramElementStruct(identifier: element_identifier, data: [String]()))
     }
     
-    ///Element type identifier
+    /// Element type identifier
     public var identifier: WorkspaceProgramElementIdentifier?
     {
         return nil
     }
     
-    ///Element data components count for type
+    /// Element data components count for type
     public var data_count: Int
     {
         return 0
@@ -69,38 +69,38 @@ public class WorkspaceProgramElement: Hashable, Identifiable
         
     }
     
-    ///A string for the title in program element card.
+    /// A string for the title in program element card.
     open var title: String
     {
         return "Title"
     }
     
-    ///A string for the text in program element card.
+    /// A string for the text in program element card.
     open var info: String
     {
         return "Info"
     }
     
-    ///An image name for program element card.
+    /// An image name for program element card.
     open var symbol_name: String
     {
         return "app"
     }
     
-    ///An image for program element card.
+    /// An image for program element card.
     public var image: Image
     {
         return Image(systemName: symbol_name)
     }
     
-    ///A color for the program element card.
+    /// A color for the program element card.
     open var color: Color
     {
         return Color(.gray)
     }
     
-    //MARK: - Work with file system
-    ///Converts tool data to codable tool struct.
+    // MARK: - Work with file system
+    /// Converts tool data to codable tool struct.
     public var file_info: WorkspaceProgramElementStruct
     {
         return WorkspaceProgramElementStruct()
@@ -146,11 +146,11 @@ public enum ObserverObjectType: String, Codable, Equatable, CaseIterable
 ///A workspace program element type enum.
 public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
 {
-    //Performer
+    // Performer
     case robot_performer
     case tool_performer
     
-    //Modifier
+    // Modifier
     case mover_modifier
     case writer_modifier
     case math_modifier
@@ -158,7 +158,7 @@ public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
     case observer_modifier
     case cleaner_modifier
     
-    //Logic
+    // Logic
     case jump_logic
     case comparator_logic
     case mark_logic

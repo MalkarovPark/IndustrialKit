@@ -22,19 +22,19 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         lhs.name == rhs.name
     }
     
-    ///A module name.
+    /// A module name.
     @Published public var name = String()
     
-    ///An optional module description.
+    /// An optional module description.
     @Published public var description = String()
     
-    ///Code lisitngs of module.
+    /// Code lisitngs of module.
     @Published public var code_items = [String: String]()
     
-    ///Linked components from internal modules.
+    /// Linked components from internal modules.
     @Published public var linked_components = [String: String]()
     
-    //MARK: - File handling
+    // MARK: - File handling
     /**
      An additional resources files names.
      
@@ -51,11 +51,11 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
      */
     @Published public var main_scene_name: String?
     
-    public static var work_folder_bookmark: Data? ///A folder bookmark to resources access.
+    public static var work_folder_bookmark: Data? /// A folder bookmark to resources access.
     
-    open var extension_name: String { "module" } ///An object package extension name.
+    open var extension_name: String { "module" } /// An object package extension name.
     
-    //MARK: - Init functions    
+    // MARK: - Init functions    
     /**
      New module init.
      
@@ -71,24 +71,24 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.linked_components = default_linked_components
     }
     
-    //MARK: Module init for in-app mounting
-    ///Internal module init.
+    // MARK: Module init for in-app mounting
+    /// Internal module init.
     public init(name: String = String(), description: String = String())
     {
         self.name = name
         self.description = description
     }
     
-    ///External module init.
+    /// External module init.
     public init(external_name: String = String())
     {
         self.name = external_name
         self.description = String()
         
-        //import_external_resources()
+        // import_external_resources()
     }
     
-    public var internal_url: String? ///An adress to package contents access.
+    public var internal_url: String? /// An adress to package contents access.
     {
         do
         {
@@ -110,31 +110,31 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         }
     }
     
-    //MARK: - Designer functions
-    ///Default code items for module design process.
+    // MARK: - Designer functions
+    /// Default code items for module design process.
     open var default_code_items: [String: String]
     {
         return [String: String]()
     }
     
-    ///Default linked modules of components.
+    /// Default linked modules of components.
     open var default_linked_components: [String: String]
     {
         return [String: String]()
     }
     
-    //MARK: - Components
-    ///A scene passed to object.
+    // MARK: - Components
+    /// A scene passed to object.
     open var node = SCNNode()
     
-    //MARK: - Import functions
-    ///A module package url of external module.
+    // MARK: - Import functions
+    /// A module package url of external module.
     open var package_url: URL
     {
         return URL(filePath: "")
     }
     
-    ///A scene of external module passed to object.
+    /// A scene of external module passed to object.
     open var external_node: SCNNode
     {
         return SCNNode()
@@ -150,29 +150,29 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         no_model_node()
     }
     
-    ///Builds a filler node for object without model description.
+    /// Builds a filler node for object without model description.
     open func no_model_node()
     {
-        //Build filler model node
+        // Build filler model node
         node.geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
         
         node.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
         node.geometry?.firstMaterial?.lightingModel = .physicallyBased
         
-        //node.name = scene_node_name
+        // node.name = scene_node_name
     }
     
-    ///Imports data from info header file of module.
+    /// Imports data from info header file of module.
     /*open func import_external_resources()
     {
-        //import_info()
-        //import_external_node(external_scene_url)
+        // import_info()
+        // import_external_node(external_scene_url)
     }*/
     
-    //MARK: - Listing elements
-    open var scene_code_name: String { (main_scene_name ?? "\(name).scn") } ///A class SCNScene variable name.
+    // MARK: - Listing elements
+    open var scene_code_name: String { (main_scene_name ?? "\(name).scn") } /// A class SCNScene variable name.
     
-    //MARK: - Codable handling
+    // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
         case name
@@ -235,7 +235,7 @@ public class CodeItem: Codable, Equatable
     @Published public var name = String()
     @Published public var code = String()
     
-    //MARK: Codable handling
+    // MARK: Codable handling
     enum CodingKeys: String, CodingKey
     {
         case name

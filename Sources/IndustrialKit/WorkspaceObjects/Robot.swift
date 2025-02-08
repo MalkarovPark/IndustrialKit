@@ -16,22 +16,22 @@ import SwiftUI
  */
 public class Robot: WorkspaceObject
 {
-    //MARK: - Init functions
-    ///Inits robot with default parameters.
+    // MARK: - Init functions
+    /// Inits robot with default parameters.
     public override init()
     {
         super.init()
         set_default_cell_parameters()
     }
     
-    ///Inits robot by name.
+    /// Inits robot by name.
     public override init(name: String)
     {
         super.init(name: name)
         set_default_cell_parameters()
     }
     
-    ///Inits robot by name, controller, connector and SceneKit scene.
+    /// Inits robot by name, controller, connector and SceneKit scene.
     public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene: SCNScene)
     {
         super.init(name: name)
@@ -45,7 +45,7 @@ public class Robot: WorkspaceObject
         set_default_cell_parameters()
     }
     
-    ///Inits robot by name, controller, connector and SceneKit scene name.
+    /// Inits robot by name, controller, connector and SceneKit scene name.
     public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene_name: String)
     {
         super.init(name: name)
@@ -59,7 +59,7 @@ public class Robot: WorkspaceObject
         set_default_cell_parameters()
     }
     
-    ///Inits part by name and part module.
+    /// Inits part by name and part module.
     public init(name: String, module: RobotModule)
     {
         super.init(name: name)
@@ -81,7 +81,7 @@ public class Robot: WorkspaceObject
         self.space_scale = [Robot.default_space_scale[0], Robot.default_space_scale[1], Robot.default_space_scale[2]]
     }
     
-    //MARK: - Module handling
+    // MARK: - Module handling
     /**
      Sets modular components to object instance.
      - Parameters:
@@ -116,16 +116,16 @@ public class Robot: WorkspaceObject
             connector = module.connector
         }
         
-        //model_controller = module.model_controller.copy() as! RobotModelController
-        //connector = module.connector.copy() as! RobotConnector
+        // model_controller = module.model_controller.copy() as! RobotModelController
+        // connector = module.connector.copy() as! RobotConnector
         
         apply_statistics_flags()
     }
     
-    ///Imported internal robot modules.
+    /// Imported internal robot modules.
     public static var internal_modules = [RobotModule]()
     
-    ///Imported external robot modules.
+    /// Imported external robot modules.
     public static var external_modules = [RobotModule]()
     
     public override func module_import_by_name(_ name: String, is_internal: Bool = true)
@@ -147,16 +147,16 @@ public class Robot: WorkspaceObject
         connector.get_statistics = get_statistics
     }
     
-    //MARK: - Program manage functions
-    ///An array of robot positions programs.
+    // MARK: - Program manage functions
+    /// An array of robot positions programs.
     @Published public var programs = [PositionsProgram]()
     
-    ///A selected positions program index.
+    /// A selected positions program index.
     public var selected_program_index = 0
     {
         willSet
         {
-            //Stop robot moving before program change
+            // Stop robot moving before program change
             performed = false
             moving_completed = false
             target_point_index = 0
@@ -191,9 +191,9 @@ public class Robot: WorkspaceObject
         - index: Updated program index.
         - program: A new robot positions program.
      */
-    public func update_program(index: Int, _ program: PositionsProgram) //Update program by index
+    public func update_program(index: Int, _ program: PositionsProgram) // Update program by index
     {
-        if programs.indices.contains(index) //Checking for the presence of a position program with a given number to update
+        if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
         {
             programs[index] = program
             selected_program.visual_clear()
@@ -218,7 +218,7 @@ public class Robot: WorkspaceObject
      */
     public func delete_program(index: Int)
     {
-        if programs.indices.contains(index) //Checking for the presence of a position program with a given number to delete
+        if programs.indices.contains(index) // Checking for the presence of a position program with a given number to delete
         {
             selected_program.visual_clear()
             programs.remove(at: index)
@@ -255,10 +255,10 @@ public class Robot: WorkspaceObject
         select_program(index: index_by_name(name: name))
     }
     
-    ///A selected positions program.
+    /// A selected positions program.
     public var selected_program: PositionsProgram
     {
-        get //Return positions program by selected index
+        get // Return positions program by selected index
         {
             if programs.count > 0 && selected_program_index < programs.count
             {
@@ -270,7 +270,7 @@ public class Robot: WorkspaceObject
                 {
                     return programs[selected_program_index - 1]
                 }
-                //return programs[selected_program_index]
+                // return programs[selected_program_index]
             }
             else
             {
@@ -283,13 +283,13 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///Returns index by program name.
+    /// Returns index by program name.
     private func index_by_name(name: String) -> Int
     {
         return programs.firstIndex(of: PositionsProgram(name: name)) ?? -1
     }
     
-    ///All positions programs names in robot.
+    /// All positions programs names in robot.
     public var programs_names: [String]
     {
         var prog_names = [String]()
@@ -303,17 +303,17 @@ public class Robot: WorkspaceObject
         return prog_names
     }
     
-    ///A positions programs coount in robot.
+    /// A positions programs coount in robot.
     public var programs_count: Int
     {
         return programs.count
     }
     
-    //MARK: - Moving functions
-    ///A drawing path flag.
+    // MARK: - Moving functions
+    /// A drawing path flag.
     public var draw_path = false
     
-    ///A moving state of robot.
+    /// A moving state of robot.
     public var performed = false
     
     /**
@@ -325,13 +325,13 @@ public class Robot: WorkspaceObject
      */
     public var moving_completed = false
     
-    ///An Index of target point in points array.
+    /// An Index of target point in points array.
     public var target_point_index = 0
     
-    ///A default location of robot cell origin.
+    /// A default location of robot cell origin.
     public static var default_origin_location = [Float](repeating: 0, count: 3)
     
-    ///A default scale of robot cell box.
+    /// A default scale of robot cell box.
     public static var default_space_scale = [Float](repeating: 200, count: 3)
     
     /**
@@ -360,27 +360,27 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///A robot default pointer location.
+    /// A robot default pointer location.
     private var default_pointer_location: [Float]?
     
-    ///A robot default pointer rotatioin.
+    /// A robot default pointer rotatioin.
     private var default_pointer_rotation: [Float]?
     
-    ///Sets default robot pointer position by current pointer position.
+    /// Sets default robot pointer position by current pointer position.
     public func set_default_pointer_position()
     {
         default_pointer_location = pointer_location
         default_pointer_rotation = pointer_rotation
     }
     
-    ///Clears default robot pointer position.
+    /// Clears default robot pointer position.
     public func clear_default_pointer_position()
     {
         default_pointer_location = nil
         default_pointer_rotation = nil
     }
     
-    ///Resets robot pointer to default position.
+    /// Resets robot pointer to default position.
     public func reset_pointer_to_default()
     {
         guard let location = default_pointer_location, let rotation = default_pointer_rotation
@@ -395,7 +395,7 @@ public class Robot: WorkspaceObject
         update()
     }
     
-    ///Returns information about default pointer position avalibility of robot.
+    /// Returns information about default pointer position avalibility of robot.
     public var has_default_position: Bool
     {
         if default_pointer_location != nil && default_pointer_rotation != nil
@@ -426,14 +426,14 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///Returns robot pointer position for nodes.
+    /// Returns robot pointer position for nodes.
     private func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
         return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
     
-    //MARK: Update functions
-    ///Updates robot statistics and model by current pointer position.
+    // MARK: Update functions
+    /// Updates robot statistics and model by current pointer position.
     public override func update()
     {
         if performed
@@ -441,7 +441,7 @@ public class Robot: WorkspaceObject
             update_statistics_data()
         }
         
-        //Modeling
+        // Modeling
         if demo
         {
             model_controller.update_by_pointer()
@@ -452,7 +452,7 @@ public class Robot: WorkspaceObject
         }
     }
     
-    //MARK: Performation cycle
+    // MARK: Performation cycle
     /**
      Performs movement on robot by target position with completion handler.
      
@@ -462,12 +462,12 @@ public class Robot: WorkspaceObject
      */
     public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
-        //pointer_position_to_robot()
+        // pointer_position_to_robot()
         performed = true
         
         if demo
         {
-            //Move to point for virtual robot
+            // Move to point for virtual robot
             pointer_position_to_robot()
             model_controller.update_movement_time(point1: point,
                                                   point2: PositionPoint(x: pointer_location[0],
@@ -479,14 +479,14 @@ public class Robot: WorkspaceObject
             model_controller.nodes_move_to(point: point)
             {
                 completion()
-                //self.performed = false
+                // self.performed = false
             }
         }
         else
         {
             if connector.connected
             {
-                //Move to point for real robot
+                // Move to point for real robot
                 connector.move_to(point: point)
                 {
                     completion()
@@ -501,7 +501,7 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///A robot moving performation toggle.
+    /// A robot moving performation toggle.
     public func start_pause_moving()
     {
         guard selected_program.points_count > 0
@@ -511,21 +511,21 @@ public class Robot: WorkspaceObject
             return
         }
         
-        //Robot moving handling
+        // Robot moving handling
         if !performed
         {
-            if !demo //Pass workcell parameters to model controller
+            if !demo // Pass workcell parameters to model controller
             {
                 sync_connector_parameters()
             }
             
-            //Move to next point if moving was stop
-            //performed = true
+            // Move to next point if moving was stop
+            // performed = true
             move_to_next_point()
         }
         else
         {
-            //Remove all action if moving was perform
+            // Remove all action if moving was perform
             pointer_position_to_robot()
             performed = false
             pause_handler()
@@ -539,14 +539,14 @@ public class Robot: WorkspaceObject
             }
             else
             {
-                //Remove actions for real robot
+                // Remove actions for real robot
                 connector.canceled = true
                 connector.reset_device()
             }
         }
     }
     
-    ///Performs robot to selected point movement and select next.
+    /// Performs robot to selected point movement and select next.
     public func move_to_next_point()
     {
         move_to(point: programs[selected_program_index].points[target_point_index])
@@ -555,18 +555,18 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///Set the new target point index.
+    /// Set the new target point index.
     private func select_new_point()
     {
         if target_point_index < selected_program.points_count - 1
         {
-            //Select and move to next point
+            // Select and move to next point
             target_point_index += 1
             move_to_next_point()
         }
         else
         {
-            //Reset target point index if all points passed
+            // Reset target point index if all points passed
             target_point_index = 0
             performed = false
             moving_completed = true
@@ -578,16 +578,16 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///Finish handler for to point moving.
+    /// Finish handler for to point moving.
     public var finish_handler: (() -> Void) = {}
     
-    ///Clears finish handler.
+    /// Clears finish handler.
     public func clear_finish_handler()
     {
         finish_handler = {}
     }
     
-    ///Resets robot moving.
+    /// Resets robot moving.
     public func reset_moving()
     {
         if performed
@@ -610,7 +610,7 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///Pass pointer position from model controller or connector to robot.
+    /// Pass pointer position from model controller or connector to robot.
     internal func pointer_position_to_robot()
     {
         if demo
@@ -625,8 +625,8 @@ public class Robot: WorkspaceObject
         }
     }
     
-    //MARK: - Connection functions
-    ///A robot connector.
+    // MARK: - Connection functions
+    /// A robot connector.
     public var connector = RobotConnector()
     
     private func sync_connector_parameters()
@@ -637,18 +637,18 @@ public class Robot: WorkspaceObject
         connector.space_scale = space_scale
     }
     
-    ///Disconnects from real robot.
+    /// Disconnects from real robot.
     private func disconnect()
     {
-        //connector.update_model = false
+        // connector.update_model = false
         connector.model_controller = nil
         connector.disconnect()
     }
     
-    //MARK: - Visual build functions
+    // MARK: - Visual build functions
     public override var scene_node_name: String { "robot" }
     
-    ///A robot visual model controller.
+    /// A robot visual model controller.
     public var model_controller = RobotModelController()
     
     private func sync_model_controller_parameters()
@@ -680,32 +680,32 @@ public class Robot: WorkspaceObject
         }
     }
     
-    //Robot workcell unit nodes references
-    ///Robot unit node with manipulator node.
+    // Robot workcell unit nodes references
+    /// Robot unit node with manipulator node.
     public var unit_node: SCNNode?
     
-    ///Box bordered cell workspace.
+    /// Box bordered cell workspace.
     public var box_node: SCNNode?
     
-    ///Camera.
+    /// Camera.
     public var camera_node: SCNNode?
     
-    ///Robot teach pointer.
+    /// Robot teach pointer.
     public var pointer_node: SCNNode?
     
-    ///Node for internal element.
+    /// Node for internal element.
     public var pointer_node_internal: SCNNode?
     
-    ///Teach points.
+    /// Teach points.
     public var points_node: SCNNode?
     
-    ///Current robot.
+    /// Current robot.
     public var robot_node: SCNNode?
     
-    ///Robot space.
+    /// Robot space.
     public var space_node:SCNNode?
     
-    ///Node for tool attachment.
+    /// Node for tool attachment.
     public var tool_node: SCNNode?
     
     /**
@@ -807,29 +807,29 @@ public class Robot: WorkspaceObject
             }
         }
         
-        //Place and scale cell box
+        // Place and scale cell box
         robot_location_place()
-        update_space_scale() //Set space scale by connected robot parameters
+        update_space_scale() // Set space scale by connected robot parameters
         
-        //Pass workcell parameters to model controller
-        //model_controller.origin_location = origin_location
-        //model_controller.origin_rotation = origin_rotation
+        // Pass workcell parameters to model controller
+        // model_controller.origin_location = origin_location
+        // model_controller.origin_rotation = origin_rotation
         model_controller.space_scale = space_scale
         
         update_location()
         update_rotation()
         
         update_points_model()
-        //model_controller.update_robot() //Updates robot model by target position. Update robot parts position on robot connection.
+        // model_controller.update_robot() // Updates robot model by target position. Update robot parts position on robot connection.
         
-        //Pass model controller to connector
+        // Pass model controller to connector
         /*if update_model_by_connector
         {
             connector.model_controller = model_controller
         }*/
     }
     
-    ///Sets robot pointer node location.
+    /// Sets robot pointer node location.
     private func update_location()
     {
         if !performed
@@ -838,7 +838,7 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///Sets robot pointer node rotation.
+    /// Sets robot pointer node rotation.
     private func update_rotation()
     {
         if !performed
@@ -847,7 +847,7 @@ public class Robot: WorkspaceObject
         }
     }
     
-    //MARK: Cell box handling
+    // MARK: Cell box handling
     /**
      A robot cell origin location.
      
@@ -876,26 +876,26 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///A robot cell box scale.
+    /// A robot cell box scale.
     public var space_scale = [Float](repeating: 200, count: 3)
     
-    ///A modified node reference.
+    /// A modified node reference.
     private var modified_node = SCNNode()
     
-    ///A saved SCNMateral for edited node.
+    /// A saved SCNMateral for edited node.
     private var saved_material = SCNMaterial()
     
-    ///Places cell workspace relative to manipulator.
+    /// Places cell workspace relative to manipulator.
     public func robot_location_place()
     {
         sync_model_controller_parameters()
         
         let vertical_length = model_controller.nodes["base"]?.position.y
         
-        //MARK: Place workcell box
+        // MARK: Place workcell box
         #if os(macOS)
         space_node?.position.x = CGFloat(origin_location[1])
-        space_node?.position.y = CGFloat(origin_location[2]) + (vertical_length ?? 0) //Add vertical base length
+        space_node?.position.y = CGFloat(origin_location[2]) + (vertical_length ?? 0) // Add vertical base length
         space_node?.position.z = CGFloat(origin_location[0])
         
         space_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
@@ -911,7 +911,7 @@ public class Robot: WorkspaceObject
         space_node?.eulerAngles.z = origin_rotation[0].to_rad
         #endif
         
-        //MARK: Place camera
+        // MARK: Place camera
         #if os(macOS)
         camera_node?.position.x += CGFloat(origin_location[1])
         camera_node?.position.y += CGFloat(origin_location[2]) + (vertical_length ?? 0)
@@ -923,7 +923,7 @@ public class Robot: WorkspaceObject
         #endif
     }
     
-    ///Updates cell box model scale.
+    /// Updates cell box model scale.
     public func update_space_scale()
     {
         guard box_node?.childNodes.count ?? 0 > 0
@@ -932,7 +932,7 @@ public class Robot: WorkspaceObject
             return
         }
         
-        //XY planes
+        // XY planes
         modified_node = box_node?.childNode(withName: "w0", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[0]))
@@ -951,7 +951,7 @@ public class Robot: WorkspaceObject
         modified_node.position.y = space_scale[2] / 2
         #endif
         
-        //YZ plane
+        // YZ plane
         modified_node = box_node?.childNode(withName: "w2", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[2]))
@@ -970,7 +970,7 @@ public class Robot: WorkspaceObject
         modified_node.position.z = space_scale[0] / 2
         #endif
         
-        //XZ plane
+        // XZ plane
         modified_node = box_node?.childNode(withName: "w4", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
         modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]), height: CGFloat(space_scale[2]))
@@ -1034,7 +1034,7 @@ public class Robot: WorkspaceObject
         }
     }
     
-    private func position_points_shift() //Shifts all positions
+    private func position_points_shift() // Shifts all positions
     {
         if programs_count > 0
         {
@@ -1053,10 +1053,10 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///An option of view current position program model.
+    /// An option of view current position program model.
     public static var view_current_program_model = true
     
-    private func update_points_model() //Update selected positions program model for robot
+    private func update_points_model() // Update selected positions program model for robot
     {
         if Robot.view_current_program_model
         {
@@ -1066,14 +1066,14 @@ public class Robot: WorkspaceObject
         }
     }
     
-    //MARK: - Chart functions
-    ///A robot charts data.
+    // MARK: - Chart functions
+    /// A robot charts data.
     @Published public var charts_data: [WorkspaceObjectChart]?
     
-    ///A robot state data.
+    /// A robot state data.
     @Published public var states_data: [StateItem]?
     
-    ///A statistics getting toggle.
+    /// A statistics getting toggle.
     public var get_statistics = false
     {
         didSet
@@ -1089,10 +1089,10 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///Index of chart element.
+    /// Index of chart element.
     private var chart_element_index = 0
     
-    ///Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
+    /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     public func update_statistics_data()
     {
         if charts_data == nil
@@ -1100,13 +1100,13 @@ public class Robot: WorkspaceObject
             charts_data = [WorkspaceObjectChart]()
         }
         
-        if self.demo //Get statistic from model controller
+        if self.demo // Get statistic from model controller
         {
             self.model_controller.update_statistics_data()
             self.states_data = model_controller.states_data
             self.charts_data = model_controller.charts_data
         }
-        else //Get statistic from real tool
+        else // Get statistic from real tool
         {
             self.connector.update_statistics_data()
             self.states_data = connector.states_data
@@ -1118,13 +1118,13 @@ public class Robot: WorkspaceObject
             DispatchQueue.global(qos: .background).async { [weak self] in
                 guard let self = self else { return }
 
-                if self.demo //Get statistic from model controller
+                if self.demo // Get statistic from model controller
                 {
                     self.model_controller.update_statistics_data()
                     self.states_data = model_controller.states_data
                     self.charts_data = model_controller.charts_data
                 }
-                else //Get statistic from real tool
+                else // Get statistic from real tool
                 {
                     self.connector.update_statistics_data()
                     self.states_data = connector.states_data
@@ -1133,15 +1133,15 @@ public class Robot: WorkspaceObject
             }
         }*/
         
-        /*if get_statistics && performed //Get data if robot is moving and statistic collection enabled
+        /*if get_statistics && performed // Get data if robot is moving and statistic collection enabled
         {
-            if demo //Get statistic from model controller
+            if demo // Get statistic from model controller
             {
                 model_controller.update_statistics_data()
                 states_data = model_controller.states_data
                 charts_data = model_controller.charts_data
             }
-            else //Get statistic from real robot
+            else // Get statistic from real robot
             {
                 connector.update_statistics_data()
                 states_data = connector.states_data
@@ -1150,7 +1150,7 @@ public class Robot: WorkspaceObject
         }*/
     }
     
-    ///Clears robot chart data.
+    /// Clears robot chart data.
     public func clear_chart_data()
     {
         charts_data = nil
@@ -1168,7 +1168,7 @@ public class Robot: WorkspaceObject
         }
     }
     
-    ///Clears robot state data.
+    /// Clears robot state data.
     public func clear_states_data()
     {
         states_data = nil
@@ -1186,13 +1186,13 @@ public class Robot: WorkspaceObject
         }
     }
     
-    //MARK: - UI functions
+    // MARK: - UI functions
     /**
      Returns info for robot card view.
      
      Color sets by the manufacturer name.
      */
-    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) //Get info for robot card view
+    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
     {
         return("\(self.name)", "Model – \(self.module_name)", .green, UIImage(), SCNNode())
     }
@@ -1207,18 +1207,18 @@ public class Robot: WorkspaceObject
      */
     public func inspector_point_color(point: PositionPoint) -> Color
     {
-        var color = Color.gray //Gray point color if the robot is not reching the point
-        let point_number = self.selected_program.points.firstIndex(of: point) //Number of selected point
+        var color = Color.gray // Gray point color if the robot is not reching the point
+        let point_number = self.selected_program.points.firstIndex(of: point) // Number of selected point
         
         if performed
         {
-            if point_number == target_point_index //Yellow color, if the robot is in the process of moving to the point
+            if point_number == target_point_index // Yellow color, if the robot is in the process of moving to the point
             {
                 color = .yellow
             }
             else
             {
-                if point_number ?? 0 < target_point_index //Green color, if the robot has reached this point
+                if point_number ?? 0 < target_point_index // Green color, if the robot has reached this point
                 {
                     color = .green
                 }
@@ -1226,7 +1226,7 @@ public class Robot: WorkspaceObject
         }
         else
         {
-            if moving_completed //Green color, if the robot has passed all points
+            if moving_completed // Green color, if the robot has passed all points
             {
                 color = .green
             }
@@ -1235,7 +1235,7 @@ public class Robot: WorkspaceObject
         return color
     }
     
-    ///Connects robot charts to UI.
+    /// Connects robot charts to UI.
     public func charts_binding() -> Binding<[WorkspaceObjectChart]?>
     {
         Binding<[WorkspaceObjectChart]?>(
@@ -1257,7 +1257,7 @@ public class Robot: WorkspaceObject
         )
     }
     
-    ///Connects robot charts to UI.
+    /// Connects robot charts to UI.
     public func states_binding() -> Binding<[StateItem]?>
     {
         Binding<[StateItem]?>(
@@ -1279,7 +1279,7 @@ public class Robot: WorkspaceObject
         )
     }
     
-    //MARK: - Work with file system
+    // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
     {
         case origin_location

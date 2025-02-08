@@ -11,19 +11,19 @@ import SwiftUI
 ///Initiates operations on controllable devices such as robots or tools.
 public class PerformerElement: WorkspaceProgramElement
 {
-    ///A name of workspace object.
+    /// A name of workspace object.
     public var object_name = ""
     
-    ///Determines if workspace object is perform a single action.
+    /// Determines if workspace object is perform a single action.
     public var is_single_perfrom = false
     
-    ///Determines if workspace object is perform a program by index from registers.
+    /// Determines if workspace object is perform a program by index from registers.
     public var is_program_by_index = false
     
-    ///A name of program to perfrom.
+    /// A name of program to perfrom.
     public var program_name = ""
     
-    ///An index of register with index of program to perform.
+    /// An index of register with index of program to perform.
     public var program_index = 0
     
     public override var info: String
@@ -68,21 +68,21 @@ public class PerformerElement: WorkspaceProgramElement
 ///Performs program or position on selected robot.
 public class RobotPerformerElement: PerformerElement
 {
-    ///Index of *x* location component.
+    /// Index of *x* location component.
     public var x_index = 0
-    ///Index of *y* location component.
+    /// Index of *y* location component.
     public var y_index = 0
-    ///Index of *z* location component.
+    /// Index of *z* location component.
     public var z_index = 0
     
-    ///Index of *r* rotation component.
+    /// Index of *r* rotation component.
     public var r_index = 0
-    ///Index of *p* rotation component.
+    /// Index of *p* rotation component.
     public var p_index = 0
-    ///Index of *w* rotation component.
+    /// Index of *w* rotation component.
     public var w_index = 0
     
-    ///Index of movement speed.
+    /// Index of movement speed.
     public var speed_index = 0
     
     public override var title: String
@@ -95,8 +95,8 @@ public class RobotPerformerElement: PerformerElement
         return "r.square"
     }
     
-    //File handling
-    //Data [robot name, program name, program index, is single, is by index, x, y, z, r, p, w, speed]
+    // File handling
+    // Data [robot name, program name, program index, is single, is by index, x, y, z, r, p, w, speed]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .robot_performer
@@ -155,7 +155,7 @@ public class RobotPerformerElement: PerformerElement
 ///Performs program or position on selected tool.
 public class ToolPerformerElement: PerformerElement
 {
-    ///Index of operation code location component.
+    /// Index of operation code location component.
     public var opcode_index = 0
     
     public override var title: String
@@ -168,8 +168,8 @@ public class ToolPerformerElement: PerformerElement
         return "hammer"
     }
     
-    //File handling
-    //Data [tool name, program name, program index, is single, is by index, opcode]
+    // File handling
+    // Data [tool name, program name, program index, is single, is by index, opcode]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .tool_performer

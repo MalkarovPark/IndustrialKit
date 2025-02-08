@@ -29,7 +29,7 @@ public struct ViewCloseButton: ViewModifier
                 #if !os(iOS)
                 .buttonStyle(.bordered)
                 #else
-                //.foregroundStyle(.primary)
+                // .foregroundStyle(.primary)
                 .modifier(ButtonBorderer())
                 #endif
                 #if os(visionOS)
@@ -64,7 +64,7 @@ public struct ViewCloseFuncButton: ViewModifier
                 #if !os(iOS)
                 .buttonStyle(.bordered)
                 #else
-                //.foregroundStyle(.primary)
+                // .foregroundStyle(.primary)
                 .modifier(ButtonBorderer())
                 #endif
                 #if os(visionOS)
