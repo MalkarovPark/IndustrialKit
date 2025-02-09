@@ -226,23 +226,32 @@ open class RobotModelController: ModelController
      */
     public func update_movement_time(point1: PositionPoint, point2: PositionPoint)
     {
-        // Calculate time between target point and current location/rotation
         let v = point1.move_speed
         let s = distance_between_points(point1: point1, point2: point2)
         
+        let default_rotation_speed: Float = 100
+        
+        // Calculate time between target point and current location/rotation
         if v != 0
         {
             location_time = s / v
             
-            rotation_time.r = location_time
-            rotation_time.p = location_time
-            rotation_time.w = location_time
+            if s != 0
+            {
+                rotation_time.r = location_time
+                rotation_time.p = location_time
+                rotation_time.w = location_time
+            }
+            else
+            {
+                rotation_time.r = abs(point1.r - point2.r) / default_rotation_speed
+                rotation_time.p = abs(point1.p - point2.p) / default_rotation_speed
+                rotation_time.w = abs(point1.w - point2.w) / default_rotation_speed
+            }
         }
         else
         {
             location_time = 0
-            
-            let default_rotation_speed: Float = 100
             
             rotation_time.r = abs(point1.r - point2.r) / default_rotation_speed
             rotation_time.p = abs(point1.p - point2.p) / default_rotation_speed
