@@ -186,7 +186,7 @@ open class RobotModelController: ModelController
         let location_action = SCNAction.move(to: SCNVector3(point.y, point.z, point.x), duration: TimeInterval(location_time))
         
         let rotation_action_r = SCNAction.rotateTo(x: 0, y: 0, z: CGFloat(point.r.to_rad), duration: TimeInterval(rotation_time.r))
-        let rotation_action_pw = SCNAction.rotateTo(x: CGFloat(point.p.to_rad), y: CGFloat(point.w.to_rad), z: 0, duration: TimeInterval(rotation_time.p + rotation_time.w))
+        let rotation_action_pw = SCNAction.rotateTo(x: CGFloat(point.p.to_rad), y: CGFloat(point.w.to_rad), z: 0, duration: TimeInterval((rotation_time.p + rotation_time.w) / 2))
         
         pointer_node?.runAction(SCNAction.group([location_action, rotation_action_pw]))
         {
