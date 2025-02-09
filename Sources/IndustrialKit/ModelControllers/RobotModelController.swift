@@ -226,49 +226,27 @@ open class RobotModelController: ModelController
      */
     public func update_movement_time(point1: PositionPoint, point2: PositionPoint)
     {
-        // Calculate time between target point and current location
+        // Calculate time between target point and current location/rotation
         let v = point1.move_speed
         let s = distance_between_points(point1: point1, point2: point2)
         
         if v != 0
         {
             location_time = s / v
+            
+            rotation_time.r = location_time
+            rotation_time.p = location_time
+            rotation_time.w = location_time
         }
         else
         {
             location_time = 0
-        }
-        
-        // Calculate time between target point and current rotation
-        var rotation_r = sqrt(pow(point1.y - point2.y, 2) + pow(point1.z - point2.z, 2))
-        var rotation_p = sqrt(pow(point1.x - point2.x, 2) + pow(point1.z - point2.z, 2))
-        var rotation_w = sqrt(pow(point1.x - point2.x, 2) + pow(point1.y - point2.y, 2))
-        
-        if v != 0
-        {
-            if rotation_r == 0
-            {
-                rotation_r = abs(point1.r - point2.r)
-            }
-            rotation_time.r = rotation_r / v
             
-            if rotation_p == 0
-            {
-                rotation_p = abs(point1.p - point2.p)
-            }
-            rotation_time.p = rotation_p / v
+            let default_rotation_speed: Float = 100
             
-            if rotation_w == 0
-            {
-                rotation_w = abs(point1.w - point2.w)
-            }
-            rotation_time.w = rotation_w / v
-        }
-        else
-        {
-            rotation_time.r = 0
-            rotation_time.p = 0
-            rotation_time.w = 0
+            rotation_time.r = abs(point1.r - point2.r) / default_rotation_speed
+            rotation_time.p = abs(point1.p - point2.p) / default_rotation_speed
+            rotation_time.w = abs(point1.w - point2.w) / default_rotation_speed
         }
         
         func distance_between_points(point1: PositionPoint, point2: PositionPoint) -> Float
