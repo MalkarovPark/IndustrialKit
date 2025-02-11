@@ -460,7 +460,7 @@ public class Robot: WorkspaceObject
         - point: The target position performed by the robot.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func move_to(point: PositionPoint, completion: @escaping () -> Void)
+    public func move_to(point: PositionPoint, completion: @escaping () -> Void = {})
     {
         // pointer_position_to_robot()
         performed = true

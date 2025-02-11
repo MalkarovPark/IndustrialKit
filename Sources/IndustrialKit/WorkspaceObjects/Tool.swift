@@ -360,7 +360,7 @@ public class Tool: WorkspaceObject
         - code: The operation code value of the operation performed by the tool.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func perform(code: Int, completion: @escaping () -> Void)
+    public func perform(code: Int, completion: @escaping () -> Void = {})
     {
         if demo
         {
