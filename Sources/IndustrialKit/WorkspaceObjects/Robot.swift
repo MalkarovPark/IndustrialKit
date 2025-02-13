@@ -820,13 +820,6 @@ public class Robot: WorkspaceObject
         update_rotation()
         
         update_points_model()
-        // model_controller.update_robot() // Updates robot model by target position. Update robot parts position on robot connection.
-        
-        // Pass model controller to connector
-        /*if update_model_by_connector
-        {
-            connector.model_controller = model_controller
-        }*/
     }
     
     /// Sets robot pointer node location.
