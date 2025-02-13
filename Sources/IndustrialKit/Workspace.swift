@@ -233,9 +233,9 @@ public class Workspace: ObservableObject
             
             // Get new node
             select_robot(name: name) // Select robot in the workspace
-            workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!) // Get workcell from Workcell.scn and add it to Workspace.scn
+            robots_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!) // Get workcell from Workcell.scn and add it to Workspace.scn
             
-            edited_object_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
+            edited_object_node = robots_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
             
             edited_object_node?.name = name
             selected_robot.workcell_connect(scene: scene, name: name, connect_camera: false)
@@ -2138,7 +2138,7 @@ public class Workspace: ObservableObject
     public var camera_node: SCNNode?
     
     /// Robots workcells node.
-    public var workcells_node: SCNNode?
+    public var robots_node: SCNNode?
     
     /// Tools node.
     public var tools_node: SCNNode?
@@ -2165,14 +2165,47 @@ public class Workspace: ObservableObject
         deselect_tool()
         deselect_part()
         
-        camera_node = scene.rootNode.childNode(withName: "camera", recursively: true)
+        camera_node = scene.rootNode.childNode(withName: "camera", recursively: true) ??
+        {
+            let node = SCNNode()
+            node.name = "camera"
+            scene.rootNode.addChildNode(node)
+            return node
+        }()
         
-        workcells_node = scene.rootNode.childNode(withName: "workcells", recursively: true)
-        tools_node = scene.rootNode.childNode(withName: "tools", recursively: false)
-        parts_node = scene.rootNode.childNode(withName: "parts", recursively: false)
+        robots_node = scene.rootNode.childNode(withName: "robots", recursively: true) ??
+        {
+            let node = SCNNode()
+            node.name = "robots"
+            scene.rootNode.addChildNode(node)
+            return node
+        }()
         
-        object_pointer_node = scene.rootNode.childNode(withName: "object_pointer", recursively: false)
-        object_pointer_node?.constraints = [SCNConstraint]()
+        tools_node = scene.rootNode.childNode(withName: "tools", recursively: true) ??
+        {
+            let node = SCNNode()
+            node.name = "tools"
+            scene.rootNode.addChildNode(node)
+            return node
+        }()
+        
+        parts_node = scene.rootNode.childNode(withName: "parts", recursively: true) ??
+        {
+            let node = SCNNode()
+            node.name = "parts"
+            scene.rootNode.addChildNode(node)
+            return node
+        }()
+        
+        object_pointer_node = scene.rootNode.childNode(withName: "object_pointer", recursively: false) ??
+        {
+            let node = SCNNode()
+            node.name = "object_pointer"
+            scene.rootNode.addChildNode(node)
+            return node
+        }()
+        
+        object_pointer_node?.constraints = []
         
         place_objects(scene: scene)
     }
@@ -2192,8 +2225,8 @@ public class Workspace: ObservableObject
             {
                 if robot.is_placed
                 {
-                    workcells_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!)
-                    unit_node = workcells_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
+                    robots_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!)
+                    unit_node = robots_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
                     
                     unit_node?.name = robot.name // Select robot cell node
                     robot.workcell_connect(scene: scene, name: robot.name, connect_camera: connect_camera) // Connect to robot model, place manipulator
