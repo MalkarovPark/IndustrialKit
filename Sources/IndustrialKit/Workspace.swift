@@ -233,7 +233,7 @@ public class Workspace: ObservableObject
             
             // Get new node
             select_robot(name: name) // Select robot in the workspace
-            robots_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)!.rootNode.childNode(withName: "unit", recursively: false)!) // Get workcell from Workcell.scn and add it to Workspace.scn
+            robots_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)?.rootNode.childNode(withName: "unit", recursively: false) ?? SCNNode())
             
             edited_object_node = robots_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
             
