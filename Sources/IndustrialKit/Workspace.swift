@@ -2225,7 +2225,13 @@ public class Workspace: ObservableObject
             {
                 if robot.is_placed
                 {
-                    robots_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)?.rootNode.childNode(withName: "unit", recursively: false) ?? SCNNode())
+                    robots_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)?.rootNode.childNode(withName: "unit", recursively: false) ??
+                    {
+                        let node = SCNNode()
+                        node.name = "unit"
+                        scene.rootNode.addChildNode(node)
+                        return node
+                    }())
                     unit_node = robots_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
                     
                     unit_node?.name = robot.name // Select robot cell node
