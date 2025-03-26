@@ -43,12 +43,14 @@ public func mismatched_name(name: String, names: [String]) -> String
     return name + name_postfix
 }
 
-///Transforms input position by origin rotation.
-/// - Warning: All input/output arrays have only 3 values.
-/// - Parameters:
-///     - pointer_location: Input point location components – *x*, *y*, *z*.
-///     - pointer_rotation: Input origin rotation components – *r*, *p*, *w*.
-/// - Returns: Transformed inputed point location components – *x*, *y*, *z*.
+/**
+ Transforms input position by origin rotation.
+ - Warning: All input/output arrays have only 3 values.
+ - Parameters:
+    - pointer_location: Input point location components – *x*, *y*, *z*.
+    - pointer_rotation: Input origin rotation components – *r*, *p*, *w*.
+ - Returns: Transformed inputed point location components – *x*, *y*, *z*.
+*/
 public func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float]
 {
     let new_x, new_y, new_z: Float
@@ -594,6 +596,12 @@ public func set_position(for node: SCNNode, from string: String)
 #endif
 
 //MARK: - Workspace program functions
+/**
+ Converts a string representation of a workspace program into an array of `WorkspaceProgramElement`.
+ 
+ - Parameter code: A string containing the workspace program.
+ - Returns: An array of `WorkspaceProgramElement` parsed from the input code.
+ */
 public func code_to_elements(code: String) -> [WorkspaceProgramElement]
 {
     var elements: [WorkspaceProgramElement] = []
@@ -606,6 +614,19 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
     }
     
     return elements
+}
+
+/**
+ Converts an array of `WorkspaceProgramElement` back into a string representation of a workspace program.
+ 
+ - Parameter elements: An array of `WorkspaceProgramElement` to be converted into a string.
+ - Returns: A string representation of the workspace program.
+*/
+public func elements_to_code(elements: [WorkspaceProgramElement]) -> String
+{
+    var code: String = ""
+    
+    return code
 }
 
 //MARK: - UI functions
