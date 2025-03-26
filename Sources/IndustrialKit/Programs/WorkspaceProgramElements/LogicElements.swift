@@ -48,6 +48,12 @@ public class JumpLogicElement: LogicElement
         return "arrowshape.zigzag.forward"
     }
     
+    // Code string conversion
+    public override var code_string: String
+    {
+        return ""
+    }
+    
     // File handling
     // Data [target]
     public override var identifier: WorkspaceProgramElementIdentifier?
@@ -104,6 +110,12 @@ public class ComparatorLogicElement: LogicElement
     public override var symbol_name: String
     {
         return "alt"
+    }
+    
+    // Code string conversion
+    public override var code_string: String
+    {
+        return ""
     }
     
     // File handling
@@ -204,6 +216,12 @@ public class MarkLogicElement: LogicElement
     public override var symbol_name: String
     {
         return "record.circle"
+    }
+    
+    // Code string conversion
+    public override var code_string: String
+    {
+        return ""
     }
     
     // File handling

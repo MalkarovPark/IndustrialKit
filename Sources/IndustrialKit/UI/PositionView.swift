@@ -318,19 +318,46 @@ struct PositionParameterView: View
 
 struct PositionView_Previews: PreviewProvider
 {
+    struct Container: View
+    {
+        @State private var location: [Float] = [20, 40, 60]
+        @State private var rotation: [Float] = [0, 90, 0]
+        
+        var body: some View
+        {
+            ZStack
+            {
+                Rectangle()
+                    .foregroundStyle(.white)
+                
+                HStack(spacing: 48)
+                {
+                    HStack(spacing: 16)
+                    {
+                        PositionView(location: $location, rotation: $rotation)
+                    }
+                    .frame(width: 256)
+                    .padding()
+                    .background(.bar)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .shadow(radius: 8)
+                    
+                    HStack(spacing: 16)
+                    {
+                        PositionControl(location: $location, rotation: $rotation, scale: .constant([100, 100, 100]))
+                    }
+                    .frame(width: 256)
+                    .background(.bar)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .shadow(radius: 8)
+                }
+                .padding(32)
+            }
+        }
+    }
+    
     static var previews: some View
     {
-        Group
-        {
-            HStack(spacing: 16)
-            {
-                PositionView(location: .constant([20, 40, 60]), rotation: .constant([0, 90, 0]))
-            }
-            .frame(width: 256)
-            .padding()
-            
-            PositionControl(location: .constant([20, 40, 60]), rotation: .constant([0, 90, 0]), scale: .constant([100, 100, 100]))
-                .frame(width: 256)
-        }
+        Container()
     }
 }

@@ -50,6 +50,12 @@ public class MoverModifierElement: ModifierElement
         }
     }
     
+    // Code string conversion
+    public override var code_string: String
+    {
+        return ""
+    }
+    
     // File handling
     // Data [type, from, to]
     public override var identifier: WorkspaceProgramElementIdentifier?
@@ -107,6 +113,12 @@ public class WriterModifierElement: ModifierElement
         return "square.and.pencil"
     }
     
+    // Code string conversion
+    public override var code_string: String
+    {
+        return ""
+    }
+    
     // File handling
     // Data [value, to]
     public override var identifier: WorkspaceProgramElementIdentifier?
@@ -150,6 +162,12 @@ public class MathModifierElement: ModifierElement
     public override var symbol_name: String
     {
         return "function"
+    }
+    
+    // Code string conversion
+    public override var code_string: String
+    {
+        return ""
     }
     
     // File handling
@@ -246,7 +264,14 @@ public class ChangerModifierElement: ModifierElement
         return "wand.and.rays"
     }
     
+    // Code string conversion
+    public override var code_string: String
+    {
+        return ""
+    }
+    
     // File handling
+    // Data [changer_module_name]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .changer_modifier
@@ -350,6 +375,12 @@ public class ObserverModifierElement: ModifierElement
         return "loupe"
     }
     
+    // Code string conversion
+    public override var code_string: String
+    {
+        return ""
+    }
+    
     // File handling
     // Data [type, name, from indices, to indices]
     public override var identifier: WorkspaceProgramElementIdentifier?
@@ -410,6 +441,12 @@ public class CleanerModifierElement: ModifierElement
     public override var symbol_name: String
     {
         return "clear"
+    }
+    
+    // Code string conversion
+    public override var code_string: String
+    {
+        return ""
     }
     
     // File handling

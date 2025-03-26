@@ -41,19 +41,19 @@ public class WorkspaceProgramElement: Hashable, Identifiable
         }
     }
     
-    /// Inits workspace program element by appropriate identifier
+    /// Inits workspace program element by appropriate identifier.
     public init(element_identifier: WorkspaceProgramElementIdentifier)
     {
         data_from_struct(WorkspaceProgramElementStruct(identifier: element_identifier, data: [String]()))
     }
     
-    /// Element type identifier
+    /// Element type identifier.
     public var identifier: WorkspaceProgramElementIdentifier?
     {
         return nil
     }
     
-    /// Element data components count for type
+    /// Element data components count for type.
     public var data_count: Int
     {
         return 0
@@ -99,6 +99,13 @@ public class WorkspaceProgramElement: Hashable, Identifiable
         return Color(.gray)
     }
     
+    // MARK: - Text representation
+    /// A code string representing of element.
+    open var code_string: String
+    {
+        return String()
+    }
+    
     // MARK: - Work with file system
     /// Converts tool data to codable tool struct.
     public var file_info: WorkspaceProgramElementStruct
@@ -107,11 +114,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable
     }
 }
 
-//MARK: - Modifier elements
-
-//MARK: - Logic elements
-
-//MARK: - ?
+//MARK: - Codable Types
 ///A codable tool struct.
 public struct WorkspaceProgramElementStruct: Codable
 {

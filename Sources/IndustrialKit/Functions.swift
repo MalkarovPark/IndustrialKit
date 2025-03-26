@@ -593,6 +593,21 @@ public func set_position(for node: SCNNode, from string: String)
 }
 #endif
 
+//MARK: - Workspace program functions
+public func code_to_elements(code: String) -> [WorkspaceProgramElement]
+{
+    var elements: [WorkspaceProgramElement] = []
+    
+    let lines = code.split(separator: "\n")
+    
+    for line in lines
+    {
+        let trimmed_line = line.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    return elements
+}
+
 //MARK: - UI functions
 private func colors_by_seed(seed: Int) -> [Color]
 {
