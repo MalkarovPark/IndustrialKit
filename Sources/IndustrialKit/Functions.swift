@@ -614,6 +614,21 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
     }
     
     return elements
+    
+    func performer_parsing()
+    {
+        
+    }
+    
+    func modifier_parsing()
+    {
+        
+    }
+    
+    func logic_parsing()
+    {
+        
+    }
 }
 
 /**
@@ -625,6 +640,16 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
 public func elements_to_code(elements: [WorkspaceProgramElement]) -> String
 {
     var code: String = ""
+    
+    for (index, element) in elements.enumerated()
+    {
+        code.append(element.code_string)
+        
+        if index < elements.count - 1
+        {
+            code.append("\n")
+        }
+    }
     
     return code
 }

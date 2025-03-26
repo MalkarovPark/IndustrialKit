@@ -51,7 +51,7 @@ public class JumpLogicElement: LogicElement
     // Code string conversion
     public override var code_string: String
     {
-        return ""
+        return "l: jump.(\(target_mark_name)"
     }
     
     // File handling
@@ -115,7 +115,7 @@ public class ComparatorLogicElement: LogicElement
     // Code string conversion
     public override var code_string: String
     {
-        return ""
+        return "l: if [\(value_index)] \(compare_type.code_string) [\(value2_index)] jump.(\(target_mark_name))"
     }
     
     // File handling
@@ -195,6 +195,25 @@ public enum CompareType: String, Codable, Equatable, CaseIterable
             return value1 <= value2
         }
     }
+    
+    var code_string: String
+    {
+        switch self
+        {
+        case .equal:
+            return "="
+        case .unequal:
+            return "!="
+        case .greater:
+            return ">"
+        case .greater_equal:
+            return ">="
+        case .less:
+            return "<"
+        case .less_equal:
+            return "<="
+        }
+    }
 }
 
 ///A logic mark to jump.
@@ -221,7 +240,7 @@ public class MarkLogicElement: LogicElement
     // Code string conversion
     public override var code_string: String
     {
-        return ""
+        return "l: mark.(\(name)"
     }
     
     // File handling

@@ -95,6 +95,26 @@ public class RobotPerformerElement: PerformerElement
         return "r.square"
     }
     
+    // Code string conversion
+    public override var code_string: String
+    {
+        if !is_single_perfrom
+        {
+            if !is_program_by_index
+            {
+                return "p: r.(\(object_name)).(\(program_name))"
+            }
+            else
+            {
+                return "p: r.(\(object_name)).index.[\(program_index)]"
+            }
+        }
+        else
+        {
+            return "p: r.(\(object_name)).single.[\(x_index), \(y_index), \(z_index), \(r_index), \(p_index), \(w_index), \(speed_index)]"
+        }
+    }
+    
     // File handling
     // Data [robot name, program name, program index, is single, is by index, x, y, z, r, p, w, speed]
     public override var identifier: WorkspaceProgramElementIdentifier?
@@ -166,6 +186,26 @@ public class ToolPerformerElement: PerformerElement
     public override var symbol_name: String
     {
         return "hammer"
+    }
+    
+    // Code string conversion
+    public override var code_string: String
+    {
+        if !is_single_perfrom
+        {
+            if !is_program_by_index
+            {
+                return "p: t.(\(object_name)).(\(program_name))"
+            }
+            else
+            {
+                return "p: t.(\(object_name)).index.[\(program_index)]"
+            }
+        }
+        else
+        {
+            return "p: t.(\(object_name)).single.[\(opcode_index)]"
+        }
     }
     
     // File handling

@@ -53,7 +53,7 @@ public class MoverModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return ""
+        return "m: [\(to_index)] \(move_type.code_string) [\(from_index)]"
     }
     
     // File handling
@@ -116,7 +116,7 @@ public class WriterModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return ""
+        return "m: [\(to_index)] write \(value)"
     }
     
     // File handling
@@ -167,7 +167,7 @@ public class MathModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return ""
+        return "m: [\(value_index)] \(operation.code_string) [\(value2_index)]"
     }
     
     // File handling
@@ -240,6 +240,23 @@ public enum MathType: String, Codable, Equatable, CaseIterable
             value1 = pow(value1, value2)
         }
     }
+    
+    var code_string: String
+    {
+        switch self
+        {
+        case .add:
+            return "+"
+        case .substract:
+            return "-"
+        case .multiply:
+            return "*"
+        case .divide:
+            return "/"
+        case .power:
+            return "^"
+        }
+    }
 }
 
 ///Changes registers by changer module.
@@ -267,7 +284,7 @@ public class ChangerModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return ""
+        return "m: change.(\(module_name))"
     }
     
     // File handling
@@ -378,7 +395,7 @@ public class ObserverModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return ""
+        return "m: \(object_type.code_string).(\(object_name)).observe.[\(from_indices.map { String($0) }.joined(separator: ", "))] [\(to_indices.map { String($0) }.joined(separator: ", "))]"
     }
     
     // File handling
@@ -446,7 +463,7 @@ public class CleanerModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return ""
+        return "m: clear"
     }
     
     // File handling

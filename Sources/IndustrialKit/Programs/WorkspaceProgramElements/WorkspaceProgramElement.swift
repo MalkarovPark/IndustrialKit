@@ -138,12 +138,34 @@ public enum ModifierCopyType: String, Codable, Equatable, CaseIterable
 {
     case duplicate = "Duplicate"
     case move = "Move"
+    
+    var code_string: String
+    {
+        switch self
+        {
+        case .duplicate:
+            return "duplicate"
+        case .move:
+            return "move"
+        }
+    }
 }
 
 public enum ObserverObjectType: String, Codable, Equatable, CaseIterable
 {
     case robot = "Robot"
     case tool = "Tool"
+    
+    var code_string: String
+    {
+        switch self
+        {
+        case .robot:
+            return "r"
+        case .tool:
+            return "t"
+        }
+    }
 }
 
 ///A workspace program element type enum.
