@@ -625,99 +625,131 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
         switch input
         {
         // Performers
+        // p: r.(name).(program)
         case _ where match_regex(text: input, pattern: "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)"):
-            // p: r.(name).(program)
             let data = extract_data_array(from: input, pattern: "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)")
-            var element = RobotPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0", "0", "0", "0", "0", "0", "0"])
-            return element
+            return RobotPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0", "0", "0", "0", "0", "0", "0"])
             
+        // p: r.(name).index.[#]
         case _ where match_regex(text: input, pattern: "p: r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]"):
-            // p: r.(name).index.[#]
             let data = extract_data_array(from: input, pattern: "p: r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]")
-            var element = RobotPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0", "0", "0", "0", "0", "0", "0"])
-            return element
+            return RobotPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0", "0", "0", "0", "0", "0", "0"])
             
+        // p: r.(name).single.[#, #, #, #, #, #, #]
         case _ where match_regex(text: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]"):
-            // p: r.(name).single.[#, #, #, #, #, #, #]
             let data = extract_data_array(from: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]")
-            var element = RobotPerformerElement(data_array: [data[0], "", "0", "true", "false", data[1], data[2], data[3], data[4], data[5], data[6], data[7]])
-            return element
+            return RobotPerformerElement(data_array: [data[0], "", "0", "true", "false", data[1], data[2], data[3], data[4], data[5], data[6], data[7]])
             
+        // p: t.(name).(program)
         case _ where match_regex(text: input, pattern: "p: t\\.\\((.*?)\\)\\.\\((.*?)\\)"):
-            // p: t.(name).(program)
             let data = extract_data_array(from: input, pattern: "p: t\\.\\((.*?)\\)\\.\\((.*?)\\)")
-            var element = ToolPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0"])
-            return element
+            return ToolPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0"])
             
+        // p: t.(name).index.[#]
         case _ where match_regex(text: input, pattern: "p: t\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]"):
-            // p: t.(name).index.[#]
             let data = extract_data_array(from: input, pattern: "p: t\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]")
-            var element = ToolPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0"])
-            return element
+            return ToolPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0"])
             
+        // p: t.(name).single.[#]
         case _ where match_regex(text: input, pattern: "p: t\\.\\(([^()]*)\\)\\.single\\.\\[([^\\[\\]]*)\\]"):
-            // p: t.(name).single.[#]
             let data = extract_data_array(from: input, pattern: "p: t\\.\\(([^()]*)\\)\\.single\\.\\[([^\\[\\]]*)\\]")
-            var element = ToolPerformerElement(data_array: [data[0], "", "0", "true", "false", data[1]])
-            return element
+            return ToolPerformerElement(data_array: [data[0], "", "0", "true", "false", data[1]])
         
         // Modifiers
-        case _ where match_regex(text: input, pattern: "^(\\d+) \\+ (\\d+)$"):
-            // m: [#] + [#]
-            break
+        // m: [#] + [#]
+        case _ where match_regex(text: input, pattern: "m: \\[([^\\[\\]]+)\\] \\+ \\[([^\\[\\]]+)\\]"):
+            let data = extract_data_array(from: input, pattern: "m: \\[([^\\[\\]]+)\\] \\+ \\[([^\\[\\]]+)\\]")
+            return MathModifierElement(data_array: ["+", data[0], data[1]])
             
-        case _ where match_regex(text: input, pattern: "^(\\d+) - (\\d+)$"):
-            // m: [#] - [#]
-            break
+        // m: [#] - [#]
+        case _ where match_regex(text: input, pattern: "m: \\[([^\\[\\]]+)\\] - \\[([^\\[\\]]+)\\]"):
+            let data = extract_data_array(from: input, pattern: "m: \\[([^\\[\\]]+)\\] - \\[([^\\[\\]]+)\\]")
+            return MathModifierElement(data_array: ["-", data[0], data[1]])
             
-        case _ where match_regex(text: input, pattern: "^(\\d+) \\* (\\d+)$"):
-            // m: [#] * [#]
-            break
+        // m: [#] * [#]
+        case _ where match_regex(text: input, pattern: "m: \\[([^\\[\\]]+)\\] \\* \\[([^\\[\\]]+)\\]"):
+            let data = extract_data_array(from: input, pattern: "m: \\[([^\\[\\]]+)\\] \\* \\[([^\\[\\]]+)\\]")
+            return MathModifierElement(data_array: ["·", data[0], data[1]])
             
-        case _ where match_regex(text: input, pattern: "^(\\d+) / (\\d+)$"):
-            // m: [#] / [#]
-            break
+        // m: [#] / [#]
+        case _ where match_regex(text: input, pattern: "m: \\[([^\\[\\]]+)\\] / \\[([^\\[\\]]+)\\]"):
+            let data = extract_data_array(from: input, pattern: "m: \\[([^\\[\\]]+)\\] / \\[([^\\[\\]]+)\\]")
+            return MathModifierElement(data_array: ["÷", data[0], data[1]])
             
-        case _ where match_regex(text: input, pattern: "^(\\d+) \\^ (\\d+)$"):
-            // m: [#] ^ [#]
-            break
+        // m: [#] ^ [#]
+        case _ where match_regex(text: input, pattern: "m: \\[([^\\[\\]]+)\\] \\^ \\[([^\\[\\]]+)\\]"):
+            let data = extract_data_array(from: input, pattern: "m: \\[([^\\[\\]]+)\\] \\^ \\[([^\\[\\]]+)\\]")
+            return MathModifierElement(data_array: ["^", data[0], data[1]])
+           
+        // m: [#] move [#]
+        case _ where match_regex(text: input, pattern: "m: \\[([^\\[\\]]+)\\] move \\[([^\\[\\]]+)\\]"):
+            let data = extract_data_array(from: input, pattern: "m: \\[([^\\[\\]]+)\\] move \\[([^\\[\\]]+)\\]")
+            return MoverModifierElement(data_array: ["Move", data[0], data[1]])
             
-        case _ where match_regex(text: input, pattern: "^(\\d+) move (\\d+)$"):
-            // m: [#] move [#]
-            break
+        // m: [#] copy [#]
+        case _ where match_regex(text: input, pattern: "m: \\[([^\\[\\]]+)\\] copy \\[([^\\[\\]]+)\\]"):
+            let data = extract_data_array(from: input, pattern: "m: \\[([^\\[\\]]+)\\] copy \\[([^\\[\\]]+)\\]")
+            return MoverModifierElement(data_array: ["Duplicate", data[0], data[1]])
             
-        case _ where match_regex(text: input, pattern: "^(\\d+) copy (\\d+)$"):
-            // m: [#] copy [#]
-            break
+        // m: [#] write value
+        case _ where match_regex(text: input, pattern: "m: \\[([^\\[\\]]+)\\] write (.*)"):
+            let data = extract_data_array(from: input, pattern: "m: \\[([^\\[\\]]+)\\] write (.*)")
+            return WriterModifierElement(data_array: [data[0], data[1]])
+           
+        // m: t.(name).observe.[#, #, #] [#, #, #]
+        case _ where match_regex(text: input, pattern: "m: r\\.\\(([^()]*)\\)\\.observe\\.\\[(.*?)\\] \\[(.*?)\\]"):
+            let data = extract_data_array(from: input, pattern: "m: r\\.\\(([^()]*)\\)\\.observe\\.\\[(.*?)\\] \\[(.*?)\\]")
+            return ObserverModifierElement(data_array: ["Robot", data[0], data[1].replacingOccurrences(of: ", ", with: "|"), data[2].replacingOccurrences(of: ", ", with: "|")])
             
-        case _ where match_regex(text: input, pattern: "^(\\d+) write (\\d+[.,]?\\d*)$"):
-            // m: [#] write number
-            break
+        // m: t.(name).observe.[#, #, #] [#, #, #]
+        case _ where match_regex(text: input, pattern: "m: t\\.\\(([^()]*)\\)\\.observe\\.\\[(.*?)\\] \\[(.*?)\\]"):
+            let data = extract_data_array(from: input, pattern: "m: t\\.\\(([^()]*)\\)\\.observe\\.\\[(.*?)\\] \\[(.*?)\\]")
+            return ObserverModifierElement(data_array: ["Tool", data[0], data[1].replacingOccurrences(of: ", ", with: "|"), data[2].replacingOccurrences(of: ", ", with: "|")])
             
-        case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.observe\\.\\[([\\d, ]*?)\\] \\[([\\d, ]*?)\\]$"):
-            // m: t.(name).observe.[#, #, #] [#, #, #]
-            break
+        // m: change.(name)
+        case _ where match_regex(text: input, pattern: "m: change\\.\\(([^()]*)\\)"):
+            let data = extract_data_array(from: input, pattern: "m: change\\.\\(([^()]*)\\)")
+            return ChangerModifierElement(data_array: [data[0]])
             
-        case _ where match_regex(text: input, pattern: "^change\\.(\\w+)$"):
-            // m: change.(name)
-            break
-            
-        case _ where match_regex(text: input, pattern: "^clear$"):
-            // m: clear
+        // m: clear
+        case _ where match_regex(text: input, pattern: "m: clear"):
             return CleanerModifierElement()
             
         // Logic
-        case _ where match_regex(text: input, pattern: "^if (\\d+) > (\\d+) jump\\.(\\w+)$"):
-            // l: if [#] > [#] jump.(name)
-            break
+        // l: if [#] = [#] jump.(name)
+        case _ where match_regex(text: input, pattern: "l: if \\[([^\\[\\]]+)\\] = \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)"):
+            let data = extract_data_array(from: input, pattern: "l: if \\[([^\\[\\]]+)\\] = \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)")
+            return ComparatorLogicElement(data_array: ["=", data[0], data[1], data[2]])
             
-        case _ where match_regex(text: input, pattern: "^jump\\.(\\w+)$"):
-            // l: jump.(name)
-            break
+        // l: if [#] > [#] jump.(name)
+        case _ where match_regex(text: input, pattern: "l: if \\[([^\\[\\]]+)\\] = \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)"):
+            let data = extract_data_array(from: input, pattern: "l: if \\[([^\\[\\]]+)\\] > \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)")
+            return ComparatorLogicElement(data_array: [">", data[0], data[1], data[2]])
             
-        case _ where match_regex(text: input, pattern: "^mark\\.(\\w+)$"):
-            // l: mark.(name)
-            break
+        // l: if [#] >= [#] jump.(name)
+        case _ where match_regex(text: input, pattern: "l: if \\[([^\\[\\]]+)\\] >= \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)"):
+            let data = extract_data_array(from: input, pattern: "l: if \\[([^\\[\\]]+)\\] >= \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)")
+            return ComparatorLogicElement(data_array: ["⩾", data[0], data[1], data[2]])
+            
+        // l: if [#] < [#] jump.(name)
+        case _ where match_regex(text: input, pattern: "l: if \\[([^\\[\\]]+)\\] < \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)"):
+            let data = extract_data_array(from: input, pattern: "l: if \\[([^\\[\\]]+)\\] < \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)")
+            return ComparatorLogicElement(data_array: ["<", data[0], data[1], data[2]])
+            
+        // l: if [#] <= [#] jump.(name)
+        case _ where match_regex(text: input, pattern: "l: if \\[([^\\[\\]]+)\\] <= \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)"):
+            let data = extract_data_array(from: input, pattern: "l: if \\[([^\\[\\]]+)\\] <= \\[([^\\[\\]]+)\\] jump\\.\\(([^()]*)\\)")
+            return ComparatorLogicElement(data_array: ["⩽", data[0], data[1], data[2]])
+            
+        // l: jump.(name)
+        case _ where match_regex(text: input, pattern: "l: jump\\.\\(([^()]*)\\)"):
+            let data = extract_data_array(from: input, pattern: "l: jump\\.\\(([^()]*)\\)")
+            return JumpLogicElement(data_array: [data[0]])
+            
+        // l: mark.(name)
+        case _ where match_regex(text: input, pattern: "l: mark\\.\\(([^()]*)\\)"):
+            let data = extract_data_array(from: input, pattern: "l: mark\\.\\(([^()]*)\\)")
+            return MarkLogicElement(data_array: [data[0]])
             
         default:
             break

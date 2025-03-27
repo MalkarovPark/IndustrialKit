@@ -55,7 +55,7 @@ public class JumpLogicElement: LogicElement
     }
     
     // File handling
-    // Data [target]
+    // Data [<#target#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .jump_logic
@@ -119,7 +119,7 @@ public class ComparatorLogicElement: LogicElement
     }
     
     // File handling
-    // Data [compare, value, value2, target]
+    // Data [<#compare#>, <#value#>, <#value2#>, <#target#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .comparator_logic

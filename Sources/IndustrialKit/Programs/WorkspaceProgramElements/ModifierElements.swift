@@ -57,7 +57,7 @@ public class MoverModifierElement: ModifierElement
     }
     
     // File handling
-    // Data [type, from, to]
+    // Data [<#type#>, <#from#>, <#to#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .mover_modifier
@@ -120,7 +120,7 @@ public class WriterModifierElement: ModifierElement
     }
     
     // File handling
-    // Data [value, to]
+    // Data [<#to#>, <#value#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .writer_modifier
@@ -133,8 +133,8 @@ public class WriterModifierElement: ModifierElement
     
     public override func data_from_array(_ data: [String])
     {
-        value = Float(data[0]) ?? 0
-        to_index = Int(data[1]) ?? 0
+        to_index = Int(data[0]) ?? 0
+        value = Float(data[1]) ?? 0
     }
     
     public override var file_info: WorkspaceProgramElementStruct
@@ -171,7 +171,7 @@ public class MathModifierElement: ModifierElement
     }
     
     // File handling
-    // Data [operation, value, value2]
+    // Data [<#operation#>, <#value#>, <#value2#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .math_modifier
@@ -288,7 +288,7 @@ public class ChangerModifierElement: ModifierElement
     }
     
     // File handling
-    // Data [changer_module_name]
+    // Data [<#changer_module_name#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .changer_modifier
@@ -399,7 +399,7 @@ public class ObserverModifierElement: ModifierElement
     }
     
     // File handling
-    // Data [type, name, from indices, to indices]
+    // Data [<#type#>, <#name#>, <#from indices#>, <#to indices#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .observer_modifier
