@@ -625,19 +625,19 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
         switch input
         {
         // Performers
-        case _ where match_regex(text: input, pattern: "^r\\.(\\w+)\\.(\\w+)$"):
+        case _ where match_regex(text: input, pattern: "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)"):
             // p: r.(name).(program)
             let data = extract_data_array(from: input, pattern: "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)")
             var element = RobotPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0", "0", "0", "0", "0", "0", "0"])
             return element
             
-        case _ where match_regex(text: input, pattern: "^r\\.(\\w+)\\.index\\.\\[(\\d+)\\]$"):
+        case _ where match_regex(text: input, pattern: "r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]"):
             // p: r.(name).index.[#]
             let data = extract_data_array(from: input, pattern: "r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]")
             var element = RobotPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0", "0", "0", "0", "0", "0", "0"])
             return element
             
-        case _ where match_regex(text: input, pattern: "^r\\.(\\w+)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]$"):
+        case _ where match_regex(text: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]"):
             // p: r.(name).single.[#, #, #, #, #, #, #]
             let data = extract_data_array(from: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]")
             var element = RobotPerformerElement(data_array: [data[0], "", "", "true", "false", data[1], data[2], data[3], data[4], data[5], data[6], data[7]])
