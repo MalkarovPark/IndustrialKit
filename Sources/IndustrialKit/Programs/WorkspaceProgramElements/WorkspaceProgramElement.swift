@@ -37,34 +37,34 @@ public class WorkspaceProgramElement: Hashable, Identifiable
     {
         if element_struct.identifier == identifier && element_struct.data.count == data_count
         {
-            data_from_struct(element_struct)
+            data_from_array(element_struct.data)
         }
     }
     
     /// Inits workspace program element by appropriate identifier.
     public init(element_identifier: WorkspaceProgramElementIdentifier)
     {
-        data_from_struct(WorkspaceProgramElementStruct(identifier: element_identifier, data: [String]()))
+        data_from_array([String]())
     }
     
     /// Element type identifier.
-    public var identifier: WorkspaceProgramElementIdentifier?
+    open var identifier: WorkspaceProgramElementIdentifier?
     {
         return nil
     }
     
     /// Element data components count for type.
-    public var data_count: Int
+    open var data_count: Int
     {
         return 0
     }
     
     /**
-     Inits program element by struct.
+     Input program element data from data array.
      - Parameters:
-        - struct: Appropriate codable struct.
+        - array: Appropriate data array.
      */
-    public func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    open func data_from_array(_ data: [String])
     {
         
     }

@@ -611,23 +611,89 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
     for line in lines
     {
         let trimmed_line = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if let element = line_to_element(trimmed_line)
+        {
+            elements.append(element)
+        }
     }
     
     return elements
     
-    func performer_parsing()
+    func line_to_element(_ input: String) -> WorkspaceProgramElement?
     {
+        switch input
+        {
+        // Performers
+        case _ where match_regex(text: input, pattern: "^r\\.(\\w+)\\.(\\w+)$"):
+            // p: r.(name).(program)
+            break
+        case _ where match_regex(text: input, pattern: "^r\\.(\\w+)\\.index\\.\\[(\\d+)\\]$"):
+            // p: r.(name).index.[#]
+            break
+        case _ where match_regex(text: input, pattern: "^r\\.(\\w+)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]$"):
+            // p: r.(name).single.[#, #, #, #, #, #, #]
+            break
+        case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.(\\w+)$"):
+            // p: t.(name).(program)
+            break
+        case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.index\\.\\[(\\d+)\\]$"):
+            // p: t.(name).index.[#]
+            break
+        case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.single\\.\\[(\\d+)\\]$"):
+            // p: t.(name).single.[#]
+            break
         
-    }
-    
-    func modifier_parsing()
-    {
+        // Modifiers
+        case _ where match_regex(text: input, pattern: "^(\\d+) \\+ (\\d+)$"):
+            // m: [#] + [#]
+            break
+        case _ where match_regex(text: input, pattern: "^(\\d+) - (\\d+)$"):
+            // m: [#] - [#]
+            break
+        case _ where match_regex(text: input, pattern: "^(\\d+) \\* (\\d+)$"):
+            // m: [#] * [#]
+            break
+        case _ where match_regex(text: input, pattern: "^(\\d+) / (\\d+)$"):
+            // m: [#] / [#]
+            break
+        case _ where match_regex(text: input, pattern: "^(\\d+) \\^ (\\d+)$"):
+            // m: [#] ^ [#]
+            break
+        case _ where match_regex(text: input, pattern: "^(\\d+) move (\\d+)$"):
+            // m: [#] move [#]
+            break
+        case _ where match_regex(text: input, pattern: "^(\\d+) copy (\\d+)$"):
+            // m: [#] copy [#]
+            break
+        case _ where match_regex(text: input, pattern: "^(\\d+) write (\\d+[.,]?\\d*)$"):
+            // m: [#] write number
+            break
+        case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.observe\\.\\[([\\d, ]*?)\\] \\[([\\d, ]*?)\\]$"):
+            // m: t.(name).observe.[#, #, #] [#, #, #]
+            break
+        case _ where match_regex(text: input, pattern: "^change\\.(\\w+)$"):
+            // m: change.(name)
+            break
+        case _ where match_regex(text: input, pattern: "^clear$"):
+            // m: clear
+            return CleanerModifierElement()
+            
+        // Logic
+        case _ where match_regex(text: input, pattern: "^if (\\d+) > (\\d+) jump\\.(\\w+)$"):
+            // l: if [#] > [#] jump.(name)
+            break
+        case _ where match_regex(text: input, pattern: "^jump\\.(\\w+)$"):
+            // l: jump.(name)
+            break
+        case _ where match_regex(text: input, pattern: "^mark\\.(\\w+)$"):
+            // l: mark.(name)
+            break
+        default:
+            break
+        }
         
-    }
-    
-    func logic_parsing()
-    {
-        
+        return nil
     }
 }
 
@@ -652,6 +718,22 @@ public func elements_to_code(elements: [WorkspaceProgramElement]) -> String
     }
     
     return code
+}
+
+private func match_regex(text: String, pattern: String) -> Bool
+{
+    do
+    {
+        let regex = try NSRegularExpression(pattern: pattern, options: [])
+        let range = NSRange(location: 0, length: text.utf16.count)
+        let match = regex.firstMatch(in: text, options: [], range: range)
+        return match != nil
+    }
+    catch
+    {
+        print(error)
+        return false
+    }
 }
 
 //MARK: - UI functions

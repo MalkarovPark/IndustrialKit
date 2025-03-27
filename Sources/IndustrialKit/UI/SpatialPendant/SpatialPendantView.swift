@@ -13,11 +13,6 @@ import SwiftUI
  
  This pendant can change its content according to selected *workspace*, *robot* or *tool*.
  */
-@available(visionOS 1.0, *)
-@available(macOS, unavailable)
-@available(iOS, unavailable)
-@available(tvOS, unavailable)
-@available(watchOS, unavailable)
 public struct SpatialPendant: Scene
 {
     var window_id: String

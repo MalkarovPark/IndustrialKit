@@ -127,24 +127,24 @@ public class RobotPerformerElement: PerformerElement
         return 12
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        object_name = element_struct.data[0]
+        object_name = data[0]
         
-        program_name = element_struct.data[1]
-        program_index = Int(element_struct.data[2]) ?? 0
-        is_single_perfrom = Bool(element_struct.data[3]) ?? false
-        is_program_by_index = Bool(element_struct.data[4]) ?? false
+        program_name = data[1]
+        program_index = Int(data[2]) ?? 0
+        is_single_perfrom = Bool(data[3]) ?? false
+        is_program_by_index = Bool(data[4]) ?? false
         
-        x_index = Int(element_struct.data[5]) ?? 0
-        y_index = Int(element_struct.data[6]) ?? 0
-        z_index = Int(element_struct.data[7]) ?? 0
+        x_index = Int(data[5]) ?? 0
+        y_index = Int(data[6]) ?? 0
+        z_index = Int(data[7]) ?? 0
         
-        r_index = Int(element_struct.data[8]) ?? 0
-        p_index = Int(element_struct.data[9]) ?? 0
-        w_index = Int(element_struct.data[10]) ?? 0
+        r_index = Int(data[8]) ?? 0
+        p_index = Int(data[9]) ?? 0
+        w_index = Int(data[10]) ?? 0
         
-        speed_index = Int(element_struct.data[11]) ?? 0
+        speed_index = Int(data[11]) ?? 0
     }
     
     public override var file_info: WorkspaceProgramElementStruct
@@ -220,16 +220,16 @@ public class ToolPerformerElement: PerformerElement
         return 6
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        object_name = element_struct.data[0]
+        object_name = data[0]
         
-        program_name = element_struct.data[1]
-        program_index = Int(element_struct.data[2]) ?? 0
-        is_single_perfrom = Bool(element_struct.data[3]) ?? false
-        is_program_by_index = Bool(element_struct.data[4]) ?? false
+        program_name = data[1]
+        program_index = Int(data[2]) ?? 0
+        is_single_perfrom = Bool(data[3]) ?? false
+        is_program_by_index = Bool(data[4]) ?? false
         
-        opcode_index = Int(element_struct.data[5]) ?? 0
+        opcode_index = Int(data[5]) ?? 0
     }
     
     public override var file_info: WorkspaceProgramElementStruct

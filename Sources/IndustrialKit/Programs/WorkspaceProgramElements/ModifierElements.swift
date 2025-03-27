@@ -68,11 +68,11 @@ public class MoverModifierElement: ModifierElement
         return 3
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        move_type = type_from_string(element_struct.data[0])
-        from_index = Int(element_struct.data[1]) ?? 0
-        to_index = Int(element_struct.data[2]) ?? 0
+        move_type = type_from_string(data[0])
+        from_index = Int(data[1]) ?? 0
+        to_index = Int(data[2]) ?? 0
         
         func type_from_string(_ string: String) -> ModifierCopyType
         {
@@ -131,10 +131,10 @@ public class WriterModifierElement: ModifierElement
         return 2
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        value = Float(element_struct.data[0]) ?? 0
-        to_index = Int(element_struct.data[1]) ?? 0
+        value = Float(data[0]) ?? 0
+        to_index = Int(data[1]) ?? 0
     }
     
     public override var file_info: WorkspaceProgramElementStruct
@@ -182,12 +182,12 @@ public class MathModifierElement: ModifierElement
         return 3
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        operation = operation_from_string(element_struct.data[0])
+        operation = operation_from_string(data[0])
         
-        value_index = Int(element_struct.data[1]) ?? 0
-        value2_index = Int(element_struct.data[2]) ?? 0
+        value_index = Int(data[1]) ?? 0
+        value2_index = Int(data[2]) ?? 0
         
         func operation_from_string(_ string: String) -> MathType
         {
@@ -299,9 +299,9 @@ public class ChangerModifierElement: ModifierElement
         return 1
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        module_name = element_struct.data[0]
+        module_name = data[0]
         
         module_import_by_name(module_name, is_internal: is_internal_module)
     }
@@ -410,12 +410,12 @@ public class ObserverModifierElement: ModifierElement
         return 4
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        object_type = type_from_string(element_struct.data[0])
-        object_name = element_struct.data[1]
-        from_indices = string_to_indices(element_struct.data[2])
-        to_indices = string_to_indices(element_struct.data[3])
+        object_type = type_from_string(data[0])
+        object_name = data[1]
+        from_indices = string_to_indices(data[2])
+        to_indices = string_to_indices(data[3])
         
         func type_from_string(_ string: String) -> ObserverObjectType
         {
@@ -478,7 +478,7 @@ public class CleanerModifierElement: ModifierElement
         return 0
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
         // Nothing...
     }

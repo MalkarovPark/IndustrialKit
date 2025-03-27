@@ -66,9 +66,9 @@ public class JumpLogicElement: LogicElement
         return 1
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        target_mark_name = element_struct.data[0]
+        target_mark_name = data[0]
     }
     
     public override var file_info: WorkspaceProgramElementStruct
@@ -130,14 +130,14 @@ public class ComparatorLogicElement: LogicElement
         return 4
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        compare_type = compare_from_string(element_struct.data[0])
+        compare_type = compare_from_string(data[0])
         
-        value_index = Int(element_struct.data[1]) ?? 0
-        value2_index = Int(element_struct.data[2]) ?? 0
+        value_index = Int(data[1]) ?? 0
+        value2_index = Int(data[2]) ?? 0
         
-        target_mark_name = element_struct.data[3]
+        target_mark_name = data[3]
         
         func compare_from_string(_ string: String) -> CompareType
         {
@@ -255,9 +255,9 @@ public class MarkLogicElement: LogicElement
         return 1
     }
     
-    public override func data_from_struct(_ element_struct: WorkspaceProgramElementStruct)
+    public override func data_from_array(_ data: [String])
     {
-        name = element_struct.data[0]
+        name = data[0]
     }
     
     public override var file_info: WorkspaceProgramElementStruct

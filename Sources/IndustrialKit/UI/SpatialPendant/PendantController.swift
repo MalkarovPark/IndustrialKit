@@ -11,11 +11,6 @@ import Foundation
 /**
  A class that provides integration between applications and the Spatial Pendant.
  */
-@available(visionOS 1.0, *)
-@available(macOS, unavailable)
-@available(iOS, unavailable)
-@available(tvOS, unavailable)
-@available(watchOS, unavailable)
 public class PendantController: ObservableObject
 {
     public init()
@@ -160,6 +155,8 @@ public class PendantController: ObservableObject
             return false
         }
     }
+    
+    @Published public var code_editor_text = String()
     
     // MARK: - New data
     @Published var new_operation_code = OperationCodeInfo()
