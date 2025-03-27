@@ -116,7 +116,7 @@ public class RobotPerformerElement: PerformerElement
     }
     
     // File handling
-    // Data [robot name, program name, program index, is single, is by index, x, y, z, r, p, w, speed]
+    // Data [<#robot name#>, <#program name#>, <#program index#>, <#is single#>, <#is by index#>, <#x#>, <#y#>, <#z#>, <#r#>, <#p#>, <#w#>, <#speed#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .robot_performer

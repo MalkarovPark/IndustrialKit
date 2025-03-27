@@ -47,6 +47,12 @@ public class WorkspaceProgramElement: Hashable, Identifiable
         data_from_array([String]())
     }
     
+    /// Inits workspace program element by appropriate data array.
+    public init(data_array: [String])
+    {
+        data_from_array(data_array)
+    }
+    
     /// Element type identifier.
     open var identifier: WorkspaceProgramElementIdentifier?
     {

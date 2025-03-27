@@ -627,19 +627,30 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
         // Performers
         case _ where match_regex(text: input, pattern: "^r\\.(\\w+)\\.(\\w+)$"):
             // p: r.(name).(program)
-            break
+            let data = extract_data_array(from: input, pattern: "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)")
+            var element = RobotPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0", "0", "0", "0", "0", "0", "0"])
+            return element
+            
         case _ where match_regex(text: input, pattern: "^r\\.(\\w+)\\.index\\.\\[(\\d+)\\]$"):
             // p: r.(name).index.[#]
-            break
+            let data = extract_data_array(from: input, pattern: "r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]")
+            var element = RobotPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0", "0", "0", "0", "0", "0", "0"])
+            return element
+            
         case _ where match_regex(text: input, pattern: "^r\\.(\\w+)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]$"):
             // p: r.(name).single.[#, #, #, #, #, #, #]
-            break
+            let data = extract_data_array(from: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]")
+            var element = RobotPerformerElement(data_array: [data[0], "", "", "true", "false", data[1], data[2], data[3], data[4], data[5], data[6], data[7]])
+            return element
+            
         case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.(\\w+)$"):
             // p: t.(name).(program)
             break
+            
         case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.index\\.\\[(\\d+)\\]$"):
             // p: t.(name).index.[#]
             break
+            
         case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.single\\.\\[(\\d+)\\]$"):
             // p: t.(name).single.[#]
             break
@@ -648,33 +659,43 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
         case _ where match_regex(text: input, pattern: "^(\\d+) \\+ (\\d+)$"):
             // m: [#] + [#]
             break
+            
         case _ where match_regex(text: input, pattern: "^(\\d+) - (\\d+)$"):
             // m: [#] - [#]
             break
+            
         case _ where match_regex(text: input, pattern: "^(\\d+) \\* (\\d+)$"):
             // m: [#] * [#]
             break
+            
         case _ where match_regex(text: input, pattern: "^(\\d+) / (\\d+)$"):
             // m: [#] / [#]
             break
+            
         case _ where match_regex(text: input, pattern: "^(\\d+) \\^ (\\d+)$"):
             // m: [#] ^ [#]
             break
+            
         case _ where match_regex(text: input, pattern: "^(\\d+) move (\\d+)$"):
             // m: [#] move [#]
             break
+            
         case _ where match_regex(text: input, pattern: "^(\\d+) copy (\\d+)$"):
             // m: [#] copy [#]
             break
+            
         case _ where match_regex(text: input, pattern: "^(\\d+) write (\\d+[.,]?\\d*)$"):
             // m: [#] write number
             break
+            
         case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.observe\\.\\[([\\d, ]*?)\\] \\[([\\d, ]*?)\\]$"):
             // m: t.(name).observe.[#, #, #] [#, #, #]
             break
+            
         case _ where match_regex(text: input, pattern: "^change\\.(\\w+)$"):
             // m: change.(name)
             break
+            
         case _ where match_regex(text: input, pattern: "^clear$"):
             // m: clear
             return CleanerModifierElement()
@@ -683,12 +704,15 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
         case _ where match_regex(text: input, pattern: "^if (\\d+) > (\\d+) jump\\.(\\w+)$"):
             // l: if [#] > [#] jump.(name)
             break
+            
         case _ where match_regex(text: input, pattern: "^jump\\.(\\w+)$"):
             // l: jump.(name)
             break
+            
         case _ where match_regex(text: input, pattern: "^mark\\.(\\w+)$"):
             // l: mark.(name)
             break
+            
         default:
             break
         }
@@ -731,8 +755,38 @@ private func match_regex(text: String, pattern: String) -> Bool
     }
     catch
     {
-        print(error)
+        print(error.localizedDescription)
         return false
+    }
+}
+
+private func extract_data_array(from text: String, pattern regex: String) -> [String]
+{
+    do
+    {
+        let regex = try NSRegularExpression(pattern: regex)
+        let range = NSRange(text.startIndex..., in: text)
+        let matches = regex.matches(in: text, range: range)
+
+        var results: [String] = []
+
+        for match in matches
+        {
+            for groupIndex in 1..<match.numberOfRanges
+            {
+                if let range = Range(match.range(at: groupIndex), in: text)
+                {
+                    results.append(String(text[range]))
+                }
+            }
+        }
+
+        return results
+    }
+    catch
+    {
+        print(error.localizedDescription)
+        return []
     }
 }
 
