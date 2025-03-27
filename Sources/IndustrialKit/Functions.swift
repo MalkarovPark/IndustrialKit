@@ -631,29 +631,35 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
             var element = RobotPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0", "0", "0", "0", "0", "0", "0"])
             return element
             
-        case _ where match_regex(text: input, pattern: "r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]"):
+        case _ where match_regex(text: input, pattern: "p: r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]"):
             // p: r.(name).index.[#]
-            let data = extract_data_array(from: input, pattern: "r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]")
+            let data = extract_data_array(from: input, pattern: "p: r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]")
             var element = RobotPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0", "0", "0", "0", "0", "0", "0"])
             return element
             
         case _ where match_regex(text: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]"):
             // p: r.(name).single.[#, #, #, #, #, #, #]
             let data = extract_data_array(from: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]")
-            var element = RobotPerformerElement(data_array: [data[0], "", "", "true", "false", data[1], data[2], data[3], data[4], data[5], data[6], data[7]])
+            var element = RobotPerformerElement(data_array: [data[0], "", "0", "true", "false", data[1], data[2], data[3], data[4], data[5], data[6], data[7]])
             return element
             
-        case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.(\\w+)$"):
+        case _ where match_regex(text: input, pattern: "p: t\\.\\((.*?)\\)\\.\\((.*?)\\)"):
             // p: t.(name).(program)
-            break
+            let data = extract_data_array(from: input, pattern: "p: t\\.\\((.*?)\\)\\.\\((.*?)\\)")
+            var element = ToolPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0"])
+            return element
             
-        case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.index\\.\\[(\\d+)\\]$"):
+        case _ where match_regex(text: input, pattern: "p: t\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]"):
             // p: t.(name).index.[#]
-            break
+            let data = extract_data_array(from: input, pattern: "p: t\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]")
+            var element = ToolPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0"])
+            return element
             
-        case _ where match_regex(text: input, pattern: "^t\\.(\\w+)\\.single\\.\\[(\\d+)\\]$"):
+        case _ where match_regex(text: input, pattern: "p: t\\.\\(([^()]*)\\)\\.single\\.\\[([^\\[\\]]*)\\]"):
             // p: t.(name).single.[#]
-            break
+            let data = extract_data_array(from: input, pattern: "p: t\\.\\(([^()]*)\\)\\.single\\.\\[([^\\[\\]]*)\\]")
+            var element = ToolPerformerElement(data_array: [data[0], "", "0", "true", "false", data[1]])
+            return element
         
         // Modifiers
         case _ where match_regex(text: input, pattern: "^(\\d+) \\+ (\\d+)$"):

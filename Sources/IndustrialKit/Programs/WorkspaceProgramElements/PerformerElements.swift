@@ -209,7 +209,7 @@ public class ToolPerformerElement: PerformerElement
     }
     
     // File handling
-    // Data [tool name, program name, program index, is single, is by index, opcode]
+    // Data [<#tool name#>, <#program name#>, <#program index#>, <#is single#>, <#is by index#>, <#opcode#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .tool_performer
