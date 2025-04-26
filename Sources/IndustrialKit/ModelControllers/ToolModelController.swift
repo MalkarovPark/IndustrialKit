@@ -47,7 +47,7 @@ open class ToolModelController: ModelController
     }
     
     /// Inforamation code updated by model controller.
-    public var info_output: [Float]?
+    open var info_output: [Float]?
     {
         return nil
     }
