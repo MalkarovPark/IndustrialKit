@@ -572,7 +572,7 @@ public class Tool: WorkspaceObject
         // model_controller.disconnect_nodes()
         model_controller.connect_nodes(of: unit_node)
         
-        model_controller.info_output = self.info_output
+        //model_controller.info_output = self.info_output
     }
     
     /// Disconnect tool model parts from workcell.
@@ -580,7 +580,7 @@ public class Tool: WorkspaceObject
     {
         model_controller.remove_all_model_actions()
         model_controller.disconnect_nodes()
-        model_controller.info_output = nil
+        //model_controller.info_output = nil
         
         // connector.model_controller = nil
     }
