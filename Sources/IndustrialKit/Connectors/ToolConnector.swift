@@ -54,6 +54,9 @@ open class ToolConnector: WorkspaceObjectConnector
     
     /// Inforamation code updated by connector.
     public var info_output: [Float]?
+    {
+        return nil
+    }
     
     // MARK: - Model handling
     /// A tool model controller.
@@ -179,6 +182,27 @@ public class ExternalToolConnector: ToolConnector
         {
             return
         }
+        #endif
+    }
+    
+    // MARK: Info
+    open override var info_output: [Float]?
+    {
+        #if os(macOS)
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["info_output"])
+        else
+        {
+            return nil
+        }
+        
+        let cleaned = output.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+        let components = cleaned.split(separator: ",")
+        
+        let floats: [Float] = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
+        
+        return floats.isEmpty ? nil : floats
+        #else
+        return nil
         #endif
     }
     

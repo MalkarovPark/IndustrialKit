@@ -48,6 +48,9 @@ open class ToolModelController: ModelController
     
     /// Inforamation code updated by model controller.
     public var info_output: [Float]?
+    {
+        return nil
+    }
 }
 
 //MARK: - External Model Controller
@@ -165,6 +168,27 @@ public class ExternalToolModelController: ToolModelController
         {
             completed[index] = true
         }
+        #endif
+    }
+    
+    // MARK: Info
+    open override var info_output: [Float]?
+    {
+        #if os(macOS)
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["info_output"])
+        else
+        {
+            return nil
+        }
+        
+        let cleaned = output.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+        let components = cleaned.split(separator: ",")
+        
+        let floats: [Float] = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
+        
+        return floats.isEmpty ? nil : floats
+        #else
+        return nil
         #endif
     }
     
