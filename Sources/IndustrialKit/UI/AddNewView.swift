@@ -25,8 +25,8 @@ public struct AddNewView: View
     public init(is_presented: Binding<Bool>, names: [String], add_item: @escaping (String) -> Void)
     {
         self._is_presented = is_presented
-        self.add_item = add_item
         self.names = names
+        self.add_item = add_item
     }
     
     public var body: some View
@@ -43,7 +43,7 @@ public struct AddNewView: View
             
             Button("Add")
             {
-                name_perform()
+                name_process()
             }
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
@@ -54,7 +54,7 @@ public struct AddNewView: View
         #endif
     }
     
-    private func name_perform()
+    private func name_process()
     {
         if new_item_name == ""
         {
