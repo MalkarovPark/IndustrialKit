@@ -195,12 +195,18 @@ public class ExternalToolConnector: ToolConnector
             return nil
         }
         
-        let cleaned = output.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
-        let components = cleaned.split(separator: ",")
+        let components = output.split(separator: " ")
         
         let floats: [Float] = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
         
         return floats.isEmpty ? nil : floats
+        
+        /*let cleaned = output.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+        let components = cleaned.split(separator: ",")
+        
+        let floats: [Float] = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
+        
+        return floats.isEmpty ? nil : floats*/
         #else
         return nil
         #endif
