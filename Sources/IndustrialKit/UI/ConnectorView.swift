@@ -150,6 +150,8 @@ public struct ConnectorView: View
                         connected = false
                         // connector.disconnect()
                     }
+                    
+                    update_file_data()
                 }
                 
                 Spacer()
