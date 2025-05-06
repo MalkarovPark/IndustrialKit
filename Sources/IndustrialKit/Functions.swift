@@ -251,7 +251,7 @@ public func perform_terminal_command(_ command: String) throws -> String?
  - Throws: An NSError with domain "TerminalCommandError" if the command exits with a non-zero status code.
         The error's userInfo contains the localized description of the error and the termination status.
  */
-public func perform_terminal_command(_ command: String, timeout: TimeInterval = 1, output_handler: @escaping (String) -> Void = { _ in }) throws
+public func perform_terminal_command(_ command: String, timeout: TimeInterval? = nil, output_handler: @escaping (String) -> Void = { _ in }) throws
 {
     let task = Process()
     let pipe = Pipe()
@@ -289,7 +289,16 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval = 
         semaphore.signal()
     }
     
-    let result = semaphore.wait(timeout: .now() + timeout)
+    let result: DispatchTimeoutResult
+    if let timeout = timeout
+    {
+        result = semaphore.wait(timeout: .now() + timeout)
+    }
+    else
+    {
+        semaphore.wait()
+        result = .success
+    }
     
     fileHandle.readabilityHandler = nil
     task.terminate() // Ensure termination in case it is still running
@@ -362,7 +371,7 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval = 
  
  - Returns: Terminal text output.
  */
-public func perform_terminal_app(at url: URL, with arguments: [String]) -> String?
+public func perform_terminal_app(at url: URL, with arguments: [String], timeout: TimeInterval? = nil) -> String?
 {
     /*let command = "'\(url.path)' \(arguments.joined(separator: " "))" // Combine file path and arguments into one string
      
@@ -377,7 +386,7 @@ public func perform_terminal_app(at url: URL, with arguments: [String]) -> Strin
     
     do
     {
-        try perform_terminal_command(command)
+        try perform_terminal_command(command, timeout: timeout)
         { output in
             collected_output += output
         }

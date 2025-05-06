@@ -89,7 +89,7 @@ public class ExternalToolModelController: ToolModelController
     open override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["nodes_perform", "\(code)"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["nodes_perform", "\(code)"], timeout: 1)
         else
         {
             return
@@ -135,7 +135,7 @@ public class ExternalToolModelController: ToolModelController
     open override func reset_nodes()
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["reset_nodes"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["reset_nodes"], timeout: 1)
         else
         {
             return
@@ -175,7 +175,7 @@ public class ExternalToolModelController: ToolModelController
     open override var info_output: [Float]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["info_output"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["info_output"], timeout: 1)
         else
         {
             return nil
@@ -202,7 +202,7 @@ public class ExternalToolModelController: ToolModelController
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_charts_data"], timeout: 1)
         else
         {
             return nil
@@ -220,7 +220,7 @@ public class ExternalToolModelController: ToolModelController
     open override func updated_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_states_data"], timeout: 1)
         else
         {
             return nil
@@ -238,7 +238,7 @@ public class ExternalToolModelController: ToolModelController
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"], timeout: 1)
         else
         {
             return nil
@@ -256,7 +256,7 @@ public class ExternalToolModelController: ToolModelController
     open override func initial_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"], timeout: 1)
         else
         {
             return nil

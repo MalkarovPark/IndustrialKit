@@ -114,7 +114,7 @@ public class ExternalToolConnector: ToolConnector
         // Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
         
-        guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: arguments) else
+        guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: arguments, timeout: 1) else
         {
             if output != String()
             {
@@ -184,7 +184,7 @@ public class ExternalToolConnector: ToolConnector
     override open func disconnection_process() async
     {
         #if os(macOS)
-        guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"])
+        guard let terminal_output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["disconnect"], timeout: 1)
         else
         {
             self.output += "Couldn't perform external code"
@@ -197,7 +197,7 @@ public class ExternalToolConnector: ToolConnector
     open override func perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["perform", "\(code)"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["perform", "\(code)"], timeout: 1)
         else
         {
             return
@@ -208,7 +208,7 @@ public class ExternalToolConnector: ToolConnector
     open override func reset_device()
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["reset_device"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["reset_device"], timeout: 1)
         else
         {
             return
@@ -220,7 +220,7 @@ public class ExternalToolConnector: ToolConnector
     open override var info_output: [Float]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["info_output"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["info_output"], timeout: 1)
         else
         {
             return nil
@@ -247,7 +247,7 @@ public class ExternalToolConnector: ToolConnector
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_charts_data"], timeout: 1)
         else
         {
             return nil
@@ -265,7 +265,7 @@ public class ExternalToolConnector: ToolConnector
     open override func updated_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["updated_states_data"], timeout: 1)
         else
         {
             return nil
@@ -283,7 +283,7 @@ public class ExternalToolConnector: ToolConnector
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"], timeout: 1)
         else
         {
             return nil
@@ -301,7 +301,7 @@ public class ExternalToolConnector: ToolConnector
     open override func initial_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"], timeout: 1)
         else
         {
             return nil
@@ -320,7 +320,7 @@ public class ExternalToolConnector: ToolConnector
     open override func sync_model()
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["sync_model"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["sync_model"], timeout: 1)
         else
         {
             return
