@@ -291,7 +291,14 @@ public class Tool: WorkspaceObject
         }
         else
         {
-            return connector.info_output
+            if connector.connected
+            {
+                return connector.info_output
+            }
+            else
+            {
+                return nil
+            }
         }
     }
     
