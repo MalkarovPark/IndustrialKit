@@ -126,28 +126,29 @@ public class ExternalToolConnector: ToolConnector
         }
         
         // Get output
-        if let range = terminal_output.range(of: "\"([^\"]*)\"", options: .regularExpression)
+        let is_success = terminal_output.contains("<done>")
+        let result = is_success ? "//<done:" : "//<failed:"
+        
+        if let range = terminal_output.range(of: result),
+           let end = terminal_output[range.upperBound...].firstIndex(of: ">")
+        {
+            let message = terminal_output[range.upperBound..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if !output.isEmpty
+            {
+                output += "\n"
+            }
+            
+            output += message
+        }
+        else if terminal_output.contains(is_success ? "<done>" : "<failed>")
         {
             if !output.isEmpty
             {
                 output += "\n"
             }
             
-            output += String(terminal_output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-        }
-        
-        // Get connection result
-        let is_success = terminal_output.contains("<done>")
-
-        if let tag = is_success ? "//<done:" : "//<failed:",
-           let range = terminal_output.range(of: tag),
-           let end = terminal_output[range.upperBound...].firstIndex(of: ">")
-        {
-            output += terminal_output[range.upperBound..<end].trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-        else
-        {
-            return false
+            output += is_success ? "Done" : "Failed"
         }
 
         return is_success

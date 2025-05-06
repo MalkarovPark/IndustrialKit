@@ -169,18 +169,30 @@ public class ExternalRobotConnector: RobotConnector
         
         // Get connection result
         let is_success = terminal_output.contains("<done>")
-
-        if let tag = is_success ? "//<done:" : "//<failed:",
-           let range = terminal_output.range(of: tag),
+        let result = is_success ? "//<done:" : "//<failed:"
+        
+        if let range = terminal_output.range(of: result),
            let end = terminal_output[range.upperBound...].firstIndex(of: ">")
         {
-            output += terminal_output[range.upperBound..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+            let message = terminal_output[range.upperBound..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if !output.isEmpty
+            {
+                output += "\n"
+            }
+            
+            output += message
         }
-        else
+        else if terminal_output.contains(is_success ? "<done>" : "<failed>")
         {
-            return false
+            if !output.isEmpty
+            {
+                output += "\n"
+            }
+            
+            output += is_success ? "Done" : "Failed"
         }
-
+        
         return is_success
         // Get connection result
         /*if terminal_output.contains("<done>")
