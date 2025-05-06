@@ -219,7 +219,7 @@ func clone_codable<T: Codable>(_ object: T) -> T?
  
  - Returns: Text of command output.
  */
-@discardableResult
+/*@discardableResult
 public func perform_terminal_command(_ command: String) throws -> String?
 {
     let task = Process()
@@ -236,7 +236,7 @@ public func perform_terminal_command(_ command: String) throws -> String?
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
     
     return String(data: data, encoding: .utf8)
-}
+}*/
 
 /**
  Performs a terminal command and provides output asynchronously.
@@ -251,7 +251,70 @@ public func perform_terminal_command(_ command: String) throws -> String?
  - Throws: An NSError with domain "TerminalCommandError" if the command exits with a non-zero status code.
         The error's userInfo contains the localized description of the error and the termination status.
  */
-public func perform_terminal_command(_ command: String,  output_handler: @escaping (String) -> Void) throws
+public func perform_terminal_command(_ command: String, timeout: TimeInterval = 5, output_handler: @escaping (String) -> Void = { _ in }) throws
+{
+    let task = Process()
+    let pipe = Pipe()
+    
+    task.standardOutput = pipe
+    task.standardError = pipe
+    task.arguments = ["-c", command]
+    task.executableURL = URL(fileURLWithPath: "/bin/zsh")
+    task.standardInput = nil
+    
+    let fileHandle = pipe.fileHandleForReading
+    var outputData = Data()
+    let semaphore = DispatchSemaphore(value: 0)
+    
+    fileHandle.readabilityHandler =
+    { handle in
+        let data = handle.availableData
+        if data.isEmpty
+        {
+            return
+        }
+        outputData.append(data)
+        if let output = String(data: data, encoding: .utf8)
+        {
+            output_handler(output)
+        }
+    }
+    
+    try task.run()
+    
+    // Wait for the process to exit asynchronously and signal the semaphore
+    DispatchQueue.global().async
+    {
+        task.waitUntilExit()
+        semaphore.signal()
+    }
+    
+    let result = semaphore.wait(timeout: .now() + timeout)
+    
+    fileHandle.readabilityHandler = nil
+    task.terminate() // Ensure termination in case it is still running
+    
+    if result == .timedOut
+    {
+        task.terminate()
+        throw NSError(
+            domain: "TerminalCommandError",
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "Command timed out"]
+        )
+    }
+    
+    if task.terminationStatus != 0
+    {
+        throw NSError(
+            domain: "TerminalCommandError",
+            code: Int(task.terminationStatus),
+            userInfo: [NSLocalizedDescriptionKey: "Command failed with status \(task.terminationStatus)"]
+        )
+    }
+}
+
+/*public func perform_terminal_command(_ command: String,  output_handler: @escaping (String) -> Void = { _ in }) throws
 {
     let task = Process()
     let pipe = Pipe()
@@ -288,7 +351,7 @@ public func perform_terminal_command(_ command: String,  output_handler: @escapi
     }
     
     fileHandle.readabilityHandler = nil
-}
+}*/
 
 /**
  Performs terminal app.
@@ -301,11 +364,29 @@ public func perform_terminal_command(_ command: String,  output_handler: @escapi
  */
 public func perform_terminal_app(at url: URL, with arguments: [String]) -> String?
 {
-    let command = "'\(url.path)' \(arguments.joined(separator: " "))" // Combine file path and arguments into one string
+    /*let command = "'\(url.path)' \(arguments.joined(separator: " "))" // Combine file path and arguments into one string
+     
+     let result = try? perform_terminal_command(command)
+     
+     return result*/
     
-    let result = try? perform_terminal_command(command)
+    //try perform_terminal_command("'\(url.path)' \(arguments.joined(separator: " "))")
     
-    return result
+    let command = "'\(url.path)' \(arguments.joined(separator: " "))"
+    var collected_output = ""
+    
+    do
+    {
+        try perform_terminal_command(command)
+        { output in
+            collected_output += output
+        }
+        return collected_output
+    }
+    catch
+    {
+        return nil
+    }
 }
 
 /**
