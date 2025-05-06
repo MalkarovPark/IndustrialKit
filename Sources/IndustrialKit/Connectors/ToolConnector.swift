@@ -128,7 +128,7 @@ public class ExternalToolConnector: ToolConnector
         // Get output
         if let range = terminal_output.range(of: "\"([^\"]*)\"", options: .regularExpression)
         {
-            if output != String()
+            if !output.isEmpty
             {
                 output += "\n"
             }
@@ -137,14 +137,29 @@ public class ExternalToolConnector: ToolConnector
         }
         
         // Get connection result
-        if terminal_output.contains("<done>")
+        let is_success = terminal_output.contains("<done>")
+
+        if let tag = is_success ? "//<done:" : "//<failed:",
+           let range = terminal_output.range(of: tag),
+           let end = terminal_output[range.upperBound...].firstIndex(of: ">")
+        {
+            output += terminal_output[range.upperBound..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        else
+        {
+            return false
+        }
+
+        return is_success
+        // Get connection result
+        /*if terminal_output.contains("<done>")
         {
             return true
         }
         else
         {
             return false
-        }
+        }*/
         #else
         return false
         #endif

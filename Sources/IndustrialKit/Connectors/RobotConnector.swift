@@ -156,15 +156,51 @@ public class ExternalRobotConnector: RobotConnector
             output += String(terminal_output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
         }
         
+        // Get output
+        if let range = terminal_output.range(of: "\"([^\"]*)\"", options: .regularExpression)
+        {
+            if !output.isEmpty
+            {
+                output += "\n"
+            }
+            
+            output += String(terminal_output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+        }
+        
         // Get connection result
-        if terminal_output.contains("<done>")
+        let is_success = terminal_output.contains("<done>")
+
+        if let tag = is_success ? "//<done:" : "//<failed:",
+           let range = terminal_output.range(of: tag),
+           let end = terminal_output[range.upperBound...].firstIndex(of: ">")
+        {
+            output += terminal_output[range.upperBound..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        else
+        {
+            return false
+        }
+
+        return is_success
+        // Get connection result
+        /*if terminal_output.contains("<done>")
         {
             return true
         }
         else
         {
             return false
+        }*/
+        
+        // Get connection result
+        /*if terminal_output.contains("<done>")
+        {
+            return true
         }
+        else
+        {
+            return false
+        }*/
         #else
         return false
         #endif
