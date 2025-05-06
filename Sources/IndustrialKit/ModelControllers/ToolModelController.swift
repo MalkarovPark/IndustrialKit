@@ -175,7 +175,7 @@ public class ExternalToolModelController: ToolModelController
     open override var info_output: [Float]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Connector"), with: ["info_output"])
+        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["info_output"])
         else
         {
             return nil
