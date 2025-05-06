@@ -251,7 +251,7 @@ public func perform_terminal_command(_ command: String) throws -> String?
  - Throws: An NSError with domain "TerminalCommandError" if the command exits with a non-zero status code.
         The error's userInfo contains the localized description of the error and the termination status.
  */
-public func perform_terminal_command(_ command: String, timeout: TimeInterval = 5, output_handler: @escaping (String) -> Void = { _ in }) throws
+public func perform_terminal_command(_ command: String, timeout: TimeInterval = 1, output_handler: @escaping (String) -> Void = { _ in }) throws
 {
     let task = Process()
     let pipe = Pipe()
