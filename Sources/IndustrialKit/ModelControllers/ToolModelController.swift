@@ -102,19 +102,23 @@ public class ExternalToolModelController: ToolModelController
 
         for i in 0..<lines.count // line in lines
         {
-            // Split output into components
-            let components: [String] = lines[i].split(separator: " ").map { String($0) }
-
-            // Check that output contains exactly two parameters
-            guard components.count == 2
+            let line = lines[i]
+            if let range = line.range(of: " ")
+            {
+                // Split output into components
+                let name = String(line[..<range.lowerBound])
+                let command = String(line[range.upperBound...])
+                
+                if let action = string_to_action(from: command)
+                {
+                    nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
+                        local_completion(index: i)
+                    })
+                }
+            }
             else
             {
                 return
-            }
-            
-            if let action = string_to_action(from: components[1])
-            {
-                nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: { local_completion(index: i) })
             }
         }
         
