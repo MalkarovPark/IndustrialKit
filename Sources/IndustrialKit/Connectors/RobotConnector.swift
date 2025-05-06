@@ -169,7 +169,7 @@ public class ExternalRobotConnector: RobotConnector
         
         // Get connection result
         let is_success = terminal_output.contains("<done>")
-        let result = is_success ? "//<done:" : "//<failed:"
+        let result = is_success ? "<done:" : "<failed:"
         
         if let range = terminal_output.range(of: result),
            let end = terminal_output[range.upperBound...].firstIndex(of: ">")
