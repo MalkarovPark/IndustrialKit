@@ -156,36 +156,31 @@ public class ExternalRobotConnector: RobotConnector
             output += String(terminal_output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
         }
         
-        // Get output
-        if let range = terminal_output.range(of: "\"([^\"]*)\"", options: .regularExpression)
-        {
-            if !output.isEmpty
-            {
-                output += "\n"
-            }
-            
-            output += String(terminal_output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-        }
-        
         // Get connection result
         let is_success = terminal_output.contains("<done>")
         let result = is_success ? "<done:" : "<failed:"
         
-        if let start = terminal_output.range(of: result)?.upperBound,
-           let end = terminal_output[start...].firstIndex(of: ">")
+        if let range = terminal_output.range(of: result)
         {
-            let message = terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+            let start = range.upperBound
             
-            if !output.isEmpty {
-                output += "\n"
+            if let end = terminal_output[start...].firstIndex(of: ">")
+            {
+                let message = terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                if !output.isEmpty
+                {
+                    output += "\n"
+                }
+                
+                output += message
+                return is_success
             }
-            
-            output += message
-            return is_success
         }
         else if terminal_output.contains(is_success ? "<done>" : "<failed>")
         {
-            if !output.isEmpty {
+            if !output.isEmpty
+            {
                 output += "\n"
             }
             
@@ -194,13 +189,16 @@ public class ExternalRobotConnector: RobotConnector
         }
         else
         {
-            if !output.isEmpty {
+            if !output.isEmpty
+            {
                 output += "\n"
             }
             
             output += "Unknown error"
             return false
         }
+        
+        return false
         // Get connection result
         /*if terminal_output.contains("<done>")
         {
