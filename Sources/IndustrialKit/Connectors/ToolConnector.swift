@@ -129,10 +129,10 @@ public class ExternalToolConnector: ToolConnector
         let is_success = terminal_output.contains("<done>")
         let result = is_success ? "<done:" : "<failed:"
         
-        if let start_range = terminal_output.range(of: result),
-           let end_index = terminal_output[start_range.upperBound...].firstIndex(of: ">")
+        if let start = terminal_output.range(of: result)?.upperBound,
+           let end = terminal_output[start...].firstIndex(of: ">")
         {
-            let message = terminal_output[start_range.upperBound..<end_index].trimmingCharacters(in: .whitespacesAndNewlines)
+            let message = terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
             
             if !output.isEmpty
             {
@@ -140,6 +140,7 @@ public class ExternalToolConnector: ToolConnector
             }
             
             output += message
+            return is_success
         }
         else if terminal_output.contains(is_success ? "<done>" : "<failed>")
         {
@@ -149,9 +150,10 @@ public class ExternalToolConnector: ToolConnector
             }
             
             output += is_success ? "Done" : "Failed"
+            return is_success
         }
         
-        return is_success
+        return false
         // Get connection result
         /*if terminal_output.contains("<done>")
         {
