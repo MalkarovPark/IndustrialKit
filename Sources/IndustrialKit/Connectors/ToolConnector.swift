@@ -134,8 +134,7 @@ public class ExternalToolConnector: ToolConnector
         {
             let message = terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
             
-            if !output.isEmpty
-            {
+            if !output.isEmpty {
                 output += "\n"
             }
             
@@ -144,16 +143,22 @@ public class ExternalToolConnector: ToolConnector
         }
         else if terminal_output.contains(is_success ? "<done>" : "<failed>")
         {
-            if !output.isEmpty
-            {
+            if !output.isEmpty {
                 output += "\n"
             }
             
             output += is_success ? "Done" : "Failed"
             return is_success
         }
-        
-        return false
+        else
+        {
+            if !output.isEmpty {
+                output += "\n"
+            }
+            
+            output += "Unknown error"
+            return false
+        }
         // Get connection result
         /*if terminal_output.contains("<done>")
         {
