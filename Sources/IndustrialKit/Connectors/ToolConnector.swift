@@ -137,47 +137,35 @@ public class ExternalToolConnector: ToolConnector
         }
         
         // Get connection result
-        let is_success = terminal_output.contains("<done>")
-        let result = is_success ? "<done:" : "<failed:"
-        
-        if let range = terminal_output.range(of: result)
+        if let start = terminal_output.range(of: "<done:")?.upperBound,
+           let end = terminal_output[start...].firstIndex(of: ">")
         {
-            let start = range.upperBound
-            
-            if let end = terminal_output[start...].firstIndex(of: ">")
-            {
-                let message = terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
-                
-                if !output.isEmpty
-                {
-                    output += "\n"
-                }
-                
-                output += message
-                return is_success
-            }
+            if !output.isEmpty { output += "\n" }
+            output += terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+            return true
         }
-        else if terminal_output.contains(is_success ? "<done>" : "<failed>")
+        if let start = terminal_output.range(of: "<failed:")?.upperBound,
+           let end = terminal_output[start...].firstIndex(of: ">")
         {
-            if !output.isEmpty
-            {
-                output += "\n"
-            }
-            
-            output += is_success ? "Done" : "Failed"
-            return is_success
+            if !output.isEmpty { output += "\n" }
+            output += terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+            return false
         }
-        else
+        if terminal_output.contains("<done>")
         {
-            if !output.isEmpty
-            {
-                output += "\n"
-            }
-            
-            output += "Unknown error"
+            if !output.isEmpty { output += "\n" }
+            output += "Done"
+            return true
+        }
+        if terminal_output.contains("<failed>")
+        {
+            if !output.isEmpty { output += "\n" }
+            output += "Failed"
             return false
         }
         
+        if !output.isEmpty { output += "\n" }
+        output += "Unknown error"
         return false
         // Get connection result
         /*if terminal_output.contains("<done>")
