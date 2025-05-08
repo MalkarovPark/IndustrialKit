@@ -1902,7 +1902,11 @@ public class Workspace: ObservableObject
             {
                 if element.to_indices[i] <= 255 && element.to_indices[i] >= 0 && (element.from_indices[i] < info_output.count)
                 {
-                    registers[safe: element.to_indices[i]] = info_output[element.from_indices[i]]
+                    //registers[safe: element.to_indices[i]] = info_output[element.from_indices[i]]
+                    DispatchQueue.main.async
+                    {
+                        self.registers[safe: element.to_indices[i]] = info_output[element.from_indices[i]]
+                    }
                 }
             }
         }
