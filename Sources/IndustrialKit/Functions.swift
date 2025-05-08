@@ -398,6 +398,36 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
     }
 }
 
+/*Test*/
+public func perform_terminal_app(at url: URL, with arguments: [String], timeout: TimeInterval? = nil, output_handler: @escaping (String) -> Void = { _ in })
+{
+    /*let command = "'\(url.path)' \(arguments.joined(separator: " "))" // Combine file path and arguments into one string
+     
+     let result = try? perform_terminal_command(command)
+     
+     return result*/
+    
+    //try perform_terminal_command("'\(url.path)' \(arguments.joined(separator: " "))")
+    
+    let command = "'\(url.path)' \(arguments.joined(separator: " "))"
+    var collected_output = ""
+    
+    do
+    {
+        try perform_terminal_command(command, timeout: timeout)
+        { output in
+            collected_output += output
+        }
+        
+        output_handler(collected_output)
+    }
+    catch
+    {
+        return output_handler(collected_output)
+    }
+}
+/*Test*/
+
 /**
  Converts a JSON string to an instance of the specified Codable type.
  
