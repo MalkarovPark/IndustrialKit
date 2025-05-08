@@ -164,9 +164,9 @@ open class RobotModule: IndustrialModule
         // Set visual model from internal module
         if let linked_name = linked_components["Model"]
         {
-            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
+            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
-                node = Tool.internal_modules[index].node
+                node = Robot.internal_modules[index].node
             }
         }
         else
