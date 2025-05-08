@@ -333,7 +333,22 @@ public class ExternalRobotModelController: RobotModelController
             { output in
                 let lines = output.split(separator: "\n").map { String($0) }
                 
+                let updates: [(String, String)] = lines.compactMap
+                {
+                    let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
+                    return components.count == 2 ? (components[0], components[1]) : nil
+                }
+                
                 DispatchQueue.main.async
+                {
+                    for (nodeName, actionString) in updates
+                    {
+                        set_position(for: self.nodes[safe: nodeName, default: SCNNode()], from: actionString)
+                    }
+                    self.is_nodes_updating = false
+                }
+                
+                /*DispatchQueue.main.async
                 {
                     for line in lines
                     {
@@ -345,7 +360,7 @@ public class ExternalRobotModelController: RobotModelController
                     }
                     
                     self.is_nodes_updating = false
-                }
+                }*/
             }
         }
         
