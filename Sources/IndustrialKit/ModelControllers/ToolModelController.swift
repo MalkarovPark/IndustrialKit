@@ -204,6 +204,8 @@ public class ExternalToolModelController: ToolModelController
         
         return floats*/
         
+        usleep(500000)
+        
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["info_output"], timeout: 1)
         else
         {
