@@ -341,7 +341,7 @@ public class ExternalRobotModelController: RobotModelController
             }
         }*/
         
-        DispatchQueue.global(qos: .background).async
+        DispatchQueue.global(qos: .utility).async
         {
             perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"),
                                  with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" },
