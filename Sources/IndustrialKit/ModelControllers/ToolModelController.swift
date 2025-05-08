@@ -190,19 +190,7 @@ public class ExternalToolModelController: ToolModelController
     open override var info_output: [Float]?
     {
         #if os(macOS)
-        /*var floats: [Float]?
-        
-        DispatchQueue.global(qos: .utility).async
-        {
-            perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["info_output"], timeout: 1)
-            { output in
-                let components = output.split(separator: " ")
-                
-                floats = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
-            }
-        }
-        
-        return floats*/
+        sleep(2)
         
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["info_output"], timeout: 1)
         else
