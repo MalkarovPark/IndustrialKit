@@ -325,7 +325,7 @@ public class ExternalRobotModelController: RobotModelController
         guard !is_nodes_updating else { return }
         is_nodes_updating = true
         
-        DispatchQueue.global(qos: .utility).async
+        DispatchQueue.global(qos: .userInteractive).async
         {
             perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"),
                                  with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" },
@@ -345,6 +345,7 @@ public class ExternalRobotModelController: RobotModelController
                     {
                         set_position(for: self.nodes[safe: nodeName, default: SCNNode()], from: actionString)
                     }
+                    
                     self.is_nodes_updating = false
                 }
                 
