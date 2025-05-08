@@ -320,7 +320,7 @@ public class ExternalRobotModelController: RobotModelController
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
         #if os(macOS)
-        DispatchQueue.global(qos: .background).async
+        /*DispatchQueue.global(qos: .background).async
         {
             perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" }, timeout: 1)
             { output in
@@ -342,8 +342,8 @@ public class ExternalRobotModelController: RobotModelController
                     set_position(for: self.nodes[safe: components[0], default: SCNNode()], from: components[1])
                 }
             }
-        }
-        /*perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" }, timeout: 1)
+        }*/
+        perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" }, timeout: 1)
         { output in
             // Split the output into lines
             let lines = output.split(separator: "\n").map { String($0) }
@@ -362,7 +362,7 @@ public class ExternalRobotModelController: RobotModelController
                 
                 set_position(for: self.nodes[safe: components[0], default: SCNNode()], from: components[1])
             }
-        }*/
+        }
         
         /*guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" }, timeout: 1)
         else
