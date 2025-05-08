@@ -316,35 +316,14 @@ public class ExternalRobotModelController: RobotModelController
     
     public var external_nodes_names = [String]()
     
-    private var is_updating = false
+    private var is_nodes_updating = false
     
     // MARK: Modeling
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
         #if os(macOS)
-        /*perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" }, timeout: 1)
-        { output in
-            // Split the output into lines
-            let lines = output.split(separator: "\n").map { String($0) }
-
-            for line in lines
-            {
-                // Split the line by space to separate node name and action string
-                let components = line.split(separator: " ", maxSplits: 1).map { String($0) }
-                
-                // Ensure there are two components: the node name and the action string
-                guard components.count == 2
-                else
-                {
-                    continue
-                }
-                
-                set_position(for: self.nodes[safe: components[0], default: SCNNode()], from: components[1])
-            }
-        }*/
-        
-        guard !is_updating else { return }
-        is_updating = true
+        guard !is_nodes_updating else { return }
+        is_nodes_updating = true
         
         DispatchQueue.global(qos: .userInitiated).async
         {
@@ -365,7 +344,7 @@ public class ExternalRobotModelController: RobotModelController
                         set_position(for: self.nodes[safe: components[0], default: SCNNode()], from: components[1])
                     }
                     
-                    self.is_updating = false
+                    self.is_nodes_updating = false
                 }
             }
         }
