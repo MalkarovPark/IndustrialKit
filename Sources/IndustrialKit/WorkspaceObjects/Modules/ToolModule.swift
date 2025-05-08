@@ -40,6 +40,7 @@ open class ToolModule: IndustrialModule
         self.connector = connector
     }
     
+    /// External init
     public override init(external_name: String)
     {
         super.init(external_name: external_name)

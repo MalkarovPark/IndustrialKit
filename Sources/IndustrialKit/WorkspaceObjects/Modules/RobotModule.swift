@@ -41,7 +41,12 @@ open class RobotModule: IndustrialModule
     {
         super.init(external_name: external_name)
         
-        components_import()
+        if let info = get_module_info()
+        {
+            external_module_info = info
+            
+            components_import()
+        }
     }
     
     open override var default_code_items: [String: String]
