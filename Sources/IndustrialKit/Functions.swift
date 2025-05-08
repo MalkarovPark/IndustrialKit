@@ -623,7 +623,6 @@ public func set_position(for node: SCNNode, from string: String)
            let w = Float(parameters[2])
         {
             node.eulerAngles = SCNVector3(r, p, w)
-            //node.eulerAngles = SCNVector3(r.to_deg, p.to_deg, w.to_deg)
         }
         else
         {
@@ -634,7 +633,7 @@ public func set_position(for node: SCNNode, from string: String)
         if parameters.count == 1,
            let r = Float(parameters[0])
         {
-            node.eulerAngles.x = CGFloat(r.to_deg)
+            node.eulerAngles.x = CGFloat(r)
         }
         else
         {
@@ -645,7 +644,7 @@ public func set_position(for node: SCNNode, from string: String)
         if parameters.count == 1,
            let p = Float(parameters[0])
         {
-            node.eulerAngles.y = CGFloat(p.to_deg)
+            node.eulerAngles.y = CGFloat(p)
         }
         else
         {
@@ -656,7 +655,7 @@ public func set_position(for node: SCNNode, from string: String)
         if parameters.count == 1,
            let w = Float(parameters[0])
         {
-            node.eulerAngles.z = CGFloat(w.to_deg)
+            node.eulerAngles.z = CGFloat(w)
         }
         else
         {
@@ -673,7 +672,7 @@ public func set_position(for node: SCNNode, from string: String)
            let w = Float(parameters[5])
         {
             node.position = SCNVector3(x, y, z)
-            node.eulerAngles = SCNVector3(r.to_deg, p.to_deg, w.to_deg)
+            node.eulerAngles = SCNVector3(r, p, w)
         }
         else
         {
