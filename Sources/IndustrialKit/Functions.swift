@@ -622,7 +622,11 @@ public func set_position(for node: SCNNode, from string: String)
            let p = Float(parameters[1]),
            let w = Float(parameters[2])
         {
-            node.eulerAngles = SCNVector3(r.to_rad, p.to_rad, w.to_rad)
+            node.eulerAngles.x = CGFloat(r.to_rad)
+            node.eulerAngles.y = CGFloat(p.to_rad)
+            node.eulerAngles.z = CGFloat(w.to_rad)
+            
+            //node.eulerAngles = SCNVector3(r.to_rad, p.to_rad, w.to_rad)
         }
         else
         {
