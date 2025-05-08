@@ -85,52 +85,63 @@ public class ExternalToolModelController: ToolModelController
     
     public var external_nodes_names = [String]()
     
-    // MARK: Performing
+    // MARK: Modeling
+    private var is_nodes_updating = false
+    
     open override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["nodes_perform", "\(code)"], timeout: 1)
-        else
-        {
-            return
-        }
-
-        // Split the output into lines
-        let lines = output.split(separator: "\n").map { String($0) }
+        guard !is_nodes_updating else { return }
+        is_nodes_updating = true
         
-        var completed = [Bool](repeating: false, count: lines.count)
-
-        for i in 0..<lines.count // line in lines
+        DispatchQueue.global(qos: .utility).async
         {
-            let line = lines[i]
-            if let range = line.range(of: " ")
-            {
-                // Split output into components
-                let name = String(line[..<range.lowerBound])
-                let command = String(line[range.upperBound...])
+            perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["nodes_perform", "\(code)"], timeout: 1)
+            { output in
+                // Split the output into lines
+                let lines = output.split(separator: "\n").map { String($0) }
                 
-                if let action = string_to_action(from: command)
+                var completed = [Bool](repeating: false, count: lines.count)
+
+                for i in 0..<lines.count // line in lines
                 {
-                    nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
-                        local_completion(index: i)
-                    })
+                    let line = lines[i]
+                    if let range = line.range(of: " ")
+                    {
+                        // Split output into components
+                        let name = String(line[..<range.lowerBound])
+                        let command = String(line[range.upperBound...])
+                        
+                        DispatchQueue.main.async
+                        {
+                            if let action = string_to_action(from: command)
+                            {
+                                self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
+                                    local_completion(index: i)
+                                })
+                            }
+                            
+                            self.is_nodes_updating = false
+                        }
+                    }
+                    else
+                    {
+                        return
+                    }
+                }
+                
+                func local_completion(index: Int)
+                {
+                    completed[index] = true
+                    
+                    if completed.allSatisfy({ $0 == true })
+                    {
+                        completion()
+                    }
                 }
             }
-            else
-            {
-                return
-            }
         }
         
-        func local_completion(index: Int)
-        {
-            completed[index] = true
-            
-            if completed.allSatisfy({ $0 == true })
-            {
-                completion()
-            }
-        }
         #else
         completion()
         #endif
@@ -179,6 +190,20 @@ public class ExternalToolModelController: ToolModelController
     open override var info_output: [Float]?
     {
         #if os(macOS)
+        /*var floats: [Float]?
+        
+        DispatchQueue.global(qos: .utility).async
+        {
+            perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["info_output"], timeout: 1)
+            { output in
+                let components = output.split(separator: " ")
+                
+                floats = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
+            }
+        }
+        
+        return floats*/
+        
         guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["info_output"], timeout: 1)
         else
         {
