@@ -316,6 +316,8 @@ public class ExternalRobotModelController: RobotModelController
     
     public var external_nodes_names = [String]()
     
+    private var is_updating = false
+    
     // MARK: Modeling
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
@@ -341,7 +343,10 @@ public class ExternalRobotModelController: RobotModelController
             }
         }*/
         
-        DispatchQueue.global(qos: .utility).async
+        guard !is_updating else { return }
+        is_updating = true
+        
+        DispatchQueue.global(qos: .userInitiated).async
         {
             perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"),
                                  with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" },
@@ -359,29 +364,11 @@ public class ExternalRobotModelController: RobotModelController
                         
                         set_position(for: self.nodes[safe: components[0], default: SCNNode()], from: components[1])
                     }
+                    
+                    self.is_updating = false
                 }
             }
         }
-        
-        /*DispatchQueue.global(qos: .userInitiated).async
-        {
-            perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" }, timeout: 1)
-            { output in
-                let lines = output.split(separator: "\n").map { String($0) }
-                
-                DispatchQueue.main.async
-                {
-                    for line in lines
-                    {
-                        let components = line.split(separator: " ", maxSplits: 1).map { String($0) }
-                        
-                        guard components.count == 2 else { continue }
-                        
-                        self.set_position(for: self.nodes[safe: components[0], default: SCNNode()], from: components[1])
-                    }
-                }
-            }
-        }*/
         
         /*guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" }, timeout: 1)
         else
