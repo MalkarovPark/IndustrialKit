@@ -394,7 +394,8 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
     }
     catch
     {
-        return nil
+        return collected_output
+        //return nil
     }
 }
 
