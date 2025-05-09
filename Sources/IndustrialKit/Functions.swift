@@ -390,13 +390,15 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
         { output in
             collected_output += output
         }
-        return collected_output
+        //return collected_output
     }
     catch
     {
-        return collected_output
+        //return collected_output
         //return nil
     }
+    
+    return collected_output
 }
 
 /*Test*/
