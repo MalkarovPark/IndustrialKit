@@ -253,42 +253,36 @@ public func perform_terminal_command(_ command: String) throws -> String?
  */
 public func perform_terminal_command(_ command: String, timeout: TimeInterval? = nil, output_handler: @escaping (String) -> Void = { _ in }) throws
 {
-    let task = Process()
-    let pipe = Pipe()
+    let task          = Process()
+    let output_pipe   = Pipe()
+    let error_pipe    = Pipe()
     
-    task.standardOutput = pipe
-    task.standardError = pipe
-    task.arguments = ["-c", command]
-    task.executableURL = URL(fileURLWithPath: "/bin/zsh")
-    task.standardInput = nil
+    task.standardOutput = output_pipe
+    task.standardError  = error_pipe
+    task.arguments      = ["-c", "stdbuf -oL -eL \(command)"]
+    task.executableURL  = URL(fileURLWithPath: "/bin/zsh")
+    task.standardInput  = nil
     
-    let fileHandle = pipe.fileHandleForReading
-    var outputData = Data()
-    let semaphore = DispatchSemaphore(value: 0)
+    let semaphore   = DispatchSemaphore(value: 0)
     
-    try task.run()
-    
-    DispatchQueue.global(qos: .userInitiated).async
-    {
-        while task.isRunning
-        {
-            let data = fileHandle.availableData
-            if data.isEmpty { break }
-            
-            outputData.append(data)
-            if let output = String(data: data, encoding: .utf8)
-            {
-                output_handler(output)
-            }
-        }
-        
-        // Read any remaining data
-        let remainingData = fileHandle.readDataToEndOfFile()
-        if let output = String(data: remainingData, encoding: .utf8)
+    let read_handler: (FileHandle) -> Void =
+    { handle in
+        let data = handle.availableData
+        if !data.isEmpty,
+           let output = String(data: data, encoding: .utf8)
         {
             output_handler(output)
         }
-        
+    }
+    
+    output_pipe.fileHandleForReading.readabilityHandler = read_handler
+    error_pipe.fileHandleForReading.readabilityHandler  = read_handler
+    
+    try task.run()
+    
+    DispatchQueue.global().async
+    {
+        task.waitUntilExit()
         semaphore.signal()
     }
     
@@ -296,21 +290,40 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
     if let timeout = timeout
     {
         result = semaphore.wait(timeout: .now() + timeout)
-        if result == .timedOut
-        {
-            task.terminate()
-            throw NSError(domain: "TerminalCommandError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Command timed out"])
-        }
     }
     else
     {
         semaphore.wait()
+        result = .success
     }
     
-    if task.terminationStatus != 0 {
-        throw NSError(domain: "TerminalCommandError", code: Int(task.terminationStatus), userInfo: [NSLocalizedDescriptionKey: "Command failed with status \(task.terminationStatus)"])
+    output_pipe.fileHandleForReading.readabilityHandler = nil
+    error_pipe.fileHandleForReading.readabilityHandler  = nil
+    
+    if result == .timedOut
+    {
+        if task.isRunning
+        {
+            task.terminate()
+        }
+        
+        throw NSError(
+            domain: "TerminalCommandError",
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "Command timed out"]
+        )
+    }
+    
+    if task.terminationStatus != 0
+    {
+        throw NSError(
+            domain: "TerminalCommandError",
+            code: Int(task.terminationStatus),
+            userInfo: [NSLocalizedDescriptionKey: "Command failed with status \(task.terminationStatus)"]
+        )
     }
 }
+
 /*{
     let task = Process()
     let pipe = Pipe()
