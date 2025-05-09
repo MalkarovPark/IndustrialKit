@@ -266,6 +266,65 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
     var outputData = Data()
     let semaphore = DispatchSemaphore(value: 0)
     
+    try task.run()
+    
+    DispatchQueue.global(qos: .userInitiated).async
+    {
+        while task.isRunning
+        {
+            let data = fileHandle.availableData
+            if data.isEmpty { break }
+            
+            outputData.append(data)
+            if let output = String(data: data, encoding: .utf8)
+            {
+                output_handler(output)
+            }
+        }
+        
+        // Read any remaining data
+        let remainingData = fileHandle.readDataToEndOfFile()
+        if let output = String(data: remainingData, encoding: .utf8)
+        {
+            output_handler(output)
+        }
+        
+        semaphore.signal()
+    }
+    
+    let result: DispatchTimeoutResult
+    if let timeout = timeout
+    {
+        result = semaphore.wait(timeout: .now() + timeout)
+        if result == .timedOut
+        {
+            task.terminate()
+            throw NSError(domain: "TerminalCommandError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Command timed out"])
+        }
+    }
+    else
+    {
+        semaphore.wait()
+    }
+    
+    if task.terminationStatus != 0 {
+        throw NSError(domain: "TerminalCommandError", code: Int(task.terminationStatus), userInfo: [NSLocalizedDescriptionKey: "Command failed with status \(task.terminationStatus)"])
+    }
+}
+/*{
+    let task = Process()
+    let pipe = Pipe()
+    
+    task.standardOutput = pipe
+    task.standardError = pipe
+    task.arguments = ["-c", command]
+    task.executableURL = URL(fileURLWithPath: "/bin/zsh")
+    task.standardInput = nil
+    
+    let fileHandle = pipe.fileHandleForReading
+    var outputData = Data()
+    let semaphore = DispatchSemaphore(value: 0)
+    
     fileHandle.readabilityHandler =
     { handle in
         let data = handle.availableData
@@ -321,7 +380,7 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
             userInfo: [NSLocalizedDescriptionKey: "Command failed with status \(task.terminationStatus)"]
         )
     }
-}
+}*/
 
 /*public func perform_terminal_command(_ command: String,  output_handler: @escaping (String) -> Void = { _ in }) throws
 {
