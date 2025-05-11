@@ -414,7 +414,7 @@ public func send_via_unix_socket(socket_path: String, command: String, completio
         }
         
         // Send command
-        let command_to_send = (command + "\n").utf8CString
+        let command_to_send = command.utf8CString.dropLast() //(command + "\n").utf8CString
         command_to_send.withUnsafeBufferPointer
         { buffer_ptr in
             write(sockfd, buffer_ptr.baseAddress!, buffer_ptr.count)
@@ -481,7 +481,7 @@ public func send_via_unix_socket(socket_path: String, command: String) -> String
     }
     
     // Send command
-    let command_to_send = (command + "\n").utf8CString
+    let command_to_send = command.utf8CString.dropLast() //(command + "\n").utf8CString
     command_to_send.withUnsafeBufferPointer
     { buffer_ptr in
         write(sockfd, buffer_ptr.baseAddress!, buffer_ptr.count)
