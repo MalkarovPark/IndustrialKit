@@ -343,7 +343,7 @@ public class ExternalRobotModelController: RobotModelController
                 {
                     for (nodeName, actionString) in updates
                     {
-                        set_position(for: self.nodes[safe: nodeName, default: SCNNode()], from: actionString)
+                        //set_position(for: self.nodes[safe: nodeName, default: SCNNode()], from: actionString)
                     }
                     
                     self.is_nodes_updating = false
