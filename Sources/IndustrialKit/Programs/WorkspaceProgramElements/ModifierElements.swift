@@ -366,6 +366,8 @@ public class ChangerModifierElement: ModifierElement
      */
     public static func external_modules_import(by names: [String])
     {
+        Changer.external_modules.removeAll()
+        
         for name in names
         {
             Changer.external_modules.append(ChangerModule(external_name: name))

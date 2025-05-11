@@ -143,6 +143,8 @@ public class Part: WorkspaceObject
      */
     public static func external_modules_import(by names: [String])
     {
+        Part.external_modules.removeAll()
+        
         for name in names
         {
             Part.external_modules.append(PartModule(external_name: name))

@@ -140,6 +140,8 @@ public class Tool: WorkspaceObject
      */
     public static func external_modules_import(by names: [String])
     {
+        Tool.external_modules.removeAll()
+        
         for name in names
         {
             Tool.external_modules.append(ToolModule(external_name: name))

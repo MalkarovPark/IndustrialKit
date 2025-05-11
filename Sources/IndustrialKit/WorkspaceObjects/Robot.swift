@@ -148,6 +148,8 @@ public class Robot: WorkspaceObject
      */
     public static func external_modules_import(by names: [String])
     {
+        Robot.external_modules.removeAll()
+        
         for name in names
         {
             Robot.external_modules.append(RobotModule(external_name: name))
