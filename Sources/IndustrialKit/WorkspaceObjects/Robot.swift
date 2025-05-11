@@ -141,6 +141,19 @@ public class Robot: WorkspaceObject
         module_import(modules[index])
     }
     
+    /**
+     Imports external modules by names.
+     - Parameters:
+        - name: A list of external modules names.
+     */
+    public static func external_modules_import(by names: [String])
+    {
+        for name in names
+        {
+            Robot.external_modules.append(RobotModule(external_name: name))
+        }
+    }
+    
     private func apply_statistics_flags()
     {
         model_controller.get_statistics = get_statistics

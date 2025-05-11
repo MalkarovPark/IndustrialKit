@@ -133,6 +133,19 @@ public class Tool: WorkspaceObject
         module_import(modules[index])
     }
     
+    /**
+     Imports external modules by names.
+     - Parameters:
+        - name: A list of external modules names.
+     */
+    public static func external_modules_import(by names: [String])
+    {
+        for name in names
+        {
+            Tool.external_modules.append(ToolModule(external_name: name))
+        }
+    }
+    
     private func apply_statistics_flags()
     {
         model_controller.get_statistics = get_statistics

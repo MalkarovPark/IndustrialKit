@@ -136,6 +136,19 @@ public class Part: WorkspaceObject
         module_import(modules[index])
     }
     
+    /**
+     Imports external modules by names.
+     - Parameters:
+        - name: A list of external modules names.
+     */
+    public static func external_modules_import(by names: [String])
+    {
+        for name in names
+        {
+            Part.external_modules.append(PartModule(external_name: name))
+        }
+    }
+    
     private func color_import()
     {
         if node != nil

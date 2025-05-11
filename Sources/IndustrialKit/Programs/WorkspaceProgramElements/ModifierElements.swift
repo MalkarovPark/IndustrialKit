@@ -358,6 +358,19 @@ public class ChangerModifierElement: ModifierElement
         
         module_import(modules[index])
     }
+    
+    /**
+     Imports external modules by names.
+     - Parameters:
+        - name: A list of external modules names.
+     */
+    public static func external_modules_import(by names: [String])
+    {
+        for name in names
+        {
+            Changer.external_modules.append(ChangerModule(external_name: name))
+        }
+    }
 }
 
 typealias Changer = ChangerModifierElement
