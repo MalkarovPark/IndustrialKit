@@ -212,33 +212,6 @@ func clone_codable<T: Codable>(_ object: T) -> T?
 #if os(macOS)
 //MARK: - Terminal Functions
 /**
- Performs terminal command.
- 
- - Parameters:
-    - command: A terminal command.
- 
- - Returns: Text of command output.
- */
-/*@discardableResult
-public func perform_terminal_command(_ command: String) throws -> String?
-{
-    let task = Process()
-    let pipe = Pipe()
-    
-    task.standardOutput = pipe
-    task.standardError = pipe
-    task.arguments = ["-c", command]
-    task.executableURL = URL(fileURLWithPath: "/bin/zsh")
-    task.standardInput = nil
-
-    try task.run()
-    
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    
-    return String(data: data, encoding: .utf8)
-}*/
-
-/**
  Performs a terminal command and provides output asynchronously.
 
  - Parameters:
@@ -323,45 +296,6 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
     }
 }
 
-/*public func perform_terminal_command(_ command: String,  output_handler: @escaping (String) -> Void = { _ in }) throws
-{
-    let task = Process()
-    let pipe = Pipe()
-    
-    task.standardOutput = pipe
-    task.standardError = pipe
-    task.arguments = ["-c", command]
-    task.executableURL = URL(fileURLWithPath: "/bin/zsh")
-    task.standardInput = nil
-    
-    let fileHandle = pipe.fileHandleForReading
-    
-    task.launch()
-    
-    
-    fileHandle.readabilityHandler =
-    { fileHandle in
-        let data = fileHandle.availableData
-        if data.isEmpty
-        {
-            return
-        }
-        if let output = String(data: data, encoding: .utf8)
-        {
-            output_handler(output)
-        }
-    }
-    
-    task.waitUntilExit()
-    
-    if task.terminationStatus != 0
-    {
-        throw NSError(domain: "TerminalCommandError", code: Int(task.terminationStatus), userInfo: [NSLocalizedDescriptionKey: "Command failed with status \(task.terminationStatus)"])
-    }
-    
-    fileHandle.readabilityHandler = nil
-}*/
-
 /**
  Performs terminal app.
  
@@ -399,17 +333,8 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
     return collected_output
 }
 
-/*Test*/
 public func perform_terminal_app(at url: URL, with arguments: [String], timeout: TimeInterval? = nil, output_handler: @escaping (String) -> Void = { _ in })
 {
-    /*let command = "'\(url.path)' \(arguments.joined(separator: " "))" // Combine file path and arguments into one string
-     
-     let result = try? perform_terminal_command(command)
-     
-     return result*/
-    
-    //try perform_terminal_command("'\(url.path)' \(arguments.joined(separator: " "))")
-    
     let command = "'\(url.path)' \(arguments.joined(separator: " "))"
     var collected_output = ""
     
@@ -427,8 +352,159 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
         return output_handler(collected_output)
     }
 }
-/*Test*/
 
+#if os(macOS)
+//MARK: - Socket Works
+/**
+ Sends a command to a UNIX socket and receives the response asynchronously.
+
+ - Parameters:
+    - socket_path: A file system path to the UNIX domain socket.
+    - command: The command string to send to the socket.
+    - completion: A closure that returns the response string from the socket.
+
+ - Note: The response is returned on the main thread.
+ */
+public func send_via_unix_socket(socket_path: String, command: String, completion: @escaping (String) -> Void)
+{
+    DispatchQueue.global(qos: .userInitiated).async
+    {
+        // Create socket
+        let sockfd = socket(AF_UNIX, SOCK_STREAM, 0)
+        guard sockfd >= 0 else
+        {
+            DispatchQueue.main.async
+            {
+                completion("Socket creation failed")
+            }
+            return
+        }
+        
+        // Setup socket address
+        var addr = sockaddr_un()
+        addr.sun_family = sa_family_t(AF_UNIX)
+        
+        // Fill path into sun_path
+        let path_cstring = socket_path.utf8CString
+        if let baseAddress = path_cstring.withUnsafeBufferPointer({ $0.baseAddress })
+        {
+            strncpy(&addr.sun_path.0, baseAddress, MemoryLayout.size(ofValue: addr.sun_path))
+        }
+        
+        let addr_size = socklen_t(MemoryLayout.size(ofValue: addr))
+        
+        // Connect to socket
+        let result = withUnsafePointer(to: &addr)
+        {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1)
+            {
+                connect(sockfd, $0, addr_size)
+            }
+        }
+        
+        // Check connection result
+        guard result == 0 else
+        {
+            close(sockfd)
+            DispatchQueue.main.async
+            {
+                completion("Failed to connect to UNIX socket")
+            }
+            return
+        }
+        
+        // Send command
+        let command_to_send = (command + "\n").utf8CString
+        command_to_send.withUnsafeBufferPointer
+        { buffer_ptr in
+            write(sockfd, buffer_ptr.baseAddress!, buffer_ptr.count)
+        }
+        
+        // Read response
+        var buffer = [UInt8](repeating: 0, count: 1024)
+        let bytes_read = read(sockfd, &buffer, buffer.count)
+        
+        close(sockfd)
+        
+        let response = (bytes_read > 0)
+        ? String(bytes: buffer.prefix(bytes_read), encoding: .utf8) ?? "(invalid)" : "No response"
+        
+        // Call completion on main thread
+        DispatchQueue.main.async
+        {
+            completion(response.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+    }
+}
+
+/**
+ Sends a command to a UNIX socket and returns the response synchronously.
+
+ - Parameters:
+    - socket_path: A file system path to the UNIX domain socket.
+    - command: The command string to send to the socket.
+
+ - Returns: The response string from the socket, or `nil` if an error occurred.
+ */
+public func send_via_unix_socket(socket_path: String, command: String) -> String?
+{
+    // Create socket
+    let sockfd = socket(AF_UNIX, SOCK_STREAM, 0)
+    guard sockfd >= 0 else
+    {
+        return "Socket creation failed"
+    }
+    
+    // Setup socket address
+    var addr = sockaddr_un()
+    addr.sun_family = sa_family_t(AF_UNIX)
+    
+    let path_cstring = socket_path.utf8CString
+    if let baseAddress = path_cstring.withUnsafeBufferPointer({ $0.baseAddress })
+    {
+        strncpy(&addr.sun_path.0, baseAddress, MemoryLayout.size(ofValue: addr.sun_path))
+    }
+    
+    let addr_size = socklen_t(MemoryLayout.size(ofValue: addr))
+    
+    // Connect to socket
+    let result = withUnsafePointer(to: &addr) {
+        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+            connect(sockfd, $0, addr_size)
+        }
+    }
+    
+    guard result == 0 else
+    {
+        close(sockfd)
+        return "Failed to connect to UNIX socket"
+    }
+    
+    // Send command
+    let command_to_send = (command + "\n").utf8CString
+    command_to_send.withUnsafeBufferPointer
+    { buffer_ptr in
+        write(sockfd, buffer_ptr.baseAddress!, buffer_ptr.count)
+    }
+    
+    // Read response
+    var buffer = [UInt8](repeating: 0, count: 1024)
+    let bytes_read = read(sockfd, &buffer, buffer.count)
+    
+    close(sockfd)
+    
+    if bytes_read > 0
+    {
+        return String(bytes: buffer.prefix(bytes_read), encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    else
+    {
+        return "No response"
+    }
+}
+#endif
+
+//MARK: - String functions
 /**
  Converts a JSON string to an instance of the specified Codable type.
  
