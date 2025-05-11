@@ -333,7 +333,7 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
     return collected_output
 }
 
-public func perform_terminal_app(at url: URL, with arguments: [String], timeout: TimeInterval? = nil, output_handler: @escaping (String) -> Void = { _ in })
+public func perform_terminal_app(at url: URL, with arguments: [String] = [String](), timeout: TimeInterval? = nil, output_handler: @escaping (String) -> Void = { _ in })
 {
     let command = "'\(url.path)' \(arguments.joined(separator: " "))"
     var collected_output = ""

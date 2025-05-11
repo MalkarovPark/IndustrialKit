@@ -366,11 +366,31 @@ public class ChangerModifierElement: ModifierElement
      */
     public static func external_modules_import(by names: [String])
     {
+        external_modules_server_stop()
         Changer.external_modules.removeAll()
         
         for name in names
         {
             Changer.external_modules.append(ChangerModule(external_name: name))
+        }
+        external_modules_server_start()
+    }
+    
+    /// Start all program components in module.
+    public static func external_modules_server_start()
+    {
+        for module in external_modules
+        {
+            module.start_program_components()
+        }
+    }
+    
+    /// Stop all program components in module.
+    public static func external_modules_server_stop()
+    {
+        for module in external_modules
+        {
+            module.stop_program_components()
         }
     }
 }

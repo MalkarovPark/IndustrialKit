@@ -68,7 +68,7 @@ open class ChangerModule: IndustrialModule
     
     // MARK: - Components
     /// A main external code file name
-    public var code_file_name: String { "Count" }
+    //public var code_file_name: String { "Count" }
     
     /**
      Performs register conversion within a class instance.
@@ -78,6 +78,16 @@ open class ChangerModule: IndustrialModule
     public var change: (inout [Float]) -> Void = { _ in }
     
     #if os(macOS)
+    override open func start_program_components()
+    {
+        DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Change")) }
+    }
+    
+    override open func stop_program_components()
+    {
+        send_via_unix_socket(socket_path: "/tmp/\(name)_change_socket", command: "stop")
+    }
+    
     /**
      Performs register data change within an external script.
      - Parameters:

@@ -127,6 +127,18 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     /// A scene passed to object.
     open var node = SCNNode()
     
+    /// Start all program components in module.
+    open func start_program_components()
+    {
+        
+    }
+    
+    /// Stop all program components in module.
+    open func stop_program_components()
+    {
+        
+    }
+    
     // MARK: - Import functions
     /// A module package url of external module.
     open var package_url: URL

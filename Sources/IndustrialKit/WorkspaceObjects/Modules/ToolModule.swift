@@ -237,6 +237,18 @@ open class ToolModule: IndustrialModule
         }
     }
     
+    override open func start_program_components()
+    {
+        DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller")) }
+        DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector")) }
+    }
+    
+    override open func stop_program_components()
+    {
+        send_via_unix_socket(socket_path: "/tmp/\(name)_tool_controller_socket", command: "stop")
+        send_via_unix_socket(socket_path: "/tmp/\(name)_tool_connector_socket", command: "stop")
+    }
+    
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
