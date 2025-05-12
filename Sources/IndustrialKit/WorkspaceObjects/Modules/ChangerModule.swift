@@ -80,7 +80,8 @@ open class ChangerModule: IndustrialModule
     #if os(macOS)
     override open func start_program_components()
     {
-        DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Change")) }
+        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Change"), with: [" > /dev/null 2>&1 &"])
+        //DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Change")) }
     }
     
     override open func stop_program_components()
