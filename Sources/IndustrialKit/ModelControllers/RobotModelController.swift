@@ -327,9 +327,8 @@ public class ExternalRobotModelController: RobotModelController
         
         DispatchQueue.global(qos: .utility).async
         {
-            perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"),
-                                 with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" },
-                                 timeout: 1)
+            send_via_unix_socket(at: "/tmp/\(self.module_name)_robot_controller_socket",
+                                 with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
             { output in
                 let lines = output.split(separator: "\n").map { String($0) }
                 
@@ -356,7 +355,7 @@ public class ExternalRobotModelController: RobotModelController
     open override func reset_nodes()
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["reset_nodes"], timeout: 1)
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_controller_socket", with: ["reset_nodes"])
         else
         {
             return
@@ -386,7 +385,7 @@ public class ExternalRobotModelController: RobotModelController
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_charts_data"], timeout: 1)
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_controller_socket", with: ["updated_charts_data"])
         else
         {
             return nil
@@ -404,7 +403,7 @@ public class ExternalRobotModelController: RobotModelController
     open override func updated_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["updated_states_data"], timeout: 1)
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_controller_socket", with: ["updated_states_data"])
         else
         {
             return nil
@@ -422,7 +421,7 @@ public class ExternalRobotModelController: RobotModelController
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_charts_data"], timeout: 1)
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_controller_socket", with: ["initial_charts_data"])
         else
         {
             return nil
@@ -440,7 +439,7 @@ public class ExternalRobotModelController: RobotModelController
     open override func initial_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Controller"), with: ["initial_states_data"], timeout: 1)
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_controller_socket", with: ["initial_states_data"])
         else
         {
             return nil

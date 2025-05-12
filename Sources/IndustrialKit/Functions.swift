@@ -377,7 +377,7 @@ public func perform_terminal_app_sync(at url: URL, with arguments: [String])
 
  - Note: The response is returned on the main thread.
  */
-public func send_via_unix_socket(socket_path: String, command: String, completion: @escaping (String) -> Void)
+public func send_via_unix_socket(at socket_path: String, command: String, completion: @escaping (String) -> Void)
 {
     DispatchQueue.global(qos: .userInitiated).async
     {
@@ -450,6 +450,21 @@ public func send_via_unix_socket(socket_path: String, command: String, completio
 }
 
 /**
+ Sends a command to a UNIX socket and receives the response asynchronously.
+
+ - Parameters:
+    - socket_path: A file system path to the UNIX domain socket.
+    - arguments: A string array of arguments.
+    - completion: A closure that returns the response string from the socket.
+
+ - Note: The response is returned on the main thread.
+ */
+public func send_via_unix_socket(at socket_path: String, with arguments: [String], completion: @escaping (String) -> Void)
+{
+    send_via_unix_socket(at: socket_path, command: arguments.joined(separator: " "), completion: completion)
+}
+
+/**
  Sends a command to a UNIX socket and returns the response synchronously.
 
  - Parameters:
@@ -458,7 +473,7 @@ public func send_via_unix_socket(socket_path: String, command: String, completio
 
  - Returns: The response string from the socket, or `nil` if an error occurred.
  */
-public func send_via_unix_socket(socket_path: String, command: String) -> String?
+public func send_via_unix_socket(at socket_path: String, command: String) -> String?
 {
     // Create socket
     let sockfd = socket(AF_UNIX, SOCK_STREAM, 0)
@@ -513,6 +528,20 @@ public func send_via_unix_socket(socket_path: String, command: String) -> String
     {
         return "No response"
     }
+}
+
+/**
+ Sends a command to a UNIX socket and returns the response synchronously.
+
+ - Parameters:
+    - socket_path: A file system path to the UNIX domain socket.
+    - arguments: A string array of arguments.
+
+ - Returns: The response string from the socket, or `nil` if an error occurred.
+ */
+public func send_via_unix_socket(at socket_path: String, with arguments: [String]) -> String?
+{
+    return send_via_unix_socket(at: socket_path, command: arguments.joined(separator: " "))
 }
 #endif
 

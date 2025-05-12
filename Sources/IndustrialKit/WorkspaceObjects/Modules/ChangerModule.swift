@@ -85,7 +85,7 @@ open class ChangerModule: IndustrialModule
     
     override open func stop_program_components()
     {
-        send_via_unix_socket(socket_path: "/tmp/\(name)_change_socket", command: "stop")
+        send_via_unix_socket(at: "/tmp/\(name)_change_socket", command: "stop")
     }
     
     /**
@@ -97,13 +97,13 @@ open class ChangerModule: IndustrialModule
      */
     private func external_change_func(registers: inout [Float]) -> Void
     {
-        guard let output: String = perform_terminal_app(at: package_url.appendingPathComponent("/Code/Change"), with: registers.map { String($0) })
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(name)_change_socket", with: ["change"] + registers.map { String($0) })
         else
         {
             return
         }
         
-        registers = output.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: " ").compactMap { Float($0) } // .split(separator: " ").compactMap { Float($0) }
+        registers = output.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: " ").compactMap { Float($0) }
     }
     #endif
     
