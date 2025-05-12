@@ -85,7 +85,7 @@ open class ChangerModule: IndustrialModule
     
     override open func stop_program_components()
     {
-        send_via_unix_socket(at: "/tmp/\(name)_change_socket", command: "stop")
+        send_via_unix_socket(at: "/tmp/\(name.code_correct_format)_change_socket", command: "stop")
     }
     
     /**

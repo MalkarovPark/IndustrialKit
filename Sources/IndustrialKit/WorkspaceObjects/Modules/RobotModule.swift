@@ -190,7 +190,7 @@ open class RobotModule: IndustrialModule
         else
         {
             #if os(macOS)
-            model_controller = ExternalRobotModelController(name, package_url: package_url, nodes_names: external_module_info?.nodes_names ?? [String]())
+            model_controller = ExternalRobotModelController(name.code_correct_format, package_url: package_url, nodes_names: external_module_info?.nodes_names ?? [String]())
             #endif
         }
         
@@ -205,7 +205,7 @@ open class RobotModule: IndustrialModule
         else
         {
             #if os(macOS)
-            connector = ExternalRobotConnector(name, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
+            connector = ExternalRobotConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
             #endif
         }
     }

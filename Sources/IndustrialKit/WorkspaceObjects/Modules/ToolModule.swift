@@ -217,7 +217,7 @@ open class ToolModule: IndustrialModule
         else
         {
             #if os(macOS)
-            model_controller = ExternalToolModelController(name, package_url: package_url, nodes_names: external_module_info?.nodes_names ?? [String]())
+            model_controller = ExternalToolModelController(name.code_correct_format, package_url: package_url, nodes_names: external_module_info?.nodes_names ?? [String]())
             #endif
         }
         
@@ -232,7 +232,7 @@ open class ToolModule: IndustrialModule
         else
         {
             #if os(macOS)
-            connector = ExternalToolConnector(name, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
+            connector = ExternalToolConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
             #endif
         }
     }
