@@ -158,6 +158,7 @@ public class Robot: WorkspaceObject
         {
             Robot.external_modules.append(RobotModule(external_name: name))
         }
+        
         #if os(macOS)
         external_modules_server_start()
         #endif
