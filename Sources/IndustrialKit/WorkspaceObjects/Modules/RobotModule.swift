@@ -211,17 +211,18 @@ open class RobotModule: IndustrialModule
     }
     
     #if os(macOS)
-    //private var controller_program_component_stopped: Bool = true
-    //private var connector_program_component_stopped: Bool = true
+    private var controller_program_component_stopped: Bool = true
+    private var connector_program_component_stopped: Bool = true
     
     override open func start_program_components()
     {
-        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["&"])
-        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"), with: ["&"])
+        //perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["&"])
+        //perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"), with: ["&"])
+        
         /*DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller")) }
         DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector")) }*/
         
-        /*DispatchQueue.global(qos: .background).async
+        DispatchQueue.global(qos: .background).async
         {
             if self.controller_program_component_stopped
             {
@@ -239,7 +240,7 @@ open class RobotModule: IndustrialModule
                 perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"))
                 self.connector_program_component_stopped = true
             }
-        }*/
+        }
     }
     
     override open func stop_program_components()
