@@ -366,14 +366,20 @@ public class ChangerModifierElement: ModifierElement
      */
     public static func external_modules_import(by names: [String])
     {
+        #if os(macOS)
         external_modules_server_stop()
+        #endif
+        
         Changer.external_modules.removeAll()
         
         for name in names
         {
             Changer.external_modules.append(ChangerModule(external_name: name))
         }
+        
+        #if os(macOS)
         external_modules_server_start()
+        #endif
     }
     
     /// Start all program components in module.
