@@ -366,9 +366,9 @@ public class ChangerModifierElement: ModifierElement
      */
     public static func external_modules_import(by names: [String])
     {
-        #if os(macOS)
-        external_modules_server_stop()
-        #endif
+        /*#if os(macOS)
+        external_modules_servers_stop()
+        #endif*/
         
         Changer.external_modules.removeAll()
         
@@ -377,14 +377,14 @@ public class ChangerModifierElement: ModifierElement
             Changer.external_modules.append(ChangerModule(external_name: name))
         }
         
-        #if os(macOS)
-        external_modules_server_start()
-        #endif
+        /*#if os(macOS)
+        external_modules_servers_start()
+        #endif*/
     }
     
     #if os(macOS)
     /// Start all program components in module.
-    public static func external_modules_server_start()
+    public static func external_modules_servers_start()
     {
         for module in external_modules
         {
@@ -393,7 +393,7 @@ public class ChangerModifierElement: ModifierElement
     }
     
     /// Stop all program components in module.
-    public static func external_modules_server_stop()
+    public static func external_modules_servers_stop()
     {
         for module in external_modules
         {

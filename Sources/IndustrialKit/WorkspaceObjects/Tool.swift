@@ -140,9 +140,9 @@ public class Tool: WorkspaceObject
      */
     public static func external_modules_import(by names: [String])
     {
-        #if os(macOS)
-        external_modules_server_stop()
-        #endif
+        /*#if os(macOS)
+        external_modules_servers_stop()
+        #endif*/
         
         Tool.external_modules.removeAll()
         
@@ -151,14 +151,14 @@ public class Tool: WorkspaceObject
             Tool.external_modules.append(ToolModule(external_name: name))
         }
         
-        #if os(macOS)
-        external_modules_server_start()
-        #endif
+        /*#if os(macOS)
+        external_modules_servers_start()
+        #endif*/
     }
     
     #if os(macOS)
     /// Start all program components in module.
-    public static func external_modules_server_start()
+    public static func external_modules_servers_start()
     {
         for module in external_modules
         {
@@ -167,7 +167,7 @@ public class Tool: WorkspaceObject
     }
     
     /// Stop all program components in module.
-    public static func external_modules_server_stop()
+    public static func external_modules_servers_stop()
     {
         for module in external_modules
         {
