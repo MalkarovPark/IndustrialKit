@@ -228,7 +228,7 @@ open class RobotModule: IndustrialModule
             {
                 self.controller_program_component_stopped = false
                 perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["&"])
-                self.controller_program_component_stopped = true
+                //self.controller_program_component_stopped = true
             }
         }
         
@@ -238,7 +238,7 @@ open class RobotModule: IndustrialModule
             {
                 self.connector_program_component_stopped = false
                 perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"), with: ["&"])
-                self.connector_program_component_stopped = true
+                //self.connector_program_component_stopped = true
             }
         }
     }
