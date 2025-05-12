@@ -80,7 +80,7 @@ open class ChangerModule: IndustrialModule
     #if os(macOS)
     override open func start_program_components()
     {
-        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Change"), with: [" > /dev/null 2>&1 &"])
+        perform_terminal_app_sync(at: self.package_url.appendingPathComponent("/Code/Change"), with: [" > /dev/null 2>&1 &"])
     }
     
     override open func stop_program_components()

@@ -351,6 +351,18 @@ public func perform_terminal_app(at url: URL, with arguments: [String] = [String
         }
     }
 }
+
+public func perform_terminal_app_sync(at url: URL, with arguments: [String])
+{
+    do
+    {
+        try perform_terminal_command("'\(url.path)' \(arguments.joined(separator: " "))")
+    }
+    catch
+    {
+        
+    }
+}
 #endif
 
 #if os(macOS)
