@@ -352,6 +352,7 @@ public func perform_terminal_app(at url: URL, with arguments: [String] = [String
         return output_handler(collected_output)
     }
 }
+#endif
 
 #if os(macOS)
 //MARK: - Socket Works
@@ -536,6 +537,7 @@ public func string_to_codable<T: Codable>(from string: String) -> T?
     }
 }
 
+#if os(macOS)
 /**
  Converts a string to a SceneKit action.
  

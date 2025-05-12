@@ -238,33 +238,10 @@ open class ToolModule: IndustrialModule
     }
     
     #if os(macOS)
-    private var controller_program_component_stopped: Bool = true
-    private var connector_program_component_stopped: Bool = true
-    
     override open func start_program_components()
     {
-        /*DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller")) }
-        DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector")) }*/
-        
-        /*DispatchQueue.global(qos: .background).async
-        {
-            if self.controller_program_component_stopped
-            {
-                self.controller_program_component_stopped = false
-                perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"))
-                self.controller_program_component_stopped = true
-            }
-        }
-        
-        DispatchQueue.global(qos: .background).async
-        {
-            if self.connector_program_component_stopped
-            {
-                self.connector_program_component_stopped = false
-                perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"))
-                self.connector_program_component_stopped = true
-            }
-        }*/
+        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["&"])
+        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"), with: ["&"])
     }
     
     override open func stop_program_components()
