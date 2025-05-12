@@ -216,10 +216,11 @@ open class RobotModule: IndustrialModule
     
     override open func start_program_components()
     {
+        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"))
         /*DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller")) }
         DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector")) }*/
         
-        DispatchQueue.global(qos: .background).async
+        /*DispatchQueue.global(qos: .background).async
         {
             if self.controller_program_component_stopped
             {
@@ -237,7 +238,7 @@ open class RobotModule: IndustrialModule
                 perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"))
                 self.connector_program_component_stopped = true
             }
-        }
+        }*/
     }
     
     override open func stop_program_components()
