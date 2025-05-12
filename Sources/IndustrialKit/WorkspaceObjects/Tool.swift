@@ -156,6 +156,7 @@ public class Tool: WorkspaceObject
         #endif
     }
     
+    #if os(macOS)
     /// Start all program components in module.
     public static func external_modules_server_start()
     {
@@ -173,6 +174,7 @@ public class Tool: WorkspaceObject
             module.stop_program_components()
         }
     }
+    #endif
     
     private func apply_statistics_flags()
     {

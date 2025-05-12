@@ -237,6 +237,7 @@ open class ToolModule: IndustrialModule
         }
     }
     
+    #if os(macOS)
     override open func start_program_components()
     {
         DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller")) }
@@ -248,6 +249,7 @@ open class ToolModule: IndustrialModule
         send_via_unix_socket(socket_path: "/tmp/\(name)_tool_controller_socket", command: "stop")
         send_via_unix_socket(socket_path: "/tmp/\(name)_tool_connector_socket", command: "stop")
     }
+    #endif
     
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey

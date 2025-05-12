@@ -382,6 +382,7 @@ public class ChangerModifierElement: ModifierElement
         #endif
     }
     
+    #if os(macOS)
     /// Start all program components in module.
     public static func external_modules_server_start()
     {
@@ -399,6 +400,7 @@ public class ChangerModifierElement: ModifierElement
             module.stop_program_components()
         }
     }
+    #endif
 }
 
 typealias Changer = ChangerModifierElement
