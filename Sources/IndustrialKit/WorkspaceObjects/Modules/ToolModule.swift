@@ -246,7 +246,7 @@ open class ToolModule: IndustrialModule
         /*DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller")) }
         DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector")) }*/
         
-        DispatchQueue.global(qos: .background).async
+        /*DispatchQueue.global(qos: .background).async
         {
             if self.controller_program_component_stopped
             {
@@ -264,7 +264,7 @@ open class ToolModule: IndustrialModule
                 perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"))
                 self.connector_program_component_stopped = true
             }
-        }
+        }*/
     }
     
     override open func stop_program_components()

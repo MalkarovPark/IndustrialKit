@@ -216,7 +216,7 @@ open class RobotModule: IndustrialModule
     
     override open func start_program_components()
     {
-        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"))
+        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["&"])
         /*DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller")) }
         DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector")) }*/
         
