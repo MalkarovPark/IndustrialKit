@@ -243,17 +243,17 @@ open class ToolModule: IndustrialModule
     
     override open func start_program_components()
     {
-        //perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["&"])
-        //perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"), with: ["&"])
+        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["&"])
+        perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"), with: ["&"])
         
         /*DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller")) }
         DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector")) }*/
         
-        DispatchQueue.global(qos: .background).async
+        /*DispatchQueue.global(qos: .background).async
         {
             perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Controller"), with: ["&"])
             perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Connector"), with: ["&"])
-        }
+        }*/
         
         /*DispatchQueue.global(qos: .background).async
         {
