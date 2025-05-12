@@ -219,9 +219,8 @@ open class RobotModule: IndustrialModule
     
     override open func stop_program_components()
     {
-        print(name)
-        send_via_unix_socket(at: "/tmp/\(name)_robot_controller_socket", command: "stop")
-        send_via_unix_socket(at: "/tmp/\(name)_robot_connector_socket", command: "stop")
+        send_via_unix_socket(at: "/tmp/\(name.code_correct_format)_robot_controller_socket", command: "stop")
+        send_via_unix_socket(at: "/tmp/\(name.code_correct_format)_robot_connector_socket", command: "stop")
     }
     #endif
     

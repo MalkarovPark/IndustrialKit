@@ -246,8 +246,8 @@ open class ToolModule: IndustrialModule
     
     override open func stop_program_components()
     {
-        send_via_unix_socket(at: "/tmp/\(name)_tool_controller_socket", command: "stop")
-        send_via_unix_socket(at: "/tmp/\(name)_tool_connector_socket", command: "stop")
+        send_via_unix_socket(at: "/tmp/\(name.code_correct_format)_tool_controller_socket", command: "stop")
+        send_via_unix_socket(at: "/tmp/\(name.code_correct_format)_tool_connector_socket", command: "stop")
     }
     #endif
     
