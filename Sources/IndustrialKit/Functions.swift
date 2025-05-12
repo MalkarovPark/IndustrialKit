@@ -236,32 +236,16 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
     task.standardInput = nil
     
     let fileHandle = pipe.fileHandleForReading
-    var outputData = Data()
     let semaphore = DispatchSemaphore(value: 0)
-    
-    fileHandle.readabilityHandler =
-    { handle in
-        let data = handle.availableData
-        if data.isEmpty
-        {
-            return
-        }
-        outputData.append(data)
-        if let output = String(data: data, encoding: .utf8)
-        {
-            output_handler(output)
-        }
-    }
-    
+
     try task.run()
     
-    // Wait for the process to exit asynchronously and signal the semaphore
     DispatchQueue.global().async
     {
         task.waitUntilExit()
         semaphore.signal()
     }
-    
+
     let result: DispatchTimeoutResult
     if let timeout = timeout
     {
@@ -272,10 +256,7 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
         semaphore.wait()
         result = .success
     }
-    
-    fileHandle.readabilityHandler = nil
-    task.terminate() // Ensure termination in case it is still running
-    
+
     if result == .timedOut
     {
         task.terminate()
@@ -285,7 +266,14 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
             userInfo: [NSLocalizedDescriptionKey: "Command timed out"]
         )
     }
+
+    let outputData = fileHandle.readDataToEndOfFile()
+    fileHandle.closeFile()
     
+    if let output = String(data: outputData, encoding: .utf8) {
+        output_handler(output)
+    }
+
     if task.terminationStatus != 0
     {
         throw NSError(
@@ -307,14 +295,6 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
  */
 public func perform_terminal_app(at url: URL, with arguments: [String], timeout: TimeInterval? = nil) -> String?
 {
-    /*let command = "'\(url.path)' \(arguments.joined(separator: " "))" // Combine file path and arguments into one string
-     
-     let result = try? perform_terminal_command(command)
-     
-     return result*/
-    
-    //try perform_terminal_command("'\(url.path)' \(arguments.joined(separator: " "))")
-    
     let command = "'\(url.path)' \(arguments.joined(separator: " "))"
     var collected_output = ""
     
@@ -335,21 +315,40 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
 
 public func perform_terminal_app(at url: URL, with arguments: [String] = [String](), timeout: TimeInterval? = nil, output_handler: @escaping (String) -> Void = { _ in })
 {
-    let command = "'\(url.path)' \(arguments.joined(separator: " "))"
-    var collected_output = ""
-    
-    do
+    DispatchQueue.global(qos: .background).async
     {
-        try perform_terminal_command(command, timeout: timeout)
-        { output in
-            collected_output += output
+        let command = "'\(url.path)' \(arguments.joined(separator: " "))"
+        let task = Process()
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.standardError = pipe
+        task.arguments = ["-c", command]
+        task.executableURL = URL(fileURLWithPath: "/bin/zsh")
+
+        do
+        {
+            try task.run()
         }
-        
-        output_handler(collected_output)
-    }
-    catch
-    {
-        return output_handler(collected_output)
+        catch
+        {
+            DispatchQueue.main.async
+            {
+                output_handler("Failed to launch process: \(error.localizedDescription)")
+            }
+            return
+        }
+
+        let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
+        pipe.fileHandleForReading.closeFile()
+        task.waitUntilExit()
+
+        if let output = String(data: outputData, encoding: .utf8)
+        {
+            DispatchQueue.main.async
+            {
+                output_handler(output)
+            }
+        }
     }
 }
 #endif
