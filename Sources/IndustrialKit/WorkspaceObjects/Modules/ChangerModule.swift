@@ -81,7 +81,6 @@ open class ChangerModule: IndustrialModule
     override open func start_program_components()
     {
         perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Change"), with: [" > /dev/null 2>&1 &"])
-        //DispatchQueue.global(qos: .background).async { perform_terminal_app(at: self.package_url.appendingPathComponent("/Code/Change")) }
     }
     
     override open func stop_program_components()
