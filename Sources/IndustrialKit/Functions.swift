@@ -235,17 +235,33 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
     task.executableURL = URL(fileURLWithPath: "/bin/zsh")
     task.standardInput = nil
     
-    let fileHandle = pipe.fileHandleForReading
+    let file_handle = pipe.fileHandleForReading
+    var output_data = Data()
     let semaphore = DispatchSemaphore(value: 0)
-
+    
+    file_handle.readabilityHandler =
+    { handle in
+        let data = handle.availableData
+        if data.isEmpty
+        {
+            return
+        }
+        output_data.append(data)
+        if let output = String(data: data, encoding: .utf8)
+        {
+            output_handler(output)
+        }
+    }
+    
     try task.run()
     
+    // Wait for the process to exit asynchronously and signal the semaphore
     DispatchQueue.global().async
     {
         task.waitUntilExit()
         semaphore.signal()
     }
-
+    
     let result: DispatchTimeoutResult
     if let timeout = timeout
     {
@@ -256,7 +272,10 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
         semaphore.wait()
         result = .success
     }
-
+    
+    file_handle.readabilityHandler = nil
+    task.terminate() // Ensure termination in case it is still running
+    
     if result == .timedOut
     {
         task.terminate()
@@ -266,14 +285,7 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
             userInfo: [NSLocalizedDescriptionKey: "Command timed out"]
         )
     }
-
-    let outputData = fileHandle.readDataToEndOfFile()
-    fileHandle.closeFile()
     
-    if let output = String(data: outputData, encoding: .utf8) {
-        output_handler(output)
-    }
-
     if task.terminationStatus != 0
     {
         throw NSError(
