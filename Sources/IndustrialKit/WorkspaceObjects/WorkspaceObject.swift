@@ -111,7 +111,10 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     private var update_task: Task<Void, Never>?
     
     /// The interval between updates in nanoseconds.
-    public static var update_interval: UInt64 = 1_000_000_0
+    public var update_interval: Double = 1_000_000_0.0
+    
+    /// Defines the update timing scope.
+    public var scope_type: ScopeType = ScopeType.selected
     
     /**
      Starts the update loop.
@@ -126,7 +129,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         {
             while updated
             {
-                try? await Task.sleep(nanoseconds: WorkspaceObject.update_interval)
+                try? await Task.sleep(nanoseconds: UInt64(update_interval))
                 await MainActor.run
                 {
                     self.update()
@@ -220,6 +223,9 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         case location
         case rotation
         case is_placed
+        
+        case update_interval
+        case scope_type
     }
     
     public required init(from decoder: any Decoder) throws
@@ -234,6 +240,9 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         self.location = try container.decode([Float].self, forKey: .location)
         self.rotation = try container.decode([Float].self, forKey: .rotation)
         self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
+        
+        self.update_interval = try container.decodeIfPresent(Double.self, forKey: .update_interval) ?? 1_000_000_0.0
+        self.scope_type = try container.decodeIfPresent(ScopeType.self, forKey: .scope_type) ?? .selected
         
         // color_to_model()
         module_import_by_name(module_name, is_internal: self.is_internal_module)
@@ -251,5 +260,14 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         try container.encode(location, forKey: .location)
         try container.encode(rotation, forKey: .rotation)
         try container.encode(is_placed, forKey: .is_placed)
+        
+        try container.encode(update_interval, forKey: .update_interval)
+        try container.encode(scope_type, forKey: .scope_type)
     }
+}
+
+public enum ScopeType: String, Codable, Equatable, CaseIterable
+{
+    case selected = "Is selected"
+    case constant = "Constant"
 }
