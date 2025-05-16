@@ -268,6 +268,6 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
 
 public enum ScopeType: String, Codable, Equatable, CaseIterable
 {
-    case selected = "Is selected"
+    case selected = "Selected"
     case constant = "Constant"
 }
