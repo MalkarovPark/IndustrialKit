@@ -110,7 +110,7 @@ public class Workspace: ObservableObject
     private var update_task: Task<Void, Never>?
     
     /// The interval between updates in nanoseconds.
-    public static var update_interval: UInt64 = 1_000_000_0
+    public static var update_interval: Double = 0.01
     
     /**
      Starts the update loop.
@@ -125,7 +125,7 @@ public class Workspace: ObservableObject
         {
             while updated
             {
-                try? await Task.sleep(nanoseconds: Workspace.update_interval)
+                try? await Task.sleep(nanoseconds: UInt64(Workspace.update_interval * 1_000_000_000))
                 await MainActor.run
                 {
                     self.update()

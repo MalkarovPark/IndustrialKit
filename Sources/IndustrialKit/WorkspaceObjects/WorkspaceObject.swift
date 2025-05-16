@@ -111,7 +111,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     private var update_task: Task<Void, Never>?
     
     /// The interval between updates in nanoseconds.
-    public var update_interval: Double = 1_000_000_0.0
+    public var update_interval: Double = 0.01
     
     /// Defines the update timing scope.
     public var scope_type: ScopeType = ScopeType.selected
@@ -129,7 +129,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         {
             while updated
             {
-                try? await Task.sleep(nanoseconds: UInt64(update_interval))
+                try? await Task.sleep(nanoseconds: UInt64(update_interval * 1_000_000_000))
                 await MainActor.run
                 {
                     self.update()
@@ -241,7 +241,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         self.rotation = try container.decode([Float].self, forKey: .rotation)
         self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
         
-        self.update_interval = try container.decodeIfPresent(Double.self, forKey: .update_interval) ?? 1_000_000_0.0
+        self.update_interval = try container.decodeIfPresent(Double.self, forKey: .update_interval) ?? 0.01
         self.scope_type = try container.decodeIfPresent(ScopeType.self, forKey: .scope_type) ?? .selected
         
         // color_to_model()
