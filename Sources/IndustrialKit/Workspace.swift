@@ -469,6 +469,44 @@ public class Workspace: ObservableObject
         perform(selected_program_element, completion: select_new_element)
     }
     
+    private func perform_constant_objects_update()
+    {
+        for robot in robots
+        {
+            if robot.scope_type == .constant
+            {
+                robot.perform_update()
+            }
+        }
+        
+        for tool in tools
+        {
+            if tool.scope_type == .constant
+            {
+                tool.perform_update()
+            }
+        }
+    }
+    
+    private func disable_constant_objects_update()
+    {
+        for robot in robots
+        {
+            if robot.scope_type == .constant
+            {
+                robot.disable_update()
+            }
+        }
+        
+        for tool in tools
+        {
+            if tool.scope_type == .constant
+            {
+                tool.disable_update()
+            }
+        }
+    }
+    
     /*private func selected_object_update_perform()
     {
         switch selected_object_type
@@ -600,6 +638,8 @@ public class Workspace: ObservableObject
     /// Pauses program element performing.
     public func pause_performing()
     {
+        disable_constant_objects_update()
+        
         let element = selected_program_element
         
         switch element
@@ -615,12 +655,14 @@ public class Workspace: ObservableObject
         func pause_robot()
         {
             selected_robot.start_pause_moving()
+            selected_robot.disable_update()
             deselect_robot()
         }
         
         func pause_tool()
         {
             selected_tool.start_pause_performing()
+            selected_tool.disable_update()
             deselect_tool()
         }
     }
@@ -710,6 +752,11 @@ public class Workspace: ObservableObject
         {
             if selected_robot_index != -1
             {
+                if selected_robot.scope_type == .selected
+                {
+                    selected_robot.perform_update()
+                }
+                
                 if !element.is_program_by_index
                 {
                     selected_robot.select_program(name: element.program_name)
@@ -719,7 +766,10 @@ public class Workspace: ObservableObject
                     selected_robot.select_program(index: Int(registers[safe: element.program_index] ?? 0))
                 }
                 
-                selected_robot.finish_handler = completion
+                selected_robot.finish_handler = { //completion
+                    self.selected_robot.disable_update()
+                    completion()
+                }
                 selected_robot.start_pause_moving()
             }
             else
@@ -761,6 +811,11 @@ public class Workspace: ObservableObject
         {
             if selected_tool_index != -1
             {
+                if selected_tool.scope_type == .selected
+                {
+                    selected_tool.perform_update()
+                }
+                
                 if !element.is_program_by_index
                 {
                     selected_tool.select_program(name: element.program_name)
@@ -770,7 +825,10 @@ public class Workspace: ObservableObject
                     selected_tool.select_program(index: Int(registers[safe: element.program_index] ?? 0))
                 }
                 
-                selected_tool.finish_handler = completion
+                selected_tool.finish_handler = { //completion
+                    self.selected_tool.disable_update()
+                    completion()
+                }
                 selected_tool.start_pause_performing()
             }
             else
