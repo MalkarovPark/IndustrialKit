@@ -379,6 +379,8 @@ public func perform_terminal_app_sync(at url: URL, with arguments: [String])
 
 #if os(macOS)
 //MARK: - Socket Works
+private let response_count_limit: Int = 1024 * 64
+
 /**
  Sends a command to a UNIX socket and receives the response asynchronously.
 
@@ -445,7 +447,7 @@ public func send_via_unix_socket(at socket_path: String, command: String, comple
         }
         
         // Read response
-        var buffer = [UInt8](repeating: 0, count: 1024)
+        var buffer = [UInt8](repeating: 0, count: response_count_limit)
         let bytes_read = read(sockfd, &buffer, buffer.count)
         
         close(sockfd)
@@ -527,7 +529,7 @@ public func send_via_unix_socket(at socket_path: String, command: String) -> Str
     }
     
     // Read response
-    var buffer = [UInt8](repeating: 0, count: 1024)
+    var buffer = [UInt8](repeating: 0, count: response_count_limit)
     let bytes_read = read(sockfd, &buffer, buffer.count)
     
     close(sockfd)
