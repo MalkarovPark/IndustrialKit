@@ -440,20 +440,33 @@ public func send_via_unix_socket(at socket_path: String, command: String, comple
         }
         
         // Send command
-        let command_to_send = command.utf8CString.dropLast() //(command + "\n").utf8CString
+        let command_to_send = command.utf8CString.dropLast()
         command_to_send.withUnsafeBufferPointer
         { buffer_ptr in
             write(sockfd, buffer_ptr.baseAddress!, buffer_ptr.count)
         }
         
         // Read response
-        var buffer = [UInt8](repeating: 0, count: response_count_limit)
-        let bytes_read = read(sockfd, &buffer, buffer.count)
+        var response_data = Data()
+        var buffer = [UInt8](repeating: 0, count: 4096)
+        var isReceiving = true
+        
+        while isReceiving
+        {
+            let bytesRead = read(sockfd, &buffer, buffer.count)
+            if bytesRead > 0
+            {
+                response_data.append(buffer, count: bytesRead)
+            }
+            else
+            {
+                isReceiving = false
+            }
+        }
         
         close(sockfd)
         
-        let response = (bytes_read > 0)
-        ? String(bytes: buffer.prefix(bytes_read), encoding: .utf8) ?? "(invalid)" : "No response"
+        let response = String(data: response_data, encoding: .utf8) ?? "Invalid response"
         
         // Call completion on main thread
         DispatchQueue.main.async
@@ -522,26 +535,33 @@ public func send_via_unix_socket(at socket_path: String, command: String) -> Str
     }
     
     // Send command
-    let command_to_send = command.utf8CString.dropLast() //(command + "\n").utf8CString
+    let command_to_send = command.utf8CString.dropLast()
     command_to_send.withUnsafeBufferPointer
     { buffer_ptr in
         write(sockfd, buffer_ptr.baseAddress!, buffer_ptr.count)
     }
     
     // Read response
-    var buffer = [UInt8](repeating: 0, count: response_count_limit)
-    let bytes_read = read(sockfd, &buffer, buffer.count)
+    var response_data = Data()
+    var buffer = [UInt8](repeating: 0, count: 4096)
+    var isReceiving = true
+    
+    while isReceiving
+    {
+        let bytesRead = read(sockfd, &buffer, buffer.count)
+        if bytesRead > 0
+        {
+            response_data.append(buffer, count: bytesRead)
+        }
+        else
+        {
+            isReceiving = false
+        }
+    }
     
     close(sockfd)
     
-    if bytes_read > 0
-    {
-        return String(bytes: buffer.prefix(bytes_read), encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-    else
-    {
-        return "No response"
-    }
+    return String(data: response_data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "Invalid response"
 }
 
 /**
