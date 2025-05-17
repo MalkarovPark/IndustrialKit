@@ -443,6 +443,7 @@ public class Workspace: ObservableObject
         {
             // Move to next point if moving was stop
             performed = true
+            perform_constant_objects_update()
             
             perform_next_element()
             element_changed = true
