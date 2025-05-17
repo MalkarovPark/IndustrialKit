@@ -135,7 +135,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
                     self.update()
                 }
                 
-                if(update_task == nil)
+                if update_task == nil
                 {
                     return
                 }

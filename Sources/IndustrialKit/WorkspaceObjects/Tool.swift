@@ -390,7 +390,7 @@ public class Tool: WorkspaceObject
     /// Updates tool statistics and sync model by real device state.
     public override func update()
     {
-        if performed
+        if performed || scope_type == .constant
         {
             update_statistics_data()
         }
