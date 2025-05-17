@@ -379,7 +379,7 @@ public func perform_terminal_app_sync(at url: URL, with arguments: [String])
 
 #if os(macOS)
 //MARK: - Socket Works
-private let response_count_limit: Int = 1024 * 64
+private let response_count_limit: Int = 1024 * 1024
 
 /**
  Sends a command to a UNIX socket and receives the response asynchronously.
