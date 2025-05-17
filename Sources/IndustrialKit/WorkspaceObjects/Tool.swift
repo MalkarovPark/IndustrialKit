@@ -648,10 +648,10 @@ public class Tool: WorkspaceObject
     
     // MARK: - Chart functions
     /// A tool charts data.
-    public var charts_data: [WorkspaceObjectChart]?
+    @Published public var charts_data: [WorkspaceObjectChart]?
     
     /// A tool state data.
-    public var states_data: [StateItem]?
+    @Published public var states_data: [StateItem]?
     
     /// A statistics getting toggle.
     public var get_statistics = false
