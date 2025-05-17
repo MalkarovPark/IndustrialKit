@@ -631,6 +631,8 @@ public class Workspace: ObservableObject
                 
                 deselect_robot()
                 deselect_tool()
+                
+                disable_constant_objects_update()
                 // update_view()
             }
         }
