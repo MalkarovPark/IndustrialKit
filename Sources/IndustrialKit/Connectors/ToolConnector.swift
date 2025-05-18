@@ -189,7 +189,7 @@ public class ExternalToolConnector: ToolConnector
     open override func perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["perform", "\(code)"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["perform", "\(code)"])
         else
         {
             return
@@ -275,7 +275,7 @@ public class ExternalToolConnector: ToolConnector
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["initial_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["initial_charts_data"])
         else
         {
             return nil
@@ -293,7 +293,7 @@ public class ExternalToolConnector: ToolConnector
     open override func initial_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["initial_states_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["initial_states_data"])
         else
         {
             return nil
