@@ -319,7 +319,7 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
     }
     catch
     {
-        
+        print(error.localizedDescription)
     }
     
     return collected_output
@@ -336,7 +336,7 @@ public func perform_terminal_app(at url: URL, with arguments: [String] = [String
         task.standardError = pipe
         task.arguments = ["-c", command]
         task.executableURL = URL(fileURLWithPath: "/bin/zsh")
-
+        
         do
         {
             try task.run()
@@ -349,11 +349,11 @@ public func perform_terminal_app(at url: URL, with arguments: [String] = [String
             }
             return
         }
-
+        
         let outputData = pipe.fileHandleForReading.readDataToEndOfFile()
         pipe.fileHandleForReading.closeFile()
         task.waitUntilExit()
-
+        
         if let output = String(data: outputData, encoding: .utf8)
         {
             DispatchQueue.main.async
@@ -372,7 +372,7 @@ public func perform_terminal_app_sync(at url: URL, with arguments: [String])
     }
     catch
     {
-        
+        print(error.localizedDescription)
     }
 }
 #endif
@@ -395,7 +395,7 @@ public func send_via_unix_socket(at socket_path: String, command: String, comple
 {
     DispatchQueue.global(qos: .userInitiated).async
     {
-        // Create socket
+        /*// Create socket
         let sockfd = socket(AF_UNIX, SOCK_STREAM, 0)
         guard sockfd >= 0 else
         {
@@ -412,9 +412,9 @@ public func send_via_unix_socket(at socket_path: String, command: String, comple
         
         // Fill path into sun_path
         let path_cstring = socket_path.utf8CString
-        if let baseAddress = path_cstring.withUnsafeBufferPointer({ $0.baseAddress })
+        if let base_address = path_cstring.withUnsafeBufferPointer({ $0.baseAddress })
         {
-            strncpy(&addr.sun_path.0, baseAddress, MemoryLayout.size(ofValue: addr.sun_path))
+            strncpy(&addr.sun_path.0, base_address, MemoryLayout.size(ofValue: addr.sun_path))
         }
         
         let addr_size = socklen_t(MemoryLayout.size(ofValue: addr))
@@ -449,24 +449,34 @@ public func send_via_unix_socket(at socket_path: String, command: String, comple
         // Read response
         var response_data = Data()
         var buffer = [UInt8](repeating: 0, count: 4096)
-        var isReceiving = true
+        var is_receiving = true
         
-        while isReceiving
+        while is_receiving
         {
-            let bytesRead = read(sockfd, &buffer, buffer.count)
-            if bytesRead > 0
+            let bytes_read = read(sockfd, &buffer, buffer.count)
+            if bytes_read > 0
             {
-                response_data.append(buffer, count: bytesRead)
+                response_data.append(buffer, count: bytes_read)
             }
             else
             {
-                isReceiving = false
+                is_receiving = false
             }
         }
         
         close(sockfd)
         
-        let response = String(data: response_data, encoding: .utf8) ?? "Invalid response"
+        let response = String(data: response_data, encoding: .utf8) ?? "Invalid response"*/
+        
+        guard let response = send_via_unix_socket(at: socket_path, command: command)
+        else
+        {
+            DispatchQueue.main.async
+            {
+                completion("Failed to connect to UNIX socket")
+            }
+            return
+        }
         
         // Call completion on main thread
         DispatchQueue.main.async
@@ -514,16 +524,18 @@ public func send_via_unix_socket(at socket_path: String, command: String) -> Str
     addr.sun_family = sa_family_t(AF_UNIX)
     
     let path_cstring = socket_path.utf8CString
-    if let baseAddress = path_cstring.withUnsafeBufferPointer({ $0.baseAddress })
+    if let base_address = path_cstring.withUnsafeBufferPointer({ $0.baseAddress })
     {
-        strncpy(&addr.sun_path.0, baseAddress, MemoryLayout.size(ofValue: addr.sun_path))
+        strncpy(&addr.sun_path.0, base_address, MemoryLayout.size(ofValue: addr.sun_path))
     }
     
     let addr_size = socklen_t(MemoryLayout.size(ofValue: addr))
     
     // Connect to socket
-    let result = withUnsafePointer(to: &addr) {
-        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+    let result = withUnsafePointer(to: &addr)
+    {
+        $0.withMemoryRebound(to: sockaddr.self, capacity: 1)
+        {
             connect(sockfd, $0, addr_size)
         }
     }
@@ -544,18 +556,18 @@ public func send_via_unix_socket(at socket_path: String, command: String) -> Str
     // Read response
     var response_data = Data()
     var buffer = [UInt8](repeating: 0, count: 4096)
-    var isReceiving = true
+    var is_receiving = true
     
-    while isReceiving
+    while is_receiving
     {
-        let bytesRead = read(sockfd, &buffer, buffer.count)
-        if bytesRead > 0
+        let bytes_read = read(sockfd, &buffer, buffer.count)
+        if bytes_read > 0
         {
-            response_data.append(buffer, count: bytesRead)
+            response_data.append(buffer, count: bytes_read)
         }
         else
         {
-            isReceiving = false
+            is_receiving = false
         }
     }
     
