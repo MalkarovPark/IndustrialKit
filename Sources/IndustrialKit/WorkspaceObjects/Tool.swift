@@ -726,7 +726,16 @@ public class Tool: WorkspaceObject
     {
         states_data = nil
         
-        if get_statistics
+        if demo
+        {
+            model_controller.reset_states_data()
+        }
+        else
+        {
+            connector.reset_states_data()
+        }
+        
+        /*if get_statistics
         {
             if demo
             {
@@ -736,7 +745,7 @@ public class Tool: WorkspaceObject
             {
                 connector.reset_states_data()
             }
-        }
+        }*/
     }
     
     // MARK: - UI functions
