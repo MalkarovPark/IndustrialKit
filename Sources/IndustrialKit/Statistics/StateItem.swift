@@ -10,7 +10,7 @@ import Foundation
 /**
  A storage for state info.
  */
-public struct StateItem: Identifiable, Codable
+public class StateItem: Identifiable, ObservableObject, Codable
 {
     public var id = UUID()
     
@@ -20,7 +20,7 @@ public struct StateItem: Identifiable, Codable
     
     public var children: [StateItem]?
     
-    public var is_expanded = false
+    @Published public var is_expanded = false
     
     public init(name: String, value: String? = nil, image: String? = nil, children: [StateItem]? = nil)
     {
@@ -40,14 +40,14 @@ public struct StateItem: Identifiable, Codable
         case children
     }
     
-    public init(from decoder: any Decoder) throws
+    public required init(from decoder: any Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.id       = try container.decode(UUID.self, forKey: .id)
-        self.name     = try container.decode(String.self, forKey: .name)
-        self.value    = try container.decodeIfPresent(String.self, forKey: .value)
-        self.image    = try container.decodeIfPresent(String.self, forKey: .image)
+        self.id = try container.decode(UUID.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.value = try container.decodeIfPresent(String.self, forKey: .value)
+        self.image = try container.decodeIfPresent(String.self, forKey: .image)
         self.children = try container.decodeIfPresent([StateItem].self, forKey: .children)
     }
     
