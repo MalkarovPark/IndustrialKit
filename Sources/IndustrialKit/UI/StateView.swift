@@ -55,11 +55,13 @@ struct StateItemListView: View
 {
     @Binding var item: StateItem
     
+    @State private var is_expanded = true
+    
     var body: some View
     {
         if let children = item.children, !children.isEmpty
         {
-            DisclosureGroup(isExpanded: $item.is_expanded)
+            DisclosureGroup(isExpanded: $is_expanded)
             {
                 ForEach(children.indices, id: \.self)
                 { index in
@@ -153,13 +155,13 @@ struct StateView_PreviewsContainer: PreviewProvider
             StateView(states_data: $states_data)
                 .frame(width: 320, height: 240)
                 .onAppear
-            {
-                states_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
-                states_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
-                                            StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
-                
-                states_data?.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
-            }
+                {
+                    states_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
+                    states_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
+                                         StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
+                    
+                    states_data?.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+                }
         }
     }
 }
