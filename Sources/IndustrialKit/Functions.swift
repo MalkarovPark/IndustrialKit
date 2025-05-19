@@ -382,126 +382,6 @@ public func perform_terminal_app_sync(at url: URL, with arguments: [String])
 private let response_count_limit: Int = 1024 * 1024
 
 /**
- Sends a command to a UNIX socket and receives the response asynchronously.
-
- - Parameters:
-    - socket_path: A file system path to the UNIX domain socket.
-    - command: The command string to send to the socket.
-    - completion: A closure that returns the response string from the socket.
-
- - Note: The response is returned on the main thread.
- */
-public func send_via_unix_socket(at socket_path: String, command: String, completion: @escaping (String) -> Void)
-{
-    DispatchQueue.global(qos: .userInitiated).async
-    {
-        /*// Create socket
-        let sockfd = socket(AF_UNIX, SOCK_STREAM, 0)
-        guard sockfd >= 0 else
-        {
-            DispatchQueue.main.async
-            {
-                completion("Socket creation failed")
-            }
-            return
-        }
-        
-        // Setup socket address
-        var addr = sockaddr_un()
-        addr.sun_family = sa_family_t(AF_UNIX)
-        
-        // Fill path into sun_path
-        let path_cstring = socket_path.utf8CString
-        if let base_address = path_cstring.withUnsafeBufferPointer({ $0.baseAddress })
-        {
-            strncpy(&addr.sun_path.0, base_address, MemoryLayout.size(ofValue: addr.sun_path))
-        }
-        
-        let addr_size = socklen_t(MemoryLayout.size(ofValue: addr))
-        
-        // Connect to socket
-        let result = withUnsafePointer(to: &addr)
-        {
-            $0.withMemoryRebound(to: sockaddr.self, capacity: 1)
-            {
-                connect(sockfd, $0, addr_size)
-            }
-        }
-        
-        // Check connection result
-        guard result == 0 else
-        {
-            close(sockfd)
-            DispatchQueue.main.async
-            {
-                completion("Failed to connect to UNIX socket")
-            }
-            return
-        }
-        
-        // Send command
-        let command_to_send = command.utf8CString.dropLast()
-        command_to_send.withUnsafeBufferPointer
-        { buffer_ptr in
-            write(sockfd, buffer_ptr.baseAddress!, buffer_ptr.count)
-        }
-        
-        // Read response
-        var response_data = Data()
-        var buffer = [UInt8](repeating: 0, count: 4096)
-        var is_receiving = true
-        
-        while is_receiving
-        {
-            let bytes_read = read(sockfd, &buffer, buffer.count)
-            if bytes_read > 0
-            {
-                response_data.append(buffer, count: bytes_read)
-            }
-            else
-            {
-                is_receiving = false
-            }
-        }
-        
-        close(sockfd)
-        
-        let response = String(data: response_data, encoding: .utf8) ?? "Invalid response"*/
-        
-        guard let response = send_via_unix_socket(at: socket_path, command: command)
-        else
-        {
-            DispatchQueue.main.async
-            {
-                completion("Failed to connect to UNIX socket")
-            }
-            return
-        }
-        
-        // Call completion on main thread
-        DispatchQueue.main.async
-        {
-            completion(response.trimmingCharacters(in: .whitespacesAndNewlines))
-        }
-    }
-}
-
-/**
- Sends a command to a UNIX socket and receives the response asynchronously.
-
- - Parameters:
-    - socket_path: A file system path to the UNIX domain socket.
-    - arguments: A string array of arguments.
-    - completion: A closure that returns the response string from the socket.
-
- - Note: The response is returned on the main thread.
- */
-public func send_via_unix_socket(at socket_path: String, with arguments: [String], completion: @escaping (String) -> Void)
-{
-    send_via_unix_socket(at: socket_path, command: arguments.joined(separator: " "), completion: completion)
-}
-
-/**
  Sends a command to a UNIX socket and returns the response synchronously.
 
  - Parameters:
@@ -574,6 +454,53 @@ public func send_via_unix_socket(at socket_path: String, command: String) -> Str
     close(sockfd)
     
     return String(data: response_data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "Invalid response"
+}
+
+/**
+ Sends a command to a UNIX socket and receives the response asynchronously.
+
+ - Parameters:
+    - socket_path: A file system path to the UNIX domain socket.
+    - command: The command string to send to the socket.
+    - completion: A closure that returns the response string from the socket.
+
+ - Note: The response is returned on the main thread.
+ */
+public func send_via_unix_socket(at socket_path: String, command: String, completion: @escaping (String) -> Void)
+{
+    DispatchQueue.global(qos: .userInitiated).async
+    {
+        guard let response = send_via_unix_socket(at: socket_path, command: command)
+        else
+        {
+            DispatchQueue.main.async
+            {
+                completion("Failed to connect to UNIX socket")
+            }
+            return
+        }
+        
+        // Call completion on main thread
+        DispatchQueue.main.async
+        {
+            completion(response.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+    }
+}
+
+/**
+ Sends a command to a UNIX socket and receives the response asynchronously.
+
+ - Parameters:
+    - socket_path: A file system path to the UNIX domain socket.
+    - arguments: A string array of arguments.
+    - completion: A closure that returns the response string from the socket.
+
+ - Note: The response is returned on the main thread.
+ */
+public func send_via_unix_socket(at socket_path: String, with arguments: [String], completion: @escaping (String) -> Void)
+{
+    send_via_unix_socket(at: socket_path, command: arguments.joined(separator: " "), completion: completion)
 }
 
 /**
