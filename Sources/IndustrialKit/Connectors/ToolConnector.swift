@@ -231,13 +231,6 @@ public class ExternalToolConnector: ToolConnector
         let floats: [Float] = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
         
         return floats.isEmpty ? nil : floats
-        
-        /*let cleaned = output.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
-        let components = cleaned.split(separator: ",")
-        
-        let floats: [Float] = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
-        
-        return floats.isEmpty ? nil : floats*/
         #else
         return nil
         #endif
@@ -315,6 +308,7 @@ public class ExternalToolConnector: ToolConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["initial_states_data"])
         else
         {
+            connection_failure = true
             connected = false
             return nil
         }

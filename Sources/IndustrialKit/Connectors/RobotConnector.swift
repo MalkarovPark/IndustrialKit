@@ -176,25 +176,6 @@ public class ExternalRobotConnector: RobotConnector
         if !output.isEmpty { output += "\n" }
         output += "Unknown error"
         return false
-        // Get connection result
-        /*if terminal_output.contains("<done>")
-        {
-            return true
-        }
-        else
-        {
-            return false
-        }*/
-        
-        // Get connection result
-        /*if terminal_output.contains("<done>")
-        {
-            return true
-        }
-        else
-        {
-            return false
-        }*/
         #else
         return false
         #endif
@@ -207,6 +188,8 @@ public class ExternalRobotConnector: RobotConnector
         else
         {
             self.output += "Couldn't perform external code"
+            connection_failure = true
+            connected = false
             return
         }
         #endif
@@ -233,6 +216,8 @@ public class ExternalRobotConnector: RobotConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["reset_device"])
         else
         {
+            connection_failure = true
+            connected = false
             return
         }
         #endif
@@ -245,6 +230,8 @@ public class ExternalRobotConnector: RobotConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["updated_charts_data"])
         else
         {
+            connection_failure = true
+            connected = false
             return nil
         }
         
@@ -263,15 +250,21 @@ public class ExternalRobotConnector: RobotConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["updated_states_data"])
         else
         {
+            connection_failure = true
+            connected = false
             return nil
         }
         
         if let states: [StateItem] = string_to_codable(from: output)
         {
+            connection_failure = true
+            connected = false
             return states
         }
         #endif
         
+        connection_failure = true
+        connected = false
         return nil
     }
 
@@ -281,6 +274,8 @@ public class ExternalRobotConnector: RobotConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["initial_charts_data"])
         else
         {
+            connection_failure = true
+            connected = false
             return nil
         }
         
@@ -290,6 +285,8 @@ public class ExternalRobotConnector: RobotConnector
         }
         #endif
         
+        connection_failure = true
+        connected = false
         return nil
     }
 
@@ -299,6 +296,8 @@ public class ExternalRobotConnector: RobotConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["initial_states_data"])
         else
         {
+            connection_failure = true
+            connected = false
             return nil
         }
         
@@ -308,6 +307,8 @@ public class ExternalRobotConnector: RobotConnector
         }
         #endif
         
+        connection_failure = true
+        connected = false
         return nil
     }
     
@@ -318,6 +319,8 @@ public class ExternalRobotConnector: RobotConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_controller_socket", with: ["sync_model"])
         else
         {
+            connection_failure = true
+            connected = false
             return
         }
 
