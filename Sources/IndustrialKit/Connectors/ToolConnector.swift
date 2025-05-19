@@ -180,6 +180,7 @@ public class ExternalToolConnector: ToolConnector
         else
         {
             self.output += "Couldn't perform external code"
+            connection_failure = true
             connected = false
             return
         }
@@ -193,6 +194,7 @@ public class ExternalToolConnector: ToolConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["perform", "\(code)"])
         else
         {
+            connection_failure = true
             connected = false
             return
         }
@@ -205,6 +207,7 @@ public class ExternalToolConnector: ToolConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["reset_device"])
         else
         {
+            connection_failure = true
             connected = false
             return
         }
@@ -218,6 +221,7 @@ public class ExternalToolConnector: ToolConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["info_output"])
         else
         {
+            connection_failure = true
             connected = false
             return nil
         }
@@ -246,6 +250,7 @@ public class ExternalToolConnector: ToolConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["updated_charts_data"])
         else
         {
+            connection_failure = true
             connected = false
             return nil
         }
@@ -266,6 +271,7 @@ public class ExternalToolConnector: ToolConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["updated_states_data"])
         else
         {
+            connection_failure = true
             connected = false
             return nil
         }
@@ -276,6 +282,7 @@ public class ExternalToolConnector: ToolConnector
         }
         #endif
         
+        connection_failure = true
         connected = false
         return nil
     }
@@ -286,6 +293,7 @@ public class ExternalToolConnector: ToolConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["initial_charts_data"])
         else
         {
+            connection_failure = true
             connected = false
             return nil
         }
@@ -296,6 +304,7 @@ public class ExternalToolConnector: ToolConnector
         }
         #endif
         
+        connection_failure = true
         connected = false
         return nil
     }
@@ -316,6 +325,7 @@ public class ExternalToolConnector: ToolConnector
         }
         #endif
         
+        connection_failure = true
         connected = false
         return nil
     }
@@ -327,6 +337,7 @@ public class ExternalToolConnector: ToolConnector
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["sync_model"])
         else
         {
+            connection_failure = true
             connected = false
             return
         }
@@ -343,6 +354,7 @@ public class ExternalToolConnector: ToolConnector
             guard components.count == 2
             else
             {
+                connection_failure = true
                 connected = false
                 return
             }

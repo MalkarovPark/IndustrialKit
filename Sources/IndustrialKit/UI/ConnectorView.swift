@@ -223,6 +223,14 @@ public struct ConnectorView: View
         {
             connected = connector.connected
             toggle_enabled = false
+            
+            if connector.connection_failure
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                {
+                    connector.connection_failure = false
+                }
+            }
         }
         .controlSize(.regular)
     }
