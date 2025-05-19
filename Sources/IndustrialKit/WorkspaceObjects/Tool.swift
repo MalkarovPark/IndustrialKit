@@ -392,7 +392,10 @@ public class Tool: WorkspaceObject
     {
         if get_statistics && (performed || scope_type == .constant)
         {
-            update_statistics_data()
+            if demo || connector.connected
+            {
+                update_statistics_data()
+            }
         }
         
         // Modeling
