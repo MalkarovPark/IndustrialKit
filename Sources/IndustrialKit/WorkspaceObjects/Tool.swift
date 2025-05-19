@@ -697,7 +697,18 @@ public class Tool: WorkspaceObject
     /// Clears tool chart data.
     public func clear_chart_data()
     {
-        if get_statistics
+        charts_data = nil
+        
+        if demo
+        {
+            model_controller.reset_charts_data()
+        }
+        else
+        {
+            connector.reset_charts_data()
+        }
+        
+        /*if get_statistics
         {
             if demo
             {
@@ -707,9 +718,7 @@ public class Tool: WorkspaceObject
             {
                 connector.reset_charts_data()
             }
-            
-            charts_data = nil
-        }
+        }*/
     }
     
     /// Clears tool state data.

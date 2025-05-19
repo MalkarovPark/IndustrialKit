@@ -1191,7 +1191,16 @@ public class Robot: WorkspaceObject
     {
         charts_data = nil
         
-        if get_statistics
+        if demo
+        {
+            model_controller.reset_charts_data()
+        }
+        else
+        {
+            connector.reset_charts_data()
+        }
+        
+        /*if get_statistics
         {
             if demo
             {
@@ -1201,7 +1210,7 @@ public class Robot: WorkspaceObject
             {
                 connector.reset_charts_data()
             }
-        }
+        }*/
     }
     
     /// Clears robot state data.
