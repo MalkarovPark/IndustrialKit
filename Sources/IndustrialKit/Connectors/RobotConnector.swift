@@ -174,7 +174,7 @@ public class ExternalRobotConnector: RobotConnector
         }
         
         if !output.isEmpty { output += "\n" }
-        output += "Unknown error"
+        output += "External module connector unavailable"
         return false
         #else
         return false
