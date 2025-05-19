@@ -22,9 +22,12 @@ public struct StateView: View
         {
             if states_data != nil
             {
-                List(states_data!, children: \.children)
-                { item in
-                    StateItemView(item: item)
+                List
+                {
+                    ForEach(is_expanded_binding($states_data, default: []).wrappedValue.indices, id: \.self)
+                    { index in
+                        StateItemListView(item: is_expanded_binding($states_data, default: [])[index])
+                    }
                 }
                 .listStyle(.plain)
                 .padding()
@@ -37,6 +40,65 @@ public struct StateView: View
         #if !os(visionOS)
         .background(.white)
         #endif
+    }
+    
+    private func is_expanded_binding(_ binding: Binding<[StateItem]?>, default defaultValue: [StateItem]) -> Binding<[StateItem]>
+    {
+        Binding<[StateItem]>(
+            get: { binding.wrappedValue ?? defaultValue },
+            set: { binding.wrappedValue = $0 }
+        )
+    }
+}
+
+struct StateItemListView: View
+{
+    @Binding var item: StateItem
+    
+    var body: some View
+    {
+        if let children = item.children, !children.isEmpty
+        {
+            DisclosureGroup(isExpanded: $item.is_expanded)
+            {
+                ForEach(children.indices, id: \.self)
+                { index in
+                    StateItemListView(item: Binding(
+                        get: { item.children![index] },
+                        set: { item.children![index] = $0 }
+                    ))
+                }
+            }
+            label:
+            {
+                itemLabel
+            }
+        }
+        else
+        {
+            itemLabel
+        }
+    }
+    
+    private var itemLabel: some View
+    {
+        HStack
+        {
+            if let imageName = item.image
+            {
+                Image(systemName: imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 25, height: 25)
+                    .foregroundColor(.accentColor)
+            }
+            
+            Text(item.name)
+            
+            Spacer()
+            
+            Text(item.value ?? "")
+        }
     }
 }
 
@@ -91,13 +153,13 @@ struct StateView_PreviewsContainer: PreviewProvider
             StateView(states_data: $states_data)
                 .frame(width: 320, height: 240)
                 .onAppear
-                {
-                    states_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
-                    states_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
-                                         StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
-                    
-                    states_data?.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
-                }
+            {
+                states_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
+                states_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
+                                            StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
+                
+                states_data?.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
+            }
         }
     }
 }
