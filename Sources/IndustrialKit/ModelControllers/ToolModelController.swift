@@ -249,7 +249,7 @@ public class ExternalToolModelController: ToolModelController
         
         return nil
     }
-
+    
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
@@ -267,7 +267,7 @@ public class ExternalToolModelController: ToolModelController
         
         return nil
     }
-
+    
     open override func initial_states_data() -> [StateItem]?
     {
         #if os(macOS)

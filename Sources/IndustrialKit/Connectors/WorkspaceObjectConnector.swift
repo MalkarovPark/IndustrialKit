@@ -227,7 +227,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
     // MARK: - Statistics handling
     /// A get statistics flag.
     public var get_statistics = false
-    {
+    /*{
         didSet
         {
             if !get_statistics
@@ -235,7 +235,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
                 reset_charts_data()
             }
         }
-    }
+    }*/
     
     /// Charts data.
     @Published public var charts_data: [WorkspaceObjectChart]?
