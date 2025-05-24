@@ -530,7 +530,7 @@ public func send_via_unix_socket(at socket_path: String, with arguments: [String
 public func string_to_codable<T: Codable>(from string: String) -> T?
 {
     // Convert the string to Data
-    guard let jsonData = string.data(using: .utf8)
+    guard let json_data = string.data(using: .utf8)
     else
     {
         return nil
@@ -540,7 +540,7 @@ public func string_to_codable<T: Codable>(from string: String) -> T?
     let decoder = JSONDecoder()
     do
     {
-        let object = try decoder.decode(T.self, from: jsonData)
+        let object = try decoder.decode(T.self, from: json_data)
         return object
     }
     catch

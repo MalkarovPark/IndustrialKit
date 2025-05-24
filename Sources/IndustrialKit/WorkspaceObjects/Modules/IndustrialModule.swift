@@ -128,16 +128,34 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     open var node = SCNNode()
     
     #if os(macOS)
-    /// Start all program components in module.
-    open func start_program_components()
+    /**
+     Returns an array of program component paths used in the module.
+     
+     Each element of the array is a tuple containing:
+     - `file`: The path to the executable file of the module.
+     - `socket`: The path to the Unix socket created by the module for inter-process communication.
+     */
+    open var program_components_paths: [(file: String, socket: String)]
     {
-        
+        return [(file: String, socket: String)]()
+    }
+    
+    /// Start all program components in module.
+    public func start_program_components()
+    {
+        for program_components_path in program_components_paths
+        {
+            perform_terminal_app_sync(at: self.package_url.appendingPathComponent(program_components_path.file), with: [" > /dev/null 2>&1 &"])
+        }
     }
     
     /// Stop all program components in module.
-    open func stop_program_components()
+    public func stop_program_components()
     {
-        
+        for program_components_path in program_components_paths
+        {
+            send_via_unix_socket(at: program_components_path.socket, command: "stop")
+        }
     }
     #endif
     

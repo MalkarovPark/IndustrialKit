@@ -78,14 +78,14 @@ open class ChangerModule: IndustrialModule
     public var change: (inout [Float]) -> Void = { _ in }
     
     #if os(macOS)
-    override open func start_program_components()
+    override open var program_components_paths: [(file: String, socket: String)]
     {
-        perform_terminal_app_sync(at: self.package_url.appendingPathComponent("/Code/Change"), with: [" > /dev/null 2>&1 &"])
-    }
-    
-    override open func stop_program_components()
-    {
-        send_via_unix_socket(at: "/tmp/\(name.code_correct_format)_change_socket", command: "stop")
+        return [
+            (
+                file: "/Code/Change",
+                socket: "/tmp/\(name.code_correct_format)_change_socket"
+            )
+        ]
     }
     
     /**

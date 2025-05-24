@@ -238,16 +238,18 @@ open class ToolModule: IndustrialModule
     }
     
     #if os(macOS)
-    override open func start_program_components()
+    override open var program_components_paths: [(file: String, socket: String)]
     {
-        perform_terminal_app_sync(at: self.package_url.appendingPathComponent("/Code/Controller"), with: [" > /dev/null 2>&1 &"])
-        perform_terminal_app_sync(at: self.package_url.appendingPathComponent("/Code/Connector"), with: [" > /dev/null 2>&1 &"])
-    }
-    
-    override open func stop_program_components()
-    {
-        send_via_unix_socket(at: "/tmp/\(name.code_correct_format)_tool_controller_socket", command: "stop")
-        send_via_unix_socket(at: "/tmp/\(name.code_correct_format)_tool_connector_socket", command: "stop")
+        return [
+            (
+                file: "/Code/Controller",
+                socket: "/tmp/\(name.code_correct_format)_tool_controller_socket"
+            ),
+            (
+                file: "/Code/Connector",
+                socket: "/tmp/\(name.code_correct_format)_tool_connector_socket"
+            )
+        ]
     }
     #endif
     
