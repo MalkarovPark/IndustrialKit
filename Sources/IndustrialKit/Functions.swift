@@ -526,7 +526,7 @@ public func send_via_unix_socket(at socket_path: String, with arguments: [String
  - Parameter path: The file system path to the Unix domain socket.
  - Returns: `true` if a process is using the socket at the given path, `false` otherwise.
  */
-func is_socket_active(at path: String) -> Bool
+public func is_socket_active(at path: String) -> Bool
 {
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
