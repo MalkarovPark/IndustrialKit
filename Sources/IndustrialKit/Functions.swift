@@ -516,6 +516,40 @@ public func send_via_unix_socket(at socket_path: String, with arguments: [String
 {
     return send_via_unix_socket(at: socket_path, command: arguments.joined(separator: " "))
 }
+
+/**
+ Checks whether a process is currently listening on the specified Unix socket.
+ 
+ This function uses the `lsof` utility to determine if any process is actively using
+ the provided Unix domain socket path. It executes `lsof -U <path>` and analyzes the output.
+ 
+ - Parameter path: The file system path to the Unix domain socket.
+ - Returns: `true` if a process is using the socket at the given path, `false` otherwise.
+ */
+func is_socket_active(at path: String) -> Bool
+{
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
+    process.arguments = ["-U", path]
+
+    let pipe = Pipe()
+    process.standardOutput = pipe
+
+    do
+    {
+        try process.run()
+        process.waitUntilExit()
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: data, encoding: .utf8) ?? ""
+
+        return output.contains(path)
+    }
+    catch
+    {
+        return false
+    }
+}
 #endif
 
 //MARK: - String functions
