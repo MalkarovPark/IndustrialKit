@@ -2334,7 +2334,7 @@ public class Workspace: ObservableObject
                     unit_node?.name = robot.name // Select robot cell node
                     robot.workcell_connect(scene: scene, name: robot.name, connect_camera: connect_camera) // Connect to robot model, place manipulator
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25)
                     {
                         robot.update() // Update robot by current position
                     }
