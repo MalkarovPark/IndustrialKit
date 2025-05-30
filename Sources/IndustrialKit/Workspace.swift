@@ -2333,7 +2333,12 @@ public class Workspace: ObservableObject
                     
                     unit_node?.name = robot.name // Select robot cell node
                     robot.workcell_connect(scene: scene, name: robot.name, connect_camera: connect_camera) // Connect to robot model, place manipulator
-                    robot.update() // Update robot by current position
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1)
+                    {
+                        robot.update() // Update robot by current position
+                    }
+                    //robot.update() // Update robot by current position
                     
                     apply_bit_mask(node: robot.unit_node ?? SCNNode(), Workspace.robot_bit_mask)
                     
