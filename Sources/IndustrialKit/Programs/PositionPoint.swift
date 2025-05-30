@@ -70,4 +70,29 @@ public enum MoveType: String, Codable, Equatable, CaseIterable
 {
     case linear = "Linear"
     case fine = "Fine"
+    
+    init(register_value: Int)
+    {
+        switch register_value
+        {
+        case 0:
+            self = .linear
+        case 1:
+            self = .fine
+        default:
+            self = .linear
+        }
+    }
+    
+    /*/// Register value.
+    public var register_value: Int
+    {
+        switch self
+        {
+        case .linear:
+            return 0
+        case .fine:
+            return 1
+        }
+    }*/
 }

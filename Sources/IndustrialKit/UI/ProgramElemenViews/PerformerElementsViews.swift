@@ -20,6 +20,7 @@ public struct RobotPerformerElementView: View
     @State private var location_indices = [Int]()
     @State private var rotation_indices = [Int]()
     @State private var speed_index = [Int]()
+    @State private var type_index = [Int]()
     
     @EnvironmentObject var workspace: Workspace
     @State private var picker_is_presented = false
@@ -39,6 +40,7 @@ public struct RobotPerformerElementView: View
         _location_indices = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).x_index, (_element.wrappedValue as! RobotPerformerElement).y_index, (_element.wrappedValue as! RobotPerformerElement).z_index])
         _rotation_indices = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).r_index, (_element.wrappedValue as! RobotPerformerElement).p_index, (_element.wrappedValue as! RobotPerformerElement).w_index])
         _speed_index = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).speed_index])
+        _type_index = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).type_index])
         
         self.on_update = on_update
     }
@@ -88,7 +90,7 @@ public struct RobotPerformerElementView: View
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                .padding([.horizontal])
+                .frame(maxWidth: .infinity)
                 
                 if is_single_perfrom
                 {
@@ -98,8 +100,14 @@ public struct RobotPerformerElementView: View
                     RegistersSelector(text: "Rotation R: \(rotation_indices[0]), P: \(rotation_indices[1]), W: \(rotation_indices[2])", registers_count: workspace.registers.count, colors: registers_colors, indices: $rotation_indices, names: ["R", "P", "W"])
                         .padding(.top)
                     
-                    RegistersSelector(text: "Speed: \(speed_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $speed_index, names: ["Speed"])
-                        .padding(.top)
+                    HStack(spacing: 0)
+                    {
+                        RegistersSelector(text: "Speed: \(speed_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $speed_index, names: ["Speed"])
+                            .padding(.trailing)
+                        
+                        RegistersSelector(text: "Type: \(type_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $type_index, names: ["Type"])
+                    }
+                    .padding(.top)
                 }
                 else
                 {
@@ -273,7 +281,7 @@ public struct ToolPerformerElementView: View
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                .padding([.horizontal])
+                .frame(maxWidth: .infinity)
                 
                 if is_single_perfrom
                 {

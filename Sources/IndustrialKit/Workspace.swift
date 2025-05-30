@@ -789,7 +789,8 @@ public class Workspace: ObservableObject
                                              r: registers[safe_float: element.r_index],
                                              p: registers[safe_float: element.p_index],
                                              w: registers[safe_float: element.w_index],
-                                             move_speed: registers[safe_float: element.speed_index])
+                                             move_speed: registers[safe_float: element.speed_index],
+                                             move_type: MoveType(register_value: Int(registers[safe_float: element.type_index])))
             selected_robot.point_shift(&target_point)
             
             selected_robot.move_to(point: target_point)

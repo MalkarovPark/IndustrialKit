@@ -874,17 +874,18 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
         // p: r.(name).(program)
         case _ where match_regex(text: input, pattern: "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)"):
             let data = extract_data_array(from: input, pattern: "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)")
-            return RobotPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0", "0", "0", "0", "0", "0", "0"])
+            return RobotPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0", "0", "0", "0", "0", "0", "0", "0"])
             
         // p: r.(name).index.[#]
         case _ where match_regex(text: input, pattern: "p: r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]"):
             let data = extract_data_array(from: input, pattern: "p: r\\.\\(([^()]*)\\)\\.index\\.\\[([^\\[\\]]*)\\]")
-            return RobotPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0", "0", "0", "0", "0", "0", "0"])
+            return RobotPerformerElement(data_array: [data[0], "", data[1], "false", "true", "0", "0", "0", "0", "0", "0", "0", "0"])
             
-        // p: r.(name).single.[#, #, #, #, #, #, #]
-        case _ where match_regex(text: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]"):
-            let data = extract_data_array(from: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]")
-            return RobotPerformerElement(data_array: [data[0], "", "0", "true", "false", data[1], data[2], data[3], data[4], data[5], data[6], data[7]])
+        // p: r.(name).single.[#, #, #, #, #, #, #, #]
+        case _ where match_regex(text: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]"):
+            let data = extract_data_array(from: input, pattern: "p: r\\.\\(([^()]*)\\)\\.single\\.\\[(\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+), (\\d+)\\]")
+            return RobotPerformerElement(
+                data_array: [data[0], "", "0", "true", "false", data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]])
             
         // p: t.(name).(program)
         case _ where match_regex(text: input, pattern: "p: t\\.\\((.*?)\\)\\.\\((.*?)\\)"):

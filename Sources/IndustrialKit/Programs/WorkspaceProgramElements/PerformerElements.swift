@@ -85,6 +85,9 @@ public class RobotPerformerElement: PerformerElement
     /// Index of movement speed.
     public var speed_index = 0
     
+    /// Index of movement type.
+    public var type_index = 0
+    
     public override var title: String
     {
         return "Robot"
@@ -111,12 +114,12 @@ public class RobotPerformerElement: PerformerElement
         }
         else
         {
-            return "p: r.(\(object_name)).single.[\(x_index), \(y_index), \(z_index), \(r_index), \(p_index), \(w_index), \(speed_index)]"
+            return "p: r.(\(object_name)).single.[\(x_index), \(y_index), \(z_index), \(r_index), \(p_index), \(w_index), \(speed_index), \(type_index)]"
         }
     }
     
     // File handling
-    // Data [<#robot name#>, <#program name#>, <#program index#>, <#is single#>, <#is by index#>, <#x#>, <#y#>, <#z#>, <#r#>, <#p#>, <#w#>, <#speed#>]
+    // Data [<#robot name#>, <#program name#>, <#program index#>, <#is single#>, <#is by index#>, <#x#>, <#y#>, <#z#>, <#r#>, <#p#>, <#w#>, <#speed#>, <#type#>]
     public override var identifier: WorkspaceProgramElementIdentifier?
     {
         return .robot_performer
@@ -124,7 +127,7 @@ public class RobotPerformerElement: PerformerElement
     
     public override var data_count: Int
     {
-        return 12
+        return 13
     }
     
     public override func data_from_array(_ data: [String])
@@ -145,6 +148,7 @@ public class RobotPerformerElement: PerformerElement
         w_index = Int(data[10]) ?? 0
         
         speed_index = Int(data[11]) ?? 0
+        type_index = Int(data[12]) ?? 0
     }
     
     public override var file_info: WorkspaceProgramElementStruct
@@ -167,6 +171,7 @@ public class RobotPerformerElement: PerformerElement
         info.append(String(w_index))
         
         info.append(String(speed_index))
+        info.append(String(type_index))
         
         return WorkspaceProgramElementStruct(identifier: .robot_performer, data: info)
     }
