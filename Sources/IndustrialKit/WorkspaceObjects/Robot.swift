@@ -1380,12 +1380,7 @@ public class Robot: WorkspaceObject
         try super.init(from: decoder)
         
         self.connector.import_connection_parameters_values(try container.decodeIfPresent([String].self, forKey: .connection_parameters))
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2)
-        {
-            self.reset_pointer_to_default()
-        }
-        //self.reset_pointer_to_default()
+        self.reset_pointer_to_default()
     }
     
     public override func encode(to encoder: any Encoder) throws
