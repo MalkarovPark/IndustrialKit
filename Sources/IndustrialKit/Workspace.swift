@@ -1919,10 +1919,13 @@ public class Workspace: ObservableObject
         guard let tool_node = robot_by_name(robot_name).tool_node else { return }
         
         let tool_attachment_constraint = SCNReplicatorConstraint(target: tool_node)
+        
         tool_attachment_constraint.positionOffset = tool_node.position
         tool_attachment_constraint.orientationOffset.x = tool_node.eulerAngles.x
         tool_attachment_constraint.orientationOffset.y = tool_node.eulerAngles.y
         tool_attachment_constraint.orientationOffset.z = tool_node.eulerAngles.z
+        
+        edited_object_node?.constraints?.append(tool_attachment_constraint)
     }
     
     /// Removes attachment for edited tool and reset it position in the workspace.
