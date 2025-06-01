@@ -1695,7 +1695,7 @@ public class Workspace: ObservableObject
         return names
     }
     
-    /// Names of robots avaliable to tool attachment.
+    /*/// Names of robots avaliable to tool attachment.
     public var attachable_robots_names: [String]
     {
         var names = placed_robots_names
@@ -1716,7 +1716,7 @@ public class Workspace: ObservableObject
         }
         
         return names
-    }
+    }*/
     
     // MARK: - Tools handling functions
     // MARK: Tools manage funcions
