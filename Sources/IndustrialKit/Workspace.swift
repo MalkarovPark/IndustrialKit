@@ -1913,8 +1913,22 @@ public class Workspace: ObservableObject
     {
         update_pointer()
         
-        edited_object_node?.constraints = [SCNConstraint]()
-        edited_object_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(robot_name).tool_node))
+        //edited_object_node?.constraints = [SCNConstraint]()
+        //edited_object_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(robot_name).tool_node))
+        
+        guard let edited_node = edited_object_node,
+              let tool_node = robot_by_name(robot_name).tool_node else { return }
+        
+        let savedPosition = edited_node.position
+        let savedEulerAngles = edited_node.eulerAngles
+        
+        edited_node.constraints = []
+        
+        let replicatorConstraint = SCNReplicatorConstraint(target: tool_node)
+        edited_node.constraints?.append(replicatorConstraint)
+        
+        edited_node.position = savedPosition
+        edited_node.eulerAngles = savedEulerAngles
     }
     
     /// Removes attachment for edited tool and reset it position in the workspace.
