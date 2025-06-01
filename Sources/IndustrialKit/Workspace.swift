@@ -1928,9 +1928,7 @@ public class Workspace: ObservableObject
         let tool_attachment_constraint = SCNReplicatorConstraint(target: robot_tool_node)
         
         tool_attachment_constraint.positionOffset = edited_node.position
-        tool_attachment_constraint.orientationOffset.x = edited_node.eulerAngles.x
-        tool_attachment_constraint.orientationOffset.y = edited_node.eulerAngles.y
-        tool_attachment_constraint.orientationOffset.z = edited_node.eulerAngles.z
+        tool_attachment_constraint.orientationOffset = edited_node.orientation
         
         edited_node.constraints?.append(tool_attachment_constraint)
     }
