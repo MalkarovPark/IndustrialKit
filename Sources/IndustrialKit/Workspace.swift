@@ -1913,10 +1913,10 @@ public class Workspace: ObservableObject
     {
         update_pointer()
         
-        edited_object_node?.constraints = [SCNConstraint]()
+        //edited_object_node?.constraints = [SCNConstraint]()
         //edited_object_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(robot_name).tool_node))
         
-        guard let edited_node = edited_object_node,
+        /*guard let edited_node = edited_object_node,
               let robot_tool_node = robot_by_name(robot_name).tool_node
         else
         {
@@ -1930,7 +1930,24 @@ public class Workspace: ObservableObject
         tool_attachment_constraint.positionOffset = edited_node.position
         tool_attachment_constraint.orientationOffset = edited_node.orientation
         
-        edited_node.constraints?.append(tool_attachment_constraint)
+        edited_node.constraints?.append(tool_attachment_constraint)*/
+        
+        if let edited_node = edited_object_node, let robot_tool_node = robot_by_name(robot_name).tool_node
+        {
+            attach(node: edited_node, to: robot_tool_node)
+        }
+    }
+    
+    private func attach(node: SCNNode, to end_point_node: SCNNode)
+    {
+        node.constraints? = []
+        
+        let attachment_constraint = SCNReplicatorConstraint(target: end_point_node)
+        
+        attachment_constraint.positionOffset = node.position
+        attachment_constraint.orientationOffset = node.orientation
+        
+        node.constraints?.append(attachment_constraint)
     }
     
     /*public func attach(tool: Tool, to robot: Robot)
@@ -2418,8 +2435,13 @@ public class Workspace: ObservableObject
                     }
                     else
                     {
-                        tool_node?.constraints = [SCNConstraint]()
-                        tool_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(tool.attached_to ?? "").tool_node))
+                        //tool_node?.constraints = [SCNConstraint]()
+                        //tool_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(tool.attached_to ?? "").tool_node))
+                        
+                        if let edited_node = tool_node, let robot_tool_node = robot_by_name(tool.attached_to ?? "").tool_node
+                        {
+                            attach(node: edited_node, to: robot_tool_node)
+                        }
                     }
                 }
             }
