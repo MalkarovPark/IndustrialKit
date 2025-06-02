@@ -2417,28 +2417,23 @@ public class Workspace: ObservableObject
                     tools_node?.addChildNode(tool_node ?? SCNNode())
                     tool.workcell_connect(scene: scene, name: tool.name) // Connect to robot model, place manipulator
                     
-                    if !tool.is_attached
+                    // Set tool node position
+                    #if os(macOS)
+                    tool_node?.position = SCNVector3(x: CGFloat(tool.location[1]), y: CGFloat(tool.location[2]), z: CGFloat(tool.location[0]))
+                    
+                    tool_node?.eulerAngles.x = CGFloat(tool.rotation[1].to_rad)
+                    tool_node?.eulerAngles.y = CGFloat(tool.rotation[2].to_rad)
+                    tool_node?.eulerAngles.z = CGFloat(tool.rotation[0].to_rad)
+                    #else
+                    tool_node?.position = SCNVector3(x: Float(tool.location[1]), y: Float(tool.location[2]), z: Float(tool.location[0]))
+                    
+                    tool_node?.eulerAngles.x = tool.rotation[1].to_rad
+                    tool_node?.eulerAngles.y = tool.rotation[2].to_rad
+                    tool_node?.eulerAngles.z = tool.rotation[0].to_rad
+                    #endif
+                    
+                    if tool.is_attached
                     {
-                        // Set tool node position
-                        #if os(macOS)
-                        tool_node?.position = SCNVector3(x: CGFloat(tool.location[1]), y: CGFloat(tool.location[2]), z: CGFloat(tool.location[0]))
-                        
-                        tool_node?.eulerAngles.x = CGFloat(tool.rotation[1].to_rad)
-                        tool_node?.eulerAngles.y = CGFloat(tool.rotation[2].to_rad)
-                        tool_node?.eulerAngles.z = CGFloat(tool.rotation[0].to_rad)
-                        #else
-                        tool_node?.position = SCNVector3(x: Float(tool.location[1]), y: Float(tool.location[2]), z: Float(tool.location[0]))
-                        
-                        tool_node?.eulerAngles.x = tool.rotation[1].to_rad
-                        tool_node?.eulerAngles.y = tool.rotation[2].to_rad
-                        tool_node?.eulerAngles.z = tool.rotation[0].to_rad
-                        #endif
-                    }
-                    else
-                    {
-                        //tool_node?.constraints = [SCNConstraint]()
-                        //tool_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(tool.attached_to ?? "").tool_node))
-                        
                         if let edited_node = tool_node, let robot_tool_node = robot_by_name(tool.attached_to ?? "").tool_node
                         {
                             attach(node: edited_node, to: robot_tool_node)
