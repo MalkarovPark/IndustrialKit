@@ -1940,7 +1940,8 @@ public class Workspace: ObservableObject
     
     private func attach(node: SCNNode, to end_point_node: SCNNode)
     {
-        node.constraints? = []
+        node.constraints = [SCNConstraint]()
+        //node.constraints? = []
         
         let attachment_constraint = SCNReplicatorConstraint(target: end_point_node)
         
@@ -2435,13 +2436,13 @@ public class Workspace: ObservableObject
                     }
                     else
                     {
-                        tool_node?.constraints = [SCNConstraint]()
-                        tool_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(tool.attached_to ?? "").tool_node))
+                        //tool_node?.constraints = [SCNConstraint]()
+                        //tool_node?.constraints?.append(SCNReplicatorConstraint(target: robot_by_name(tool.attached_to ?? "").tool_node))
                         
-                        /*if let edited_node = tool_node, let robot_tool_node = robot_by_name(tool.attached_to ?? "").tool_node
+                        if let edited_node = tool_node, let robot_tool_node = robot_by_name(tool.attached_to ?? "").tool_node
                         {
                             attach(node: edited_node, to: robot_tool_node)
-                        }*/
+                        }
                     }
                 }
             }
