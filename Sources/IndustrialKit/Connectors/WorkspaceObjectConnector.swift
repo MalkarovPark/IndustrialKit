@@ -173,12 +173,17 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
             disconnection_task = Task
             {
                 await disconnection_process()
+                
+                connected = false
+                connection_updating = false
+                
+                connection_failure = false
             }
             
-            connected = false
+            /*connected = false
             connection_updating = false
             
-            connection_failure = false
+            connection_failure = false*/
         }
     }
     
