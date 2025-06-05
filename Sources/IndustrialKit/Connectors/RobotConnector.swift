@@ -316,7 +316,7 @@ public class ExternalRobotConnector: RobotConnector
     open override func sync_model()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["sync_model"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["sync_model"])
         else
         {
             connection_failure = true
