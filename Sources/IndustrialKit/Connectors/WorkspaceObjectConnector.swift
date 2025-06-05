@@ -170,10 +170,12 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
         {
             connection_updating = true
             
-            disconnection_task = Task
+            /*disconnection_task = Task
             {
                 await disconnection_process()
-            }
+            }*/
+            
+            disconnection_process()
             
             connected = false
             connection_updating = false
@@ -187,7 +189,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
         return true
     }
     
-    open func disconnection_process() async // -> Bool
+    open func disconnection_process()// async // -> Bool
     {
         // return false
     }

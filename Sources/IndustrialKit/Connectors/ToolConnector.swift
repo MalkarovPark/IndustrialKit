@@ -173,7 +173,7 @@ public class ExternalToolConnector: ToolConnector
         #endif
     }
     
-    override open func disconnection_process() async
+    override open func disconnection_process()// async
     {
         #if os(macOS)
         guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["disconnect"])
