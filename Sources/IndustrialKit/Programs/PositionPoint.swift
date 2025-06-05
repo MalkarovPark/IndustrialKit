@@ -35,6 +35,7 @@ public class PositionPoint: Identifiable, Codable, Hashable
     public var move_type: MoveType
     
     /// Moving to point speed.
+    /// > In mm/sec
     public var move_speed: Float
     
     // MARK: - Init functions

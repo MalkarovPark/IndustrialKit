@@ -199,14 +199,14 @@ public class ExternalRobotConnector: RobotConnector
     override open func move_to(point: PositionPoint)
     {
         #if os(macOS)
-        let pointer_location = [point.x, point.y, point.z]
+        /*let pointer_location = [point.x, point.y, point.z]
         let pointer_rotation = [point.r, point.p, point.w]
         
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
         else
         {
             return
-        }
+        }*/
         #endif
     }
     
