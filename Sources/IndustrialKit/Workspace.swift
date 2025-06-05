@@ -1695,29 +1695,6 @@ public class Workspace: ObservableObject
         return names
     }
     
-    /*/// Names of robots avaliable to tool attachment.
-    public var attachable_robots_names: [String]
-    {
-        var names = placed_robots_names
-        
-        if names.count > 0
-        {
-            // Find attached robots names by tools
-            var attached_robots_names = [String]()
-            for tool in tools
-            {
-                if tool.is_attached
-                {
-                    attached_robots_names.append(tool.attached_to ?? "")
-                }
-            }
-            
-            names = names.filter{ !attached_robots_names.contains($0) } // Substract attached robots names from all placed robots
-        }
-        
-        return names
-    }*/
-    
     // MARK: - Tools handling functions
     // MARK: Tools manage funcions
     /// Adds tool in the workspace.

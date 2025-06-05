@@ -153,6 +153,10 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
                     
                     connection_failure = false
                 }
+                else
+                {
+                    sync_model()
+                }
             }
         }
     }
