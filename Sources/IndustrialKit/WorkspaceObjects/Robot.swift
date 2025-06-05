@@ -873,15 +873,7 @@ public class Robot: WorkspaceObject
     {
         if !performed
         {
-            model_controller.update_by_pointer()
-            /*if demo
-            {
-                model_controller.pointer_location = pointer_location
-            }
-            else
-            {
-                
-            }*/
+            model_controller.pointer_location = pointer_location
         }
     }
     
@@ -890,15 +882,7 @@ public class Robot: WorkspaceObject
     {
         if !performed
         {
-            model_controller.update_by_pointer()
-            /*if demo
-            {
-                model_controller.pointer_rotation = pointer_rotation
-            }
-            else
-            {
-                
-            }*/
+            model_controller.pointer_rotation = pointer_rotation
         }
     }
     
