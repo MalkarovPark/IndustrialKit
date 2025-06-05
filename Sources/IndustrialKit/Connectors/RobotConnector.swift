@@ -134,7 +134,7 @@ public class ExternalRobotConnector: RobotConnector
         // Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
 
-        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: arguments) else
+        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: arguments) else
         {
             if output != String()
             {
@@ -184,7 +184,7 @@ public class ExternalRobotConnector: RobotConnector
     override open func disconnection_process() async
     {
         #if os(macOS)
-        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["disconnect"])
+        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["disconnect"])
         else
         {
             self.output += "Couldn't perform external code"
@@ -202,7 +202,7 @@ public class ExternalRobotConnector: RobotConnector
         let pointer_location = [point.x, point.y, point.z]
         let pointer_rotation = [point.r, point.p, point.w]
         
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
         else
         {
             return
@@ -213,7 +213,7 @@ public class ExternalRobotConnector: RobotConnector
     open override func reset_device()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["reset_device"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["reset_device"])
         else
         {
             connection_failure = true
@@ -227,7 +227,7 @@ public class ExternalRobotConnector: RobotConnector
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["updated_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["updated_charts_data"])
         else
         {
             connection_failure = true
@@ -247,7 +247,7 @@ public class ExternalRobotConnector: RobotConnector
     open override func updated_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["updated_states_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["updated_states_data"])
         else
         {
             connection_failure = true
@@ -271,7 +271,7 @@ public class ExternalRobotConnector: RobotConnector
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["initial_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["initial_charts_data"])
         else
         {
             connection_failure = true
@@ -293,7 +293,7 @@ public class ExternalRobotConnector: RobotConnector
     open override func initial_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_connector_socket", with: ["initial_states_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["initial_states_data"])
         else
         {
             connection_failure = true
@@ -316,7 +316,7 @@ public class ExternalRobotConnector: RobotConnector
     open override func sync_model()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_robot_controller_socket", with: ["sync_model"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["sync_model"])
         else
         {
             connection_failure = true

@@ -150,7 +150,7 @@ public class ExternalToolModelController: ToolModelController
     open override func reset_nodes()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["reset_nodes"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["reset_nodes"])
         else
         {
             return
@@ -190,7 +190,7 @@ public class ExternalToolModelController: ToolModelController
     open override var info_output: [Float]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["info_output"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["info_output"])
         else
         {
             return nil
@@ -217,7 +217,7 @@ public class ExternalToolModelController: ToolModelController
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["updated_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["updated_charts_data"])
         else
         {
             return nil
@@ -235,7 +235,7 @@ public class ExternalToolModelController: ToolModelController
     open override func updated_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["updated_states_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["updated_states_data"])
         else
         {
             return nil
@@ -253,7 +253,7 @@ public class ExternalToolModelController: ToolModelController
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["initial_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["initial_charts_data"])
         else
         {
             return nil
@@ -271,7 +271,7 @@ public class ExternalToolModelController: ToolModelController
     open override func initial_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["initial_states_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["initial_states_data"])
         else
         {
             return nil

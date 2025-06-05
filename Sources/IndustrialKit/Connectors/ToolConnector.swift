@@ -114,7 +114,7 @@ public class ExternalToolConnector: ToolConnector
         // Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
         
-        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: arguments)
+        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: arguments)
         else
         {
             if output != String()
@@ -176,7 +176,7 @@ public class ExternalToolConnector: ToolConnector
     override open func disconnection_process() async
     {
         #if os(macOS)
-        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["disconnect"])
+        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["disconnect"])
         else
         {
             self.output += "Couldn't perform external code"
@@ -191,7 +191,7 @@ public class ExternalToolConnector: ToolConnector
     open override func perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["perform", "\(code)"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["perform", "\(code)"])
         else
         {
             connection_failure = true
@@ -204,7 +204,7 @@ public class ExternalToolConnector: ToolConnector
     open override func reset_device()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["reset_device"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["reset_device"])
         else
         {
             connection_failure = true
@@ -218,7 +218,7 @@ public class ExternalToolConnector: ToolConnector
     open override var info_output: [Float]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["info_output"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["info_output"])
         else
         {
             connection_failure = true
@@ -240,7 +240,7 @@ public class ExternalToolConnector: ToolConnector
     open override func updated_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["updated_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["updated_charts_data"])
         else
         {
             connection_failure = true
@@ -261,7 +261,7 @@ public class ExternalToolConnector: ToolConnector
     open override func updated_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["updated_states_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["updated_states_data"])
         else
         {
             connection_failure = true
@@ -283,7 +283,7 @@ public class ExternalToolConnector: ToolConnector
     open override func initial_charts_data() -> [WorkspaceObjectChart]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["initial_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["initial_charts_data"])
         else
         {
             connection_failure = true
@@ -305,7 +305,7 @@ public class ExternalToolConnector: ToolConnector
     open override func initial_states_data() -> [StateItem]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_connector_socket", with: ["initial_states_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["initial_states_data"])
         else
         {
             connection_failure = true
@@ -328,7 +328,7 @@ public class ExternalToolConnector: ToolConnector
     open override func sync_model()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name)_tool_controller_socket", with: ["sync_model"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["sync_model"])
         else
         {
             connection_failure = true
