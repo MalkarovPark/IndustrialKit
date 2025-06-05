@@ -1392,6 +1392,11 @@ public class Robot: WorkspaceObject
         try super.init(from: decoder)
         
         self.connector.import_connection_parameters_values(try container.decodeIfPresent([String].self, forKey: .connection_parameters))
+        if self.update_model_by_connector
+        {
+            self.connector.model_controller = self.model_controller
+        }
+        
         self.reset_pointer_to_default()
     }
     
