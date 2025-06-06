@@ -246,8 +246,11 @@ open class RobotModelController: ModelController
             }
         }
         
-        pointer_location = [point.x, point.y, point.z]
-        pointer_rotation = [point.r, point.p, point.w]
+        if !canceled
+        {
+            pointer_location = [point.x, point.y, point.z]
+            pointer_rotation = [point.r, point.p, point.w]
+        }
     }
     
     private func remove_movement_actions()
