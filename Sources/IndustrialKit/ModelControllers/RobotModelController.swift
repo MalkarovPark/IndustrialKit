@@ -42,7 +42,7 @@ open class RobotModelController: ModelController
     }
     
     /// An update pointer node by position data flag.
-    private var update_pointer_node_position = true
+    //private var update_pointer_node_position = true
     
     /**
      A robot pointer location.
@@ -90,27 +90,20 @@ open class RobotModelController: ModelController
     /// Update robot manipulator parts positions by target point.
     private func update_model()
     {
-        if update_pointer_node_position
-        {
-            let pointer_position = converted_pointer_position
-            
-            pointer_node?.position = pointer_position.location // Set robot pointer node location.
-            
-            // Set robot pointer node rotation.
-            #if os(macOS)
-            pointer_node?.eulerAngles.x = CGFloat(pointer_position.rot_y)
-            pointer_node?.eulerAngles.y = CGFloat(pointer_position.rot_z)
-            pointer_node_internal?.eulerAngles.z = CGFloat(pointer_position.rot_x)
-            #else
-            pointer_node?.eulerAngles.x = pointer_position.rot_y
-            pointer_node?.eulerAngles.y = pointer_position.rot_z
-            pointer_node_internal?.eulerAngles.z = pointer_position.rot_x
-            #endif
-        }
-        else
-        {
-            update_pointer_node_position = true
-        }
+        let pointer_position = converted_pointer_position
+        
+        pointer_node?.position = pointer_position.location // Set robot pointer node location
+        
+        // Set robot pointer node rotation
+        #if os(macOS)
+        pointer_node?.eulerAngles.x = CGFloat(pointer_position.rot_y)
+        pointer_node?.eulerAngles.y = CGFloat(pointer_position.rot_z)
+        pointer_node_internal?.eulerAngles.z = CGFloat(pointer_position.rot_x)
+        #else
+        pointer_node?.eulerAngles.x = pointer_position.rot_y
+        pointer_node?.eulerAngles.y = pointer_position.rot_z
+        pointer_node_internal?.eulerAngles.z = pointer_position.rot_x
+        #endif
         
         update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }

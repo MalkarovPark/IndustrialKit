@@ -515,13 +515,6 @@ public class Robot: WorkspaceObject
         {
             // Move to point for virtual robot
             pointer_position_to_robot()
-            /*model_controller.update_movement_time(point1: point,
-                                                  point2: PositionPoint(x: pointer_location[0],
-                                                                        y: pointer_location[1],
-                                                                        z: pointer_location[2],
-                                                                        r: pointer_rotation[0],
-                                                                        p: pointer_rotation[1],
-                                                                        w: pointer_rotation[2]))*/
             model_controller.move_to(point: point)
             {
                 completion()
@@ -532,9 +525,21 @@ public class Robot: WorkspaceObject
             if connector.connected
             {
                 // Move to point for real robot
-                connector.move_to(point: point)
+                if update_model_by_connector
                 {
-                    completion()
+                    pointer_position_to_robot()
+                    connector.move_to(point: point)
+                    {
+                        completion()
+                    }
+                }
+                else
+                {
+                    //pointer_position_to_robot()
+                    model_controller.move_to(point: point)
+                    {
+                        completion()
+                    }
                 }
             }
             else
