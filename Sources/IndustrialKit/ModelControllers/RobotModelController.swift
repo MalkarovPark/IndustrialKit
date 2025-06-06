@@ -132,7 +132,7 @@ open class RobotModelController: ModelController
      
      > Can be used within class, but for normal synchronization in SceneKit it is placed in the public protection level.
      */
-    public func update_by_pointer() // Call from internal – nodes_move_to function
+    public func update_by_pointer() // Calls from internal – nodes_move_to function
     {
         update_pointer_node_position = false
         
