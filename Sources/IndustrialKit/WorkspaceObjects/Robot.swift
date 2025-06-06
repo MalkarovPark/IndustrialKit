@@ -522,30 +522,10 @@ public class Robot: WorkspaceObject
         }
         else
         {
-            if connector.connected
-            {
-                // Move to point for real robot
-                if update_model_by_connector
-                {
-                    pointer_position_to_robot()
-                    connector.move_to(point: point)
-                    {
-                        completion()
-                    }
-                }
-                else
-                {
-                    //pointer_position_to_robot()
-                    model_controller.move_to(point: point)
-                    {
-                        completion()
-                    }
-                }
-            }
-            else
+            pointer_position_to_robot()
+            connector.move_to(point: point, update_model: update_model_by_connector)
             {
                 completion()
-                self.performed = false
             }
         }
     }

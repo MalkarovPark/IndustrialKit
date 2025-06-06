@@ -66,21 +66,60 @@ open class RobotConnector: WorkspaceObjectConnector
      
      - Parameters:
         - point: The target position performed by the real robot.
+        - update_model: Update model by connector.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func move_to(point: PositionPoint, completion: @escaping () -> Void)
+    public func move_to(point: PositionPoint, update_model: Bool = true, completion: @escaping () -> Void)
     {
-        canceled = false
-        moving_task = Task
+        if connected
         {
-            self.move_to(point: point)
-            
-            if !canceled
+            if update_model
             {
-                // canceled = true
+                connector_move_to(point: point, completion: completion)
+            }
+            else
+            {
+                controller_move_to(point: point, completion: completion)
+            }
+        }
+        else
+        {
+            completion()
+        }
+        
+        func connector_move_to(point: PositionPoint, completion: @escaping () -> Void) // Update robot model by connector
+        {
+            canceled = false
+            moving_task = Task
+            {
+                self.move_to(point: point)
+                
+                if !canceled
+                {
+                    completion()
+                }
+                canceled = false
+            }
+        }
+        
+        func controller_move_to(point: PositionPoint, completion: @escaping () -> Void) // Update robot model by model controller
+        {
+            var controller_completed = false
+            
+            connector_move_to(point: point) // Perform connector process
+            {
+                if !controller_completed
+                {
+                    self.model_controller?.canceled = true // Cancel model controller performing if not finished
+                }
+                
                 completion()
             }
-            canceled = false
+            
+            model_controller?.move_to(point: point) // Perform model controller process
+            {
+                controller_completed = true
+            }
         }
     }
     

@@ -162,7 +162,6 @@ open class RobotModelController: ModelController
             
             if !canceled
             {
-                // canceled = true
                 completion()
             }
             canceled = false
