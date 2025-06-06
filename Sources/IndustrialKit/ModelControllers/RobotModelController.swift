@@ -162,22 +162,40 @@ open class RobotModelController: ModelController
     }
     
     /// Cancel perform flag.
-    private var cancel_task = false
+    private var canceled = false
     
-    /// Moving finished flag.
-    private var moving_finished = false
-    
-    /// Rotation finished flag.
-    private var rotation_finished = false
+    private var moving_task = Task {}
     
     /**
-     Performs robot model action by target position with completion handler.
+     Performs robot model movement by target position with completion handler.
      
      - Parameters:
         - point: The target position performed by the robot visual model.
         - completion: A completion function that is calls when the performing completes.
      */
     public func move_to(point: PositionPoint, completion: @escaping () -> Void)
+    {
+        canceled = false
+        moving_task = Task
+        {
+            self.move_to(point: point)
+            
+            if !canceled
+            {
+                // canceled = true
+                completion()
+            }
+            canceled = false
+        }
+    }
+    
+    /**
+     Performs robot model movement by target position.
+     
+     - Parameters:
+        - point: The target position performed by the robot visual model.
+     */
+    public func move_to(point: PositionPoint)
     {
         let parts_count: Int = 1000
         
@@ -238,8 +256,6 @@ open class RobotModelController: ModelController
         
         pointer_location = [point.x, point.y, point.z]
         pointer_rotation = [point.r, point.p, point.w]
-        
-        completion()
     }
     /*public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
@@ -343,7 +359,7 @@ open class RobotModelController: ModelController
     
     open override func reset_nodes()
     {
-        cancel_task = true
+        canceled = true
         remove_movement_actions()
     }
 }
