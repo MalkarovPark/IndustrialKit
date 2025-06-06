@@ -523,7 +523,7 @@ public class Robot: WorkspaceObject
         else
         {
             pointer_position_to_robot()
-            connector.move_to(point: point, update_model: update_model_by_connector)
+            connector.move_to(point: point)
             {
                 completion()
             }
@@ -711,7 +711,7 @@ public class Robot: WorkspaceObject
             else
             {
                 connector.model_controller?.reset_nodes()
-                //connector.model_controller = nil
+                connector.model_controller = nil
             }
         }
     }
@@ -863,11 +863,15 @@ public class Robot: WorkspaceObject
     {
         if !performed
         {
-            model_controller.pointer_location = pointer_location
-            /*if demo || !update_model_by_connector
+            //model_controller.pointer_location = pointer_location
+            if demo
             {
                 model_controller.pointer_location = pointer_location
-            }*/
+            }
+            else
+            {
+                connector.pointer_location = pointer_location
+            }
         }
     }
     
@@ -876,11 +880,15 @@ public class Robot: WorkspaceObject
     {
         if !performed
         {
-            model_controller.pointer_rotation = pointer_rotation
-            /*if demo || !update_model_by_connector
+            //model_controller.pointer_rotation = pointer_rotation
+            if demo
             {
                 model_controller.pointer_rotation = pointer_rotation
-            }*/
+            }
+            else
+            {
+                connector.pointer_rotation = pointer_rotation
+            }
         }
     }
     
