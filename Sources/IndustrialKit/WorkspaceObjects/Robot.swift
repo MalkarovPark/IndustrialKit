@@ -579,6 +579,7 @@ public class Robot: WorkspaceObject
         {
             if demo
             {
+                model_controller.canceled = true
                 model_controller.reset_nodes()
             }
             else

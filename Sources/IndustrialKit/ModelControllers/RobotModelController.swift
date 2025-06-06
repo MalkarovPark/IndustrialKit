@@ -128,19 +128,6 @@ open class RobotModelController: ModelController
     public var pointer_node_internal: SCNNode?
     
     /**
-     Updates robot model by current pointer node position.
-     
-     > Can be used within class, but for normal synchronization in SceneKit it is placed in the public protection level.
-     */
-    /*public func update_by_pointer() // Calls from internal – nodes_move_to function
-    {
-        update_pointer_node_position = false
-        
-        pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
-        pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
-    }*/
-    
-    /**
      Gets parts nodes links from model root node and pass to array.
      
      - Parameters:
@@ -162,7 +149,7 @@ open class RobotModelController: ModelController
     }
     
     /// Cancel perform flag.
-    private var canceled = false
+    public var canceled = false
     
     private var moving_task = Task {}
     
@@ -252,104 +239,16 @@ open class RobotModelController: ModelController
             pointer_rotation[2] += step_w
             
             usleep(UInt32(part_time * 1_000_000))
+            
+            if canceled
+            {
+                break
+            }
         }
         
         pointer_location = [point.x, point.y, point.z]
         pointer_rotation = [point.r, point.p, point.w]
     }
-    /*public func move_to(point: PositionPoint, completion: @escaping () -> Void)
-    {
-        self.moving_finished = false
-        self.rotation_finished = false
-        self.cancel_task = false
-        
-        let location_action = SCNAction.move(to: SCNVector3(point.y, point.z, point.x), duration: TimeInterval(location_time))
-        
-        let rotation_action_r = SCNAction.rotateTo(x: 0, y: 0, z: CGFloat(point.r.to_rad), duration: TimeInterval(rotation_time.r))
-        let rotation_action_pw = SCNAction.rotateTo(x: CGFloat(point.p.to_rad), y: CGFloat(point.w.to_rad), z: 0, duration: TimeInterval((rotation_time.p + rotation_time.w) / 2))
-        
-        pointer_node?.runAction(SCNAction.group([location_action, rotation_action_pw]))
-        {
-            self.moving_finished = true
-            check_completion()
-        }
-        
-        pointer_node_internal?.runAction(rotation_action_r)
-        {
-            self.rotation_finished = true
-            check_completion()
-        }
-        
-        func check_completion()
-        {
-            if (self.moving_finished && self.rotation_finished) || self.cancel_task
-            {
-                if self.cancel_task
-                {
-                    self.remove_movement_actions()
-                    // self.cancel_task = false
-                }
-                else
-                {
-                    completion()
-                }
-            }
-        }
-    }*/
-    
-    /*/**
-     Updates robot model movement time by end points distance.
-     
-     - Parameters:
-        - point1: The first target point.
-        - completion: The second target point.
-     */
-    public func update_movement_time(point1: PositionPoint, point2: PositionPoint)
-    {
-        let v = point1.move_speed
-        let s = distance_between_points(point1: point1, point2: point2)
-        
-        let default_rotation_speed: Float = 100
-        
-        // Calculate time between target point and current location/rotation
-        if v != 0
-        {
-            location_time = s / v
-            
-            if s != 0
-            {
-                rotation_time.r = location_time
-                rotation_time.p = location_time
-                rotation_time.w = location_time
-            }
-            else
-            {
-                rotation_time.r = abs(point1.r - point2.r) / default_rotation_speed
-                rotation_time.p = abs(point1.p - point2.p) / default_rotation_speed
-                rotation_time.w = abs(point1.w - point2.w) / default_rotation_speed
-            }
-        }
-        else
-        {
-            location_time = 0
-            
-            rotation_time.r = abs(point1.r - point2.r) / default_rotation_speed
-            rotation_time.p = abs(point1.p - point2.p) / default_rotation_speed
-            rotation_time.w = abs(point1.w - point2.w) / default_rotation_speed
-        }
-        
-        func distance_between_points(point1: PositionPoint, point2: PositionPoint) -> Float
-        {
-            let x_dist = point1.x - point2.x
-            let y_dist = point1.y - point2.y
-            let z_dist = point1.z - point2.z
-            
-            return sqrt(pow(x_dist, 2) + pow(y_dist, 2) + pow(z_dist, 2))
-        }
-    }
-    
-    private var location_time: Float = 0
-    private var rotation_time: (r: Float, p: Float, w: Float) = (0, 0, 0)*/
     
     private func remove_movement_actions()
     {
