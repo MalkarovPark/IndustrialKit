@@ -664,8 +664,14 @@ public class Robot: WorkspaceObject
         }
         else
         {
-            pointer_location = connector.pointer_location
-            pointer_rotation = connector.pointer_rotation
+            //pointer_location = connector.pointer_location
+            //pointer_rotation = connector.pointer_rotation
+            
+            if let controller = connector.model_controller
+            {
+                pointer_location = controller.pointer_location
+                pointer_rotation = controller.pointer_rotation
+            }
         }
     }
     
@@ -872,6 +878,10 @@ public class Robot: WorkspaceObject
         if !performed
         {
             model_controller.pointer_location = pointer_location
+            /*if demo || !update_model_by_connector
+            {
+                model_controller.pointer_location = pointer_location
+            }*/
         }
     }
     
@@ -881,6 +891,10 @@ public class Robot: WorkspaceObject
         if !performed
         {
             model_controller.pointer_location = pointer_location
+            /*if demo || !update_model_by_connector
+            {
+                model_controller.pointer_rotation = pointer_rotation
+            }*/
         }
     }
     
