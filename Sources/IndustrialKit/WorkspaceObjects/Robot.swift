@@ -890,7 +890,7 @@ public class Robot: WorkspaceObject
     {
         if !performed
         {
-            model_controller.pointer_location = pointer_location
+            model_controller.pointer_rotation = pointer_rotation
             /*if demo || !update_model_by_connector
             {
                 model_controller.pointer_rotation = pointer_rotation
