@@ -711,7 +711,7 @@ public class Robot: WorkspaceObject
             else
             {
                 connector.model_controller?.reset_nodes()
-                connector.model_controller = nil
+                //connector.model_controller = nil
             }
         }
     }
