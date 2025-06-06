@@ -132,13 +132,13 @@ open class RobotModelController: ModelController
      
      > Can be used within class, but for normal synchronization in SceneKit it is placed in the public protection level.
      */
-    public func update_by_pointer() // Calls from internal – nodes_move_to function
+    /*public func update_by_pointer() // Calls from internal – nodes_move_to function
     {
         update_pointer_node_position = false
         
         pointer_location = [Float(pointer_node?.position.z ?? 0), Float(pointer_node?.position.x ?? 0), Float(pointer_node?.position.y ?? 0)]
         pointer_rotation = [Float(pointer_node_internal?.eulerAngles.z ?? 0).to_deg, Float(pointer_node?.eulerAngles.x ?? 0).to_deg, Float(pointer_node?.eulerAngles.y ?? 0).to_deg]
-    }
+    }*/
     
     /**
      Gets parts nodes links from model root node and pass to array.
@@ -177,7 +177,71 @@ open class RobotModelController: ModelController
         - point: The target position performed by the robot visual model.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func nodes_move_to(point: PositionPoint, completion: @escaping () -> Void)
+    public func move_to(point: PositionPoint, completion: @escaping () -> Void)
+    {
+        let parts_count: Int = 1000
+        
+        let current_location = pointer_location
+        let current_rotation = pointer_rotation
+        
+        let delta_x: Float = point.x - current_location[0]
+        let delta_y: Float = point.y - current_location[1]
+        let delta_z: Float = point.z - current_location[2]
+        
+        let delta_r: Float = point.r - current_rotation[0]
+        let delta_p: Float = point.p - current_rotation[1]
+        let delta_w: Float = point.w - current_rotation[2]
+        
+        let distance_xyz: Double = sqrt(
+            pow(Double(delta_x), 2) +
+            pow(Double(delta_y), 2) +
+            pow(Double(delta_z), 2)
+        )
+        
+        let distance_rpw: Double = sqrt(
+            pow(Double(delta_r), 2) +
+            pow(Double(delta_p), 2) +
+            pow(Double(delta_w), 2)
+        )
+        
+        let total_distance: Double = max(distance_xyz, distance_rpw)
+        
+        let move_speed: Double = Double(point.move_speed)
+        guard move_speed > 0, parts_count > 0 else
+        {
+            return
+        }
+        
+        let total_time: Double = total_distance / move_speed
+        let part_time: Double = total_time / Double(parts_count)
+        
+        let step_x: Float = delta_x / Float(parts_count)
+        let step_y: Float = delta_y / Float(parts_count)
+        let step_z: Float = delta_z / Float(parts_count)
+        
+        let step_r: Float = delta_r / Float(parts_count)
+        let step_p: Float = delta_p / Float(parts_count)
+        let step_w: Float = delta_w / Float(parts_count)
+        
+        for _ in 0..<parts_count
+        {
+            pointer_location[0] += step_x
+            pointer_location[1] += step_y
+            pointer_location[2] += step_z
+            
+            pointer_rotation[0] += step_r
+            pointer_rotation[1] += step_p
+            pointer_rotation[2] += step_w
+            
+            usleep(UInt32(part_time * 1_000_000))
+        }
+        
+        pointer_location = [point.x, point.y, point.z]
+        pointer_rotation = [point.r, point.p, point.w]
+        
+        completion()
+    }
+    /*public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
         self.moving_finished = false
         self.rotation_finished = false
@@ -215,9 +279,9 @@ open class RobotModelController: ModelController
                 }
             }
         }
-    }
+    }*/
     
-    /**
+    /*/**
      Updates robot model movement time by end points distance.
      
      - Parameters:
@@ -269,7 +333,7 @@ open class RobotModelController: ModelController
     }
     
     private var location_time: Float = 0
-    private var rotation_time: (r: Float, p: Float, w: Float) = (0, 0, 0)
+    private var rotation_time: (r: Float, p: Float, w: Float) = (0, 0, 0)*/
     
     private func remove_movement_actions()
     {

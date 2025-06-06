@@ -490,7 +490,7 @@ public class Robot: WorkspaceObject
         // Modeling
         if demo
         {
-            model_controller.update_by_pointer()
+            //model_controller.update_by_pointer()
         }
         else if update_model_by_connector
         {
@@ -515,14 +515,14 @@ public class Robot: WorkspaceObject
         {
             // Move to point for virtual robot
             pointer_position_to_robot()
-            model_controller.update_movement_time(point1: point,
+            /*model_controller.update_movement_time(point1: point,
                                                   point2: PositionPoint(x: pointer_location[0],
                                                                         y: pointer_location[1],
                                                                         z: pointer_location[2],
                                                                         r: pointer_rotation[0],
                                                                         p: pointer_rotation[1],
-                                                                        w: pointer_rotation[2]))
-            model_controller.nodes_move_to(point: point)
+                                                                        w: pointer_rotation[2]))*/
+            model_controller.move_to(point: point)
             {
                 completion()
             }
