@@ -106,6 +106,11 @@ open class RobotConnector: WorkspaceObjectConnector
         {
             var controller_completed = false
             
+            model_controller?.move_to(point: point) // Perform model controller process
+            {
+                controller_completed = true
+            }
+            
             connector_move_to(point: point) // Perform connector process
             {
                 if !controller_completed
@@ -116,10 +121,10 @@ open class RobotConnector: WorkspaceObjectConnector
                 completion()
             }
             
-            model_controller?.move_to(point: point) // Perform model controller process
+            /*model_controller?.move_to(point: point) // Perform model controller process
             {
                 controller_completed = true
-            }
+            }*/
         }
     }
     
