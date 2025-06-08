@@ -322,6 +322,7 @@ public class ExternalRobotModelController: RobotModelController
         #endif
     }
     
+    #if os(macOS)
     /**
      Applies position updates to scene nodes based on a list of string commands.
      
@@ -351,6 +352,7 @@ public class ExternalRobotModelController: RobotModelController
             self.is_nodes_updating = false
         }
     }
+    #endif
     
     open override func reset_nodes()
     {

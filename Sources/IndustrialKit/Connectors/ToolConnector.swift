@@ -223,9 +223,16 @@ public class ExternalToolConnector: ToolConnector
         {
             if let output = output
             {
-                let nodes_actions: [String]? = output.split(separator: "\n").map { String($0) }
+                let lines = output.components(separatedBy: "\n")
+                guard let first = lines.first
+                else
+                {
+                    return (false, nil)
+                }
                 
-                return (completed: Bool(), nodes_actions: nodes_actions)
+                let completed = (first == "true")
+                let actions = lines.dropFirst()
+                return (completed, actions.isEmpty ? nil : Array(actions))
             }
             else
             {

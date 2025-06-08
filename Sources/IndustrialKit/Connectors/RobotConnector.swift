@@ -237,9 +237,23 @@ public class ExternalRobotConnector: RobotConnector
         {
             if let output = output
             {
-                let nodes_positions: [String]? = output.split(separator: "\n").map { String($0) }
+                let lines = output.components(separatedBy: "\n")
+                guard lines.count >= 2 else {
+                    return (false, nil, nil)
+                }
                 
-                return (completed: Bool(), pointer_position: nil, nodes_positions: nodes_positions)
+                let completed = (lines[0] == "true")
+                
+                let pointer_line = lines[1]
+                let pointer_position: (Float, Float, Float, Float, Float, Float)? = {
+                    if pointer_line == "nil" { return nil }
+                    let components = pointer_line.split(separator: " ").compactMap { Float($0) }
+                    return components.count == 6 ? (components[0], components[1], components[2],
+                                                    components[3], components[4], components[5]) : nil
+                }()
+                
+                let nodes_positions = lines.count > 2 ? Array(lines.dropFirst(2)) : nil
+                return (completed, pointer_position, nodes_positions)
             }
             else
             {

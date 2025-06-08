@@ -110,6 +110,7 @@ public class ExternalToolModelController: ToolModelController
         #endif
     }
     
+    #if os(macOS)
     /**
      Applies a sequence of actions to scene nodes based on string commands and calls a completion handler when all actions are finished.
      
@@ -160,6 +161,7 @@ public class ExternalToolModelController: ToolModelController
             }
         }
     }
+    #endif
     
     open override func reset_nodes()
     {
