@@ -286,7 +286,7 @@ public class ExternalRobotConnector: RobotConnector
             }
             else // Update nodes positions by model controller
             {
-                model_controller?.update_nodes(pointer_location: <#T##[Float]#>, pointer_rotation: <#T##[Float]#>, origin_location: <#T##[Float]#>, origin_rotation: <#T##[Float]#>)
+                //model_controller?.update_nodes(pointer_location: <#T##[Float]#>, pointer_rotation: <#T##[Float]#>, origin_location: <#T##[Float]#>, origin_rotation: <#T##[Float]#>)
             }
             
             usleep(100000)
