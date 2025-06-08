@@ -1098,3 +1098,132 @@ private func colors_by_seed(seed: Int) -> [Color]
 }
 
 let registers_colors = colors_by_seed(seed: 5433)
+
+#if os(macOS)
+// MARK: Connector state strings
+/**
+ Parses a string representing the robot connector state, including completion status,
+ optional pointer position, and optional list of node positions.
+ 
+ The expected input string format is:
+ - Line 1: `"true"` or `"false"` — completion status.
+ - Line 2: Either `"nil"` or six space-separated float values representing the pointer position and orientation: `x y z r p w`.
+ - Line 3 and onward (optional): One string per line representing a node position update.
+ 
+ - Parameter string: The input string to parse.
+ - Returns: A tuple containing:
+ - `Bool`: Completion status.
+ - `(Float, Float, Float, Float, Float, Float)?`: Pointer position and orientation, or `nil`.
+ - `[String]?`: Optional list of node position strings.
+ */
+public func robot_connector_state_string(from string: String) -> (Bool, (Float, Float, Float, Float, Float, Float)?, [String]?)
+{
+    let lines = string.components(separatedBy: "\n")
+    guard lines.count >= 2 else
+    {
+        return (false, nil, nil)
+    }
+
+    let completed = (lines[0] == "true")
+
+    let pointer_line = lines[1]
+    let pointer_position: (Float, Float, Float, Float, Float, Float)? = {
+        if pointer_line == "nil" { return nil }
+        let components = pointer_line.split(separator: " ").compactMap { Float($0) }
+        return components.count == 6 ? (components[0], components[1], components[2],
+                                        components[3], components[4], components[5]) : nil
+    }()
+    
+    let nodes_positions = lines.count > 2 ? Array(lines.dropFirst(2)) : nil
+    return (completed, pointer_position, nodes_positions)
+}
+
+/**
+ Decodes a string representing the robot connector state, including completion status,
+ optional pointer position, and optional list of node position strings.
+ 
+ The expected format of the input string is:
+ - Line 1: `"true"` or `"false"` indicating the completion status.
+ - Line 2: `"nil"` or six space-separated float values representing pointer position and orientation: `x y z r p w`.
+ - Line 3 and onward (optional): One string per line representing a node position update.
+ 
+ - Parameter string: The input string to decode.
+ - Returns: A tuple containing:
+ - `Bool`: Completion status.
+ - `(Float, Float, Float, Float, Float, Float)?`: Pointer position and orientation, or `nil`.
+ - `[String]?`: Optional list of node position strings.
+ */
+public func robot_connector_state_decode(from string: String) -> (Bool, (Float, Float, Float, Float, Float, Float)?, [String]?)
+{
+    let lines = string.components(separatedBy: "\n")
+    guard lines.count >= 2
+    else
+    {
+        return (false, nil, nil)
+    }
+    
+    let completed = (lines[0] == "true")
+    
+    let pointer_line = lines[1]
+    let pointer_position: (Float, Float, Float, Float, Float, Float)? = {
+        if pointer_line == "nil" { return nil }
+        let components = pointer_line.split(separator: " ").compactMap { Float($0) }
+        return components.count == 6 ? (components[0], components[1], components[2],
+                                        components[3], components[4], components[5]) : nil
+    }()
+    
+    let nodes_positions = lines.count > 2 ? Array(lines.dropFirst(2)) : nil
+    return (completed, pointer_position, nodes_positions)
+}
+
+/**
+ Parses a string representing the tool connector state, including completion status
+ and an optional list of node action strings.
+ 
+ The expected input string format is:
+ - Line 1: `"true"` or `"false"` — completion status.
+ - Line 2 and onward (optional): One string per line representing an action command.
+ 
+ - Parameter string: The input string to parse.
+ - Returns: A tuple containing:
+ - `Bool`: Completion status.
+ - `[String]?`: Optional list of action strings.
+ */
+public func tool_connector_state_string(from string: String) -> (Bool, [String]?)
+{
+    let lines = string.components(separatedBy: "\n")
+    guard let first = lines.first else
+    {
+        return (false, nil)
+    }
+
+    let completed = (first == "true")
+    let actions = lines.dropFirst()
+    return (completed, actions.isEmpty ? nil : Array(actions))
+}
+
+/**
+ Decodes a string representing the tool connector state, including completion status
+ and an optional list of action strings.
+ 
+ The expected format of the input string is:
+ - Line 1: `"true"` or `"false"` indicating the completion status.
+ - Line 2 and onward (optional): One string per line representing an action command.
+ 
+ - Parameter string: The input string to decode.
+ - Returns: A tuple containing:
+ - `Bool`: Completion status.
+ - `[String]?`: Optional array of action strings (or `nil` if none are present).
+ */
+public func tool_connector_state_decode(from string: String) -> (Bool, [String]?)
+{
+    let lines = string.components(separatedBy: "\n")
+    guard let first = lines.first else {
+        return (false, nil)
+    }
+    
+    let completed = (first == "true")
+    let actions = lines.dropFirst()
+    return (completed, actions.isEmpty ? nil : Array(actions))
+}
+#endif
