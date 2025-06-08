@@ -41,9 +41,6 @@ open class RobotModelController: ModelController
         
     }
     
-    /// An update pointer node by position data flag.
-    //private var update_pointer_node_position = true
-    
     /**
      A robot pointer location.
      
@@ -90,39 +87,42 @@ open class RobotModelController: ModelController
     /// Update robot manipulator parts positions by target point.
     private func update_model()
     {
-        update_pointer_position(to: converted_pointer_position)
-        
+        update_pointer_position(pos_x: pointer_location[0], pos_y: pointer_location[1], pos_z: pointer_location[2],
+                                rot_x: pointer_rotation[0], rot_y: pointer_rotation[1], rot_z: pointer_rotation[2])
+        update_nodes_by_pointer_location()
+        //update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+    }
+    
+    /// Updates robot nodes by current pointer and origin parameters.
+    public func update_nodes_by_pointer_location()
+    {
         update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
-    /// Robot current pointer position data for nodes.
-    private var converted_pointer_position: (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
-    {
-        return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
-    }
-    
     /**
-     Updates the pointer’s position and orientation in the 3D scene.
+     Updates the pointer’s position and orientation in the scene.
      
-     - Parameter pointer_position: A tuple containing the new transform for the pointer:
-     - location: The target position of the pointer as an `SCNVector3`.
+     - Parameters:
+     - pos_x: The X coordinate of the pointer's position.
+     - pos_y: The Y coordinate of the pointer's position.
+     - pos_z: The Z coordinate of the pointer's position.
      - rot_x: Rotation about the X-axis, in radians.
      - rot_y: Rotation about the Y-axis, in radians.
      - rot_z: Rotation about the Z-axis, in radians.
      */
-    public func update_pointer_position(to pointer_position: (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float))
+    public func update_pointer_position(pos_x: Float, pos_y: Float, pos_z: Float,
+                                        rot_x: Float, rot_y: Float, rot_z: Float)
     {
-        pointer_node?.position = pointer_position.location // Set robot pointer node location
+        pointer_node?.position = SCNVector3(pos_y, pos_z, pos_x)
         
-        // Set robot pointer node rotation
         #if os(macOS)
-        pointer_node?.eulerAngles.x = CGFloat(pointer_position.rot_y)
-        pointer_node?.eulerAngles.y = CGFloat(pointer_position.rot_z)
-        pointer_node_internal?.eulerAngles.z = CGFloat(pointer_position.rot_x)
+        pointer_node?.eulerAngles.x = CGFloat(rot_y)
+        pointer_node?.eulerAngles.y = CGFloat(rot_z)
+        pointer_node_internal?.eulerAngles.z = CGFloat(rot_x)
         #else
-        pointer_node?.eulerAngles.x = pointer_position.rot_y
-        pointer_node?.eulerAngles.y = pointer_position.rot_z
-        pointer_node_internal?.eulerAngles.z = pointer_position.rot_x
+        pointer_node?.eulerAngles.x = rot_y
+        pointer_node?.eulerAngles.y = rot_z
+        pointer_node_internal?.eulerAngles.z = rot_x
         #endif
     }
     

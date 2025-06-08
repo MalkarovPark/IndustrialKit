@@ -240,7 +240,7 @@ public class ExternalRobotConnector: RobotConnector
             return output
         }
         
-        var state: (completed: Bool, pointer_position: [Float]?, nodes_positions: [String]?)
+        var state: (completed: Bool, pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?, nodes_positions: [String]?)
         {
             if let output = output
             {
@@ -261,32 +261,28 @@ public class ExternalRobotConnector: RobotConnector
             
             if let position = state.pointer_position // Update pointer node position by connector
             {
+                model_controller?.update_pointer_position(pos_x: position.x, pos_y: position.y, pos_z: position.z, rot_x: position.r, rot_y: position.p, rot_z: position.w)
                 
-            }
-            else // Update pointer node position by model controller
-            {
-                
-            }
-            
-            if let nodes_positions = state.nodes_positions // Update nodes positions by connector
-            {
-                let updates: [(String, String)] = nodes_positions.compactMap
+                if let nodes_positions = state.nodes_positions // Update nodes positions by connector
                 {
-                    let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
-                    return components.count == 2 ? (components[0], components[1]) : nil
-                }
-                
-                if let model_controller = model_controller // Process robot model parts
-                {
-                    for (node_name, action_string) in updates
+                    let updates: [(String, String)] = nodes_positions.compactMap
                     {
-                        set_position(for: model_controller.nodes[safe: node_name, default: SCNNode()], from: action_string)
+                        let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
+                        return components.count == 2 ? (components[0], components[1]) : nil
+                    }
+                    
+                    if let model_controller = model_controller // Process robot model parts
+                    {
+                        for (node_name, action_string) in updates
+                        {
+                            set_position(for: model_controller.nodes[safe: node_name, default: SCNNode()], from: action_string)
+                        }
                     }
                 }
-            }
-            else // Update nodes positions by model controller
-            {
-                //model_controller?.update_nodes(pointer_location: <#T##[Float]#>, pointer_rotation: <#T##[Float]#>, origin_location: <#T##[Float]#>, origin_rotation: <#T##[Float]#>)
+                else // Update nodes positions by model controller
+                {
+                    model_controller?.update_nodes(pointer_location: [position.x, position.y, position.z], pointer_rotation: [position.r, position.p, position.w], origin_location: origin_location, origin_rotation: origin_rotation)
+                }
             }
             
             usleep(100000)
