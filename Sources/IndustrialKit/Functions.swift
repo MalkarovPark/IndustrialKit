@@ -1102,25 +1102,26 @@ let registers_colors = colors_by_seed(seed: 5433)
 #if os(macOS)
 // MARK: Connector state strings
 /**
- Encodes robot connector state as a string.
+ Converts robot connector state into a string.
  
  Format:
  - Line 1: "true" or "false"
- - Line 2: Six floats (x y z r p w) or "nil"
- - Following lines (if any): Each node position string.
+ - Line 2: Six space-separated Float values (x y z r p w), or "nil"
+ - Following lines: Optional list of node positions (each on its own line)
  
- - Parameter completed: Whether the action was completed.
- - Parameter pointer_position: Optional pointer position and orientation.
- - Parameter nodes_positions: Optional list of node positions.
- - Returns: Encoded string.
+ - Parameter state: Tuple containing:
+ - completed: Completion flag
+ - pointer_position: Optional pointer position and orientation
+ - nodes_positions: Optional list of node positions
+ - Returns: Encoded string representation.
  */
-public func robot_connector_state_string(from completed: Bool, pointer_position: (Float, Float, Float, Float, Float, Float)?, nodes_positions: [String]?) -> String
+public func robot_connector_state_string(_ state: (completed: Bool, pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?, nodes_positions: [String]?)) -> String
 {
-    let completed_line = completed ? "true" : "false"
-    let pointer_line = pointer_position.map {
-        "\($0.0) \($0.1) \($0.2) \($0.3) \($0.4) \($0.5)"
+    let completed_line = state.completed ? "true" : "false"
+    let pointer_line = state.pointer_position.map {
+        "\($0.x) \($0.y) \($0.z) \($0.r) \($0.p) \($0.w)"
     } ?? "nil"
-    let positions = nodes_positions?.joined(separator: "\n") ?? ""
+    let positions = state.nodes_positions?.joined(separator: "\n") ?? ""
     return positions.isEmpty ? "\(completed_line)\n\(pointer_line)" : "\(completed_line)\n\(pointer_line)\n\(positions)"
 }
 
@@ -1152,20 +1153,19 @@ public func robot_connector_state_decode(from string: String) -> (Bool, (Float, 
 }
 
 /**
- Encodes tool connector state as a string.
+ Converts tool connector state into a string.
  
  Format:
  - Line 1: "true" or "false"
- - Following lines (if any): Each action as one string.
+ - Following lines: Optional list of node actions (each on its own line)
  
- - Parameter completed: Whether tool actions are completed.
- - Parameter nodes_actions: Optional list of action strings.
- - Returns: Encoded string.
+ - Parameter state: Tuple with completion flag and optional node actions.
+ - Returns: Encoded string representation.
  */
-public func tool_connector_state_string(from completed: Bool, nodes_actions: [String]?) -> String
+public func tool_connector_state_string(_ state: (completed: Bool, nodes_actions: [String]?)) -> String
 {
-    let completed_line = completed ? "true" : "false"
-    let actions = nodes_actions?.joined(separator: "\n") ?? ""
+    let completed_line = state.completed ? "true" : "false"
+    let actions = state.nodes_actions?.joined(separator: "\n") ?? ""
     return actions.isEmpty ? completed_line : "\(completed_line)\n\(actions)"
 }
 
