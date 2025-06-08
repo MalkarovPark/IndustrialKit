@@ -1116,7 +1116,7 @@ let registers_colors = colors_by_seed(seed: 5433)
  - `(Float, Float, Float, Float, Float, Float)?`: Pointer position and orientation, or `nil`.
  - `[String]?`: Optional list of node position strings.
  */
-public func robot_connector_state_string(from string: String) -> (Bool, (Float, Float, Float, Float, Float, Float)?, [String]?)
+public func robot_connector_state_decode(from string: String) -> (Bool, (Float, Float, Float, Float, Float, Float)?, [String]?)
 {
     let lines = string.components(separatedBy: "\n")
     guard lines.count >= 2 else
@@ -1153,7 +1153,7 @@ public func robot_connector_state_string(from string: String) -> (Bool, (Float, 
  - `(Float, Float, Float, Float, Float, Float)?`: Pointer position and orientation, or `nil`.
  - `[String]?`: Optional list of node position strings.
  */
-public func robot_connector_state_decode(from string: String) -> (Bool, (Float, Float, Float, Float, Float, Float)?, [String]?)
+public func robot_connector_state_string(from string: String) -> (Bool, (Float, Float, Float, Float, Float, Float)?, [String]?)
 {
     let lines = string.components(separatedBy: "\n")
     guard lines.count >= 2
@@ -1189,7 +1189,7 @@ public func robot_connector_state_decode(from string: String) -> (Bool, (Float, 
  - `Bool`: Completion status.
  - `[String]?`: Optional list of action strings.
  */
-public func tool_connector_state_string(from string: String) -> (Bool, [String]?)
+public func tool_connector_state_decode(from string: String) -> (Bool, [String]?)
 {
     let lines = string.components(separatedBy: "\n")
     guard let first = lines.first else
@@ -1215,7 +1215,7 @@ public func tool_connector_state_string(from string: String) -> (Bool, [String]?
  - `Bool`: Completion status.
  - `[String]?`: Optional array of action strings (or `nil` if none are present).
  */
-public func tool_connector_state_decode(from string: String) -> (Bool, [String]?)
+public func tool_connector_state_string(from string: String) -> (Bool, [String]?)
 {
     let lines = string.components(separatedBy: "\n")
     guard let first = lines.first else {
