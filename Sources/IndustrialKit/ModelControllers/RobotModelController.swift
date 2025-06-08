@@ -316,26 +316,40 @@ public class ExternalRobotModelController: RobotModelController
             send_via_unix_socket(at: "/tmp/\(self.module_name)_robot_controller_socket",
                                  with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
             { output in
-                let lines = output.split(separator: "\n").map { String($0) }
-                
-                let updates: [(String, String)] = lines.compactMap
-                {
-                    let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
-                    return components.count == 2 ? (components[0], components[1]) : nil
-                }
-                
-                DispatchQueue.main.async
-                {
-                    for (node_name, action_string) in updates
-                    {
-                        set_position(for: self.nodes[safe: node_name, default: SCNNode()], from: action_string)
-                    }
-                    
-                    self.is_nodes_updating = false
-                }
+                self.apply_nodes_positions(by: output.split(separator: "\n").map { String($0) })
             }
         }
         #endif
+    }
+    
+    /**
+     Applies position updates to scene nodes based on a list of string commands.
+     
+     Each string in `lines` must be in the format `"nodeName position"`, where:
+     - `nodeName` is the identifier of the node to update.
+     - `position` is a string describing the new position (e.g., coordinates).
+     
+     The updates are applied asynchronously on the main thread.
+     
+     - Parameter lines: An array of strings, each containing a node name and its target position separated by a space.
+     */
+    public func apply_nodes_positions(by lines: [String])
+    {
+        let updates: [(String, String)] = lines.compactMap
+        {
+            let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
+            return components.count == 2 ? (components[0], components[1]) : nil
+        }
+        
+        DispatchQueue.main.async
+        {
+            for (node_name, action_string) in updates
+            {
+                set_position(for: self.nodes[safe: node_name, default: SCNNode()], from: action_string)
+            }
+            
+            self.is_nodes_updating = false
+        }
     }
     
     open override func reset_nodes()

@@ -206,17 +206,10 @@ public class ExternalRobotConnector: RobotConnector
     override open func move_to(point: PositionPoint)
     {
         #if os(macOS)
-        // Prepare command for get output
-        //let pointer_location = [point.x, point.y, point.z]
-        //let pointer_rotation = [point.r, point.p, point.w]
-                
-        //let values = (pointer_location + pointer_rotation + origin_location + origin_rotation + [Float(point.move_speed)]).map { "\($0)" }
-        //let command = ["move_to"] + values + [point.move_type.rawValue]
-        
-        let origin_position = (origin_location + origin_rotation).map { "\($0)" }        
+        // Perform to point moving
+        let origin_position = (origin_location + origin_rotation).map { "\($0)" }
         let command = ["move_to"] + origin_position + [point.json_string()]
         
-        // Perform to point moving
         guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: command)
         else
         {
@@ -231,7 +224,7 @@ public class ExternalRobotConnector: RobotConnector
         {
             guard let output: String = send_via_unix_socket(
                 at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
-                with: ["sync_model"])
+                with: ["sync_device"])
             else
             {
                 return nil
@@ -246,7 +239,7 @@ public class ExternalRobotConnector: RobotConnector
             {
                 let nodes_positions: [String]? = output.split(separator: "\n").map { String($0) }
                 
-                return (completed: Bool(), pointer_position: nil, nodes_positions: nil)
+                return (completed: Bool(), pointer_position: nil, nodes_positions: nodes_positions)
             }
             else
             {
@@ -265,18 +258,9 @@ public class ExternalRobotConnector: RobotConnector
                 
                 if let nodes_positions = state.nodes_positions // Update nodes positions by connector
                 {
-                    let updates: [(String, String)] = nodes_positions.compactMap
+                    if let external_сontroller = model_controller as? ExternalRobotModelController
                     {
-                        let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
-                        return components.count == 2 ? (components[0], components[1]) : nil
-                    }
-                    
-                    if let model_controller = model_controller // Process robot model parts
-                    {
-                        for (node_name, action_string) in updates
-                        {
-                            set_position(for: model_controller.nodes[safe: node_name, default: SCNNode()], from: action_string)
-                        }
+                        external_сontroller.apply_nodes_positions(by: nodes_positions)
                     }
                 }
                 else // Update nodes positions by model controller
@@ -396,7 +380,7 @@ public class ExternalRobotConnector: RobotConnector
     open override func sync_model()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["sync_model"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["sync_device"])
         else
         {
             connection_failure = true

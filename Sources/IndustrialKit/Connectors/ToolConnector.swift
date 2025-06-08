@@ -191,15 +191,26 @@ public class ExternalToolConnector: ToolConnector
     open override func perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
-        // Prepare command for get output
+        // Perform operation
         let command = ["perform", "\(code)"]
+        
+        guard let terminal_output: String = send_via_unix_socket(
+            at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
+            with: command)
+        else
+        {
+            self.output += "Couldn't perform operation"
+            connection_failure = true
+            connected = false
+            return
+        }
         
         // Output from external
         var output: String?
         {
             guard let output: String = send_via_unix_socket(
                 at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
-                with: command)
+                with: ["sync_device"])
             else
             {
                 return nil
@@ -208,28 +219,35 @@ public class ExternalToolConnector: ToolConnector
             return output
         }
         
-        var state: (completed: Bool, pointer_position: [Float]?, nodes_actions: [String]?)
+        var state: (completed: Bool, nodes_actions: [String]?)
         {
-            return (completed: Bool(), pointer_position: nil, nodes_actions: nil)
+            if let output = output
+            {
+                let nodes_actions: [String]? = output.split(separator: "\n").map { String($0) }
+                
+                return (completed: Bool(), nodes_actions: nodes_actions)
+            }
+            else
+            {
+                return (completed: true, nodes_actions: nil)
+            }
         }
         
-        //Process output
+        // Process output
         while !state.completed
         {
+            let state = state
             
+            if let actions = state.nodes_actions // Apply nodes actions by connector
+            {
+                if let external_сontroller = model_controller as? ExternalToolModelController
+                {
+                    external_сontroller.apply_nodes_actions(by: actions)
+                }
+            }
         }
         
-        //new point state only
-        //update pointer only
-        //update parts
-        
-        /*guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["perform", "\(code)"])
-        else
-        {
-            connection_failure = true
-            connected = false
-            return
-        }*/
+        model_controller?.remove_all_model_actions() // Remove nodes actions if performing finished
         #endif
     }
     
@@ -360,7 +378,7 @@ public class ExternalToolConnector: ToolConnector
     open override func sync_model()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["sync_model"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["sync_device"])
         else
         {
             connection_failure = true
