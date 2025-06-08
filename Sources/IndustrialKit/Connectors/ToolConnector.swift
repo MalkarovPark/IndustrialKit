@@ -191,13 +191,45 @@ public class ExternalToolConnector: ToolConnector
     open override func perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["perform", "\(code)"])
+        // Prepare command for get output
+        let command = ["perform", "\(code)"]
+        
+        // Output from external
+        var output: String?
+        {
+            guard let output: String = send_via_unix_socket(
+                at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
+                with: command)
+            else
+            {
+                return nil
+            }
+            
+            return output
+        }
+        
+        var state: (completed: Bool, pointer_position: [Float]?, nodes_actions: [String]?)
+        {
+            return (completed: Bool(), pointer_position: nil, nodes_actions: nil)
+        }
+        
+        //Process output
+        while !state.completed
+        {
+            
+        }
+        
+        //new point state only
+        //update pointer only
+        //update parts
+        
+        /*guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["perform", "\(code)"])
         else
         {
             connection_failure = true
             connected = false
             return
-        }
+        }*/
         #endif
     }
     

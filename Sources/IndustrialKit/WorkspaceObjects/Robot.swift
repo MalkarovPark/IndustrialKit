@@ -488,14 +488,14 @@ public class Robot: WorkspaceObject
         }
         
         // Modeling
-        if demo
+        /*if demo
         {
             //model_controller.update_by_pointer()
         }
         else if update_model_by_connector
         {
             connector.sync_model()
-        }
+        }*/
     }
     
     // MARK: Performation cycle
@@ -848,9 +848,7 @@ public class Robot: WorkspaceObject
         update_space_scale() // Set space scale by connected robot parameters
         
         // Pass workcell parameters to model controller
-        // model_controller.origin_location = origin_location
-        // model_controller.origin_rotation = origin_rotation
-        model_controller.space_scale = space_scale
+        //model_controller.space_scale = space_scale
         
         update_location()
         update_rotation()
@@ -1040,6 +1038,7 @@ public class Robot: WorkspaceObject
         box_node?.position = SCNVector3(x: space_scale[1] / 2, y: space_scale[2] / 2, z: space_scale[0] / 2)
         #endif
         
+        model_controller.space_scale = space_scale
         position_points_shift()
     }
     

@@ -206,14 +206,91 @@ public class ExternalRobotConnector: RobotConnector
     override open func move_to(point: PositionPoint)
     {
         #if os(macOS)
-        /*let pointer_location = [point.x, point.y, point.z]
-        let pointer_rotation = [point.r, point.p, point.w]
+        // Prepare command for get output
+        //let pointer_location = [point.x, point.y, point.z]
+        //let pointer_rotation = [point.r, point.p, point.w]
+                
+        //let values = (pointer_location + pointer_rotation + origin_location + origin_rotation + [Float(point.move_speed)]).map { "\($0)" }
+        //let command = ["move_to"] + values + [point.move_type.rawValue]
         
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
+        let origin_position = (origin_location + origin_rotation).map { "\($0)" }        
+        let command = ["move_to"] + origin_position + [point.json_string()]
+        
+        // Perform to point moving
+        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: command)
         else
         {
+            self.output += "Couldn't perform position"
+            connection_failure = true
+            connected = false
             return
-        }*/
+        }
+        
+        // Output from external
+        var output: String?
+        {
+            guard let output: String = send_via_unix_socket(
+                at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
+                with: ["sync_model"])
+            else
+            {
+                return nil
+            }
+            
+            return output
+        }
+        
+        var state: (completed: Bool, pointer_position: [Float]?, nodes_positions: [String]?)
+        {
+            if let output = output
+            {
+                let nodes_positions: [String]? = output.split(separator: "\n").map { String($0) }
+                
+                return (completed: Bool(), pointer_position: nil, nodes_positions: nil)
+            }
+            else
+            {
+                return (completed: true, pointer_position: nil, nodes_positions: nil)
+            }
+        }
+        
+        // Process output
+        while !state.completed
+        {
+            let state = state
+            
+            if let position = state.pointer_position // Update pointer node position by connector
+            {
+                
+            }
+            else // Update pointer node position by model controller
+            {
+                
+            }
+            
+            if let nodes_positions = state.nodes_positions // Update nodes positions by connector
+            {
+                let updates: [(String, String)] = nodes_positions.compactMap
+                {
+                    let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
+                    return components.count == 2 ? (components[0], components[1]) : nil
+                }
+                
+                if let model_controller = model_controller // Process robot model parts
+                {
+                    for (node_name, action_string) in updates
+                    {
+                        set_position(for: model_controller.nodes[safe: node_name, default: SCNNode()], from: action_string)
+                    }
+                }
+            }
+            else // Update nodes positions by model controller
+            {
+                model_controller?.update_nodes(pointer_location: <#T##[Float]#>, pointer_rotation: <#T##[Float]#>, origin_location: <#T##[Float]#>, origin_rotation: <#T##[Float]#>)
+            }
+            
+            usleep(100000)
+        }
         #endif
     }
     

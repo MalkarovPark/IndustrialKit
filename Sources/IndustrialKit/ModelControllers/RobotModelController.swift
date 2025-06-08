@@ -90,8 +90,28 @@ open class RobotModelController: ModelController
     /// Update robot manipulator parts positions by target point.
     private func update_model()
     {
-        let pointer_position = converted_pointer_position
+        update_pointer_position(to: converted_pointer_position)
         
+        update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+    }
+    
+    /// Robot current pointer position data for nodes.
+    private var converted_pointer_position: (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
+    {
+        return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
+    }
+    
+    /**
+     Updates the pointer’s position and orientation in the 3D scene.
+     
+     - Parameter pointer_position: A tuple containing the new transform for the pointer:
+     - location: The target position of the pointer as an `SCNVector3`.
+     - rot_x: Rotation about the X-axis, in radians.
+     - rot_y: Rotation about the Y-axis, in radians.
+     - rot_z: Rotation about the Z-axis, in radians.
+     */
+    public func update_pointer_position(to pointer_position: (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float))
+    {
         pointer_node?.position = pointer_position.location // Set robot pointer node location
         
         // Set robot pointer node rotation
@@ -104,14 +124,6 @@ open class RobotModelController: ModelController
         pointer_node?.eulerAngles.y = pointer_position.rot_z
         pointer_node_internal?.eulerAngles.z = pointer_position.rot_x
         #endif
-        
-        update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-    }
-    
-    /// Robot current pointer position data for nodes.
-    private var converted_pointer_position: (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
-    {
-        return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
     }
     
     /// Robot teach pointer.
@@ -314,9 +326,9 @@ public class ExternalRobotModelController: RobotModelController
                 
                 DispatchQueue.main.async
                 {
-                    for (nodeName, actionString) in updates
+                    for (node_name, action_string) in updates
                     {
-                        set_position(for: self.nodes[safe: nodeName, default: SCNNode()], from: actionString)
+                        set_position(for: self.nodes[safe: node_name, default: SCNNode()], from: action_string)
                     }
                     
                     self.is_nodes_updating = false
