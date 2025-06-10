@@ -7,7 +7,7 @@
 
 import Foundation
 import SceneKit
-import SwiftUICore
+import SwiftUI//Core
 #if os(macOS)
 import AppKit
 #endif
