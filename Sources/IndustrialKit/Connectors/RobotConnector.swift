@@ -286,7 +286,8 @@ public class ExternalRobotConnector: RobotConnector
         
         update_model()
         
-        usleep(100)
+        let seconds = 4
+        usleep(UInt32(seconds * 1_000_000))
         #endif
     }
     
