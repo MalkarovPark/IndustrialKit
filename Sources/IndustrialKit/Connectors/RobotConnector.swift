@@ -269,12 +269,12 @@ public class ExternalRobotConnector: RobotConnector
             
             update_model()
             
-            usleep(100)//(10000)
+            //usleep(100)//(10000)
         }
         
-        update_model()
+        /*update_model()
         
-        usleep(100)
+        usleep(100)*/
         #endif
     }
     

@@ -232,7 +232,7 @@ public class ExternalToolConnector: ToolConnector
         }
         
         // Process output
-        while !state.completed
+        while !state.completed && !canceled
         {
             let state = state
             
