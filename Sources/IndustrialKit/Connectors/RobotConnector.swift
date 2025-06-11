@@ -267,7 +267,7 @@ public class ExternalRobotConnector: RobotConnector
                 }
             }
             
-            usleep(100000)
+            usleep(10000)//(100000)
         }
         #endif
     }
