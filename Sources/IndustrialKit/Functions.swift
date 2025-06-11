@@ -1170,6 +1170,41 @@ public func tool_connector_state_string(_ state: (completed: Bool, nodes_actions
 }
 
 /**
+ Splits the input string by spaces, but preserves substrings enclosed in { } as single elements.
+ 
+ For example:
+ Input:  "move_to {\"x\": 1, \"y\": 2} 0 0 0"
+ Output: ["move_to", "{\"x\": 1, \"y\": 2}", "0", "0", "0"]
+ 
+ - Parameter input: The full input string to split.
+ - Returns: An array of string parts with braces-enclosed substrings kept intact.
+ 
+ > This function can be used to decode input strings where one of the arguments is a JSON-formatted substring.
+ */
+func safe_input_split(_ input: String) -> [String]
+{
+    var r: [String] = []
+    var c = ""
+    var b = false
+    
+    for ch in input
+    {
+        if ch == "{" { b = true; c.append(ch) }
+        else if ch == "}" { b = false; c.append(ch) }
+        else if ch == " " && !b
+        {
+            if !c.isEmpty { r.append(c); c = "" }
+        }
+        else
+        {
+            c.append(ch)
+        }
+    }
+    if !c.isEmpty { r.append(c) }
+    return r
+}
+
+/**
  Decodes a string representing tool connector state.
  
  - Parameter string: Input string.
