@@ -257,16 +257,9 @@ open class RobotModelController: ModelController
         }
     }
     
-    private func remove_movement_actions()
-    {
-        pointer_node?.removeAllActions()
-        pointer_node_internal?.removeAllActions()
-    }
-    
     open override func reset_nodes()
     {
-        canceled = true
-        remove_movement_actions()
+        
     }
 }
 
@@ -379,6 +372,11 @@ public class ExternalRobotModelController: RobotModelController
             }
             
             set_position(for: nodes[safe: components[0], default: SCNNode()], from: components[1])
+            
+            if canceled
+            {
+                break
+            }
         }
         #endif
     }
