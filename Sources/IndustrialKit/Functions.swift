@@ -1181,7 +1181,7 @@ public func tool_connector_state_string(_ state: (completed: Bool, nodes_actions
  
  > This function can be used to decode input strings where one of the arguments is a JSON-formatted substring.
  */
-func safe_input_split(_ input: String) -> [String]
+public func safe_input_split(_ input: String) -> [String]
 {
     var r: [String] = []
     var c = ""
