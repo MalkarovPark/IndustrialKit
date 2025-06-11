@@ -210,7 +210,7 @@ public class ExternalRobotConnector: RobotConnector
         let origin_position = (origin_location + origin_rotation).map { "\($0)" }
         let command = ["move_to"] + [point.json_string()] + origin_position
         
-        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: command)
+        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: command)
         else
         {
             self.output += "Couldn't move to position"
