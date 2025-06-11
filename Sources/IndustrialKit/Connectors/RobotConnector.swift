@@ -245,22 +245,31 @@ public class ExternalRobotConnector: RobotConnector
             }
         }
         
+        var update_model_finished = true
+        
         func update_model()
         {
-            if let position = state.pointer_position // Update pointer node position by connector
+            if update_model_finished
             {
-                model_controller?.update_pointer_position(pos_x: position.x, pos_y: position.y, pos_z: position.z, rot_x: position.r, rot_y: position.p, rot_z: position.w)
-                
-                if let nodes_positions = state.nodes_positions // Update nodes positions by connector
+                if let position = state.pointer_position // Update pointer node position by connector
                 {
-                    if let external_сontroller = model_controller as? ExternalRobotModelController
+                    update_model_finished = false
+                    
+                    model_controller?.update_pointer_position(pos_x: position.x, pos_y: position.y, pos_z: position.z, rot_x: position.r, rot_y: position.p, rot_z: position.w)
+                    
+                    if let nodes_positions = state.nodes_positions // Update nodes positions by connector
                     {
-                        external_сontroller.apply_nodes_positions(by: nodes_positions)
+                        if let external_сontroller = model_controller as? ExternalRobotModelController
+                        {
+                            external_сontroller.apply_nodes_positions(by: nodes_positions)
+                        }
                     }
-                }
-                else // Update nodes positions by model controller
-                {
-                    model_controller?.update_nodes(pointer_location: [position.x, position.y, position.z], pointer_rotation: [position.r, position.p, position.w], origin_location: origin_location, origin_rotation: origin_rotation)
+                    else // Update nodes positions by model controller
+                    {
+                        model_controller?.update_nodes(pointer_location: [position.x, position.y, position.z], pointer_rotation: [position.r, position.p, position.w], origin_location: origin_location, origin_rotation: origin_rotation)
+                    }
+                    
+                    update_model_finished = true
                 }
             }
         }
