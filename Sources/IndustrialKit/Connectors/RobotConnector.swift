@@ -245,11 +245,8 @@ public class ExternalRobotConnector: RobotConnector
             }
         }
         
-        // Process output
-        while !state.completed && !canceled
+        func update_model()
         {
-            let state = state
-            
             if let position = state.pointer_position // Update pointer node position by connector
             {
                 model_controller?.update_pointer_position(pos_x: position.x, pos_y: position.y, pos_z: position.z, rot_x: position.r, rot_y: position.p, rot_z: position.w)
@@ -266,9 +263,19 @@ public class ExternalRobotConnector: RobotConnector
                     model_controller?.update_nodes(pointer_location: [position.x, position.y, position.z], pointer_rotation: [position.r, position.p, position.w], origin_location: origin_location, origin_rotation: origin_rotation)
                 }
             }
-            
-            usleep(10000)//(100000)
         }
+        
+        // Process output
+        while !state.completed && !canceled
+        {
+            let state = state
+            
+            update_model()
+            
+            usleep(10000)
+        }
+        
+        update_model()
         #endif
     }
     
