@@ -261,6 +261,40 @@ open class RobotModelController: ModelController
     {
         
     }
+    
+    #if os(macOS)
+    /**
+     Applies position updates to scene nodes based on a list of string commands.
+     
+     Each string in `lines` must be in the format `"nodeName position"`, where:
+     - `nodeName` is the identifier of the node to update.
+     - `position` is a string describing the new position (e.g., coordinates).
+     
+     The updates are applied asynchronously on the main thread.
+     
+     - Parameter lines: An array of strings, each containing a node name and its target position separated by a space.
+     */
+    public func apply_nodes_positions(by lines: [String])
+    {
+        let updates: [(String, String)] = lines.compactMap
+        {
+            let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
+            return components.count == 2 ? (components[0], components[1]) : nil
+        }
+        
+        DispatchQueue.main.async
+        {
+            for (node_name, action_string) in updates
+            {
+                set_position(for: self.nodes[safe: node_name, default: SCNNode()], from: action_string)
+            }
+            
+            self.is_nodes_updating = false
+        }
+    }
+    
+    internal var is_nodes_updating = false
+    #endif
 }
 
 //MARK: - External Controller
@@ -296,8 +330,6 @@ public class ExternalRobotModelController: RobotModelController
     public var external_nodes_names = [String]()
     
     // MARK: Modeling
-    private var is_nodes_updating = false
-    
     override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
     {
         #if os(macOS)
@@ -314,38 +346,6 @@ public class ExternalRobotModelController: RobotModelController
         }
         #endif
     }
-    
-    #if os(macOS)
-    /**
-     Applies position updates to scene nodes based on a list of string commands.
-     
-     Each string in `lines` must be in the format `"nodeName position"`, where:
-     - `nodeName` is the identifier of the node to update.
-     - `position` is a string describing the new position (e.g., coordinates).
-     
-     The updates are applied asynchronously on the main thread.
-     
-     - Parameter lines: An array of strings, each containing a node name and its target position separated by a space.
-     */
-    public func apply_nodes_positions(by lines: [String])
-    {
-        let updates: [(String, String)] = lines.compactMap
-        {
-            let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
-            return components.count == 2 ? (components[0], components[1]) : nil
-        }
-        
-        DispatchQueue.main.async
-        {
-            for (node_name, action_string) in updates
-            {
-                set_position(for: self.nodes[safe: node_name, default: SCNNode()], from: action_string)
-            }
-            
-            self.is_nodes_updating = false
-        }
-    }
-    #endif
     
     open override func reset_nodes()
     {

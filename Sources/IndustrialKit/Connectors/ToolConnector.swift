@@ -238,10 +238,7 @@ public class ExternalToolConnector: ToolConnector
             
             if let actions = state.nodes_actions // Apply nodes actions by connector
             {
-                if let external_сontroller = model_controller as? ExternalToolModelController
-                {
-                    external_сontroller.apply_nodes_actions(by: actions)
-                }
+                model_controller?.apply_nodes_actions(by: actions)
             }
         }
         

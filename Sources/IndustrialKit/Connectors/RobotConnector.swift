@@ -253,10 +253,7 @@ public class ExternalRobotConnector: RobotConnector
                 
                 if let nodes_positions = state.nodes_positions // Update nodes positions by connector
                 {
-                    if let external_сontroller = model_controller as? ExternalRobotModelController
-                    {
-                        external_сontroller.apply_nodes_positions(by: nodes_positions)
-                    }
+                    model_controller?.apply_nodes_positions(by: nodes_positions)
                 }
                 else // Update nodes positions by model controller
                 {

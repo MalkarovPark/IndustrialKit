@@ -51,64 +51,6 @@ open class ToolModelController: ModelController
     {
         return nil
     }
-}
-
-//MARK: - External Model Controller
-public class ExternalToolModelController: ToolModelController
-{
-    // MARK: Init functions
-    /// An external module name.
-    public var module_name: String
-    
-    /// For access to code.
-    public var package_url: URL
-    
-    public init(_ module_name: String, package_url: URL, nodes_names: [String])
-    {
-        self.module_name = module_name
-        self.package_url = package_url
-        
-        self.external_nodes_names = nodes_names
-    }
-    
-    required init()
-    {
-        self.module_name = ""
-        self.package_url = URL(fileURLWithPath: "")
-    }
-    
-    // MARK: Parameters import
-    override open var nodes_names: [String]
-    {
-        return external_nodes_names
-    }
-    
-    public var external_nodes_names = [String]()
-    
-    // MARK: Modeling
-    private var is_nodes_updating = false
-    
-    open override func nodes_perform(code: Int, completion: @escaping () -> Void)
-    {
-        #if os(macOS)
-        guard !is_nodes_updating else { return }
-        is_nodes_updating = true
-        
-        DispatchQueue.global(qos: .utility).async
-        {
-            send_via_unix_socket(at: "/tmp/\(self.module_name)_tool_controller_socket", with: ["nodes_perform", "\(code)"])
-            { output in
-                // Split the output into lines
-                let lines = output.split(separator: "\n").map { String($0) }
-                
-                self.apply_nodes_actions(by: lines, completion: completion)
-            }
-        }
-        
-        #else
-        completion()
-        #endif
-    }
     
     #if os(macOS)
     /**
@@ -123,7 +65,7 @@ public class ExternalToolModelController: ToolModelController
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
         var completed = [Bool](repeating: false, count: lines.count)
-
+        
         for i in 0..<lines.count // line in lines
         {
             let line = lines[i]
@@ -161,7 +103,65 @@ public class ExternalToolModelController: ToolModelController
             }
         }
     }
+    
+    internal var is_nodes_updating = false
     #endif
+}
+
+//MARK: - External Model Controller
+public class ExternalToolModelController: ToolModelController
+{
+    // MARK: Init functions
+    /// An external module name.
+    public var module_name: String
+    
+    /// For access to code.
+    public var package_url: URL
+    
+    public init(_ module_name: String, package_url: URL, nodes_names: [String])
+    {
+        self.module_name = module_name
+        self.package_url = package_url
+        
+        self.external_nodes_names = nodes_names
+    }
+    
+    required init()
+    {
+        self.module_name = ""
+        self.package_url = URL(fileURLWithPath: "")
+    }
+    
+    // MARK: Parameters import
+    override open var nodes_names: [String]
+    {
+        return external_nodes_names
+    }
+    
+    public var external_nodes_names = [String]()
+    
+    // MARK: Modeling
+    open override func nodes_perform(code: Int, completion: @escaping () -> Void)
+    {
+        #if os(macOS)
+        guard !is_nodes_updating else { return }
+        is_nodes_updating = true
+        
+        DispatchQueue.global(qos: .utility).async
+        {
+            send_via_unix_socket(at: "/tmp/\(self.module_name)_tool_controller_socket", with: ["nodes_perform", "\(code)"])
+            { output in
+                // Split the output into lines
+                let lines = output.split(separator: "\n").map { String($0) }
+                
+                self.apply_nodes_actions(by: lines, completion: completion)
+            }
+        }
+        
+        #else
+        completion()
+        #endif
+    }
     
     open override func reset_nodes()
     {
