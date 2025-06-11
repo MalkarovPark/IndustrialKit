@@ -246,7 +246,7 @@ public class ExternalRobotConnector: RobotConnector
         }
         
         // Process output
-        while !state.completed
+        while !state.completed && !canceled
         {
             let state = state
             
