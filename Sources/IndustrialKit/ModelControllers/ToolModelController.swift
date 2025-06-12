@@ -175,7 +175,75 @@ open class ToolModelController: ModelController
     }
     
     #if os(macOS)
-    /**
+    private var nodes_actions_completed = [Bool]()
+    private var is_actions_running = false
+
+    public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
+    {
+        if is_actions_running
+        {
+            return
+        }
+        
+        if lines.isEmpty
+        {
+            completion()
+            return
+        }
+        
+        is_actions_running = true
+        nodes_actions_completed = [Bool](repeating: false, count: lines.count)
+        
+        for i in 0..<lines.count
+        {
+            let line = lines[i]
+            if let range = line.range(of: " ")
+            {
+                let name = String(line[..<range.lowerBound])
+                let command = String(line[range.upperBound...])
+                
+                DispatchQueue.main.async
+                {
+                    if let action = string_to_action(from: command)
+                    {
+                        self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler:
+                        {
+                            self.local_completion(index: i, completion: completion)
+                        })
+                    }
+                    else
+                    {
+                        self.local_completion(index: i, completion: completion)
+                    }
+                }
+            }
+            else
+            {
+                nodes_actions_completed[i] = true
+                check_all_actions_completed(completion: completion)
+            }
+        }
+    }
+
+    private func local_completion(index: Int, completion: @escaping () -> Void = {})
+    {
+        if nodes_actions_completed.count > index
+        {
+            nodes_actions_completed[index] = true
+            check_all_actions_completed(completion: completion)
+        }
+    }
+
+    private func check_all_actions_completed(completion: @escaping () -> Void)
+    {
+        if !nodes_actions_completed.contains(false)
+        {
+            is_actions_running = false
+            completion()
+        }
+    }
+    
+    /*/**
      Applies a sequence of actions to scene nodes based on string commands and calls a completion handler when all actions are finished.
      
      Each string in `lines` must follow the format `"nodeName action"`, where `nodeName` is the identifier of the node to apply the action to, and `action` is a string representing the action to perform.
@@ -249,9 +317,7 @@ open class ToolModelController: ModelController
                 completion()
             }
         }
-    }
-    
-    //internal var is_nodes_updating = false
+    }*/
     #endif
 }
 
