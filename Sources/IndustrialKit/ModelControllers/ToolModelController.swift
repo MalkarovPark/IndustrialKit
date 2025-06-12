@@ -35,124 +35,6 @@ open class ToolModelController: ModelController
         completion()
     }
     
-    /*
-     /// Stops connected model actions performation.
-     public final func remove_all_model_actions()
-     {
-         for (_, node) in nodes
-         {
-             node.removeAllActions()
-         }
-
-         #if os(macOS)
-         for i in nodes_actions_completed.indices
-         {
-             nodes_actions_completed[i] = true
-         }
-
-         if !nodes_actions_completed.isEmpty
-         {
-             nodes_actions_completion?()
-             nodes_actions_completion = nil
-             nodes_actions_completed.removeAll()
-         }
-         #endif
-
-         reset_nodes()
-     }
-     
-     /// Inforamation code updated by model controller.
-     open var info_output: [Float]?
-     {
-         return nil
-     }
-     
-     private var nodes_actions_completed = [Bool]()
-     private var nodes_actions_completion: (() -> Void)?
-     
-     #if os(macOS)
-     /**
-      Applies a sequence of actions to scene nodes based on string commands and calls a completion handler when all actions are finished.
-      
-      Each string in `lines` must follow the format `"nodeName action"`, where `nodeName` is the identifier of the node to apply the action to, and `action` is a string representing the action to perform.
-      
-      - Parameters:
-      - lines: An array of command strings, each specifying a node name and an action.
-      - completion: A closure called once all actions have been completed.
-      */
-     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
-     {
-         if !nodes_actions_completed.isEmpty && nodes_actions_completed.contains(false)
-         {
-             return
-         }
-
-         nodes_actions_completed = [Bool](repeating: false, count: lines.count)
-         nodes_actions_completion = completion
-         let expected_count = lines.count
-
-         for i in 0..<lines.count
-         {
-             let line = lines[i]
-
-             if let range = line.range(of: " ")
-             {
-                 let name = String(line[..<range.lowerBound])
-                 let command = String(line[range.upperBound...])
-
-                 DispatchQueue.main.async
-                 {
-                     if let action = string_to_action(from: command)
-                     {
-                         let node = self.nodes[safe: name, default: SCNNode()]
-
-                         let timeout: TimeInterval = 3.0
-                         DispatchQueue.main.asyncAfter(deadline: .now() + timeout)
-                         {
-                             if self.nodes_actions_completed.count == expected_count &&
-                                i < self.nodes_actions_completed.count &&
-                                !self.nodes_actions_completed[i]
-                             {
-                                 self.local_completion(index: i)
-                             }
-                         }
-
-                         node.runAction(action)
-                         {
-                             self.local_completion(index: i)
-                         }
-                     }
-                     else
-                     {
-                         self.local_completion(index: i)
-                     }
-                 }
-             }
-             else
-             {
-                 self.local_completion(index: i)
-             }
-         }
-     }
-
-     private func local_completion(index: Int)
-     {
-         guard index < nodes_actions_completed.count else
-         {
-             return
-         }
-
-         nodes_actions_completed[index] = true
-
-         if !nodes_actions_completed.contains(false)
-         {
-             nodes_actions_completion?()
-             nodes_actions_completion = nil
-             nodes_actions_completed.removeAll()
-         }
-     }
-    */
-    
     /// Stops connected model actions performation.
     public final func remove_all_model_actions()
     {
@@ -186,10 +68,10 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
-        /*if nodes_actions_completed.contains(false)
+        if nodes_actions_completed.contains(false)
         {
             return
-        }*/
+        }
         
         //var completed = [Bool](repeating: false, count: lines.count)
         nodes_actions_completed = [Bool](repeating: false, count: lines.count)
@@ -203,20 +85,22 @@ open class ToolModelController: ModelController
                 let name = String(line[..<range.lowerBound])
                 let command = String(line[range.upperBound...])
                 
-                DispatchQueue.main.async
+                if let action = string_to_action(from: command)
+                {
+                    self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
+                        self.local_completion(index: i, completion: completion)
+                    })
+                }
+                
+                /*DispatchQueue.main.async
                 {
                     if let action = string_to_action(from: command)
                     {
-                        //self.is_nodes_updating = true
-                        
-                        /*self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
-                            local_completion(index: i)
-                        })*/
                         self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
                             self.local_completion(index: i, completion: completion)
                         })
                     }
-                }
+                }*/
             }
             else
             {
@@ -224,16 +108,6 @@ open class ToolModelController: ModelController
                 //return
             }
         }
-        
-        /*func local_completion(index: Int)
-        {
-            completed[index] = true
-            
-            if completed.allSatisfy({ $0 == true })
-            {
-                completion()
-            }
-        }*/
     }
     
     private var nodes_actions_completed = [Bool]()
