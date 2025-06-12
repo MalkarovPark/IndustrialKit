@@ -95,7 +95,7 @@ open class RobotConnector: WorkspaceObjectConnector
     /// A robot model controller.
     public var model_controller: RobotModelController?
     
-    override open func sync_model()
+    override open func sync_device()
     {
         
     }
@@ -381,7 +381,7 @@ public class ExternalRobotConnector: RobotConnector
     }
     
     // MARK: Modeling
-    open override func sync_model()
+    open override func sync_device()
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["sync_device"])

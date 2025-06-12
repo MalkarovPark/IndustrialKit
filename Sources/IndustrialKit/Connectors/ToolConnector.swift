@@ -62,7 +62,7 @@ open class ToolConnector: WorkspaceObjectConnector
     /// A tool model controller.
     public var model_controller: ToolModelController?
     
-    override open func sync_model()
+    override open func sync_device()
     {
         // model_controller?.nodes[safe: "Node", default: SCNNode()].runAction(SCNAction())
     }
@@ -370,7 +370,7 @@ public class ExternalToolConnector: ToolConnector
     }
     
     // MARK: Modeling
-    open override func sync_model()
+    open override func sync_device()
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["sync_device"])
