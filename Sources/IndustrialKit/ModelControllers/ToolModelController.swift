@@ -175,28 +175,20 @@ open class ToolModelController: ModelController
     }
     
     #if os(macOS)
-    private var nodes_actions_completed = [Bool]()
-    private var is_actions_running = false
-
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
-        if is_actions_running
+        if nodes_actions_completed.contains(false)
         {
+            pending_nodes_actions.append((lines, completion))
             return
         }
         
-        if lines.isEmpty
-        {
-            completion()
-            return
-        }
-        
-        is_actions_running = true
         nodes_actions_completed = [Bool](repeating: false, count: lines.count)
         
         for i in 0..<lines.count
         {
             let line = lines[i]
+            
             if let range = line.range(of: " ")
             {
                 let name = String(line[..<range.lowerBound])
@@ -206,8 +198,7 @@ open class ToolModelController: ModelController
                 {
                     if let action = string_to_action(from: command)
                     {
-                        self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler:
-                        {
+                        self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
                             self.local_completion(index: i, completion: completion)
                         })
                     }
@@ -219,27 +210,30 @@ open class ToolModelController: ModelController
             }
             else
             {
-                nodes_actions_completed[i] = true
-                check_all_actions_completed(completion: completion)
+                self.local_completion(index: i, completion: completion)
             }
         }
     }
 
+    private var nodes_actions_completed = [Bool]()
+    private var pending_nodes_actions: [([String], () -> Void)] = []
+
     private func local_completion(index: Int, completion: @escaping () -> Void = {})
     {
-        if nodes_actions_completed.count > index
+        if index < nodes_actions_completed.count
         {
             nodes_actions_completed[index] = true
-            check_all_actions_completed(completion: completion)
-        }
-    }
-
-    private func check_all_actions_completed(completion: @escaping () -> Void)
-    {
-        if !nodes_actions_completed.contains(false)
-        {
-            is_actions_running = false
-            completion()
+            
+            if !nodes_actions_completed.contains(false)
+            {
+                completion()
+                
+                if !pending_nodes_actions.isEmpty
+                {
+                    let (next_lines, next_completion) = pending_nodes_actions.removeFirst()
+                    self.apply_nodes_actions(by: next_lines, completion: next_completion)
+                }
+            }
         }
     }
     
