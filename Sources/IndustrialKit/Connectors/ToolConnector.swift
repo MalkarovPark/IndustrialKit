@@ -238,7 +238,7 @@ public class ExternalToolConnector: ToolConnector
         {
             let state = state
             
-            if !is_actions_performing
+            if true//!is_actions_performing
             {
                 if let actions = state.nodes_actions // Apply nodes actions by connector
                 {
