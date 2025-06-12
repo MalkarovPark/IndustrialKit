@@ -68,7 +68,7 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
-        if !(nodes_actions_completed.allSatisfy({ $0 == true }))
+        if nodes_actions_completed.contains(false)
         {
             return
         }
@@ -122,11 +122,14 @@ open class ToolModelController: ModelController
     
     private func local_completion(index: Int, completion: @escaping () -> Void = {})
     {
+        print(nodes_actions_completed)
+        print("finished at \(index)")
+        
         if nodes_actions_completed.count > 0
         {
             nodes_actions_completed[index] = true
             
-            if nodes_actions_completed.allSatisfy({ $0 == true })
+            if !nodes_actions_completed.contains(false) //nodes_actions_completed.allSatisfy({ $0 == true })
             {
                 completion()
             }
