@@ -188,7 +188,7 @@ public class ExternalToolConnector: ToolConnector
     }
     
     // MARK: Performing
-    open override func perform(code: Int, completion: @escaping () -> Void)
+    open override func perform(code: Int)//, completion: @escaping () -> Void)
     {
         #if os(macOS)
         // Perform operation
