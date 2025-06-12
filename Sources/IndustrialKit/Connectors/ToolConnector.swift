@@ -234,7 +234,7 @@ public class ExternalToolConnector: ToolConnector
         var is_actions_performing = false
         
         // Process output
-        while !state.completed && !canceled
+        /*while !state.completed && !canceled
         {
             let state = state
             
@@ -248,6 +248,30 @@ public class ExternalToolConnector: ToolConnector
                     {
                         is_actions_performing = false
                     }
+                }
+            }
+        }*/
+        
+        while !state.completed && !canceled
+        {
+            if !is_actions_performing
+            {
+                if let actions = state.nodes_actions
+                {
+                    is_actions_performing = true
+                    
+                    let semaphore = DispatchSemaphore(value: 0)
+                    
+                    model_controller?.apply_nodes_actions(by: actions)
+                    {
+                        is_actions_performing = false
+                        
+                        usleep(250_000)
+                        
+                        semaphore.signal()
+                    }
+                    
+                    semaphore.wait()
                 }
             }
         }
