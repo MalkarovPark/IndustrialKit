@@ -38,6 +38,29 @@ open class ToolModelController: ModelController
     /// Stops connected model actions performation.
     public final func remove_all_model_actions()
     {
+        for (_, node) in nodes
+        {
+            node.removeAllActions()
+        }
+
+        #if os(macOS)
+        for i in nodes_actions_completed.indices
+        {
+            nodes_actions_completed[i] = true
+        }
+
+        if !nodes_actions_completed.isEmpty
+        {
+            nodes_actions_completion?()
+            nodes_actions_completion = nil
+            nodes_actions_completed.removeAll()
+        }
+        #endif
+
+        reset_nodes()
+    }
+    /*public final func remove_all_model_actions()
+    {
         for (_, node) in nodes // Remove all node actions
         {
             node.removeAllActions()
@@ -48,13 +71,16 @@ open class ToolModelController: ModelController
         #endif
         
         reset_nodes()
-    }
+    }*/
     
     /// Inforamation code updated by model controller.
     open var info_output: [Float]?
     {
         return nil
     }
+    
+    private var nodes_actions_completed = [Bool]()
+    private var nodes_actions_completion: (() -> Void)?
     
     #if os(macOS)
     /**
@@ -70,7 +96,78 @@ open class ToolModelController: ModelController
     {
         if !nodes_actions_completed.isEmpty && nodes_actions_completed.contains(false)
         {
-            print("⏳ Previous actions not yet completed. Skipping new actions.")
+            return
+        }
+
+        nodes_actions_completed = [Bool](repeating: false, count: lines.count)
+        nodes_actions_completion = completion
+        let expected_count = lines.count
+
+        for i in 0..<lines.count
+        {
+            let line = lines[i]
+
+            if let range = line.range(of: " ")
+            {
+                let name = String(line[..<range.lowerBound])
+                let command = String(line[range.upperBound...])
+
+                DispatchQueue.main.async
+                {
+                    if let action = string_to_action(from: command)
+                    {
+                        let node = self.nodes[safe: name, default: SCNNode()]
+
+                        let timeout: TimeInterval = 3.0
+                        DispatchQueue.main.asyncAfter(deadline: .now() + timeout)
+                        {
+                            if self.nodes_actions_completed.count == expected_count &&
+                               i < self.nodes_actions_completed.count &&
+                               !self.nodes_actions_completed[i]
+                            {
+                                self.local_completion(index: i)
+                            }
+                        }
+
+                        node.runAction(action)
+                        {
+                            self.local_completion(index: i)
+                        }
+                    }
+                    else
+                    {
+                        self.local_completion(index: i)
+                    }
+                }
+            }
+            else
+            {
+                self.local_completion(index: i)
+            }
+        }
+    }
+
+    private func local_completion(index: Int)
+    {
+        guard index < nodes_actions_completed.count else
+        {
+            return
+        }
+
+        nodes_actions_completed[index] = true
+
+        if !nodes_actions_completed.contains(false)
+        {
+            nodes_actions_completion?()
+            nodes_actions_completion = nil
+            nodes_actions_completed.removeAll()
+        }
+    }
+    
+    /*public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
+    {
+        if !nodes_actions_completed.isEmpty && nodes_actions_completed.contains(false)
+        {
             return
         }
 
@@ -100,7 +197,6 @@ open class ToolModelController: ModelController
                                i < self.nodes_actions_completed.count &&
                                !self.nodes_actions_completed[i]
                             {
-                                print("⏱️ Timeout: Forcing completion for node \(name)")
                                 self.local_completion(index: i, completion: completion)
                             }
                         }
@@ -112,102 +208,32 @@ open class ToolModelController: ModelController
                     }
                     else
                     {
-                        print("⚠️ Failed to parse action: \(command)")
                         self.local_completion(index: i, completion: completion)
                     }
                 }
             }
             else
             {
-                print("⚠️ Invalid command string (missing space): \(line)")
                 self.local_completion(index: i, completion: completion)
             }
         }
     }
-    /*public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
-    {
-        if nodes_actions_completed.contains(false)
-        {
-            return
-        }
-        
-        //var completed = [Bool](repeating: false, count: lines.count)
-        nodes_actions_completed = [Bool](repeating: false, count: lines.count)
-        
-        for i in 0..<lines.count // line in lines
-        {
-            let line = lines[i]
-            if let range = line.range(of: " ")
-            {
-                // Split output into components
-                let name = String(line[..<range.lowerBound])
-                let command = String(line[range.upperBound...])
-                
-                DispatchQueue.main.async
-                {
-                    if let action = string_to_action(from: command)
-                    {
-                        //self.is_nodes_updating = true
-                        
-                        /*self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
-                            local_completion(index: i)
-                        })*/
-                        self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
-                            self.local_completion(index: i, completion: completion)
-                        })
-                    }
-                }
-            }
-            else
-            {
-                completion()
-                //return
-            }
-        }
-        
-        /*func local_completion(index: Int)
-        {
-            completed[index] = true
-            
-            if completed.allSatisfy({ $0 == true })
-            {
-                completion()
-            }
-        }*/
-    }*/
     
     private var nodes_actions_completed = [Bool]()
     
     private func local_completion(index: Int, completion: @escaping () -> Void = {})
     {
-        guard index < nodes_actions_completed.count else
+        guard index < nodes_actions_completed.count
+        else
         {
-            print("❗ Completion index \(index) is out of bounds")
             return
         }
 
         nodes_actions_completed[index] = true
-        print("✅ Node action finished at index \(index)")
 
         if !nodes_actions_completed.contains(false)
         {
-            print("🏁 All node actions completed")
             completion()
-        }
-    }
-    /*private func local_completion(index: Int, completion: @escaping () -> Void = {})
-    {
-        print(nodes_actions_completed)
-        print("finished at \(index)")
-        
-        if nodes_actions_completed.count > 0
-        {
-            nodes_actions_completed[index] = true
-            
-            if !nodes_actions_completed.contains(false) //nodes_actions_completed.allSatisfy({ $0 == true })
-            {
-                completion()
-            }
         }
     }*/
     #endif
