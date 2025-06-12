@@ -68,6 +68,60 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
+        if !nodes_actions_completed.isEmpty && nodes_actions_completed.contains(false)
+        {
+            print("⏳ Previous actions not yet completed. Skipping new actions.")
+            return
+        }
+        
+        nodes_actions_completed = [Bool](repeating: false, count: lines.count)
+        
+        for i in 0..<lines.count
+        {
+            let line = lines[i]
+            
+            if let range = line.range(of: " ")
+            {
+                let name = String(line[..<range.lowerBound])
+                let command = String(line[range.upperBound...])
+                
+                DispatchQueue.main.async
+                {
+                    if let action = string_to_action(from: command)
+                    {
+                        let node = self.nodes[safe: name, default: SCNNode()]
+                        
+                        let timeout: TimeInterval = 3.0
+                        DispatchQueue.main.asyncAfter(deadline: .now() + timeout)
+                        {
+                            if !self.nodes_actions_completed[i]
+                            {
+                                print("⏱️ Timeout: Forcing completion for node \(name)")
+                                self.local_completion(index: i, completion: completion)
+                            }
+                        }
+                        
+                        node.runAction(action)
+                        {
+                            self.local_completion(index: i, completion: completion)
+                        }
+                    }
+                    else
+                    {
+                        print("⚠️ Failed to parse action: \(command)")
+                        self.local_completion(index: i, completion: completion)
+                    }
+                }
+            }
+            else
+            {
+                print("⚠️ Invalid command string (missing space): \(line)")
+                self.local_completion(index: i, completion: completion)
+            }
+        }
+    }
+    /*public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
+    {
         if nodes_actions_completed.contains(false)
         {
             return
@@ -116,11 +170,29 @@ open class ToolModelController: ModelController
                 completion()
             }
         }*/
-    }
+    }*/
     
     private var nodes_actions_completed = [Bool]()
     
     private func local_completion(index: Int, completion: @escaping () -> Void = {})
+    {
+        if index < nodes_actions_completed.count
+        {
+            nodes_actions_completed[index] = true
+            print("✅ Node action finished at index \(index)")
+            
+            if !nodes_actions_completed.contains(false)
+            {
+                print("🏁 All node actions completed")
+                completion()
+            }
+        }
+        else
+        {
+            print("❗ Index out of bounds in nodes_actions_completed")
+        }
+    }
+    /*private func local_completion(index: Int, completion: @escaping () -> Void = {})
     {
         print(nodes_actions_completed)
         print("finished at \(index)")
@@ -134,9 +206,7 @@ open class ToolModelController: ModelController
                 completion()
             }
         }
-    }
-    
-    //internal var is_nodes_updating = false
+    }*/
     #endif
 }
 
