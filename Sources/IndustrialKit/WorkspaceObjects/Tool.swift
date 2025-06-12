@@ -399,10 +399,10 @@ public class Tool: WorkspaceObject
         }
         
         // Modeling
-        if !demo && update_model_by_connector
+        /*if !demo && update_model_by_connector
         {
             connector.sync_device()
-        }
+        }*/
     }
     
     // MARK: Performation cycle
