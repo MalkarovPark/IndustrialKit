@@ -231,14 +231,24 @@ public class ExternalToolConnector: ToolConnector
             }
         }
         
+        var is_actions_performing = false
+        
         // Process output
         while !state.completed && !canceled
         {
             let state = state
             
-            if let actions = state.nodes_actions // Apply nodes actions by connector
+            if !is_actions_performing
             {
-                model_controller?.apply_nodes_actions(by: actions)
+                is_actions_performing = true
+                
+                if let actions = state.nodes_actions // Apply nodes actions by connector
+                {
+                    model_controller?.apply_nodes_actions(by: actions)
+                    {
+                        is_actions_performing = false
+                    }
+                }
             }
         }
         
