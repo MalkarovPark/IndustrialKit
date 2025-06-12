@@ -44,7 +44,7 @@ open class ToolModelController: ModelController
         }
         
         #if os(macOS)
-        
+        nodes_actions_completed.removeAll()
         #endif
         
         reset_nodes()
@@ -117,11 +117,14 @@ open class ToolModelController: ModelController
     
     private func local_completion(index: Int, completion: @escaping () -> Void = {})
     {
-        nodes_actions_completed[index] = true
-        
-        if nodes_actions_completed.allSatisfy({ $0 == true })
+        if nodes_actions_completed.count > 0
         {
-            completion()
+            nodes_actions_completed[index] = true
+            
+            if nodes_actions_completed.allSatisfy({ $0 == true })
+            {
+                completion()
+            }
         }
     }
     
