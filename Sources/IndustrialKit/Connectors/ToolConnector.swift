@@ -247,6 +247,10 @@ public class ExternalToolConnector: ToolConnector
                     model_controller?.apply_nodes_actions(by: actions)
                     {
                         is_actions_performing = false
+                        
+                        //>w<
+                        var seconds = 0.25
+                        usleep(UInt32(seconds * 1_000_000))
                     }
                 }
             }

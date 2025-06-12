@@ -89,7 +89,8 @@ open class ToolModelController: ModelController
             }
             else
             {
-                return
+                completion()
+                //return
             }
         }
         
