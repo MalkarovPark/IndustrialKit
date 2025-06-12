@@ -43,6 +43,10 @@ open class ToolModelController: ModelController
             node.removeAllActions()
         }
         
+        #if os(macOS)
+        
+        #endif
+        
         reset_nodes()
     }
     
@@ -64,7 +68,8 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
-        var completed = [Bool](repeating: false, count: lines.count)
+        //var completed = [Bool](repeating: false, count: lines.count)
+        var nodes_actions_completed = [Bool](repeating: false, count: lines.count)
         
         for i in 0..<lines.count // line in lines
         {
@@ -79,12 +84,15 @@ open class ToolModelController: ModelController
                 {
                     if let action = string_to_action(from: command)
                     {
-                        self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
+                        //self.is_nodes_updating = true
+                        
+                        /*self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
                             local_completion(index: i)
+                        })*/
+                        self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
+                            self.local_completion(index: i, completion: completion)
                         })
                     }
-                    
-                    self.is_nodes_updating = false
                 }
             }
             else
@@ -94,7 +102,7 @@ open class ToolModelController: ModelController
             }
         }
         
-        func local_completion(index: Int)
+        /*func local_completion(index: Int)
         {
             completed[index] = true
             
@@ -102,10 +110,22 @@ open class ToolModelController: ModelController
             {
                 completion()
             }
+        }*/
+    }
+    
+    private var nodes_actions_completed = [Bool]()
+    
+    private func local_completion(index: Int, completion: @escaping () -> Void = {})
+    {
+        nodes_actions_completed[index] = true
+        
+        if nodes_actions_completed.allSatisfy({ $0 == true })
+        {
+            completion()
         }
     }
     
-    internal var is_nodes_updating = false
+    //internal var is_nodes_updating = false
     #endif
 }
 
@@ -145,8 +165,8 @@ public class ExternalToolModelController: ToolModelController
     open override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
-        guard !is_nodes_updating else { return }
-        is_nodes_updating = true
+        //guard !is_nodes_updating else { return }
+        //is_nodes_updating = true
         
         DispatchQueue.global(qos: .utility).async
         {

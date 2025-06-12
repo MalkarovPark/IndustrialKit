@@ -254,8 +254,8 @@ public class ExternalToolConnector: ToolConnector
         
         model_controller?.remove_all_model_actions() // Remove nodes actions if performing finished
         
-        var seconds = 1
-        usleep(UInt32(seconds * 1_000_000))
+        //var seconds = 1
+        //usleep(UInt32(seconds * 1_000_000))
         #endif
     }
     
