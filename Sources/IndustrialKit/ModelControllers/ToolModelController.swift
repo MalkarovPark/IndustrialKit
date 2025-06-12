@@ -69,7 +69,7 @@ open class ToolModelController: ModelController
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
         //var completed = [Bool](repeating: false, count: lines.count)
-        var nodes_actions_completed = [Bool](repeating: false, count: lines.count)
+        nodes_actions_completed = [Bool](repeating: false, count: lines.count)
         
         for i in 0..<lines.count // line in lines
         {
