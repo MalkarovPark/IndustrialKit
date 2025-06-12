@@ -476,6 +476,8 @@ public class Tool: WorkspaceObject
             }
             else
             {
+                model_controller.remove_all_model_actions()
+                
                 // Remove actions for real tool
                 connector.canceled = true
                 connector.reset_device()
@@ -546,6 +548,8 @@ public class Tool: WorkspaceObject
             }
             else
             {
+                model_controller.remove_all_model_actions()
+                
                 connector.canceled = true
                 connector.reset_device()
             }
