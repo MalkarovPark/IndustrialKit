@@ -238,18 +238,18 @@ public class ExternalToolConnector: ToolConnector
         {
             let state = state
             
-            if true//!is_actions_performing
-            {
+            /*if true//!is_actions_performing
+            {*/
                 if let actions = state.nodes_actions // Apply nodes actions by connector
                 {
                     is_actions_performing = true
                     
                     model_controller?.apply_nodes_actions(by: actions)
-                    {
+                    /*{
                         is_actions_performing = false
-                    }
+                    }*/
                 }
-            }
+            //}
         }
         
         model_controller?.remove_all_model_actions() // Remove nodes actions if performing finished

@@ -68,6 +68,11 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
+        if !(nodes_actions_completed.allSatisfy({ $0 == true }))
+        {
+            return
+        }
+        
         //var completed = [Bool](repeating: false, count: lines.count)
         nodes_actions_completed = [Bool](repeating: false, count: lines.count)
         
