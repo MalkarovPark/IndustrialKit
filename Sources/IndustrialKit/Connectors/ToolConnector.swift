@@ -252,6 +252,10 @@ public class ExternalToolConnector: ToolConnector
             }
         }
         
+        // Remove actions if real device completed before model
+        is_actions_performing = false
+        model_controller?.remove_all_model_actions()
+        
         model_controller?.remove_all_model_actions() // Remove nodes actions if performing finished
         #endif
     }
