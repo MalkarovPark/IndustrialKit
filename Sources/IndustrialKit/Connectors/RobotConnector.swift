@@ -391,7 +391,7 @@ public class ExternalRobotConnector: RobotConnector
             connected = false
             return
         }
-
+        
         // Split the output into lines
         let lines = output.split(separator: "\n").map { String($0) }
 

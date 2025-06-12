@@ -388,14 +388,12 @@ public class ExternalToolConnector: ToolConnector
         {
             // Split output into components
             let components: [String] = lines[i].split(separator: " ").map { String($0) }
-
+            
             // Check that output contains exactly two parameters
             guard components.count == 2
             else
             {
-                connection_failure = true
-                connected = false
-                return
+                continue
             }
             
             if let action = string_to_action(from: components[1])
