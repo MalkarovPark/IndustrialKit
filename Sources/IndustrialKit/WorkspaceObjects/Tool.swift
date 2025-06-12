@@ -471,6 +471,7 @@ public class Tool: WorkspaceObject
         {
             if demo
             {
+                model_controller.remove_all_model_actions()
                 model_controller.reset_nodes()
             }
             else
@@ -540,6 +541,7 @@ public class Tool: WorkspaceObject
         {
             if demo
             {
+                model_controller.remove_all_model_actions()
                 model_controller.reset_nodes()
             }
             else
