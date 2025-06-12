@@ -175,69 +175,7 @@ open class ToolModelController: ModelController
     }
     
     #if os(macOS)
-    public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
-    {
-        if nodes_actions_completed.contains(false)
-        {
-            pending_nodes_actions.append((lines, completion))
-            return
-        }
-        
-        nodes_actions_completed = [Bool](repeating: false, count: lines.count)
-        
-        for i in 0..<lines.count
-        {
-            let line = lines[i]
-            
-            if let range = line.range(of: " ")
-            {
-                let name = String(line[..<range.lowerBound])
-                let command = String(line[range.upperBound...])
-                
-                DispatchQueue.main.async
-                {
-                    if let action = string_to_action(from: command)
-                    {
-                        self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
-                            self.local_completion(index: i, completion: completion)
-                        })
-                    }
-                    else
-                    {
-                        self.local_completion(index: i, completion: completion)
-                    }
-                }
-            }
-            else
-            {
-                self.local_completion(index: i, completion: completion)
-            }
-        }
-    }
-
-    private var nodes_actions_completed = [Bool]()
-    private var pending_nodes_actions: [([String], () -> Void)] = []
-
-    private func local_completion(index: Int, completion: @escaping () -> Void = {})
-    {
-        if index < nodes_actions_completed.count
-        {
-            nodes_actions_completed[index] = true
-            
-            if !nodes_actions_completed.contains(false)
-            {
-                completion()
-                
-                if !pending_nodes_actions.isEmpty
-                {
-                    let (next_lines, next_completion) = pending_nodes_actions.removeFirst()
-                    self.apply_nodes_actions(by: next_lines, completion: next_completion)
-                }
-            }
-        }
-    }
-    
-    /*/**
+    /**
      Applies a sequence of actions to scene nodes based on string commands and calls a completion handler when all actions are finished.
      
      Each string in `lines` must follow the format `"nodeName action"`, where `nodeName` is the identifier of the node to apply the action to, and `action` is a string representing the action to perform.
@@ -248,10 +186,10 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
-        if nodes_actions_completed.contains(false)
+        /*if nodes_actions_completed.contains(false)
         {
             return
-        }
+        }*/
         
         //var completed = [Bool](repeating: false, count: lines.count)
         nodes_actions_completed = [Bool](repeating: false, count: lines.count)
@@ -311,7 +249,7 @@ open class ToolModelController: ModelController
                 completion()
             }
         }
-    }*/
+    }
     #endif
 }
 
