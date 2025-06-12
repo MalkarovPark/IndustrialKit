@@ -73,34 +73,38 @@ open class ToolModelController: ModelController
             print("⏳ Previous actions not yet completed. Skipping new actions.")
             return
         }
-        
+
         nodes_actions_completed = [Bool](repeating: false, count: lines.count)
-        
+        let current_task_id = UUID() // Task identifier to detect mismatched async completions
+        let expected_count = lines.count
+
         for i in 0..<lines.count
         {
             let line = lines[i]
-            
+
             if let range = line.range(of: " ")
             {
                 let name = String(line[..<range.lowerBound])
                 let command = String(line[range.upperBound...])
-                
+
                 DispatchQueue.main.async
                 {
                     if let action = string_to_action(from: command)
                     {
                         let node = self.nodes[safe: name, default: SCNNode()]
-                        
+
                         let timeout: TimeInterval = 3.0
                         DispatchQueue.main.asyncAfter(deadline: .now() + timeout)
                         {
-                            if !self.nodes_actions_completed[i]
+                            if self.nodes_actions_completed.count == expected_count &&
+                               i < self.nodes_actions_completed.count &&
+                               !self.nodes_actions_completed[i]
                             {
                                 print("⏱️ Timeout: Forcing completion for node \(name)")
                                 self.local_completion(index: i, completion: completion)
                             }
                         }
-                        
+
                         node.runAction(action)
                         {
                             self.local_completion(index: i, completion: completion)
@@ -176,20 +180,19 @@ open class ToolModelController: ModelController
     
     private func local_completion(index: Int, completion: @escaping () -> Void = {})
     {
-        if index < nodes_actions_completed.count
+        guard index < nodes_actions_completed.count else
         {
-            nodes_actions_completed[index] = true
-            print("✅ Node action finished at index \(index)")
-            
-            if !nodes_actions_completed.contains(false)
-            {
-                print("🏁 All node actions completed")
-                completion()
-            }
+            print("❗ Completion index \(index) is out of bounds")
+            return
         }
-        else
+
+        nodes_actions_completed[index] = true
+        print("✅ Node action finished at index \(index)")
+
+        if !nodes_actions_completed.contains(false)
         {
-            print("❗ Index out of bounds in nodes_actions_completed")
+            print("🏁 All node actions completed")
+            completion()
         }
     }
     /*private func local_completion(index: Int, completion: @escaping () -> Void = {})
