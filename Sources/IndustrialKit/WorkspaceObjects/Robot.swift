@@ -471,7 +471,7 @@ public class Robot: WorkspaceObject
                 connector.model_controller = model_controller
             }
             
-            model_controller.toggle_alt_pointer(!demo)
+            model_controller.toggle_alt_pointer(demo)
         }
     }
     
