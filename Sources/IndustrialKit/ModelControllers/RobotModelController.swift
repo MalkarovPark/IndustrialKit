@@ -85,13 +85,13 @@ open class RobotModelController: ModelController
         pointer_node?.position = SCNVector3(pos_y, pos_z, pos_x)
         
         #if os(macOS)
-        pointer_node?.eulerAngles.x = CGFloat(rot_y)
-        pointer_node?.eulerAngles.y = CGFloat(rot_z)
-        pointer_node_internal?.eulerAngles.z = CGFloat(rot_x)
+        pointer_node?.eulerAngles.x = CGFloat(rot_y.to_rad)
+        pointer_node?.eulerAngles.y = CGFloat(rot_z.to_rad)
+        pointer_node_internal?.eulerAngles.z = CGFloat(rot_x.to_rad)
         #else
-        pointer_node?.eulerAngles.x = rot_y
-        pointer_node?.eulerAngles.y = rot_z
-        pointer_node_internal?.eulerAngles.z = rot_x
+        pointer_node?.eulerAngles.x = rot_y.to_rad
+        pointer_node?.eulerAngles.y = rot_z.to_rad
+        pointer_node_internal?.eulerAngles.z = rot_x.to_rad
         #endif
     }
     
@@ -156,9 +156,9 @@ open class RobotModelController: ModelController
         alt_pointer_node?.eulerAngles.y = CGFloat(rot_z.to_rad)
         alt_pointer_node?.eulerAngles.z = CGFloat(rot_x.to_rad)
         #else
-        alt_pointer_node?.eulerAngles.x = rot_y
-        alt_pointer_node?.eulerAngles.y = rot_z
-        alt_pointer_node?.eulerAngles.z = rot_x
+        alt_pointer_node?.eulerAngles.x = rot_y.to_rad
+        alt_pointer_node?.eulerAngles.y = rot_z.to_rad
+        alt_pointer_node?.eulerAngles.z = rot_x.to_rad
         #endif
     }
     
@@ -210,7 +210,7 @@ open class RobotModelController: ModelController
      - Parameters:
         - node: A root node of workspace object model.
         - pointer: A node of pointer for robot.
-        - pointer_internal: A internal node of pointer for robot.
+        - pointer_internal: An internal node of pointer for robot.
      */
     public func nodes_connect(_ node: SCNNode, pointer: SCNNode, pointer_internal: SCNNode)
     {
