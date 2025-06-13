@@ -131,9 +131,8 @@ open class RobotModelController: ModelController
     /// Updates alt pointer position by target point.
     private func update_alt_pointer()
     {
-        update_pointer_position(pos_x: pointer_location[0], pos_y: pointer_location[1], pos_z: pointer_location[2],
+        update_alt_pointer_position(pos_x: pointer_location[0], pos_y: pointer_location[1], pos_z: pointer_location[2],
                                 rot_x: pointer_rotation[0], rot_y: pointer_rotation[1], rot_z: pointer_rotation[2])
-        update_nodes_by_pointer_location()
     }
     
     /**
@@ -147,7 +146,7 @@ open class RobotModelController: ModelController
      - rot_y: Rotation about the Y-axis, in radians.
      - rot_z: Rotation about the Z-axis, in radians.
      */
-    public func update_alt_pointer_position(pos_x: Float, pos_y: Float, pos_z: Float,
+    private func update_alt_pointer_position(pos_x: Float, pos_y: Float, pos_z: Float,
                                         rot_x: Float, rot_y: Float, rot_z: Float)
     {
         alt_pointer_node?.position = SCNVector3(pos_y, pos_z, pos_x)
