@@ -155,7 +155,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
                 }
                 else
                 {
-                    sync_model()
+                    sync_device()
                 }
             }
         }
@@ -297,7 +297,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
     @Published public var update_model = false
     
     /// Synchronizes model with real device state.
-    open func sync_model()
+    open func sync_device()
     {
         
     }
