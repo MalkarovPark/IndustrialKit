@@ -210,7 +210,7 @@ public class ExternalToolConnector: ToolConnector
         {
             guard let output: String = send_via_unix_socket(
                 at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
-                with: ["sync_model"])
+                with: ["performing_state"])
             else
             {
                 return .completed //.error
