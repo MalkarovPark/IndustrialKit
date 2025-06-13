@@ -236,10 +236,7 @@ public class ExternalToolConnector: ToolConnector
         // Process output
         while state == .processing && !canceled
         {
-            if let actions = nodes_actions // Apply nodes actions by connector
-            {
-                model_controller?.apply_nodes_actions(by: actions)
-            }
+            sync_model()
         }
         
         model_controller?.remove_all_model_actions() // Remove nodes actions if performing finished
@@ -248,7 +245,10 @@ public class ExternalToolConnector: ToolConnector
     
     open override func sync_model()
     {
-        
+        if let actions = nodes_actions // Apply nodes actions by connector
+        {
+            model_controller?.apply_nodes_actions(by: actions)
+        }
     }
     
     open override func reset_device()
