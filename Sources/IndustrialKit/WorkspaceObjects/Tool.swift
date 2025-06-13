@@ -454,7 +454,7 @@ public class Tool: WorkspaceObject
         // Handling tool performing
         if !performed
         {
-            // Move to next point if moving was stop
+            // Perform nex action if performing was stop
             performed = true
             perform_next_code()
             
