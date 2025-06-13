@@ -466,6 +466,10 @@ public class Robot: WorkspaceObject
                 reset_moving()
                 disconnect()
             }
+            else if !demo && update_model_by_connector
+            {
+                connector.model_controller = model_controller
+            }
         }
     }
     
