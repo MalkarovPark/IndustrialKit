@@ -272,8 +272,7 @@ public class ExternalRobotConnector: RobotConnector
             }
             
             let lines = output.components(separatedBy: "\n")
-            
-            return lines.isEmpty ? nil : Array(lines)
+            return lines == [""] ? nil : lines
         }
         
         // Process output
