@@ -401,7 +401,7 @@ public class Tool: WorkspaceObject
         // Modeling
         /*if !demo && update_model_by_connector
         {
-            connector.sync_device()
+            connector.sync_model()
         }*/
     }
     

@@ -62,7 +62,7 @@ open class ToolConnector: WorkspaceObjectConnector
     /// A tool model controller.
     public var model_controller: ToolModelController?
     
-    override open func sync_device()
+    override open func sync_model()
     {
         // model_controller?.nodes[safe: "Node", default: SCNNode()].runAction(SCNAction())
     }
@@ -210,7 +210,7 @@ public class ExternalToolConnector: ToolConnector
         {
             guard let output: String = send_via_unix_socket(
                 at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
-                with: ["sync_device"])
+                with: ["sync_model"])
             else
             {
                 return nil
@@ -231,25 +231,15 @@ public class ExternalToolConnector: ToolConnector
             }
         }
         
-        var is_actions_performing = false
-        
         // Process output
         while !state.completed && !canceled
         {
             let state = state
             
-            /*if true//!is_actions_performing
-            {*/
-                if let actions = state.nodes_actions // Apply nodes actions by connector
-                {
-                    is_actions_performing = true
-                    
-                    model_controller?.apply_nodes_actions(by: actions)
-                    /*{
-                        is_actions_performing = false
-                    }*/
-                }
-            //}
+            if let actions = state.nodes_actions // Apply nodes actions by connector
+            {
+                model_controller?.apply_nodes_actions(by: actions)
+            }
         }
         
         model_controller?.remove_all_model_actions() // Remove nodes actions if performing finished
@@ -380,10 +370,10 @@ public class ExternalToolConnector: ToolConnector
     }
     
     // MARK: Modeling
-    open override func sync_device()
+    open override func sync_model()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["sync_device"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["sync_model"])
         else
         {
             connection_failure = true
