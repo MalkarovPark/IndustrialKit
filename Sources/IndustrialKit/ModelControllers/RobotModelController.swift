@@ -165,9 +165,6 @@ open class RobotModelController: ModelController
     /// Robot alt teach pointer.
     public var alt_pointer_node: SCNNode?
     
-    /// Node for internal element of alt pointer.
-    public var alt_pointer_node_internal: SCNNode?
-    
     /// Toggles view for alt pointer.
     public func toggle_alt_pointer(_ hidden: Bool)
     {
@@ -222,8 +219,9 @@ open class RobotModelController: ModelController
         pointer_node = pointer
         pointer_node_internal = pointer_internal
         
+        alt_pointer_node?.removeFromParentNode()
+        
         alt_pointer_node = pointer.deep_clone()
-        alt_pointer_node_internal = pointer_internal.deep_clone()
         alt_pointer_node?.opacity = 0.5
         
         if let parent_node = pointer.parent, let alt_pointer_node = alt_pointer_node
