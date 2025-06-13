@@ -206,7 +206,20 @@ public class ExternalToolConnector: ToolConnector
         }
         
         // Output from external
-        var output: String?
+        var state: PerformingState
+        {
+            guard let output: String = send_via_unix_socket(
+                at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
+                with: ["sync_model"])
+            else
+            {
+                return .completed //.error
+            }
+            
+            return PerformingState(rawValue: output) ?? .completed //.error
+        }
+        
+        var nodes_actions: [String]?
         {
             guard let output: String = send_via_unix_socket(
                 at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
@@ -216,27 +229,15 @@ public class ExternalToolConnector: ToolConnector
                 return nil
             }
             
-            return output
-        }
-        
-        var state: (completed: Bool, nodes_actions: [String]?)
-        {
-            if let output = output
-            {
-                return tool_connector_state_decode(from: output)
-            }
-            else
-            {
-                return (completed: true, nodes_actions: nil)
-            }
+            let lines = output.components(separatedBy: "\n")
+            
+            return lines.isEmpty ? nil : Array(lines)
         }
         
         // Process output
-        while !state.completed && !canceled
+        while (state != .completed) && !canceled
         {
-            let state = state
-            
-            if let actions = state.nodes_actions // Apply nodes actions by connector
+            if let actions = nodes_actions // Apply nodes actions by connector
             {
                 model_controller?.apply_nodes_actions(by: actions)
             }
