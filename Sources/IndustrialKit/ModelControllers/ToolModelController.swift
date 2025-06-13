@@ -46,8 +46,6 @@ open class ToolModelController: ModelController
         #if os(macOS)
         nodes_actions_completed.removeAll()
         #endif
-        
-        //reset_nodes()
     }
     
     /// Inforamation code updated by model controller.
@@ -156,9 +154,6 @@ public class ExternalToolModelController: ToolModelController
     open override func nodes_perform(code: Int, completion: @escaping () -> Void)
     {
         #if os(macOS)
-        //guard !is_nodes_updating else { return }
-        //is_nodes_updating = true
-        
         DispatchQueue.global(qos: .utility).async
         {
             send_via_unix_socket(at: "/tmp/\(self.module_name)_tool_controller_socket", with: ["nodes_perform", "\(code)"])

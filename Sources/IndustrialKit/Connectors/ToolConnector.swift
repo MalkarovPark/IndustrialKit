@@ -188,6 +188,34 @@ public class ExternalToolConnector: ToolConnector
     }
     
     // MARK: Performing
+    private var state: PerformingState
+    {
+        guard let output: String = send_via_unix_socket(
+            at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
+            with: ["performing_state"])
+        else
+        {
+            return .completed //.error
+        }
+        
+        return PerformingState(rawValue: output) ?? .completed //.error
+    }
+    
+    private var nodes_actions: [String]?
+    {
+        guard let output: String = send_via_unix_socket(
+            at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
+            with: ["sync_model"])
+        else
+        {
+            return nil
+        }
+        
+        let lines = output.components(separatedBy: "\n")
+        
+        return lines.isEmpty ? nil : Array(lines)
+    }
+    
     open override func perform(code: Int)//, completion: @escaping () -> Void)
     {
         #if os(macOS)
@@ -205,35 +233,6 @@ public class ExternalToolConnector: ToolConnector
             return
         }
         
-        // Output from external
-        var state: PerformingState
-        {
-            guard let output: String = send_via_unix_socket(
-                at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
-                with: ["performing_state"])
-            else
-            {
-                return .completed //.error
-            }
-            
-            return PerformingState(rawValue: output) ?? .completed //.error
-        }
-        
-        var nodes_actions: [String]?
-        {
-            guard let output: String = send_via_unix_socket(
-                at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
-                with: ["sync_model"])
-            else
-            {
-                return nil
-            }
-            
-            let lines = output.components(separatedBy: "\n")
-            
-            return lines.isEmpty ? nil : Array(lines)
-        }
-        
         // Process output
         while state == .processing && !canceled
         {
@@ -245,6 +244,11 @@ public class ExternalToolConnector: ToolConnector
         
         model_controller?.remove_all_model_actions() // Remove nodes actions if performing finished
         #endif
+    }
+    
+    open override func sync_model()
+    {
+        
     }
     
     open override func reset_device()
@@ -371,7 +375,7 @@ public class ExternalToolConnector: ToolConnector
     }
     
     // MARK: Modeling
-    open override func sync_model()
+    /*open override func sync_model()
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["sync_model"])
@@ -403,5 +407,5 @@ public class ExternalToolConnector: ToolConnector
             }
         }
         #endif
-    }
+    }*/
 }

@@ -486,16 +486,6 @@ public class Robot: WorkspaceObject
                 update_statistics_data()
             }
         }
-        
-        // Modeling
-        /*if demo
-        {
-            //model_controller.update_by_pointer()
-        }
-        else if update_model_by_connector
-        {
-            connector.sync_model()
-        }*/
     }
     
     // MARK: Performation cycle

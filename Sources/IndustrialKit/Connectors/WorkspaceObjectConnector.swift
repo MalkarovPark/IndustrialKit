@@ -155,7 +155,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
                 }
                 else
                 {
-                    sync_model()
+                    sync_model() // Turn model into a state similar to the current state of the real device
                 }
             }
         }
@@ -294,7 +294,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
     
     // MARK: - Model handling
     /// A flag of update model avalibility.
-    @Published public var update_model = false
+    //@Published public var update_model = false
     
     /// Synchronizes model with real device state.
     open func sync_model()
