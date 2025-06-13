@@ -152,9 +152,9 @@ open class RobotModelController: ModelController
         alt_pointer_node?.position = SCNVector3(pos_y, pos_z, pos_x)
         
         #if os(macOS)
-        alt_pointer_node?.eulerAngles.x = CGFloat(rot_y)
-        alt_pointer_node?.eulerAngles.y = CGFloat(rot_z)
-        alt_pointer_node?.eulerAngles.z = CGFloat(rot_x)
+        alt_pointer_node?.eulerAngles.x = CGFloat(rot_y.to_rad)
+        alt_pointer_node?.eulerAngles.y = CGFloat(rot_z.to_rad)
+        alt_pointer_node?.eulerAngles.z = CGFloat(rot_x.to_rad)
         #else
         alt_pointer_node?.eulerAngles.x = rot_y
         alt_pointer_node?.eulerAngles.y = rot_z
