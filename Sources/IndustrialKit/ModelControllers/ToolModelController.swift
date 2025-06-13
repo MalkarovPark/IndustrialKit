@@ -44,7 +44,7 @@ open class ToolModelController: ModelController
         }
         
         #if os(macOS)
-        nodes_actions_completed.removeAll()
+        nodes_actions_performing_count = 0
         #endif
     }
     
@@ -66,13 +66,13 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
-        if nodes_actions_completed.contains(false)
+        if nodes_actions_performing_count > 0
         {
             completion()
             return
         }
         
-        nodes_actions_completed = [Bool](repeating: false, count: lines.count)
+        nodes_actions_performing_count = lines.count
         
         for i in 0..<lines.count // line in lines
         {
@@ -101,15 +101,15 @@ open class ToolModelController: ModelController
         }
     }
     
-    private var nodes_actions_completed = [Bool]()
+    private var nodes_actions_performing_count = 0
     
     private func local_completion(index: Int, completion: @escaping () -> Void = {})
     {
-        if nodes_actions_completed.count > 0
+        if nodes_actions_performing_count > 0
         {
-            nodes_actions_completed[index] = true
+            nodes_actions_performing_count -= 1
             
-            if !nodes_actions_completed.contains(false) //nodes_actions_completed.allSatisfy({ $0 == true })
+            if nodes_actions_performing_count == 0
             {
                 completion()
             }
