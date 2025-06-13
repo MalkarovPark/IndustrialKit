@@ -350,33 +350,9 @@ public class ExternalRobotModelController: RobotModelController
     open override func reset_nodes()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["reset_nodes"])
-        else
-        {
-            return
-        }
-        
-        // Split the output into lines
-        let lines = output.split(separator: "\n").map { String($0) }
-
-        for line in lines
-        {
-            // Split the line by space to separate node name and action string
-            let components = line.split(separator: " ", maxSplits: 1).map { String($0) }
-            
-            // Ensure there are two components: the node name and the action string
-            guard components.count == 2
-            else
-            {
-                continue
-            }
-            
-            set_position(for: nodes[safe: components[0], default: SCNNode()], from: components[1])
-            
-            if canceled
-            {
-                break
-            }
+        send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["reset_nodes"])
+        { output in
+            self.apply_nodes_positions(by: output.split(separator: "\n").map { String($0) })
         }
         #endif
     }

@@ -73,7 +73,6 @@ open class ToolModelController: ModelController
             return
         }
         
-        //var completed = [Bool](repeating: false, count: lines.count)
         nodes_actions_completed = [Bool](repeating: false, count: lines.count)
         
         for i in 0..<lines.count // line in lines
@@ -91,21 +90,10 @@ open class ToolModelController: ModelController
                         self.local_completion(index: i, completion: completion)
                     })
                 }
-                
-                /*DispatchQueue.main.async
-                {
-                    if let action = string_to_action(from: command)
-                    {
-                        self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
-                            self.local_completion(index: i, completion: completion)
-                        })
-                    }
-                }*/
             }
             else
             {
                 completion()
-                //return
             }
         }
     }
@@ -185,38 +173,12 @@ public class ExternalToolModelController: ToolModelController
     open override func reset_nodes()
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["reset_nodes"])
-        else
-        {
-            return
-        }
-
-        // Split the output into lines
-        let lines = output.split(separator: "\n").map { String($0) }
-        
-        var completed = [Bool](repeating: false, count: lines.count)
-
-        for i in 0..<lines.count // line in lines
-        {
-            // Split output into components
-            let components: [String] = lines[i].split(separator: " ").map { String($0) }
-
-            // Check that output contains exactly two parameters
-            guard components.count == 2
-            else
-            {
-                return
-            }
+        send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["reset_nodes"])
+        { output in
+            // Split the output into lines
+            let lines = output.split(separator: "\n").map { String($0) }
             
-            if let action = string_to_action(from: components[1])
-            {
-                nodes[safe: components[0], default: SCNNode()].runAction(action, completionHandler: { local_completion(index: i) })
-            }
-        }
-        
-        func local_completion(index: Int)
-        {
-            completed[index] = true
+            self.apply_nodes_actions(by: lines)
         }
         #endif
     }
