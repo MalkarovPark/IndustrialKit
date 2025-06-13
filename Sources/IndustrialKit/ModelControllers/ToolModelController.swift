@@ -173,13 +173,7 @@ public class ExternalToolModelController: ToolModelController
     open override func reset_nodes()
     {
         #if os(macOS)
-        /*send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["reset_nodes"])
-        { output in
-            // Split the output into lines
-            let lines = output.split(separator: "\n").map { String($0) }
-            
-            self.apply_nodes_actions(by: lines)
-        }*/
+        send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["reset_nodes"])
         #endif
     }
     

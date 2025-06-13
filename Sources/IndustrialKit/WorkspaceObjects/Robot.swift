@@ -470,6 +470,8 @@ public class Robot: WorkspaceObject
             {
                 connector.model_controller = model_controller
             }
+            
+            model_controller.toggle_alt_pointer(!demo)
         }
     }
     
@@ -863,7 +865,7 @@ public class Robot: WorkspaceObject
             }
             else
             {
-                connector.pointer_location = pointer_location
+                model_controller.alt_pointer_location = pointer_location
             }
         }
     }
@@ -880,7 +882,7 @@ public class Robot: WorkspaceObject
             }
             else
             {
-                connector.pointer_rotation = pointer_rotation
+                model_controller.alt_pointer_rotation = pointer_rotation
             }
         }
     }

@@ -41,6 +41,7 @@ open class RobotModelController: ModelController
         
     }
     
+    // MARK: Pointer
     /**
      A robot pointer location.
      
@@ -65,38 +66,6 @@ open class RobotModelController: ModelController
         {
             update_model()
         }
-    }
-    
-    /**
-     A robot cell origin location.
-     
-     Array with three coordinates – [*x*, *y*, *z*].
-     */
-    public var origin_location = [Float](repeating: 0, count: 3)
-    
-    /**
-     A robot cell origin rotation.
-     
-     Array with three angles – [*r*, *p*, *w*].
-     */
-    public var origin_rotation = [Float](repeating: 0, count: 3)
-    
-    /// A robot cell box scale.
-    public var space_scale = [Float](repeating: 200, count: 3)
-    
-    /// Update robot manipulator parts positions by target point.
-    private func update_model()
-    {
-        update_pointer_position(pos_x: pointer_location[0], pos_y: pointer_location[1], pos_z: pointer_location[2],
-                                rot_x: pointer_rotation[0], rot_y: pointer_rotation[1], rot_z: pointer_rotation[2])
-        update_nodes_by_pointer_location()
-        //update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
-    }
-    
-    /// Updates robot nodes by current pointer and origin parameters.
-    public func update_nodes_by_pointer_location()
-    {
-        update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
     }
     
     /**
@@ -132,6 +101,105 @@ open class RobotModelController: ModelController
     /// Node for internal element.
     public var pointer_node_internal: SCNNode?
     
+    // MARK: Alt pointer
+    /**
+     A robot alt pointer location.
+     
+     Array with three coordinates – [*x*, *y*, *z*].
+     */
+    public var alt_pointer_location: [Float] = [0.0, 0.0, 0.0]
+    {
+        didSet
+        {
+            update_model()
+        }
+    }
+    
+    /**
+     A robot alt pointer rotation.
+     
+     Array with three angles – [*r*, *p*, *w*].
+     */
+    public var alt_pointer_rotation: [Float] = [0.0, 0.0, 0.0]
+    {
+        didSet
+        {
+            update_model()
+        }
+    }
+    
+    /**
+     Updates the alt pointer’s position and orientation in the scene.
+     
+     - Parameters:
+     - pos_x: The X coordinate of the pointer's position.
+     - pos_y: The Y coordinate of the pointer's position.
+     - pos_z: The Z coordinate of the pointer's position.
+     - rot_x: Rotation about the X-axis, in radians.
+     - rot_y: Rotation about the Y-axis, in radians.
+     - rot_z: Rotation about the Z-axis, in radians.
+     */
+    public func update_alt_pointer_position(pos_x: Float, pos_y: Float, pos_z: Float,
+                                        rot_x: Float, rot_y: Float, rot_z: Float)
+    {
+        alt_pointer_node?.position = SCNVector3(pos_y, pos_z, pos_x)
+        
+        #if os(macOS)
+        alt_pointer_node?.eulerAngles.x = CGFloat(rot_y)
+        alt_pointer_node?.eulerAngles.y = CGFloat(rot_z)
+        alt_pointer_node?.eulerAngles.z = CGFloat(rot_x)
+        #else
+        alt_pointer_node?.eulerAngles.x = rot_y
+        alt_pointer_node?.eulerAngles.y = rot_z
+        alt_pointer_node?.eulerAngles.z = rot_x
+        #endif
+    }
+    
+    /// Robot alt teach pointer.
+    public var alt_pointer_node: SCNNode?
+    
+    /// Node for internal element of alt pointer.
+    public var alt_pointer_node_internal: SCNNode?
+    
+    /// Toggles view for alt pointer
+    public func toggle_alt_pointer(_ enabled: Bool)
+    {
+        alt_pointer_node?.isHidden = enabled
+    }
+    
+    // MARK: Workcell
+    /**
+     A robot cell origin location.
+     
+     Array with three coordinates – [*x*, *y*, *z*].
+     */
+    public var origin_location = [Float](repeating: 0, count: 3)
+    
+    /**
+     A robot cell origin rotation.
+     
+     Array with three angles – [*r*, *p*, *w*].
+     */
+    public var origin_rotation = [Float](repeating: 0, count: 3)
+    
+    /// A robot cell box scale.
+    public var space_scale = [Float](repeating: 200, count: 3)
+    
+    // MARK: Device
+    /// Update robot manipulator parts positions by target point.
+    private func update_model()
+    {
+        update_pointer_position(pos_x: pointer_location[0], pos_y: pointer_location[1], pos_z: pointer_location[2],
+                                rot_x: pointer_rotation[0], rot_y: pointer_rotation[1], rot_z: pointer_rotation[2])
+        update_nodes_by_pointer_location()
+    }
+    
+    /// Updates robot nodes by current pointer and origin parameters.
+    public func update_nodes_by_pointer_location()
+    {
+        update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+    }
+    
     /**
      Gets parts nodes links from model root node and pass to array.
      
@@ -143,8 +211,13 @@ open class RobotModelController: ModelController
     public func nodes_connect(_ node: SCNNode, pointer: SCNNode, pointer_internal: SCNNode)
     {
         connect_nodes(of: node)
+        
         pointer_node = pointer
         pointer_node_internal = pointer_internal
+        
+        alt_pointer_node = pointer.deep_clone()
+        alt_pointer_node_internal = pointer_internal.deep_clone()
+        alt_pointer_node?.opacity = 0.5
     }
     
     public override func disconnect_nodes()

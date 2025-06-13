@@ -21,14 +21,14 @@ open class RobotConnector: WorkspaceObjectConnector
      
      Array with three coordinates – [*x*, *y*, *z*].
      */
-    public var pointer_location: [Float] = [0.0, 0.0, 0.0]
+    //public var pointer_location: [Float] = [0.0, 0.0, 0.0]
     
     /**
      A robot pointer rotation.
      
      Array with three angles – [*r*, *p*, *w*].
      */
-    public var pointer_rotation: [Float] = [0.0, 0.0, 0.0]
+    //public var pointer_rotation: [Float] = [0.0, 0.0, 0.0]
     
     /**
      A robot cell origin location.

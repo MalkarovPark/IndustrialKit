@@ -605,12 +605,6 @@ public class Tool: WorkspaceObject
         }
     }
     
-    /// An array of connected tool parts.
-    // private var tool_parts = [SCNNode]()
-    
-    /// An array of tool parts lengths.
-    // private var lengths = [Float]()
-    
     /**
      Connects to robot model in scene.
      - Parameters:

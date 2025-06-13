@@ -130,14 +130,6 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
         {
             connection_updating = true
             
-            /*DispatchQueue.global(qos: .background).async
-            {
-                self.connected = self.connection_process()
-                self.connection_updating = false
-                
-                self.connection_failure = !self.connected
-            }*/
-            
             connection_task = Task
             {
                 connected = await connection_process()
