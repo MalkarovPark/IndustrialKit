@@ -169,6 +169,19 @@ open class RobotModelController: ModelController
     public func toggle_alt_pointer(_ hidden: Bool)
     {
         alt_pointer_node?.isHidden = hidden
+        
+        if hidden
+        {
+            // to demo
+            pointer_location = alt_pointer_location
+            pointer_rotation = alt_pointer_rotation
+        }
+        else
+        {
+            // to real
+            alt_pointer_location = pointer_location
+            alt_pointer_rotation = pointer_rotation
+        }
     }
     
     // MARK: Workcell
@@ -222,7 +235,7 @@ open class RobotModelController: ModelController
         alt_pointer_node?.removeFromParentNode()
         
         alt_pointer_node = pointer.deep_clone()
-        alt_pointer_node?.opacity = 0.5
+        alt_pointer_node?.opacity = 0.25
         
         if let parent_node = pointer.parent, let alt_pointer_node = alt_pointer_node
         {
