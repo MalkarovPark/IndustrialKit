@@ -111,7 +111,7 @@ open class RobotModelController: ModelController
     {
         didSet
         {
-            update_model()
+            update_alt_pointer()
         }
     }
     
@@ -124,8 +124,16 @@ open class RobotModelController: ModelController
     {
         didSet
         {
-            update_model()
+            update_alt_pointer()
         }
+    }
+    
+    /// Updates alt pointer position by target point.
+    private func update_alt_pointer()
+    {
+        update_pointer_position(pos_x: pointer_location[0], pos_y: pointer_location[1], pos_z: pointer_location[2],
+                                rot_x: pointer_rotation[0], rot_y: pointer_rotation[1], rot_z: pointer_rotation[2])
+        update_nodes_by_pointer_location()
     }
     
     /**
@@ -161,7 +169,7 @@ open class RobotModelController: ModelController
     /// Node for internal element of alt pointer.
     public var alt_pointer_node_internal: SCNNode?
     
-    /// Toggles view for alt pointer
+    /// Toggles view for alt pointer.
     public func toggle_alt_pointer(_ enabled: Bool)
     {
         alt_pointer_node?.isHidden = enabled
