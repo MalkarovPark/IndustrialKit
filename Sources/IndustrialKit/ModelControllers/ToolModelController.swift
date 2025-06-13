@@ -70,6 +70,7 @@ open class ToolModelController: ModelController
     {
         if nodes_actions_completed.contains(false)
         {
+            completion()
             return
         }
         
