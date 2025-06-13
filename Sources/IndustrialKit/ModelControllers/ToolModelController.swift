@@ -68,9 +68,10 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
+        print(nodes_actions_completed)
+        
         if nodes_actions_completed.contains(false)
         {
-            print(nodes_actions_completed)
             completion()
             return
         }
