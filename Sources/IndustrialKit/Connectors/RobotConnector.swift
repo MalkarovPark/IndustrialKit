@@ -233,25 +233,57 @@ public class ExternalRobotConnector: RobotConnector
             return output
         }
         
-        var state: (completed: Bool, pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?, nodes_positions: [String]?)
+        var state: PerformingState
         {
-            if let output = output
-            {
-                return robot_connector_state_decode(from: output)
-            }
+            guard let output: String = send_via_unix_socket(
+                at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
+                with: ["performing_state"])
             else
             {
-                return (completed: true, pointer_position: nil, nodes_positions: nil)
+                return .completed //.error
             }
+            
+            return PerformingState(rawValue: output) ?? .completed //.error
         }
         
-        func update_model()
+        var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
         {
-            if let position = state.pointer_position // Update pointer node position by connector
+            guard let output: String = send_via_unix_socket(
+                at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
+                with: ["sync_pointer"])
+            else
+            {
+                return nil
+            }
+            
+            let components = output.split(separator: " ").compactMap { Float($0) }
+            return components.count == 6 ? (components[0], components[1], components[2],
+                                            components[3], components[4], components[5]) : nil
+        }
+        
+        var nodes_positions: [String]?
+        {
+            guard let output: String = send_via_unix_socket(
+                at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
+                with: ["sync_model"])
+            else
+            {
+                return nil
+            }
+            
+            let lines = output.components(separatedBy: "\n")
+            
+            return lines.isEmpty ? nil : Array(lines)
+        }
+        
+        // Process output
+        while state == .processing && !canceled
+        {
+            if let position = pointer_position // Update pointer node position by connector
             {
                 model_controller?.update_pointer_position(pos_x: position.x, pos_y: position.y, pos_z: position.z, rot_x: position.r, rot_y: position.p, rot_z: position.w)
                 
-                if let nodes_positions = state.nodes_positions // Update nodes positions by connector
+                if let nodes_positions = nodes_positions // Update nodes positions by connector
                 {
                     model_controller?.apply_nodes_positions(by: nodes_positions)
                 }
@@ -261,20 +293,6 @@ public class ExternalRobotConnector: RobotConnector
                 }
             }
         }
-        
-        // Process output
-        while !state.completed && !canceled
-        {
-            let state = state
-            
-            update_model()
-            
-            //usleep(100)//(10000)
-        }
-        
-        /*update_model()
-        
-        usleep(100)*/
         #endif
     }
     
