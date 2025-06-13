@@ -131,8 +131,8 @@ open class RobotModelController: ModelController
     /// Updates alt pointer position by target point.
     private func update_alt_pointer()
     {
-        update_alt_pointer_position(pos_x: pointer_location[0], pos_y: pointer_location[1], pos_z: pointer_location[2],
-                                rot_x: pointer_rotation[0], rot_y: pointer_rotation[1], rot_z: pointer_rotation[2])
+        update_alt_pointer_position(pos_x: alt_pointer_location[0], pos_y: alt_pointer_location[1], pos_z: alt_pointer_location[2],
+                                rot_x: alt_pointer_rotation[0], rot_y: alt_pointer_rotation[1], rot_z: alt_pointer_rotation[2])
     }
     
     /**
@@ -169,9 +169,9 @@ open class RobotModelController: ModelController
     public var alt_pointer_node_internal: SCNNode?
     
     /// Toggles view for alt pointer.
-    public func toggle_alt_pointer(_ enabled: Bool)
+    public func toggle_alt_pointer(_ hidden: Bool)
     {
-        alt_pointer_node?.isHidden = enabled
+        alt_pointer_node?.isHidden = hidden
     }
     
     // MARK: Workcell
