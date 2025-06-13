@@ -203,6 +203,48 @@ public class ExternalRobotConnector: RobotConnector
     }
     
     // MARK: Performing
+    private var external_state: PerformingState
+    {
+        guard let output: String = send_via_unix_socket(
+            at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
+            with: ["performing_state"])
+        else
+        {
+            return .completed //.error
+        }
+        
+        return PerformingState(rawValue: output) ?? .completed //.error
+    }
+    
+    private var external_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
+    {
+        guard let output: String = send_via_unix_socket(
+            at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
+            with: ["sync_pointer"])
+        else
+        {
+            return nil
+        }
+        
+        let components = output.split(separator: " ").compactMap { Float($0) }
+        return components.count == 6 ? (components[0], components[1], components[2],
+                                        components[3], components[4], components[5]) : nil
+    }
+    
+    private var external_nodes_positions: [String]?
+    {
+        guard let output: String = send_via_unix_socket(
+            at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
+            with: ["sync_model"])
+        else
+        {
+            return nil
+        }
+        
+        let lines = output.components(separatedBy: "\n")
+        return lines == [""] ? nil : lines
+    }
+    
     override open func move_to(point: PositionPoint)
     {
         #if os(macOS)
@@ -219,80 +261,29 @@ public class ExternalRobotConnector: RobotConnector
             return
         }
         
-        // Output from external
-        var output: String?
-        {
-            guard let output: String = send_via_unix_socket(
-                at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
-                with: ["sync_model"])
-            else
-            {
-                return nil
-            }
-            
-            return output
-        }
-        
-        var state: PerformingState
-        {
-            guard let output: String = send_via_unix_socket(
-                at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
-                with: ["performing_state"])
-            else
-            {
-                return .completed //.error
-            }
-            
-            return PerformingState(rawValue: output) ?? .completed //.error
-        }
-        
-        var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
-        {
-            guard let output: String = send_via_unix_socket(
-                at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
-                with: ["sync_pointer"])
-            else
-            {
-                return nil
-            }
-            
-            let components = output.split(separator: " ").compactMap { Float($0) }
-            return components.count == 6 ? (components[0], components[1], components[2],
-                                            components[3], components[4], components[5]) : nil
-        }
-        
-        var nodes_positions: [String]?
-        {
-            guard let output: String = send_via_unix_socket(
-                at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
-                with: ["sync_model"])
-            else
-            {
-                return nil
-            }
-            
-            let lines = output.components(separatedBy: "\n")
-            return lines == [""] ? nil : lines
-        }
-        
         // Process output
-        while state == .processing && !canceled
+        while external_state == .processing && !canceled
         {
-            if let position = pointer_position // Update pointer node position by connector
-            {
-                model_controller?.update_pointer_position(pos_x: position.x, pos_y: position.y, pos_z: position.z, rot_x: position.r, rot_y: position.p, rot_z: position.w)
-                
-                if let nodes_positions = nodes_positions // Update nodes positions by connector
-                {
-                    model_controller?.apply_nodes_positions(by: nodes_positions)
-                }
-                else // Update nodes positions by model controller
-                {
-                    model_controller?.update_nodes(pointer_location: [position.x, position.y, position.z], pointer_rotation: [position.r, position.p, position.w], origin_location: origin_location, origin_rotation: origin_rotation)
-                }
-            }
+            sync_model()
         }
         #endif
+    }
+    
+    open override func sync_model()
+    {
+        if let position = external_pointer_position // Update pointer node position by connector
+        {
+            model_controller?.update_pointer_position(pos_x: position.x, pos_y: position.y, pos_z: position.z, rot_x: position.r, rot_y: position.p, rot_z: position.w)
+            
+            if let nodes_positions = external_nodes_positions // Update nodes positions by connector (real device)
+            {
+                model_controller?.apply_nodes_positions(by: nodes_positions)
+            }
+            else // Update nodes positions by model controller (simulated device)
+            {
+                model_controller?.update_nodes(pointer_location: [position.x, position.y, position.z], pointer_rotation: [position.r, position.p, position.w], origin_location: origin_location, origin_rotation: origin_rotation)
+            }
+        }
     }
     
     open override func reset_device()
@@ -398,7 +389,7 @@ public class ExternalRobotConnector: RobotConnector
     }
     
     // MARK: Modeling
-    open override func sync_model()
+    /*open override func sync_model()
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["sync_model"])
@@ -411,7 +402,7 @@ public class ExternalRobotConnector: RobotConnector
         
         // Split the output into lines
         let lines = output.split(separator: "\n").map { String($0) }
-
+        
         for line in lines
         {
             // Split the line by space to separate node name and action string
@@ -427,5 +418,5 @@ public class ExternalRobotConnector: RobotConnector
             set_position(for: model_controller?.nodes[safe: components[0], default: SCNNode()] ?? SCNNode(), from: components[1])
         }
         #endif
-    }
+    }*/
 }

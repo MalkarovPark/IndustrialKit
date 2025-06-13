@@ -1157,42 +1157,6 @@ public class Robot: WorkspaceObject
             self.states_data = connector.states_data
             self.charts_data = connector.charts_data
         }
-        
-        /*if get_statistics && performed
-        {
-            DispatchQueue.global(qos: .background).async { [weak self] in
-                guard let self = self else { return }
-
-                if self.demo // Get statistic from model controller
-                {
-                    self.model_controller.update_statistics_data()
-                    self.states_data = model_controller.states_data
-                    self.charts_data = model_controller.charts_data
-                }
-                else // Get statistic from real tool
-                {
-                    self.connector.update_statistics_data()
-                    self.states_data = connector.states_data
-                    self.charts_data = connector.charts_data
-                }
-            }
-        }*/
-        
-        /*if get_statistics && performed // Get data if robot is moving and statistic collection enabled
-        {
-            if demo // Get statistic from model controller
-            {
-                model_controller.update_statistics_data()
-                states_data = model_controller.states_data
-                charts_data = model_controller.charts_data
-            }
-            else // Get statistic from real robot
-            {
-                connector.update_statistics_data()
-                states_data = connector.states_data
-                charts_data = connector.charts_data
-            }
-        }*/
     }
     
     /// Clears robot chart data.
@@ -1208,18 +1172,6 @@ public class Robot: WorkspaceObject
         {
             connector.reset_charts_data()
         }
-        
-        /*if get_statistics
-        {
-            if demo
-            {
-                model_controller.reset_charts_data()
-            }
-            else
-            {
-                connector.reset_charts_data()
-            }
-        }*/
     }
     
     /// Clears robot state data.

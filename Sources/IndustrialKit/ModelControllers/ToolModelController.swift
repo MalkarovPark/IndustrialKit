@@ -47,7 +47,7 @@ open class ToolModelController: ModelController
         nodes_actions_completed.removeAll()
         #endif
         
-        reset_nodes()
+        //reset_nodes()
     }
     
     /// Inforamation code updated by model controller.
