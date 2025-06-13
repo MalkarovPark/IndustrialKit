@@ -235,7 +235,7 @@ public class ExternalToolConnector: ToolConnector
         }
         
         // Process output
-        while (state != .completed) && !canceled
+        while state == .processing && !canceled
         {
             if let actions = nodes_actions // Apply nodes actions by connector
             {
