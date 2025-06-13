@@ -68,8 +68,6 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
-        print(nodes_actions_completed)
-        
         if nodes_actions_completed.contains(false)
         {
             completion()
@@ -92,6 +90,10 @@ open class ToolModelController: ModelController
                     self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
                         self.local_completion(index: i, completion: completion)
                     })
+                }
+                else
+                {
+                    completion()
                 }
             }
             else
