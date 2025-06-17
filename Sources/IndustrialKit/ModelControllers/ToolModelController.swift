@@ -54,7 +54,6 @@ open class ToolModelController: ModelController
         return nil
     }
     
-    #if os(macOS)
     /**
      Applies a sequence of actions to scene nodes based on string commands and calls a completion handler when all actions are finished.
      
@@ -66,6 +65,7 @@ open class ToolModelController: ModelController
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
+        #if os(macOS)
         if nodes_actions_performing_count > 0
         {
             completion()
@@ -99,8 +99,12 @@ open class ToolModelController: ModelController
                 completion()
             }
         }
+        #else
+        completion()
+        #endif
     }
     
+    #if os(macOS)
     private var nodes_actions_performing_count = 0
     
     private func local_completion(index: Int, completion: @escaping () -> Void = {})

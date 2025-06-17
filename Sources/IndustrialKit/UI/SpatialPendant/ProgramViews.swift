@@ -646,7 +646,7 @@ internal struct OperationItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(workspace.selected_tool.inspector_code_color(code: code_item))
+                .foregroundColor(code_item.performing_state.color)
             
             Picker("Code", selection: $new_code)
             {

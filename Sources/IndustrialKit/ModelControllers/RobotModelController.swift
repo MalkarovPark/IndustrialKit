@@ -358,7 +358,6 @@ open class RobotModelController: ModelController
         
     }
     
-    #if os(macOS)
     /**
      Applies position updates to scene nodes based on a list of string commands.
      
@@ -372,6 +371,7 @@ open class RobotModelController: ModelController
      */
     public func apply_nodes_positions(by lines: [String])
     {
+        #if os(macOS)
         let updates: [(String, String)] = lines.compactMap
         {
             let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
@@ -387,8 +387,10 @@ open class RobotModelController: ModelController
             
             self.is_nodes_updating = false
         }
+        #endif
     }
     
+    #if os(macOS)
     internal var is_nodes_updating = false
     #endif
 }

@@ -353,13 +353,6 @@ public class Tool: WorkspaceObject
     public var selected_code_index = 0
     
     /**
-     An operation code changed flag.
-     
-     This flag perform update if performed code changed. Used for GUI.
-     */
-    public var code_changed = false
-    
-    /**
      Demo state of tool.
      
      If did set *true* – class instance try to connects a real tool by connector.
@@ -449,11 +442,11 @@ public class Tool: WorkspaceObject
         // Handling tool performing
         if !performed
         {
-            // Perform nex action if performing was stop
+            // Perform next action if performing was stop
             performed = true
             perform_next_code()
             
-            code_changed = true
+            //code_changed = true
         }
         else
         {
@@ -483,8 +476,12 @@ public class Tool: WorkspaceObject
     /// Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
-        perform(code: selected_program.codes[selected_code_index].value)
+        let current_code = selected_program.codes[selected_code_index]
+        current_code.performing_state = .processing
+        
+        perform(code: current_code.value) //(code: selected_program.codes[selected_code_index].value)
         {
+            current_code.performing_state = .completed
             self.select_new_code()
         }
     }
@@ -492,8 +489,6 @@ public class Tool: WorkspaceObject
     /// Set the new target operation code index.
     private func select_new_code()
     {
-        // update_statistics = false
-        
         if performed
         {
             selected_code_index += 1
@@ -502,8 +497,6 @@ public class Tool: WorkspaceObject
         {
             return
         }
-        
-        code_changed = true
         
         if selected_code_index < selected_program.codes_count
         {
@@ -514,9 +507,12 @@ public class Tool: WorkspaceObject
         {
             // Reset target point index if all points passed
             selected_code_index = 0
-            // update_statistics_data()
             performed = false
-            performing_completed = true
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+            {
+                self.selected_program.reset_codes_states()
+            }
             
             finish_handler()
         }
@@ -550,7 +546,7 @@ public class Tool: WorkspaceObject
             }
             
             performed = false
-            performing_completed = false
+            //performing_completed = false
             selected_code_index = 0
             
             clear_chart_data()
@@ -755,53 +751,6 @@ public class Tool: WorkspaceObject
     public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode) // Get info for robot card view
     {
         return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, UIImage(), node: SCNNode()) // Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
-    }
-    
-    /**
-     An operations completion state.
-     
-     This flag set if the tool has passed all operations.
-     
-     > Used for indication in GUI.
-     */
-    public var performing_completed = false
-    
-    /**
-     Returns point color for inspector view.
-     
-     Colors mean:
-     - gray – if operation not selected.
-     - yellow – if target operation not passed.
-     - green – if target operation passed.
-     */
-    public func inspector_code_color(code: OperationCode) -> Color
-    {
-        var color = Color.gray // Gray point color if the robot is not reching the code
-        let code_index = self.selected_program.codes.firstIndex(of: code) // Number of selected code
-        
-        if performed
-        {
-            if code_index == selected_code_index // Yellow color, if the tool is in the process of moving to the code
-            {
-                color = .yellow
-            }
-            else
-            {
-                if code_index ?? 0 < selected_code_index // Green color, if the tool has reached this code
-                {
-                    color = .green
-                }
-            }
-        }
-        else
-        {
-            if performing_completed // Green color, if the robot has passed all codes
-            {
-                color = .green
-            }
-        }
-        
-        return color
     }
     
     /// Apply corresponded label and SF Symbol to operation code.

@@ -91,6 +91,15 @@ public class PositionsProgram: Identifiable, Codable, Equatable
         return points.count
     }
     
+    /// Resets the performing state of all position points to the `.none` state.
+    public func reset_points_states()
+    {
+        for point in points
+        {
+            point.performing_state = .none
+        }
+    }
+    
     // MARK: - Visual functions
     /// A node with all positions points model.
     public var positions_group = SCNNode()

@@ -49,7 +49,6 @@ public class OperationsProgram: Identifiable, Codable, Hashable
     }
     
     // MARK: - Code manage functions
-    
     /**
      Add the new code to opertaions program.
      - Parameters:
@@ -108,6 +107,15 @@ public class OperationsProgram: Identifiable, Codable, Hashable
             {
                 codes[codes.count].value = 0
             }
+        }
+    }
+    
+    /// Resets the performing state of all operation codes to the `.none` state.
+    public func reset_codes_states()
+    {
+        for code in codes
+        {
+            code.performing_state = .none
         }
     }
 }

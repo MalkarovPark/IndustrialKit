@@ -190,6 +190,7 @@ public class ExternalToolConnector: ToolConnector
     // MARK: Performing
     private var state: PerformingState
     {
+        #if os(macOS)
         guard let output: String = send_via_unix_socket(
             at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
             with: ["performing_state"])
@@ -199,10 +200,14 @@ public class ExternalToolConnector: ToolConnector
         }
         
         return PerformingState(rawValue: output) ?? .completed //.error
+        #else
+        return PerformingState(rawValue: output) ?? .completed //.error
+        #endif
     }
     
     private var nodes_actions: [String]?
     {
+        #if os(macOS)
         guard let output: String = send_via_unix_socket(
             at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
             with: ["sync_model"])
@@ -214,6 +219,9 @@ public class ExternalToolConnector: ToolConnector
         let lines = output.components(separatedBy: "\n")
         
         return lines.isEmpty ? nil : Array(lines)
+        #else
+        return nil
+        #endif
     }
     
     open override func perform(code: Int)//, completion: @escaping () -> Void)

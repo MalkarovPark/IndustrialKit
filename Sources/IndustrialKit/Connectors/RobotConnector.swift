@@ -205,6 +205,7 @@ public class ExternalRobotConnector: RobotConnector
     // MARK: Performing
     private var external_state: PerformingState
     {
+        #if os(macOS)
         guard let output: String = send_via_unix_socket(
             at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
             with: ["performing_state"])
@@ -214,10 +215,14 @@ public class ExternalRobotConnector: RobotConnector
         }
         
         return PerformingState(rawValue: output) ?? .completed //.error
+        #else
+        return PerformingState(rawValue: output) ?? .completed //.error
+        #endif
     }
     
     private var external_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
     {
+        #if os(macOS)
         guard let output: String = send_via_unix_socket(
             at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
             with: ["sync_pointer"])
@@ -229,10 +234,14 @@ public class ExternalRobotConnector: RobotConnector
         let components = output.split(separator: " ").compactMap { Float($0) }
         return components.count == 6 ? (components[0], components[1], components[2],
                                         components[3], components[4], components[5]) : nil
+        #else
+        return nil
+        #endif
     }
     
     private var external_nodes_positions: [String]?
     {
+        #if os(macOS)
         guard let output: String = send_via_unix_socket(
             at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
             with: ["sync_model"])
@@ -243,6 +252,9 @@ public class ExternalRobotConnector: RobotConnector
         
         let lines = output.components(separatedBy: "\n")
         return lines == [""] ? nil : lines
+        #else
+        return nil
+        #endif
     }
     
     override open func move_to(point: PositionPoint)
