@@ -548,10 +548,10 @@ public class Tool: WorkspaceObject
             selected_code_index = 0
             performed = false
             
-            selected_program.reset_codes_states()
-            
             clear_chart_data()
         }
+        
+        selected_program.reset_codes_states()
     }
     
     // MARK: - Connection functions

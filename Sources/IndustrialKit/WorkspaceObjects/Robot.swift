@@ -632,10 +632,10 @@ public class Robot: WorkspaceObject
             target_point_index = 0
             performed = false
             
-            selected_program.reset_points_states()
-            
             clear_chart_data()
         }
+        
+        selected_program.reset_points_states()
     }
     
     /// Pass pointer position from model controller or connector to robot.
