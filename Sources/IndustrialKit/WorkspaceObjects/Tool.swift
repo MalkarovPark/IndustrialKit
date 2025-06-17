@@ -349,15 +349,6 @@ public class Tool: WorkspaceObject
     /// A moving state of tool.
     public var performed = false
     
-    /**
-     An operations completion state.
-     
-     This flag set if the tool has passed all operations.
-     
-     > Used for indication in GUI.
-     */
-    public var performing_completed = false
-    
     /// An Index of target code in operation codes array.
     public var selected_code_index = 0
     
@@ -765,6 +756,15 @@ public class Tool: WorkspaceObject
     {
         return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, UIImage(), node: SCNNode()) // Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
     }
+    
+    /**
+     An operations completion state.
+     
+     This flag set if the tool has passed all operations.
+     
+     > Used for indication in GUI.
+     */
+    public var performing_completed = false
     
     /**
      Returns point color for inspector view.

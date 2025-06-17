@@ -359,15 +359,6 @@ public class Robot: WorkspaceObject
     /// A moving state of robot.
     public var performed = false
     
-    /**
-     A path moving completion state.
-     
-     This flag set if the robot has passed all positions.
-     
-     > Used for indication in UI.
-     */
-    public var moving_completed = false
-    
     /// An Index of target point in points array.
     public var target_point_index = 0
     
@@ -1207,6 +1198,15 @@ public class Robot: WorkspaceObject
     {
         return("\(self.name)", "Model – \(self.module_name)", .green, UIImage(), SCNNode())
     }
+    
+    /**
+     A path moving completion state.
+     
+     This flag set if the robot has passed all positions.
+     
+     > Used for indication in UI.
+     */
+    public var moving_completed = false
     
     /**
      Returns point color for inspector view.

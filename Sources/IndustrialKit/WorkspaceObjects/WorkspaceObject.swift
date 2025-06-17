@@ -275,6 +275,7 @@ public enum ScopeType: String, Codable, Equatable, CaseIterable
 public enum PerformingState: String, Codable, Equatable, CaseIterable
 {
     case none = "None"
+    case selected = "Selected"
     case processing = "Processing"
     case completed = "Completed"
     case error = "Error"
@@ -284,13 +285,15 @@ public enum PerformingState: String, Codable, Equatable, CaseIterable
         switch self
         {
         case .none:
-            return .gray
+            .gray
+        case .selected:
+            .cyan
         case .processing:
-            return .yellow
+            .yellow
         case .completed:
-            return .green
+            .green
         case .error:
-            return .red
+            .red
         }
     }
 }

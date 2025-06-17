@@ -36,4 +36,29 @@ public class OperationCode: Identifiable, Codable, Hashable
     {
         self.value = value
     }
+    
+    // MARK: - UI functions
+    @Published public var performing_state: PerformingState = .none
+    
+    // MARK: - Work with file system
+    // For performing_state exclusion
+    enum CodingKeys: String, CodingKey
+    {
+        case value
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        value = try container.decode(Int.self, forKey: .value)
+        performing_state = .none
+    }
+    
+    public func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(value, forKey: .value)
+    }
 }

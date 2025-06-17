@@ -64,6 +64,44 @@ public class PositionPoint: Identifiable, Codable, Hashable
         self.move_speed = move_speed
         self.move_type = move_type
     }
+    
+    // MARK: - UI functions
+    @Published public var performing_state: PerformingState = .none
+    
+    // MARK: - Work with file system
+    // For performing_state exclusion
+    enum CodingKeys: String, CodingKey
+    {
+        case x, y, z, r, p, w, move_type, move_speed
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        x = try container.decode(Float.self, forKey: .x)
+        y = try container.decode(Float.self, forKey: .y)
+        z = try container.decode(Float.self, forKey: .z)
+        r = try container.decode(Float.self, forKey: .r)
+        p = try container.decode(Float.self, forKey: .p)
+        w = try container.decode(Float.self, forKey: .w)
+        move_type = try container.decode(MoveType.self, forKey: .move_type)
+        move_speed = try container.decode(Float.self, forKey: .move_speed)
+    }
+    
+    public func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(x, forKey: .x)
+        try container.encode(y, forKey: .y)
+        try container.encode(z, forKey: .z)
+        try container.encode(r, forKey: .r)
+        try container.encode(p, forKey: .p)
+        try container.encode(w, forKey: .w)
+        try container.encode(move_type, forKey: .move_type)
+        try container.encode(move_speed, forKey: .move_speed)
+    }
 }
 
 ///Movement to point type.

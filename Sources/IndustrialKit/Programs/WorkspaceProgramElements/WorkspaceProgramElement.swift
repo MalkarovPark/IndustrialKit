@@ -75,6 +75,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable
         
     }
     
+    // MARK: - UI functions
     /// A string for the title in program element card.
     open var title: String
     {
@@ -104,6 +105,8 @@ public class WorkspaceProgramElement: Hashable, Identifiable
     {
         return Color(.gray)
     }
+    
+    @Published public var performing_state: PerformingState = .none
     
     // MARK: - Text representation
     /// A code string representing of element.
