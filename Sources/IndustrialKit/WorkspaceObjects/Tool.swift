@@ -545,9 +545,10 @@ public class Tool: WorkspaceObject
                 connector.reset_device()
             }
             
-            performed = false
-            //performing_completed = false
             selected_code_index = 0
+            performed = false
+            
+            selected_program.reset_codes_states()
             
             clear_chart_data()
         }

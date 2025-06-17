@@ -391,7 +391,7 @@ internal struct PositionItemView: View
 {
     @Binding var points: [PositionPoint]
     
-    @State var point_item: PositionPoint
+    @StateObject var point_item: PositionPoint
     @State var position_item_view_presented = false
     
     @EnvironmentObject var workspace: Workspace
@@ -441,13 +441,21 @@ internal struct PositionItemView: View
             .popover(isPresented: $position_item_view_presented,
                      arrowEdge: .leading)
             {
-                PositionPointView(points: $points, point_item: $point_item, position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
+                PositionPointView(points: $points, point_item: force_bind(point_item), position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
             }
         }
         .onTapGesture
         {
             position_item_view_presented.toggle()
         }
+    }
+    
+    private func force_bind(_ point: PositionPoint) -> Binding<PositionPoint>
+    {
+        Binding<PositionPoint>(
+            get: { point },
+            set: { _ in } // Ничего не делаем, потому что `point` — ссылочный тип
+        )
     }
 }
 
