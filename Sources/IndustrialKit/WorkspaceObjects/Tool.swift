@@ -445,8 +445,6 @@ public class Tool: WorkspaceObject
             // Perform next action if performing was stop
             performed = true
             perform_next_code()
-            
-            //code_changed = true
         }
         else
         {
@@ -457,6 +455,8 @@ public class Tool: WorkspaceObject
         
         func pause_handler()
         {
+            selected_program.codes[selected_code_index].performing_state = .current
+            
             if demo
             {
                 model_controller.remove_all_model_actions()

@@ -403,7 +403,7 @@ internal struct PositionItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(workspace.selected_robot.inspector_point_color(point: point_item)) // .gray)
+                .foregroundColor(point_item.performing_state.color) // .gray)
             
             // Spacer()
             
@@ -634,7 +634,7 @@ internal struct OperationItemView: View
 {
     @Binding var codes: [OperationCode]
     
-    @State var code_item: OperationCode
+    @StateObject var code_item: OperationCode
     @State private var new_code = OperationCodeInfo()
     @State private var update_data = false
     

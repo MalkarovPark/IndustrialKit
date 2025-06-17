@@ -201,7 +201,6 @@ public class Robot: WorkspaceObject
         {
             // Stop robot moving before program change
             performed = false
-            moving_completed = false
             target_point_index = 0
         }
         didSet
@@ -549,6 +548,8 @@ public class Robot: WorkspaceObject
         
         func pause_handler()
         {
+            selected_program.points[target_point_index].performing_state = .current
+            
             if demo
             {
                 model_controller.canceled = true
@@ -586,7 +587,11 @@ public class Robot: WorkspaceObject
             // Reset target point index if all points passed
             target_point_index = 0
             performed = false
-            moving_completed = true
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+            {
+                self.selected_program.reset_points_states()
+            }
             
             update()
             pointer_position_to_robot()
@@ -1197,53 +1202,6 @@ public class Robot: WorkspaceObject
     public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
     {
         return("\(self.name)", "Model – \(self.module_name)", .green, UIImage(), SCNNode())
-    }
-    
-    /**
-     A path moving completion state.
-     
-     This flag set if the robot has passed all positions.
-     
-     > Used for indication in UI.
-     */
-    public var moving_completed = false
-    
-    /**
-     Returns point color for inspector view.
-     
-     Colors mean:
-     - gray – if point not selected.
-     - yellow – if target point not reached.
-     - green – if target point reached.
-     */
-    public func inspector_point_color(point: PositionPoint) -> Color
-    {
-        var color = Color.gray // Gray point color if the robot is not reching the point
-        let point_number = self.selected_program.points.firstIndex(of: point) // Number of selected point
-        
-        if performed
-        {
-            if point_number == target_point_index // Yellow color, if the robot is in the process of moving to the point
-            {
-                color = .yellow
-            }
-            else
-            {
-                if point_number ?? 0 < target_point_index // Green color, if the robot has reached this point
-                {
-                    color = .green
-                }
-            }
-        }
-        else
-        {
-            if moving_completed // Green color, if the robot has passed all points
-            {
-                color = .green
-            }
-        }
-        
-        return color
     }
     
     /// Connects robot charts to UI.
