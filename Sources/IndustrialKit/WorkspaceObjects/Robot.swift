@@ -535,7 +535,6 @@ public class Robot: WorkspaceObject
             }
             
             // Move to next point if moving was stop
-            // performed = true
             move_to_next_point()
         }
         else
@@ -567,8 +566,12 @@ public class Robot: WorkspaceObject
     /// Performs robot to selected point movement and select next.
     public func move_to_next_point()
     {
-        move_to(point: programs[selected_program_index].points[target_point_index])
+        let current_point = selected_program.points[target_point_index]
+        current_point.performing_state = .processing
+        
+        move_to(point: current_point) //(point: programs[selected_program_index].points[target_point_index])
         {
+            current_point.performing_state = .completed
             self.select_new_point()
         }
     }
