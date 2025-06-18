@@ -629,12 +629,12 @@ public class Robot: WorkspaceObject
             }
             
             pointer_position_to_robot()
-            target_point_index = 0
             performed = false
             
             clear_chart_data()
         }
         
+        target_point_index = 0
         selected_program.reset_points_states()
     }
     
