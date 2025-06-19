@@ -1464,7 +1464,7 @@ public class Workspace: ObservableObject
                 elements_check()
             case .tool:
                 selected_tool.is_placed = false
-                remove_attachment(tool: selected_tool)
+                remove_attachment(tool: selected_tool) //remove_attachment(from: edited_object_node, to: tools_node)
                 deselect_tool()
                 elements_check()
             case .part:
@@ -1903,19 +1903,22 @@ public class Workspace: ObservableObject
         node.transform = local_transform
     }
 
-    /*/// Removes the node from its parent and re-adds to scene root, preserving world transform.
-    public func remove_attachment()
+    /**
+     Detaches the given node from its current parent and re-adds it to the specified root node,
+     preserving its local transform and ensuring correct visual update.
+     
+     - Parameters:
+        - node: The node to be detached and moved.
+        - root_node: The node that will become the new parent (typically the scene root).
+     */
+    public func remove_attachment(from node: SCNNode, to root_node: SCNNode)
     {
-        guard let node = edited_object_node, let scene_root_node = tools_node else { return }
-        
         let local_transform = node.transform
-        scene_root_node.addChildNode(node)
+        root_node.addChildNode(node)
         node.transform = local_transform
         
         node.simdTransform = node.simdTransform
-        
-        selected_tool.attached_to = nil
-    }*/
+    }
     
     /**
      Detaches the specified tool from its current parent node and restores it to the scene root,
@@ -1928,13 +1931,9 @@ public class Workspace: ObservableObject
     {
         if tool.attached_to != nil
         {
-            guard let node = tool.node, let scene_root_node = tools_node else { return }
+            guard let tool_node = tool.node, let scene_root_node = tools_node else { return }
             
-            let local_transform = node.transform
-            scene_root_node.addChildNode(node)
-            node.transform = local_transform
-            
-            node.simdTransform = node.simdTransform
+            remove_attachment(from: tool_node, to: scene_root_node)
             
             tool.attached_to = nil
         }
