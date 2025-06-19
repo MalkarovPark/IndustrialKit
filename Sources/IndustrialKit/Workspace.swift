@@ -1926,8 +1926,9 @@ public class Workspace: ObservableObject
      
      - Parameters:
         - tool: The tool to be detached and reinserted into the scene root.
+        - node_only: If `true`, only the tool's node is detached without modifying its attachment state.
      */
-    public func remove_attachment(tool: Tool)
+    public func remove_attachment(tool: Tool, node_only: Bool = false)
     {
         if tool.attached_to != nil
         {
@@ -1935,7 +1936,10 @@ public class Workspace: ObservableObject
             
             remove_attachment(from: tool_node, to: scene_root_node)
             
-            tool.attached_to = nil
+            if !node_only
+            {
+                tool.attached_to = nil
+            }
         }
     }
     
@@ -1946,11 +1950,18 @@ public class Workspace: ObservableObject
         remove_attachment(from: edited_object_node, to: tools_node)
     }
     
-    public func remove_all_tools_attachments()
+    /**
+     Detaches all tool nodes from their current parents and re-adds them to the scene root.
+     Optionally preserves the tools' attachment state.
+     
+     - Parameters:
+        -  nodes_only: If `true`, only the nodes are moved without resetting the attachment information.
+     */
+    public func remove_all_tools_attachments(nodes_only: Bool = false)
     {
         for tool in tools
         {
-            remove_attachment(tool: tool)
+            remove_attachment(tool: tool, node_only: nodes_only)
         }
     }
     
