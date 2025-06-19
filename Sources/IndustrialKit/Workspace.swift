@@ -1909,10 +1909,11 @@ public class Workspace: ObservableObject
         guard let node = edited_object_node, let scene_root_node = tools_node else { return }
         
         let world_transform = node.worldTransform
-        
         scene_root_node.addChildNode(node)
-        
         node.transform = scene_root_node.convertTransform(world_transform, from: nil)
+        
+        node.position.x += 1
+        node.position.x -= 1
         
         selected_tool.attached_to = nil
     }
