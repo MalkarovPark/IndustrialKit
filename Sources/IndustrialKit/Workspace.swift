@@ -1896,11 +1896,11 @@ public class Workspace: ObservableObject
     /// Moves the node to be child of the end_point_node, preserving its world transform.
     private func attach(node: SCNNode, to new_parent: SCNNode)
     {
-        let world_transform = node.worldTransform
+        let local_transform = node.transform
         
         new_parent.addChildNode(node)
         
-        node.transform = new_parent.convertTransform(world_transform, from: nil)
+        node.transform = local_transform
     }
 
     /// Removes the node from its parent and re-adds to scene root, preserving world transform.
