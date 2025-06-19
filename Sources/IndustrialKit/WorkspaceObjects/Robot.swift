@@ -571,7 +571,15 @@ public class Robot: WorkspaceObject
         
         move_to(point: current_point) //(point: programs[selected_program_index].points[target_point_index])
         {
-            current_point.performing_state = .completed
+            if self.demo
+            {
+                current_point.performing_state = .completed
+            }
+            else if self.connector.connected
+            {
+                current_point.performing_state = self.connector.performing_state.output
+            }
+            
             self.select_new_point()
         }
     }

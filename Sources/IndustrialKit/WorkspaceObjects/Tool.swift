@@ -481,7 +481,15 @@ public class Tool: WorkspaceObject
         
         perform(code: current_code.value) //(code: selected_program.codes[selected_code_index].value)
         {
-            current_code.performing_state = .completed
+            if self.demo
+            {
+                current_code.performing_state = .completed
+            }
+            else if self.connector.connected
+            {
+                current_code.performing_state = self.connector.performing_state.output
+            }
+            
             self.select_new_code()
         }
     }

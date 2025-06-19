@@ -203,7 +203,12 @@ public class ExternalRobotConnector: RobotConnector
     }
     
     // MARK: Performing
-    private var external_state: PerformingState
+    override open var performing_state: (output: PerformingState, log: String)
+    {
+        return (output: state, log: String())
+    }
+    
+    private var state: PerformingState
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(
@@ -274,7 +279,7 @@ public class ExternalRobotConnector: RobotConnector
         }
         
         // Process output
-        while external_state == .processing && !canceled
+        while state == .processing && !canceled
         {
             sync_model()
         }

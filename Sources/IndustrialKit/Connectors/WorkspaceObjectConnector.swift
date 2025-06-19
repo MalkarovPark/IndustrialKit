@@ -181,9 +181,9 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
         return true
     }
     
-    open func disconnection_process()// async // -> Bool
+    open func disconnection_process()
     {
-        // return false
+        
     }
     
     /// A get output flag.
@@ -220,6 +220,17 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying
     open func reset_device()
     {
         
+    }
+    
+    /**
+     Current performing state of real device operations.
+     
+     - output: The current state of operation performing.
+     - log: A textual log associated with the operation state.
+     */
+    open var performing_state: (output: PerformingState, log: String)
+    {
+        return (output: .none, log: String())
     }
     
     // MARK: - Statistics handling

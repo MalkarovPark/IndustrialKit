@@ -1916,48 +1916,6 @@ public class Workspace: ObservableObject
         
         selected_tool.attached_to = nil
     }
-
-    /*/**
-     Attaches tool to robot.
-     
-     - Parameters:
-        - robot_name: A name of the robot that the tool is attached to.
-     */
-    public func attach_tool_to(robot_name: String)
-    {
-        update_pointer()
-        
-        if let edited_node = edited_object_node, let robot_tool_node = robot_by_name(robot_name).tool_node
-        {
-            attach(node: edited_node, to: robot_tool_node)
-        }
-    }
-    
-    private func attach(node: SCNNode, to end_point_node: SCNNode)
-    {
-        node.constraints = [SCNConstraint]()
-        
-        let attachment_constraint = SCNReplicatorConstraint(target: end_point_node)
-        
-        attachment_constraint.positionOffset = node.position
-        attachment_constraint.orientationOffset = node.orientation
-        
-        node.constraints?.append(attachment_constraint)
-    }
-    
-    /*public func attach(tool: Tool, to robot: Robot)
-    {
-        update_pointer()
-        
-        //
-    }*/
-    
-    /// Removes attachment for edited tool and reset it position in the workspace.
-    public func remove_attachment()
-    {
-        edited_object_node?.remove_all_constraints()
-        selected_tool.attached_to = nil
-    }*/
     
     // MARK: - Parts handling functions
     // MARK: Parts manage funcions
