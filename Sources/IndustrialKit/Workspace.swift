@@ -1939,6 +1939,13 @@ public class Workspace: ObservableObject
         }
     }
     
+    /// Detaches the currently edited node and restores it to the tools root node.
+    public func remove_edited_node_attachment()
+    {
+        guard let edited_object_node = edited_object_node, let tools_node = tools_node else { return }
+        remove_attachment(from: edited_object_node, to: tools_node)
+    }
+    
     public func remove_all_tools_attachments()
     {
         for tool in tools
