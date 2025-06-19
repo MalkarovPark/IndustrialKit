@@ -1912,12 +1912,7 @@ public class Workspace: ObservableObject
         scene_root_node.addChildNode(node)
         node.transform = scene_root_node.convertTransform(world_transform, from: nil)
         
-        node.position.x += 1
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-        {
-            node.position.x -= 1
-        }
+        node.simdTransform = node.simdTransform
         
         selected_tool.attached_to = nil
     }
