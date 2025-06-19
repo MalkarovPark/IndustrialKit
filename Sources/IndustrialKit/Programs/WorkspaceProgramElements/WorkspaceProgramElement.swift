@@ -106,7 +106,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable
         return Color(.gray)
     }
     
-    @Published public var performing_state: PerformingState = .none
+    //@Published public var performing_state: PerformingState = .none
     
     // MARK: - Text representation
     /// A code string representing of element.

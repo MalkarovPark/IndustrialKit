@@ -1464,7 +1464,7 @@ public class Workspace: ObservableObject
                 elements_check()
             case .tool:
                 selected_tool.is_placed = false
-                remove_attachment()
+                remove_attachment(tool: selected_tool)
                 deselect_tool()
                 elements_check()
             case .part:
@@ -1903,7 +1903,7 @@ public class Workspace: ObservableObject
         node.transform = local_transform
     }
 
-    /// Removes the node from its parent and re-adds to scene root, preserving world transform.
+    /*/// Removes the node from its parent and re-adds to scene root, preserving world transform.
     public func remove_attachment()
     {
         guard let node = edited_object_node, let scene_root_node = tools_node else { return }
@@ -1915,6 +1915,37 @@ public class Workspace: ObservableObject
         node.simdTransform = node.simdTransform
         
         selected_tool.attached_to = nil
+    }*/
+    
+    /**
+     Detaches the specified tool from its current parent node and restores it to the scene root,
+     preserving its local transform and resetting its attachment state.
+     
+     - Parameters:
+        - tool: The tool to be detached and reinserted into the scene root.
+     */
+    public func remove_attachment(tool: Tool)
+    {
+        if tool.attached_to != nil
+        {
+            guard let node = tool.node, let scene_root_node = tools_node else { return }
+            
+            let local_transform = node.transform
+            scene_root_node.addChildNode(node)
+            node.transform = local_transform
+            
+            node.simdTransform = node.simdTransform
+            
+            tool.attached_to = nil
+        }
+    }
+    
+    public func remove_all_tools_attachments()
+    {
+        for tool in tools
+        {
+            remove_attachment(tool: tool)
+        }
     }
     
     // MARK: - Parts handling functions
