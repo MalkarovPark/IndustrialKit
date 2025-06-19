@@ -1913,7 +1913,11 @@ public class Workspace: ObservableObject
         node.transform = scene_root_node.convertTransform(world_transform, from: nil)
         
         node.position.x += 1
-        node.position.x -= 1
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+        {
+            node.position.x -= 1
+        }
         
         selected_tool.attached_to = nil
     }
