@@ -1923,7 +1923,7 @@ public class Workspace: ObservableObject
         let attachment_constraint = SCNReplicatorConstraint(target: end_point_node)
         
         attachment_constraint.positionOffset = node.position
-        //attachment_constraint.orientationOffset = node.orientation
+        attachment_constraint.orientationOffset = node.orientation
         
         node.constraints?.append(attachment_constraint)
     }
