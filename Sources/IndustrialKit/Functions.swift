@@ -531,18 +531,18 @@ public func is_socket_active(at path: String) -> Bool
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
     process.arguments = ["-U", path]
-
+    
     let pipe = Pipe()
     process.standardOutput = pipe
-
+    
     do
     {
         try process.run()
         process.waitUntilExit()
-
+        
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         let output = String(data: data, encoding: .utf8) ?? ""
-
+        
         return output.contains(path)
     }
     catch
