@@ -34,7 +34,7 @@ internal struct WorkspaceProgramView: View
                         self.dragged_element = element
                         return NSItemProvider(object: element.id.uuidString as NSItemProviderWriting)
                     }, preview: {
-                        ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color)
+                        ElementCardView(program_element: element)
                     })
                     .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $workspace.elements, dragged_element: $dragged_element, workspace_elements: workspace.file_data().elements, element: element))
                 }
@@ -121,7 +121,7 @@ internal struct ProgramElementItemView: View
     {
         ZStack
         {
-            ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color, is_current: workspace.is_current_element(element: element))
+            ElementCardView(program_element: element)
                 .onTapGesture
             {
                 element_view_presented = true
