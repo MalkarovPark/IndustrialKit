@@ -160,7 +160,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
      
      This function is called on the main thread by the `perform_update()` function as long as the `updated` flag is `true`. Subclasses should override this method to implement their specific update logic.
      
-     > This function is called frequently, so it's crucial to keep its execution time as short as possible to avoid performance issues.
+     > This function is called frequently, so it's crucial to keep its performing time as short as possible to avoid performance issues.
      */
     open func update()
     {

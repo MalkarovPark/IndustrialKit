@@ -378,30 +378,11 @@ public struct SmallCardView: View
 
 public struct ElementCardView: View
 {
-    let title: String
-    let info: String
-    let image: Image
-    let color: Color
-    let is_current: Bool
+    @StateObject var program_element: WorkspaceProgramElement
     
-    public init(title: String, info: String, image: Image, color: Color, is_current: Bool)
+    public init(program_element: WorkspaceProgramElement)
     {
-        self.color = color
-        self.image = image
-        self.title = title
-        self.info = info
-        
-        self.is_current = is_current
-    }
-    
-    public init(title: String, info: String, image: Image, color: Color)
-    {
-        self.color = color
-        self.image = image
-        self.title = title
-        self.info = info
-        
-        self.is_current = false
+        _program_element = StateObject(wrappedValue: program_element)
     }
     
     public var body: some View
@@ -420,16 +401,16 @@ public struct ElementCardView: View
                 {
                     ZStack
                     {
-                        image
+                        program_element.image
                             .foregroundColor(.white)
                             .imageScale(.large)
-                            .animation(.easeInOut(duration: 0.2), value: image)
+                            .animation(.easeInOut(duration: 0.2), value: program_element.image)
                     }
                     .frame(width: 48, height: 48)
-                    .background(color)
+                    .background(program_element.color)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .padding(16)
-                    .animation(.easeInOut(duration: 0.2), value: color)
+                    .animation(.easeInOut(duration: 0.2), value: program_element.color)
                     
                     HStack(spacing: 0)
                     {
@@ -437,12 +418,12 @@ public struct ElementCardView: View
                         {
                             VStack(alignment: .leading)
                             {
-                                Text(title)
+                                Text(program_element.title)
                                     .font(.title3)
-                                    .animation(.easeInOut(duration: 0.2), value: title)
-                                Text(info)
+                                    .animation(.easeInOut(duration: 0.2), value: program_element.title)
+                                Text(program_element.info)
                                     .foregroundColor(.secondary)
-                                    .animation(.easeInOut(duration: 0.2), value: info)
+                                    .animation(.easeInOut(duration: 0.2), value: program_element.info)
                             }
                             
                             Spacer()
@@ -460,14 +441,11 @@ public struct ElementCardView: View
         // .shadow(radius: 8)
         .overlay(alignment: .topTrailing)
         {
-            if is_current
-            {
-                Circle()
-                    .foregroundColor(.secondary.opacity(0.5))
-                    .frame(width: 16, height: 16)
-                    .padding()
-                    .transition(AnyTransition.scale)
-            }
+            Circle()
+                .foregroundColor(program_element.performing_state.color.opacity(0.5))
+                .frame(width: 16, height: 16)
+                .padding()
+                .transition(AnyTransition.scale)
         }
     }
 }
@@ -599,7 +577,7 @@ struct Cards_Previews: PreviewProvider
             
             VStack()
             {
-                ElementCardView(title: element.title, info: element.info, image: element.image, color: element.color, is_current: true)
+                ElementCardView(program_element: element)
                 #if !os(visionOS)
                     .shadow(radius: 8)
                 #else

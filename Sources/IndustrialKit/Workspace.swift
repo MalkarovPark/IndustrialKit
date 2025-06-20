@@ -411,13 +411,6 @@ public class Workspace: ObservableObject
     /// An Index of target element in control program array.
     private var selected_element_index = 0
     
-    /**
-     An program element changed flag.
-     
-     This flag perform update if performed element changed. Used for GUI.
-     */
-    public var element_changed = false
-    
     /// Selects program element and performs by workcell.
     public func start_pause_performing()
     {
@@ -439,6 +432,7 @@ public class Workspace: ObservableObject
             self.update_view()
         }
         
+        // Handling workspace performing
         if !performed
         {
             // Move to next point if moving was stop
@@ -446,14 +440,11 @@ public class Workspace: ObservableObject
             perform_constant_objects_update()
             
             perform_next_element()
-            element_changed = true
         }
         else
         {
             // Remove all action if moving was perform
             performed = false
-            
-            // Stop perfomed objects
             pause_performing()
         }
     }
@@ -467,6 +458,7 @@ public class Workspace: ObservableObject
     /// Selects and performs program element by workspace.
     private func perform_next_element()
     {
+        selected_program_element.performing_state = .processing
         perform(selected_program_element, completion: select_new_element)
     }
     
@@ -508,38 +500,6 @@ public class Workspace: ObservableObject
         }
     }
     
-    /*private func selected_object_update_perform()
-    {
-        switch selected_object_type
-        {
-        case .robot:
-            selected_robot.perform_update()
-        case .tool:
-            selected_tool.perform_update()
-        case .part:
-            break
-        case .none:
-            break
-        }
-    }
-    
-    private func selected_object_update_stop()
-    {
-        switch selected_object_type
-        {
-        case .robot:
-            selected_robot.disable_update()
-        case .tool:
-            selected_tool.disable_update()
-        case .part:
-            break
-        case .none:
-            break
-        }
-    }*/
-    
-    //private var update_functions_array: [() -> Void] = []
-    
     /**
      Performs program element on workspace.
      
@@ -555,6 +515,7 @@ public class Workspace: ObservableObject
             perform_robot(by: performer_element, completion: completion)
         case let performer_element as ToolPerformerElement:
             perform_tool(by: performer_element, completion: completion)
+            
         // Modifiers
         case let mover_element as MoverModifierElement:
             move(by: mover_element)
@@ -576,6 +537,7 @@ public class Workspace: ObservableObject
         case is CleanerModifierElement:
             clear_registers()
             completion()
+            
         // Logic
         case let jump_element as JumpLogicElement:
             jump(by: jump_element)
@@ -601,6 +563,8 @@ public class Workspace: ObservableObject
     /// Set the new target program element index.
     private func select_new_element()
     {
+        selected_program_element.performing_state = .none
+        
         if performed
         {
             selected_element_index += 1
@@ -609,8 +573,6 @@ public class Workspace: ObservableObject
         {
             return
         }
-        
-        element_changed = true
         
         if selected_element_index < elements.count
         {
@@ -633,7 +595,6 @@ public class Workspace: ObservableObject
                 deselect_tool()
                 
                 disable_constant_objects_update()
-                // update_view()
             }
         }
     }
@@ -644,6 +605,7 @@ public class Workspace: ObservableObject
         disable_constant_objects_update()
         
         let element = selected_program_element
+        element.performing_state = .current
         
         switch element
         {
@@ -1902,6 +1864,20 @@ public class Workspace: ObservableObject
         
         node.transform = local_transform
     }
+    
+    /*/// Removes the node from its parent and re-adds to scene root, preserving world transform.
+    public func remove_attachment()
+    {
+        guard let node = edited_object_node, let scene_root_node = tools_node else { return }
+        
+        let local_transform = node.transform
+        scene_root_node.addChildNode(node)
+        node.transform = local_transform
+        
+        node.simdTransform = node.simdTransform
+        
+        selected_tool.attached_to = nil
+    }*/
 
     /**
      Detaches the given node from its current parent and re-adds it to the specified root node,

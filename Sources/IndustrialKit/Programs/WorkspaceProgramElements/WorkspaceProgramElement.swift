@@ -13,7 +13,7 @@ import SwiftUI
  
  The element contains some action performed by the production system.
  */
-public class WorkspaceProgramElement: Hashable, Identifiable
+public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject
 {
     public static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
@@ -106,7 +106,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable
         return Color(.gray)
     }
     
-    //@Published public var performing_state: PerformingState = .none
+    @Published public var performing_state: PerformingState = .none
     
     // MARK: - Text representation
     /// A code string representing of element.
