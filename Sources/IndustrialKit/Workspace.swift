@@ -563,7 +563,7 @@ public class Workspace: ObservableObject
     /// Set the new target program element index.
     private func select_new_element()
     {
-        selected_program_element.performing_state = .none
+        selected_program_element.performing_state = .completed
         
         if performed
         {
@@ -585,6 +585,8 @@ public class Workspace: ObservableObject
             
             if cycled
             {
+                self.reset_program_elements_states()
+                
                 perform_next_element()
             }
             else
@@ -595,6 +597,11 @@ public class Workspace: ObservableObject
                 deselect_tool()
                 
                 disable_constant_objects_update()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                {
+                    self.reset_program_elements_states()
+                }
             }
         }
     }
@@ -629,6 +636,15 @@ public class Workspace: ObservableObject
             selected_tool.start_pause_performing()
             selected_tool.disable_update()
             deselect_tool()
+        }
+    }
+    
+    /// Resets the performing state of all operation codes to the `.none` state.
+    public func reset_program_elements_states()
+    {
+        for element in elements
+        {
+            element.performing_state = .none
         }
     }
     
@@ -877,10 +893,6 @@ public class Workspace: ObservableObject
                 if element.to_indices[i] <= 255 && element.to_indices[i] >= 0 && (element.from_indices[i] < info_output.count)
                 {
                     registers[safe: element.to_indices[i]] = info_output[element.from_indices[i]]
-                    /*DispatchQueue.main.async
-                    {
-                        self.registers[safe: element.to_indices[i]] = info_output[element.from_indices[i]]
-                    }*/
                 }
             }
         }
@@ -912,23 +924,22 @@ public class Workspace: ObservableObject
     /// Resets workspace performing.
     public func reset_performing()
     {
-        if performed
+        pause_performing()
+        
+        switch selected_object_type
         {
-            pause_performing()
-            
-            switch selected_object_type
-            {
-            case .robot:
-                selected_robot.reset_moving()
-            case .tool:
-                selected_tool.reset_performing()
-            default:
-                break
-            }
-            
-            performed = false // Enable workspace program edit
-            selected_element_index = 0 // Select first program element
+        case .robot:
+            selected_robot.reset_moving()
+        case .tool:
+            selected_tool.reset_performing()
+        default:
+            break
         }
+        
+        performed = false // Enable workspace program edit
+        selected_element_index = 0 // Select first program element
+        
+        self.reset_program_elements_states()
     }
     
     /// Prepare workspace program to perform.
