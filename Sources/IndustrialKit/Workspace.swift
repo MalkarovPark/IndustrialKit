@@ -452,7 +452,7 @@ public class Workspace: ObservableObject
     /// A selected workspace program element.
     private var selected_program_element: WorkspaceProgramElement
     {
-        return elements[selected_element_index]
+        return elements[safe: selected_element_index] ?? WorkspaceProgramElement()
     }
     
     /// Selects and performs program element by workspace.
