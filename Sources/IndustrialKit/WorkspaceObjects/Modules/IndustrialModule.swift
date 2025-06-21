@@ -141,26 +141,14 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }
     
     /// Start all program components in module.
-    public func start_program_components()
+    public func start_program_components() async
     {
         for program_components_path in program_components_paths
         {
-            Task
-            {
-                for program_components_path in self.program_components_paths
-                {
-                    let isActive = await is_socket_active(at: program_components_path.socket)
-                    
-                    if !isActive
-                    {
-                        perform_terminal_app_sync(at: self.package_url.appendingPathComponent(program_components_path.file), with: [" > /dev/null 2>&1 &"])
-                    }
-                }
-            }
-            /*if !is_socket_active(at: program_components_path.socket)
+            if await !is_socket_active(at: program_components_path.socket)
             {
                 perform_terminal_app_sync(at: self.package_url.appendingPathComponent(program_components_path.file), with: [" > /dev/null 2>&1 &"])
-            }*/
+            }
             //perform_terminal_app_sync(at: self.package_url.appendingPathComponent(program_components_path.file), with: [" > /dev/null 2>&1 &"])
         }
     }

@@ -168,10 +168,17 @@ public class Robot: WorkspaceObject
     /// Start all program components in module.
     public static func external_modules_servers_start()
     {
-        for module in external_modules
+        Task
+        {
+            for module in external_modules
+            {
+                await module.start_program_components()
+            }
+        }
+        /*for module in external_modules
         {
             module.start_program_components()
-        }
+        }*/
     }
     
     /// Stop all program components in module.
