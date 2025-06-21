@@ -526,7 +526,7 @@ public func send_via_unix_socket(at socket_path: String, with arguments: [String
  - Parameter path: The file system path to the Unix domain socket.
  - Returns: `true` if a process is using the socket at the given path, `false` otherwise.
  */
-public func is_socket_active(at path: String) -> Bool
+/*public func is_socket_active(at path: String) -> Bool
 {
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
@@ -549,6 +549,62 @@ public func is_socket_active(at path: String) -> Bool
     {
         return false
     }
+}*/
+public func is_socket_active(at path: String) -> Bool
+{
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
+    process.arguments = ["-U", path]
+
+    let pipe = Pipe()
+    process.standardOutput = pipe
+    process.standardError = Pipe() // Optional: suppress stderr from going to console
+
+    let group = DispatchGroup()
+    group.enter()
+
+    var output = ""
+    let outputHandle = pipe.fileHandleForReading
+
+    // Read output asynchronously
+    outputHandle.readabilityHandler =
+    { handle in
+        let data = handle.availableData
+        if data.isEmpty
+        {
+            outputHandle.readabilityHandler = nil
+            group.leave()
+        }
+        else
+        {
+            if let chunk = String(data: data, encoding: .utf8) {
+                output += chunk
+            }
+        }
+    }
+
+    do
+    {
+        try process.run()
+    }
+    catch
+    {
+        outputHandle.readabilityHandler = nil
+        group.leave()
+        return false
+    }
+
+    process.terminationHandler =
+    { _ in
+        // Ensure we leave the group in case of early termination
+        outputHandle.readabilityHandler = nil
+        group.leave()
+    }
+
+    // Wait with timeout to avoid indefinite blocking
+    let timeoutResult = group.wait(timeout: .now() + 2.0)
+
+    return timeoutResult == .success && output.contains(path)
 }
 #endif
 
