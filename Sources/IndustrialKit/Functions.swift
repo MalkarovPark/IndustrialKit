@@ -532,31 +532,6 @@ public func is_socket_active(at path: String) -> Bool
     process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
     process.arguments = ["-U", path]
     
-    let outputPipe = Pipe()
-    process.standardOutput = outputPipe
-    process.standardError = Pipe()
-    
-    do
-    {
-        try process.run()
-        process.waitUntilExit()
-        
-        let outputData = try? outputPipe.fileHandleForReading.readToEnd()
-        let output = String(data: outputData ?? Data(), encoding: .utf8) ?? ""
-        
-        return output.contains(path)
-    }
-    catch
-    {
-        return false
-    }
-}
-/*public func is_socket_active(at path: String) -> Bool
-{
-    let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
-    process.arguments = ["-U", path]
-    
     let pipe = Pipe()
     process.standardOutput = pipe
     process.standardError = Pipe()
@@ -616,7 +591,7 @@ public func is_socket_active(at path: String) -> Bool
     
     let timeoutResult = group.wait(timeout: .now() + 0.1)
     return timeoutResult == .success && output.contains(path)
-}*/
+}
 
 /*public func is_socket_active(at path: String) -> Bool
 {
