@@ -526,6 +526,98 @@ public func send_via_unix_socket(at socket_path: String, with arguments: [String
  - Parameter path: The file system path to the Unix domain socket.
  - Returns: `true` if a process is using the socket at the given path, `false` otherwise.
  */
+public func is_socket_active(at path: String) -> Bool
+{
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
+    process.arguments = ["-U", path]
+    
+    let outputPipe = Pipe()
+    process.standardOutput = outputPipe
+    process.standardError = Pipe()
+    
+    do
+    {
+        try process.run()
+        process.waitUntilExit()
+        
+        let outputData = try? outputPipe.fileHandleForReading.readToEnd()
+        let output = String(data: outputData ?? Data(), encoding: .utf8) ?? ""
+        
+        return output.contains(path)
+    }
+    catch
+    {
+        return false
+    }
+}
+/*public func is_socket_active(at path: String) -> Bool
+{
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
+    process.arguments = ["-U", path]
+    
+    let pipe = Pipe()
+    process.standardOutput = pipe
+    process.standardError = Pipe()
+    
+    let group = DispatchGroup()
+    group.enter()
+    
+    var output = ""
+    let outputHandle = pipe.fileHandleForReading
+    
+    var didLeaveGroup = false
+    let lock = NSLock()
+    
+    func safe_leave()
+    {
+        lock.lock()
+        if !didLeaveGroup
+        {
+            didLeaveGroup = true
+            group.leave()
+        }
+        lock.unlock()
+    }
+    
+    outputHandle.readabilityHandler =
+    { handle in
+        let data = handle.availableData
+        if data.isEmpty
+        {
+            outputHandle.readabilityHandler = nil
+            safe_leave()
+        }
+        else
+        {
+            if let chunk = String(data: data, encoding: .utf8) {
+                output += chunk
+            }
+        }
+    }
+    
+    do
+    {
+        try process.run()
+    }
+    catch
+    {
+        outputHandle.readabilityHandler = nil
+        safe_leave()
+        return false
+    }
+    
+    process.terminationHandler =
+    { _ in
+        outputHandle.readabilityHandler = nil
+        safe_leave()
+    }
+    
+    let timeoutResult = group.wait(timeout: .now() + 0.1)
+    return timeoutResult == .success && output.contains(path)
+}*/
+
 /*public func is_socket_active(at path: String) -> Bool
 {
     let process = Process()
@@ -550,72 +642,6 @@ public func send_via_unix_socket(at socket_path: String, with arguments: [String
         return false
     }
 }*/
-public func is_socket_active(at path: String) -> Bool
-{
-    let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
-    process.arguments = ["-U", path]
-    
-    let pipe = Pipe()
-    process.standardOutput = pipe
-    process.standardError = Pipe()
-    
-    let group = DispatchGroup()
-    group.enter()
-    
-    var output = ""
-    let outputHandle = pipe.fileHandleForReading
-    
-    var didLeaveGroup = false
-    let lock = NSLock()
-    
-    func safeLeave()
-    {
-        lock.lock()
-        if !didLeaveGroup
-        {
-            didLeaveGroup = true
-            group.leave()
-        }
-        lock.unlock()
-    }
-    
-    outputHandle.readabilityHandler =
-    { handle in
-        let data = handle.availableData
-        if data.isEmpty
-        {
-            outputHandle.readabilityHandler = nil
-            safeLeave()
-        }
-        else
-        {
-            if let chunk = String(data: data, encoding: .utf8) {
-                output += chunk
-            }
-        }
-    }
-    
-    do
-    {
-        try process.run()
-    }
-    catch
-    {
-        outputHandle.readabilityHandler = nil
-        safeLeave()
-        return false
-    }
-    
-    process.terminationHandler =
-    { _ in
-        outputHandle.readabilityHandler = nil
-        safeLeave()
-    }
-    
-    let timeoutResult = group.wait(timeout: .now() + 0.1)
-    return timeoutResult == .success && output.contains(path)
-}
 #endif
 
 //MARK: - String functions
