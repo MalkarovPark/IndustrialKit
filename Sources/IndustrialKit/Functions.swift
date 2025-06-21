@@ -526,7 +526,35 @@ public func send_via_unix_socket(at socket_path: String, with arguments: [String
  - Parameter path: The file system path to the Unix domain socket.
  - Returns: `true` if a process is using the socket at the given path, `false` otherwise.
  */
-public func is_socket_active(at path: String) -> Bool
+public func is_socket_active(at path: String) async -> Bool
+{
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
+    process.arguments = ["-U", path]
+    
+    let outputPipe = Pipe()
+    process.standardOutput = outputPipe
+    process.standardError = Pipe()
+    
+    do {
+        try process.run()
+    } catch {
+        return false
+    }
+    
+    return await withCheckedContinuation
+    { continuation in
+        Task
+        {
+            let outputData = try? outputPipe.fileHandleForReading.readToEnd()
+            process.waitUntilExit()
+            
+            let output = String(data: outputData ?? Data(), encoding: .utf8) ?? ""
+            continuation.resume(returning: output.contains(path))
+        }
+    }
+}
+/*public func is_socket_active(at path: String) -> Bool
 {
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
@@ -591,7 +619,7 @@ public func is_socket_active(at path: String) -> Bool
     
     let timeoutResult = group.wait(timeout: .now() + 0.1)
     return timeoutResult == .success && output.contains(path)
-}
+}*/
 
 /*public func is_socket_active(at path: String) -> Bool
 {

@@ -145,10 +145,22 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     {
         for program_components_path in program_components_paths
         {
-            if !is_socket_active(at: program_components_path.socket)
+            Task.detached
+            {
+                for program_components_path in self.program_components_paths
+                {
+                    let isActive = await is_socket_active(at: program_components_path.socket)
+                    
+                    if !isActive
+                    {
+                        perform_terminal_app_sync(at: self.package_url.appendingPathComponent(program_components_path.file), with: [" > /dev/null 2>&1 &"])
+                    }
+                }
+            }
+            /*if !is_socket_active(at: program_components_path.socket)
             {
                 perform_terminal_app_sync(at: self.package_url.appendingPathComponent(program_components_path.file), with: [" > /dev/null 2>&1 &"])
-            }
+            }*/
             //perform_terminal_app_sync(at: self.package_url.appendingPathComponent(program_components_path.file), with: [" > /dev/null 2>&1 &"])
         }
     }
