@@ -555,25 +555,38 @@ public func is_socket_active(at path: String) -> Bool
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/sbin/lsof")
     process.arguments = ["-U", path]
-
+    
     let pipe = Pipe()
     process.standardOutput = pipe
-    process.standardError = Pipe() // Optional: suppress stderr from going to console
-
+    process.standardError = Pipe()
+    
     let group = DispatchGroup()
     group.enter()
-
+    
     var output = ""
     let outputHandle = pipe.fileHandleForReading
-
-    // Read output asynchronously
+    
+    var didLeaveGroup = false
+    let lock = NSLock()
+    
+    func safeLeave()
+    {
+        lock.lock()
+        if !didLeaveGroup
+        {
+            didLeaveGroup = true
+            group.leave()
+        }
+        lock.unlock()
+    }
+    
     outputHandle.readabilityHandler =
     { handle in
         let data = handle.availableData
         if data.isEmpty
         {
             outputHandle.readabilityHandler = nil
-            group.leave()
+            safeLeave()
         }
         else
         {
@@ -582,7 +595,7 @@ public func is_socket_active(at path: String) -> Bool
             }
         }
     }
-
+    
     do
     {
         try process.run()
@@ -590,20 +603,17 @@ public func is_socket_active(at path: String) -> Bool
     catch
     {
         outputHandle.readabilityHandler = nil
-        group.leave()
+        safeLeave()
         return false
     }
-
+    
     process.terminationHandler =
     { _ in
-        // Ensure we leave the group in case of early termination
         outputHandle.readabilityHandler = nil
-        group.leave()
+        safeLeave()
     }
-
-    // Wait with timeout to avoid indefinite blocking
+    
     let timeoutResult = group.wait(timeout: .now() + 2.0)
-
     return timeoutResult == .success && output.contains(path)
 }
 #endif
