@@ -613,7 +613,7 @@ public func is_socket_active(at path: String) -> Bool
         safeLeave()
     }
     
-    let timeoutResult = group.wait(timeout: .now() + 2.0)
+    let timeoutResult = group.wait(timeout: .now() + 0.1)
     return timeoutResult == .success && output.contains(path)
 }
 #endif
