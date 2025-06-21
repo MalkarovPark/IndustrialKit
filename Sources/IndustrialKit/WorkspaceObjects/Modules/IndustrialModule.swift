@@ -145,7 +145,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     {
         for program_components_path in program_components_paths
         {
-            Task.detached
+            Task
             {
                 for program_components_path in self.program_components_paths
                 {
