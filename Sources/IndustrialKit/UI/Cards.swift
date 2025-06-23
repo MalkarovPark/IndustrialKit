@@ -389,12 +389,6 @@ public struct ElementCardView: View
     {
         ZStack
         {
-            /*if is_current
-            {
-                Rectangle()
-                    .foregroundStyle(.mint.opacity(0.5))
-            }*/
-            
             VStack
             {
                 HStack(spacing: 0)
@@ -435,18 +429,40 @@ public struct ElementCardView: View
                 .frame(maxWidth: .infinity)
             }
             .background(.thinMaterial)
+            
+            if program_element.performing_state != .none
+            {
+                VStack
+                {
+                    HStack
+                    {
+                        Spacer()
+                        
+                        Circle()
+                            .foregroundColor(program_element.performing_state.color.opacity(0.5))
+                            .frame(width: 16, height: 16)
+                            .padding()
+                            .transition(AnyTransition.scale)
+                        
+                    }
+                    Spacer()
+                }
+            }
         }
         .frame(height: 80)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        // .shadow(radius: 8)
-        .overlay(alignment: .topTrailing)
+        //.shadow(radius: 8)
+        /*.overlay(alignment: .topTrailing)
         {
-            Circle()
-                .foregroundColor(program_element.performing_state.color.opacity(0.5))
-                .frame(width: 16, height: 16)
-                .padding()
-                .transition(AnyTransition.scale)
-        }
+            if program_element.performing_state != .none
+            {
+                Circle()
+                    .foregroundColor(program_element.performing_state.color.opacity(0.5))
+                    .frame(width: 16, height: 16)
+                    .padding()
+                    .transition(AnyTransition.scale)
+            }
+        }*/
     }
 }
 
