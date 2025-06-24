@@ -236,6 +236,7 @@ open class RobotModelController: ModelController
         
         alt_pointer_node = pointer.deep_clone()
         alt_pointer_node?.opacity = 0.25
+        alt_pointer_node?.isHidden = true
         
         if let parent_node = pointer.parent, let alt_pointer_node = alt_pointer_node
         {
