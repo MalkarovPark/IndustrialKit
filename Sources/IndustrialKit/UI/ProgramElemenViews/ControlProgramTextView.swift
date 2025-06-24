@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  ControlProgramTextView.swift
 //  IndustrialKit
 //
 //  Created by Artem Malkarov on 23.06.2025.

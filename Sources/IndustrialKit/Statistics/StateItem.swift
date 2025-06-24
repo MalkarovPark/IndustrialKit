@@ -20,7 +20,7 @@ public struct StateItem: Identifiable, Codable
     
     public var children: [StateItem]?
     
-    // MARK: Init function
+    // MARK: Init functions
     public init(name: String, value: String? = nil, image: String? = nil, children: [StateItem]? = nil)
     {
         self.name = name

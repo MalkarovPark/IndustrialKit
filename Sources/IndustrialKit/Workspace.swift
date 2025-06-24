@@ -1230,7 +1230,7 @@ public class Workspace: ObservableObject
     public func select_object_in_scene(result: SCNHitTestResult)
     {
         // print(result.localCoordinates)
-        // print("🍮 tapped – \(result.node.name!), category \(result.node.categoryBitMask)")
+        // print("tapped – \(result.node.name!), category \(result.node.categoryBitMask)")
         var object_node: SCNNode?
         
         switch result.node.categoryBitMask // Switch object node bit mask

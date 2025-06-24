@@ -694,7 +694,6 @@ public func string_to_action(from string: String) -> SCNAction?
     
     guard components.count == 2 else
     {
-        print("Invalid format")
         return nil
     }
     
@@ -806,7 +805,6 @@ public func set_position(for node: SCNNode, from string: String)
     guard components.count == 2
     else
     {
-        print("Invalid format")
         return
     }
     

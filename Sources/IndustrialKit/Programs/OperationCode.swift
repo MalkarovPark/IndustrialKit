@@ -41,7 +41,6 @@ public class OperationCode: Identifiable, Codable, Hashable, ObservableObject
     @Published public var performing_state: PerformingState = .none
     
     // MARK: - Work with file system
-    // For performing_state exclusion
     enum CodingKeys: String, CodingKey
     {
         case value
