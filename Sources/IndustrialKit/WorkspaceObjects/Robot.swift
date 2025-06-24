@@ -860,9 +860,6 @@ public class Robot: WorkspaceObject
         robot_location_place()
         update_space_scale() // Set space scale by connected robot parameters
         
-        // Pass workcell parameters to model controller
-        //model_controller.space_scale = space_scale
-        
         update_location()
         update_rotation()
         
