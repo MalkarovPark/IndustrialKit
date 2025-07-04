@@ -135,9 +135,9 @@ public struct ObjectSceneView: UIViewRepresentable
         scene_view.addGestureRecognizer(UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_tap(_:))))
         
         // Add reset double tap recognizer for macOS
-        /*let double_tap_gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_reset_double_tap(_:)))
+        let double_tap_gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.handle_reset_double_tap(_:)))
         double_tap_gesture.numberOfClicksRequired = 2
-        scene_view.addGestureRecognizer(double_tap_gesture)*/
+        scene_view.addGestureRecognizer(double_tap_gesture)
         
         scene_view.allowsCameraControl = true
         scene_view.rendersContinuously = true
@@ -229,11 +229,11 @@ public struct ObjectSceneView: UIViewRepresentable
         }
         
         #if os(macOS)
-        /*@objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
+        @MainActor @objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
         {
             reset_camera_view_position(locataion: SCNVector3(0, 0, 2), rotation: SCNVector4Zero, view: scn_view)
             
-            func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
+            @MainActor func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
             {
                 if !on_reset_view
                 {
@@ -244,7 +244,7 @@ public struct ObjectSceneView: UIViewRepresentable
                         reset_action, completionHandler: { self.on_reset_view = false })
                 }
             }
-        }*/
+        }
         #endif
     }
 }
