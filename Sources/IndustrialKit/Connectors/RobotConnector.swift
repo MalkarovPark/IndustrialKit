@@ -13,7 +13,7 @@ import SceneKit
  
  Contains special function for movement to point performation.
  */
-open class RobotConnector: WorkspaceObjectConnector
+open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
 {
     // MARK: - Parameters
     /**
@@ -69,7 +69,7 @@ open class RobotConnector: WorkspaceObjectConnector
         - update_model: Update model by connector.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func move_to(point: PositionPoint, completion: @escaping () -> Void)
+    public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void)
     {
         if connected
         {

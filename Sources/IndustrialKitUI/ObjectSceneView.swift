@@ -195,7 +195,7 @@ public struct ObjectSceneView: UIViewRepresentable
         Coordinator(self, scene_view)
     }
     
-    final public class Coordinator: NSObject, SCNSceneRendererDelegate
+    final public class Coordinator: NSObject, @preconcurrency SCNSceneRendererDelegate
     {
         var control: ObjectSceneView
         
@@ -207,7 +207,7 @@ public struct ObjectSceneView: UIViewRepresentable
             super.init()
         }
         
-        public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
+        @MainActor public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
         {
             control.on_render(scn_view)
         }
@@ -218,17 +218,17 @@ public struct ObjectSceneView: UIViewRepresentable
         private var on_reset_view = false
         #endif
         
-        @objc func handle_tap(_ gesture_recognize: UITapGestureRecognizer)
+        @MainActor @objc func handle_tap(_ gesture_recognize: UITapGestureRecognizer)
         {
             control.on_tap(gesture_recognize, scn_view)
         }
         
         #if os(macOS)
-        @objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
+        @MainActor @objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
         {
             reset_camera_view_position(locataion: SCNVector3(0, 0, 2), rotation: SCNVector4Zero, view: scn_view)
             
-            func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
+            @MainActor func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
             {
                 if !on_reset_view
                 {

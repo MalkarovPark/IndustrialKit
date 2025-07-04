@@ -123,10 +123,10 @@ public class Robot: WorkspaceObject
     }
     
     /// Imported internal robot modules.
-    public static var internal_modules = [RobotModule]()
+    nonisolated(unsafe) public static var internal_modules = [RobotModule]()
     
     /// Imported external robot modules.
-    public static var external_modules = [RobotModule]()
+    nonisolated(unsafe) public static var external_modules = [RobotModule]()
     
     public override func module_import_by_name(_ name: String, is_internal: Bool = true)
     {
@@ -369,10 +369,10 @@ public class Robot: WorkspaceObject
     public var target_point_index = 0
     
     /// A default location of robot cell origin.
-    public static var default_origin_location = [Float](repeating: 0, count: 3)
+    nonisolated(unsafe) public static var default_origin_location = [Float](repeating: 0, count: 3)
     
     /// A default scale of robot cell box.
-    public static var default_space_scale = [Float](repeating: 200, count: 3)
+    nonisolated(unsafe) public static var default_space_scale = [Float](repeating: 200, count: 3)
     
     /**
      A robot pointer location.
@@ -499,7 +499,7 @@ public class Robot: WorkspaceObject
         - point: The target position performed by the robot.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func move_to(point: PositionPoint, completion: @escaping () -> Void = {})
+    public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void = {})
     {
         // pointer_position_to_robot()
         performed = true
@@ -1108,7 +1108,7 @@ public class Robot: WorkspaceObject
     }
     
     /// An option of view current position program model.
-    public static var view_current_program_model = true
+    nonisolated(unsafe) public static var view_current_program_model = true
     
     private func update_points_model() // Update selected positions program model for robot
     {

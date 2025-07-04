@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 
 ///Provides control over visual model for robot.
-open class ToolModelController: ModelController
+open class ToolModelController: ModelController, @unchecked Sendable
 {
     /**
      Performs tool model action by operation code value.
@@ -29,7 +29,7 @@ open class ToolModelController: ModelController
         - code: The operation code value of the operation performed by the tool visual model.
         - completion: A completion function that is calls when the performing completes.
      */
-    open func nodes_perform(code: Int, completion: @escaping () -> Void)
+    open func nodes_perform(code: Int, completion: @escaping @Sendable () -> Void)
     {
         nodes_perform(code: code)
         completion()
@@ -123,7 +123,7 @@ open class ToolModelController: ModelController
 }
 
 //MARK: - External Model Controller
-public class ExternalToolModelController: ToolModelController
+public class ExternalToolModelController: ToolModelController, @unchecked Sendable
 {
     // MARK: Init functions
     /// An external module name.
@@ -155,7 +155,7 @@ public class ExternalToolModelController: ToolModelController
     public var external_nodes_names = [String]()
     
     // MARK: Modeling
-    open override func nodes_perform(code: Int, completion: @escaping () -> Void)
+    open override func nodes_perform(code: Int, completion: @escaping @Sendable () -> Void)
     {
         #if os(macOS)
         DispatchQueue.global(qos: .utility).async

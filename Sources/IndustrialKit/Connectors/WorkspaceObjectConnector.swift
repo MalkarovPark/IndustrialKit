@@ -17,7 +17,7 @@ import SceneKit
  
  Control functions are specialized for subtypes by workspace objects.
  */
-open class WorkspaceObjectConnector: ObservableObject, NSCopying
+open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sendable
 {
     // MARK: - Init functions
     required public init()

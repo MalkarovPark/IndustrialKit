@@ -118,10 +118,10 @@ public class Part: WorkspaceObject
     }
     
     /// Imported internal part modules.
-    public static var internal_modules = [PartModule]()
+    nonisolated(unsafe) public static var internal_modules = [PartModule]()
     
     /// Imported external part modules.
-    public static var external_modules = [PartModule]()
+    nonisolated(unsafe) public static var external_modules = [PartModule]()
     
     public override func module_import_by_name(_ name: String, is_internal: Bool = true)
     {
