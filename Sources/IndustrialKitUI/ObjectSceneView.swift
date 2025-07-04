@@ -16,7 +16,7 @@ public struct ObjectSceneView: UIViewRepresentable
     private let node: SCNNode
     
     private let on_init: ((_ scene_view: SCNView) -> Void)
-    private let on_render: ((_ scene_view: SCNView) -> Void)
+    private let on_render: (@Sendable (_ scene_view: SCNView) -> Void)
     private let on_tap: ((_ recognizer: UITapGestureRecognizer, _ scene_view: SCNView) -> Void)
     
     private var transparent: Bool
@@ -27,7 +27,7 @@ public struct ObjectSceneView: UIViewRepresentable
     // MARK: Init functions
     public init(node: SCNNode,
                 transparent: Bool = true,
-                on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
+                on_render: @Sendable @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
@@ -55,7 +55,7 @@ public struct ObjectSceneView: UIViewRepresentable
     
     public init(scene: SCNScene,
                 transparent: Bool = true,
-                on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
+                on_render: @Sendable @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
@@ -74,7 +74,7 @@ public struct ObjectSceneView: UIViewRepresentable
     public init(scene: SCNScene,
                 node: SCNNode,
                 transparent: Bool = true,
-                on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
+                on_render: @Sendable @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
@@ -209,9 +209,7 @@ public struct ObjectSceneView: UIViewRepresentable
         
         public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval)
         {
-            Task { @MainActor in
-                control.on_render(scn_view)
-            }
+            control.on_render(scn_view)
         }
         
         private let scn_view: SCNView
