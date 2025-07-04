@@ -13,7 +13,7 @@ import SceneKit
  
  Contains special function for operation code performation.
  */
-open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
+open class ToolConnector: WorkspaceObjectConnector
 {
     // MARK: - Device handling
     private var performing_task = Task {}
@@ -36,7 +36,7 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
         - code: The operation code value of the operation performed by the real tool.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func perform(code: Int, completion: @escaping @Sendable () -> Void)
+    public func perform(code: Int, completion: @escaping () -> Void)
     {
         canceled = false
         performing_task = Task

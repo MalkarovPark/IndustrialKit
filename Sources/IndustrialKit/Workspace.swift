@@ -16,7 +16,7 @@ import SwiftUI
  
  Also can build a visual model of the production system with editing functions.
  */
-public class Workspace: ObservableObject, @unchecked Sendable
+public class Workspace: ObservableObject
 {
     // MARK: - Init functions
     public init()
@@ -110,7 +110,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var update_task: Task<Void, Never>?
     
     /// The interval between updates in nanoseconds.
-    nonisolated(unsafe) public static var update_interval: Double = 0.01
+    public static var update_interval: Double = 0.01
     
     /**
      Starts the update loop.
@@ -506,7 +506,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - element: A workspace program element.
      */
-    public func perform(_ element: WorkspaceProgramElement, completion: @Sendable @escaping () -> Void)
+    public func perform(_ element: WorkspaceProgramElement, completion: @escaping () -> Void)
     {
         switch element
         {
@@ -649,7 +649,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// A default count of data registers for workspace.
-    nonisolated(unsafe) public static var default_registers_count = 256
+    public static var default_registers_count = 256
     
     /// An array of data registers of workspace.
     @Published public var registers: [Float]// = [Float](repeating: 0, count: Workspace.default_registers_count)
@@ -724,7 +724,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - element: A robot performer element.
      */
-    private func perform_robot(by element: RobotPerformerElement, completion: @escaping @Sendable () -> Void)
+    private func perform_robot(by element: RobotPerformerElement, completion: @escaping () -> Void)
     {
         select_robot(name: element.object_name)
         deselect_tool()
@@ -784,7 +784,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - element: A tool performer element.
      */
-    private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable () -> Void)
+    private func perform_tool(by element: ToolPerformerElement, completion: @escaping () -> Void)
     {
         select_tool(name: element.object_name)
         deselect_robot()
@@ -1025,7 +1025,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public var edited_object_node: SCNNode?
     
     /// A workcell scene adress.
-    nonisolated(unsafe) public static var workcell_scene_address = String()
+    public static var workcell_scene_address = String()
     
     /// Gets new object node model for previewing position.
     public func view_object_node(type: WorkspaceObjectType, name: String)
@@ -2276,13 +2276,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public var object_pointer_node: SCNNode?
     
     /// Robot node category bit mask.
-    nonisolated(unsafe) public static var robot_bit_mask = 2
+    public static var robot_bit_mask = 2
     
     /// Tool node category bit mask.
-    nonisolated(unsafe) public static var tool_bit_mask = 4
+    public static var tool_bit_mask = 4
     
     /// Part node category bit mask.
-    nonisolated(unsafe) public static var part_bit_mask = 6
+    public static var part_bit_mask = 6
     
     /// Connects and places objects to workspace scene.
     public func connect_scene(_ scene: SCNScene)

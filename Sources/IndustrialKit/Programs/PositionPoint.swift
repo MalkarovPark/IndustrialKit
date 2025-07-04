@@ -13,7 +13,7 @@ import SceneKit
  
  The position consists of the location of the manipulator in a rectangular coordinate system and the rotation angles in it.
  */
-public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @unchecked Sendable
+public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject
 {
     public static func == (lhs: PositionPoint, rhs: PositionPoint) -> Bool
     {

@@ -9,7 +9,7 @@ import Foundation
 import SceneKit
 
 ///Provides control over visual model for robot.
-open class RobotModelController: ModelController, @unchecked Sendable
+open class RobotModelController: ModelController
 {
     /**
      Updates nodes positions of robot model by target position and origin parameters.
@@ -262,7 +262,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         - point: The target position performed by the robot visual model.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void)
+    public func move_to(point: PositionPoint, completion: @escaping () -> Void)
     {
         canceled = false
         moving_task = Task
@@ -397,7 +397,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
 }
 
 //MARK: - External Controller
-public class ExternalRobotModelController: RobotModelController, @unchecked Sendable
+public class ExternalRobotModelController: RobotModelController
 {
     // MARK: Init functions
     /// An external module name.

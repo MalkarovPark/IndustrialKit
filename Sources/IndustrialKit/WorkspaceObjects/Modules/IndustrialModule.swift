@@ -51,7 +51,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
      */
     @Published public var main_scene_name: String?
     
-    nonisolated(unsafe) public static var work_folder_bookmark: Data? /// A folder bookmark to resources access.
+    public static var work_folder_bookmark: Data? /// A folder bookmark to resources access.
     
     open var extension_name: String { "module" } /// An object package extension name.
     

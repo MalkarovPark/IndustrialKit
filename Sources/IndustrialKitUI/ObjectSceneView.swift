@@ -16,7 +16,7 @@ public struct ObjectSceneView: UIViewRepresentable
     private let node: SCNNode
     
     private let on_init: ((_ scene_view: SCNView) -> Void)
-    private let on_render: (@Sendable (_ scene_view: SCNView) -> Void)
+    private let on_render: ((_ scene_view: SCNView) -> Void)
     private let on_tap: ((_ recognizer: UITapGestureRecognizer, _ scene_view: SCNView) -> Void)
     
     private var transparent: Bool
@@ -27,7 +27,7 @@ public struct ObjectSceneView: UIViewRepresentable
     // MARK: Init functions
     public init(node: SCNNode,
                 transparent: Bool = true,
-                on_render: @Sendable @escaping (_ scene_view: SCNView) -> Void = { _ in },
+                on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
@@ -55,7 +55,7 @@ public struct ObjectSceneView: UIViewRepresentable
     
     public init(scene: SCNScene,
                 transparent: Bool = true,
-                on_render: @Sendable @escaping (_ scene_view: SCNView) -> Void = { _ in },
+                on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
@@ -74,7 +74,7 @@ public struct ObjectSceneView: UIViewRepresentable
     public init(scene: SCNScene,
                 node: SCNNode,
                 transparent: Bool = true,
-                on_render: @Sendable @escaping (_ scene_view: SCNView) -> Void = { _ in },
+                on_render: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_init: @escaping (_ scene_view: SCNView) -> Void = { _ in },
                 on_tap: @escaping (_: UITapGestureRecognizer, _: SCNView) -> Void = { _, _ in })
     {
@@ -195,7 +195,7 @@ public struct ObjectSceneView: UIViewRepresentable
         Coordinator(self, scene_view)
     }
     
-    final public class Coordinator: NSObject, SCNSceneRendererDelegate, @unchecked Sendable
+    final public class Coordinator: NSObject, SCNSceneRendererDelegate
     {
         var control: ObjectSceneView
         
@@ -220,18 +220,15 @@ public struct ObjectSceneView: UIViewRepresentable
         
         @objc func handle_tap(_ gesture_recognize: UITapGestureRecognizer)
         {
-            Task
-            { @MainActor in
-                self.control.on_tap(gesture_recognize, self.scn_view)
-            }
+            control.on_tap(gesture_recognize, scn_view)
         }
         
         #if os(macOS)
-        @MainActor @objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
+        @objc func handle_reset_double_tap(_ gesture_recognize: UITapGestureRecognizer)
         {
             reset_camera_view_position(locataion: SCNVector3(0, 0, 2), rotation: SCNVector4Zero, view: scn_view)
             
-            @MainActor func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
+            func reset_camera_view_position(locataion: SCNVector3, rotation: SCNVector4, view: SCNView)
             {
                 if !on_reset_view
                 {
