@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-//@available(macOS 26.0, iOS 26.0, visionOS 26.0, *)
 public struct ViewCloseButton: ViewModifier
 {
     @Binding public var is_presented: Bool

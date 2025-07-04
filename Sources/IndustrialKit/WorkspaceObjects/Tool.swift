@@ -14,7 +14,7 @@ import SwiftUI
  
  Permorms operation by codes order in selected operations program.
  */
-public class Tool: WorkspaceObject
+public class Tool: WorkspaceObject, @unchecked Sendable
 {
     // MARK: - Init functions
     public override init()
@@ -115,10 +115,10 @@ public class Tool: WorkspaceObject
     }
     
     /// Imported internal tool modules.
-    public static var internal_modules = [ToolModule]()
+    nonisolated(unsafe) public static var internal_modules = [ToolModule]()
     
     /// Imported external tool modules.
-    public static var external_modules = [ToolModule]()
+    nonisolated(unsafe) public static var external_modules = [ToolModule]()
     
     public override func module_import_by_name(_ name: String, is_internal: Bool = true)
     {
@@ -402,7 +402,7 @@ public class Tool: WorkspaceObject
         - code: The operation code value of the operation performed by the tool.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func perform(code: Int, completion: @escaping () -> Void = {})
+    public func perform(code: Int, completion: @escaping @Sendable () -> Void = {})
     {
         if demo
         {

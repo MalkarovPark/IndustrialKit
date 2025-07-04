@@ -14,7 +14,7 @@ import SwiftUI
  
  Industrial production objects are represented by equipment that provide technological operations performing.
  */
-open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject, Codable // , NSCopying
+open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject, Codable, @unchecked Sendable // , NSCopying
 {
     public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool // Identity condition by names
     {
@@ -64,7 +64,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     
     // MARK: - Module handling
     /// Modules folder access bookmark.
-    public static var modules_folder_bookmark: Data?
+    nonisolated(unsafe) public static var modules_folder_bookmark: Data?
     
     /**
      Imports module by name.
@@ -181,7 +181,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     open var scene_internal_folder_address: String? { nil }
     
     /// Folder access bookmark.
-    // public static var folder_bookmark: Data?
+    // nonisolated(unsafe) public static var folder_bookmark: Data?
     
     // MARK: - UI functions
     /*///Universal data storage for NSImage or UIImage.

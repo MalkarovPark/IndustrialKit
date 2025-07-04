@@ -12,7 +12,7 @@ import Foundation
  
  A program unit with an integer. This class is identifiable in an array.
  */
-public class OperationCode: Identifiable, Codable, Hashable, ObservableObject
+public class OperationCode: Identifiable, Codable, Hashable, ObservableObject, @unchecked Sendable
 {
     public static func == (lhs: OperationCode, rhs: OperationCode) -> Bool
     {

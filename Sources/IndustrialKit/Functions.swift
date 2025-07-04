@@ -224,7 +224,7 @@ func clone_codable<T: Codable>(_ object: T) -> T?
  - Throws: An NSError with domain "TerminalCommandError" if the command exits with a non-zero status code.
         The error's userInfo contains the localized description of the error and the termination status.
  */
-public func perform_terminal_command(_ command: String, timeout: TimeInterval? = nil, output_handler: @escaping (String) -> Void = { _ in }) throws
+public func perform_terminal_command(_ command: String, timeout: TimeInterval? = nil, output_handler: @escaping @Sendable (String) -> Void = { _ in }) throws
 {
     let task = Process()
     let pipe = Pipe()
@@ -239,14 +239,18 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
     var output_data = Data()
     let semaphore = DispatchSemaphore(value: 0)
     
+    let output_queue = DispatchQueue(label: "output_data_queue")
+
     file_handle.readabilityHandler =
     { handle in
         let data = handle.availableData
-        if data.isEmpty
+        if data.isEmpty { return }
+        
+        output_queue.async
         {
-            return
+            output_data.append(data)
         }
-        output_data.append(data)
+        
         if let output = String(data: data, encoding: .utf8)
         {
             output_handler(output)
@@ -308,13 +312,17 @@ public func perform_terminal_command(_ command: String, timeout: TimeInterval? =
 public func perform_terminal_app(at url: URL, with arguments: [String], timeout: TimeInterval? = nil) -> String?
 {
     let command = "'\(url.path)' \(arguments.joined(separator: " "))"
+    let output_queue = DispatchQueue(label: "collected_output_queue")
     var collected_output = ""
     
     do
     {
         try perform_terminal_command(command, timeout: timeout)
         { output in
-            collected_output += output
+            output_queue.sync
+            {
+                collected_output += output
+            }
         }
     }
     catch

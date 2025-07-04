@@ -328,16 +328,16 @@ public class ChangerModifierElement: ModifierElement
     }
     
     /// Imported internal part modules.
-    public static var internal_modules = [ChangerModule]()
+    nonisolated(unsafe) public static var internal_modules = [ChangerModule]()
     
     /// Imported external part modules.
-    public static var external_modules = [ChangerModule]()
+    nonisolated(unsafe) public static var external_modules = [ChangerModule]()
     
     /// A changer internal modules names array.
-    public static var internal_modules_list = [String]()
+    nonisolated(unsafe) public static var internal_modules_list = [String]()
     
     /// A changer external modules names array.
-    public static var external_modules_list = [String]()
+    nonisolated(unsafe) public static var external_modules_list = [String]()
     
     /**
      Imports module by name.
