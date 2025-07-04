@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SceneKit
+import IndustrialKit
 
 //MARK: - Large card view
 public struct LargeCardView: View

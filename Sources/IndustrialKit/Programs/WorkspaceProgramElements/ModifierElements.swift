@@ -410,7 +410,7 @@ public class ChangerModifierElement: ModifierElement
     #endif
 }
 
-typealias Changer = ChangerModifierElement
+public typealias Changer = ChangerModifierElement
 
 ///Pushes info code from tool to registers.
 public class ObserverModifierElement: ModifierElement

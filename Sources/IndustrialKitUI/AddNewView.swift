@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import IndustrialKit
 
 public struct AddNewView: View
 {

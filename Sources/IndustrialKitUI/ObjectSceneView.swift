@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SceneKit
+import IndustrialKit
 
 public struct ObjectSceneView: UIViewRepresentable
 {

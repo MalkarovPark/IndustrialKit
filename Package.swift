@@ -8,12 +8,16 @@ let package = Package(
     platforms: [
         .macOS(.v14),
         .iOS(.v17),
+        .visionOS(.v1)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "IndustrialKit",
             targets: ["IndustrialKit"]),
+        .library(
+            name: "IndustrialKitUI",
+            targets: ["IndustrialKitUI"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -25,7 +29,13 @@ let package = Package(
         .target(
             name: "IndustrialKit",
             dependencies: [],
-            path: "Sources"),
+            path: "Sources/IndustrialKit"),
+        .target(
+            name: "IndustrialKitUI",
+            dependencies: [
+                "IndustrialKit",
+            ],
+            path: "Sources/IndustrialKitUI"),
         .testTarget(
             name: "IndustrialKitTests",
             dependencies: ["IndustrialKit"]),
