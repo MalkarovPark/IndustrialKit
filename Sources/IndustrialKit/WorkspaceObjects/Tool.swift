@@ -392,12 +392,6 @@ public class Tool: WorkspaceObject
                 update_statistics_data()
             }
         }
-        
-        // Modeling
-        /*if !demo && update_model_by_connector
-        {
-            connector.sync_model()
-        }*/
     }
     
     // MARK: Performation cycle
@@ -613,7 +607,6 @@ public class Tool: WorkspaceObject
      - Parameters:
         - scene: A current scene.
         - name: A tool name.
-        - connect_camera: Place camera to tool's camera node.
      */
     public func workcell_connect(scene: SCNScene, name: String) // Connect tool parts from scene
     {
