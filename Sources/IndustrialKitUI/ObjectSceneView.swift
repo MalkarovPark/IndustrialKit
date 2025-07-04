@@ -224,7 +224,7 @@ public struct ObjectSceneView: UIViewRepresentable
         {
             Task
             { @MainActor in
-                //self.control.on_tap(gesture_recognize, self.scn_view)
+                self.control.on_tap(gesture_recognize, self.scn_view)
             }
         }
         
