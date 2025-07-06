@@ -296,7 +296,7 @@ public struct PositionSnapshot: Equatable
 {
     let x: Float, y: Float, z: Float, r: Float, p: Float, w: Float
     
-    init(_ tuple: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    public init(_ tuple: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
         self.x = tuple.x
         self.y = tuple.y
