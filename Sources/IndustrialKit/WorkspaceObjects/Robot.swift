@@ -77,8 +77,8 @@ public class Robot: WorkspaceObject
     
     private func set_default_cell_parameters()
     {
-        self.origin_location = [Robot.default_origin_location[0], Robot.default_origin_location[1], Robot.default_origin_location[2]]
-        self.space_scale = [Robot.default_space_scale[0], Robot.default_space_scale[1], Robot.default_space_scale[2]]
+        self.origin_position = Robot.default_origin_position
+        self.space_scale = Robot.default_space_scale
     }
     
     // MARK: - Module handling
@@ -368,69 +368,40 @@ public class Robot: WorkspaceObject
     /// An Index of target point in points array.
     public var target_point_index = 0
     
-    /// A default location of robot cell origin.
-    nonisolated(unsafe) public static var default_origin_location = [Float](repeating: 0, count: 3)
-    
-    /// A default scale of robot cell box.
-    nonisolated(unsafe) public static var default_space_scale = [Float](repeating: 200, count: 3)
-    
     /**
-     A robot pointer location.
+     A robot pointer position.
      
-     Array with three coordinates – [*x*, *y*, *z*].
+     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
-    public var pointer_location: [Float] = [0.0, 0.0, 0.0]
+    public var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     {
         didSet
         {
-            update_location()
+            update_position()
         }
     }
     
-    /**
-     A robot pointer rotation.
-     
-     Array with three angles – [*r*, *p*, *w*].
-     */
-    public var pointer_rotation: [Float] = [0.0, 0.0, 0.0]
-    {
-        didSet
-        {
-            update_rotation()
-        }
-    }
-    
-    /// A robot default pointer location.
-    private var default_pointer_location: [Float]?
-    
-    /// A robot default pointer rotatioin.
-    private var default_pointer_rotation: [Float]?
+    /// A robot default pointer position.
+    private var default_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
     
     /// Sets default robot pointer position by current pointer position.
     public func set_default_pointer_position()
     {
-        default_pointer_location = pointer_location
-        default_pointer_rotation = pointer_rotation
+        default_pointer_position = pointer_position
     }
     
     /// Clears default robot pointer position.
     public func clear_default_pointer_position()
     {
-        default_pointer_location = nil
-        default_pointer_rotation = nil
+        default_pointer_position = nil
     }
     
     /// Resets robot pointer to default position.
     public func reset_pointer_to_default()
     {
-        guard let location = default_pointer_location, let rotation = default_pointer_rotation
-        else
-        {
-            return
-        }
+        guard let position = default_pointer_position else { return }
         
-        pointer_location = location
-        pointer_rotation = rotation
+        pointer_position = position
         
         update()
     }
@@ -438,14 +409,7 @@ public class Robot: WorkspaceObject
     /// Returns information about default pointer position avalibility of robot.
     public var has_default_position: Bool
     {
-        if default_pointer_location != nil && default_pointer_rotation != nil
-        {
-            return true
-        }
-        else
-        {
-            return false
-        }
+        return default_pointer_position != nil
     }
     
     /**
@@ -475,7 +439,7 @@ public class Robot: WorkspaceObject
     /// Returns robot pointer position for nodes.
     private func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
-        return(SCNVector3(pointer_location[1], pointer_location[2], pointer_location[0]), pointer_rotation[0].to_rad, pointer_rotation[1].to_rad, pointer_rotation[2].to_rad)
+        return(SCNVector3(pointer_position.y, pointer_position.z, pointer_position.x), pointer_position.r.to_rad, pointer_position.p.to_rad, pointer_position.w.to_rad)
     }
     
     // MARK: Update functions
@@ -658,18 +622,13 @@ public class Robot: WorkspaceObject
     {
         if demo
         {
-            pointer_location = model_controller.pointer_location
-            pointer_rotation = model_controller.pointer_rotation
+            pointer_position = model_controller.pointer_position
         }
         else
         {
-            //pointer_location = connector.pointer_location
-            //pointer_rotation = connector.pointer_rotation
-            
             if let controller = connector.model_controller
             {
-                pointer_location = controller.pointer_location
-                pointer_rotation = controller.pointer_rotation
+                pointer_position = controller.pointer_position
             }
         }
     }
@@ -680,9 +639,7 @@ public class Robot: WorkspaceObject
     
     private func sync_connector_parameters()
     {
-        connector.origin_location = origin_location
-        connector.origin_rotation = origin_rotation
-        
+        connector.origin_position = origin_position
         connector.space_scale = space_scale
     }
     
@@ -702,9 +659,7 @@ public class Robot: WorkspaceObject
     
     private func sync_model_controller_parameters()
     {
-        model_controller.origin_location = origin_location
-        model_controller.origin_rotation = origin_rotation
-        
+        model_controller.origin_position = origin_position
         model_controller.space_scale = space_scale
     }
     
@@ -860,77 +815,50 @@ public class Robot: WorkspaceObject
         robot_location_place()
         update_space_scale() // Set space scale by connected robot parameters
         
-        update_location()
-        update_rotation()
+        update_position()
         
         update_points_model()
     }
     
-    /// Sets robot pointer node location.
-    private func update_location()
+    /// Sets robot pointer node position.
+    private func update_position()
     {
         if !performed
         {
-            //model_controller.pointer_location = pointer_location
             if demo
             {
-                model_controller.pointer_location = pointer_location
+                model_controller.pointer_position = pointer_position
             }
             else
             {
-                model_controller.alt_pointer_location = pointer_location
-            }
-        }
-    }
-    
-    /// Sets robot pointer node rotation.
-    private func update_rotation()
-    {
-        if !performed
-        {
-            //model_controller.pointer_rotation = pointer_rotation
-            if demo
-            {
-                model_controller.pointer_rotation = pointer_rotation
-            }
-            else
-            {
-                model_controller.alt_pointer_rotation = pointer_rotation
+                model_controller.alt_pointer_position = pointer_position
             }
         }
     }
     
     // MARK: Cell box handling
-    /**
-     A robot cell origin location.
-     
-     Array with three coordinates – [*x*, *y*, *z*].
-     */
-    public var origin_location = [Float](repeating: 0, count: 3)
-    {
-        didSet
-        {
-            robot_location_place()
-            update_location()
-        }
-    }
+    /// A default location of robot cell origin.
+    nonisolated(unsafe) public static var default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    
+    /// A default scale of robot cell box.
+    nonisolated(unsafe) public static var default_space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
     /**
-     A robot cell origin rotation.
+     A robot cell origin position.
      
-     Array with three angles – [*r*, *p*, *w*].
+     Tuple with coordinates – *x*, *y*, *z* and angles – *r*, *p*, *w*.
      */
-    public var origin_rotation = [Float](repeating: 0, count: 3)
+    public var origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     {
         didSet
         {
             robot_location_place()
-            update_rotation()
+            update_position()
         }
     }
     
     /// A robot cell box scale.
-    public var space_scale = [Float](repeating: 200, count: 3)
+    public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
     /// A modified node reference.
     private var modified_node = SCNNode()
@@ -947,32 +875,32 @@ public class Robot: WorkspaceObject
         
         // MARK: Place workcell box
         #if os(macOS)
-        space_node?.position.x = CGFloat(origin_location[1])
-        space_node?.position.y = CGFloat(origin_location[2]) + (vertical_length ?? 0) // Add vertical base length
-        space_node?.position.z = CGFloat(origin_location[0])
+        space_node?.position.x = CGFloat(origin_position.y)
+        space_node?.position.y = CGFloat(origin_position.z) + (vertical_length ?? 0) // Add vertical base length
+        space_node?.position.z = CGFloat(origin_position.x)
         
-        space_node?.eulerAngles.x = CGFloat(origin_rotation[1].to_rad)
-        space_node?.eulerAngles.y = CGFloat(origin_rotation[2].to_rad)
-        space_node?.eulerAngles.z = CGFloat(origin_rotation[0].to_rad)
+        space_node?.eulerAngles.x = CGFloat(origin_position.p.to_rad)
+        space_node?.eulerAngles.y = CGFloat(origin_position.w.to_rad)
+        space_node?.eulerAngles.z = CGFloat(origin_position.r.to_rad)
         #else
-        space_node?.position.x = Float(origin_location[1])
-        space_node?.position.y = Float(origin_location[2] + (vertical_length ?? 0))
-        space_node?.position.z = Float(origin_location[0])
+        space_node?.position.x = Float(origin_position.y)
+        space_node?.position.y = Float(origin_position.z + (vertical_length ?? 0))
+        space_node?.position.z = Float(origin_position.x)
         
-        space_node?.eulerAngles.x = origin_rotation[1].to_rad
-        space_node?.eulerAngles.y = origin_rotation[2].to_rad
-        space_node?.eulerAngles.z = origin_rotation[0].to_rad
+        space_node?.eulerAngles.x = origin_position.p.to_rad
+        space_node?.eulerAngles.y = origin_position.w.to_rad
+        space_node?.eulerAngles.z = origin_position.r.to_rad
         #endif
         
         // MARK: Place camera
         #if os(macOS)
-        camera_node?.position.x += CGFloat(origin_location[1])
-        camera_node?.position.y += CGFloat(origin_location[2]) + (vertical_length ?? 0)
-        camera_node?.position.z += CGFloat(origin_location[0])
+        camera_node?.position.x += CGFloat(origin_position.y)
+        camera_node?.position.y += CGFloat(origin_position.z) + (vertical_length ?? 0)
+        camera_node?.position.z += CGFloat(origin_position.x)
         #else
-        camera_node?.position.x += Float(origin_location[1])
-        camera_node?.position.y += Float(origin_location[2] + (vertical_length ?? 0))
-        camera_node?.position.z += Float(origin_location[0])
+        camera_node?.position.x += Float(origin_position.y)
+        camera_node?.position.y += Float(origin_position.z + (vertical_length ?? 0))
+        camera_node?.position.z += Float(origin_position.x)
         #endif
     }
     
@@ -988,64 +916,64 @@ public class Robot: WorkspaceObject
         // XY planes
         modified_node = box_node?.childNode(withName: "w0", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[0]))
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.y), height: CGFloat(space_scale.x))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.y = -CGFloat(space_scale[2]) / 2
+        modified_node.position.y = -CGFloat(space_scale.z) / 2
         #else
-        modified_node.position.y = -space_scale[2] / 2
+        modified_node.position.y = -space_scale.z / 2
         #endif
         modified_node = box_node?.childNode(withName: "w1", recursively: true) ?? SCNNode()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[0]))
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.y), height: CGFloat(space_scale.x))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.y = CGFloat(space_scale[2]) / 2
+        modified_node.position.y = CGFloat(space_scale.z) / 2
         #else
-        modified_node.position.y = space_scale[2] / 2
+        modified_node.position.y = space_scale.z / 2
         #endif
         
         // YZ plane
         modified_node = box_node?.childNode(withName: "w2", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[2]))
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.y), height: CGFloat(space_scale.z))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.z = -CGFloat(space_scale[0]) / 2
+        modified_node.position.z = -CGFloat(space_scale.x) / 2
         #else
-        modified_node.position.z = -space_scale[0] / 2
+        modified_node.position.z = -space_scale.x / 2
         #endif
         modified_node = box_node?.childNode(withName: "w3", recursively: true) ?? SCNNode()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[1]), height: CGFloat(space_scale[2]))
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.y), height: CGFloat(space_scale.z))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.z = CGFloat(space_scale[0]) / 2
+        modified_node.position.z = CGFloat(space_scale.x) / 2
         #else
-        modified_node.position.z = space_scale[0] / 2
+        modified_node.position.z = space_scale.x / 2
         #endif
         
         // XZ plane
         modified_node = box_node?.childNode(withName: "w4", recursively: true) ?? SCNNode()
         saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]), height: CGFloat(space_scale[2]))
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.x), height: CGFloat(space_scale.z))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.x = -CGFloat(space_scale[1]) / 2
+        modified_node.position.x = -CGFloat(space_scale.y) / 2
         #else
-        modified_node.position.x = -space_scale[1] / 2
+        modified_node.position.x = -space_scale.y / 2
         #endif
         modified_node = box_node?.childNode(withName: "w5", recursively: true) ?? SCNNode()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale[0]), height: CGFloat(space_scale[2]))
+        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.x), height: CGFloat(space_scale.z))
         modified_node.geometry?.firstMaterial = saved_material
         #if os(macOS)
-        modified_node.position.x = CGFloat(space_scale[1]) / 2
+        modified_node.position.x = CGFloat(space_scale.y) / 2
         #else
-        modified_node.position.x = space_scale[1] / 2
+        modified_node.position.x = space_scale.y / 2
         #endif
         
         #if os(macOS)
-        box_node?.position = SCNVector3(x: CGFloat(space_scale[1]) / 2, y: CGFloat(space_scale[2]) / 2, z: CGFloat(space_scale[0]) / 2)
+        box_node?.position = SCNVector3(x: CGFloat(space_scale.y) / 2, y: CGFloat(space_scale.z) / 2, z: CGFloat(space_scale.x) / 2)
         #else
-        box_node?.position = SCNVector3(x: space_scale[1] / 2, y: space_scale[2] / 2, z: space_scale[0] / 2)
+        box_node?.position = SCNVector3(x: space_scale.y / 2, y: space_scale.z / 2, z: space_scale.x / 2)
         #endif
         
         model_controller.space_scale = space_scale
@@ -1060,27 +988,27 @@ public class Robot: WorkspaceObject
      */
     public func point_shift(_ point: inout PositionPoint)
     {
-        if point.x > Float(space_scale[0])
+        if point.x > Float(space_scale.x)
         {
-            point.x = Float(space_scale[0])
+            point.x = Float(space_scale.x)
         }
         else if point.x < 0
         {
             point.x = 0
         }
         
-        if point.y > Float(space_scale[1])
+        if point.y > Float(space_scale.y)
         {
-            point.y = Float(space_scale[1])
+            point.y = Float(space_scale.y)
         }
         else if point.y < 0
         {
             point.y = 0
         }
         
-        if point.z > Float(space_scale[2])
+        if point.z > Float(space_scale.z)
         {
-            point.z = Float(space_scale[2])
+            point.z = Float(space_scale.z)
         }
         else if point.z < 0
         {
@@ -1290,12 +1218,16 @@ public class Robot: WorkspaceObject
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.origin_location = try container.decode([Float].self, forKey: .origin_location)
-        self.origin_rotation = try container.decode([Float].self, forKey: .origin_rotation)
-        self.space_scale = try container.decode([Float].self, forKey: .space_scale)
+        let location = try container.decode([Float].self, forKey: .origin_location)
+        let rotation = try container.decode([Float].self, forKey: .origin_rotation)
+        self.origin_position = (location[0], location[1], location[2], rotation[0], rotation[1], rotation[2])
+        let space_scale = try container.decode([Float].self, forKey: .space_scale)
+        self.space_scale = (space_scale[0], space_scale[1], space_scale[2])
         
-        self.default_pointer_location = try container.decodeIfPresent([Float].self, forKey: .default_pointer_location)
-        self.default_pointer_rotation = try container.decodeIfPresent([Float].self, forKey: .default_pointer_rotation)
+        if let pointer_location = try container.decodeIfPresent([Float].self, forKey: .default_pointer_location), let pointer_rotation = try container.decodeIfPresent([Float].self, forKey: .default_pointer_rotation)
+        {
+            self.default_pointer_position = (pointer_location[0], pointer_location[1], pointer_location[2], pointer_rotation[0], pointer_rotation[1], pointer_rotation[2])
+        }
         
         self.demo = try container.decode(Bool.self, forKey: .demo)
         self.update_model_by_connector = try container.decode(Bool.self, forKey: .update_model_by_connector)
@@ -1321,12 +1253,15 @@ public class Robot: WorkspaceObject
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(origin_location, forKey: .origin_location)
-        try container.encode(origin_rotation, forKey: .origin_rotation)
-        try container.encode(space_scale, forKey: .space_scale)
-        
-        try container.encode(default_pointer_location, forKey: .default_pointer_location)
-        try container.encode(default_pointer_rotation, forKey: .default_pointer_rotation)
+        try container.encode([origin_position.0, origin_position.1, origin_position.2], forKey: .origin_location)
+        try container.encode([origin_position.3, origin_position.4, origin_position.5], forKey: .origin_rotation)
+        try container.encode([space_scale.0, space_scale.1, space_scale.2], forKey: .space_scale)
+
+        if let pointer = default_pointer_position
+        {
+            try container.encode([pointer.0, pointer.1, pointer.2], forKey: .default_pointer_location)
+            try container.encode([pointer.3, pointer.4, pointer.5], forKey: .default_pointer_rotation)
+        }
         
         try container.encode(demo, forKey: .demo)
         try container.encode(connector.connection_parameters_values, forKey: .connection_parameters)

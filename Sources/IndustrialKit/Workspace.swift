@@ -871,17 +871,15 @@ public class Workspace: ObservableObject, @unchecked Sendable
         case .robot:
             robot_by_name(element.object_name).pointer_position_to_robot()
             
-            var pointer_position = robot_by_name(element.object_name).pointer_location
-            for i in 0 ..< 3
-            {
-                info_output.append(pointer_position[i])
-            }
+            let pointer_position = robot_by_name(element.object_name).pointer_position
             
-            pointer_position = robot_by_name(element.object_name).pointer_rotation
-            for i in 0 ..< 3
-            {
-                info_output.append(pointer_position[i])
-            }
+            info_output.append(pointer_position.x)
+            info_output.append(pointer_position.y)
+            info_output.append(pointer_position.z)
+            
+            info_output.append(pointer_position.r)
+            info_output.append(pointer_position.p)
+            info_output.append(pointer_position.w)
         case .tool:
             info_output = tool_by_name(element.object_name).info_output ?? [Float]()
         }
@@ -1034,14 +1032,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
         switch selected_object_type
         {
         case .robot:
-            selected_robot.location = [0, 0, 0]
-            selected_robot.rotation = [0, 0, 0]
+            selected_robot.position = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
         case .tool:
-            selected_tool.location = [0, 0, 0]
-            selected_tool.rotation = [0, 0, 0]
+            selected_tool.position = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
         case .part:
-            selected_part.location = [0, 0, 0]
-            selected_part.rotation = [0, 0, 0]
+            selected_part.position = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
         default:
             break
         }
@@ -1102,37 +1097,33 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public func update_object_position()
     {
         // Get position by selected object type
-        var location = [Float](repeating: 0, count: 3)
-        var rotation = [Float](repeating: 0, count: 3)
+        var position = (x: Float(0), y: Float(0), z: Float(0), r: Float(0), p: Float(0), w: Float(0))
         
         switch selected_object_type
         {
         case .robot:
-            location = selected_robot.location
-            rotation = selected_robot.rotation
+            position = selected_robot.position
         case .tool:
-            location = selected_tool.location
-            rotation = selected_tool.rotation
-        case.part:
-            location = selected_part.location
-            rotation = selected_part.rotation
+            position = selected_tool.position
+        case .part:
+            position = selected_part.position
         default:
             break
         }
         
         // Apply position to node
         #if os(macOS)
-        edited_object_node?.worldPosition = SCNVector3(x: CGFloat(location[1]), y: CGFloat(location[2]), z: CGFloat(location[0]))
+        edited_object_node?.worldPosition = SCNVector3(x: CGFloat(position.y), y: CGFloat(position.z), z: CGFloat(position.x))
         
-        edited_object_node?.eulerAngles.x = CGFloat(rotation[1].to_rad)
-        edited_object_node?.eulerAngles.y = CGFloat(rotation[2].to_rad)
-        edited_object_node?.eulerAngles.z = CGFloat(rotation[0].to_rad)
+        edited_object_node?.eulerAngles.x = CGFloat(position.p.to_rad)
+        edited_object_node?.eulerAngles.y = CGFloat(position.w.to_rad)
+        edited_object_node?.eulerAngles.z = CGFloat(position.r.to_rad)
         #else
-        edited_object_node?.worldPosition = SCNVector3(x: location[1], y: location[2], z: location[0])
+        edited_object_node?.worldPosition = SCNVector3(x: position.y, y: position.z, z: position.x)
         
-        edited_object_node?.eulerAngles.x = rotation[1].to_rad
-        edited_object_node?.eulerAngles.y = rotation[2].to_rad
-        edited_object_node?.eulerAngles.z = rotation[0].to_rad
+        edited_object_node?.eulerAngles.x = position.p.to_rad
+        edited_object_node?.eulerAngles.y = position.w.to_rad
+        edited_object_node?.eulerAngles.z = position.r.to_rad
         #endif
     }
     
@@ -1372,11 +1363,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 
                 // Get part node position after physics calculation
                 #if os(macOS)
-                selected_part.location = [Float((edited_object_node?.presentation.worldPosition.z)!), Float((edited_object_node?.presentation.worldPosition.x)!), Float((edited_object_node?.presentation.worldPosition.y)!)]
-                selected_part.rotation = [Float((edited_object_node?.presentation.eulerAngles.z)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.x)!).to_deg, Float((edited_object_node?.presentation.eulerAngles.y)!).to_deg]
+                selected_part.position = (x: Float((edited_object_node?.presentation.worldPosition.z)!),
+                                          y: Float((edited_object_node?.presentation.worldPosition.x)!),
+                                          z: Float((edited_object_node?.presentation.worldPosition.y)!),
+                                          
+                                          r: Float((edited_object_node?.presentation.eulerAngles.z)!).to_deg,
+                                          p: Float((edited_object_node?.presentation.eulerAngles.x)!).to_deg,
+                                          w: Float((edited_object_node?.presentation.eulerAngles.y)!).to_deg)
                 #else
-                selected_part.location = [(edited_object_node?.presentation.worldPosition.z)!, (edited_object_node?.presentation.worldPosition.x)!, (edited_object_node?.presentation.worldPosition.y)!]
-                selected_part.rotation = [(edited_object_node?.presentation.eulerAngles.z.to_deg)!, (edited_object_node?.presentation.eulerAngles.x.to_deg)!, (edited_object_node?.presentation.eulerAngles.y.to_deg)!]
+                selected_part.position = (x: (edited_object_node?.presentation.worldPosition.z)!,
+                                          y: (edited_object_node?.presentation.worldPosition.x)!,
+                                          z: (edited_object_node?.presentation.worldPosition.y)!,
+                                          
+                                          r: (edited_object_node?.presentation.eulerAngles.z.to_deg)!,
+                                          p: (edited_object_node?.presentation.eulerAngles.x.to_deg)!,
+                                          w: (edited_object_node?.presentation.eulerAngles.y.to_deg)!)
                 #endif
             }
             
@@ -2375,17 +2376,17 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     
                     // Set robot cell node position
                     #if os(macOS)
-                    unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.location[1]), y: CGFloat(robot.location[2]), z: CGFloat(robot.location[0]))
+                    unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.position.y), y: CGFloat(robot.position.z), z: CGFloat(robot.position.x))
                     
-                    unit_node?.eulerAngles.x = CGFloat(robot.rotation[1].to_rad)
-                    unit_node?.eulerAngles.y = CGFloat(robot.rotation[2].to_rad)
-                    unit_node?.eulerAngles.z = CGFloat(robot.rotation[0].to_rad)
+                    unit_node?.eulerAngles.x = CGFloat(robot.position.p.to_rad)
+                    unit_node?.eulerAngles.y = CGFloat(robot.position.w.to_rad)
+                    unit_node?.eulerAngles.z = CGFloat(robot.position.r.to_rad)
                     #else
-                    unit_node?.worldPosition = SCNVector3(x: robot.location[1], y: robot.location[2], z: robot.location[0])
+                    unit_node?.worldPosition = SCNVector3(x: robot.position.y, y: robot.position.z, z: robot.position.x)
 
-                    unit_node?.eulerAngles.x = robot.rotation[1].to_rad
-                    unit_node?.eulerAngles.y = robot.rotation[2].to_rad
-                    unit_node?.eulerAngles.z = robot.rotation[0].to_rad
+                    unit_node?.eulerAngles.x = robot.position.p.to_rad
+                    unit_node?.eulerAngles.y = robot.position.w.to_rad
+                    unit_node?.eulerAngles.z = robot.position.r.to_rad
                     #endif
                 }
             }
@@ -2406,17 +2407,17 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     
                     // Set tool node position
                     #if os(macOS)
-                    tool_node?.position = SCNVector3(x: CGFloat(tool.location[1]), y: CGFloat(tool.location[2]), z: CGFloat(tool.location[0]))
+                    tool_node?.position = SCNVector3(x: CGFloat(tool.position.y), y: CGFloat(tool.position.z), z: CGFloat(tool.position.x))
                     
-                    tool_node?.eulerAngles.x = CGFloat(tool.rotation[1].to_rad)
-                    tool_node?.eulerAngles.y = CGFloat(tool.rotation[2].to_rad)
-                    tool_node?.eulerAngles.z = CGFloat(tool.rotation[0].to_rad)
+                    tool_node?.eulerAngles.x = CGFloat(tool.position.p.to_rad)
+                    tool_node?.eulerAngles.y = CGFloat(tool.position.w.to_rad)
+                    tool_node?.eulerAngles.z = CGFloat(tool.position.r.to_rad)
                     #else
-                    tool_node?.position = SCNVector3(x: Float(tool.location[1]), y: Float(tool.location[2]), z: Float(tool.location[0]))
+                    tool_node?.position = SCNVector3(x: Float(tool.position.y), y: Float(tool.position.z), z: Float(tool.position.x))
                     
-                    tool_node?.eulerAngles.x = tool.rotation[1].to_rad
-                    tool_node?.eulerAngles.y = tool.rotation[2].to_rad
-                    tool_node?.eulerAngles.z = tool.rotation[0].to_rad
+                    tool_node?.eulerAngles.x = tool.position.p.to_rad
+                    tool_node?.eulerAngles.y = tool.position.w.to_rad
+                    tool_node?.eulerAngles.z = tool.position.r.to_rad
                     #endif
                     
                     if tool.is_attached
@@ -2445,17 +2446,17 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     
                     // Set part node position
                     #if os(macOS)
-                    part_node?.position = SCNVector3(x: CGFloat(part.location[1]), y: CGFloat(part.location[2]), z: CGFloat(part.location[0]))
+                    part_node?.position = SCNVector3(x: CGFloat(part.position.y), y: CGFloat(part.position.z), z: CGFloat(part.position.x))
                     
-                    part_node?.eulerAngles.x = CGFloat(part.rotation[1].to_rad)
-                    part_node?.eulerAngles.y = CGFloat(part.rotation[2].to_rad)
-                    part_node?.eulerAngles.z = CGFloat(part.rotation[0].to_rad)
+                    part_node?.eulerAngles.x = CGFloat(part.position.p.to_rad)
+                    part_node?.eulerAngles.y = CGFloat(part.position.w.to_rad)
+                    part_node?.eulerAngles.z = CGFloat(part.position.r.to_rad)
                     #else
-                    part_node?.position = SCNVector3(x: Float(part.location[1]), y: Float(part.location[2]), z: Float(part.location[0]))
+                    part_node?.position = SCNVector3(x: Float(part.position.y), y: Float(part.position.z), z: Float(part.position.x))
                     
-                    part_node?.eulerAngles.x = part.rotation[1].to_rad
-                    part_node?.eulerAngles.y = part.rotation[2].to_rad
-                    part_node?.eulerAngles.z = part.rotation[0].to_rad
+                    part_node?.eulerAngles.x = part.position.p.to_rad
+                    part_node?.eulerAngles.y = part.position.w.to_rad
+                    part_node?.eulerAngles.z = part.position.r.to_rad
                     #endif
                 }
             }
@@ -2468,52 +2469,6 @@ public enum WorkspaceObjectType: String, Equatable, CaseIterable
     case robot = "Robot"
     case tool = "Tool"
     case part = "Part"
-}
-
-public enum PositionComponents: String, Equatable, CaseIterable
-{
-    case location = "Location"
-    case rotation = "Rotation"
-}
-
-public enum LocationComponents: Equatable, CaseIterable
-{
-    case x
-    case y
-    case z
-    
-    public var info: (text: String, index: Int)
-    {
-        switch self
-        {
-        case .x:
-            return("X: ", 0)
-        case .y:
-            return("Y: ", 1)
-        case .z:
-            return("Z: ", 2)
-        }
-    }
-}
-
-public enum RotationComponents: Equatable, CaseIterable
-{
-    case r
-    case p
-    case w
-    
-    public var info: (text: String, index: Int)
-    {
-        switch self
-        {
-        case .r:
-            return("R: ", 0)
-        case .p:
-            return("P: ", 1)
-        case .w:
-            return("W: ", 2)
-        }
-    }
 }
 
 //MARK: - Structures for workspace preset document handling

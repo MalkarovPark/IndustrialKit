@@ -17,35 +17,14 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
 {
     // MARK: - Parameters
     /**
-     A robot pointer location.
+     A robot cell origin position.
      
-     Array with three coordinates – [*x*, *y*, *z*].
+     Tuple with coordinates – *x*, *y*, *z* and angles – *r*, *p*, *w*.
      */
-    //public var pointer_location: [Float] = [0.0, 0.0, 0.0]
-    
-    /**
-     A robot pointer rotation.
-     
-     Array with three angles – [*r*, *p*, *w*].
-     */
-    //public var pointer_rotation: [Float] = [0.0, 0.0, 0.0]
-    
-    /**
-     A robot cell origin location.
-     
-     Array with three coordinates – [*x*, *y*, *z*].
-     */
-    public var origin_location = [Float](repeating: 0, count: 3)
-    
-    /**
-     A robot cell origin rotation.
-     
-     Array with three angles – [*r*, *p*, *w*].
-     */
-    public var origin_rotation = [Float](repeating: 0, count: 3)
+    public var origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     /// A robot cell box scale.
-    public var space_scale = [Float](repeating: 200, count: 3)
+    public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
     // MARK: - Device handling
     private var moving_task = Task {}
@@ -266,7 +245,8 @@ public class ExternalRobotConnector: RobotConnector
     {
         #if os(macOS)
         // Perform to point moving
-        let origin_position = (origin_location + origin_rotation).map { "\($0)" }
+        let origin_position = ["\(origin_position.x)",  "\(origin_position.y)",  "\(origin_position.z)",
+                               "\(origin_position.r)",  "\(origin_position.p)",  "\(origin_position.w)"]
         let command = ["move_to"] + [point.json_string()] + origin_position
         
         guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: command)
@@ -290,7 +270,7 @@ public class ExternalRobotConnector: RobotConnector
     {
         if let position = external_pointer_position // Update pointer node position by connector
         {
-            model_controller?.update_pointer_position(pos_x: position.x, pos_y: position.y, pos_z: position.z, rot_x: position.r, rot_y: position.p, rot_z: position.w)
+            model_controller?.update_pointer_position((x: position.x, y: position.y, z: position.z, r: position.r, p: position.p, w: position.w))
             
             if let nodes_positions = external_nodes_positions // Update nodes positions by connector (real device)
             {
@@ -298,7 +278,7 @@ public class ExternalRobotConnector: RobotConnector
             }
             else // Update nodes positions by model controller (simulated device)
             {
-                model_controller?.update_nodes(pointer_location: [position.x, position.y, position.z], pointer_rotation: [position.r, position.p, position.w], origin_location: origin_location, origin_rotation: origin_rotation)
+                model_controller?.update_nodes(pointer_position: position, origin_position: origin_position)
             }
         }
     }

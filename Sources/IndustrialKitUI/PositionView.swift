@@ -10,73 +10,67 @@ import IndustrialKit
 
 public struct PositionView: View
 {
-    @Binding public var location: [Float]
-    @Binding public var rotation: [Float]
+    @Binding public var position: (x: Float, y: Float, z: Float,
+                                   r: Float, p: Float, w: Float)
     
-    public init(location: Binding<[Float]>, rotation: Binding<[Float]>)
+    public init(position: Binding<(x: Float, y: Float, z: Float,
+                                   r: Float, p: Float, w: Float)>)
     {
-        self._location = location
-        self._rotation = rotation
+        self._position = position
+    }
+    
+    private func binding(for component: PositionComponents) -> Binding<Float>
+    {
+        switch component
+        {
+        case .x:
+            return Binding(get: { position.x }, set: { position.x = $0 })
+        case .y:
+            return Binding(get: { position.y }, set: { position.y = $0 })
+        case .z:
+            return Binding(get: { position.z }, set: { position.z = $0 })
+            
+        case .r:
+            return Binding(get: { position.r }, set: { position.r = $0 })
+        case .p:
+            return Binding(get: { position.p }, set: { position.p = $0 })
+        case .w:
+            return Binding(get: { position.w }, set: { position.w = $0 })
+        }
     }
     
     public var body: some View
     {
-        ForEach(PositionComponents.allCases, id: \.self)
-        { position_component in
-            GroupBox(label: Text(position_component.rawValue)
+        ForEach(PositionComponents.Group.allCases, id: \.self)
+        { group in
+            GroupBox(label: Text(group.rawValue)
                 .font(.headline))
             {
                 VStack(spacing: 12)
                 {
-                    switch position_component
-                    {
-                    case .location:
-                        ForEach(LocationComponents.allCases, id: \.self)
-                        { location_component in
-                            HStack(spacing: 8)
-                            {
-                                Text(location_component.info.text)
-                                #if os(macOS)
-                                    .frame(width: 20.0)
-                                #else
-                                    .frame(width: 30.0)
-                                #endif
-                                TextField("0", value: $location[location_component.info.index], format: .number)
-                                    .textFieldStyle(.roundedBorder)
-                                #if os(iOS)
-                                    .frame(minWidth: 60)
-                                    .keyboardType(.decimalPad)
-                                #elseif os(visionOS)
-                                    .frame(minWidth: 80)
-                                    .keyboardType(.decimalPad)
-                                #endif
-                                Stepper("Enter", value: $location[location_component.info.index], in: -1000...1000)
-                                    .labelsHidden()
-                            }
-                        }
-                    case .rotation:
-                        ForEach(RotationComponents.allCases, id: \.self)
-                        { rotation_component in
-                            HStack(spacing: 8)
-                            {
-                                Text(rotation_component.info.text)
-                                    #if os(macOS)
-                                        .frame(width: 20.0)
-                                    #else
-                                        .frame(width: 30.0)
-                                    #endif
-                                TextField("0", value: $rotation[rotation_component.info.index], format: .number)
-                                    .textFieldStyle(.roundedBorder)
-                                #if os(iOS)
-                                    .frame(minWidth: 60)
-                                    .keyboardType(.decimalPad)
-                                #elseif os(visionOS)
-                                    .frame(minWidth: 80)
-                                    .keyboardType(.decimalPad)
-                                #endif
-                                Stepper("Enter", value: $rotation[rotation_component.info.index], in: -180...180)
-                                    .labelsHidden()
-                            }
+                    ForEach(PositionComponents.components(for: group), id: \.self)
+                    { component in
+                        HStack(spacing: 8)
+                        {
+                            Text(component.info.text)
+                            #if os(macOS)
+                                .frame(width: 20.0)
+                            #else
+                                .frame(width: 30.0)
+                            #endif
+                            TextField("0", value: binding(for: component), format: .number)
+                                .textFieldStyle(.roundedBorder)
+                            #if os(iOS)
+                                .frame(minWidth: 60)
+                                .keyboardType(.decimalPad)
+                            #elseif os(visionOS)
+                                .frame(minWidth: 80)
+                                .keyboardType(.decimalPad)
+                            #endif
+                            Stepper("Enter",
+                                    value: binding(for: component),
+                                    in: group == .location ? -1000...1000 : -180...180)
+                            .labelsHidden()
                         }
                     }
                 }
@@ -88,9 +82,9 @@ public struct PositionView: View
 
 public struct PositionControl: View
 {
-    @Binding var location: [Float]
-    @Binding var rotation: [Float]
-    @Binding var scale: [Float]
+    @Binding var position: (x: Float, y: Float, z: Float,
+                            r: Float, p: Float, w: Float)
+    @Binding var scale: (x: Float, y: Float, z: Float)
     
     @State private var teach_selection = 0
     @State private var ppv_presented_location = [false, false, false]
@@ -98,11 +92,47 @@ public struct PositionControl: View
     
     private let teach_items: [String] = ["Location", "Rotation"]
     
-    public init(location: Binding<[Float]>, rotation: Binding<[Float]>, scale: Binding<[Float]>)
+    public init(position: Binding<(x: Float, y: Float, z: Float,
+                                   r: Float, p: Float, w: Float)>,
+                scale: Binding<(x: Float, y: Float, z: Float)>)
     {
-        self._location = location
-        self._rotation = rotation
+        self._position = position
         self._scale = scale
+    }
+    
+    private func binding(for component: PositionComponents) -> Binding<Float>
+    {
+        switch component
+        {
+        case .x:
+            return Binding(get: { position.x }, set: { position.x = $0 })
+        case .y:
+            return Binding(get: { position.y }, set: { position.y = $0 })
+        case .z:
+            return Binding(get: { position.z }, set: { position.z = $0 })
+            
+        case .r:
+            return Binding(get: { position.r }, set: { position.r = $0 })
+        case .p:
+            return Binding(get: { position.p }, set: { position.p = $0 })
+        case .w:
+            return Binding(get: { position.w }, set: { position.w = $0 })
+        }
+    }
+    
+    private func scale_limit(for component: PositionComponents) -> Float
+    {
+        switch component
+        {
+        case .x:
+            return scale.x
+        case .y:
+            return scale.y
+        case .z:
+            return scale.z
+        default:
+            return 1.0
+        }
     }
     
     public var body: some View
@@ -115,7 +145,7 @@ public struct PositionControl: View
                 {
                     ForEach(0..<teach_items.count, id: \.self)
                     { index in
-                        Text(self.teach_items[index]).tag(index)
+                        Text(teach_items[index]).tag(index)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -128,61 +158,32 @@ public struct PositionControl: View
                 
                 if teach_selection == 0
                 {
-                    HStack
-                    {
-                        Button(action: { ppv_presented_location[0].toggle() })
+                    ForEach([PositionComponents.x, .y, .z], id: \.self)
+                    { component in
+                        let index = component.info.order
+                        HStack
                         {
-                            Text("X: " + String(format: "%.0f", location[0]))
-                            #if !os(visionOS)
-                                .foregroundColor(Color.accentColor)
-                            #endif
+                            Button(action: { ppv_presented_location[index].toggle() })
+                            {
+                                Text(component.info.text + String(format: "%.0f", binding(for: component).wrappedValue))
+                                #if !os(visionOS)
+                                    .foregroundColor(Color.accentColor)
+                                #endif
+                            }
+                            .buttonStyle(.borderless)
+                            .frame(width: button_width)
+                            .popover(isPresented: $ppv_presented_location[index])
+                            {
+                                PositionParameterView(
+                                    position_parameter_view_presented: $ppv_presented_location[index],
+                                    parameter_value: binding(for: component),
+                                    limit_min: .constant(0),
+                                    limit_max: .constant(scale_limit(for: component))
+                                )
+                            }
+                            Slider(value: binding(for: component), in: 0.0...scale_limit(for: component))
+                                .padding(.trailing)
                         }
-                        .buttonStyle(.borderless)
-                        .frame(width: button_width)
-                        .popover(isPresented: $ppv_presented_location[0])
-                        {
-                            PositionParameterView(position_parameter_view_presented: $ppv_presented_location[0], parameter_value: $location[0], limit_min: .constant(0), limit_max: $scale[0])
-                        }
-                        Slider(value: $location[0], in: 0.0...scale[0])
-                            .padding(.trailing)
-                    }
-                    
-                    HStack
-                    {
-                        Button(action: { ppv_presented_location[1].toggle() })
-                        {
-                            Text("Y: " + String(format: "%.0f", location[1]))
-                            #if !os(visionOS)
-                                .foregroundColor(Color.accentColor)
-                            #endif
-                        }
-                        .buttonStyle(.borderless)
-                        .frame(width: button_width)
-                        .popover(isPresented: $ppv_presented_location[1])
-                        {
-                            PositionParameterView(position_parameter_view_presented: $ppv_presented_location[1], parameter_value: $location[1], limit_min: .constant(0), limit_max: $scale[1])
-                        }
-                        Slider(value: $location[1], in: 0.0...scale[1])
-                            .padding(.trailing)
-                    }
-                    
-                    HStack
-                    {
-                        Button(action: { ppv_presented_location[2].toggle() })
-                        {
-                            Text("Z: " + String(format: "%.0f", location[2]))
-                            #if !os(visionOS)
-                                .foregroundColor(Color.accentColor)
-                            #endif
-                        }
-                        .buttonStyle(.borderless)
-                        .frame(width: button_width)
-                        .popover(isPresented: $ppv_presented_location[2])
-                        {
-                            PositionParameterView(position_parameter_view_presented: $ppv_presented_location[2], parameter_value: $location[2], limit_min: .constant(0), limit_max: $scale[2])
-                        }
-                        Slider(value: $location[2], in: 0.0...scale[2])
-                            .padding(.trailing)
                     }
                     #if os(macOS)
                     .padding(.bottom, 8)
@@ -192,61 +193,32 @@ public struct PositionControl: View
                 }
                 else
                 {
-                    HStack
-                    {
-                        Button(action: { ppv_presented_rotation[0].toggle() })
+                    ForEach([PositionComponents.r, .p, .w], id: \.self)
+                    { component in
+                        let index = component.info.order
+                        HStack
                         {
-                            Text("R: " + String(format: "%.0f", rotation[0]))
-                            #if !os(visionOS)
-                                .foregroundColor(Color.accentColor)
-                            #endif
+                            Button(action: { ppv_presented_rotation[index].toggle() })
+                            {
+                                Text(component.info.text + String(format: "%.0f", binding(for: component).wrappedValue))
+                                #if !os(visionOS)
+                                    .foregroundColor(Color.accentColor)
+                                #endif
+                            }
+                            .buttonStyle(.borderless)
+                            .frame(width: button_width)
+                            .popover(isPresented: $ppv_presented_rotation[index])
+                            {
+                                PositionParameterView(
+                                    position_parameter_view_presented: $ppv_presented_rotation[index],
+                                    parameter_value: binding(for: component),
+                                    limit_min: .constant(-180),
+                                    limit_max: .constant(180)
+                                )
+                            }
+                            Slider(value: binding(for: component), in: -180.0...180)
+                                .padding(.trailing)
                         }
-                        .buttonStyle(.borderless)
-                        .frame(width: button_width)
-                        .popover(isPresented: $ppv_presented_rotation[0])
-                        {
-                            PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[0], parameter_value: $rotation[0], limit_min: .constant(-180), limit_max: .constant(180))
-                        }
-                        Slider(value: $rotation[0], in: -180.0...180)
-                            .padding(.trailing)
-                    }
-                    
-                    HStack
-                    {
-                        Button(action: { ppv_presented_rotation[1].toggle() })
-                        {
-                            Text("P: " + String(format: "%.0f", rotation[1]))
-                            #if !os(visionOS)
-                                .foregroundColor(Color.accentColor)
-                            #endif
-                        }
-                        .buttonStyle(.borderless)
-                        .frame(width: button_width)
-                        .popover(isPresented: $ppv_presented_rotation[1])
-                        {
-                            PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[1], parameter_value: $rotation[1], limit_min: .constant(-180), limit_max: .constant(180))
-                        }
-                        Slider(value: $rotation[1], in: -180.0...180)
-                            .padding(.trailing)
-                    }
-                    
-                    HStack
-                    {
-                        Button(action: { ppv_presented_rotation[2].toggle() })
-                        {
-                            Text("W: " + String(format: "%.0f", rotation[2]))
-                            #if !os(visionOS)
-                                .foregroundColor(Color.accentColor)
-                            #endif
-                        }
-                        .buttonStyle(.borderless)
-                        .frame(width: button_width)
-                        .popover(isPresented: $ppv_presented_rotation[2])
-                        {
-                            PositionParameterView(position_parameter_view_presented: $ppv_presented_rotation[2], parameter_value: $rotation[2], limit_min: .constant(-180), limit_max: .constant(180))
-                        }
-                        Slider(value: $rotation[2], in: -180.0...180)
-                            .padding(.trailing)
                     }
                     #if os(macOS)
                     .padding(.bottom, 8)
@@ -260,16 +232,11 @@ public struct PositionControl: View
     }
 }
 
-#if !os(visionOS)
-let button_width = 64.0
-#else
-let button_width = 96.0
-#endif
-
 struct PositionParameterView: View
 {
     @Binding var position_parameter_view_presented: Bool
     @Binding var parameter_value: Float
+    
     @Binding var limit_min: Float
     @Binding var limit_max: Float
     
@@ -283,6 +250,7 @@ struct PositionParameterView: View
                     parameter_value = 0
                 }
                 // parameter_value = 0
+                
                 position_parameter_view_presented.toggle()
             })
             {
@@ -317,12 +285,61 @@ struct PositionParameterView: View
     }
 }
 
+#if !os(visionOS)
+let button_width = 64.0
+#else
+let button_width = 96.0
+#endif
+
+public enum PositionComponents: Equatable, CaseIterable
+{
+    case x
+    case y
+    case z
+    
+    case r
+    case p
+    case w
+    
+    public enum Group: String, CaseIterable
+    {
+        case location = "Location"
+        case rotation = "Rotation"
+    }
+    
+    public var info: (text: String, group: Group, order: Int)
+    {
+        switch self
+        {
+        case .x:
+            return ("X: ", .location, 0)
+        case .y:
+            return ("Y: ", .location, 1)
+        case .z:
+            return ("Z: ", .location, 2)
+            
+        case .r:
+            return ("R: ", .rotation, 0)
+        case .p:
+            return ("P: ", .rotation, 1)
+        case .w:
+            return ("W: ", .rotation, 2)
+        }
+    }
+    
+    public static func components(for group: Group) -> [PositionComponents]
+    {
+        Self.allCases
+            .filter { $0.info.group == group }
+            .sorted { $0.info.order < $1.info.order }
+    }
+}
+
 struct PositionView_Previews: PreviewProvider
 {
     struct Container: View
     {
-        @State private var location: [Float] = [20, 40, 60]
-        @State private var rotation: [Float] = [0, 90, 0]
+        @State private var position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 20, y: 40, z: 60, r: 0, p: 90, w: 0)
         
         var body: some View
         {
@@ -335,7 +352,7 @@ struct PositionView_Previews: PreviewProvider
                 {
                     HStack(spacing: 16)
                     {
-                        PositionView(location: $location, rotation: $rotation)
+                        PositionView(position: $position)
                     }
                     .frame(width: 256)
                     .padding()
@@ -345,7 +362,7 @@ struct PositionView_Previews: PreviewProvider
                     
                     HStack(spacing: 16)
                     {
-                        PositionControl(location: $location, rotation: $rotation, scale: .constant([100, 100, 100]))
+                        PositionControl(position: $position, scale: .constant((x: 100, y: 100, z: 100)))
                     }
                     .frame(width: 256)
                     .background(.bar)

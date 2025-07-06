@@ -22,9 +22,12 @@ open class RobotModelController: ModelController, @unchecked Sendable
      
      > Pre-transforms the position in space depending on the rotation of the tool coordinate system.
      */
-    public func update_nodes(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
+    public func update_nodes(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
+                             origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
-        update_nodes_positions(pointer_location: origin_transform(pointer_location: pointer_location, origin_rotation: origin_rotation), pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        update_nodes_positions(pointer_position: origin_transform(pointer_position: pointer_position,
+                                                                  origin_position: origin_position),
+                               origin_position: origin_position)
     }
     
     /**
@@ -36,31 +39,19 @@ open class RobotModelController: ModelController, @unchecked Sendable
         - origin_location: The workcell origin location components – *x*, *y*, *z*.
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      */
-    open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
+    open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
+                                     origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
         
     }
     
     // MARK: Pointer
     /**
-     A robot pointer location.
+     A robot pointer position.
      
-     Array with three coordinates – [*x*, *y*, *z*].
+     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
-    public var pointer_location: [Float] = [0.0, 0.0, 0.0]
-    {
-        didSet
-        {
-            update_model()
-        }
-    }
-    
-    /**
-     A robot pointer rotation.
-     
-     Array with three angles – [*r*, *p*, *w*].
-     */
-    public var pointer_rotation: [Float] = [0.0, 0.0, 0.0]
+    public var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     {
         didSet
         {
@@ -79,19 +70,18 @@ open class RobotModelController: ModelController, @unchecked Sendable
      - rot_y: Rotation about the Y-axis, in radians.
      - rot_z: Rotation about the Z-axis, in radians.
      */
-    public func update_pointer_position(pos_x: Float, pos_y: Float, pos_z: Float,
-                                        rot_x: Float, rot_y: Float, rot_z: Float)
+    public func update_pointer_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
-        pointer_node?.position = SCNVector3(pos_y, pos_z, pos_x)
+        pointer_node?.position = SCNVector3(position.y, position.z, position.x)
         
         #if os(macOS)
-        pointer_node?.eulerAngles.x = CGFloat(rot_y.to_rad)
-        pointer_node?.eulerAngles.y = CGFloat(rot_z.to_rad)
-        pointer_node_internal?.eulerAngles.z = CGFloat(rot_x.to_rad)
+        pointer_node?.eulerAngles.x = CGFloat(position.y.to_rad)
+        pointer_node?.eulerAngles.y = CGFloat(position.z.to_rad)
+        pointer_node_internal?.eulerAngles.z = CGFloat(position.x.to_rad)
         #else
-        pointer_node?.eulerAngles.x = rot_y.to_rad
-        pointer_node?.eulerAngles.y = rot_z.to_rad
-        pointer_node_internal?.eulerAngles.z = rot_x.to_rad
+        pointer_node?.eulerAngles.x = position.y.to_rad
+        pointer_node?.eulerAngles.y = position.z.to_rad
+        pointer_node_internal?.eulerAngles.z = position.x.to_rad
         #endif
     }
     
@@ -105,22 +95,9 @@ open class RobotModelController: ModelController, @unchecked Sendable
     /**
      A robot alt pointer location.
      
-     Array with three coordinates – [*x*, *y*, *z*].
+     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
-    public var alt_pointer_location: [Float] = [0.0, 0.0, 0.0]
-    {
-        didSet
-        {
-            update_alt_pointer()
-        }
-    }
-    
-    /**
-     A robot alt pointer rotation.
-     
-     Array with three angles – [*r*, *p*, *w*].
-     */
-    public var alt_pointer_rotation: [Float] = [0.0, 0.0, 0.0]
+    public var alt_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     {
         didSet
         {
@@ -131,8 +108,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
     /// Updates alt pointer position by target point.
     private func update_alt_pointer()
     {
-        update_alt_pointer_position(pos_x: alt_pointer_location[0], pos_y: alt_pointer_location[1], pos_z: alt_pointer_location[2],
-                                rot_x: alt_pointer_rotation[0], rot_y: alt_pointer_rotation[1], rot_z: alt_pointer_rotation[2])
+        update_alt_pointer_position(alt_pointer_position)
     }
     
     /**
@@ -146,19 +122,18 @@ open class RobotModelController: ModelController, @unchecked Sendable
      - rot_y: Rotation about the Y-axis, in radians.
      - rot_z: Rotation about the Z-axis, in radians.
      */
-    private func update_alt_pointer_position(pos_x: Float, pos_y: Float, pos_z: Float,
-                                        rot_x: Float, rot_y: Float, rot_z: Float)
+    private func update_alt_pointer_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
-        alt_pointer_node?.position = SCNVector3(pos_y, pos_z, pos_x)
+        alt_pointer_node?.position = SCNVector3(position.y, position.z, position.x)
         
         #if os(macOS)
-        alt_pointer_node?.eulerAngles.x = CGFloat(rot_y.to_rad)
-        alt_pointer_node?.eulerAngles.y = CGFloat(rot_z.to_rad)
-        alt_pointer_node?.eulerAngles.z = CGFloat(rot_x.to_rad)
+        alt_pointer_node?.eulerAngles.x = CGFloat(position.y.to_rad)
+        alt_pointer_node?.eulerAngles.y = CGFloat(position.z.to_rad)
+        alt_pointer_node?.eulerAngles.z = CGFloat(position.x.to_rad)
         #else
-        alt_pointer_node?.eulerAngles.x = rot_y.to_rad
-        alt_pointer_node?.eulerAngles.y = rot_z.to_rad
-        alt_pointer_node?.eulerAngles.z = rot_x.to_rad
+        alt_pointer_node?.eulerAngles.x = position.y.to_rad
+        alt_pointer_node?.eulerAngles.y = position.z.to_rad
+        alt_pointer_node?.eulerAngles.z = position.x.to_rad
         #endif
     }
     
@@ -173,48 +148,38 @@ open class RobotModelController: ModelController, @unchecked Sendable
         if hidden
         {
             // to demo
-            pointer_location = alt_pointer_location
-            pointer_rotation = alt_pointer_rotation
+            pointer_position = alt_pointer_position
         }
         else
         {
             // to real
-            alt_pointer_location = pointer_location
-            alt_pointer_rotation = pointer_rotation
+            alt_pointer_position = pointer_position
         }
     }
     
     // MARK: Workcell
     /**
-     A robot cell origin location.
+     A robot cell origin position.
      
-     Array with three coordinates – [*x*, *y*, *z*].
+     Tuple with coordinates – *x*, *y*, *z* and angles – *r*, *p*, *w*.
      */
-    public var origin_location = [Float](repeating: 0, count: 3)
-    
-    /**
-     A robot cell origin rotation.
-     
-     Array with three angles – [*r*, *p*, *w*].
-     */
-    public var origin_rotation = [Float](repeating: 0, count: 3)
+    public var origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     /// A robot cell box scale.
-    public var space_scale = [Float](repeating: 200, count: 3)
+    public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
     // MARK: Device
     /// Update robot manipulator parts positions by target point.
     private func update_model()
     {
-        update_pointer_position(pos_x: pointer_location[0], pos_y: pointer_location[1], pos_z: pointer_location[2],
-                                rot_x: pointer_rotation[0], rot_y: pointer_rotation[1], rot_z: pointer_rotation[2])
+        update_pointer_position(pointer_position)
         update_nodes_by_pointer_location()
     }
     
     /// Updates robot nodes by current pointer and origin parameters.
     public func update_nodes_by_pointer_location()
     {
-        update_nodes(pointer_location: pointer_location, pointer_rotation: pointer_rotation, origin_location: origin_location, origin_rotation: origin_rotation)
+        update_nodes(pointer_position: pointer_position, origin_position: origin_position)
     }
     
     /**
@@ -287,16 +252,15 @@ open class RobotModelController: ModelController, @unchecked Sendable
     {
         let parts_count: Int = 1000
         
-        let current_location = pointer_location
-        let current_rotation = pointer_rotation
+        let current_position = pointer_position
         
-        let delta_x: Float = point.x - current_location[0]
-        let delta_y: Float = point.y - current_location[1]
-        let delta_z: Float = point.z - current_location[2]
+        let delta_x: Float = point.x - current_position.x
+        let delta_y: Float = point.y - current_position.y
+        let delta_z: Float = point.z - current_position.z
         
-        let delta_r: Float = point.r - current_rotation[0]
-        let delta_p: Float = point.p - current_rotation[1]
-        let delta_w: Float = point.w - current_rotation[2]
+        let delta_r: Float = point.r - current_position.r
+        let delta_p: Float = point.p - current_position.p
+        let delta_w: Float = point.w - current_position.w
         
         let distance_xyz: Double = sqrt(
             pow(Double(delta_x), 2) +
@@ -331,13 +295,17 @@ open class RobotModelController: ModelController, @unchecked Sendable
         
         for _ in 0..<parts_count
         {
-            pointer_location[0] += step_x
-            pointer_location[1] += step_y
-            pointer_location[2] += step_z
+            var new_position = pointer_position
             
-            pointer_rotation[0] += step_r
-            pointer_rotation[1] += step_p
-            pointer_rotation[2] += step_w
+            new_position.x += step_x
+            new_position.y += step_y
+            new_position.z += step_z
+            
+            new_position.r += step_r
+            new_position.p += step_p
+            new_position.w += step_w
+            
+            pointer_position = new_position
             
             usleep(UInt32(part_time * 1_000_000))
             
@@ -349,8 +317,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
         
         if !canceled
         {
-            pointer_location = [point.x, point.y, point.z]
-            pointer_rotation = [point.r, point.p, point.w]
+            pointer_position = (x: point.x, y: point.y, z: point.z,
+                                r: point.r, p: point.p, w: point.w)
         }
     }
     
@@ -429,7 +397,8 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     public var external_nodes_names = [String]()
     
     // MARK: Modeling
-    override open func update_nodes_positions(pointer_location: [Float], pointer_rotation: [Float], origin_location: [Float], origin_rotation: [Float])
+    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
+                                              origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
         #if os(macOS)
         guard !is_nodes_updating else { return }
@@ -437,8 +406,19 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
         
         DispatchQueue.global(qos: .utility).async
         {
-            send_via_unix_socket(at: "/tmp/\(self.module_name)_robot_controller_socket",
-                                 with: ["update_nodes_positions"] + (pointer_location + pointer_rotation + origin_location + origin_rotation).map { "\($0)" })
+            let pointer_position: [String] =
+            [
+                "\(pointer_position.x)", "\(pointer_position.y)", "\(pointer_position.z)",
+                "\(pointer_position.r)", "\(pointer_position.p)", "\(pointer_position.w)"
+            ]
+
+            let origin_position: [String] =
+            [
+                "\(origin_position.x)",  "\(origin_position.y)",  "\(origin_position.z)",
+                "\(origin_position.r)",  "\(origin_position.p)",  "\(origin_position.w)"
+            ]
+
+            send_via_unix_socket(at:   "/tmp/\(self.module_name)_robot_controller_socket", with: ["update_nodes_positions"] + (pointer_position + origin_position).map { "\($0)" })
             { output in
                 self.apply_nodes_positions(by: output.split(separator: "\n").map { String($0) })
             }

@@ -51,25 +51,20 @@ public func mismatched_name(name: String, names: [String]) -> String
     - pointer_rotation: Input origin rotation components – *r*, *p*, *w*.
  - Returns: Transformed inputed point location components – *x*, *y*, *z*.
 */
-public func origin_transform(pointer_location: [Float], origin_rotation: [Float]) -> [Float]
+public func origin_transform(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
+                             origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) -> (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)
 {
-    let new_x, new_y, new_z: Float
-    if origin_rotation.reduce(0, +) > 0 // If at least one rotation angle of the origin is not equal to zero
+    var new_position = pointer_position
+    
+    if origin_position.r != 0 || origin_position.p != 0 || origin_position.w != 0 // If at least one rotation angle of the origin is not equal to zero
     {
         // Calculate new values for coordinates components by origin rotation angles
-        new_x = pointer_location[0] * cos(origin_rotation[1].to_rad) * cos(origin_rotation[2].to_rad) + pointer_location[2] * sin(origin_rotation[1].to_rad) - pointer_location[1] * sin(origin_rotation[2].to_rad)
-        new_y = pointer_location[1] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[2].to_rad) - pointer_location[2] * sin(origin_rotation[0].to_rad) + pointer_location[0] * sin(origin_rotation[2].to_rad)
-        new_z = pointer_location[2] * cos(origin_rotation[0].to_rad) * cos(origin_rotation[1].to_rad) + pointer_location[1] * sin(origin_rotation[0].to_rad) - pointer_location[0] * sin(origin_rotation[1].to_rad)
-    }
-    else
-    {
-        // Return original values
-        new_x = pointer_location[0]
-        new_y = pointer_location[1]
-        new_z = pointer_location[2]
+        new_position.x = pointer_position.x * cos(origin_position.p.to_rad) * cos(origin_position.w.to_rad) + pointer_position.z * sin(origin_position.p.to_rad) - pointer_position.y * sin(origin_position.w.to_rad)
+        new_position.y = pointer_position.y * cos(origin_position.r.to_rad) * cos(origin_position.w.to_rad) - pointer_position.z * sin(origin_position.r.to_rad) + pointer_position.x * sin(origin_position.w.to_rad)
+        new_position.z = pointer_position.z * cos(origin_position.r.to_rad) * cos(origin_position.p.to_rad) + pointer_position.y * sin(origin_position.r.to_rad) - pointer_position.x * sin(origin_position.p.to_rad)
     }
     
-    return [new_x, new_y, new_z]
+    return new_position
 }
 
 /**
@@ -116,12 +111,16 @@ public func pass_robot_preferences(_ origin_location: Bool, _ origin_rotation: B
 {
     if origin_location
     {
-        to.origin_location = from.origin_location
+        to.origin_position.x = from.origin_position.x
+        to.origin_position.y = from.origin_position.y
+        to.origin_position.z = from.origin_position.z
     }
     
     if origin_rotation
     {
-        to.origin_rotation = from.origin_rotation
+        to.origin_position.r = from.origin_position.r
+        to.origin_position.p = from.origin_position.p
+        to.origin_position.w = from.origin_position.w
     }
     
     if space_scale

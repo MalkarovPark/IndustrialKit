@@ -84,8 +84,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         {
             if !is_placed
             {
-                location = [0, 0, 0]
-                rotation = [0, 0, 0]
+                position = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
                 on_remove()
             }
         }
@@ -97,11 +96,12 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         
     }
     
-    /// Object location components – *x*, *y*, *z*.
-    public var location = [Float](repeating: 0, count: 3)
-    
-    /// Object rotation components – *r*, *p*, *w*.
-    public var rotation = [Float](repeating: 0, count: 3)
+    /**
+     A robot pointer position.
+     
+     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
+     */
+    public var position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     // MARK: - Update functions
     /// Flag indicating whether the update loop is active.
@@ -237,14 +237,15 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         self.module_name = try container.decode(String.self, forKey: .module_name)
         self.is_internal_module = try container.decodeIfPresent(Bool.self, forKey: .is_internal_module) ?? true // self.is_internal_module = try container.decode(Bool.self, forKey: .is_internal_module)
         
-        self.location = try container.decode([Float].self, forKey: .location)
-        self.rotation = try container.decode([Float].self, forKey: .rotation)
+        let location = try container.decode([Float].self, forKey: .location)
+        let rotation = try container.decode([Float].self, forKey: .rotation)
+        self.position = (location[0], location[1], location[2], rotation[0], rotation[1], rotation[2])
+        
         self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
         
         self.update_interval = try container.decodeIfPresent(Double.self, forKey: .update_interval) ?? 0.01
         self.scope_type = try container.decodeIfPresent(ScopeType.self, forKey: .scope_type) ?? .selected
         
-        // color_to_model()
         module_import_by_name(module_name, is_internal: self.is_internal_module)
     }
     
@@ -257,8 +258,9 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         try container.encode(module_name, forKey: .module_name)
         try container.encode(is_internal_module, forKey: .is_internal_module)
         
-        try container.encode(location, forKey: .location)
-        try container.encode(rotation, forKey: .rotation)
+        try container.encode([position.0, position.1, position.2], forKey: .location)
+        try container.encode([position.3, position.4, position.5], forKey: .rotation)
+        
         try container.encode(is_placed, forKey: .is_placed)
         
         try container.encode(update_interval, forKey: .update_interval)
