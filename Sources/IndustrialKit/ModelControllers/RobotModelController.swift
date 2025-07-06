@@ -75,13 +75,13 @@ open class RobotModelController: ModelController, @unchecked Sendable
         pointer_node?.position = SCNVector3(position.y, position.z, position.x)
         
         #if os(macOS)
-        pointer_node?.eulerAngles.x = CGFloat(position.y.to_rad)
-        pointer_node?.eulerAngles.y = CGFloat(position.z.to_rad)
-        pointer_node_internal?.eulerAngles.z = CGFloat(position.x.to_rad)
+        pointer_node?.eulerAngles.x = CGFloat(position.p.to_rad)
+        pointer_node?.eulerAngles.y = CGFloat(position.w.to_rad)
+        pointer_node_internal?.eulerAngles.z = CGFloat(position.r.to_rad)
         #else
-        pointer_node?.eulerAngles.x = position.y.to_rad
-        pointer_node?.eulerAngles.y = position.z.to_rad
-        pointer_node_internal?.eulerAngles.z = position.x.to_rad
+        pointer_node?.eulerAngles.x = position.r.to_rad
+        pointer_node?.eulerAngles.y = position.p.to_rad
+        pointer_node_internal?.eulerAngles.z = position.w.to_rad
         #endif
     }
     
