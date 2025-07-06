@@ -291,6 +291,23 @@ let button_width = 64.0
 let button_width = 96.0
 #endif
 
+///Sendable struct for onChange handling.
+public struct PositionSnapshot: Equatable
+{
+    let x: Float, y: Float, z: Float, r: Float, p: Float, w: Float
+    
+    init(_ tuple: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    {
+        self.x = tuple.x
+        self.y = tuple.y
+        self.z = tuple.z
+        
+        self.r = tuple.r
+        self.p = tuple.p
+        self.w = tuple.w
+    }
+}
+
 public enum PositionComponents: Equatable, CaseIterable
 {
     case x
