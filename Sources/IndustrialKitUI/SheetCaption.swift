@@ -12,18 +12,31 @@ public struct SheetCaption: ViewModifier
     @Binding var is_presented: Bool
     
     let label: String
+    let with_spacing: Bool
     
-    public init(is_presented: Binding<Bool>, label: String = String())
+    public init(is_presented: Binding<Bool>, label: String = String(), caption_spacing: Bool = true)
     {
         self._is_presented = is_presented
         self.label = label
+        self.with_spacing = caption_spacing
     }
     
     public func body(content: Content) -> some View
     {
         ZStack(alignment: .top)//(spacing: 0)
         {
-            content
+            if with_spacing
+            {
+                VStack(spacing: 0)
+                {
+                    Spacer(minLength: 68)
+                    content
+                }
+            }
+            else
+            {
+                content
+            }
             
             ZStack
             {
