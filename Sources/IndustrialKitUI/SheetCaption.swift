@@ -21,50 +21,88 @@ public struct SheetCaption: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        VStack(spacing: 0)
+        ZStack(alignment: .top)//(spacing: 0)
         {
+            content
+            
             ZStack
             {
                 HStack(alignment: .center)
                 {
                     Text(label)
                         .padding(0)
+                        .font(.title3)
                     #if os(visionOS)
                         .font(.title2)
                         .padding(.vertical)
                     #endif
                 }
+                .padding(.horizontal, 8)
+                .padding(8)
+                .glassEffect()
                 
                 HStack(spacing: 0)
                 {
                     Button(action: { is_presented = false })
                     {
                         Image(systemName: "xmark")
+                            .imageScale(.large)
+                        #if os(macOS)
+                            .frame(width: 16, height: 16)
+                        #else
+                            .frame(width: 24, height: 24)
+                        #endif
                     }
                     .keyboardShortcut(.cancelAction)
                     #if !os(visionOS)
-                    .buttonStyle(.borderless)
                     .controlSize(.extraLarge)
                     #else
                     .buttonBorderShape(.circle)
                     .buttonStyle(.bordered)
                     #endif
+                    .buttonBorderShape(.circle)
+                    .buttonStyle(.glass)
                     .padding()
                     
                     Spacer()
                 }
             }
-            
-            #if !os(visionOS)
-            Divider()
-            #endif
-            
-            content
         }
+        /*content
+            .navigationTitle(label)
+            .toolbar
+            {
+                ToolbarItem(placement: .cancellationAction)
+                {
+                    Button("Dismiss", systemImage: "xmark")
+                    {
+                        is_presented = false
+                    }
+                }
+            }*/
         #if os(macOS) || os(visionOS)
         .fitted()
         #endif
     }
+}
+
+#Preview
+{
+    ZStack
+    {
+        Rectangle()
+            .foregroundStyle(.white)
+            .frame(width: 320, height: 240)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .shadow(color: .black.opacity(0.25), radius: 16)
+        
+        Rectangle()
+            .foregroundStyle(.mint.opacity(0.25))
+            .modifier(SheetCaption(is_presented: .constant(true), label: "Label"))
+            .frame(width: 320, height: 240)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+    .padding(32)
 }
 
 #Preview
@@ -79,7 +117,9 @@ public struct SheetCaption: ViewModifier
         }
         .sheet(isPresented: $is_presented)
         {
-            EmptyView()
+            //EmptyView()
+            Rectangle()
+                .foregroundStyle(.mint.opacity(0.25))
                 .frame(width: 320, height: 240)
                 .modifier(SheetCaption(is_presented: $is_presented, label: "Label"))
         }

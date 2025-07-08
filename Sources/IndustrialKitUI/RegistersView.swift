@@ -16,17 +16,19 @@ public struct RegistersView: View
     
     private let numbers: [Int]
     
+    private let top_spacing: CGFloat
     private let bottom_spacing: CGFloat
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: register_card_maximum, maximum: register_card_maximum), spacing: 0)]
     
-    public init(registers: Binding<[Float]>, colors: [Color], bottom_spacing: CGFloat = 0)
+    public init(registers: Binding<[Float]>, colors: [Color], top_spacing: CGFloat = 0, bottom_spacing: CGFloat = 0)
     {
         self._registers = registers
         self.numbers = (0...registers.count - 1).map { $0 }
         
         self.colors = colors
         
+        self.top_spacing = top_spacing
         self.bottom_spacing = bottom_spacing
     }
     
@@ -37,6 +39,7 @@ public struct RegistersView: View
         
         self.colors = [Color](repeating: .accentColor, count: numbers.count)
         
+        self.top_spacing = 0
         self.bottom_spacing = 0
     }
     
@@ -44,6 +47,11 @@ public struct RegistersView: View
     {
         ScrollView
         {
+            if top_spacing > 0
+            {
+                Spacer(minLength: top_spacing)
+            }
+            
             LazyVGrid(columns: columns, spacing: register_card_spacing)
             {
                 ForEach(numbers, id: \.self)
@@ -57,11 +65,6 @@ public struct RegistersView: View
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
                 }
-                
-                if bottom_spacing > 0
-                {
-                    Spacer(minLength: bottom_spacing)
-                }
             }
             .padding()
             #if os(macOS)
@@ -69,6 +72,11 @@ public struct RegistersView: View
             #else
             .padding(.vertical)
             #endif
+            
+            if bottom_spacing > 0
+            {
+                Spacer(minLength: bottom_spacing)
+            }
         }
     }
 }
@@ -323,63 +331,69 @@ public struct RegistersDataView: View
     {
         VStack(spacing: 0)
         {
-            RegistersView(registers: $workspace.registers, colors: registers_colors, bottom_spacing: 40)
+            RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: 48, bottom_spacing: 48)
                 .overlay(alignment: .bottom)
                 {
-                    HStack(spacing: 0)
+                    GlassEffectContainer
                     {
-                        Button(role: .destructive, action: clear_registers)
+                        HStack(spacing: 0)
                         {
-                            Image(systemName: "eraser")
-                                .frame(width: 16, height: 16)
-                                .padding()
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        
-                        Divider()
-                        
-                        Button(action: save_registers)
-                        {
-                            Image(systemName: "arrow.down.doc")
-                                .frame(width: 16, height: 16)
-                                .padding()
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        
-                        Divider()
-                        
-                        Button(action: { is_registers_count_presented = true })
-                        {
-                            Image(systemName: "square.grid.2x2")
-                                .frame(width: 16, height: 16)
-                                .padding()
-                        }
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .foregroundColor(.black)
-                        #endif
-                        .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
-                        {
-                            RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)
+                            Button(role: .destructive, action: clear_registers)
                             {
-                                save_registers()
+                                Image(systemName: "eraser")
+                                    .imageScale(.large)
+                                #if os(macOS)
+                                    .frame(width: 16, height: 16)
+                                #else
+                                    .frame(width: 24, height: 24)
+                                #endif
+                                    .padding(8)
                             }
-                            #if os(iOS)
-                            .presentationDetents([.height(96)])
-                            #endif
+                            .buttonBorderShape(.circle)
+                            .buttonStyle(.glass)
+                            .padding(.trailing)
+                            
+                            Button(action: save_registers)
+                            {
+                                Image(systemName: "arrow.down.doc")
+                                    .imageScale(.large)
+                                #if os(macOS)
+                                    .frame(width: 16, height: 16)
+                                #else
+                                    .frame(width: 24, height: 24)
+                                #endif
+                                    .padding(8)
+                            }
+                            .buttonBorderShape(.circle)
+                            .buttonStyle(.glass)
+                            .padding(.trailing)
+                            
+                            Button(action: { is_registers_count_presented = true })
+                            {
+                                Image(systemName: "square.grid.2x2")
+                                    .imageScale(.large)
+                                #if os(macOS)
+                                    .frame(width: 16, height: 16)
+                                #else
+                                    .frame(width: 24, height: 24)
+                                #endif
+                                    .padding(8)
+                            }
+                            .buttonBorderShape(.circle)
+                            .buttonStyle(.glass)
+                            .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
+                            {
+                                RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)
+                                {
+                                    save_registers()
+                                }
+                                #if os(iOS)
+                                .presentationDetents([.height(96)])
+                                #endif
+                            }
                         }
+                        .padding()
                     }
-                    .background(.bar)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .shadow(radius: 4)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding()
                 }
         }
         .controlSize(.large)
@@ -420,7 +434,7 @@ private struct RegistersCountView: View
     
     var body: some View
     {
-        HStack(spacing: 8)
+        HStack(spacing: 0)
         {
             Button(action: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
@@ -433,11 +447,11 @@ private struct RegistersCountView: View
                 Image(systemName: "arrow.counterclockwise")
             }
             .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
             #if os(macOS)
             .foregroundColor(Color.white)
-            #else
-            .padding(.leading, 8)
             #endif
+            .padding(.trailing, 10)
             
             TextField("\(Workspace.default_registers_count)", value: $registers_count, format: .number)
                 .textFieldStyle(.roundedBorder)
@@ -450,19 +464,17 @@ private struct RegistersCountView: View
             #else
                 .frame(width: 128)
             #endif
+                .padding(.trailing, 8)
             
             Stepper("Enter", value: $registers_count, in: 1...1000)
                 .labelsHidden()
-            #if os(iOS) || os(visionOS)
-                .padding(.trailing, 8)
-            #endif
         }
         /*.onChange(of: registers_count)
         { _, _ in
             update_count()
             additive_func()
         }*/
-        .padding(8)
+        .padding(10)
         .controlSize(.regular)
     }
     
@@ -602,8 +614,8 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
                     .frame(width: 420, height: 480)
                     .environmentObject(Workspace())
                     .background(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .shadow(radius: 8)
+                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    .shadow(color: .black.opacity(0.25), radius: 16)
                     .padding(32)
             }
         }
