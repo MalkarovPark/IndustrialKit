@@ -12,24 +12,24 @@ public struct SheetCaption: ViewModifier
     @Binding var is_presented: Bool
     
     let label: String
-    let with_spacing: Bool
+    let plain: Bool
     
-    public init(is_presented: Binding<Bool>, label: String = String(), caption_spacing: Bool = true)
+    public init(is_presented: Binding<Bool>, label: String = String(), plain: Bool = true)
     {
         self._is_presented = is_presented
         self.label = label
-        self.with_spacing = caption_spacing
+        self.plain = plain
     }
     
     public func body(content: Content) -> some View
     {
         ZStack(alignment: .top)//(spacing: 0)
         {
-            if with_spacing
+            if plain
             {
                 VStack(spacing: 0)
                 {
-                    Spacer(minLength: 68)
+                    Spacer(minLength: 68) //Spacer(minLength: 48)
                     content
                 }
             }
@@ -40,19 +40,37 @@ public struct SheetCaption: ViewModifier
             
             ZStack
             {
-                HStack(alignment: .center)
+                if !plain
                 {
-                    Text(label)
-                        .padding(0)
-                        .font(.title3)
-                    #if os(visionOS)
-                        .font(.title2)
-                        .padding(.vertical)
-                    #endif
+                    HStack(alignment: .center)
+                    {
+                        Text(label)
+                            .padding(0)
+                            .font(.title3)
+                        #if os(visionOS)
+                            .font(.title2)
+                            .padding(.vertical)
+                        #endif
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(8)
+                    .glassEffect()
                 }
-                .padding(.horizontal, 8)
-                .padding(8)
-                .glassEffect()
+                else
+                {
+                    HStack(alignment: .center)
+                    {
+                        Text(label)
+                            .padding(0)
+                            .font(.title3)
+                        #if os(visionOS)
+                            .font(.title2)
+                            .padding(.vertical)
+                        #endif
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(8)
+                }
                 
                 HStack(spacing: 0)
                 {
@@ -76,6 +94,53 @@ public struct SheetCaption: ViewModifier
                     .buttonBorderShape(.circle)
                     .buttonStyle(.glass)
                     .padding()
+                    
+                    /*if !with_spacing
+                    {
+                        Button(action: { is_presented = false })
+                        {
+                            Image(systemName: "xmark")
+                                .imageScale(.large)
+                            #if os(macOS)
+                                .frame(width: 16, height: 16)
+                            #else
+                                .frame(width: 24, height: 24)
+                            #endif
+                        }
+                        .keyboardShortcut(.cancelAction)
+                        #if !os(visionOS)
+                        .controlSize(.extraLarge)
+                        #else
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.bordered)
+                        #endif
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glass)
+                        .padding()
+                    }
+                    else
+                    {
+                        Button(action: { is_presented = false })
+                        {
+                            Image(systemName: "xmark")
+                                .imageScale(.large)
+                            #if os(macOS)
+                                .frame(width: 16, height: 16)
+                            #else
+                                .frame(width: 24, height: 24)
+                            #endif
+                        }
+                        .keyboardShortcut(.cancelAction)
+                        #if !os(visionOS)
+                        .controlSize(.extraLarge)
+                        #else
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.bordered)
+                        #endif
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.borderless)
+                        .padding()
+                    }*/
                     
                     Spacer()
                 }
@@ -120,6 +185,25 @@ public struct SheetCaption: ViewModifier
 
 #Preview
 {
+    ZStack
+    {
+        Rectangle()
+            .foregroundStyle(.white)
+            .frame(width: 320, height: 240)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .shadow(color: .black.opacity(0.25), radius: 16)
+        
+        Rectangle()
+            .foregroundStyle(.mint.opacity(0.25))
+            .modifier(SheetCaption(is_presented: .constant(true), label: "Label", plain: false))
+            .frame(width: 320, height: 240)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+    .padding(32)
+}
+
+#Preview
+{
     @Previewable @State var is_presented: Bool = false
     
     VStack()
@@ -130,7 +214,6 @@ public struct SheetCaption: ViewModifier
         }
         .sheet(isPresented: $is_presented)
         {
-            //EmptyView()
             Rectangle()
                 .foregroundStyle(.mint.opacity(0.25))
                 .frame(width: 320, height: 240)

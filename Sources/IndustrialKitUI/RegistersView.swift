@@ -397,7 +397,7 @@ public struct RegistersDataView: View
                 }
         }
         .controlSize(.large)
-        .modifier(SheetCaption(is_presented: $is_presented, label: "Registers", caption_spacing: false))
+        .modifier(SheetCaption(is_presented: $is_presented, label: "Registers", plain: false))
     }
     
     private func clear_registers()
