@@ -78,18 +78,11 @@ public struct SheetCaption: ViewModifier
                     {
                         Image(systemName: "xmark")
                             .imageScale(.large)
-                        #if os(macOS)
                             .frame(width: 16, height: 16)
-                        #else
-                            .frame(width: 24, height: 24)
-                        #endif
                     }
                     .keyboardShortcut(.cancelAction)
                     #if !os(visionOS)
                     .controlSize(.extraLarge)
-                    #else
-                    .buttonBorderShape(.circle)
-                    .buttonStyle(.bordered)
                     #endif
                     .buttonBorderShape(.circle)
                     .buttonStyle(.glass)
