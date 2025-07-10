@@ -87,6 +87,9 @@ public struct SheetCaption: ViewModifier
                     .buttonBorderShape(.circle)
                     .buttonStyle(.glass)
                     .padding(8)
+                    #if !os(macOS)
+                    .padding(.top, 4)
+                    #endif
                     
                     Spacer()
                 }
