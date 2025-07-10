@@ -29,7 +29,7 @@ public struct SheetCaption: ViewModifier
             {
                 VStack(spacing: 0)
                 {
-                    Spacer(minLength: 68) //Spacer(minLength: 48)
+                    Spacer(minLength: 52) //Spacer(minLength: 48)
                     content
                 }
             }
@@ -86,54 +86,7 @@ public struct SheetCaption: ViewModifier
                     #endif
                     .buttonBorderShape(.circle)
                     .buttonStyle(.glass)
-                    .padding()
-                    
-                    /*if !with_spacing
-                    {
-                        Button(action: { is_presented = false })
-                        {
-                            Image(systemName: "xmark")
-                                .imageScale(.large)
-                            #if os(macOS)
-                                .frame(width: 16, height: 16)
-                            #else
-                                .frame(width: 24, height: 24)
-                            #endif
-                        }
-                        .keyboardShortcut(.cancelAction)
-                        #if !os(visionOS)
-                        .controlSize(.extraLarge)
-                        #else
-                        .buttonBorderShape(.circle)
-                        .buttonStyle(.bordered)
-                        #endif
-                        .buttonBorderShape(.circle)
-                        .buttonStyle(.glass)
-                        .padding()
-                    }
-                    else
-                    {
-                        Button(action: { is_presented = false })
-                        {
-                            Image(systemName: "xmark")
-                                .imageScale(.large)
-                            #if os(macOS)
-                                .frame(width: 16, height: 16)
-                            #else
-                                .frame(width: 24, height: 24)
-                            #endif
-                        }
-                        .keyboardShortcut(.cancelAction)
-                        #if !os(visionOS)
-                        .controlSize(.extraLarge)
-                        #else
-                        .buttonBorderShape(.circle)
-                        .buttonStyle(.bordered)
-                        #endif
-                        .buttonBorderShape(.circle)
-                        .buttonStyle(.borderless)
-                        .padding()
-                    }*/
+                    .padding(8)
                     
                     Spacer()
                 }

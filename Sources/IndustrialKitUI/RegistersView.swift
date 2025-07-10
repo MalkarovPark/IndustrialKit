@@ -372,11 +372,7 @@ public struct RegistersDataView: View
                             {
                                 Image(systemName: "square.grid.2x2")
                                     .imageScale(.large)
-                                #if os(macOS)
                                     .frame(width: 16, height: 16)
-                                #else
-                                    .frame(width: 24, height: 24)
-                                #endif
                                     .padding(8)
                             }
                             .buttonBorderShape(.circle)
