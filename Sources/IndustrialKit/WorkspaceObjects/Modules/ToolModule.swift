@@ -32,10 +32,10 @@ open class ToolModule: IndustrialModule
     {
         super.init(name: name, description: description)
         
-        self.codes = operation_codes
-        
         self.node = node
         self.model_controller = model_controller
+        
+        self.codes = operation_codes
         
         self.connector = connector
     }
@@ -68,9 +68,6 @@ open class ToolModule: IndustrialModule
     /// A connector of the tool model.
     public var connector = ToolConnector()
     
-    /// Operation codes of the tool model.
-    public var codes = [OperationCodeInfo]()
-    
     /**
      A sequence of nodes names nested within the main node.
         
@@ -84,6 +81,9 @@ open class ToolModule: IndustrialModule
      > Used by connector.
      */
     @Published public var connection_parameters = [ConnectionParameter]()
+    
+    /// Operation codes of the tool model.
+    public var codes = [OperationCodeInfo]()
     
     // MARK: - Import functions
     open override var package_url: URL
@@ -256,20 +256,25 @@ open class ToolModule: IndustrialModule
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
-        case operation_codes
-        
         case nodes_names
         case connection_parameters
+        
+        case operation_codes
+        
+        // Linked
+        case linked_model_module_name
+        case linked_connector_module_name
+        case linked_controller_module_name
     }
     
     public required init(from decoder: any Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
-        
         self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
         self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
+        
+        self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
         
         try super.init(from: decoder)
     }

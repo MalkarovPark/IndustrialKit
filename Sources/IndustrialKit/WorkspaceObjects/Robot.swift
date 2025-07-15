@@ -59,7 +59,7 @@ public class Robot: WorkspaceObject
         set_default_cell_parameters()
     }
     
-    /// Inits part by name and part module.
+    /// Inits robot by name and part module.
     public init(name: String, module: RobotModule)
     {
         super.init(name: name)
@@ -98,6 +98,8 @@ public class Robot: WorkspaceObject
         
         node = module.node.clone()
         
+        
+        
         if !(module.model_controller is ExternalRobotModelController)
         {
             model_controller = module.model_controller.copy() as! RobotModelController
@@ -120,6 +122,8 @@ public class Robot: WorkspaceObject
         // connector = module.connector.copy() as! RobotConnector
         
         apply_statistics_flags()
+        
+        origin_shift = module.origin_shift
     }
     
     /// Imported internal robot modules.
@@ -860,6 +864,9 @@ public class Robot: WorkspaceObject
     /// A robot cell box scale.
     public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
+    /// A robot cell box default shift.
+    public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
+    
     /// A modified node reference.
     private var modified_node = SCNNode()
     
@@ -871,21 +878,19 @@ public class Robot: WorkspaceObject
     {
         sync_model_controller_parameters()
         
-        let vertical_length = model_controller.nodes["base"]?.position.y
-        
         // MARK: Place workcell box
         #if os(macOS)
-        space_node?.position.x = CGFloat(origin_position.y)
-        space_node?.position.y = CGFloat(origin_position.z) + (vertical_length ?? 0) // Add vertical base length
-        space_node?.position.z = CGFloat(origin_position.x)
+        space_node?.position.x = CGFloat(origin_position.y + origin_shift.y)
+        space_node?.position.y = CGFloat(origin_position.z + origin_shift.z)
+        space_node?.position.z = CGFloat(origin_position.x + origin_shift.x)
         
         space_node?.eulerAngles.x = CGFloat(origin_position.p.to_rad)
         space_node?.eulerAngles.y = CGFloat(origin_position.w.to_rad)
         space_node?.eulerAngles.z = CGFloat(origin_position.r.to_rad)
         #else
-        space_node?.position.x = Float(origin_position.y)
-        space_node?.position.y = Float(origin_position.z + (vertical_length ?? 0))
-        space_node?.position.z = Float(origin_position.x)
+        space_node?.position.x = Float(origin_position.y) + default_space_shift.y
+        space_node?.position.y = Float(origin_position.z) + default_space_shift.z
+        space_node?.position.z = Float(origin_position.x) + default_space_shift.x
         
         space_node?.eulerAngles.x = origin_position.p.to_rad
         space_node?.eulerAngles.y = origin_position.w.to_rad
@@ -895,11 +900,11 @@ public class Robot: WorkspaceObject
         // MARK: Place camera
         #if os(macOS)
         camera_node?.position.x += CGFloat(origin_position.y)
-        camera_node?.position.y += CGFloat(origin_position.z) + (vertical_length ?? 0)
+        camera_node?.position.y += CGFloat(origin_position.z)// + (vertical_length ?? 0)
         camera_node?.position.z += CGFloat(origin_position.x)
         #else
         camera_node?.position.x += Float(origin_position.y)
-        camera_node?.position.y += Float(origin_position.z + (vertical_length ?? 0))
+        camera_node?.position.y += Float(origin_position.z)// + (vertical_length ?? 0))
         camera_node?.position.z += Float(origin_position.x)
         #endif
     }
@@ -1253,14 +1258,14 @@ public class Robot: WorkspaceObject
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode([origin_position.0, origin_position.1, origin_position.2], forKey: .origin_location)
-        try container.encode([origin_position.3, origin_position.4, origin_position.5], forKey: .origin_rotation)
-        try container.encode([space_scale.0, space_scale.1, space_scale.2], forKey: .space_scale)
+        try container.encode([origin_position.x, origin_position.y, origin_position.z], forKey: .origin_location)
+        try container.encode([origin_position.r, origin_position.p, origin_position.w], forKey: .origin_rotation)
+        try container.encode([space_scale.x, space_scale.y, space_scale.z], forKey: .space_scale)
 
         if let pointer = default_pointer_position
         {
-            try container.encode([pointer.0, pointer.1, pointer.2], forKey: .default_pointer_location)
-            try container.encode([pointer.3, pointer.4, pointer.5], forKey: .default_pointer_rotation)
+            try container.encode([pointer.x, pointer.y, pointer.z], forKey: .default_pointer_location)
+            try container.encode([pointer.r, pointer.p, pointer.w], forKey: .default_pointer_rotation)
         }
         
         try container.encode(demo, forKey: .demo)

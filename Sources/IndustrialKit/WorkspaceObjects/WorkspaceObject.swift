@@ -258,8 +258,8 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         try container.encode(module_name, forKey: .module_name)
         try container.encode(is_internal_module, forKey: .is_internal_module)
         
-        try container.encode([position.0, position.1, position.2], forKey: .location)
-        try container.encode([position.3, position.4, position.5], forKey: .rotation)
+        try container.encode([position.x, position.y, position.z], forKey: .location)
+        try container.encode([position.r, position.p, position.w], forKey: .rotation)
         
         try container.encode(is_placed, forKey: .is_placed)
         

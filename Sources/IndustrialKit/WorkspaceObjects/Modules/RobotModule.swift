@@ -24,6 +24,8 @@ open class RobotModule: IndustrialModule
         
         node: SCNNode,
         
+        origin_shift: (x: Float, y: Float, z: Float),
+        
         model_controller: RobotModelController,        
         connector: RobotConnector
     )
@@ -32,6 +34,8 @@ open class RobotModule: IndustrialModule
         
         self.node = node
         self.model_controller = model_controller
+        
+        self.origin_shift = origin_shift
         
         self.connector = connector
     }
@@ -76,6 +80,9 @@ open class RobotModule: IndustrialModule
      > Used by connector.
      */
     @Published public var connection_parameters = [ConnectionParameter]()
+    
+    /// A robot cell box default shift.
+    public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
     
     // MARK: - Import functions
     open override var package_url: URL
@@ -232,6 +239,8 @@ open class RobotModule: IndustrialModule
         case nodes_names
         case connection_parameters
         
+        case origin_shift
+        
         // Linked
         case linked_model_module_name
         case linked_connector_module_name
@@ -245,6 +254,13 @@ open class RobotModule: IndustrialModule
         self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
         self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
         
+        let location = try container.decode([Float].self, forKey: .origin_shift)
+        
+        if let origin_shift = try container.decodeIfPresent([Float].self, forKey: .origin_shift)
+        {
+            self.origin_shift = (origin_shift[0], origin_shift[1], origin_shift[2])
+        }
+        
         try super.init(from: decoder)
     }
     
@@ -254,6 +270,8 @@ open class RobotModule: IndustrialModule
         
         try container.encode(nodes_names, forKey: .nodes_names)
         try container.encode(connection_parameters, forKey: .connection_parameters)
+        
+        try container.encode([origin_shift.x, origin_shift.y, origin_shift.z], forKey: .origin_shift)
         
         try super.encode(to: encoder)
     }
