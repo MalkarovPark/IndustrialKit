@@ -98,8 +98,6 @@ public class Robot: WorkspaceObject
         
         node = module.node.clone()
         
-        
-        
         if !(module.model_controller is ExternalRobotModelController)
         {
             model_controller = module.model_controller.copy() as! RobotModelController
@@ -863,6 +861,12 @@ public class Robot: WorkspaceObject
     
     /// A robot cell box scale.
     public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
+    {
+        didSet
+        {
+            update_space_scale()
+        }
+    }
     
     /// A robot cell box default shift.
     public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
