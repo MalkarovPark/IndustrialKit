@@ -16,7 +16,7 @@ public struct SpaceOriginView: View
     
     @State private var editor_selection = 0
     
-    public init(robot: Binding<Robot>, on_update: @escaping () -> ())
+    public init(robot: Binding<Robot>, on_update: @escaping () -> () = {})
     {
         self._robot = robot
         self.on_update = on_update
