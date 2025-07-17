@@ -74,7 +74,7 @@ public struct PositionView: View
                         }
                     }
                 }
-                .padding(8.0)
+                .padding(8)
             }
         }
     }

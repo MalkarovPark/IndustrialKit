@@ -205,9 +205,9 @@ public struct SpaceOriginView: View
 }
 
 #if !os(visionOS)
-let label_width = 20.0
+private let label_width = 20.0
 #else
-let label_width = 26.0
+private let label_width = 26.0
 #endif
 
 public struct ScaleSnapshot: Equatable

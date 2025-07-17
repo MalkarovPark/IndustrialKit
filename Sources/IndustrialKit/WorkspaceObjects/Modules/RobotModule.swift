@@ -160,6 +160,11 @@ open class RobotModule: IndustrialModule
         return SCNNode()
     }
     
+    public var external_origin_shift: (x: Float, y: Float, z: Float)
+    {
+        return external_module_info?.origin_shift ?? (x: 0, y: 0, z: 0)
+    }
+    
     // MARK: - Linked components init
     open override var default_linked_components: [String: String]
     {
@@ -184,6 +189,19 @@ open class RobotModule: IndustrialModule
         else
         {
             node = external_node
+        }
+        
+        // Set origin shift from internal module
+        if let linked_name = linked_components["Shift"]
+        {
+            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
+            {
+                origin_shift = Robot.internal_modules[index].origin_shift
+            }
+        }
+        else
+        {
+            origin_shift = external_origin_shift
         }
         
         // Set contoller
