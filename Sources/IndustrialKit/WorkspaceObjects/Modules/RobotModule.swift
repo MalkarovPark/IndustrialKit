@@ -254,7 +254,7 @@ open class RobotModule: IndustrialModule
         self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
         self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
         
-        let location = try container.decode([Float].self, forKey: .origin_shift)
+        //let location = try container.decode([Float].self, forKey: .origin_shift)
         
         if let origin_shift = try container.decodeIfPresent([Float].self, forKey: .origin_shift)
         {

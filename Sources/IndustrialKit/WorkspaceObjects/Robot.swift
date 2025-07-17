@@ -870,6 +870,12 @@ public class Robot: WorkspaceObject
     
     /// A robot cell box default shift.
     public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
+    {
+        didSet
+        {
+            robot_location_place()
+        }
+    }
     
     /// A modified node reference.
     private var modified_node = SCNNode()
