@@ -392,7 +392,7 @@ public struct RegistersDataView: View
                     }
                 }
         }
-        .controlSize(.large)
+        .controlSize(.regular)
         .modifier(SheetCaption(is_presented: $is_presented, label: "Registers", plain: false))
     }
     

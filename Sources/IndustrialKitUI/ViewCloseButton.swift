@@ -26,18 +26,14 @@ public struct ViewCloseButton: ViewModifier
                     Image(systemName: "xmark")
                 }
                 .keyboardShortcut(.cancelAction)
-                #if !os(iOS)
-                .buttonStyle(.bordered)
-                #else
-                // .foregroundStyle(.primary)
-                .modifier(ButtonBorderer())
-                #endif
-                #if os(visionOS)
                 .buttonBorderShape(.circle)
-                #endif
-                .padding()
-                #if os(visionOS)
+                .buttonStyle(.glass)
                 .padding(8)
+                #if !os(macOS)
+                .padding(.top, 4)
+                #endif
+                #if !os(visionOS)
+                .controlSize(.extraLarge)
                 #endif
             }
     }
