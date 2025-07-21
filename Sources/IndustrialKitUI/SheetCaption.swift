@@ -54,7 +54,7 @@ public struct SheetCaption: ViewModifier
                     }
                     .padding(.horizontal, 8)
                     .padding(8)
-                    .glassEffect()
+                    //.glassEffect()
                 }
                 else
                 {
@@ -92,6 +92,15 @@ public struct SheetCaption: ViewModifier
                     #endif
                     
                     Spacer()
+                }
+            }
+            .background
+            {
+                if !plain
+                {
+                    Rectangle()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .foregroundStyle(.ultraThinMaterial)
                 }
             }
         }
