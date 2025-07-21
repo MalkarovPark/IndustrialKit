@@ -898,9 +898,9 @@ public class Robot: WorkspaceObject
         space_node?.eulerAngles.y = CGFloat(origin_position.w.to_rad)
         space_node?.eulerAngles.z = CGFloat(origin_position.r.to_rad)
         #else
-        space_node?.position.x = Float(origin_position.y) + default_space_shift.y
-        space_node?.position.y = Float(origin_position.z) + default_space_shift.z
-        space_node?.position.z = Float(origin_position.x) + default_space_shift.x
+        space_node?.position.x = Float(origin_position.y) + origin_shift.y
+        space_node?.position.y = Float(origin_position.z) + origin_shift.z
+        space_node?.position.z = Float(origin_position.x) + origin_shift.x
         
         space_node?.eulerAngles.x = origin_position.p.to_rad
         space_node?.eulerAngles.y = origin_position.w.to_rad
@@ -910,11 +910,11 @@ public class Robot: WorkspaceObject
         // MARK: Place camera
         #if os(macOS)
         camera_node?.position.x += CGFloat(origin_position.y)
-        camera_node?.position.y += CGFloat(origin_position.z)// + (vertical_length ?? 0)
+        camera_node?.position.y += CGFloat(origin_position.z)
         camera_node?.position.z += CGFloat(origin_position.x)
         #else
         camera_node?.position.x += Float(origin_position.y)
-        camera_node?.position.y += Float(origin_position.z)// + (vertical_length ?? 0))
+        camera_node?.position.y += Float(origin_position.z)
         camera_node?.position.z += Float(origin_position.x)
         #endif
     }
