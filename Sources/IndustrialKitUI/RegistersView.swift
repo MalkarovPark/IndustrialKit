@@ -351,7 +351,7 @@ public struct RegistersDataView: View
                             }
                             .buttonBorderShape(.circle)
                             .buttonStyle(.glass)
-                            .padding(.trailing)
+                            .padding(.trailing, 8)
                             
                             Button(action: save_registers)
                             {
@@ -366,7 +366,7 @@ public struct RegistersDataView: View
                             }
                             .buttonBorderShape(.circle)
                             .buttonStyle(.glass)
-                            .padding(.trailing)
+                            .padding(.trailing, 8)
                             
                             Button(action: { is_registers_count_presented = true })
                             {

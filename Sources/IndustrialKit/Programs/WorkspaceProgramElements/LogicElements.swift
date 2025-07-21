@@ -240,7 +240,7 @@ public class MarkLogicElement: LogicElement
     // Code string conversion
     public override var code_string: String
     {
-        return "l: mark.(\(name)"
+        return "l: mark.(\(name))"
     }
     
     // File handling
