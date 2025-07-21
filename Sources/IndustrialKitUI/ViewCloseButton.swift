@@ -24,6 +24,8 @@ public struct ViewCloseButton: ViewModifier
                 Button(action: { is_presented.toggle() })
                 {
                     Image(systemName: "xmark")
+                        .imageScale(.large)
+                        .frame(width: 16, height: 16)
                 }
                 .keyboardShortcut(.cancelAction)
                 .buttonBorderShape(.circle)
