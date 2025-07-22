@@ -175,6 +175,7 @@ public struct ConnectorView: View
                 .buttonBorderShape(.circle)
                 #endif
                 .toggleStyle(.button)
+                .buttonBorderShape(.circle)
                 .padding(.trailing)
                 
                 Toggle(isOn: $connected)
