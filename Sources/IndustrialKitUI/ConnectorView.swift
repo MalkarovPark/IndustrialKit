@@ -96,11 +96,7 @@ public struct ConnectorView: View
                     {
                         Image(systemName: "text.append")
                     }
-                    #if os(iOS)
-                    .modifier(ButtonBorderer())
-                    #elseif os(visionOS)
                     .buttonBorderShape(.circle)
-                    #endif
                     .toggleStyle(.button)
                     .padding(8)
                     
@@ -110,11 +106,7 @@ public struct ConnectorView: View
                     {
                         Image(systemName: "eraser")
                     }
-                    #if os(iOS)
-                    .modifier(ButtonBorderer())
-                    #elseif os(visionOS)
                     .buttonBorderShape(.circle)
-                    #endif
                     .toggleStyle(.button)
                     .padding(.horizontal, 8)
                 }
