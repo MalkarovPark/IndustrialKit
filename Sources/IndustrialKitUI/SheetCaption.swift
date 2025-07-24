@@ -29,7 +29,13 @@ public struct SheetCaption: ViewModifier
             {
                 VStack(spacing: 0)
                 {
-                    Spacer(minLength: 52) //Spacer(minLength: 48)
+                    #if os(macOS)
+                    Spacer(minLength: 52)
+                    #elseif os(iOS)
+                    Spacer(minLength: 56)
+                    #else
+                    Spacer(minLength: 56)
+                    #endif
                     content
                 }
             }
@@ -40,7 +46,7 @@ public struct SheetCaption: ViewModifier
             
             ZStack
             {
-                if !plain
+                if plain
                 {
                     HStack(alignment: .center)
                     {
@@ -54,7 +60,6 @@ public struct SheetCaption: ViewModifier
                     }
                     .padding(.horizontal, 8)
                     .padding(8)
-                    //.glassEffect()
                 }
                 else
                 {
@@ -70,6 +75,7 @@ public struct SheetCaption: ViewModifier
                     }
                     .padding(.horizontal, 8)
                     .padding(8)
+                    //.glassEffect()
                 }
                 
                 HStack(spacing: 0)
