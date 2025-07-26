@@ -257,6 +257,7 @@ struct PositionParameterView: View
                 Image(systemName: "arrow.counterclockwise")
             }
             .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
             #if os(macOS)
             .foregroundColor(Color.white)
             #else
@@ -329,18 +330,18 @@ public enum PositionComponents: Equatable, CaseIterable
         switch self
         {
         case .x:
-            return ("X: ", .location, 0)
+            return ("X ", .location, 0)
         case .y:
-            return ("Y: ", .location, 1)
+            return ("Y ", .location, 1)
         case .z:
-            return ("Z: ", .location, 2)
+            return ("Z ", .location, 2)
             
         case .r:
-            return ("R: ", .rotation, 0)
+            return ("R ", .rotation, 0)
         case .p:
-            return ("P: ", .rotation, 1)
+            return ("P ", .rotation, 1)
         case .w:
-            return ("W: ", .rotation, 2)
+            return ("W ", .rotation, 2)
         }
     }
     
