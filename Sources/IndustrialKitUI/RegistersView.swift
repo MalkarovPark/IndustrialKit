@@ -450,6 +450,8 @@ private struct RegistersCountView: View
             .buttonBorderShape(.circle)
             #if os(macOS)
             .foregroundColor(Color.white)
+            #else
+            .padding(.leading, 4)
             #endif
             
             TextField("\(Workspace.default_registers_count)", value: $registers_count, format: .number)

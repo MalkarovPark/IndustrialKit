@@ -260,6 +260,8 @@ struct PositionParameterView: View
             .buttonBorderShape(.circle)
             #if os(macOS)
             .foregroundColor(Color.white)
+            #else
+            .padding(.leading, 4)
             #endif
             
             TextField("0", value: $parameter_value, format: .number)
