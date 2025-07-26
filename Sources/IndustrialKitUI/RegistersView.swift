@@ -434,7 +434,7 @@ private struct RegistersCountView: View
     
     var body: some View
     {
-        HStack(spacing: 0)
+        HStack(spacing: 8)
         {
             Button(action: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
@@ -450,8 +450,9 @@ private struct RegistersCountView: View
             .buttonBorderShape(.circle)
             #if os(macOS)
             .foregroundColor(Color.white)
+            #else
+            .padding(.leading, 8)
             #endif
-            .padding(.trailing, 10)
             
             TextField("\(Workspace.default_registers_count)", value: $registers_count, format: .number)
                 .textFieldStyle(.roundedBorder)
@@ -464,7 +465,6 @@ private struct RegistersCountView: View
             #else
                 .frame(width: 128)
             #endif
-                .padding(.trailing, 8)
             
             Stepper("Enter", value: $registers_count, in: 1...1000)
                 .labelsHidden()

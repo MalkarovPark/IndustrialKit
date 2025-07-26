@@ -275,9 +275,6 @@ struct PositionParameterView: View
             
             Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
                 .labelsHidden()
-            #if os(iOS) || os(visionOS)
-                .padding(.trailing, 8)
-            #endif
         }
         .padding(8)
         #if os(iOS)
