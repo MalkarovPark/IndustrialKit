@@ -450,8 +450,6 @@ private struct RegistersCountView: View
             .buttonBorderShape(.circle)
             #if os(macOS)
             .foregroundColor(Color.white)
-            #else
-            .padding(.leading, 8)
             #endif
             
             TextField("\(Workspace.default_registers_count)", value: $registers_count, format: .number)
@@ -468,6 +466,9 @@ private struct RegistersCountView: View
             
             Stepper("Enter", value: $registers_count, in: 1...1000)
                 .labelsHidden()
+            #if os(iOS) || os(visionOS)
+                .padding(.trailing, 8)
+            #endif
         }
         /*.onChange(of: registers_count)
         { _, _ in

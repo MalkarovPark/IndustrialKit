@@ -260,8 +260,6 @@ struct PositionParameterView: View
             .buttonBorderShape(.circle)
             #if os(macOS)
             .foregroundColor(Color.white)
-            #else
-            .padding(.leading, 8)
             #endif
             
             TextField("0", value: $parameter_value, format: .number)
@@ -275,6 +273,9 @@ struct PositionParameterView: View
             
             Stepper("Enter", value: $parameter_value, in: Float(limit_min)...Float(limit_max))
                 .labelsHidden()
+            #if os(iOS) || os(visionOS)
+                .padding(.trailing, 8)
+            #endif
         }
         .padding(8)
         #if os(iOS)
