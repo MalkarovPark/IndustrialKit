@@ -759,7 +759,8 @@ public class Tool: WorkspaceObject, @unchecked Sendable
      */
     public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode) // Get info for robot card view
     {
-        return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, UIImage(), node: SCNNode()) // Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
+        return("\(self.name)", "Model – \(self.module_name)", .green, UIImage(), SCNNode())
+        //return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, UIImage(), node: SCNNode()) // Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
     }
     
     /// Apply corresponded label and SF Symbol to operation code.
