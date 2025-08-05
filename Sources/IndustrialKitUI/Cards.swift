@@ -135,13 +135,34 @@ public struct LargeCardView<Content: View>: View
     {
         ZStack
         {
+            // Colored Background
             if let color = color
             {
                 Rectangle()
                     .foregroundStyle(color)
-                    .opacity(0.5)
+                    .opacity(0.25)
             }
             
+            // Back Side
+            Rectangle()
+                .subtracting(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .offset(y: 10)
+                )
+                .foregroundStyle(
+                    .linearGradient(
+                        stops: [
+                            Gradient.Stop(color: Color(red: 239 / 255, green: 239 / 255, blue: 242 / 255), location: 0.0),
+                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 1.0)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .opacity(0.75)
+                .brightness(-0.05)
+            
+            // Internals
             if image != nil
             {
                 #if os(macOS)
@@ -161,6 +182,7 @@ public struct LargeCardView<Content: View>: View
                     .disabled(true)
             }
             
+            // Forward Side
             Rectangle()
                 .subtracting(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -179,6 +201,7 @@ public struct LargeCardView<Content: View>: View
                 .opacity(0.75)
                 .brightness(-0.05)
             
+            // Top Side
             VStack(spacing: 0)
             {
                 ZStack
