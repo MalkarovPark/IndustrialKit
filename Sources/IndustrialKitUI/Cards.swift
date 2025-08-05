@@ -10,7 +10,7 @@ import SceneKit
 import IndustrialKit
 
 //MARK: - Large card view
-public struct LargeCardView: View
+public struct LargeCardView<Content: View>: View
 {
     // View parameters
     @State public var title: String
@@ -26,11 +26,16 @@ public struct LargeCardView: View
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
+    // Overlay
+    let overlay_view: Content?
+    
     public init(
         title: String,
         subtitle: String? = nil,
         color: Color? = nil,
-        image: UIImage?
+        image: UIImage?,
+        
+        @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
         self.node = nil
@@ -43,6 +48,8 @@ public struct LargeCardView: View
         self._edited_name = .constant("")
         self.new_name = ""
         self.on_rename = { }
+        
+        self.overlay_view = overlay()
     }
     
     public init(
@@ -53,7 +60,9 @@ public struct LargeCardView: View
         
         to_rename: Binding<Bool>,
         edited_name: Binding<String>,
-        on_rename: @escaping () -> ()
+        on_rename: @escaping () -> (),
+        
+        @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
         self.node = nil
@@ -66,13 +75,17 @@ public struct LargeCardView: View
         self._edited_name = edited_name
         _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
+        
+        self.overlay_view = overlay()
     }
     
     public init(
         title: String,
         subtitle: String? = nil,
         color: Color? = nil,
-        node: SCNNode?
+        node: SCNNode?,
+        
+        @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
         self.title = title
@@ -85,6 +98,8 @@ public struct LargeCardView: View
         self._edited_name = .constant("")
         self.new_name = ""
         self.on_rename = { }
+        
+        self.overlay_view = overlay()
     }
     
     public init(
@@ -95,7 +110,9 @@ public struct LargeCardView: View
         
         to_rename: Binding<Bool>,
         edited_name: Binding<String>,
-        on_rename: @escaping () -> ()
+        on_rename: @escaping () -> (),
+        
+        @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
         self.title = title
@@ -108,6 +125,8 @@ public struct LargeCardView: View
         self._edited_name = edited_name
         _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
+        
+        self.overlay_view = overlay()
     }
     
     @State private var hovered = false
@@ -272,29 +291,7 @@ public struct LargeCardView: View
                 Spacer(minLength: 10)
             }
             
-            /*Rectangle()
-                .foregroundColor(color)
-                .overlay
-            {
-                if image != nil
-                {
-                    #if os(macOS)
-                    Image(nsImage: image!)
-                        .resizable()
-                        .scaledToFill()
-                    #else
-                    Image(uiImage: image!)
-                        .resizable()
-                        .scaledToFill()
-                    #endif
-                }
-                
-                if node != nil
-                {
-                    ObjectSceneView(node: node!)
-                        .disabled(true)
-                }
-            }*/
+            overlay_view
         }
         #if !os(visionOS)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
