@@ -485,59 +485,83 @@ public struct RegisterCardView: View
     {
         ZStack
         {
-            VStack
+            Rectangle()
+                .foregroundStyle(color)
+                .brightness(-0.05)
+            
+            Rectangle()
+                .foregroundStyle(
+                    .linearGradient(
+                        stops: [
+                            Gradient.Stop(color: .clear, location: 0.0),
+                            Gradient.Stop(color: .white.opacity(0.1), location: 1.0)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+            
+            VStack(spacing: 0)
             {
-                VStack(spacing: 0)
+                ZStack
                 {
-                    ZStack
-                    {
-                        TextField("0", value: $value, format: .number)
-                            .font(.system(size: register_card_font_size))
-                            .multilineTextAlignment(.center)
-                            .textFieldStyle(.plain)
-                        #if !os(macOS)
-                            .keyboardType(.decimalPad)
-                        #endif
-                    }
-                    #if os(macOS)
-                    .frame(height: 48)
-                    #else
-                    .frame(height: 72)
-                    #endif
-                    .background(Color.clear)
+                    Rectangle()
+                        .foregroundStyle(color)
                     
                     Rectangle()
-                        .foregroundColor(color)
-                    #if os(macOS)
-                        .frame(height: 32)
-                    #else
-                        .frame(height: 48)
-                    #endif
-                        .overlay(alignment: .leading)
-                        {
-                            Text("\(number)")
-                                .foregroundColor(.white)
-                                .padding(.leading, 8)
-                            #if os(iOS) || os(visionOS)
-                                .font(.system(size: 20))
-                            #endif
-                        }
-                    #if !os(visionOS)
-                        .shadow(radius: 2)
-                    #endif
+                        .foregroundStyle(
+                            .linearGradient(
+                                stops: [
+                                    Gradient.Stop(color: .clear, location: 0.0),
+                                    Gradient.Stop(color: .white.opacity(0.1), location: 1.0)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
                 }
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                
+                Spacer(minLength: 4)
             }
-            .background(.thinMaterial)
+            
+            TextField("0", value: $value, format: .number)
+                .font(.system(size: register_card_font_size))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.white)
+                .textFieldStyle(.plain)
+            #if !os(macOS)
+                .keyboardType(.decimalPad)
+            #endif
         }
         .frame(width: register_card_scale, height: register_card_scale)
-        .clipShape(RoundedRectangle(cornerRadius: 4.0, style: .continuous))
+        .overlay(alignment: .bottomLeading)
+        {
+            Text("\(number)")
+                .foregroundColor(.white)
+                .padding(10)
+            #if os(iOS) || os(visionOS)
+                .font(.system(size: 20))
+            #endif
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         #if !os(visionOS)
-        .shadow(radius: 4)
+        .shadow(color: .black.opacity(0.2), radius: 8)
         #else
         .frame(depth: 8)
         #endif
     }
 }
+
+#if os(macOS)
+let register_card_scale: CGFloat = 80
+let register_card_spacing: CGFloat = 16
+let register_card_font_size: CGFloat = 20
+#else
+let register_card_scale: CGFloat = 112
+let register_card_spacing: CGFloat = 20
+let register_card_font_size: CGFloat = 32
+#endif
 
 //MARK: - Cards preview
 struct Cards_Previews: PreviewProvider

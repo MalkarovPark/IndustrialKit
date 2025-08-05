@@ -134,7 +134,7 @@ private struct RegistersSelectorView: View
     @State private var selections: [Bool]
     @State private var texts: [String]
     
-    private let columns: [GridItem] = [.init(.adaptive(minimum: 70, maximum: 70), spacing: 0)]
+    private let columns: [GridItem] = [.init(.adaptive(minimum: 56, maximum: .infinity), spacing: 12)]
     
     init(registers_count: Int, colors: [Color], indices: Binding<[Int]>, names: [String])
     {
@@ -161,7 +161,7 @@ private struct RegistersSelectorView: View
             
             ScrollView
             {
-                LazyVGrid(columns: columns, spacing: 6)
+                LazyVGrid(columns: columns, spacing: 12)
                 {
                     ForEach(registers_count, id: \.self)
                     { number in
@@ -172,17 +172,13 @@ private struct RegistersSelectorView: View
                         {
                             select_index(number)
                         }
+                        .animation(.easeInOut(duration: 0.2), value: selections)
                     }
                 }
                 .padding()
-                #if os(macOS)
-                .padding(.vertical, 10)
-                #else
-                .padding(.vertical)
-                #endif
             }
         }
-        .frame(width: 256, height: 256)
+        .frame(width: 240, height: 240)
         .overlay(alignment: .top)
         {
             if names.count > 1
@@ -196,6 +192,7 @@ private struct RegistersSelectorView: View
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
+                .frame(maxWidth: .infinity)
                 .padding()
                 .background(.thinMaterial)
             }
@@ -279,31 +276,59 @@ private struct RegistersSelectorCardView: View
         ZStack
         {
             Rectangle()
-                .foregroundStyle(Color(color).opacity(0.75))
+                .foregroundStyle(color)
+                .brightness(-0.05)
             
-            Text("\(number)")
-                .font(.system(size: 20))
-                .foregroundColor(.white)
-                .padding(8)
+            Rectangle()
+                .foregroundStyle(
+                    .linearGradient(
+                        stops: [
+                            Gradient.Stop(color: .clear, location: 0.0),
+                            Gradient.Stop(color: .white.opacity(0.1), location: 1.0)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
             
-            if is_selected
+            VStack(spacing: 0)
             {
                 ZStack
                 {
-                    Text(selection_text)
-                        .foregroundStyle(.primary)
-                        .minimumScaleFactor(0.5)
-                        .padding(8)
-                        // .lineLimit(1)
+                    Rectangle()
+                        .foregroundStyle(color)
+                    
+                    Rectangle()
+                        .foregroundStyle(
+                            .linearGradient(
+                                stops: [
+                                    Gradient.Stop(color: .clear, location: 0.0),
+                                    Gradient.Stop(color: .white.opacity(0.1), location: 1.0)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
                 }
-                .frame(width: 64, height: 64)
-                .background(.regularMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                
+                Spacer(minLength: 4)
             }
+            
+            Text(is_selected ? "\(selection_text)" :"\(number)")
+                .font(.system(size: is_selected ? 16 : 20))
+                .foregroundColor(is_selected ? .black : .white)
+                .padding(8)
+            #if !os(macOS)
+                .keyboardType(.decimalPad)
+            #endif
         }
-        .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-        .frame(width: 64, height: 64)
+        .aspectRatio(1, contentMode: .fit)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .brightness(is_selected ? 0.25 : 0)
         #if !os(visionOS)
-        .shadow(radius: 2)
+        //.shadow(color: .black.opacity(0.2), radius: 2)
+        .shadow(color: .black.opacity(is_selected ? 0.2 : 0.1), radius: 4)
         #else
         .frame(depth: 4)
         #endif
@@ -490,16 +515,6 @@ private struct RegistersCountView: View
         }
     }
 }
-
-#if os(macOS)
-let register_card_scale: CGFloat = 80
-let register_card_spacing: CGFloat = 16
-let register_card_font_size: CGFloat = 20
-#else
-let register_card_scale: CGFloat = 112
-let register_card_spacing: CGFloat = 20
-let register_card_font_size: CGFloat = 32
-#endif
 
 let register_card_maximum = register_card_scale + register_card_spacing
 
