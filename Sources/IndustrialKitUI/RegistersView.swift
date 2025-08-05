@@ -328,7 +328,7 @@ private struct RegistersSelectorCardView: View
         .brightness(is_selected ? 0.25 : 0)
         #if !os(visionOS)
         //.shadow(color: .black.opacity(0.2), radius: 2)
-        .shadow(color: .black.opacity(is_selected ? 0.2 : 0.1), radius: 4)
+        .shadow(color: color.opacity(is_selected ? 0.2 : 0.1), radius: 4)
         #else
         .frame(depth: 4)
         #endif

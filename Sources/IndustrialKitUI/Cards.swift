@@ -13,11 +13,11 @@ import IndustrialKit
 public struct LargeCardView: View
 {
     // View parameters
-    @State public var color: Color
+    @State public var title: String
+    @State public var subtitle: String?
+    let color: Color?
     let image: UIImage?
     let node: SCNNode?
-    @State public var title: String
-    @State public var subtitle: String
     
     // Rename parameters
     @Binding public var to_rename: Bool
@@ -26,13 +26,18 @@ public struct LargeCardView: View
     @FocusState private var is_focused: Bool
     let on_rename: () -> ()
     
-    public init(color: Color, image: UIImage?, title: String, subtitle: String)
+    public init(
+        title: String,
+        subtitle: String? = nil,
+        color: Color? = nil,
+        image: UIImage?
+    )
     {
-        self.color = color
-        self.image = image
         self.node = nil
         self.title = title
         self.subtitle = subtitle
+        self.color = color
+        self.image = image
         
         self._to_rename = .constant(false)
         self._edited_name = .constant("")
@@ -40,13 +45,22 @@ public struct LargeCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, image: UIImage?, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
+    public init(
+        title: String,
+        subtitle: String? = nil,
+        color: Color? = nil,
+        image: UIImage?,
+        
+        to_rename: Binding<Bool>,
+        edited_name: Binding<String>,
+        on_rename: @escaping () -> ()
+    )
     {
-        self.color = color
-        self.image = image
         self.node = nil
         self.title = title
         self.subtitle = subtitle
+        self.color = color
+        self.image = image
         
         self._to_rename = to_rename
         self._edited_name = edited_name
@@ -54,13 +68,18 @@ public struct LargeCardView: View
         self.on_rename = on_rename
     }
     
-    public init(color: Color, node: SCNNode?, title: String, subtitle: String)
+    public init(
+        title: String,
+        subtitle: String? = nil,
+        color: Color? = nil,
+        node: SCNNode?
+    )
     {
+        self.title = title
+        self.subtitle = subtitle
         self.color = color
         self.image = nil
         self.node = node
-        self.title = title
-        self.subtitle = subtitle
         
         self._to_rename = .constant(false)
         self._edited_name = .constant("")
@@ -68,25 +87,188 @@ public struct LargeCardView: View
         self.on_rename = { }
     }
     
-    public init(color: Color, node: SCNNode?, title: String, subtitle: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
+    public init(
+        title: String,
+        subtitle: String? = nil,
+        color: Color? = nil,
+        node: SCNNode?,
+        
+        to_rename: Binding<Bool>,
+        edited_name: Binding<String>,
+        on_rename: @escaping () -> ()
+    )
     {
+        self.title = title
+        self.subtitle = subtitle
         self.color = color
         self.image = nil
         self.node = node
-        self.title = title
-        self.subtitle = subtitle
         
         self._to_rename = to_rename
         self._edited_name = edited_name
         _new_name = State(initialValue: _edited_name.wrappedValue)
         self.on_rename = on_rename
     }
+    
+    @State private var hovered = false
     
     public var body: some View
     {
         ZStack
         {
+            if let color = color
+            {
+                Rectangle()
+                    .foregroundStyle(color)
+                    .opacity(0.5)
+            }
+            
             Rectangle()
+                .foregroundStyle(
+                    .linearGradient(
+                        stops: [
+                            Gradient.Stop(color: Color(red: 239 / 255, green: 239 / 255, blue: 242 / 255), location: 0.0),
+                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 1.0)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .opacity(0.75)
+                .brightness(-0.05)
+            
+            if image != nil
+            {
+                #if os(macOS)
+                Image(nsImage: image!)
+                    .resizable()
+                    .scaledToFill()
+                #else
+                Image(uiImage: image!)
+                    .resizable()
+                    .scaledToFill()
+                #endif
+            }
+            
+            if node != nil
+            {
+                ObjectSceneView(node: node!)
+                    .disabled(true)
+            }
+            
+            VStack(spacing: 0)
+            {
+                ZStack
+                {
+                    Rectangle()
+                        .foregroundStyle(
+                            .linearGradient(
+                                stops: [
+                                    Gradient.Stop(color: Color(red: 239 / 255, green: 239 / 255, blue: 242 / 255), location: 0.0),
+                                    Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 1.0)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .opacity(0.5)
+                        .overlay(alignment: .bottomLeading)
+                        {
+                            HStack
+                            {
+                                if !to_rename
+                                {
+                                    VStack(alignment: .leading)
+                                    {
+                                        if let subtitle = subtitle
+                                        {
+                                            Text(title)
+                                                .font(.headline)
+                                                .padding(.top, 8)
+                                                .padding(.leading, 4)
+                                            
+                                            Text(subtitle)
+                                            #if os(macOS) || os(iOS)
+                                                .foregroundColor(.gray)
+                                            #endif
+                                                .padding(.bottom, 8)
+                                                .padding(.leading, 4)
+                                        }
+                                        else
+                                        {
+                                            Text(title)
+                                                .font(.headline)
+                                                .padding(.vertical, 8)
+                                                .padding(.leading, 4)
+                                        }
+                                    }
+                                    #if !os(visionOS)
+                                    .padding(.horizontal, 8)
+                                    #else
+                                    .padding(.horizontal, 32)
+                                    #endif
+                                    .padding(.trailing, 4)
+                                    //Spacer()
+                                }
+                                else
+                                {
+                                    VStack(alignment: .leading)
+                                    {
+                                        HStack
+                                        {
+                                            #if os(macOS)
+                                            TextField("Name", text: $new_name)
+                                                .textFieldStyle(.roundedBorder)
+                                                .focused($is_focused)
+                                                .labelsHidden()
+                                                .padding()
+                                                .onSubmit
+                                                {
+                                                    edited_name = new_name
+                                                    title = new_name
+                                                    on_rename()
+                                                    to_rename = false
+                                                }
+                                                .onExitCommand
+                                                {
+                                                    to_rename = false
+                                                }
+                                                .onAppear
+                                                {
+                                                    is_focused = true
+                                                }
+                                            #else
+                                            TextField("Name", text: $new_name, onCommit: {
+                                                edited_name = new_name
+                                                title = new_name
+                                                on_rename()
+                                                to_rename = false
+                                            })
+                                                .textFieldStyle(.roundedBorder)
+                                                .focused($is_focused)
+                                                .labelsHidden()
+                                                .padding()
+                                                .onAppear
+                                                {
+                                                    is_focused = true
+                                                }
+                                            #endif
+                                        }
+                                    }
+                                }
+                            }
+                            .background(.bar)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .padding(8)
+                        }
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                //.opacity(0.5)
+                
+                Spacer(minLength: 10)
+            }
+            
+            /*Rectangle()
                 .foregroundColor(color)
                 .overlay
             {
@@ -108,94 +290,23 @@ public struct LargeCardView: View
                     ObjectSceneView(node: node!)
                         .disabled(true)
                 }
-            }
-            
-            VStack
-            {
-                Spacer()
-                HStack
-                {
-                    if !to_rename
-                    {
-                        VStack(alignment: .leading)
-                        {
-                            Text(title)
-                                .font(.headline)
-                                .padding(.top, 8)
-                                .padding(.leading, 4)
-                            
-                            Text(subtitle)
-                            #if os(macOS) || os(iOS)
-                                .foregroundColor(.gray)
-                            #endif
-                                .padding(.bottom, 8)
-                                .padding(.leading, 4)
-                        }
-                        #if !os(visionOS)
-                        .padding(.horizontal, 8)
-                        #else
-                        .padding(.horizontal, 32)
-                        #endif
-                        Spacer()
-                    }
-                    else
-                    {
-                        VStack(alignment: .leading)
-                        {
-                            HStack
-                            {
-                                #if os(macOS)
-                                TextField("Name", text: $new_name)
-                                    .textFieldStyle(.roundedBorder)
-                                    .focused($is_focused)
-                                    .labelsHidden()
-                                    .padding()
-                                    .onSubmit
-                                    {
-                                        edited_name = new_name
-                                        title = new_name
-                                        on_rename()
-                                        to_rename = false
-                                    }
-                                    .onExitCommand
-                                    {
-                                        to_rename = false
-                                    }
-                                    .onAppear
-                                    {
-                                        is_focused = true
-                                    }
-                                #else
-                                TextField("Name", text: $new_name, onCommit: {
-                                    edited_name = new_name
-                                    title = new_name
-                                    on_rename()
-                                    to_rename = false
-                                })
-                                    .textFieldStyle(.roundedBorder)
-                                    .focused($is_focused)
-                                    .labelsHidden()
-                                    .padding()
-                                    .onAppear
-                                    {
-                                        is_focused = true
-                                    }
-                                #endif
-                            }
-                        }
-                    }
-                }
-                .background(color.opacity(0.2))
-                .background(.thinMaterial)
-            }
+            }*/
         }
         #if !os(visionOS)
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         #endif
         .frame(height: 192)
         #if os(visionOS)
         .glassBackgroundEffect()
         #endif
+        .onHover
+        { hovered in
+            withAnimation
+            {
+                self.hovered = hovered
+            }
+        }
+        .scaleEffect(hovered ? 1.02 : 1.0)
         // .shadow(radius: 8)
     }
 }
@@ -534,7 +645,7 @@ public struct RegisterCardView: View
         }
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         #if !os(visionOS)
-        .shadow(color: .black.opacity(0.2), radius: 8)
+        .shadow(color: color.opacity(0.2), radius: 8)
         #else
         .frame(depth: 8)
         #endif
@@ -562,9 +673,9 @@ struct Cards_Previews: PreviewProvider
         {
             VStack()
             {
-                LargeCardView(color: .green, image: nil, title: "Title", subtitle: "Subtitle")
+                LargeCardView(title: "Title", color: .green, image: nil)
                 #if !os(visionOS)
-                    .shadow(radius: 8)
+                    .shadow(color: .black.opacity(0.2), radius: 8)
                 #else
                     .frame(depth: 24)
                 #endif
@@ -584,9 +695,9 @@ struct Cards_Previews: PreviewProvider
             
             VStack()
             {
-                LargeCardView(color: .gray, node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), title: "Cube", subtitle: "Model")
+                LargeCardView(title: "Cube", subtitle: "Model", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
                 #if !os(visionOS)
-                    .shadow(radius: 8)
+                    .shadow(color: .black.opacity(0.2), radius: 8)
                 #else
                     .frame(depth: 24)
                 #endif
