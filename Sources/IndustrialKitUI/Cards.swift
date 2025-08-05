@@ -140,7 +140,7 @@ public struct LargeCardView<Content: View>: View
             {
                 Rectangle()
                     .foregroundStyle(color)
-                    .opacity(0.25)
+                    .opacity(0.5)
             }
             
             // Bottom Side
@@ -152,15 +152,15 @@ public struct LargeCardView<Content: View>: View
                 .foregroundStyle(
                     .linearGradient(
                         stops: [
-                            Gradient.Stop(color: Color(red: 239 / 255, green: 239 / 255, blue: 242 / 255), location: 0.0),
-                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 1.0)
+                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 0.0),
+                            Gradient.Stop(color: .white, location: 1.0)
                         ],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
                 )
                 .opacity(0.5)
-                .brightness(-0.05)
+                .brightness(-0.025)
             
             // Back Side
             Rectangle()
@@ -171,15 +171,15 @@ public struct LargeCardView<Content: View>: View
                 .foregroundStyle(
                     .linearGradient(
                         stops: [
-                            Gradient.Stop(color: Color(red: 239 / 255, green: 239 / 255, blue: 242 / 255), location: 0.0),
-                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 1.0)
+                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 0.0),
+                            Gradient.Stop(color: .white, location: 1.0)
                         ],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
                 )
                 .opacity(0.75)
-                .brightness(-0.05)
+                .brightness(-0.075)
             
             // Internals
             if image != nil
@@ -210,15 +210,15 @@ public struct LargeCardView<Content: View>: View
                 .foregroundStyle(
                     .linearGradient(
                         stops: [
-                            Gradient.Stop(color: Color(red: 239 / 255, green: 239 / 255, blue: 242 / 255), location: 0.0),
-                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 1.0)
+                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 0.0),
+                            Gradient.Stop(color: .white, location: 1.0)
                         ],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
                 )
                 .opacity(0.75)
-                .brightness(-0.05)
+                .brightness(-0.075)
             
             // Top Side
             VStack(spacing: 0)
@@ -229,14 +229,14 @@ public struct LargeCardView<Content: View>: View
                         .foregroundStyle(
                             .linearGradient(
                                 stops: [
-                                    Gradient.Stop(color: Color(red: 239 / 255, green: 239 / 255, blue: 242 / 255), location: 0.0),
-                                    Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 1.0)
+                                    Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 0.0),
+                                    Gradient.Stop(color: .white, location: 1.0)
                                 ],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
-                        .opacity(0.5)
+                        .opacity(0.25)
                         .overlay(alignment: .bottomLeading)
                         {
                             // Rename Handling
@@ -329,7 +329,6 @@ public struct LargeCardView<Content: View>: View
                         }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                //.opacity(0.5)
                 
                 Spacer(minLength: 10)
             }
@@ -345,193 +344,18 @@ public struct LargeCardView<Content: View>: View
         #endif
         .onHover
         { hovered in
-            withAnimation
+            withAnimation(.easeInOut(duration: 0.2))
             {
                 self.hovered = hovered
             }
         }
-        .scaleEffect(hovered ? 1.02 : 1.0)
+        .offset(y: hovered ? -4 : 0)
+        //.scaleEffect(hovered ? 1.02 : 1.0)
         // .shadow(radius: 8)
     }
 }
 
-//MARK: - Small card view
-public struct SmallCardView: View
-{
-    // View properties
-    @State public var color: Color
-    let image: UIImage?
-    let node: SCNNode?
-    @State public var title: String
-    
-    // Rename properties
-    @Binding public var to_rename: Bool
-    @Binding public var edited_name: String
-    @State private var new_name: String
-    @FocusState private var is_focused: Bool
-    let on_rename: () -> ()
-    
-    public init(color: Color, image: UIImage?, title: String)
-    {
-        self.color = color
-        self.image = image
-        self.node = nil
-        self.title = title
-        
-        self._to_rename = .constant(false)
-        self._edited_name = .constant("")
-        self.new_name = ""
-        self.on_rename = { }
-    }
-    
-    public init(color: Color, image: UIImage?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
-    {
-        self.color = color
-        self.image = image
-        self.node = nil
-        self.title = title
-        
-        self._to_rename = to_rename
-        self._edited_name = edited_name
-        _new_name = State(initialValue: _edited_name.wrappedValue)
-        self.on_rename = on_rename
-    }
-    
-    public init(color: Color, node: SCNNode?, title: String)
-    {
-        self.color = color
-        self.image = nil
-        self.node = node
-        self.title = title
-        
-        self._to_rename = .constant(false)
-        self._edited_name = .constant("")
-        self.new_name = ""
-        self.on_rename = { }
-    }
-    
-    public init(color: Color, node: SCNNode?, title: String, to_rename: Binding<Bool>, edited_name: Binding<String>, on_rename: @escaping () -> ())
-    {
-        self.color = color
-        self.image = nil
-        self.node = node
-        self.title = title
-        
-        self._to_rename = to_rename
-        self._edited_name = edited_name
-        _new_name = State(initialValue: _edited_name.wrappedValue)
-        self.on_rename = on_rename
-    }
-    
-    public var body: some View
-    {
-        ZStack
-        {
-            VStack
-            {
-                HStack(spacing: 0)
-                {
-                    HStack(spacing: 0)
-                    {
-                        if !to_rename
-                        {
-                            Text(title)
-                                .font(.headline)
-                                .padding()
-                            #if os(visionOS)
-                                .padding(.leading, 8)
-                            #endif
-                            
-                            Spacer()
-                        }
-                        else
-                        {
-                            #if os(macOS)
-                            TextField("Name", text: $new_name)
-                                .focused($is_focused)
-                                .labelsHidden()
-                                .font(.headline)
-                                .padding()
-                                .onSubmit
-                                {
-                                    edited_name = new_name
-                                    title = new_name
-                                    on_rename()
-                                    to_rename = false
-                                }
-                                .onExitCommand
-                                {
-                                    to_rename = false
-                                }
-                                .onAppear
-                                {
-                                    is_focused = true
-                                }
-                            #else
-                            TextField("Name", text: $new_name, onCommit: {
-                                edited_name = new_name
-                                title = new_name
-                                on_rename()
-                                to_rename = false
-                            })
-                            .onAppear
-                            {
-                                is_focused = true
-                            }
-                            .focused($is_focused)
-                            .labelsHidden()
-                            .font(.headline)
-                            .padding()
-                            #if os(visionOS)
-                            .padding(.leading, 8)
-                            #endif
-                            #endif
-                        }
-                        
-                        Rectangle()
-                            .fill(.clear)
-                            .overlay
-                        {
-                            if image != nil
-                            {
-                                #if os(macOS)
-                                Image(nsImage: image!)
-                                    .resizable()
-                                    .scaledToFill()
-                                #else
-                                Image(uiImage: image!)
-                                    .resizable()
-                                    .scaledToFill()
-                                #endif
-                            }
-                            
-                            if node != nil
-                            {
-                                ObjectSceneView(node: node!)
-                                    .disabled(true)
-                                    .padding(8)
-                            }
-                        }
-                        .frame(width: 64, height: 64)
-                        .background(Color.clear)
-                    }
-                    
-                    Rectangle()
-                        .foregroundColor(color)
-                        .frame(width: 32, height: 64)
-                }
-            }
-            .background(.thinMaterial)
-        }
-        #if !os(visionOS)
-        .clipShape(RoundedRectangle(cornerRadius: 8.0, style: .continuous))
-        #else
-        .glassBackgroundEffect()
-        #endif
-        // .shadow(radius: 8)
-    }
-}
-
+//MARK: - Program element card view
 public struct ElementCardView: View
 {
     @StateObject var program_element: WorkspaceProgramElement
@@ -723,14 +547,6 @@ struct Cards_Previews: PreviewProvider
                 #else
                     .frame(depth: 24)
                 #endif
-                    .padding([.horizontal, .top])
-                
-                SmallCardView(color: .green, image: nil, title: "Title")
-                #if !os(visionOS)
-                    .shadow(radius: 8)
-                #else
-                    .frame(depth: 24)
-                #endif
                     .padding()
             }
             .padding(4)
@@ -742,14 +558,6 @@ struct Cards_Previews: PreviewProvider
                 LargeCardView(title: "Cube", subtitle: "Model", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
                 #if !os(visionOS)
                     .shadow(color: .black.opacity(0.2), radius: 8)
-                #else
-                    .frame(depth: 24)
-                #endif
-                    .padding([.horizontal, .top])
-                
-                SmallCardView(color: .gray, node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), title: "Cube")
-                #if !os(visionOS)
-                    .shadow(radius: 8)
                 #else
                     .frame(depth: 24)
                 #endif
@@ -778,6 +586,6 @@ struct Cards_Previews: PreviewProvider
             }
         }
         .padding(8)
-        // .background(.white)
+        //.background(.white)
     }
 }
