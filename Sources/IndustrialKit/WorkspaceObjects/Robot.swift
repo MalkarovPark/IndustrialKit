@@ -1161,7 +1161,7 @@ public class Robot: WorkspaceObject
      */
     public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
     {
-        return("\(self.name)", "Model – \(self.module_name)", .green, UIImage(), SCNNode())
+        return("\(self.name)", "\(self.module_name)", .green, UIImage(), SCNNode())
     }
     
     /// Connects robot charts to UI.

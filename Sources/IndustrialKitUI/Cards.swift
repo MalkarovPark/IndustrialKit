@@ -429,7 +429,7 @@ public struct ElementCardView: View
                 }
                 .frame(maxWidth: .infinity)
             }
-            .background(.thinMaterial)
+            .background(.white)//.thinMaterial)
             
             if program_element.performing_state != .none
             {
@@ -451,19 +451,7 @@ public struct ElementCardView: View
             }
         }
         .frame(height: 80)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        //.shadow(radius: 8)
-        /*.overlay(alignment: .topTrailing)
-        {
-            if program_element.performing_state != .none
-            {
-                Circle()
-                    .foregroundColor(program_element.performing_state.color.opacity(0.5))
-                    .frame(width: 16, height: 16)
-                    .padding()
-                    .transition(AnyTransition.scale)
-            }
-        }*/
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 
