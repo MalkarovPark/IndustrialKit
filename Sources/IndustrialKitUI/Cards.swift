@@ -349,7 +349,7 @@ public struct LargeCardView<Content: View>: View
                 self.hovered = hovered
             }
         }
-        .offset(y: hovered ? -4 : 0)
+        .offset(y: hovered ? -2 : 0)
         //.scaleEffect(hovered ? 1.02 : 1.0)
         // .shadow(radius: 8)
     }
