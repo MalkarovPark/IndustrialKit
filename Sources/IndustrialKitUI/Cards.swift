@@ -123,20 +123,6 @@ public struct LargeCardView: View
                     .opacity(0.5)
             }
             
-            Rectangle()
-                .foregroundStyle(
-                    .linearGradient(
-                        stops: [
-                            Gradient.Stop(color: Color(red: 239 / 255, green: 239 / 255, blue: 242 / 255), location: 0.0),
-                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 1.0)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .opacity(0.75)
-                .brightness(-0.05)
-            
             if image != nil
             {
                 #if os(macOS)
@@ -155,6 +141,24 @@ public struct LargeCardView: View
                 ObjectSceneView(node: node!)
                     .disabled(true)
             }
+            
+            Rectangle()
+                .subtracting(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .offset(y: -10)
+                )
+                .foregroundStyle(
+                    .linearGradient(
+                        stops: [
+                            Gradient.Stop(color: Color(red: 239 / 255, green: 239 / 255, blue: 242 / 255), location: 0.0),
+                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 1.0)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .opacity(0.75)
+                .brightness(-0.05)
             
             VStack(spacing: 0)
             {
