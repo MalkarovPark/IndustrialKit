@@ -9,7 +9,7 @@ import SwiftUI
 import SceneKit
 import IndustrialKit
 
-//MARK: - Large card view
+//MARK: - Box card view
 public struct BoxCardView<Content: View>: View
 {
     // View parameters
@@ -170,175 +170,214 @@ public struct BoxCardView<Content: View>: View
     {
         ZStack
         {
-            // Bottom Side
+            /*IntersectedWithPadding()
+                .fill(color)
+                .opacity(0.75)
+                .blur(radius: 8)*/
+            
+            // Shadow
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .intersection(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .offset(y: 10)
                 )
-                .foregroundStyle(gradient)
+                .foregroundStyle(color)
+                .blur(radius: 16)
                 .opacity(0.2)
-                .shadow(color: color, radius: 8)
-                //.shadow(color: color, radius: 8)
             
-            // Back Side
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .subtracting(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .offset(y: 10)
-                )
-                .foregroundStyle(gradient)
-                .opacity(0.5)
-            
-            // Internals
-            if image != nil
+            // Box
+            ZStack
             {
-                #if os(macOS)
-                Image(nsImage: image!)
-                    .resizable()
-                    .scaledToFill()
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                #else
-                Image(uiImage: image!)
-                    .resizable()
-                    .scaledToFill()
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                #endif
-            }
-            
-            if node != nil
-            {
-                ObjectSceneView(node: node!)
-                    .disabled(true)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            }
-            
-            // Forward Side
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .subtracting(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .offset(y: -10)
-                )
-                .foregroundStyle(gradient)
-                .opacity(0.5)
-            
-            // Top Side
-            VStack(spacing: 0)
-            {
-                ZStack
+                // Bottom Side
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .intersection(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .offset(y: 10)
+                    )
+                    .foregroundStyle(gradient)
+                    .opacity(0.2)
+                    //.shadow(color: color, radius: 8)
+                
+                // Back Side
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .subtracting(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .offset(y: 10)
+                    )
+                    .foregroundStyle(gradient)
+                    .opacity(0.5)
+                
+                // Internals
+                if image != nil
                 {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .foregroundStyle(gradient)
-                        .opacity(0.2)
-                        .overlay(alignment: .bottomLeading)
-                        {
-                            // Rename Handling
-                            HStack
+                    #if os(macOS)
+                    Image(nsImage: image!)
+                        .resizable()
+                        .scaledToFill()
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    #else
+                    Image(uiImage: image!)
+                        .resizable()
+                        .scaledToFill()
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    #endif
+                }
+                
+                if node != nil
+                {
+                    ObjectSceneView(node: node!)
+                        .disabled(true)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+                
+                // Forward Side
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .subtracting(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .offset(y: -10)
+                    )
+                    .foregroundStyle(gradient)
+                    .opacity(0.5)
+                
+                // Top Side
+                VStack(spacing: 0)
+                {
+                    ZStack
+                    {
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .foregroundStyle(gradient)
+                            .opacity(0.2)
+                            .overlay(alignment: .bottomLeading)
                             {
-                                if !to_rename
+                                // Rename Handling
+                                HStack
                                 {
-                                    VStack(alignment: .leading)
+                                    if !to_rename
                                     {
-                                        if let subtitle = subtitle
+                                        VStack(alignment: .leading)
                                         {
-                                            Text(title)
-                                                .font(.headline)
-                                                .padding(.top, 8)
-                                                .padding(.leading, 4)
-                                            
-                                            Text(subtitle)
-                                            #if os(macOS) || os(iOS)
-                                                .foregroundColor(.gray)
-                                            #endif
-                                                .padding(.bottom, 8)
-                                                .padding(.leading, 4)
+                                            if let subtitle = subtitle
+                                            {
+                                                Text(title)
+                                                    .font(.headline)
+                                                    .padding(.top, 8)
+                                                    .padding(.leading, 4)
+                                                
+                                                Text(subtitle)
+                                                #if os(macOS) || os(iOS)
+                                                    .foregroundColor(.gray)
+                                                #endif
+                                                    .padding(.bottom, 8)
+                                                    .padding(.leading, 4)
+                                            }
+                                            else
+                                            {
+                                                Text(title)
+                                                    .font(.headline)
+                                                    .padding(.vertical, 8)
+                                                    .padding(.leading, 4)
+                                            }
                                         }
-                                        else
-                                        {
-                                            Text(title)
-                                                .font(.headline)
-                                                .padding(.vertical, 8)
-                                                .padding(.leading, 4)
-                                        }
+                                        #if !os(visionOS)
+                                        .padding(.horizontal, 8)
+                                        #else
+                                        .padding(.horizontal, 32)
+                                        #endif
+                                        .padding(.trailing, 4)
+                                        //Spacer()
                                     }
-                                    #if !os(visionOS)
-                                    .padding(.horizontal, 8)
-                                    #else
-                                    .padding(.horizontal, 32)
-                                    #endif
-                                    .padding(.trailing, 4)
-                                    //Spacer()
-                                }
-                                else
-                                {
-                                    VStack(alignment: .leading)
+                                    else
                                     {
-                                        HStack
+                                        VStack(alignment: .leading)
                                         {
-                                            #if os(macOS)
-                                            TextField("Name", text: $new_name)
-                                                .textFieldStyle(.roundedBorder)
-                                                .focused($is_focused)
-                                                .labelsHidden()
-                                                .padding()
-                                                .onSubmit
-                                                {
+                                            HStack
+                                            {
+                                                #if os(macOS)
+                                                TextField("Name", text: $new_name)
+                                                    .textFieldStyle(.roundedBorder)
+                                                    .focused($is_focused)
+                                                    .labelsHidden()
+                                                    .padding()
+                                                    .onSubmit
+                                                    {
+                                                        edited_name = new_name
+                                                        title = new_name
+                                                        on_rename()
+                                                        to_rename = false
+                                                    }
+                                                    .onExitCommand
+                                                    {
+                                                        to_rename = false
+                                                    }
+                                                    .onAppear
+                                                    {
+                                                        is_focused = true
+                                                    }
+                                                #else
+                                                TextField("Name", text: $new_name, onCommit: {
                                                     edited_name = new_name
                                                     title = new_name
                                                     on_rename()
                                                     to_rename = false
-                                                }
-                                                .onExitCommand
-                                                {
-                                                    to_rename = false
-                                                }
-                                                .onAppear
-                                                {
-                                                    is_focused = true
-                                                }
-                                            #else
-                                            TextField("Name", text: $new_name, onCommit: {
-                                                edited_name = new_name
-                                                title = new_name
-                                                on_rename()
-                                                to_rename = false
-                                            })
-                                                .textFieldStyle(.roundedBorder)
-                                                .focused($is_focused)
-                                                .labelsHidden()
-                                                .padding()
-                                                .onAppear
-                                                {
-                                                    is_focused = true
-                                                }
-                                            #endif
+                                                })
+                                                    .textFieldStyle(.roundedBorder)
+                                                    .focused($is_focused)
+                                                    .labelsHidden()
+                                                    .padding()
+                                                    .onAppear
+                                                    {
+                                                        is_focused = true
+                                                    }
+                                                #endif
+                                            }
                                         }
                                     }
                                 }
+                                .background(.bar)
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .padding(8)
                             }
-                            .background(.bar)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                            .padding(8)
-                        }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    
+                    Spacer(minLength: 10)
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 
-                Spacer(minLength: 10)
+                overlay_view
             }
-            
-            overlay_view
+            .onHover
+            { hovered in
+                withAnimation(.easeInOut(duration: 0.2))
+                {
+                    self.hovered = hovered
+                }
+            }
+            .offset(y: hovered ? -2 : 0)
         }
         .frame(height: 192)
-        .onHover
-        { hovered in
-            withAnimation(.easeInOut(duration: 0.2))
-            {
-                self.hovered = hovered
-            }
-        }
-        .offset(y: hovered ? -2 : 0)
     }
 }
+
+/*struct IntersectedWithPadding: Shape
+{
+    func path(in rect: CGRect) -> Path
+    {
+        let base = RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .path(in: rect)
+        
+        let paddedRect = rect.insetBy(dx: 8, dy: 14).offsetBy(dx: 0, dy: 5)
+        let padded = RoundedRectangle(cornerRadius: 10, style: .continuous)
+            .path(in: paddedRect)
+        
+        let shiftedRect = rect.offsetBy(dx: 0, dy: 10)
+        let shifted = RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .path(in: shiftedRect)
+        
+        return base
+            .intersection(shifted)
+            .subtracting(padded)
+    }
+}*/
 
 //MARK: - Program element card view
 public struct ElementCardView: View
