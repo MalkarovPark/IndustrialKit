@@ -178,7 +178,8 @@ public struct BoxCardView<Content: View>: View
                 )
                 .foregroundStyle(gradient)
                 .opacity(0.2)
-                .shadow(color: .black.opacity(0.2), radius: 8)
+                .shadow(color: color, radius: 8)
+                //.shadow(color: color, radius: 8)
             
             // Back Side
             RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -336,8 +337,6 @@ public struct BoxCardView<Content: View>: View
             }
         }
         .offset(y: hovered ? -2 : 0)
-        //.scaleEffect(hovered ? 1.02 : 1.0)
-        // .shadow(radius: 8)
     }
 }
 
