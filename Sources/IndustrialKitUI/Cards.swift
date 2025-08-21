@@ -10,7 +10,7 @@ import SceneKit
 import IndustrialKit
 
 //MARK: - Large card view
-public struct LargeCardView<Content: View>: View
+public struct BoxCardView<Content: View>: View
 {
     // View parameters
     @State public var title: String
@@ -527,12 +527,7 @@ struct Cards_Previews: PreviewProvider
         {
             VStack()
             {
-                LargeCardView(title: "Title", color: .green, image: nil)
-                #if !os(visionOS)
-                    .shadow(color: .black.opacity(0.2), radius: 8)
-                #else
-                    .frame(depth: 24)
-                #endif
+                BoxCardView(title: "Title", color: .green, image: nil)
                     .padding()
             }
             .padding(4)
@@ -541,12 +536,7 @@ struct Cards_Previews: PreviewProvider
             
             VStack()
             {
-                LargeCardView(title: "Cube", subtitle: "Model", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
-                /*#if !os(visionOS)
-                    .shadow(color: .black.opacity(0.2), radius: 8)
-                #else
-                    .frame(depth: 24)
-                #endif*/
+                BoxCardView(title: "Cube", subtitle: "Model", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
                     .padding()
             }
             .padding(4)
