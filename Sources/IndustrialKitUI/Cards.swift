@@ -15,7 +15,7 @@ public struct LargeCardView<Content: View>: View
     // View parameters
     @State public var title: String
     @State public var subtitle: String?
-    let color: Color?
+    let color: Color
     let image: UIImage?
     let node: SCNNode?
     
@@ -29,6 +29,9 @@ public struct LargeCardView<Content: View>: View
     // Overlay
     let overlay_view: Content?
     
+    private let default_color = Color(red: 142/255, green: 142/255, blue: 147/255)
+    private let gradient: LinearGradient
+    
     public init(
         title: String,
         subtitle: String? = nil,
@@ -41,7 +44,15 @@ public struct LargeCardView<Content: View>: View
         self.node = nil
         self.title = title
         self.subtitle = subtitle
-        self.color = color
+        self.color = color ?? default_color
+        self.gradient = LinearGradient(
+            gradient: Gradient(stops: [
+                Gradient.Stop(color: self.color.opacity(0.2), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.1), location: 1.0)
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
         self.image = image
         
         self._to_rename = .constant(false)
@@ -68,7 +79,15 @@ public struct LargeCardView<Content: View>: View
         self.node = nil
         self.title = title
         self.subtitle = subtitle
-        self.color = color
+        self.color = color ?? default_color
+        self.gradient = LinearGradient(
+            gradient: Gradient(stops: [
+                Gradient.Stop(color: self.color.opacity(0.2), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.1), location: 1.0)
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
         self.image = image
         
         self._to_rename = to_rename
@@ -90,7 +109,15 @@ public struct LargeCardView<Content: View>: View
     {
         self.title = title
         self.subtitle = subtitle
-        self.color = color
+        self.color = color ?? default_color
+        self.gradient = LinearGradient(
+            gradient: Gradient(stops: [
+                Gradient.Stop(color: self.color.opacity(0.2), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.1), location: 1.0)
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
         self.image = nil
         self.node = node
         
@@ -117,7 +144,15 @@ public struct LargeCardView<Content: View>: View
     {
         self.title = title
         self.subtitle = subtitle
-        self.color = color
+        self.color = color ?? default_color
+        self.gradient = LinearGradient(
+            gradient: Gradient(stops: [
+                Gradient.Stop(color: self.color.opacity(0.2), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.1), location: 1.0)
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
         self.image = nil
         self.node = node
         
@@ -135,51 +170,24 @@ public struct LargeCardView<Content: View>: View
     {
         ZStack
         {
-            // Colored Background
-            if let color = color
-            {
-                Rectangle()
-                    .foregroundStyle(color)
-                    .opacity(0.5)
-            }
-            
             // Bottom Side
-            Rectangle()
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .intersection(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .offset(y: 10)
                 )
-                .foregroundStyle(
-                    .linearGradient(
-                        stops: [
-                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 0.0),
-                            Gradient.Stop(color: .white, location: 1.0)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .opacity(0.5)
-                .brightness(-0.025)
+                .foregroundStyle(gradient)
+                .opacity(0.2)
+                .shadow(color: .black.opacity(0.2), radius: 8)
             
             // Back Side
-            Rectangle()
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .subtracting(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .offset(y: 10)
                 )
-                .foregroundStyle(
-                    .linearGradient(
-                        stops: [
-                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 0.0),
-                            Gradient.Stop(color: .white, location: 1.0)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .opacity(0.75)
-                .brightness(-0.075)
+                .foregroundStyle(gradient)
+                .opacity(0.5)
             
             // Internals
             if image != nil
@@ -188,10 +196,12 @@ public struct LargeCardView<Content: View>: View
                 Image(nsImage: image!)
                     .resizable()
                     .scaledToFill()
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 #else
                 Image(uiImage: image!)
                     .resizable()
                     .scaledToFill()
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 #endif
             }
             
@@ -199,44 +209,26 @@ public struct LargeCardView<Content: View>: View
             {
                 ObjectSceneView(node: node!)
                     .disabled(true)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             
             // Forward Side
-            Rectangle()
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .subtracting(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .offset(y: -10)
                 )
-                .foregroundStyle(
-                    .linearGradient(
-                        stops: [
-                            Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 0.0),
-                            Gradient.Stop(color: .white, location: 1.0)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .opacity(0.75)
-                .brightness(-0.075)
+                .foregroundStyle(gradient)
+                .opacity(0.5)
             
             // Top Side
             VStack(spacing: 0)
             {
                 ZStack
                 {
-                    Rectangle()
-                        .foregroundStyle(
-                            .linearGradient(
-                                stops: [
-                                    Gradient.Stop(color: Color(red: 242 / 255, green: 242 / 255, blue: 243 / 255), location: 0.0),
-                                    Gradient.Stop(color: .white, location: 1.0)
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .opacity(0.25)
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .foregroundStyle(gradient)
+                        .opacity(0.2)
                         .overlay(alignment: .bottomLeading)
                         {
                             // Rename Handling
@@ -335,13 +327,7 @@ public struct LargeCardView<Content: View>: View
             
             overlay_view
         }
-        #if !os(visionOS)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        #endif
         .frame(height: 192)
-        #if os(visionOS)
-        .glassBackgroundEffect()
-        #endif
         .onHover
         { hovered in
             withAnimation(.easeInOut(duration: 0.2))
@@ -408,7 +394,7 @@ public struct ElementCardView: View
                 }
                 .frame(maxWidth: .infinity)
             }
-            .background(.white)//.thinMaterial)
+            .background(.white)
             
             if program_element.performing_state != .none
             {
@@ -556,11 +542,11 @@ struct Cards_Previews: PreviewProvider
             VStack()
             {
                 LargeCardView(title: "Cube", subtitle: "Model", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
-                #if !os(visionOS)
+                /*#if !os(visionOS)
                     .shadow(color: .black.opacity(0.2), radius: 8)
                 #else
                     .frame(depth: 24)
-                #endif
+                #endif*/
                     .padding()
             }
             .padding(4)
@@ -571,7 +557,7 @@ struct Cards_Previews: PreviewProvider
             {
                 ElementCardView(program_element: element)
                 #if !os(visionOS)
-                    .shadow(radius: 8)
+                    .shadow(color: .black.opacity(0.2), radius: 8)
                 #else
                     .frame(depth: 24)
                 #endif
