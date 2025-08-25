@@ -183,7 +183,7 @@ public struct BoxCardView<Content: View>: View
                 )
                 .foregroundStyle(color)
                 .blur(radius: 16)
-                .opacity(0.2)
+                .opacity(0.05)
             
             // Box
             ZStack
