@@ -212,7 +212,7 @@ public struct BoxCard<Content: View>: View
             }
             .offset(y: hovered ? -2 : 0)
         }
-        .frame(height: 192)
+        //.frame(height: 192)
     }
 }
 
