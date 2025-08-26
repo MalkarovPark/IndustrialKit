@@ -80,6 +80,7 @@ public struct BoxCard<Content: View>: View
             // Box
             ZStack
             {
+                // Bottom
                 Rectangle()
                     .foregroundStyle(color)
                     .brightness(-0.05)
@@ -87,6 +88,7 @@ public struct BoxCard<Content: View>: View
                 Rectangle()
                     .foregroundStyle(gradient)
                 
+                // Top
                 VStack(spacing: 0)
                 {
                     ZStack
@@ -187,13 +189,15 @@ public struct BoxCard<Content: View>: View
                                 }
                                 .padding(4)
                             }
-                        
-                        Image(systemName: image_name)
-                            .fontWeight(.semibold)
-                            .font(.system(size: 96))
-                            .foregroundStyle(.black)
-                            .opacity(0.1)
-                            .padding()
+                            .overlay
+                            {
+                                Image(systemName: image_name)
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 96))
+                                    .foregroundStyle(.black)
+                                    .opacity(0.1)
+                                    .padding()
+                            }
                         
                         overlay_view
                     }
@@ -212,7 +216,6 @@ public struct BoxCard<Content: View>: View
             }
             .offset(y: hovered ? -2 : 0)
         }
-        //.frame(height: 192)
     }
 }
 
@@ -742,7 +745,7 @@ struct Cards_Previews: PreviewProvider
                         .padding()
                 }
                 .padding(4)
-                .frame(width: 320)
+                .frame(width: 320, height: 192)
                 
                 VStack()
                 {
