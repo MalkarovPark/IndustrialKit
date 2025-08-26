@@ -17,6 +17,8 @@ public struct BoxCard<Content: View>: View
     @State public var subtitle: String?
     let color: Color
     let image_name: String
+    let image_size: CGFloat
+    let image_weight: Font.Weight
     
     // Rename parameters
     @Binding public var to_rename: Bool
@@ -36,6 +38,8 @@ public struct BoxCard<Content: View>: View
         subtitle: String? = nil,
         color: Color? = nil,
         image_name: String = String(),
+        image_size: CGFloat = 96,
+        image_weight: Font.Weight = .semibold,
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
@@ -52,6 +56,8 @@ public struct BoxCard<Content: View>: View
             endPoint: .trailing
         )
         self.image_name = image_name
+        self.image_size = image_size
+        self.image_weight = image_weight
         
         self._to_rename = .constant(false)
         self._edited_name = .constant("")
@@ -101,8 +107,8 @@ public struct BoxCard<Content: View>: View
                             .overlay
                             {
                                 Image(systemName: image_name)
-                                    .fontWeight(.semibold)
                                     .font(.system(size: 96))
+                                    .fontWeight(.semibold)
                                     .foregroundStyle(.black)
                                     .opacity(0.1)
                                     .padding()
