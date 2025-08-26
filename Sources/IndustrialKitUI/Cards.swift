@@ -98,6 +98,15 @@ public struct BoxCard<Content: View>: View
                         
                         Rectangle()
                             .foregroundStyle(gradient)
+                            .overlay
+                            {
+                                Image(systemName: image_name)
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 96))
+                                    .foregroundStyle(.black)
+                                    .opacity(0.1)
+                                    .padding()
+                            }
                             .overlay(alignment: .bottomLeading)
                             {
                                 // Rename Handling
@@ -188,15 +197,6 @@ public struct BoxCard<Content: View>: View
                                     }
                                 }
                                 .padding(4)
-                            }
-                            .overlay
-                            {
-                                Image(systemName: image_name)
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 96))
-                                    .foregroundStyle(.black)
-                                    .opacity(0.1)
-                                    .padding()
                             }
                         
                         overlay_view
