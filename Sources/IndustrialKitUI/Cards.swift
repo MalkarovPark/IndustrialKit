@@ -10,7 +10,214 @@ import SceneKit
 import IndustrialKit
 
 //MARK: - Box card view
-public struct BoxCardView<Content: View>: View
+public struct BoxCard<Content: View>: View
+{
+    // View parameters
+    @State public var title: String
+    @State public var subtitle: String?
+    let color: Color
+    let image_name: String
+    
+    // Rename parameters
+    @Binding public var to_rename: Bool
+    @Binding public var edited_name: String
+    @State private var new_name: String
+    @FocusState private var is_focused: Bool
+    let on_rename: () -> ()
+    
+    // Overlay
+    let overlay_view: Content?
+    
+    private let default_color = Color(red: 192/255, green: 192/255, blue: 192/255)
+    private let gradient: LinearGradient
+    
+    public init(
+        title: String,
+        subtitle: String? = nil,
+        color: Color? = nil,
+        image_name: String = String(),
+        
+        @ViewBuilder overlay: () -> Content? = { EmptyView() }
+    )
+    {
+        self.title = title
+        self.subtitle = subtitle
+        self.color = color ?? default_color
+        self.gradient = LinearGradient(
+            gradient: Gradient(stops: [
+                Gradient.Stop(color: self.color.opacity(0.4), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.2), location: 1.0)
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+        self.image_name = image_name
+        
+        self._to_rename = .constant(false)
+        self._edited_name = .constant("")
+        self.new_name = ""
+        self.on_rename = { }
+        
+        self.overlay_view = overlay()
+    }
+    
+    @State private var hovered = false
+    
+    public var body: some View
+    {
+        ZStack
+        {
+            // Shadow
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .intersection(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .offset(y: 10)
+                )
+                .foregroundStyle(color)
+                .blur(radius: 16)
+                .opacity(0.5)
+            
+            // Box
+            ZStack
+            {
+                Rectangle()
+                    .foregroundStyle(color)
+                    .brightness(-0.05)
+                
+                Rectangle()
+                    .foregroundStyle(gradient)
+                
+                VStack(spacing: 0)
+                {
+                    ZStack
+                    {
+                        Rectangle()
+                            .foregroundStyle(color)
+                        
+                        Rectangle()
+                            .foregroundStyle(gradient)
+                            .overlay(alignment: .bottomLeading)
+                            {
+                                // Rename Handling
+                                HStack
+                                {
+                                    if !to_rename
+                                    {
+                                        VStack(alignment: .leading)
+                                        {
+                                            if let subtitle = subtitle
+                                            {
+                                                Text(title)
+                                                    .font(.system(size: 28, design: .rounded))
+                                                    .foregroundColor(.white)
+                                                    .padding(.top, 8)
+                                                    .padding(.leading, 4)
+                                                
+                                                Text(subtitle)
+                                                    .font(.system(size: 20, design: .rounded))
+                                                    .foregroundColor(.white)
+                                                    .opacity(0.75)
+                                                    .padding(.bottom, 8)
+                                                    .padding(.leading, 4)
+                                            }
+                                            else
+                                            {
+                                                Text(title)
+                                                    .font(.system(size: 28, design: .rounded))
+                                                    .foregroundColor(.white)
+                                                    .padding(.vertical, 8)
+                                                    .padding(.leading, 4)
+                                            }
+                                        }
+                                        #if !os(visionOS)
+                                        .padding(.horizontal, 8)
+                                        #else
+                                        .padding(.horizontal, 32)
+                                        #endif
+                                        .padding(.trailing, 4)
+                                    }
+                                    else
+                                    {
+                                        VStack(alignment: .leading)
+                                        {
+                                            HStack
+                                            {
+                                                #if os(macOS)
+                                                TextField("Name", text: $new_name)
+                                                    .font(.system(size: 28, design: .rounded))
+                                                    .textFieldStyle(.plain)
+                                                    .focused($is_focused)
+                                                    .labelsHidden()
+                                                    .padding()
+                                                    .onSubmit
+                                                    {
+                                                        edited_name = new_name
+                                                        title = new_name
+                                                        on_rename()
+                                                        to_rename = false
+                                                    }
+                                                    .onExitCommand
+                                                    {
+                                                        to_rename = false
+                                                    }
+                                                    .onAppear
+                                                    {
+                                                        is_focused = true
+                                                    }
+                                                #else
+                                                TextField("Name", text: $new_name, onCommit: {
+                                                    edited_name = new_name
+                                                    title = new_name
+                                                    on_rename()
+                                                    to_rename = false
+                                                })
+                                                .font(.system(size: 28, design: .rounded))
+                                                .textFieldStyle(.plain)
+                                                .focused($is_focused)
+                                                .labelsHidden()
+                                                .padding()
+                                                .onAppear
+                                                {
+                                                    is_focused = true
+                                                }
+                                                #endif
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(4)
+                            }
+                        
+                        Image(systemName: image_name)
+                            .fontWeight(.semibold)
+                            .font(.system(size: 96))
+                            .foregroundStyle(.black)
+                            .opacity(0.1)
+                            .padding()
+                        
+                        overlay_view
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    
+                    Spacer(minLength: 10)
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .onHover
+            { hovered in
+                withAnimation(.easeInOut(duration: 0.2))
+                {
+                    self.hovered = hovered
+                }
+            }
+            .offset(y: hovered ? -2 : 0)
+        }
+        .frame(height: 192)
+    }
+}
+
+//MARK: - Glass box card view
+public struct GlassBoxCard<Content: View>: View
 {
     // View parameters
     @State public var title: String
@@ -29,7 +236,7 @@ public struct BoxCardView<Content: View>: View
     // Overlay
     let overlay_view: Content?
     
-    private let default_color = Color(red: 142/255, green: 142/255, blue: 147/255)
+    private let default_color = Color(red: 192/255, green: 192/255, blue: 192/255)
     private let gradient: LinearGradient
     
     public init(
@@ -47,8 +254,8 @@ public struct BoxCardView<Content: View>: View
         self.color = color ?? default_color
         self.gradient = LinearGradient(
             gradient: Gradient(stops: [
-                Gradient.Stop(color: self.color.opacity(0.2), location: 0.0),
-                Gradient.Stop(color: self.color.opacity(0.1), location: 1.0)
+                Gradient.Stop(color: self.color.opacity(0.4), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.2), location: 1.0)
             ]),
             startPoint: .leading,
             endPoint: .trailing
@@ -82,8 +289,8 @@ public struct BoxCardView<Content: View>: View
         self.color = color ?? default_color
         self.gradient = LinearGradient(
             gradient: Gradient(stops: [
-                Gradient.Stop(color: self.color.opacity(0.2), location: 0.0),
-                Gradient.Stop(color: self.color.opacity(0.1), location: 1.0)
+                Gradient.Stop(color: self.color.opacity(0.4), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.2), location: 1.0)
             ]),
             startPoint: .leading,
             endPoint: .trailing
@@ -112,8 +319,8 @@ public struct BoxCardView<Content: View>: View
         self.color = color ?? default_color
         self.gradient = LinearGradient(
             gradient: Gradient(stops: [
-                Gradient.Stop(color: self.color.opacity(0.2), location: 0.0),
-                Gradient.Stop(color: self.color.opacity(0.1), location: 1.0)
+                Gradient.Stop(color: self.color.opacity(0.4), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.2), location: 1.0)
             ]),
             startPoint: .leading,
             endPoint: .trailing
@@ -147,8 +354,8 @@ public struct BoxCardView<Content: View>: View
         self.color = color ?? default_color
         self.gradient = LinearGradient(
             gradient: Gradient(stops: [
-                Gradient.Stop(color: self.color.opacity(0.2), location: 0.0),
-                Gradient.Stop(color: self.color.opacity(0.1), location: 1.0)
+                Gradient.Stop(color: self.color.opacity(0.4), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.2), location: 1.0)
             ]),
             startPoint: .leading,
             endPoint: .trailing
@@ -170,11 +377,6 @@ public struct BoxCardView<Content: View>: View
     {
         ZStack
         {
-            /*IntersectedWithPadding()
-                .fill(color)
-                .opacity(0.75)
-                .blur(radius: 8)*/
-            
             // Shadow
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .intersection(
@@ -183,7 +385,7 @@ public struct BoxCardView<Content: View>: View
                 )
                 .foregroundStyle(color)
                 .blur(radius: 16)
-                .opacity(0.05)
+                .opacity(0.1)
             
             // Box
             ZStack
@@ -196,7 +398,6 @@ public struct BoxCardView<Content: View>: View
                     )
                     .foregroundStyle(gradient)
                     .opacity(0.2)
-                    //.shadow(color: color, radius: 8)
                 
                 // Back Side
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -337,13 +538,13 @@ public struct BoxCardView<Content: View>: View
                                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                 .padding(8)
                             }
+                        
+                        overlay_view
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     
                     Spacer(minLength: 10)
                 }
-                
-                overlay_view
             }
             .onHover
             { hovered in
@@ -358,33 +559,12 @@ public struct BoxCardView<Content: View>: View
     }
 }
 
-/*struct IntersectedWithPadding: Shape
-{
-    func path(in rect: CGRect) -> Path
-    {
-        let base = RoundedRectangle(cornerRadius: 16, style: .continuous)
-            .path(in: rect)
-        
-        let paddedRect = rect.insetBy(dx: 8, dy: 14).offsetBy(dx: 0, dy: 5)
-        let padded = RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .path(in: paddedRect)
-        
-        let shiftedRect = rect.offsetBy(dx: 0, dy: 10)
-        let shifted = RoundedRectangle(cornerRadius: 16, style: .continuous)
-            .path(in: shiftedRect)
-        
-        return base
-            .intersection(shifted)
-            .subtracting(padded)
-    }
-}*/
-
 //MARK: - Program element card view
-public struct ElementCardView: View
+public struct ProgramElementCard: View
 {
     @StateObject var program_element: WorkspaceProgramElement
     
-    public init(program_element: WorkspaceProgramElement)
+    public init(_ program_element: WorkspaceProgramElement)
     {
         _program_element = StateObject(wrappedValue: program_element)
     }
@@ -458,18 +638,27 @@ public struct ElementCardView: View
     }
 }
 
-public struct RegisterCardView: View
+public struct RegisterCard: View
 {
     @Binding var value: Float
     
     public var number: Int
     public var color: Color
+    private let gradient: LinearGradient
     
     public init(value: Binding<Float>, number: Int, color: Color)
     {
         self._value = value
         self.number = number
         self.color = color
+        self.gradient = LinearGradient(
+            gradient: Gradient(stops: [
+                Gradient.Stop(color: .clear, location: 0.0),
+                Gradient.Stop(color: .white.opacity(0.1), location: 1.0)
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
     }
     
     public var body: some View
@@ -481,16 +670,7 @@ public struct RegisterCardView: View
                 .brightness(-0.05)
             
             Rectangle()
-                .foregroundStyle(
-                    .linearGradient(
-                        stops: [
-                            Gradient.Stop(color: .clear, location: 0.0),
-                            Gradient.Stop(color: .white.opacity(0.1), location: 1.0)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
+                .foregroundStyle(gradient)
             
             VStack(spacing: 0)
             {
@@ -500,16 +680,7 @@ public struct RegisterCardView: View
                         .foregroundStyle(color)
                     
                     Rectangle()
-                        .foregroundStyle(
-                            .linearGradient(
-                                stops: [
-                                    Gradient.Stop(color: .clear, location: 0.0),
-                                    Gradient.Stop(color: .white.opacity(0.1), location: 1.0)
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
+                        .foregroundStyle(gradient)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 
@@ -563,27 +734,36 @@ struct Cards_Previews: PreviewProvider
         
         Group
         {
-            VStack()
+            VStack(spacing: 0)
             {
-                BoxCardView(title: "Title", color: .green, image: nil)
-                    .padding()
+                VStack()
+                {
+                    BoxCard(title: "Robotic", subtitle: "Workspace", color: .teal, image_name: "cube")
+                        .padding()
+                }
+                .padding(4)
+                .frame(width: 320)
+                
+                VStack()
+                {
+                    GlassBoxCard(title: "Title", color: .green, image: nil)
+                        .padding()
+                }
+                .padding(4)
+                .frame(width: 320)
+                
+                VStack()
+                {
+                    GlassBoxCard(title: "Cube", subtitle: "Model", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
+                        .padding()
+                }
+                .padding(4)
+                .frame(width: 320)
             }
-            .padding(4)
-            .frame(width: 320)
-            // .background(.white)
             
             VStack()
             {
-                BoxCardView(title: "Cube", subtitle: "Model", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
-                    .padding()
-            }
-            .padding(4)
-            .frame(width: 320)
-            // .background(.white)
-            
-            VStack()
-            {
-                ElementCardView(program_element: element)
+                ProgramElementCard(element)
                 #if !os(visionOS)
                     .shadow(color: .black.opacity(0.2), radius: 8)
                 #else
@@ -595,11 +775,10 @@ struct Cards_Previews: PreviewProvider
             
             VStack()
             {
-                RegisterCardView(value: .constant(4), number: 60, color: .cyan)
+                RegisterCard(value: .constant(4), number: 60, color: .cyan)
                     .padding(16)
             }
         }
         .padding(8)
-        //.background(.white)
     }
 }

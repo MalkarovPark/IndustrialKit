@@ -60,7 +60,7 @@ public struct RegistersView: View
                     
                     if number < registers.count
                     {
-                        RegisterCardView(value: $registers[number], number: number, color: colors[color_index])
+                        RegisterCard(value: $registers[number], number: number, color: colors[color_index])
                             .id(number)
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
