@@ -107,8 +107,8 @@ public struct BoxCard<Content: View>: View
                             .overlay
                             {
                                 Image(systemName: image_name)
-                                    .font(.system(size: 96))
-                                    .fontWeight(.semibold)
+                                    .font(.system(size: image_size))
+                                    .fontWeight(image_weight)
                                     .foregroundStyle(.black)
                                     .opacity(0.1)
                                     .padding()
