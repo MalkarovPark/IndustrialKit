@@ -420,7 +420,7 @@ public struct GlassBoxCard<Content: View>: View
                 // Internals
                 if image != nil
                 {
-                    #if os(macOS)
+                    /*#if os(macOS)
                     Image(nsImage: image!)
                         .resizable()
                         .scaledToFill()
@@ -430,7 +430,19 @@ public struct GlassBoxCard<Content: View>: View
                         .resizable()
                         .scaledToFill()
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    #endif
+                    #endif*/
+                    
+                    Rectangle()
+                        .foregroundStyle(.clear)
+                        .overlay
+                        {
+                            #if os(macOS)
+                            Image(nsImage: image!)
+                            #else
+                            Image(uiImage: image!)
+                            #endif
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 
                 if node != nil
@@ -754,7 +766,7 @@ struct Cards_Previews: PreviewProvider
                 
                 VStack()
                 {
-                    GlassBoxCard(title: "Title", color: .green, image: nil)
+                    GlassBoxCard(title: "Image", subtitle: "Color Picker", color: .green, image: UIImage(named: "NSTouchBarColorPickerFill"))
                         .padding()
                 }
                 .padding(4)
@@ -762,7 +774,7 @@ struct Cards_Previews: PreviewProvider
                 
                 VStack()
                 {
-                    GlassBoxCard(title: "Cube", subtitle: "Model", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
+                    GlassBoxCard(title: "Scene", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
                         .padding()
                 }
                 .padding(4)
