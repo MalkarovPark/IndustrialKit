@@ -564,7 +564,6 @@ public struct GlassBoxCard<Content: View>: View
             }
             .offset(y: hovered ? -2 : 0)
         }
-        .frame(height: 192)
     }
 }
 
@@ -759,7 +758,7 @@ struct Cards_Previews: PreviewProvider
                         .padding()
                 }
                 .padding(4)
-                .frame(width: 320)
+                .frame(width: 320, height: 192)
                 
                 VStack()
                 {
@@ -767,7 +766,7 @@ struct Cards_Previews: PreviewProvider
                         .padding()
                 }
                 .padding(4)
-                .frame(width: 320)
+                .frame(width: 320, height: 192)
             }
             
             VStack()
