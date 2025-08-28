@@ -603,6 +603,16 @@ public struct ProgramElementCard: View
                             .foregroundColor(.white)
                             .imageScale(.large)
                             .animation(.easeInOut(duration: 0.2), value: program_element.image)
+                        
+                        Rectangle()
+                            .foregroundStyle(LinearGradient(
+                                gradient: Gradient(stops: [
+                                    Gradient.Stop(color: .clear, location: 0.0),
+                                    Gradient.Stop(color: .white.opacity(0.1), location: 1.0)
+                                ]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ))
                     }
                     .frame(width: 48, height: 48)
                     .background(program_element.color)
@@ -750,7 +760,9 @@ struct Cards_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        let element = MoverModifierElement(element_struct: WorkspaceProgramElementStruct(identifier: .mover_modifier, data: ["8", "16"]))
+        @State var performer_element = RobotPerformerElement(element_struct: WorkspaceProgramElementStruct(identifier: .robot_performer, data: ["Device", "Program", "", "false", "false", "", "", "", "", "", "", "", ""]))
+        @State var modifier_element = MoverModifierElement(element_struct: WorkspaceProgramElementStruct(identifier: .mover_modifier, data: ["duplicate", "2", "4"]))
+        @State var logic_element = JumpLogicElement(element_struct: WorkspaceProgramElementStruct(identifier: .jump_logic, data: ["Mark"]))
         
         Group
         {
@@ -780,15 +792,18 @@ struct Cards_Previews: PreviewProvider
                 .padding(4)
                 .frame(width: 320, height: 192)
             }
+            .padding(8)
             
-            VStack()
+            VStack(spacing: 24)
             {
-                ProgramElementCard(element)
-                #if !os(visionOS)
+                ProgramElementCard(performer_element)
                     .shadow(color: .black.opacity(0.2), radius: 8)
-                #else
-                    .frame(depth: 24)
-                #endif
+                
+                ProgramElementCard(modifier_element)
+                    .shadow(color: .black.opacity(0.2), radius: 8)
+                
+                ProgramElementCard(logic_element)
+                    .shadow(color: .black.opacity(0.2), radius: 8)
             }
             .padding(16)
             .frame(width: 288)
@@ -800,5 +815,9 @@ struct Cards_Previews: PreviewProvider
             }
         }
         .padding(8)
+        .onAppear
+        {
+            performer_element.performing_state = .completed
+        }
     }
 }
