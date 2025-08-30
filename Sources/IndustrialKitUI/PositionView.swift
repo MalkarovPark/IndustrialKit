@@ -228,7 +228,6 @@ public struct PositionControl: View
                 }
             }
         }
-        .padding()
     }
 }
 
@@ -361,39 +360,39 @@ struct PositionView_Previews: PreviewProvider
         
         var body: some View
         {
-            ZStack
+            HStack
             {
-                Rectangle()
-                    .foregroundStyle(.white)
-                
-                HStack(spacing: 48)
+                HStack(spacing: 16)
                 {
-                    HStack(spacing: 16)
-                    {
-                        PositionView(position: $position)
-                    }
-                    .frame(width: 256)
-                    .padding()
-                    .background(.bar)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .shadow(radius: 8)
-                    
-                    HStack(spacing: 16)
-                    {
-                        PositionControl(position: $position, scale: .constant((x: 100, y: 100, z: 100)))
-                    }
-                    .frame(width: 256)
-                    .background(.bar)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .shadow(radius: 8)
+                    PositionView(position: $position)
                 }
-                .padding(32)
+                .frame(width: 256)
+                .modifier(PreviewBorder())
+                
+                PositionControl(position: $position, scale: .constant((x: 100, y: 100, z: 100)))
+                    .frame(width: 224)
+                    .modifier(PreviewBorder())
             }
+            .padding()
         }
     }
     
     static var previews: some View
     {
         Container()
+    }
+    
+    private struct PreviewBorder: ViewModifier
+    {
+        public func body(content: Content) -> some View
+        {
+            content
+                //.frame(width: 256)
+                .padding()
+                .background(.bar)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: .black.opacity(0.2), radius: 8)
+                .padding()
+        }
     }
 }
