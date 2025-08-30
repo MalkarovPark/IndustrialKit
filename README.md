@@ -91,7 +91,7 @@ Other kinds of industrial equipment used in a technological complex is described
 
 Interaction with tools is organized by opcides and infocodes. The opcode is responsible for the executable technological operation - when a numerical value is set in the spectial property, the start of the operation associated with the code is initialized. The default value for this property is -1, which means no operation performed. When the operation is done, the value of the opcode is reset to this value.
 
-Operational code sequences are contained in the programs array, the elements are the *OperationProgram* class, with a set of numeric code values with *OperationCode* class. Program management is similar to that of robots - there are functions for adding, deleting, selecting and performing.
+Operational code sequences are contained in the programs array, the elements are the *OperationProgram* class, with a set of numeric code values with *OperationCode* class. Program management is similar to that of robots – there are functions for adding, deleting, selecting and performing.
 
 ### Part <a name="part">
 
@@ -101,11 +101,11 @@ This class has a set of properties that describe the appearance and physical pro
 
 ### Connectors <a name="connectors">
 
-Connectors are used to connect and control industrial equipment. They are divided into two subtypes - for switching robots and tools, described by the *RobotConnector* and *ToolConnector* classes, respectively.
+Connectors are used to connect and control industrial equipment. They are divided into two subtypes – for switching robots and tools, described by the *RobotConnector* and *ToolConnector* classes, respectively.
 
 Connectors of individual models are inherited from these base classes and have their own specific redefinitions of functions and variables.
 
-Connection to the equipment is performed by the connect function, disconnection - disconnect. The connection state returns by Bool property. State of the equipment returns in array of dictionaries. They contain String name of the returned property and the value of Any type. The connection parameters are set in the corresponding array of structures.
+Connection to the equipment is performed by the connect function, disconnection – disconnect. The connection state returns by Bool property. State of the equipment returns in array of dictionaries. They contain String name of the returned property and the value of Any type. The connection parameters are set in the corresponding array of structures.
 
 ### Model Controllers <a name="model-controllers">
 
@@ -161,11 +161,9 @@ It has the functionality of double tap to reset camera position for macOS.
 
 ### Cards <a name="industrialkitui-cards"></a>
 
-Used to display various objects. Can display a description with an image or a SceneKit scene model.
+Used to display various objects. Box Card can display title, subtitle and SF Symbol. Glass Box Card can display title and subtitle with an Image or a SceneKit Node.
 
-Can be used in conjunction with objects inherited from WorkspaceObject. The card initializer is passed the values returned by the object's *card_info* method.
-
-The small card has no subtitle.
+These cards can be used in conjunction with objects inherited from WorkspaceObject by passing them the values ​​returned by the object's *card_info* method.
 
 <p align="center">
   <img width="672" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/f4335808-4442-4636-99a7-6a3f669de7a0" />

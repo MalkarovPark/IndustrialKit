@@ -104,6 +104,7 @@ public struct ComparatorElementView: View
             HStack(spacing: 8)
             {
                 Text("If value of")
+                    .frame(minWidth: 60)
                 
                 RegistersSelector(text: "\(value_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $value_index, names: ["Value 1"])
                 
@@ -120,6 +121,7 @@ public struct ComparatorElementView: View
                 }
                 
                 Text("value of")
+                    .frame(minWidth: 48)
                 
                 RegistersSelector(text: "\(value2_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $value2_index, names: ["Value 2"])
             }
@@ -248,14 +250,8 @@ struct IMALogicPreviewsContainer: PreviewProvider
 
         var body: some View
         {
-            ZStack
-            {
-                Rectangle()
-                    .foregroundStyle(.white)
-                
-                LogicView()
-                    .environmentObject(workspace)
-            }
+            LogicView()
+                .environmentObject(workspace)
         }
     }
 
@@ -275,35 +271,37 @@ struct IMALogicPreviewsContainer: PreviewProvider
                     .opacity(0.75)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding([.horizontal, .top], 8)*/
-
+                
                 HStack
                 {
                     ComparatorElementView(element: .constant(ComparatorLogicElement()), on_update: {})
-                        .padding()
-                        .frame(width: 256)
-                        .background(.bar)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                        .shadow(radius: 8)
-                        .padding()
+                        .modifier(PreviewBorder())
 
                     MarkLogicElementView(element: .constant(mark), on_update: {})
-                        .padding()
-                        .frame(width: 256)
-                        .background(.bar)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                        .shadow(radius: 8)
-                        .padding()
+                        .modifier(PreviewBorder())
                 }
-                
-                Spacer()
             }
-            .padding(8)
+            .padding()
             .onAppear
             {
                 mark.name = "Cycle"
                 
                 workspace.elements.append(mark)
             }
+        }
+    }
+    
+    private struct PreviewBorder: ViewModifier
+    {
+        public func body(content: Content) -> some View
+        {
+            content
+                .padding()
+                .frame(width: 256)
+                .background(.bar)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: .black.opacity(0.2), radius: 8)
+                .padding()
         }
     }
 }

@@ -701,7 +701,7 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                     .opacity(0.75)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding([.horizontal, .top], 8)*/
-
+                
                 HStack
                 {
                     MoverElementView(element: .constant(MoverModifierElement()), on_update: {})
@@ -727,10 +727,8 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                         Spacer()
                     }
                 }
-                
-                Spacer()
             }
-            .padding(8)
+            .padding()
         }
     }
     
