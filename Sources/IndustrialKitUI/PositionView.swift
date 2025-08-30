@@ -370,7 +370,7 @@ struct PositionView_Previews: PreviewProvider
                 .modifier(PreviewBorder())
                 
                 PositionControl(position: $position, scale: .constant((x: 100, y: 100, z: 100)))
-                    .frame(width: 224)
+                    .frame(width: 208)
                     .modifier(PreviewBorder())
             }
             .padding()

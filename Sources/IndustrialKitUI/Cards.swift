@@ -778,7 +778,7 @@ struct Cards_Previews: PreviewProvider
                 
                 VStack()
                 {
-                    GlassBoxCard(title: "Image", subtitle: "Color Picker", color: .green, image: UIImage(named: "NSTouchBarColorPickerFill"))
+                    GlassBoxCard(title: "Image", subtitle: "Color Wheel", color: .green, image: UIImage(named: "NSTouchBarColorPickerFill"))
                         .padding()
                 }
                 .padding(4)

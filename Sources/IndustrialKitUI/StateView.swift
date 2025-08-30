@@ -148,7 +148,6 @@ struct StateView_PreviewsContainer: PreviewProvider
     
     struct StateView_Previews: View
     {
-        @State var chart_data: [WorkspaceObjectChart]? = [WorkspaceObjectChart]()
         @State var states_data: [StateItem]? = [StateItem]()
         
         var body: some View
@@ -157,9 +156,8 @@ struct StateView_PreviewsContainer: PreviewProvider
                 .frame(width: 320, height: 240)
                 .onAppear
                 {
-                    states_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
-                    states_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"),
-                                         StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
+                    //states_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
+                    //states_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"), StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
                     
                     states_data?.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
                 }

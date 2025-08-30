@@ -170,7 +170,6 @@ struct ChartsView_PreviewsContainer: PreviewProvider
     struct ChartsView_Previews: View
     {
         @State var chart_data: [WorkspaceObjectChart]? = [WorkspaceObjectChart]()
-        @State var states_data: [StateItem]? = [StateItem]()
         
         var body: some View
         {
