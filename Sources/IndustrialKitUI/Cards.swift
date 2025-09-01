@@ -644,6 +644,8 @@ public struct ProgramElementCard: View
             }
             #if !os(visionOS)
             .background(.white)
+            #else
+            .background(.thinMaterial)
             #endif
             
             if program_element.performing_state != .none
