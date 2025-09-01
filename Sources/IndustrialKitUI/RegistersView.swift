@@ -431,6 +431,7 @@ public struct RegistersDataView: View
                                 .padding(8)
                         }
                         .buttonBorderShape(.circle)
+                        .glassBackgroundEffect()
                         .padding(.trailing, 8)
                         
                         Button(action: save_registers)
@@ -441,6 +442,7 @@ public struct RegistersDataView: View
                                 .padding(8)
                         }
                         .buttonBorderShape(.circle)
+                        .glassBackgroundEffect()
                         .padding(.trailing, 8)
                         
                         Button(action: { is_registers_count_presented = true })
@@ -451,6 +453,7 @@ public struct RegistersDataView: View
                                 .padding(8)
                         }
                         .buttonBorderShape(.circle)
+                        .glassBackgroundEffect()
                         .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
                         {
                             RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)

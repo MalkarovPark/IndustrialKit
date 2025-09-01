@@ -31,6 +31,8 @@ public struct ViewCloseButton: ViewModifier
                 .buttonBorderShape(.circle)
                 #if !os(visionOS)
                 .buttonStyle(.glass)
+                #else
+                .glassBackgroundEffect()
                 #endif
                 .padding(8)
                 #if !os(macOS)
