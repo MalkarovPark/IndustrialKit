@@ -500,11 +500,7 @@ public struct GlassBoxCard<Content: View>: View
                                                     .padding(.leading, 4)
                                             }
                                         }
-                                        #if !os(visionOS)
                                         .padding(.horizontal, 8)
-                                        #else
-                                        .padding(.horizontal, 32)
-                                        #endif
                                         .padding(.trailing, 4)
                                         //Spacer()
                                     }
@@ -555,7 +551,11 @@ public struct GlassBoxCard<Content: View>: View
                                         }
                                     }
                                 }
+                                #if !os(visionOS)
                                 .background(.bar)
+                                #else
+                                .background(.thinMaterial)
+                                #endif
                                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                 .padding(8)
                             }
@@ -642,7 +642,9 @@ public struct ProgramElementCard: View
                 }
                 .frame(maxWidth: .infinity)
             }
+            #if !os(visionOS)
             .background(.white)
+            #endif
             
             if program_element.performing_state != .none
             {

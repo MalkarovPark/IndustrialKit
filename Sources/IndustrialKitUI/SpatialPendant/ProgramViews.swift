@@ -132,7 +132,6 @@ internal struct ProgramElementItemView: View
             {
                 Rectangle()
                     .foregroundStyle(.clear)
-                    // .popover(isPresented: $element_view_presented, arrowEdge: .trailing)
                     .sheet(isPresented: $element_view_presented)
                     {
                         ElementView(element: $element, on_update: update_program_element)
@@ -440,7 +439,7 @@ internal struct PositionItemView: View
             }
             .frame(height: 24)
             .popover(isPresented: $position_item_view_presented,
-                     arrowEdge: .leading)
+                     arrowEdge: .top)
             {
                 PositionPointView(points: $points, point_item: force_bind(point_item), position_item_view_presented: $position_item_view_presented, item_view_pos_location: [point_item.x, point_item.y, point_item.z], item_view_pos_rotation: [point_item.r, point_item.p, point_item.w], on_delete: on_delete)
             }
