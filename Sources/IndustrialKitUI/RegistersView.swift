@@ -359,6 +359,7 @@ public struct RegistersDataView: View
             RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: 48, bottom_spacing: 48)
                 .overlay(alignment: .bottom)
                 {
+                    #if !os(visionOS)
                     GlassEffectContainer
                     {
                         HStack(spacing: 0)
@@ -419,6 +420,47 @@ public struct RegistersDataView: View
                         }
                         .padding()
                     }
+                    #else
+                    HStack(spacing: 0)
+                    {
+                        Button(role: .destructive, action: clear_registers)
+                        {
+                            Image(systemName: "eraser")
+                                .imageScale(.large)
+                                .frame(width: 24, height: 24)
+                                .padding(8)
+                        }
+                        .buttonBorderShape(.circle)
+                        .padding(.trailing, 8)
+                        
+                        Button(action: save_registers)
+                        {
+                            Image(systemName: "arrow.down.doc")
+                                .imageScale(.large)
+                                .frame(width: 24, height: 24)
+                                .padding(8)
+                        }
+                        .buttonBorderShape(.circle)
+                        .padding(.trailing, 8)
+                        
+                        Button(action: { is_registers_count_presented = true })
+                        {
+                            Image(systemName: "square.grid.2x2")
+                                .imageScale(.large)
+                                .frame(width: 24, height: 24)
+                                .padding(8)
+                        }
+                        .buttonBorderShape(.circle)
+                        .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
+                        {
+                            RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)
+                            {
+                                save_registers()
+                            }
+                        }
+                    }
+                    .padding()
+                    #endif
                 }
         }
         .controlSize(.regular)

@@ -40,4 +40,13 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
         }
     }
 }
+
+//MARK: - Inspector modifier for visionOS
+public extension View
+{
+    func inspector<InspectorContent: View>(isPresented: Binding<Bool>, @ViewBuilder inspectorContent: @escaping () -> InspectorContent) -> some View
+    {
+        self.modifier(InspectorModifier(isPresented: isPresented, inspectorContent: inspectorContent))
+    }
+}
 #endif

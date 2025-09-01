@@ -7,6 +7,7 @@
 
 #if os(visionOS)
 import Foundation
+import IndustrialKit
 
 /**
  A class that provides integration between applications and the Spatial Pendant.

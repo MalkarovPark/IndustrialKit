@@ -7,6 +7,7 @@
 
 #if os(visionOS)
 import SwiftUI
+import IndustrialKit
 
 /**
  A view that provides the universal spatial pendant for industrial applications.
@@ -207,7 +208,7 @@ private struct SpatialPendantView: View
     
     private func add_robot_item()
     {
-        workspace.selected_robot.selected_program.add_point(PositionPoint(x: workspace.selected_robot.pointer_location[0], y: workspace.selected_robot.pointer_location[1], z: workspace.selected_robot.pointer_location[2], r: workspace.selected_robot.pointer_rotation[0], p: workspace.selected_robot.pointer_rotation[1], w: workspace.selected_robot.pointer_rotation[2]))
+        workspace.selected_robot.selected_program.add_point(PositionPoint(x: workspace.selected_robot.pointer_position.x, y: workspace.selected_robot.pointer_position.y, z: workspace.selected_robot.pointer_position.z, r: workspace.selected_robot.pointer_position.r, p: workspace.selected_robot.pointer_position.p, w: workspace.selected_robot.pointer_position.w))
         
         workspace.update_view()
         controller.robots_document_data_update.toggle()

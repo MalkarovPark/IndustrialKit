@@ -7,6 +7,7 @@
 
 #if os(visionOS)
 import SwiftUI
+import IndustrialKit
 
 //MARK: - Workspace
 internal struct WorkspaceControl: View
@@ -199,7 +200,8 @@ internal struct RobotControl: View
     
     var body: some View
     {
-        PositionControl(location: $workspace.selected_robot.pointer_location, rotation: $workspace.selected_robot.pointer_rotation, scale: $workspace.selected_robot.space_scale)
+        PositionControl(position: $workspace.selected_robot.pointer_position, scale: $workspace.selected_robot.space_scale)
+            .padding()
     }
 }
 

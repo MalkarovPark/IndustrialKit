@@ -91,7 +91,9 @@ public struct SheetCaption: ViewModifier
                     .controlSize(.extraLarge)
                     #endif
                     .buttonBorderShape(.circle)
+                    #if !os(visionOS)
                     .buttonStyle(.glass)
+                    #endif
                     .padding(8)
                     #if !os(macOS)
                     .padding(.top, 4)

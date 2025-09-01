@@ -7,6 +7,7 @@
 
 #if os(visionOS)
 import SwiftUI
+import IndustrialKit
 import UniformTypeIdentifiers
 
 //MARK: - Workspace
@@ -34,7 +35,7 @@ internal struct WorkspaceProgramView: View
                         self.dragged_element = element
                         return NSItemProvider(object: element.id.uuidString as NSItemProviderWriting)
                     }, preview: {
-                        ElementCardView(program_element: element)
+                        ProgramElementCard(element)
                     })
                     .onDrop(of: [UTType.text], delegate: WorkspaceDropDelegate(elements: $workspace.elements, dragged_element: $dragged_element, workspace_elements: workspace.file_data().elements, element: element))
                 }
@@ -121,7 +122,7 @@ internal struct ProgramElementItemView: View
     {
         ZStack
         {
-            ElementCardView(program_element: element)
+            ProgramElementCard(element)
                 .onTapGesture
             {
                 element_view_presented = true
@@ -380,7 +381,7 @@ internal struct RobotProgramView: View
     
     private func add_point_to_program()
     {
-        workspace.selected_robot.selected_program.add_point(PositionPoint(x: workspace.selected_robot.pointer_location[0], y: workspace.selected_robot.pointer_location[1], z: workspace.selected_robot.pointer_location[2], r: workspace.selected_robot.pointer_rotation[0], p: workspace.selected_robot.pointer_rotation[1], w: workspace.selected_robot.pointer_rotation[2]))
+        workspace.selected_robot.selected_program.add_point(PositionPoint(x: workspace.selected_robot.pointer_position.x, y: workspace.selected_robot.pointer_position.y, z: workspace.selected_robot.pointer_position.z, r: workspace.selected_robot.pointer_position.r, p: workspace.selected_robot.pointer_position.p, w: workspace.selected_robot.pointer_position.w))
         
         controller.robots_document_data_update.toggle()
         workspace.update_view()
@@ -454,7 +455,7 @@ internal struct PositionItemView: View
     {
         Binding<PositionPoint>(
             get: { point },
-            set: { _ in } // Ничего не делаем, потому что `point` — ссылочный тип
+            set: { _ in }
         )
     }
 }
@@ -476,7 +477,8 @@ internal struct PositionPointView: View
     @EnvironmentObject var workspace: Workspace
     
     let on_delete: (IndexSet) -> ()
-    let button_padding = 12.0
+    
+    private let button_padding = 12.0
     
     var body: some View
     {
@@ -484,15 +486,7 @@ internal struct PositionPointView: View
         {
             HStack
             {
-                PositionView(location: $item_view_pos_location, rotation: $item_view_pos_rotation)
-                    .onChange(of: item_view_pos_location)
-                    { _, _ in
-                        update_point_location()
-                    }
-                    .onChange(of: item_view_pos_rotation)
-                    { _, _ in
-                        update_point_rotation()
-                    }
+                PositionView(position: pos_binding)
             }
             .padding([.horizontal, .top])
             
@@ -519,6 +513,14 @@ internal struct PositionPointView: View
                     .labelsHidden()
             }
             .padding()
+            .onChange(of: item_view_pos_location)
+            { _, _ in
+                update_point_location()
+            }
+            .onChange(of: item_view_pos_rotation)
+            { _, _ in
+                update_point_rotation()
+            }
             .onChange(of: item_view_pos_type)
             { _, new_value in
                 if appeared
@@ -551,6 +553,28 @@ internal struct PositionPointView: View
         {
             workspace.selected_robot.selected_program.selected_point_index = -1
         }
+    }
+    
+    var pos_binding: Binding<(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)>
+    {
+        Binding(
+            get: {
+                (x: item_view_pos_location[safe: 0] ?? 0,
+                 y: item_view_pos_location[safe: 1] ?? 0,
+                 z: item_view_pos_location[safe: 2] ?? 0,
+                 r: item_view_pos_rotation[safe: 0] ?? 0,
+                 p: item_view_pos_rotation[safe: 1] ?? 0,
+                 w: item_view_pos_rotation[safe: 2] ?? 0)
+            },
+            set: {
+                item_view_pos_location[safe: 0] = $0.x
+                item_view_pos_location[safe: 1] = $0.y
+                item_view_pos_location[safe: 2] = $0.z
+                item_view_pos_rotation[safe: 0] = $0.r
+                item_view_pos_rotation[safe: 1] = $0.p
+                item_view_pos_rotation[safe: 2] = $0.w
+            }
+        )
     }
     
     // MARK: Point manage functions
