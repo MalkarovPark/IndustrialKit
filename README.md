@@ -131,21 +131,29 @@ Some functions that can be used both in framework and independently by developer
 
 ### Extensions <a name="extensions">
 
-Added methods for Float and uses to convert radians to degrees – __to_deg__ and vice versa – __to_rad__.
+Added methods for `Float` to convert radians to degrees – __to_deg__ and vice versa – __to_rad__.
 
-Provided new methods for __SCNNode__ – __remove_all_constraints__ to remove constraints and reset default position, __remove_all_child_nodes__ to remove all child nodes from this node.
+Provided new methods for `SCNNode` – __remove_all_constraints__ to remove all constraints and refresh node, __remove_all_child_nodes__ to remove all child nodes, and __deep_clone__ to fully clone node with geometry, materials, and children.
 
-Extension for provide the __pngData__ missed method for __UIImage__ (UIKit).
+Extension to provide the __pngData__ method for `UIImage` (UIKit / NSImage AppKit).
 
-Aliases for __NSImage__, __NSColor__ to use them as __UIImage__ and __UIColor__ respectively (AppKit).
+Aliases for `NSImage` and `NSColor` to use them as `UIImage` and `UIColor` respectively (AppKit).
+
+Safe access extensions for `Array` and `Dictionary` – __safe__, __safe_float__, __safe_name__ to get/set elements or nodes without crashes.
+
+Extensions for `Color` and `UIColor` to initialize from HEX (__init(hex:)__) and get HEX string (__to_hex__).
+
+Encodable extensions – __json_data__ and __json_string__ for pretty-printed JSON output.
+
+String extension – __code_correct_format__ to convert to code-safe string (spaces → underscores, digits prefixed with _).
 
 # [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a>
 
 The built-in programming language of the IndustrialKit platform formalizes methods for robotic systems algoritmization and organizes unified connection and control of various robots and equipment tools.
 
-<p align="center">
+<!-- <p align="center">
    <img width="168" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/2792a352-5574-4965-885d-cc69a27de9c2">
-</p>
+</p> -->
 
 # IndustrialKitUI <a name="industrialkitui"></a>
 
@@ -156,7 +164,7 @@ The simple view for SceneKit nodes. Initalises only by SCNNode and has transpare
 It has the functionality of double tap to reset camera position for macOS.
 
 <p align="center">
-  <img width="712" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/af8223de-82e1-4ab7-a194-16f6ce721478" />
+  <img width="712" height="512" alt="Object Scene View" src="https://github.com/user-attachments/assets/59ad9231-bf58-4039-9c25-ec142c7de42e" />
 </p>
 
 ### Cards <a name="industrialkitui-cards"></a>
@@ -166,19 +174,19 @@ Used to display various objects. Box Card can display title, subtitle and SF Sym
 These cards can be used in conjunction with objects inherited from WorkspaceObject by passing them the values ​​returned by the object's *card_info* method.
 
 <p align="center">
-  <img width="672" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/f4335808-4442-4636-99a7-6a3f669de7a0" />
+  <img width="992" height="224" alt="Cards" src="https://github.com/user-attachments/assets/11c19b3a-9a5a-4aa5-bc2f-3ea6cde07ec0" />
 </p>
 
 The program element card. Marked if corresponding program element is performing.
 
 <p align="center">
-  <img width="304" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/ebc9cc09-01a1-44d3-8e20-94f2d54031c2" />
+  <img width="304" src="https://github.com/user-attachments/assets/f10aa961-b91e-4bd1-a501-b1ef7f3be87a" />
 </p>
 
 The register card allows edit the register value.
 
 <p align="center">
-  <img width="128" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/4bae3f72-254f-47f8-9589-401f9df3620a" />
+  <img width="128" height="128" alt="RegisterCard" src="https://github.com/user-attachments/assets/4290a0bd-d123-4def-bec9-779f7d8c4357" />
 </p>
 
 ### Position View <a name="industrialkitui-positionview"></a>
@@ -191,7 +199,7 @@ The editing window contains two groups of three editable parameters:
 Each editable parameter consists of a field and an associated stepper. The described sequence of groups can be displayed in a vertical, horizontal or some other stack.
 
 <p align="center">
-  <img width="288" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/4f516989-ce57-4c0a-b519-4e90bd320e00" />
+  <img width="256" height="243" alt="PositionView" src="https://github.com/user-attachments/assets/04afbdf8-d7c2-4545-83ba-9d6dec1e5498" />
 </p>
 
 ### Position Control <a name="industrialkitui-positioncontrol"></a>
@@ -199,7 +207,7 @@ Each editable parameter consists of a field and an associated stepper. The descr
 Provides position editing with sliders. For location should set upper limits (lower limits have 0 value). Rotations are limited to the range -180º – 180º.
 
 <p align="center">
-  <img width="256" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/078ff7dc-6468-4d1d-b536-e1432979fedd" />
+  <img width="256" src="https://github.com/user-attachments/assets/acc3e380-79ab-485f-acbc-1c37440ab547" />
 </p>
 
 ### Registers View <a name="industrialkitui-registersview"></a>
@@ -207,7 +215,7 @@ Provides position editing with sliders. For location should set upper limits (lo
 View for editing the Workspace memory of the robotic technological complex.
 
 <p align="center">
-  <img width="468" alt="registers_view" src="https://github.com/user-attachments/assets/b2c2f15e-71f8-40b3-930c-8c12b247b00f" />
+  <img width="527" height="592" alt="RegistersView" src="https://github.com/user-attachments/assets/a91f76c8-ea91-4ca3-b97a-b622ba5f2aa7" />
 </p>
 
 ### Registers Selector <a name="industrialkitui-registersselector"></a>
@@ -215,7 +223,7 @@ View for editing the Workspace memory of the robotic technological complex.
 Pruposed for elements, registers from which they take data can be specified. This functionality is provided by the Registers Selector control. One or more registers can be selected.
 
 <p align="center">
-  <img width="680" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/0d600fa1-6a99-4129-9f5d-ab5a3572629a" />
+  <img width="340" src="https://github.com/user-attachments/assets/543859bc-e595-42dd-957a-df2413ede23f" />
 </p>
 
 ### Program Elements Views <a name="industrialkitui-programelementsviews"></a>
@@ -223,9 +231,9 @@ Pruposed for elements, registers from which they take data can be specified. Thi
 Views for editing different types of IMA program elements – Performers, Modifiers and Logic.
 
 <p align="center">
-  <img width="600" alt="performers_views" src="https://github.com/user-attachments/assets/be0b7cac-b2d3-4fcf-a92d-39abc78f7968" />
-  <img width="600" alt="modifier_views" src="https://github.com/user-attachments/assets/93b0fe5c-91cc-49f0-a0b3-538fd7d3c980" />
-  <img width="600" alt="logic_views" src="https://github.com/user-attachments/assets/6d970534-6006-4740-9114-a7b44d9407d0" />
+  <img width="600" alt="performers_views" src="https://github.com/user-attachments/assets/605e9781-6f3c-44eb-8c67-25f2ebcbf23f" />
+  <img width="600" alt="modifier_views" src="https://github.com/user-attachments/assets/2387d9ce-da14-46dd-88db-2a573f4e55ce" />
+  <img width="600" alt="logic_views" src="https://github.com/user-attachments/assets/85e57094-3ed2-4d71-9c25-3e9bf3f5e4bc" />
 </p>
 
 ### Charts View <a name="industrialkitui-chartsview"></a>
@@ -233,7 +241,7 @@ Views for editing different types of IMA program elements – Performers, Modifi
 Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to switch between them by segmented picker (if count of arrays of arrays is more than one). The type of chart is determined by its properties.
 
 <p align="center">
-  <img width="752" src="https://github.com/user-attachments/assets/97db690a-662c-4fe4-8468-880818460865" />
+  <img width="752" src="https://github.com/user-attachments/assets/c77a8564-e3dd-4f67-aec8-a24e1a0af774" />
 </p>
 
 ### State View <a name="industrialkitui-stateview"></a>
@@ -241,7 +249,7 @@ Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to swit
 Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable [SF Symbols](https://developer.apple.com/sf-symbols/).
 
 <p align="center">
-  <img width="432" src="https://github.com/user-attachments/assets/2b092b07-67b7-4da7-a1c1-a56769d2e021" />
+  <img width="432" height="384" alt="StateView" src="https://github.com/user-attachments/assets/22cf3a4a-b96f-4fbe-98a9-58260eb6d836" />
 </p>
 
 ### Spatial Pendant <a name="industrialkitui-spendant"></a>

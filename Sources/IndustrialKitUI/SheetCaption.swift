@@ -127,7 +127,7 @@ public struct SheetCaption: ViewModifier
                 }
             }*/
         #if os(macOS) || os(visionOS)
-        .fitted()
+        .presentationSizing(.fitted)
         #endif
     }
 }
