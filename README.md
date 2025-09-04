@@ -199,7 +199,7 @@ The editing window contains two groups of three editable parameters:
 Each editable parameter consists of a field and an associated stepper. The described sequence of groups can be displayed in a vertical, horizontal or some other stack.
 
 <p align="center">
-  <img width="256" height="243" alt="PositionView" src="https://github.com/user-attachments/assets/04afbdf8-d7c2-4545-83ba-9d6dec1e5498" />
+  <img width="352" height="243" alt="PositionView" src="https://github.com/user-attachments/assets/04afbdf8-d7c2-4545-83ba-9d6dec1e5498" />
 </p>
 
 ### Position Control <a name="industrialkitui-positioncontrol"></a>
@@ -207,7 +207,7 @@ Each editable parameter consists of a field and an associated stepper. The descr
 Provides position editing with sliders. For location should set upper limits (lower limits have 0 value). Rotations are limited to the range -180º – 180º.
 
 <p align="center">
-  <img width="256" src="https://github.com/user-attachments/assets/acc3e380-79ab-485f-acbc-1c37440ab547" />
+  <img width="352" src="https://github.com/user-attachments/assets/acc3e380-79ab-485f-acbc-1c37440ab547" />
 </p>
 
 ### Registers View <a name="industrialkitui-registersview"></a>
