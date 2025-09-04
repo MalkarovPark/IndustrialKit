@@ -55,7 +55,7 @@ The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS, visionO
 
 CareKit can be installed via SPM. Create a new Xcode project and navigate to `File > Add Package Dependences`. Enter the url `https://github.com/MalkarovPark/IndustrialKit` and select the `main` branch. Next, select targeted project and tap `Add Package`.
 
-<img width="1208" alt="package_installation" src="https://github.com/user-attachments/assets/88ab8206-b5aa-48d4-bb5c-3ed6b85cc528" />
+<img width="1226" height="797" alt="Add Package" src="https://github.com/user-attachments/assets/290c243b-bea1-4779-b7da-033ef2e91ebe" />
 
 ### [Robotic Complex Workspace](https://github.com/MalkarovPark/Robotic-Complex-Workspace) <a name="rcworkspace-app"></a>
 
@@ -73,7 +73,7 @@ IndustrialKitUI provides some views and modifiers for use in design and data pro
 
 ### Workspace <a name="workspace">
 
-Described by the *Workspace* class is the basis of the production complex, which consists of robots, tools, parts and controlled by a global program, presented as a sequence of blocks - algorithmic elements. Thus, this class contains four properties of an array of values of types of workspace objects (*WorkspaceObject* class) inherited such as *Robot*, *Tool*, *Part* and elements of the global control program with type *WorkspaceProgramElement*.
+Described by the *Workspace* class is the basis of the production complex, which consists of robots, tools, parts and controlled by a global program, presented as a sequence of blocks – algorithmic elements. Thus, this class contains four properties of an array of values of types of workspace objects (*WorkspaceObject* class) inherited such as *Robot*, *Tool*, *Part* and elements of the global control program with type *WorkspaceProgramElement*.
 
 For arrays of objects, a standard set of functions is used, including adding, deleting, selecting, deselecting, searching by name. However, some features may not be available for some objects.
 
@@ -89,15 +89,15 @@ Robot can add, delete and edit its programs. There are functions for selecting a
 
 Other kinds of industrial equipment used in a technological complex is described by the *Tool* class. Tool can be either free-standing or attached to the endpoint of the robot manipulator.
 
-Interaction with tools is organized by opcides and infocodes. The opcode is responsible for the executable technological operation - when a numerical value is set in the spectial property, the start of the operation associated with the code is initialized. The default value for this property is -1, which means no operation performed. When the operation is done, the value of the opcode is reset to this value.
+Interaction with tools is organized by opcides and infocodes. The opcode is responsible for the executable technological operation – when a numerical value is set in the spectial property, the start of the operation associated with the code is initialized. The default value for this property is -1, which means no operation performed. When the operation is done, the value of the opcode is reset to this value.
 
 Operational code sequences are contained in the programs array, the elements are the *OperationProgram* class, with a set of numeric code values with *OperationCode* class. Program management is similar to that of robots – there are functions for adding, deleting, selecting and performing.
 
 ### Part <a name="part">
 
-Parts form the environment, such as tables, drives, safety fences, etc., and also represent objects with which the executing devices interact directly - an example is the parts assembled by robots. Described by the *Part* class.
+Parts form the environment, such as tables, drives, safety fences, etc., and also represent objects with which the executing devices interact directly – an example is the parts assembled by robots. Described by the *Part* class.
 
-This class has a set of properties that describe the appearance and physical properties of the part. A part model can be obtained both parametrically - from an array of lengths and the name of a geometric primitive, and by importing from a scene file.
+This class has a set of properties that describe the appearance and physical properties of the part. A part model can be obtained both parametrically – from an array of lengths and the name of a geometric primitive, and by importing from a scene file.
 
 ### Connectors <a name="connectors">
 
@@ -193,8 +193,8 @@ The register card allows edit the register value.
 
 Provides editing of positions, for example for production objects in the workspace or target positions for robots.
 The editing window contains two groups of three editable parameters:
-   * __Location__ with editable position parameters in a rectangular coordinate system - *x*, *y*, *z*;
-   * __Rotation__ with editable rotation angles at a point - *r*, *p*, *w*.
+   * __Location__ with editable position parameters in a rectangular coordinate system – *x*, *y*, *z*;
+   * __Rotation__ with editable rotation angles at a point – *r*, *p*, *w*.
 
 Each editable parameter consists of a field and an associated stepper. The described sequence of groups can be displayed in a vertical, horizontal or some other stack.
 
@@ -223,7 +223,7 @@ View for editing the Workspace memory of the robotic technological complex.
 Pruposed for elements, registers from which they take data can be specified. This functionality is provided by the Registers Selector control. One or more registers can be selected.
 
 <p align="center">
-  <img width="340" src="https://github.com/user-attachments/assets/543859bc-e595-42dd-957a-df2413ede23f" />
+  <img width="600" src="https://github.com/user-attachments/assets/543859bc-e595-42dd-957a-df2413ede23f" />
 </p>
 
 ### Program Elements Views <a name="industrialkitui-programelementsviews"></a>
