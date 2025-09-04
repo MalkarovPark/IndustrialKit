@@ -155,7 +155,7 @@ public extension Dictionary where Key == String
 }
 
 //MARK: - Color by hex import
-extension Color
+public extension Color
 {
     /**
      Initializes a `Color` instance from a HEX string.
