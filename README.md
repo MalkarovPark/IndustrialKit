@@ -186,7 +186,7 @@ The program element card. Marked if corresponding program element is performing.
 The registers cards allows edit the registers values.
 
 <p align="center">
-  <img width="128" height="128" alt="RegisterCard" src="https://github.com/user-attachments/assets/d91bb81c-82db-4abd-8d05-8ba0cbc9a304" />
+  <img width="336" height="128" alt="RegisterCard" src="https://github.com/user-attachments/assets/d91bb81c-82db-4abd-8d05-8ba0cbc9a304" />
 </p>
 
 ### Position View <a name="industrialkitui-positionview"></a>
