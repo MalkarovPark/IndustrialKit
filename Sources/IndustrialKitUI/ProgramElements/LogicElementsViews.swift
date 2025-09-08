@@ -272,7 +272,7 @@ struct IMALogicPreviewsContainer: PreviewProvider
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding([.horizontal, .top], 8)*/
                 
-                HStack
+                HStack(alignment: .top)
                 {
                     ComparatorElementView(element: .constant(ComparatorLogicElement()), on_update: {})
                         .modifier(PreviewBorder())

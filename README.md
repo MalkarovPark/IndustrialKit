@@ -183,10 +183,10 @@ The program element card. Marked if corresponding program element is performing.
   <img width="304" src="https://github.com/user-attachments/assets/f10aa961-b91e-4bd1-a501-b1ef7f3be87a" />
 </p>
 
-The register card allows edit the register value.
+The registers cards allows edit the registers values.
 
 <p align="center">
-  <img width="128" height="128" alt="RegisterCard" src="https://github.com/user-attachments/assets/4290a0bd-d123-4def-bec9-779f7d8c4357" />
+  <img width="128" height="128" alt="RegisterCard" src="https://github.com/user-attachments/assets/d91bb81c-82db-4abd-8d05-8ba0cbc9a304" />
 </p>
 
 ### Position View <a name="industrialkitui-positionview"></a>
@@ -233,7 +233,7 @@ Views for editing different types of IMA program elements – Performers, Modifi
 <p align="center">
   <img width="600" alt="performers_views" src="https://github.com/user-attachments/assets/605e9781-6f3c-44eb-8c67-25f2ebcbf23f" />
   <img width="600" alt="modifier_views" src="https://github.com/user-attachments/assets/2387d9ce-da14-46dd-88db-2a573f4e55ce" />
-  <img width="600" alt="logic_views" src="https://github.com/user-attachments/assets/85e57094-3ed2-4d71-9c25-3e9bf3f5e4bc" />
+  <img width="600" alt="logic_views" src="https://github.com/user-attachments/assets/ecc0cce4-7565-47f8-9028-533c00a972fc" />
 </p>
 
 ### Charts View <a name="industrialkitui-chartsview"></a>

@@ -812,11 +812,15 @@ struct Cards_Previews: PreviewProvider
             .padding(16)
             .frame(width: 288)
             
-            VStack()
+            HStack(spacing: 24)
             {
+                RegisterCard(value: .constant(2), number: 40, color: .mint)
+                
                 RegisterCard(value: .constant(4), number: 60, color: .cyan)
-                    .padding(16)
+                
+                RegisterCard(value: .constant(6), number: 20, color: .indigo)
             }
+            .padding(16)
         }
         .padding(8)
         .onAppear
