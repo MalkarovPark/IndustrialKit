@@ -173,11 +173,11 @@ open class RobotModelController: ModelController, @unchecked Sendable
     private func update_model()
     {
         update_pointer_position(pointer_position)
-        update_nodes_by_pointer_location()
+        update_nodes_by_pointer_position()
     }
     
     /// Updates robot nodes by current pointer and origin parameters.
-    public func update_nodes_by_pointer_location()
+    public func update_nodes_by_pointer_position()
     {
         update_nodes(pointer_position: pointer_position, origin_position: origin_position)
     }
