@@ -91,17 +91,12 @@ public struct SheetCaption: ViewModifier
                         #endif
                             .padding(6)
                         #if os(iOS)
-                            .padding(6)
+                            .padding(4)
                             .foregroundStyle(.black)
                         #endif
                     }
                     .keyboardShortcut(.cancelAction)
-                    #if !os(visionOS)
                     .modifier(CircleButtonGlassBorderer())
-                    #else
-                    .buttonBorderShape(.circle)
-                    .glassBackgroundEffect()
-                    #endif
                     .keyboardShortcut(.cancelAction)
                     .padding(8)
                     #if !os(macOS)

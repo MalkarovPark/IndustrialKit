@@ -24,12 +24,7 @@ public struct ViewCloseButton: ViewModifier
                 Button(action: { is_presented.toggle() })
                 {
                     Image(systemName: "xmark")
-                        .imageScale(.large)
-                        .frame(width: 16, height: 16)
-                    #if os(iOS)
-                        .padding(6)
-                        .foregroundStyle(.black)
-                    #endif
+                        .modifier(CircleButtonImageFramer())
                 }
                 .keyboardShortcut(.cancelAction)
                 .buttonBorderShape(.circle)
@@ -68,25 +63,10 @@ public struct ViewCloseFuncButton: ViewModifier
                 Button(action: close_action)
                 {
                     Image(systemName: "xmark")
-                        .imageScale(.large)
-                    #if os(macOS)
-                        .frame(width: 16, height: 16)
-                    #else
-                        .frame(width: 24, height: 24)
-                    #endif
-                        .padding(6)
-                    #if os(iOS)
-                        .padding(6)
-                        .foregroundStyle(.black)
-                    #endif
+                        .modifier(CircleButtonImageFramer())
                 }
                 .keyboardShortcut(.cancelAction)
-                #if !os(visionOS)
                 .modifier(CircleButtonGlassBorderer())
-                #else
-                .buttonBorderShape(.circle)
-                .glassBackgroundEffect()
-                #endif
                 .keyboardShortcut(.cancelAction)
                 .padding(8)
                 #if !os(macOS)
@@ -96,7 +76,6 @@ public struct ViewCloseFuncButton: ViewModifier
     }
 }
 
-#if os(macOS) || os(iOS)
 // MARK: - Glass Button Modifiers
 public struct CircleButtonGlassBorderer: ViewModifier
 {
@@ -111,8 +90,10 @@ public struct CircleButtonGlassBorderer: ViewModifier
             .buttonBorderShape(.circle)
         #if os(macOS)
             .buttonStyle(.glass)
-        #else
+        #elseif os(iOS)
             .glassEffect(.regular.interactive())
+        #else
+            .glassBackgroundEffect()
         #endif
             //.padding()
     }
@@ -141,4 +122,3 @@ public struct CircleButtonImageFramer: ViewModifier
         #endif
     }
 }
-#endif
