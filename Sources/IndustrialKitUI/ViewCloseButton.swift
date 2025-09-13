@@ -100,6 +100,11 @@ public struct ViewCloseFuncButton: ViewModifier
 // MARK: - Glass Button Modifiers
 public struct CircleButtonGlassBorderer: ViewModifier
 {
+    public init()
+    {
+        
+    }
+    
     public func body(content: Content) -> some View
     {
         content
@@ -115,6 +120,11 @@ public struct CircleButtonGlassBorderer: ViewModifier
 
 public struct CircleButtonImageFramer: ViewModifier
 {
+    public init()
+    {
+        
+    }
+    
     public func body(content: Content) -> some View
     {
         content
