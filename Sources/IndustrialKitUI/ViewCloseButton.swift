@@ -68,20 +68,29 @@ public struct ViewCloseFuncButton: ViewModifier
                 Button(action: close_action)
                 {
                     Image(systemName: "xmark")
+                        .imageScale(.large)
+                    #if os(macOS)
+                        .frame(width: 16, height: 16)
+                    #else
+                        .frame(width: 24, height: 24)
+                    #endif
+                        .padding(6)
+                    #if os(iOS)
+                        .padding(6)
+                        .foregroundStyle(.black)
+                    #endif
                 }
-                #if !os(iOS)
-                .buttonStyle(.bordered)
+                .keyboardShortcut(.cancelAction)
+                #if !os(visionOS)
+                .modifier(CircleButtonGlassBorderer())
                 #else
-                // .foregroundStyle(.primary)
-                .modifier(ButtonBorderer())
-                #endif
-                #if os(visionOS)
                 .buttonBorderShape(.circle)
+                .glassBackgroundEffect()
                 #endif
                 .keyboardShortcut(.cancelAction)
-                .padding()
-                #if os(visionOS)
                 .padding(8)
+                #if !os(macOS)
+                .padding(.top, 4)
                 #endif
             }
     }
