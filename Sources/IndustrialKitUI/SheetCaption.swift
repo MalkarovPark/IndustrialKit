@@ -30,11 +30,11 @@ public struct SheetCaption: ViewModifier
                 VStack(spacing: 0)
                 {
                     #if os(macOS)
-                    Spacer(minLength: 52)
-                    #elseif os(iOS)
-                    Spacer(minLength: 70)
-                    #else
                     Spacer(minLength: 56)
+                    #elseif os(iOS)
+                    Spacer(minLength: 74)
+                    #else
+                    Spacer(minLength: 60)
                     #endif
                     content
                 }
@@ -58,8 +58,8 @@ public struct SheetCaption: ViewModifier
                             .padding(.vertical)
                         #endif
                     }
-                    .padding(.horizontal, 8)
-                    .padding(8)
+                    .padding(.horizontal, 10)
+                    .padding(10)
                 }
                 else
                 {
@@ -73,8 +73,8 @@ public struct SheetCaption: ViewModifier
                             .padding(.vertical)
                         #endif
                     }
-                    .padding(.horizontal, 8)
-                    .padding(8)
+                    .padding(.horizontal, 10)
+                    .padding(10)
                     //.glassEffect()
                 }
                 
@@ -83,25 +83,12 @@ public struct SheetCaption: ViewModifier
                     Button(action: { is_presented = false })
                     {
                         Image(systemName: "xmark")
-                            .imageScale(.large)
-                        #if os(macOS)
-                            .frame(width: 16, height: 16)
-                        #else
-                            .frame(width: 24, height: 24)
-                        #endif
-                            .padding(6)
-                        #if os(iOS)
-                            .padding(4)
-                            .foregroundStyle(.black)
-                        #endif
+                            .modifier(CircleButtonImageFramer())
                     }
                     .keyboardShortcut(.cancelAction)
                     .modifier(CircleButtonGlassBorderer())
                     .keyboardShortcut(.cancelAction)
-                    .padding(8)
-                    #if !os(macOS)
-                    .padding(.top, 4)
-                    #endif
+                    .padding(10)
                     
                     Spacer()
                 }

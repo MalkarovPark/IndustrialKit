@@ -362,7 +362,7 @@ public struct RegistersDataView: View
                     #if !os(visionOS)
                     GlassEffectContainer
                     {
-                        HStack(spacing: 0)
+                        HStack(spacing: 10)
                         {
                             Button(role: .destructive, action: clear_registers)
                             {
@@ -380,7 +380,6 @@ public struct RegistersDataView: View
                                 #endif
                             }
                             .modifier(CircleButtonGlassBorderer())
-                            .padding(.trailing, 8)
                             
                             Button(action: save_registers)
                             {
@@ -398,7 +397,6 @@ public struct RegistersDataView: View
                                 #endif
                             }
                             .modifier(CircleButtonGlassBorderer())
-                            .padding(.trailing, 8)
                             
                             Button(action: { is_registers_count_presented = true })
                             {
@@ -688,7 +686,7 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
                     .background(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                     .shadow(color: .black.opacity(0.25), radius: 16)
-                    .padding(32)
+                    .padding(48)
             }
         }
     }
