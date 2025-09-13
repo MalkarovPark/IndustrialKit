@@ -376,7 +376,11 @@ public struct RegistersDataView: View
                                     .padding(8)
                             }
                             .buttonBorderShape(.circle)
+                            #if os(macOS)
                             .buttonStyle(.glass)
+                            #else
+                            .glassEffect(.regular.interactive())
+                            #endif
                             .padding(.trailing, 8)
                             
                             Button(action: save_registers)
@@ -391,7 +395,11 @@ public struct RegistersDataView: View
                                     .padding(8)
                             }
                             .buttonBorderShape(.circle)
+                            #if os(macOS)
                             .buttonStyle(.glass)
+                            #else
+                            .glassEffect(.regular.interactive())
+                            #endif
                             .padding(.trailing, 8)
                             
                             Button(action: { is_registers_count_presented = true })

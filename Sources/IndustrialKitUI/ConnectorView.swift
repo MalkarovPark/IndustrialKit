@@ -96,6 +96,7 @@ public struct ConnectorView: View
                     {
                         Image(systemName: "text.append")
                     }
+                    .buttonStyle(.bordered)
                     .buttonBorderShape(.circle)
                     .toggleStyle(.button)
                     .padding(8)
@@ -106,6 +107,7 @@ public struct ConnectorView: View
                     {
                         Image(systemName: "eraser")
                     }
+                    .buttonStyle(.bordered)
                     .buttonBorderShape(.circle)
                     .toggleStyle(.button)
                     .padding(.horizontal, 8)
@@ -228,11 +230,6 @@ public struct ConnectorView: View
         }
         .controlSize(.regular)
     }
-    
-    /*private func close_connector()
-    {
-        is_presented = false
-    }*/
 }
 
 public struct ConnectionParameterView: View

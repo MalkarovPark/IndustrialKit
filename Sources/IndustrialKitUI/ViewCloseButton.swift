@@ -29,8 +29,10 @@ public struct ViewCloseButton: ViewModifier
                 }
                 .keyboardShortcut(.cancelAction)
                 .buttonBorderShape(.circle)
-                #if !os(visionOS)
+                #if os(macOS)
                 .buttonStyle(.glass)
+                #elseif os(iOS)
+                .glassEffect(.regular.interactive())
                 #else
                 .glassBackgroundEffect()
                 #endif
@@ -80,3 +82,40 @@ public struct ViewCloseFuncButton: ViewModifier
             }
     }
 }
+
+/*#if os(macOS) || os(iOS)
+// MARK: - Glass Button Modifiers
+struct CircleButtonGlassBorderer: ViewModifier
+{
+    public func body(content: Content) -> some View
+    {
+        content
+            .buttonBorderShape(.circle)
+        #if os(macOS)
+            .buttonStyle(.glass)
+        #else
+            .glassEffect(.regular.interactive())
+        #endif
+            //.padding()
+    }
+}
+
+struct CircleButtonImageFramer: ViewModifier
+{
+    public func body(content: Content) -> some View
+    {
+        content
+            .imageScale(.large)
+        #if os(macOS)
+            .frame(width: 16, height: 16)
+        #else
+            .frame(width: 24, height: 24)
+        #endif
+            .padding(8)
+        #if os(iOS)
+            .padding(6)
+            .foregroundStyle(.black)
+        #endif
+    }
+}
+#endif*/
