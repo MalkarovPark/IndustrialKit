@@ -367,54 +367,25 @@ public struct RegistersDataView: View
                             Button(role: .destructive, action: clear_registers)
                             {
                                 Image(systemName: "eraser")
-                                    .imageScale(.large)
-                                #if os(macOS)
-                                    .frame(width: 16, height: 16)
-                                #else
-                                    .frame(width: 24, height: 24)
-                                #endif
-                                    .padding(8)
+                                    .modifier(CircleButtonImageFramer())
                             }
-                            .buttonBorderShape(.circle)
-                            #if os(macOS)
-                            .buttonStyle(.glass)
-                            #else
-                            .glassEffect(.regular.interactive())
-                            #endif
+                            .modifier(CircleButtonGlassBorderer())
                             .padding(.trailing, 8)
                             
                             Button(action: save_registers)
                             {
                                 Image(systemName: "arrow.down.doc")
-                                    .imageScale(.large)
-                                #if os(macOS)
-                                    .frame(width: 16, height: 16)
-                                #else
-                                    .frame(width: 24, height: 24)
-                                #endif
-                                    .padding(8)
+                                    .modifier(CircleButtonImageFramer())
                             }
-                            .buttonBorderShape(.circle)
-                            #if os(macOS)
-                            .buttonStyle(.glass)
-                            #else
-                            .glassEffect(.regular.interactive())
-                            #endif
+                            .modifier(CircleButtonGlassBorderer())
                             .padding(.trailing, 8)
                             
                             Button(action: { is_registers_count_presented = true })
                             {
                                 Image(systemName: "square.grid.2x2")
-                                    .imageScale(.large)
-                                #if os(macOS)
-                                    .frame(width: 16, height: 16)
-                                #else
-                                    .frame(width: 24, height: 24)
-                                #endif
-                                    .padding(8)
+                                    .modifier(CircleButtonImageFramer())
                             }
-                            .buttonBorderShape(.circle)
-                            .buttonStyle(.glass)
+                            .modifier(CircleButtonGlassBorderer())
                             .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
                             {
                                 RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)

@@ -85,6 +85,10 @@ public struct SheetCaption: ViewModifier
                         Image(systemName: "xmark")
                             .imageScale(.large)
                             .frame(width: 16, height: 16)
+                        #if os(iOS)
+                            .padding(6)
+                            .foregroundStyle(.black)
+                        #endif
                     }
                     .keyboardShortcut(.cancelAction)
                     #if !os(visionOS)

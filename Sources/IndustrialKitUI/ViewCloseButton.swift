@@ -26,6 +26,10 @@ public struct ViewCloseButton: ViewModifier
                     Image(systemName: "xmark")
                         .imageScale(.large)
                         .frame(width: 16, height: 16)
+                    #if os(iOS)
+                        .padding(6)
+                        .foregroundStyle(.black)
+                    #endif
                 }
                 .keyboardShortcut(.cancelAction)
                 .buttonBorderShape(.circle)
@@ -83,7 +87,7 @@ public struct ViewCloseFuncButton: ViewModifier
     }
 }
 
-/*#if os(macOS) || os(iOS)
+#if os(macOS) || os(iOS)
 // MARK: - Glass Button Modifiers
 struct CircleButtonGlassBorderer: ViewModifier
 {
@@ -118,4 +122,4 @@ struct CircleButtonImageFramer: ViewModifier
         #endif
     }
 }
-#endif*/
+#endif
