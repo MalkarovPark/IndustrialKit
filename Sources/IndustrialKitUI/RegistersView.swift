@@ -356,7 +356,7 @@ public struct RegistersDataView: View
     {
         VStack(spacing: 0)
         {
-            RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: 48, bottom_spacing: 48)
+            RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: 48, bottom_spacing: 40)
                 .overlay(alignment: .bottom)
                 {
                     #if !os(visionOS)
@@ -367,51 +367,21 @@ public struct RegistersDataView: View
                             Button(role: .destructive, action: clear_registers)
                             {
                                 Image(systemName: "eraser")
-                                    .imageScale(.large)
-                                #if os(macOS)
-                                    .frame(width: 16, height: 16)
-                                #else
-                                    .frame(width: 24, height: 24)
-                                #endif
-                                    .padding(8)
-                                #if os(iOS)
-                                    .padding(6)
-                                    .foregroundStyle(.black)
-                                #endif
+                                    .modifier(CircleButtonImageFramer())
                             }
                             .modifier(CircleButtonGlassBorderer())
                             
                             Button(action: save_registers)
                             {
                                 Image(systemName: "arrow.down.doc")
-                                    .imageScale(.large)
-                                #if os(macOS)
-                                    .frame(width: 16, height: 16)
-                                #else
-                                    .frame(width: 24, height: 24)
-                                #endif
-                                    .padding(8)
-                                #if os(iOS)
-                                    .padding(6)
-                                    .foregroundStyle(.black)
-                                #endif
+                                    .modifier(CircleButtonImageFramer())
                             }
                             .modifier(CircleButtonGlassBorderer())
                             
                             Button(action: { is_registers_count_presented = true })
                             {
                                 Image(systemName: "square.grid.2x2")
-                                    .imageScale(.large)
-                                #if os(macOS)
-                                    .frame(width: 16, height: 16)
-                                #else
-                                    .frame(width: 24, height: 24)
-                                #endif
-                                    .padding(8)
-                                #if os(iOS)
-                                    .padding(6)
-                                    .foregroundStyle(.black)
-                                #endif
+                                    .modifier(CircleButtonImageFramer())
                             }
                             .modifier(CircleButtonGlassBorderer())
                             .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)

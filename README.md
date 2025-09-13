@@ -215,7 +215,7 @@ Provides position editing with sliders. For location should set upper limits (lo
 View for editing the Workspace memory of the robotic technological complex.
 
 <p align="center">
-  <img width="527" height="592" alt="RegistersView" src="https://github.com/user-attachments/assets/48fa3f22-0e48-4bd0-af6e-c6dc146c56c5" />
+  <img width="527" height="592" alt="RegistersView" src="https://github.com/user-attachments/assets/888f9387-8516-4fdd-8430-de3510bc8560" />
 </p>
 
 ### Registers Selector <a name="industrialkitui-registersselector"></a>
