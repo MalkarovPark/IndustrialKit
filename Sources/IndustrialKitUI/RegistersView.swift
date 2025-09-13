@@ -367,7 +367,17 @@ public struct RegistersDataView: View
                             Button(role: .destructive, action: clear_registers)
                             {
                                 Image(systemName: "eraser")
-                                    .modifier(CircleButtonImageFramer())
+                                    .imageScale(.large)
+                                #if os(macOS)
+                                    .frame(width: 16, height: 16)
+                                #else
+                                    .frame(width: 24, height: 24)
+                                #endif
+                                    .padding(8)
+                                #if os(iOS)
+                                    .padding(6)
+                                    .foregroundStyle(.black)
+                                #endif
                             }
                             .modifier(CircleButtonGlassBorderer())
                             .padding(.trailing, 8)
@@ -375,7 +385,17 @@ public struct RegistersDataView: View
                             Button(action: save_registers)
                             {
                                 Image(systemName: "arrow.down.doc")
-                                    .modifier(CircleButtonImageFramer())
+                                    .imageScale(.large)
+                                #if os(macOS)
+                                    .frame(width: 16, height: 16)
+                                #else
+                                    .frame(width: 24, height: 24)
+                                #endif
+                                    .padding(8)
+                                #if os(iOS)
+                                    .padding(6)
+                                    .foregroundStyle(.black)
+                                #endif
                             }
                             .modifier(CircleButtonGlassBorderer())
                             .padding(.trailing, 8)
@@ -383,7 +403,17 @@ public struct RegistersDataView: View
                             Button(action: { is_registers_count_presented = true })
                             {
                                 Image(systemName: "square.grid.2x2")
-                                    .modifier(CircleButtonImageFramer())
+                                    .imageScale(.large)
+                                #if os(macOS)
+                                    .frame(width: 16, height: 16)
+                                #else
+                                    .frame(width: 24, height: 24)
+                                #endif
+                                    .padding(8)
+                                #if os(iOS)
+                                    .padding(6)
+                                    .foregroundStyle(.black)
+                                #endif
                             }
                             .modifier(CircleButtonGlassBorderer())
                             .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
@@ -542,7 +572,7 @@ private struct RegistersCountView: View
 
 let register_card_maximum = register_card_scale + register_card_spacing
 
-//MARK: - Previews
+// MARK: - Previews
 struct RegistersSelectors_PreviewsContainer: PreviewProvider
 {
     struct Container: View

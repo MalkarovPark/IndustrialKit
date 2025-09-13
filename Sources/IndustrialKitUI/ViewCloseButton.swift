@@ -27,21 +27,8 @@ public struct ViewCloseButton: ViewModifier
                         .modifier(CircleButtonImageFramer())
                 }
                 .keyboardShortcut(.cancelAction)
-                .buttonBorderShape(.circle)
-                #if os(macOS)
-                .buttonStyle(.glass)
-                #elseif os(iOS)
-                .glassEffect(.regular.interactive())
-                #else
-                .glassBackgroundEffect()
-                #endif
-                .padding(8)
-                #if !os(macOS)
-                .padding(.top, 4)
-                #endif
-                #if !os(visionOS)
-                .controlSize(.extraLarge)
-                #endif
+                .modifier(CircleButtonGlassBorderer())
+                .padding(10)
             }
     }
 }
@@ -67,11 +54,7 @@ public struct ViewCloseFuncButton: ViewModifier
                 }
                 .keyboardShortcut(.cancelAction)
                 .modifier(CircleButtonGlassBorderer())
-                .keyboardShortcut(.cancelAction)
-                .padding(8)
-                #if !os(macOS)
-                .padding(.top, 4)
-                #endif
+                .padding(10)
             }
     }
 }
@@ -115,10 +98,51 @@ public struct CircleButtonImageFramer: ViewModifier
         #else
             .frame(width: 24, height: 24)
         #endif
-            .padding(8)
-        #if os(iOS)
             .padding(6)
+        #if os(iOS)
+            .padding(4)
             .foregroundStyle(.black)
         #endif
     }
+}
+
+// MARK: - Previews
+#Preview
+{
+    ZStack
+    {
+        Rectangle()
+            .foregroundStyle(.white)
+            .frame(width: 320, height: 240)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .shadow(color: .black.opacity(0.25), radius: 16)
+        
+        Rectangle()
+            .foregroundStyle(.mint.opacity(0.25))
+            .modifier(ViewCloseButton(is_presented: .constant(true)))
+            .frame(width: 320, height: 240)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+    }
+    .padding(32)
+}
+
+#Preview
+{
+    @Previewable @State var is_presented: Bool = false
+    
+    VStack()
+    {
+        Button("View Sheet")
+        {
+            is_presented = true
+        }
+        .sheet(isPresented: $is_presented)
+        {
+            Rectangle()
+                .foregroundStyle(.mint.opacity(0.25))
+                .frame(width: 320, height: 240)
+                .modifier(ViewCloseButton(is_presented: .constant(true)))
+        }
+    }
+    .frame(width: 640, height: 480)
 }
