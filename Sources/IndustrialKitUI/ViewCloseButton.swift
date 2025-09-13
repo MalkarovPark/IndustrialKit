@@ -98,7 +98,7 @@ public struct ViewCloseFuncButton: ViewModifier
 
 #if os(macOS) || os(iOS)
 // MARK: - Glass Button Modifiers
-struct CircleButtonGlassBorderer: ViewModifier
+public struct CircleButtonGlassBorderer: ViewModifier
 {
     public func body(content: Content) -> some View
     {
@@ -113,7 +113,7 @@ struct CircleButtonGlassBorderer: ViewModifier
     }
 }
 
-struct CircleButtonImageFramer: ViewModifier
+public struct CircleButtonImageFramer: ViewModifier
 {
     public func body(content: Content) -> some View
     {
