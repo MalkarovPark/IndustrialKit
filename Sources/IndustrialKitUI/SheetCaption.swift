@@ -46,37 +46,22 @@ public struct SheetCaption: ViewModifier
             
             ZStack
             {
-                if plain
+                HStack(alignment: .center)
                 {
-                    HStack(alignment: .center)
-                    {
-                        Text(label)
-                            .padding(0)
-                            .font(.title3)
-                        #if os(visionOS)
-                            .font(.title2)
-                            .padding(.vertical)
-                        #endif
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(10)
+                    Text(label)
+                        .padding(0)
+                        .font(.title3)
+                    #if os(visionOS)
+                        .font(.title2)
+                        .padding(.vertical)
+                    #endif
                 }
-                else
-                {
-                    HStack(alignment: .center)
-                    {
-                        Text(label)
-                            .padding(0)
-                            .font(.title3)
-                        #if os(visionOS)
-                            .font(.title2)
-                            .padding(.vertical)
-                        #endif
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(10)
-                    //.glassEffect()
-                }
+                .padding(.horizontal, 10)
+                #if os(macOS) || os(iOS)
+                .padding(10)
+                #else
+                .padding(20)
+                #endif
                 
                 HStack(spacing: 0)
                 {
@@ -88,7 +73,11 @@ public struct SheetCaption: ViewModifier
                     .keyboardShortcut(.cancelAction)
                     .modifier(CircleButtonGlassBorderer())
                     .keyboardShortcut(.cancelAction)
+                    #if os(macOS) || os(iOS)
                     .padding(10)
+                    #else
+                    .padding(20)
+                    #endif
                     
                     Spacer()
                 }
