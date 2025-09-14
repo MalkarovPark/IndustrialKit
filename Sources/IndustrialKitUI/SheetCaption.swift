@@ -34,7 +34,7 @@ public struct SheetCaption: ViewModifier
                     #elseif os(iOS)
                     Spacer(minLength: 64)
                     #else
-                    Spacer(minLength: 78)
+                    Spacer(minLength: 84)
                     #endif
                     content
                 }
