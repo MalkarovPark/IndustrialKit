@@ -87,7 +87,7 @@ public struct ViewCloseFuncButton: ViewModifier
                 #if os(macOS) || os(iOS)
                 .padding(10)
                 #else
-                .padding(20)
+                .padding(16)
                 #endif
             }
     }

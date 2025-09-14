@@ -60,7 +60,7 @@ public struct SheetCaption: ViewModifier
                 #if os(macOS) || os(iOS)
                 .padding(10)
                 #else
-                .padding(20)
+                .padding(16)
                 #endif
                 
                 HStack(spacing: 0)
@@ -76,7 +76,7 @@ public struct SheetCaption: ViewModifier
                     #if os(macOS) || os(iOS)
                     .padding(10)
                     #else
-                    .padding(20)
+                    .padding(16)
                     #endif
                     
                     Spacer()
