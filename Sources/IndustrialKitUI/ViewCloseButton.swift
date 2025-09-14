@@ -18,7 +18,20 @@ public struct ViewCloseButton: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        content
+        ZStack(alignment: .topLeading)
+        {
+            content
+            
+            Button(action: { is_presented.toggle() })
+            {
+                Image(systemName: "xmark")
+                    .modifier(CircleButtonImageFramer())
+            }
+            .keyboardShortcut(.cancelAction)
+            .modifier(CircleButtonGlassBorderer())
+            .padding(10)
+        }
+        /*content
             .overlay(alignment: .topLeading)
             {
                 Button(action: { is_presented.toggle() })
@@ -29,7 +42,7 @@ public struct ViewCloseButton: ViewModifier
                 .keyboardShortcut(.cancelAction)
                 .modifier(CircleButtonGlassBorderer())
                 .padding(10)
-            }
+            }*/
     }
 }
 
@@ -44,7 +57,20 @@ public struct ViewCloseFuncButton: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        content
+        ZStack(alignment: .topLeading)
+        {
+            content
+            
+            Button(action: close_action)
+            {
+                Image(systemName: "xmark")
+                    .modifier(CircleButtonImageFramer())
+            }
+            .keyboardShortcut(.cancelAction)
+            .modifier(CircleButtonGlassBorderer())
+            .padding(10)
+        }
+        /*content
             .overlay(alignment: .topLeading)
             {
                 Button(action: close_action)
@@ -55,7 +81,7 @@ public struct ViewCloseFuncButton: ViewModifier
                 .keyboardShortcut(.cancelAction)
                 .modifier(CircleButtonGlassBorderer())
                 .padding(10)
-            }
+            }*/
     }
 }
 
@@ -141,7 +167,7 @@ public struct CircleButtonImageFramer: ViewModifier
             Rectangle()
                 .foregroundStyle(.mint.opacity(0.25))
                 .frame(width: 320, height: 240)
-                .modifier(ViewCloseButton(is_presented: .constant(true)))
+                .modifier(ViewCloseButton(is_presented: $is_presented))
         }
     }
     .frame(width: 640, height: 480)
