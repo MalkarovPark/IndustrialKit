@@ -102,8 +102,8 @@ public struct CircleButtonGlassBorderer: ViewModifier
         #elseif os(iOS)
             .glassEffect(.regular.interactive())
         #else
-            .controlSize(.borderless)
-            .buttonStyle(.plain)
+            .controlSize(.large)
+            .buttonStyle(.borderless)
             .glassBackgroundEffect()
             .frame(depth: 24)
         #endif
