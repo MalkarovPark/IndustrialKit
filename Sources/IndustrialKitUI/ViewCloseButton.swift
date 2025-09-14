@@ -18,7 +18,7 @@ public struct ViewCloseButton: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        ZStack(alignment: .topLeading)
+        /*ZStack(alignment: .topLeading)
         {
             content
             
@@ -30,8 +30,8 @@ public struct ViewCloseButton: ViewModifier
             .keyboardShortcut(.cancelAction)
             .modifier(CircleButtonGlassBorderer())
             .padding(10)
-        }
-        /*content
+        }*/
+        content
             .overlay(alignment: .topLeading)
             {
                 Button(action: { is_presented.toggle() })
@@ -42,7 +42,7 @@ public struct ViewCloseButton: ViewModifier
                 .keyboardShortcut(.cancelAction)
                 .modifier(CircleButtonGlassBorderer())
                 .padding(10)
-            }*/
+            }
     }
 }
 
@@ -57,7 +57,7 @@ public struct ViewCloseFuncButton: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        ZStack(alignment: .topLeading)
+        /*ZStack(alignment: .topLeading)
         {
             content
             
@@ -69,8 +69,8 @@ public struct ViewCloseFuncButton: ViewModifier
             .keyboardShortcut(.cancelAction)
             .modifier(CircleButtonGlassBorderer())
             .padding(10)
-        }
-        /*content
+        }*/
+        content
             .overlay(alignment: .topLeading)
             {
                 Button(action: close_action)
@@ -81,7 +81,7 @@ public struct ViewCloseFuncButton: ViewModifier
                 .keyboardShortcut(.cancelAction)
                 .modifier(CircleButtonGlassBorderer())
                 .padding(10)
-            }*/
+            }
     }
 }
 
