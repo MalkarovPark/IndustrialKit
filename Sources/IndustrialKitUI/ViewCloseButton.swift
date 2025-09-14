@@ -41,7 +41,11 @@ public struct ViewCloseButton: ViewModifier
                 }
                 .keyboardShortcut(.cancelAction)
                 .modifier(CircleButtonGlassBorderer())
+                #if os(macOS) || os(iOS)
                 .padding(10)
+                #else
+                .padding(20)
+                #endif
             }
     }
 }
@@ -80,7 +84,11 @@ public struct ViewCloseFuncButton: ViewModifier
                 }
                 .keyboardShortcut(.cancelAction)
                 .modifier(CircleButtonGlassBorderer())
+                #if os(macOS) || os(iOS)
                 .padding(10)
+                #else
+                .padding(20)
+                #endif
             }
     }
 }
