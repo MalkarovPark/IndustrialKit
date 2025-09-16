@@ -44,7 +44,7 @@ IndustrialKit is an open source software platform for creating applications that
 
 # Requirements <a name="requirements"></a>
 
-The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS, visionOS and requires Xcode 26.0 or newer. The IndustrialKit framework has a Base SDK version of 26.0.
+The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS, visionOS. The IndustrialKit framework has a Base SDK version of 26.0.
 
 # Getting Started <a name="getting-started"></a>
 
