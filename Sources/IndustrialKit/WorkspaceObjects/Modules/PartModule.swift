@@ -99,7 +99,7 @@ open class PartModule: IndustrialModule
                     {
                         if let external_scene = scene_source.scene(options: nil)
                         {
-                            return external_scene.rootNode.childNode(withName: "part", recursively: true)!.clone()
+                            return external_scene.rootNode.clone()
                         }
                     }
                 }
