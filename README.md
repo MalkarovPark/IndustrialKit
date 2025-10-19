@@ -27,7 +27,7 @@ IndustrialKit is an open source software platform for creating applications that
     * [Model Controllers](#model-controllers)
     * [Functions](#functions)
     * [Extensions](#extensions)
-* [Ithi Macro Assembler](#ima)
+* [IMA](#ima) <!-- * [Ithi Macro Assembler](#ima) -->
 * [IndustrialKitUI](#industrialkitui)
     * [Object Scene View](#industrialkitui-objectsceneview)
     * [Cards](#industrialkitui-cards)
@@ -147,7 +147,7 @@ Encodable extensions – __json_data__ and __json_string__ for pretty-printed JS
 
 String extension – __code_correct_format__ to convert to code-safe string (spaces → underscores, digits prefixed with _).
 
-# [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a>
+# [IMA] <a name="ima"></a> <!-- # [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a> -->
 
 The built-in programming language of the IndustrialKit platform formalizes methods for robotic systems algoritmization and organizes unified connection and control of various robots and equipment tools.
 
