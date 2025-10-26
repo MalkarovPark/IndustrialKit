@@ -1,6 +1,6 @@
 ![ik_caption_image](https://github.com/user-attachments/assets/d057dc41-9f3a-4b27-be8a-5667766e97ae)
 <!-- ![IndustiralKit](https://user-images.githubusercontent.com/62340924/206910209-87495b62-2a9b-42c2-b825-85830a1d2623.png) -->
-<!--- (https://user-images.githubusercontent.com/62340924/206910169-3009a0da-eeeb-475b-9983-4a2fffa58f9a.png) -->
+(https://user-images.githubusercontent.com/62340924/206910169-3009a0da-eeeb-475b-9983-4a2fffa58f9a.png)
 
 # IndustrialKit
 
@@ -27,7 +27,7 @@ IndustrialKit is an open source software platform for creating applications that
     * [Model Controllers](#model-controllers)
     * [Functions](#functions)
     * [Extensions](#extensions)
-* [IMA](#ima) <!-- * [Ithi Macro Assembler](#ima) -->
+* [Ithi Macro Assembler](#ima) <!-- * [IMA](#ima) -->
 * [IndustrialKitUI](#industrialkitui)
     * [Object Scene View](#industrialkitui-objectsceneview)
     * [Cards](#industrialkitui-cards)
@@ -147,7 +147,8 @@ Encodable extensions – __json_data__ and __json_string__ for pretty-printed JS
 
 String extension – __code_correct_format__ to convert to code-safe string (spaces → underscores, digits prefixed with _).
 
-# IMA <a name="ima"></a> <!-- # [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a> -->
+# [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a>
+<!-- # IMA <a name="ima"></a> -->
 
 The built-in programming language of the IndustrialKit platform formalizes methods for robotic systems algoritmization and organizes unified connection and control of various robots and equipment tools.
 

@@ -243,7 +243,7 @@ public struct ConnectionParameterView: View
         self._parameter = parameter
         self.update_file_data = update_file_data
     }
-
+    
     public var body: some View
     {
         HStack(spacing: 0)
@@ -276,7 +276,7 @@ public struct ConnectionParameterView: View
                             parameter.value = new_value
                             update_file_data()
                         }
-                    ), format: .number)
+                    ), format: .number.grouping(.never))
                     #if os(macOS)
                         .textFieldStyle(.roundedBorder)
                     #endif
