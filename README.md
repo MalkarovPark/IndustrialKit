@@ -1,6 +1,6 @@
 ![ik_caption_image](https://github.com/user-attachments/assets/d057dc41-9f3a-4b27-be8a-5667766e97ae)
 <!-- ![IndustiralKit](https://user-images.githubusercontent.com/62340924/206910209-87495b62-2a9b-42c2-b825-85830a1d2623.png) -->
-(https://user-images.githubusercontent.com/62340924/206910169-3009a0da-eeeb-475b-9983-4a2fffa58f9a.png)
+<!-- (https://user-images.githubusercontent.com/62340924/206910169-3009a0da-eeeb-475b-9983-4a2fffa58f9a.png) -->
 
 # IndustrialKit
 
@@ -145,7 +145,7 @@ Extensions for `Color` and `UIColor` to initialize from HEX (__init(hex:)__) and
 
 Encodable extensions – __json_data__ and __json_string__ for pretty-printed JSON output.
 
-String extension – __code_correct_format__ to convert to code-safe string (spaces → underscores, digits prefixed with _).
+String extension – __code_correct_format__ to convert to code-safe string (spaces → underscores, digits prefixed with “_”).
 
 # [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a>
 <!-- # IMA <a name="ima"></a> -->
@@ -229,7 +229,7 @@ Pruposed for elements, registers from which they take data can be specified. Thi
 
 ### Program Elements Views <a name="industrialkitui-programelementsviews"></a>
 
-Views for editing different types of IMA program elements – Performers, Modifiers and Logic.
+Views for editing different types of IMA program elements – __Performers__, __Modifiers__ and __Logic__.
 
 <p align="center">
   <img width="600" alt="performers_views" src="https://github.com/user-attachments/assets/605e9781-6f3c-44eb-8c67-25f2ebcbf23f" />
