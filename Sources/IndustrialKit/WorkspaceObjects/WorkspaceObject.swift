@@ -76,6 +76,12 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         
     }
     
+    /**
+     Indicates whether an available module is present for the workspace object.
+     - Returns: `true` if a module is available, otherwise `false`.
+     */
+    open var has_avaliable_module: Bool { false }
+    
     // MARK: - Object in workspace handling
     /// In workspace placement state.
     @Published public var is_placed = false

@@ -124,6 +124,11 @@ public class Robot: WorkspaceObject
         origin_shift = module.origin_shift
     }
     
+    override open var has_avaliable_module: Bool
+    {
+        return is_internal_module ? Robot.internal_modules.contains(where: { $0.name == name }) : Robot.external_modules.contains(where: { $0.name == name })
+    }
+    
     /// Imported internal robot modules.
     nonisolated(unsafe) public static var internal_modules = [RobotModule]()
     

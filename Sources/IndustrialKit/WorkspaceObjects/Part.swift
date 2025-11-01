@@ -136,6 +136,11 @@ public class Part: WorkspaceObject
         module_import(modules[index])
     }
     
+    override open var has_avaliable_module: Bool
+    {
+        return is_internal_module ? Part.internal_modules.contains(where: { $0.name == name }) : Part.external_modules.contains(where: { $0.name == name })
+    }
+    
     /**
      Imports external modules by names.
      - Parameters:

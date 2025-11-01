@@ -114,6 +114,11 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         codes = module.codes
     }
     
+    override open var has_avaliable_module: Bool
+    {
+        return is_internal_module ? Tool.internal_modules.contains(where: { $0.name == name }) : Tool.external_modules.contains(where: { $0.name == name })
+    }
+    
     /// Imported internal tool modules.
     nonisolated(unsafe) public static var internal_modules = [ToolModule]()
     
