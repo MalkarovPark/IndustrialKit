@@ -116,7 +116,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     
     override open var has_avaliable_module: Bool
     {
-        return is_internal_module ? Tool.internal_modules.contains(where: { $0.name == name }) : Tool.external_modules.contains(where: { $0.name == name })
+        return is_internal_module ? Tool.internal_modules.contains(where: { $0.name == module_name }) : Tool.external_modules.contains(where: { $0.name == module_name })
     }
     
     /// Imported internal tool modules.

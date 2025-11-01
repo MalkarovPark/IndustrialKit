@@ -126,7 +126,7 @@ public class Robot: WorkspaceObject
     
     override open var has_avaliable_module: Bool
     {
-        return is_internal_module ? Robot.internal_modules.contains(where: { $0.name == name }) : Robot.external_modules.contains(where: { $0.name == name })
+        return is_internal_module ? Robot.internal_modules.contains(where: { $0.name == module_name }) : Robot.external_modules.contains(where: { $0.name == module_name })
     }
     
     /// Imported internal robot modules.

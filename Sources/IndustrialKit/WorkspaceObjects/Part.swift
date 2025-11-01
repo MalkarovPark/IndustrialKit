@@ -138,7 +138,7 @@ public class Part: WorkspaceObject
     
     override open var has_avaliable_module: Bool
     {
-        return is_internal_module ? Part.internal_modules.contains(where: { $0.name == name }) : Part.external_modules.contains(where: { $0.name == name })
+        return is_internal_module ? Part.internal_modules.contains(where: { $0.name == module_name }) : Part.external_modules.contains(where: { $0.name == module_name })
     }
     
     /**
