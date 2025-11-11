@@ -173,11 +173,12 @@ public class ExternalRobotConnector: RobotConnector
         guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["disconnect"])
         else
         {
-            self.output += "Couldn't perform external code"
+            self.output += "Disconnection operation not initiated"
             connection_failure = true
-            connected = false
             return
         }
+        
+        self.output += terminal_output
         #endif
     }
     
