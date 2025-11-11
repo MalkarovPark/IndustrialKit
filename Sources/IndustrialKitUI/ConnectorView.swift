@@ -286,7 +286,7 @@ public struct ConnectionParameterView: View
                             parameter.value = new_value
                             update_file_data()
                         }
-                    ), in: Int.min...Int.max)
+                    ), in: -9223372036854775807...9223372036854775807)
                     .labelsHidden()
                     .padding(.leading, 8)
                 }
