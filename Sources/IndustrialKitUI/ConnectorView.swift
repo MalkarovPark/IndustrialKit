@@ -286,7 +286,7 @@ public struct ConnectionParameterView: View
                             parameter.value = new_value
                             update_file_data()
                         }
-                    ), in: (-.infinity)...(.infinity))
+                    ), in: Int.min...Int.max)
                     .labelsHidden()
                     .padding(.leading, 8)
                 }
@@ -310,7 +310,7 @@ public struct ConnectionParameterView: View
                             parameter.value = new_value
                             update_file_data()
                         }
-                    ), in: (-.infinity)...(.infinity))
+                    ), in: (-Float.infinity)...(Float.infinity))
                     .labelsHidden()
                     .padding(.leading, 8)
                 }

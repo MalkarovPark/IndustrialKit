@@ -69,7 +69,7 @@ public struct PositionView: View
                             #endif
                             Stepper("Enter",
                                     value: binding(for: component),
-                                    in: group == .location ? (-.infinity)...(.infinity) : -180...180)
+                                    in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
                             .labelsHidden()
                         }
                     }
