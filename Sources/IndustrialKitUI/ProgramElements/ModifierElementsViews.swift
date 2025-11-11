@@ -99,7 +99,7 @@ public struct WriterElementView: View
                 #if !os(macOS)
                     .keyboardType(.decimalPad)
                 #endif
-                Stepper("Enter", value: $value, in: -1000...1000)
+                Stepper("Enter", value: $value, in: (-.infinity)...(.infinity))
                     .labelsHidden()
             }
             .padding(.trailing)

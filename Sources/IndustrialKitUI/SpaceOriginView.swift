@@ -55,7 +55,7 @@ public struct SpaceOriginView: View
                         #if os(iOS) || os(visionOS)
                             .keyboardType(.decimalPad)
                         #endif
-                        Stepper("Enter", value: $robot.origin_position.x, in: -20000...20000)
+                        Stepper("Enter", value: $robot.origin_position.x, in: (-.infinity)...(.infinity))
                             .labelsHidden()
                     }
                     
@@ -68,7 +68,7 @@ public struct SpaceOriginView: View
                         #if os(iOS) || os(visionOS)
                             .keyboardType(.decimalPad)
                         #endif
-                        Stepper("Enter", value: $robot.origin_position.y, in: -20000...20000)
+                        Stepper("Enter", value: $robot.origin_position.y, in: (-.infinity)...(.infinity))
                             .labelsHidden()
                     }
                     
@@ -81,7 +81,7 @@ public struct SpaceOriginView: View
                         #if os(iOS) || os(visionOS)
                             .keyboardType(.decimalPad)
                         #endif
-                        Stepper("Enter", value: $robot.origin_position.z, in: -20000...20000)
+                        Stepper("Enter", value: $robot.origin_position.z, in: (-.infinity)...(.infinity))
                             .labelsHidden()
                     }
                 }
