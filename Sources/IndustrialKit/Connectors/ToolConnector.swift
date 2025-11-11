@@ -176,6 +176,8 @@ public class ExternalToolConnector: ToolConnector
     override open func disconnection_process()// async
     {
         #if os(macOS)
+        if !output.isEmpty { output += "\n" }
+        
         guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["disconnect"])
         else
         {
@@ -184,7 +186,7 @@ public class ExternalToolConnector: ToolConnector
             return
         }
         
-        self.output += terminal_output
+        self.output += terminal_output.isEmpty ? "Disconnected" : terminal_output
         #endif
     }
     
