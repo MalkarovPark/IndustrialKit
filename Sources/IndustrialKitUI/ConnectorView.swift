@@ -276,7 +276,7 @@ public struct ConnectionParameterView: View
                             parameter.value = new_value
                             update_file_data()
                         }
-                    ), format: .number.grouping(.never))
+                    ), format: .number.grouping(.never)) //, format: .number)
                     #if os(macOS)
                         .textFieldStyle(.roundedBorder)
                     #endif
@@ -300,7 +300,7 @@ public struct ConnectionParameterView: View
                             parameter.value = new_value
                             update_file_data()
                         }
-                    ), format: .number)
+                    ), format: .number.grouping(.never)) //, format: .number)
                     #if os(macOS)
                         .textFieldStyle(.roundedBorder)
                     #endif
