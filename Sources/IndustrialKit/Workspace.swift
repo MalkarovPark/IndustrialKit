@@ -601,6 +601,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                 {
                     self.reset_program_elements_states()
+                    self.update_view()
                 }
             }
         }
