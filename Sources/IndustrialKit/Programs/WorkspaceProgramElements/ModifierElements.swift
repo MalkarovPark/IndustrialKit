@@ -26,13 +26,13 @@ public class ModifierElement: WorkspaceProgramElement
 public class MoverModifierElement: ModifierElement
 {
     /// A type of copy
-    public var move_type: ModifierCopyType = .duplicate
+    @Published public var move_type: ModifierCopyType = .duplicate
     
     /// An index of value to copy.
-    public var from_index = 0
+    @Published public var from_index = 0
     
     /// An index of target register.
-    public var to_index = 0
+    @Published public var to_index = 0
     
     public override var info: String
     {
@@ -98,10 +98,10 @@ public class MoverModifierElement: ModifierElement
 public class WriterModifierElement: ModifierElement
 {
     /// A writable value.
-    public var value: Float = 0
+    @Published public var value: Float = 0
     
     /// An index of register to write.
-    public var to_index = 0
+    @Published public var to_index = 0
     
     public override var info: String
     {
@@ -146,13 +146,13 @@ public class WriterModifierElement: ModifierElement
 public class MathModifierElement: ModifierElement
 {
     /// A type of compare.
-    public var operation: MathType = .add
+    @Published public var operation: MathType = .add
     
     /// An index of register with compared value.
-    public var value_index = 0
+    @Published public var value_index = 0
     
     /// An index of register with compared value.
-    public var value2_index = 0
+    @Published public var value2_index = 0
     
     public override var info: String
     {
@@ -263,7 +263,7 @@ public enum MathType: String, Codable, Equatable, CaseIterable
 public class ChangerModifierElement: ModifierElement
 {
     /// A name of modifier module.
-    public var module_name = ""
+    @Published public var module_name = ""
     
     /// A module access type identifier – external or internal.
     public var is_internal_module: Bool
@@ -416,14 +416,14 @@ public typealias Changer = ChangerModifierElement
 public class ObserverModifierElement: ModifierElement
 {
     /// A type of observed object
-    public var object_type: ObserverObjectType = .robot
+    @Published public var object_type: ObserverObjectType = .robot
     
     /// A name of object to observe output.
-    public var object_name = ""
+    @Published public var object_name = ""
     
     /// An index of target register.
-    public var from_indices = [Int]()
-    public var to_indices = [Int]()
+    @Published public var from_indices = [Int]()
+    @Published public var to_indices = [Int]()
     
     public override var info: String
     {

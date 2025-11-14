@@ -69,24 +69,24 @@ public class PerformerElement: WorkspaceProgramElement
 public class RobotPerformerElement: PerformerElement
 {
     /// Index of *x* location component.
-    public var x_index = 0
+    @Published public var x_index = 0
     /// Index of *y* location component.
-    public var y_index = 0
+    @Published public var y_index = 0
     /// Index of *z* location component.
-    public var z_index = 0
+    @Published public var z_index = 0
     
     /// Index of *r* rotation component.
-    public var r_index = 0
+    @Published public var r_index = 0
     /// Index of *p* rotation component.
-    public var p_index = 0
+    @Published public var p_index = 0
     /// Index of *w* rotation component.
-    public var w_index = 0
+    @Published public var w_index = 0
     
     /// Index of movement speed.
-    public var speed_index = 0
+    @Published public var speed_index = 0
     
     /// Index of movement type.
-    public var type_index = 0
+    @Published public var type_index = 0
     
     public override var title: String
     {
@@ -181,7 +181,7 @@ public class RobotPerformerElement: PerformerElement
 public class ToolPerformerElement: PerformerElement
 {
     /// Index of operation code location component.
-    public var opcode_index = 0
+    @Published public var opcode_index = 0
     
     public override var title: String
     {
