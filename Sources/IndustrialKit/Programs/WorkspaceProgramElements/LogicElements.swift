@@ -26,10 +26,10 @@ public class LogicElement: WorkspaceProgramElement
 public class JumpLogicElement: LogicElement
 {
     /// A name of the target mark.
-    public var target_mark_name = ""
+    @Published public var target_mark_name = ""
     
     /// An index of the target mark element.
-    public var target_element_index = 0
+    @Published public var target_element_index = 0
     
     public override var info: String
     {
@@ -81,19 +81,19 @@ public class JumpLogicElement: LogicElement
 public class ComparatorLogicElement: LogicElement
 {
     /// A type of compare.
-    public var compare_type: CompareType = .equal
+    @Published public var compare_type: CompareType = .equal
     
     /// An index of register with compared value.
-    public var value_index = 0
+    @Published public var value_index = 0
     
     /// An index of register with compared value.
-    public var value2_index = 0
+    @Published public var value2_index = 0
     
     /// A name of the target mark.
-    public var target_mark_name = ""
+    @Published public var target_mark_name = ""
     
     /// An index of the target mark element.
-    public var target_element_index = 0
+    @Published public var target_element_index = 0
     
     public override var info: String
     {
@@ -220,7 +220,7 @@ public enum CompareType: String, Codable, Equatable, CaseIterable
 public class MarkLogicElement: LogicElement
 {
     /// A target mark name.
-    public var name = "None"
+    @Published public var name = "None"
     
     public override var title: String
     {
