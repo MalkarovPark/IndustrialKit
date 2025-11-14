@@ -582,12 +582,17 @@ public struct GlassBoxCard<Content: View>: View
 //MARK: - Program element card view
 public struct ProgramElementCard: View
 {
-    //@StateObject var program_element: WorkspaceProgramElement
-    @ObservedObject var program_element: WorkspaceProgramElement
+    /*@StateObject var program_element: WorkspaceProgramElement
     
     public init(_ program_element: WorkspaceProgramElement)
     {
-        //_program_element = StateObject(wrappedValue: program_element)
+        _program_element = StateObject(wrappedValue: program_element)
+    }*/
+    
+    var program_element: WorkspaceProgramElement
+    
+    public init(_ program_element: WorkspaceProgramElement)
+    {
         self.program_element = program_element
     }
     
