@@ -589,7 +589,7 @@ public struct ProgramElementCard: View
         _program_element = StateObject(wrappedValue: program_element)
     }*/
     
-    var program_element: WorkspaceProgramElement
+    @ObservedObject var program_element: WorkspaceProgramElement
     
     public init(_ program_element: WorkspaceProgramElement)
     {
