@@ -406,7 +406,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     @Published public var cycled = false
     
     /// Workspace performing state.
-    public var performed = false
+    @Published public var performed = false
     
     /// An Index of target element in control program array.
     private var selected_element_index = 0
