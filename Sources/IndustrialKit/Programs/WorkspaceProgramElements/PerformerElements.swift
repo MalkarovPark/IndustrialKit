@@ -12,19 +12,19 @@ import SwiftUI
 public class PerformerElement: WorkspaceProgramElement
 {
     /// A name of workspace object.
-    public var object_name = ""
+    @Published public var object_name = ""
     
     /// Determines if workspace object is perform a single action.
-    public var is_single_perfrom = false
+    @Published public var is_single_perfrom = false
     
     /// Determines if workspace object is perform a program by index from registers.
-    public var is_program_by_index = false
+    @Published public var is_program_by_index = false
     
     /// A name of program to perfrom.
-    public var program_name = ""
+    @Published public var program_name = ""
     
     /// An index of register with index of program to perform.
-    public var program_index = 0
+    @Published public var program_index = 0
     
     public override var info: String
     {
