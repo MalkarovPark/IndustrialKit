@@ -73,7 +73,7 @@ IndustrialKitUI provides some views and modifiers for use in design and data pro
 
 ### Workspace <a name="workspace">
 
-Described by the *Workspace* class is the basis of the production complex, which consists of robots, tools, parts and controlled by a global program, presented as a sequence of blocks – algorithmic elements. Thus, this class contains four properties of an array of values of types of workspace objects (*WorkspaceObject* class) inherited such as *Robot*, *Tool*, *Part* and elements of the global control program with type *WorkspaceProgramElement*.
+Described by the `Workspace` class is the basis of the production complex, which consists of robots, tools, parts and controlled by a global program, presented as a sequence of blocks – algorithmic elements. Thus, this class contains four properties of an array of values of types of workspace objects (`WorkspaceObject` class) inherited such as `Robot`, `Tool`, `Part` and elements of the global control program with type `WorkspaceProgramElement`.
 
 For arrays of objects, a standard set of functions is used, including adding, deleting, selecting, deselecting, searching by name. However, some features may not be available for some objects.
 
@@ -81,7 +81,7 @@ For arrays of objects, a standard set of functions is used, including adding, de
 
 The *Robot* class describes an object of the production system that works with the representation of positions in space and is able to move its arm (manipulator) endpoint to them. The robot contains in its property an array of positional programs related to the *PositionsProgram* class.
 
-The positional program contains an array of target positions of type *PositionPoint*. Position describes the location (*x*, *y*, *z*), rotation angles in it (*r*, *p*, *w*), type and speed of movement.
+The positional program contains an array of target positions of type `PositionPoint`. Position describes the location (`x`, `y`, `z`), rotation angles in it (`r`, `p`, `w`), type and speed of movement.
 
 Robot can add, delete and edit its programs. There are functions for selecting and starting, pausing, resetting the program.
 
@@ -101,7 +101,7 @@ This class has a set of properties that describe the appearance and physical pro
 
 ### Connectors <a name="connectors">
 
-Connectors are used to connect and control industrial equipment. They are divided into two subtypes – for switching robots and tools, described by the *RobotConnector* and *ToolConnector* classes, respectively.
+Connectors are used to connect and control industrial equipment. They are divided into two subtypes – for switching robots and tools, described by the `RobotConnector` and `ToolConnector` classes, respectively.
 
 Connectors of individual models are inherited from these base classes and have their own specific redefinitions of functions and variables.
 
@@ -109,7 +109,7 @@ Connection to the equipment is performed by the connect function, disconnection 
 
 ### Model Controllers <a name="model-controllers">
 
-This controllers are used to connect to and control robot and tool models in the rendered scene. Represented by *RobotModelController* and *ToolModelController* subclasses.
+This controllers are used to connect to and control robot and tool models in the rendered scene. Represented by `RobotModelController` and `ToolModelController` subclasses.
 
 Also, controllers can change the model in accordance with the specified parameters.
 
@@ -117,35 +117,35 @@ Also, controllers can change the model in accordance with the specified paramete
 
 Some functions that can be used both in framework and independently by developers.
 
-   * __mismatched_name__ – finds and updates mismatched name;
+   * `mismatched_name` – finds and updates mismatched name;
 
-   * __origin_transform__ – transforms input position by origin rotation;
+   * `origin_transform` – transforms input position by origin rotation;
 
-   * __apply_bit_mask__ – applies certain category bit mask int value for inputed node and all nested;
+   * `apply_bit_mask` – applies certain category bit mask int value for inputed node and all nested;
 
-   * __pass_robot_preferences__ – pass parameters between robots, such as origin location/rotation and working space scaling;
+   * `pass_robot_preferences` – pass parameters between robots, such as origin location/rotation and working space scaling;
 
-   * __pass_positions_programs__ – pass positions programs, specified by names, between robots.
+   * `pass_positions_programs` – pass positions programs, specified by names, between robots.
 
-   * __element_from_struct__ – universal function, that initializes the workspace program element by corresponding file struct data.
+   * `element_from_struct` – universal function, that initializes the workspace program element by corresponding file struct data.
 
 ### Extensions <a name="extensions">
 
-Added methods for `Float` to convert radians to degrees – __to_deg__ and vice versa – __to_rad__.
+Added methods for `Float` to convert radians to degrees – `to_deg` and vice versa – `to_rad`.
 
-Provided new methods for `SCNNode` – __remove_all_constraints__ to remove all constraints and refresh node, __remove_all_child_nodes__ to remove all child nodes, and __deep_clone__ to fully clone node with geometry, materials, and children.
+Provided new methods for `SCNNode` – `remove_all_constraints` to remove all constraints and refresh node, `remove_all_child_nodes` to remove all child nodes, and `deep_clone` to fully clone node with geometry, materials, and children.
 
-Extension to provide the __pngData__ method for `UIImage` (UIKit / NSImage AppKit).
+Extension to provide the `pngData` method for `UIImage` (UIKit / NSImage AppKit).
 
 Aliases for `NSImage` and `NSColor` to use them as `UIImage` and `UIColor` respectively (AppKit).
 
-Safe access extensions for `Array` and `Dictionary` – __safe__, __safe_float__, __safe_name__ to get/set elements or nodes without crashes.
+Safe access extensions for `Array` and `Dictionary` – `safe`, `safe_float`, `safe_name` to get/set elements or nodes without crashes.
 
-Extensions for `Color` and `UIColor` to initialize from HEX (__init(hex:)__) and get HEX string (__to_hex__).
+Extensions for `Color` and `UIColor` to initialize from HEX (`init(hex:)`) and get HEX string (`to_hex`).
 
-Encodable extensions – __json_data__ and __json_string__ for pretty-printed JSON output.
+Encodable extensions – `json_data` and `json_string` for pretty-printed JSON output.
 
-String extension – __code_correct_format__ to convert to code-safe string (spaces → underscores, digits prefixed with “_”).
+String extension – `code_correct_format` to convert to code-safe string (spaces → underscores, digits prefixed with `_`).
 
 # [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a>
 <!-- # IMA <a name="ima"></a> -->
@@ -172,7 +172,7 @@ It has the functionality of double tap to reset camera position for macOS.
 
 Used to display various objects. Box Card can display title, subtitle and SF Symbol. Glass Box Card can display title and subtitle with an Image or a SceneKit Node.
 
-These cards can be used in conjunction with objects inherited from WorkspaceObject by passing them the values ​​returned by the object's *card_info* method.
+These cards can be used in conjunction with objects inherited from WorkspaceObject by passing them the values ​​returned by the object's `card_info` method.
 
 <p align="center">
   <img width="992" height="224" alt="Cards" src="https://github.com/user-attachments/assets/11c19b3a-9a5a-4aa5-bc2f-3ea6cde07ec0" />
@@ -194,8 +194,8 @@ The registers cards allows edit the registers values.
 
 Provides editing of positions, for example for production objects in the workspace or target positions for robots.
 The editing window contains two groups of three editable parameters:
-   * __Location__ with editable position parameters in a rectangular coordinate system – *x*, *y*, *z*;
-   * __Rotation__ with editable rotation angles at a point – *r*, *p*, *w*.
+   * `Location` with editable position parameters in a rectangular coordinate system – `x`, `y`, `z`;
+   * `Rotation` with editable rotation angles at a point – `r`, `p`, `w`.
 
 Each editable parameter consists of a field and an associated stepper. The described sequence of groups can be displayed in a vertical, horizontal or some other stack.
 
@@ -229,7 +229,7 @@ Pruposed for elements, registers from which they take data can be specified. Thi
 
 ### Program Elements Views <a name="industrialkitui-programelementsviews"></a>
 
-Views for editing different types of IMA program elements – __Performers__, __Modifiers__ and __Logic__.
+Views for editing different types of IMA program elements – `Performers`, `Modifiers` and `Logic`.
 
 <p align="center">
   <img width="600" alt="performers_views" src="https://github.com/user-attachments/assets/605e9781-6f3c-44eb-8c67-25f2ebcbf23f" />
