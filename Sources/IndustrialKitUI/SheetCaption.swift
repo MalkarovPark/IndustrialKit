@@ -86,18 +86,16 @@ public struct SheetCaption: ViewModifier
             {
                 if !plain
                 {
-                    //Rectangle()
                     HStack
                     {
                         
                     }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        #if !os(visionOS)
-                        .background(.bar)
-                        #else
-                        .background(.thinMaterial)
-                        #endif
-                        //.foregroundStyle(.ultraThinMaterial)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    #if !os(visionOS)
+                    .background(.bar)
+                    #else
+                    .background(.thinMaterial)
+                    #endif
                 }
             }
         }
