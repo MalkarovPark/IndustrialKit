@@ -88,7 +88,12 @@ public struct SheetCaption: ViewModifier
                 {
                     Rectangle()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .foregroundStyle(.ultraThinMaterial)
+                        #if !os(visionOS)
+                        .background(.bar)
+                        #else
+                        .background(.thinMaterial)
+                        #endif
+                        //.foregroundStyle(.ultraThinMaterial)
                 }
             }
         }
