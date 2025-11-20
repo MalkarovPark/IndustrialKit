@@ -86,7 +86,11 @@ public struct SheetCaption: ViewModifier
             {
                 if !plain
                 {
-                    Rectangle()
+                    //Rectangle()
+                    HStack
+                    {
+                        
+                    }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         #if !os(visionOS)
                         .background(.bar)
