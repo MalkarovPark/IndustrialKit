@@ -27,7 +27,7 @@ IndustrialKit is an open source software platform for creating applications that
     * [Model Controllers](#model-controllers)
     * [Functions](#functions)
     * [Extensions](#extensions)
-* [Ithi Macro Assembler](#ima) <!-- * [IMA](#ima) -->
+* [IMA](#ima) <!-- * [Ithi Macro Assembler](#ima) -->
 * [IndustrialKitUI](#industrialkitui)
     * [Object Scene View](#industrialkitui-objectsceneview)
     * [Cards](#industrialkitui-cards)
@@ -79,7 +79,7 @@ For arrays of objects, a standard set of functions is used, including adding, de
 
 ### Robot <a name="robot">
 
-The *Robot* class describes an object of the production system that works with the representation of positions in space and is able to move its arm (manipulator) endpoint to them. The robot contains in its property an array of positional programs related to the *PositionsProgram* class.
+The `Robot` class describes an object of the production system that works with the representation of positions in space and is able to move its arm (manipulator) endpoint to them. The robot contains in its property an array of positional programs related to the `PositionsProgram` class.
 
 The positional program contains an array of target positions of type `PositionPoint`. Position describes the location (`x`, `y`, `z`), rotation angles in it (`r`, `p`, `w`), type and speed of movement.
 
@@ -87,15 +87,15 @@ Robot can add, delete and edit its programs. There are functions for selecting a
 
 ### Tool <a name="tool">
 
-Other kinds of industrial equipment used in a technological complex is described by the *Tool* class. Tool can be either free-standing or attached to the endpoint of the robot manipulator.
+Other kinds of industrial equipment used in a technological complex is described by the `Tool` class. Tool can be either free-standing or attached to the endpoint of the robot manipulator.
 
-Interaction with tools is organized by opcides and infocodes. The opcode is responsible for the executable technological operation – when a numerical value is set in the spectial property, the start of the operation associated with the code is initialized. The default value for this property is -1, which means no operation performed. When the operation is done, the value of the opcode is reset to this value.
+Interaction with tools is organized by opcides and infocodes. The opcode is responsible for the executable technological operation – when a numerical value is set in the spectial property, the start of the operation associated with the code is initialized. The default value for this property is __-1__, which means no operation performed. When the operation is done, the value of the opcode is reset to this value.
 
-Operational code sequences are contained in the programs array, the elements are the *OperationProgram* class, with a set of numeric code values with *OperationCode* class. Program management is similar to that of robots – there are functions for adding, deleting, selecting and performing.
+Operational code sequences are contained in the programs array, the elements are the `OperationProgram` class, with a set of numeric code values with `OperationCode` class. Program management is similar to that of robots – there are functions for adding, deleting, selecting and performing.
 
 ### Part <a name="part">
 
-Parts form the environment, such as tables, drives, safety fences, etc., and also represent objects with which the executing devices interact directly – an example is the parts assembled by robots. Described by the *Part* class.
+Parts form the environment, such as tables, drives, safety fences, etc., and also represent objects with which the executing devices interact directly – an example is the parts assembled by robots. Described by the `Part` class.
 
 This class has a set of properties that describe the appearance and physical properties of the part. A part model can be obtained both parametrically – from an array of lengths and the name of a geometric primitive, and by importing from a scene file.
 
@@ -147,8 +147,7 @@ Encodable extensions – `json_data` and `json_string` for pretty-printed JSON o
 
 String extension – `code_correct_format` to convert to code-safe string (spaces → underscores, digits prefixed with `_`).
 
-# [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a>
-<!-- # IMA <a name="ima"></a> -->
+# IMA <a name="ima"></a> <!-- # [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a> -->
 
 The built-in programming language of the IndustrialKit platform formalizes methods for robotic systems algoritmization and organizes unified connection and control of various robots and equipment tools.
 
@@ -160,7 +159,7 @@ The built-in programming language of the IndustrialKit platform formalizes metho
 
 ### Object Scene View <a name="industrialkitui-objectsceneview"></a>
 
-The simple view for SceneKit nodes. Initalises only by SCNNode and has transparent background.
+The simple view for SceneKit nodes. Initalises only by `SCNNode` and has transparent background.
 
 It has the functionality of double tap to reset camera position for macOS.
 
@@ -205,7 +204,7 @@ Each editable parameter consists of a field and an associated stepper. The descr
 
 ### Position Control <a name="industrialkitui-positioncontrol"></a>
 
-Provides position editing with sliders. For location should set upper limits (lower limits have 0 value). Rotations are limited to the range -180º – 180º.
+Provides position editing with sliders. For location should set upper limits (lower limits have 0 value). Rotations are limited to the range __-180º__ – __180º__.
 
 <p align="center">
   <img width="352" src="https://github.com/user-attachments/assets/acc3e380-79ab-485f-acbc-1c37440ab547" />
@@ -229,7 +228,7 @@ Pruposed for elements, registers from which they take data can be specified. Thi
 
 ### Program Elements Views <a name="industrialkitui-programelementsviews"></a>
 
-Views for editing different types of IMA program elements – `Performers`, `Modifiers` and `Logic`.
+Views for editing different types of IMA program elements – *Performers*, *Modifiers* and *Logic*.
 
 <p align="center">
   <img width="600" alt="performers_views" src="https://github.com/user-attachments/assets/605e9781-6f3c-44eb-8c67-25f2ebcbf23f" />
@@ -239,7 +238,7 @@ Views for editing different types of IMA program elements – `Performers`, `Mod
 
 ### Charts View <a name="industrialkitui-chartsview"></a>
 
-Output of an arrays of __WorkspaceObjectChart__ charts, with the ability to switch between them by segmented picker (if count of arrays of arrays is more than one). The type of chart is determined by its properties.
+Output of an arrays of `WorkspaceObjectChart` charts, with the ability to switch between them by segmented picker (if count of arrays of arrays is more than one). The type of chart is determined by its properties.
 
 <p align="center">
   <img width="752" src="https://github.com/user-attachments/assets/c77a8564-e3dd-4f67-aec8-a24e1a0af774" />
@@ -255,7 +254,7 @@ Output statistics by the StateItem array. If the elements are nested within each
 
 ### Spatial Pendant <a name="industrialkitui-spendant"></a>
 
-A universal UI control for programming and handling workspace and its constituent industrial equipment. Contents of this pendant vary depending on the specific selected object and its type – Workspace, Robot or Tool. Content of this control is blank if no suitable object is selected.
+A universal UI control for programming and handling workspace and its constituent industrial equipment. Contents of this pendant vary depending on the specific selected object and its type – `Workspace`, `Robot` or `Tool`. Content of this control is blank if no suitable object is selected.
 
 The spatial pendant allows you to set the sequence of program elements and control their performing.
 
