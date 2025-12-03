@@ -74,16 +74,16 @@ struct StateItemListView: View
             }
             label:
             {
-                itemLabel
+                item_label
             }
         }
         else
         {
-            itemLabel
+            item_label
         }
     }
     
-    private var itemLabel: some View
+    private var item_label: some View
     {
         HStack
         {

@@ -27,25 +27,18 @@ public struct ChartsView: View
             {
                 if charts_data!.count > 0
                 {
-                    if charts_data!.count > 1
+                    Picker("Statistics", selection: $chart_selection)
                     {
-                        Picker("Statistics", selection: $chart_selection)
-                        {
-                            ForEach(0..<charts_data!.count, id: \.self)
-                            { index in
-                                Text(charts_data![index].name).tag(index)
-                            }
+                        ForEach(0..<charts_data!.count, id: \.self)
+                        { index in
+                            Text(charts_data![index].name).tag(index)
                         }
-                        .controlSize(.regular)
-                        .pickerStyle(SegmentedPickerStyle())
-                        .labelsHidden()
-                        .padding()
                     }
-                    else
-                    {
-                        Text(charts_data!.first!.name)
-                            .padding([.top, .leading, .trailing])
-                    }
+                    .disabled(charts_data!.count == 1)
+                    .controlSize(.regular)
+                    .pickerStyle(SegmentedPickerStyle())
+                    .labelsHidden()
+                    //.padding()
                     
                     if charts_data![chart_selection].text_domain
                     {
