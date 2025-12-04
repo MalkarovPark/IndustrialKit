@@ -23,31 +23,31 @@ public struct ChartsView: View
     {
         VStack(spacing: 0)
         {
-            if charts_data != nil
+            if let charts_data = charts_data
             {
-                if charts_data!.count > 0
+                if charts_data.count > 0
                 {
                     Picker("Statistics", selection: $chart_selection)
                     {
-                        ForEach(0..<charts_data!.count, id: \.self)
+                        ForEach(0..<charts_data.count, id: \.self)
                         { index in
-                            Text(charts_data![index].name).tag(index)
+                            Text(charts_data[index].name).tag(index)
                         }
                     }
-                    .disabled(charts_data!.count == 1)
+                    .disabled(charts_data.count == 1)
                     .controlSize(.regular)
                     .pickerStyle(SegmentedPickerStyle())
                     .labelsHidden()
                     //.padding()
                     
-                    if charts_data![chart_selection].text_domain
+                    if charts_data[chart_selection].text_domain
                     {
-                        switch charts_data![chart_selection].style
+                        switch charts_data[chart_selection].style
                         {
                         case .area:
                             Chart
                             {
-                                ForEach(charts_data![chart_selection].data)
+                                ForEach(charts_data[chart_selection].data)
                                 {
                                     AreaMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
                                     .foregroundStyle(by: .value("Type", $0.name))
@@ -58,7 +58,7 @@ public struct ChartsView: View
                         case .line:
                             Chart
                             {
-                                ForEach(charts_data![chart_selection].data)
+                                ForEach(charts_data[chart_selection].data)
                                 {
                                     LineMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
                                     .foregroundStyle(by: .value("Type", $0.name))
@@ -69,7 +69,7 @@ public struct ChartsView: View
                         case .bar:
                             Chart
                             {
-                                ForEach(charts_data![chart_selection].data)
+                                ForEach(charts_data[chart_selection].data)
                                 {
                                     BarMark(x: .value("Mount", $0.domain.keys.first!), y: .value("Value", $0.codomain))
                                     .foregroundStyle(by: .value("Type", $0.name))
@@ -83,12 +83,12 @@ public struct ChartsView: View
                     }
                     else
                     {
-                        switch charts_data![chart_selection].style
+                        switch charts_data[chart_selection].style
                         {
                         case .area:
                             Chart
                             {
-                                ForEach(charts_data![chart_selection].data)
+                                ForEach(charts_data[chart_selection].data)
                                 {
                                     AreaMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
                                     .foregroundStyle(by: .value("Type", $0.name))
@@ -99,7 +99,7 @@ public struct ChartsView: View
                         case .line:
                             Chart
                             {
-                                ForEach(charts_data![chart_selection].data)
+                                ForEach(charts_data[chart_selection].data)
                                 {
                                     LineMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
                                     .foregroundStyle(by: .value("Type", $0.name))
@@ -110,7 +110,7 @@ public struct ChartsView: View
                         case .bar:
                             Chart
                             {
-                                ForEach(charts_data![chart_selection].data)
+                                ForEach(charts_data[chart_selection].data)
                                 {
                                     BarMark(x: .value("Mount", $0.domain[$0.domain.keys.first!]!), y: .value("Value", $0.codomain))
                                     .foregroundStyle(by: .value("Type", $0.name))
@@ -125,7 +125,7 @@ public struct ChartsView: View
                 }
                 else
                 {
-                    Text(charts_data?.first?.name ?? "Statistics")
+                    Text(charts_data.first?.name ?? "Statistics")
                         .font(.title2)
                         .padding([.top, .leading, .trailing])
                 }

@@ -769,70 +769,135 @@ let register_card_font_size: CGFloat = 32
 //MARK: - Cards preview
 struct Cards_Previews: PreviewProvider
 {
-    static var previews: some View
+    struct Container: View
     {
         @State var performer_element = RobotPerformerElement(element_struct: WorkspaceProgramElementStruct(identifier: .robot_performer, data: ["Device", "Program", "", "false", "false", "", "", "", "", "", "", "", ""]))
         @State var modifier_element = MoverModifierElement(element_struct: WorkspaceProgramElementStruct(identifier: .mover_modifier, data: ["duplicate", "2", "4"]))
         @State var logic_element = JumpLogicElement(element_struct: WorkspaceProgramElementStruct(identifier: .jump_logic, data: ["Mark"]))
         
-        Group
+        @State var to_rename = [false, false]
+        @State var names = ["Image", "Scene"]
+        @State var values: [Float] = [2, 4, 6]
+        
+        var body: some View
         {
-            VStack(spacing: 0)
+            Group
             {
-                VStack()
+                VStack(spacing: 0)
                 {
-                    BoxCard(title: "Robotic", subtitle: "Workspace", color: .teal, image_name: "cube")
-                        .padding()
+                    VStack()
+                    {
+                        BoxCard(title: "Robotic", subtitle: "Workspace", color: .teal, image_name: "cube")
+                            .padding()
+                    }
+                    .padding(4)
+                    .frame(width: 320, height: 192)
+                    
+                    VStack()
+                    {
+                        GlassBoxCard(title: names[0], subtitle: "Color Wheel", color: .green, image: UIImage(named: "NSTouchBarColorPickerFill"), to_rename: $to_rename[0], edited_name: $names[0], on_rename: {})
+                            .contextMenu
+                            {
+                                RenameButton()
+                                    .renameAction
+                                {
+                                    withAnimation
+                                    {
+                                        to_rename[0].toggle()
+                                    }
+                                }
+                            }
+                            .padding()
+                    }
+                    .padding(4)
+                    .frame(width: 320, height: 192)
+                    
+                    VStack()
+                    {
+                        GlassBoxCard(title: names[1], node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), to_rename: $to_rename[1], edited_name: $names[1], on_rename: {})
+                            .contextMenu
+                            {
+                                RenameButton()
+                                    .renameAction
+                                {
+                                    withAnimation
+                                    {
+                                        to_rename[1].toggle()
+                                    }
+                                }
+                            }
+                            .padding()
+                    }
+                    .padding(4)
+                    .frame(width: 320, height: 192)
                 }
-                .padding(4)
-                .frame(width: 320, height: 192)
+                .padding(8)
                 
-                VStack()
+                VStack(spacing: 24)
                 {
-                    GlassBoxCard(title: "Image", subtitle: "Color Wheel", color: .green, image: UIImage(named: "NSTouchBarColorPickerFill"))
-                        .padding()
+                    ProgramElementCard(performer_element)
+                        .shadow(color: .black.opacity(0.2), radius: 8)
+                    
+                    ProgramElementCard(modifier_element)
+                        .shadow(color: .black.opacity(0.2), radius: 8)
+                    
+                    ProgramElementCard(logic_element)
+                        .shadow(color: .black.opacity(0.2), radius: 8)
                 }
-                .padding(4)
-                .frame(width: 320, height: 192)
+                .padding(16)
+                .frame(width: 288)
                 
-                VStack()
+                HStack(spacing: 24)
                 {
-                    GlassBoxCard(title: "Scene", node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)))
-                        .padding()
+                    RegisterCard(value: $values[0], number: 40, color: .mint)
+                    
+                    RegisterCard(value: $values[1], number: 60, color: .cyan)
+                    
+                    RegisterCard(value: $values[2], number: 20, color: .indigo)
                 }
-                .padding(4)
-                .frame(width: 320, height: 192)
+                .padding(16)
             }
             .padding(8)
-            
-            VStack(spacing: 24)
+            .onAppear
             {
-                ProgramElementCard(performer_element)
-                    .shadow(color: .black.opacity(0.2), radius: 8)
-                
-                ProgramElementCard(modifier_element)
-                    .shadow(color: .black.opacity(0.2), radius: 8)
-                
-                ProgramElementCard(logic_element)
-                    .shadow(color: .black.opacity(0.2), radius: 8)
+                performer_element.performing_state = .completed
             }
-            .padding(16)
-            .frame(width: 288)
-            
-            HStack(spacing: 24)
-            {
-                RegisterCard(value: .constant(2), number: 40, color: .mint)
-                
-                RegisterCard(value: .constant(4), number: 60, color: .cyan)
-                
-                RegisterCard(value: .constant(6), number: 20, color: .indigo)
-            }
-            .padding(16)
         }
-        .padding(8)
-        .onAppear
+    }
+    
+    static var previews: some View
+    {
+        Container()
+    }
+    
+    struct RegistersView_Previews: View
+    {
+        @Binding var registers: [Float]
+        
+        var body: some View
         {
-            performer_element.performing_state = .completed
+            EmptyView()
+        }
+    }
+    
+    struct RegistersSelectors_Previews: View
+    {
+        @Binding var index: [Int]
+        @Binding var indices: [Int]
+        
+        var body: some View
+        {
+            EmptyView()
+        }
+    }
+    
+    struct RegistersDataPreview: View
+    {
+        @State private var is_presented: Bool = false
+        
+        var body: some View
+        {
+            EmptyView()
         }
     }
 }
