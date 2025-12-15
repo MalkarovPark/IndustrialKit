@@ -516,6 +516,8 @@ public class Tool: WorkspaceObject, @unchecked Sendable
             last_error = error
             print(last_error?.localizedDescription ?? "No Errors")
             current_code.performing_state = .error
+            
+            reset_performing()
             //completion()
         }
     }
