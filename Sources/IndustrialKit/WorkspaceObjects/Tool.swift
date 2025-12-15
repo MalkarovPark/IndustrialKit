@@ -365,7 +365,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     public var selected_code_index = 0
     
     /// Last performing error
-    public var last_error: NSError?
+    @Published public var last_error: Error?
     
     /**
      Demo state of tool.
@@ -410,14 +410,21 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         - code: The operation code value of the operation performed by the tool.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func perform(code: Int, completion: @escaping @Sendable () -> Void = {})
+    public func perform(code: Int, completion: @escaping @Sendable () -> Void = {}) throws
     {
         if demo
         {
             // Move to point for virtual tool
-            model_controller.nodes_perform(code: code)
+            do
             {
-                completion()
+                try model_controller.nodes_perform(code: code)
+                {
+                    completion()
+                }
+            }
+            catch
+            {
+                throw error
             }
         }
         else
@@ -488,18 +495,28 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         let current_code = selected_program.codes[selected_code_index]
         current_code.performing_state = .processing
         
-        perform(code: current_code.value) //(code: selected_program.codes[selected_code_index].value)
+        do
         {
-            if self.demo
+            try perform(code: current_code.value) //(code: selected_program.codes[selected_code_index].value)
             {
-                current_code.performing_state = .completed
+                if self.demo
+                {
+                    current_code.performing_state = .completed
+                }
+                else if self.connector.connected
+                {
+                    current_code.performing_state = self.connector.performing_state.output
+                }
+                
+                self.select_new_code()
             }
-            else if self.connector.connected
-            {
-                current_code.performing_state = self.connector.performing_state.output
-            }
-            
-            self.select_new_code()
+        }
+        catch
+        {
+            last_error = error
+            print(last_error?.localizedDescription ?? "No Errors")
+            current_code.performing_state = .error
+            //completion()
         }
     }
     

@@ -825,9 +825,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
         else
         {
             // Single tool perform
-            selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
+            do
             {
-                completion()
+                try selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
+                {
+                    completion()
+                }
+            }
+            catch
+            {
+                print(error.localizedDescription)
             }
         }
     }
