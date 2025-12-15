@@ -465,6 +465,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         if !performed
         {
             reset_error()
+            paused = false
             
             // Perform next action if performing was stop
             performed = true
@@ -480,6 +481,8 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         func pause_handler()
         {
             selected_program.codes[selected_code_index].performing_state = .current
+            
+            paused = true
             
             if demo
             {
@@ -888,13 +891,17 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         {
             if last_error == nil
             {
-                if !finished
+                if finished
                 {
-                    return PerformingState.none
+                    return PerformingState.completed
+                }
+                else if paused
+                {
+                    return PerformingState.current
                 }
                 else
                 {
-                    return PerformingState.completed
+                    return PerformingState.none
                 }
             }
             else
@@ -910,6 +917,9 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     
     /// A finished state of tool.
     private var finished = false
+    
+    /// A paused state of tool.
+    private var paused = false
     
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
