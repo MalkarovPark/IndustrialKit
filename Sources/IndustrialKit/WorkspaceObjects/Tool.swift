@@ -459,12 +459,16 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         if !performed
         {
             // Perform next action if performing was stop
+            performing_state = .current
+            
             performed = true
             perform_next_code()
         }
         else
         {
             // Pause moving if tool perform
+            performing_state = .none
+            
             performed = false
             pause_handler()
         }
@@ -868,38 +872,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     }
     
     /// Performing state
-    public var performing_state: PerformingState
-    {
-        if !performed
-        {
-            return PerformingState.none
-        }
-        else
-        {
-            return PerformingState.processing
-        }
-    }
-    
-    public func performing_state_binding() -> Binding<Color>
-    {
-        Binding<Color>(
-            get:
-            {
-                if self.performed
-                {
-                    PerformingState.processing.color
-                }
-                else
-                {
-                    PerformingState.none.color
-                }
-            },
-            set:
-            { value in
-                //self.states_data = value
-            }
-        )
-    }
+    @Published public var performing_state: PerformingState = .none
     
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
