@@ -459,16 +459,12 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         if !performed
         {
             // Perform next action if performing was stop
-            performing_state = .current
-            
             performed = true
             perform_next_code()
         }
         else
         {
             // Pause moving if tool perform
-            performing_state = .none
-            
             performed = false
             pause_handler()
         }
@@ -872,7 +868,17 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     }
     
     /// Performing state
-    @Published public var performing_state: PerformingState = .none
+    public var performing_state: PerformingState
+    {
+        if !performed
+        {
+            return PerformingState.none
+        }
+        else
+        {
+            return PerformingState.processing
+        }
+    }
     
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
