@@ -571,11 +571,13 @@ public class Tool: WorkspaceObject, @unchecked Sendable
             // Reset target point index if all points passed
             selected_code_index = 0
             performed = false
-            finished = false
+            
+            finished = true
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
             {
                 self.finished = false
+                
                 self.selected_program.reset_codes_states()
             }
             
