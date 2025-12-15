@@ -872,7 +872,14 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     {
         if !performed
         {
-            return PerformingState.none
+            if last_error == nil
+            {
+                return PerformingState.none
+            }
+            else
+            {
+                return PerformingState.error
+            }
         }
         else
         {
