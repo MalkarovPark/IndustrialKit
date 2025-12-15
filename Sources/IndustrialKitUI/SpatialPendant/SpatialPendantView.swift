@@ -152,6 +152,7 @@ private struct SpatialPendantView: View
                 .padding()
             }
             .glassBackgroundEffect()
+            .disabled(controller.view_type == .tool && workspace.selected_tool.programs_count == 0)
         }
         .disabled(controller.view_type == nil)
         .ornament(attachmentAnchor: .scene(.top))

@@ -404,5 +404,5 @@ public enum PhysicsType: String, Codable, Equatable, CaseIterable
     case ph_static = "Static"
     case ph_dynamic = "Dynamic"
     case ph_kinematic = "Kinematic"
-    case ph_none = "None"
+    case ph_none = "No Physics"
 }

@@ -640,6 +640,10 @@ internal struct ToolProgramView: View
                         }
                     }
                 }
+                else
+                {
+                    Text("Tool without control")
+                }
             }
         }
     }

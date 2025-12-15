@@ -375,6 +375,9 @@ public class Robot: WorkspaceObject
     /// An Index of target point in points array.
     public var target_point_index = 0
     
+    /// Last performing error
+    public var last_error: NSError?
+    
     /**
      A robot pointer position.
      

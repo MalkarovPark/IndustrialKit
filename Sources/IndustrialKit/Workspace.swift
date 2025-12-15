@@ -411,6 +411,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// An Index of target element in control program array.
     private var selected_element_index = 0
     
+    /// Last performing error
+    public var last_error: NSError?
+    
     /// Selects program element and performs by workcell.
     public func start_pause_performing()
     {

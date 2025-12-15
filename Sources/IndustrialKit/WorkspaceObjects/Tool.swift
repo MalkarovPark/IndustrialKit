@@ -364,6 +364,9 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     /// An Index of target code in operation codes array.
     public var selected_code_index = 0
     
+    /// Last performing error
+    public var last_error: NSError?
+    
     /**
      Demo state of tool.
      
