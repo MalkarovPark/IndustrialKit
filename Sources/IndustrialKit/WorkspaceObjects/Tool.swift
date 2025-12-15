@@ -571,9 +571,11 @@ public class Tool: WorkspaceObject, @unchecked Sendable
             // Reset target point index if all points passed
             selected_code_index = 0
             performed = false
+            finished = false
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
             {
+                self.finished = false
                 self.selected_program.reset_codes_states()
             }
             
@@ -884,7 +886,14 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         {
             if last_error == nil
             {
-                return PerformingState.none
+                if !finished
+                {
+                    return PerformingState.none
+                }
+                else
+                {
+                    return PerformingState.completed
+                }
             }
             else
             {
@@ -896,6 +905,9 @@ public class Tool: WorkspaceObject, @unchecked Sendable
             return PerformingState.processing
         }
     }
+    
+    /// A finished state of tool.
+    private var finished = false
     
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
