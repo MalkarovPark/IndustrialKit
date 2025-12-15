@@ -867,6 +867,19 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         )
     }
     
+    /// Performing state
+    public var performing_state: PerformingState
+    {
+        if !performed
+        {
+            return PerformingState.none
+        }
+        else
+        {
+            return PerformingState.processing
+        }
+    }
+    
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
     {
