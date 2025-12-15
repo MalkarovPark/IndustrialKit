@@ -880,18 +880,18 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         }
     }
     
-    public func performing_state_binding() -> Binding<PerformingState>
+    public func performing_state_binding() -> Binding<Color>
     {
-        Binding<PerformingState>(
+        Binding<Color>(
             get:
             {
                 if self.performed
                 {
-                    PerformingState.processing
+                    PerformingState.processing.color
                 }
                 else
                 {
-                    PerformingState.none
+                    PerformingState.none.color
                 }
             },
             set:
