@@ -367,6 +367,12 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     /// Last performing error
     @Published public var last_error: Error?
     
+    /// Resets last hanled error.
+    public func reset_error()
+    {
+        last_error = nil
+    }
+    
     /**
      Demo state of tool.
      
@@ -458,6 +464,8 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         // Handling tool performing
         if !performed
         {
+            reset_error()
+            
             // Perform next action if performing was stop
             performed = true
             perform_next_code()
@@ -607,6 +615,8 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         
         selected_code_index = 0
         selected_program.reset_codes_states()
+        
+        reset_error()
     }
     
     // MARK: - Connection functions
