@@ -513,12 +513,31 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         }
         catch
         {
+            error_handler(error)
+        }
+        
+        func error_handler(_ error: Error)
+        {
+            performed = false // Pause performing
+            
             last_error = error
             print(last_error?.localizedDescription ?? "No Errors")
-            current_code.performing_state = .error
             
-            reset_performing()
-            //completion()
+            current_code.performing_state = .error //Current Code
+            
+            if demo
+            {
+                model_controller.remove_all_model_actions()
+                model_controller.reset_nodes()
+            }
+            else
+            {
+                model_controller.remove_all_model_actions()
+                
+                // Remove actions for real tool
+                connector.canceled = true
+                connector.reset_device()
+            }
         }
     }
     
