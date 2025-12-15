@@ -880,6 +880,27 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         }
     }
     
+    public func performing_state_binding() -> Binding<PerformingState>
+    {
+        Binding<PerformingState>(
+            get:
+            {
+                if self.performed
+                {
+                    PerformingState.processing
+                }
+                else
+                {
+                    PerformingState.none
+                }
+            },
+            set:
+            { value in
+                //self.states_data = value
+            }
+        )
+    }
+    
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
     {
