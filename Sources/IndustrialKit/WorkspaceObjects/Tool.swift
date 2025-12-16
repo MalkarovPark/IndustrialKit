@@ -916,10 +916,10 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     }
     
     /// A finished state of tool.
-    @Published private var finished = false
+    @Published public var finished = false
     
     /// A paused state of tool.
-    @Published private var paused = false
+    @Published public var paused = false
     
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
