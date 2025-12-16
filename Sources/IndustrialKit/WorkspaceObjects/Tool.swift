@@ -431,8 +431,6 @@ public class Tool: WorkspaceObject, @unchecked Sendable
      */
     public func perform(code: Int, completion: @escaping @Sendable () -> Void = {}) throws
     {
-        performed = true
-        
         if demo
         {
             // Move to point for virtual tool
@@ -440,13 +438,11 @@ public class Tool: WorkspaceObject, @unchecked Sendable
             {
                 try model_controller.nodes_perform(code: code)
                 {
-                    self.performed = false
                     completion()
                 }
             }
             catch
             {
-                performed = false
                 throw error
             }
         }
@@ -459,20 +455,17 @@ public class Tool: WorkspaceObject, @unchecked Sendable
                 {
                     try connector.perform(code: code)
                     {
-                        self.performed = false
                         completion()
                     }
                 }
                 catch
                 {
-                    performed = false
                     throw error
                 }
             }
             else
             {
                 // Skip operation if real tool is not connected
-                performed = false
                 completion()
             }
         }
@@ -555,7 +548,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         
         func process_error(_ error: Error)
         {
-            //performed = false
+            performed = false // Pause performing
             
             last_error = error
             
