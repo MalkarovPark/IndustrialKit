@@ -359,7 +359,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     
     // MARK: - Performing functions
     /// A moving state of tool.
-    public var performed = false
+    @Published public var performed = false
     
     /// An Index of target code in operation codes array.
     public var selected_code_index = 0
@@ -916,10 +916,10 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     }
     
     /// A finished state of tool.
-    private var finished = false
+    @Published private var finished = false
     
     /// A paused state of tool.
-    private var paused = false
+    @Published private var paused = false
     
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey
