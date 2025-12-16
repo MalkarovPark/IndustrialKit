@@ -503,20 +503,20 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     /// Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
-        let current_code = selected_program.codes[selected_code_index]
-        current_code.performing_state = .processing
+        let selected_operation_code = selected_program.codes[selected_code_index]
+        selected_operation_code.performing_state = .processing
         
         do
         {
-            try perform(code: current_code.value) //(code: selected_program.codes[selected_code_index].value)
+            try perform(code: selected_operation_code.value) //(code: selected_program.codes[selected_code_index].value)
             {
                 if self.demo
                 {
-                    current_code.performing_state = .completed
+                    selected_operation_code.performing_state = .completed
                 }
                 else if self.connector.connected
                 {
-                    current_code.performing_state = self.connector.performing_state.output
+                    selected_operation_code.performing_state = self.connector.performing_state.output
                 }
                 
                 self.select_new_code()
@@ -534,7 +534,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
             last_error = error
             print(last_error?.localizedDescription ?? "No Errors")
             
-            current_code.performing_state = .error //Current Code
+            selected_operation_code.performing_state = .error //Current Code
             
             if demo
             {

@@ -412,7 +412,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var selected_element_index = 0
     
     /// Last performing error
-    public var last_error: NSError?
+    public var last_error: Error?
     
     /// Selects program element and performs by workcell.
     public func start_pause_performing()
@@ -517,7 +517,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         case let performer_element as RobotPerformerElement:
             perform_robot(by: performer_element, completion: completion)
         case let performer_element as ToolPerformerElement:
-            perform_tool(by: performer_element, completion: completion)
+            do
+            {
+                try perform_tool(by: performer_element, completion: completion)
+            }
+            catch
+            {
+                error_handler(error)
+            }
             
         // Modifiers
         case let mover_element as MoverModifierElement:
@@ -615,10 +622,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         disable_constant_objects_update()
         
-        let element = selected_program_element
-        element.performing_state = .current
+        selected_program_element.performing_state = .current
         
-        switch element
+        switch selected_program_element
         {
         case is RobotPerformerElement:
             pause_robot()
@@ -649,6 +655,42 @@ public class Workspace: ObservableObject, @unchecked Sendable
         for element in elements
         {
             element.performing_state = .none
+        }
+    }
+    
+    private func error_handler(_ error: Error)
+    {
+        //performed = false // Pause performing
+        
+        last_error = error
+        print(last_error?.localizedDescription ?? "No Errors")
+        
+        disable_constant_objects_update()
+        
+        selected_program_element.performing_state = .error
+        
+        switch selected_program_element
+        {
+        case is RobotPerformerElement:
+            robot_error_handling()
+        case is ToolPerformerElement:
+            tool_error_handling()
+        default:
+            break
+        }
+        
+        func robot_error_handling()
+        {
+            //selected_robot.start_pause_moving()
+            //selected_robot.disable_update()
+            //deselect_robot()
+        }
+        
+        func tool_error_handling()
+        {
+            //selected_tool.start_pause_performing()
+            //selected_tool.disable_update()
+            //deselect_tool()
         }
     }
     
@@ -788,7 +830,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - element: A tool performer element.
      */
-    private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable () -> Void)
+    private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable () -> Void) throws
     {
         select_tool(name: element.object_name)
         deselect_robot()
