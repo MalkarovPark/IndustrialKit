@@ -860,7 +860,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 }
                 selected_tool.error_handler = { error in
                     print(error.localizedDescription)
-                    throw error
                 }
                 
                 selected_tool.start_pause_performing()
