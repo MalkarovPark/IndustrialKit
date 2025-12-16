@@ -364,6 +364,19 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     /// An Index of target code in operation codes array.
     public var selected_code_index = 0
     
+    /// A target code in operation codes array.
+    public var selected_operation_code: OperationCode
+    {
+        get
+        {
+            return selected_program.codes[safe: selected_code_index] ?? OperationCode(0)
+        }
+        set
+        {
+            selected_program.codes[safe: selected_code_index] = newValue
+        }
+    }
+    
     /// Last performing error
     @Published public var last_error: Error?
     
@@ -503,20 +516,19 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     /// Selects a code and performs the corresponding operation.
     public func perform_next_code()
     {
-        let selected_operation_code = selected_program.codes[selected_code_index]
         selected_operation_code.performing_state = .processing
         
         do
         {
-            try perform(code: selected_operation_code.value) //(code: selected_program.codes[selected_code_index].value)
+            try perform(code: selected_operation_code.value)
             {
                 if self.demo
                 {
-                    selected_operation_code.performing_state = .completed
+                    self.selected_operation_code.performing_state = .completed
                 }
                 else if self.connector.connected
                 {
-                    selected_operation_code.performing_state = self.connector.performing_state.output
+                    self.selected_operation_code.performing_state = self.connector.performing_state.output
                 }
                 
                 self.select_new_code()
@@ -524,17 +536,17 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         }
         catch
         {
-            error_handler(error)
+            process_error(error)
         }
         
-        func error_handler(_ error: Error)
+        func process_error(_ error: Error)
         {
             performed = false // Pause performing
             
             last_error = error
             print(last_error?.localizedDescription ?? "No Errors")
             
-            selected_operation_code.performing_state = .error //Current Code
+            selected_operation_code.performing_state = .error
             
             if demo
             {
@@ -549,6 +561,8 @@ public class Tool: WorkspaceObject, @unchecked Sendable
                 connector.canceled = true
                 connector.reset_device()
             }
+            
+            error_handler()
         }
     }
     
@@ -588,13 +602,22 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         }
     }
     
-    /// Finish handler for operation code performation.
+    /// Finish handler for operation program performation.
     public var finish_handler: (() -> Void) = {}
     
     /// Clears finish handler.
     public func clear_finish_handler()
     {
         finish_handler = {}
+    }
+    
+    /// Error handler for operation program performation.
+    public var error_handler: (() -> Void) = {}
+    
+    /// Clears error handler.
+    public func clear_error_handler()
+    {
+        error_handler = {}
     }
     
     /// Resets tool operation performation.

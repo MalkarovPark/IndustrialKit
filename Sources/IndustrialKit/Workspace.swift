@@ -837,6 +837,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         if !element.is_single_perfrom
         {
+            // Program tool perform
             if selected_tool_index != -1
             {
                 if selected_tool.scope_type == .selected
@@ -853,7 +854,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     selected_tool.select_program(index: Int(registers[safe: element.program_index] ?? 0))
                 }
                 
-                selected_tool.finish_handler = { //completion
+                selected_tool.finish_handler = {
                     self.selected_tool.disable_update()
                     completion()
                 }
