@@ -858,6 +858,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     self.selected_tool.disable_update()
                     completion()
                 }
+                selected_tool.error_handler = { error in
+                    print(error.localizedDescription)
+                    throw error
+                }
+                
                 selected_tool.start_pause_performing()
             }
             else

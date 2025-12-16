@@ -482,7 +482,15 @@ public class Tool: WorkspaceObject, @unchecked Sendable
             
             // Perform next action if performing was stop
             performed = true
-            perform_next_code()
+            
+            do
+            {
+                try perform_next_code()
+            }
+            catch
+            {
+                print("Error handler with error: \(error.localizedDescription)")
+            }
         }
         else
         {
@@ -514,7 +522,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     }
     
     /// Selects a code and performs the corresponding operation.
-    public func perform_next_code()
+    public func perform_next_code() throws
     {
         selected_operation_code.performing_state = .processing
         
@@ -536,15 +544,21 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         }
         catch
         {
-            process_error(error)
+            do
+            {
+                try process_error(error)
+            }
+            catch
+            {
+                throw error
+            }
         }
         
-        func process_error(_ error: Error)
+        func process_error(_ error: Error) throws
         {
             performed = false // Pause performing
             
             last_error = error
-            print(last_error?.localizedDescription ?? "No Errors")
             
             selected_operation_code.performing_state = .error
             
@@ -562,7 +576,14 @@ public class Tool: WorkspaceObject, @unchecked Sendable
                 connector.reset_device()
             }
             
-            error_handler()
+            do
+            {
+                try error_handler(error)
+            }
+            catch
+            {
+                throw error
+            }
         }
     }
     
@@ -581,7 +602,14 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         if selected_code_index < selected_program.codes_count
         {
             // Select and move to next point
-            perform_next_code()
+            do
+            {
+                try perform_next_code()
+            }
+            catch
+            {
+                print("Error handler with error: \(error.localizedDescription)")
+            }
         }
         else
         {
@@ -612,12 +640,12 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     }
     
     /// Error handler for operation program performation.
-    public var error_handler: (() -> Void) = {}
+    public var error_handler: ((Error) throws -> Void) = { _ in }
     
     /// Clears error handler.
     public func clear_error_handler()
     {
-        error_handler = {}
+        error_handler = { _ in }
     }
     
     /// Resets tool operation performation.
