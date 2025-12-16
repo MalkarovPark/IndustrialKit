@@ -877,6 +877,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             catch
             {
                 print(error.localizedDescription)
+                throw error
             }
         }
     }
