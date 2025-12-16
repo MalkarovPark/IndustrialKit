@@ -874,8 +874,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
             // Single tool perform
             do
             {
+                selected_tool.performed = true
                 try selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
                 {
+                    self.selected_tool.performed = false
                     completion()
                 }
             }
