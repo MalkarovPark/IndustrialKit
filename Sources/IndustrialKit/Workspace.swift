@@ -519,7 +519,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         case let performer_element as ToolPerformerElement:
             do
             {
-                try perform_tool(by: performer_element, completion: completion)
+                try perform_tool(by: performer_element, completion: completion, error_handler: { error in self.error_handler(error) })
             }
             catch
             {
@@ -830,7 +830,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - element: A tool performer element.
      */
-    private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable () -> Void) throws
+    private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable () -> Void, error_handler: @escaping (Error) -> Void) throws
     {
         select_tool(name: element.object_name)
         deselect_robot()
@@ -859,7 +859,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     completion()
                 }
                 selected_tool.error_handler = { error in
-                    print(error.localizedDescription)
+                    error_handler(error)
                 }
                 
                 selected_tool.start_pause_performing()
