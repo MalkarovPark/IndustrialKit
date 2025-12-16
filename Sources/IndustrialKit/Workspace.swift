@@ -975,16 +975,30 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Resets workspace performing.
     public func reset_performing()
     {
-        pause_performing()
+        disable_constant_objects_update()
         
-        switch selected_object_type
+        switch selected_program_element
         {
-        case .robot:
-            selected_robot.reset_moving()
-        case .tool:
-            selected_tool.reset_performing()
+        case is RobotPerformerElement:
+            reset_robot()
+        case is ToolPerformerElement:
+            reset_tool()
         default:
             break
+        }
+        
+        func reset_robot()
+        {
+            selected_robot.reset_moving()
+            selected_robot.disable_update()
+            deselect_robot()
+        }
+        
+        func reset_tool()
+        {
+            selected_tool.reset_performing()
+            selected_tool.disable_update()
+            deselect_tool()
         }
         
         performed = false // Enable workspace program edit
