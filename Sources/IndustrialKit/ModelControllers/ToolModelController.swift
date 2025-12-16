@@ -17,7 +17,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
      - Parameters:
         - code: The operation code value of the operation performed by the tool visual model.
      */
-    open func nodes_perform(code: Int)
+    open func nodes_perform(code: Int) throws
     {
         
     }
@@ -31,7 +31,15 @@ open class ToolModelController: ModelController, @unchecked Sendable
      */
     open func nodes_perform(code: Int, completion: @escaping @Sendable () -> Void) throws
     {
-        nodes_perform(code: code)
+        do
+        {
+            try nodes_perform(code: code)
+        }
+        catch
+        {
+            throw error
+        }
+        
         completion()
     }
     

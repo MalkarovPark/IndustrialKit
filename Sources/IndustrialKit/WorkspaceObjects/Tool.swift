@@ -451,9 +451,16 @@ public class Tool: WorkspaceObject, @unchecked Sendable
             // Move to point for real tool
             if connector.connected
             {
-                connector.perform(code: code)
+                do
                 {
-                    completion()
+                    try connector.perform(code: code)
+                    {
+                        completion()
+                    }
+                }
+                catch
+                {
+                    throw error
                 }
             }
             else

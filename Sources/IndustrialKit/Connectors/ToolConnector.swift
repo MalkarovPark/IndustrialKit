@@ -16,7 +16,7 @@ import SceneKit
 open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
 {
     // MARK: - Device handling
-    private var performing_task = Task {}
+    private var performing_task = Task<Void, Error> {}
     
     /**
      Performs real tool by operation code value.
@@ -24,7 +24,7 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
      - Parameters:
         - code: The operation code value of the operation performed by the real tool.
      */
-    open func perform(code: Int)
+    open func perform(code: Int) throws
     {
         
     }
@@ -36,12 +36,19 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
         - code: The operation code value of the operation performed by the real tool.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func perform(code: Int, completion: @escaping @Sendable () -> Void)
+    public func perform(code: Int, completion: @escaping @Sendable () -> Void) throws
     {
         canceled = false
         performing_task = Task
         {
-            self.perform(code: code)
+            do
+            {
+                try self.perform(code: code)
+            }
+            catch
+            {
+                throw error
+            }
             
             if !canceled
             {
