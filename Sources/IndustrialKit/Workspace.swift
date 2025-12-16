@@ -660,7 +660,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func error_handler(_ error: Error)
     {
-        //performed = false // Pause performing
+        performed = false // Pause performing
         
         last_error = error
         print(last_error?.localizedDescription ?? "No Errors")
@@ -876,7 +876,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             catch
             {
-                print(error.localizedDescription)
                 throw error
             }
         }
@@ -1006,6 +1005,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // Find mark elements indexes
         var marks_associations = [(String, Int)]()
         var element = WorkspaceProgramElement()
+        
         for i in 0..<elements.count
         {
             element = elements[i]
