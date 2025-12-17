@@ -23,11 +23,18 @@ open class RobotModelController: ModelController, @unchecked Sendable
      > Pre-transforms the position in space depending on the rotation of the tool coordinate system.
      */
     public func update_nodes(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
-                             origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+                             origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
     {
-        update_nodes_positions(pointer_position: origin_transform(pointer_position: pointer_position,
-                                                                  origin_position: origin_position),
-                               origin_position: origin_position)
+        do
+        {
+            try update_nodes_positions(pointer_position: origin_transform(pointer_position: pointer_position,
+                                                                          origin_position: origin_position),
+                                       origin_position: origin_position)
+        }
+        catch
+        {
+            throw error
+        }
     }
     
     /**
@@ -40,7 +47,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      */
     open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
-                                     origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+                                     origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
     {
         
     }
@@ -52,12 +59,12 @@ open class RobotModelController: ModelController, @unchecked Sendable
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
     public var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
-    {
+    /*{
         didSet
         {
             update_model()
         }
-    }
+    }*/
     
     /**
      Updates the pointer’s position and orientation in the scene.
@@ -149,6 +156,14 @@ open class RobotModelController: ModelController, @unchecked Sendable
         {
             // to demo
             pointer_position = alt_pointer_position
+            do
+            {
+                try update_model()
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
         }
         else
         {
@@ -170,16 +185,30 @@ open class RobotModelController: ModelController, @unchecked Sendable
     
     // MARK: Device
     /// Update robot manipulator parts positions by target point.
-    private func update_model()
+    public func update_model() throws
     {
         update_pointer_position(pointer_position)
-        update_nodes_by_pointer_position()
+        do
+        {
+            try update_nodes_by_pointer_position()
+        }
+        catch
+        {
+            throw error
+        }
     }
     
     /// Updates robot nodes by current pointer and origin parameters.
-    public func update_nodes_by_pointer_position()
+    public func update_nodes_by_pointer_position() throws
     {
-        update_nodes(pointer_position: pointer_position, origin_position: origin_position)
+        do
+        {
+            try update_nodes(pointer_position: pointer_position, origin_position: origin_position)
+        }
+        catch
+        {
+            throw error
+        }
     }
     
     /**
@@ -218,7 +247,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
     /// Cancel perform flag.
     public var canceled = false
     
-    private var moving_task = Task {}
+    private var moving_task = Task<Void, Error> {}
     
     /**
      Performs robot model movement by target position with completion handler.
@@ -227,12 +256,19 @@ open class RobotModelController: ModelController, @unchecked Sendable
         - point: The target position performed by the robot visual model.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void)
+    public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void) throws
     {
         canceled = false
         moving_task = Task
         {
-            self.move_to(point: point)
+            do
+            {
+                try self.move_to(point: point)
+            }
+            catch
+            {
+                throw error
+            }
             
             if !canceled
             {
@@ -248,7 +284,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
      - Parameters:
         - point: The target position performed by the robot visual model.
      */
-    public func move_to(point: PositionPoint)
+    public func move_to(point: PositionPoint) throws
     {
         let parts_count: Int = 1000
         
@@ -306,6 +342,14 @@ open class RobotModelController: ModelController, @unchecked Sendable
             new_position.w += step_w
             
             pointer_position = new_position
+            do
+            {
+                try update_model()
+            }
+            catch
+            {
+                throw error
+            }
             
             usleep(UInt32(part_time * 1_000_000))
             
@@ -319,6 +363,14 @@ open class RobotModelController: ModelController, @unchecked Sendable
         {
             pointer_position = (x: point.x, y: point.y, z: point.z,
                                 r: point.r, p: point.p, w: point.w)
+            do
+            {
+                try update_model()
+            }
+            catch
+            {
+                throw error
+            }
         }
     }
     

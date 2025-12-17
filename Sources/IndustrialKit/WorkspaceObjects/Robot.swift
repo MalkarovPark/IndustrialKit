@@ -375,8 +375,27 @@ public class Robot: WorkspaceObject
     /// An Index of target point in points array.
     public var target_point_index = 0
     
+    /// A target position in position points array.
+    public var selected_position_point: PositionPoint
+    {
+        get
+        {
+            return selected_program.points[safe: target_point_index] ?? PositionPoint()
+        }
+        set
+        {
+            selected_program.points[safe: target_point_index] = newValue
+        }
+    }
+    
     /// Last performing error
-    public var last_error: NSError?
+    public var last_error: Error?
+    
+    /// Resets last hanled error.
+    public func reset_error()
+    {
+        last_error = nil
+    }
     
     /**
      A robot pointer position.
@@ -473,7 +492,7 @@ public class Robot: WorkspaceObject
         - point: The target position performed by the robot.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void = {})
+    public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void = {}) throws
     {
         // pointer_position_to_robot()
         performed = true
@@ -481,10 +500,17 @@ public class Robot: WorkspaceObject
         if demo
         {
             // Move to point for virtual robot
-            pointer_position_to_robot()
-            model_controller.move_to(point: point)
+            do
             {
-                completion()
+                pointer_position_to_robot()
+                try model_controller.move_to(point: point)
+                {
+                    completion()
+                }
+            }
+            catch
+            {
+                throw error
             }
         }
         else
@@ -547,21 +573,52 @@ public class Robot: WorkspaceObject
     /// Performs robot to selected point movement and select next.
     public func move_to_next_point()
     {
-        let current_point = selected_program.points[target_point_index]
-        current_point.performing_state = .processing
+        selected_position_point.performing_state = .processing
         
-        move_to(point: current_point) //(point: programs[selected_program_index].points[target_point_index])
+        do
         {
-            if self.demo
+            try move_to(point: selected_position_point) //(point: programs[selected_program_index].points[target_point_index])
             {
-                current_point.performing_state = .completed
+                if self.demo
+                {
+                    self.selected_position_point.performing_state = .completed
+                }
+                else if self.connector.connected
+                {
+                    self.selected_position_point.performing_state = self.connector.performing_state.output
+                }
+                
+                self.select_new_point()
             }
-            else if self.connector.connected
+        }
+        catch
+        {
+            process_error(error)
+        }
+        
+        func process_error(_ error: Error)
+        {
+            performed = false // Pause performing
+            
+            last_error = error
+            
+            selected_position_point.performing_state = .error
+            
+            if demo
             {
-                current_point.performing_state = self.connector.performing_state.output
+                //model_controller.remove_all_model_actions()
+                model_controller.reset_nodes()
+            }
+            else
+            {
+                //model_controller.remove_all_model_actions()
+                
+                // Remove actions for real tool
+                connector.canceled = true
+                connector.reset_device()
             }
             
-            self.select_new_point()
+            error_handler(error)
         }
     }
     
@@ -599,6 +656,15 @@ public class Robot: WorkspaceObject
     public func clear_finish_handler()
     {
         finish_handler = {}
+    }
+    
+    /// Error handler for operation program performation.
+    public var error_handler: ((Error) -> Void) = { _ in }
+    
+    /// Clears error handler.
+    public func clear_error_handler()
+    {
+        error_handler = { _ in }
     }
     
     /// Resets robot moving.
@@ -838,6 +904,14 @@ public class Robot: WorkspaceObject
             if demo
             {
                 model_controller.pointer_position = pointer_position
+                do
+                {
+                    try model_controller.update_model()
+                }
+                catch
+                {
+                    print(error.localizedDescription)
+                }
             }
             else
             {

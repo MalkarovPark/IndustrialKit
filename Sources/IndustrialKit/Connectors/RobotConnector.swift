@@ -281,7 +281,14 @@ public class ExternalRobotConnector: RobotConnector
             }
             else // Update nodes positions by model controller (simulated device)
             {
-                model_controller?.update_nodes(pointer_position: position, origin_position: origin_position)
+                do
+                {
+                    try model_controller?.update_nodes(pointer_position: position, origin_position: origin_position)
+                }
+                catch
+                {
+                    print(error.localizedDescription)
+                }
             }
         }
     }

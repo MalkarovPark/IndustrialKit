@@ -515,7 +515,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
         // Performers
         case let performer_element as RobotPerformerElement:
-            perform_robot(by: performer_element, completion: completion)
+            do
+            {
+                try perform_robot(by: performer_element, completion: completion, error_handler: { error in self.error_handler(error) })
+            }
+            catch
+            {
+                error_handler(error)
+            }
         case let performer_element as ToolPerformerElement:
             do
             {
@@ -770,13 +777,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - element: A robot performer element.
      */
-    private func perform_robot(by element: RobotPerformerElement, completion: @escaping @Sendable () -> Void)
+    private func perform_robot(by element: RobotPerformerElement, completion: @escaping @Sendable () -> Void, error_handler: @escaping (Error) -> Void) throws
     {
         select_robot(name: element.object_name)
         deselect_tool()
         
         if !element.is_single_perfrom
         {
+            // Program tool perform
             if selected_robot_index != -1
             {
                 if selected_robot.scope_type == .selected
@@ -793,10 +801,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     selected_robot.select_program(index: Int(registers[safe: element.program_index] ?? 0))
                 }
                 
-                selected_robot.finish_handler = { //completion
+                selected_robot.finish_handler = {
                     self.selected_robot.disable_update()
                     completion()
                 }
+                selected_robot.error_handler = { error in
+                    error_handler(error)
+                }
+                
                 selected_robot.start_pause_moving()
             }
             else
@@ -807,20 +819,30 @@ public class Workspace: ObservableObject, @unchecked Sendable
         else
         {
             // Single robot perform
-            var target_point = PositionPoint(x: registers[safe_float: element.x_index],
-                                             y: registers[safe_float: element.y_index],
-                                             z: registers[safe_float: element.z_index],
-                                             r: registers[safe_float: element.r_index],
-                                             p: registers[safe_float: element.p_index],
-                                             w: registers[safe_float: element.w_index],
-                                             move_speed: registers[safe_float: element.speed_index],
-                                             move_type: MoveType(register_value: Int(registers[safe_float: element.type_index])))
-            selected_robot.point_shift(&target_point)
-            
-            selected_robot.move_to(point: target_point)
+            do
             {
-                self.selected_robot.pointer_position_to_robot()
-                completion()
+                selected_robot.performed = true
+                
+                var target_point = PositionPoint(x: registers[safe_float: element.x_index],
+                                                 y: registers[safe_float: element.y_index],
+                                                 z: registers[safe_float: element.z_index],
+                                                 r: registers[safe_float: element.r_index],
+                                                 p: registers[safe_float: element.p_index],
+                                                 w: registers[safe_float: element.w_index],
+                                                 move_speed: registers[safe_float: element.speed_index],
+                                                 move_type: MoveType(register_value: Int(registers[safe_float: element.type_index])))
+                selected_robot.point_shift(&target_point)
+                
+                try selected_robot.move_to(point: target_point)
+                {
+                    self.selected_robot.pointer_position_to_robot()
+                    completion()
+                }
+            }
+            catch
+            {
+                //selected_robot.performed = false
+                throw error
             }
         }
     }
@@ -883,6 +905,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             catch
             {
+                //selected_tool.performed = false
                 throw error
             }
         }
