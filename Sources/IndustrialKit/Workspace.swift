@@ -581,7 +581,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Set the new target program element index.
     private func select_new_element()
     {
-        selected_program_element.performing_state = .completed
+        DispatchQueue.main.async
+        {
+            self.selected_program_element.performing_state = .completed
+        }
+        //selected_program_element.performing_state = .completed
         
         if performed
         {
