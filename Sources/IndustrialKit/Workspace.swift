@@ -847,7 +847,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
         }
     }*/
-    private func perform_robot(by element: RobotPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping (Error) -> Void)
+    private func perform_robot(by element: RobotPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
         select_robot(name: element.object_name)
         deselect_tool()
@@ -909,7 +909,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     self.selected_robot.pointer_position_to_robot()
                     completion(.success(()))
                 case .failure(let error):
-                    completion(.failure(error))
+                    error_handler(error)
                 }
             }
         }
