@@ -536,12 +536,16 @@ public class Robot: WorkspaceObject
         // Robot moving handling
         if !performed
         {
+            reset_error()
+            paused = false // State light
+            
             if !demo // Pass workcell parameters to model controller
             {
                 sync_connector_parameters()
             }
             
             // Move to next point if moving was stop
+            performed = false //???
             move_to_next_point()
         }
         else
@@ -555,6 +559,8 @@ public class Robot: WorkspaceObject
         func pause_handler()
         {
             selected_program.points[target_point_index].performing_state = .current
+            
+            paused = true // State light
             
             if demo
             {
@@ -637,8 +643,12 @@ public class Robot: WorkspaceObject
             target_point_index = 0
             performed = false
             
+            finished = true // State light
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
             {
+                self.finished = false // State light
+                
                 self.selected_program.reset_points_states()
             }
             
@@ -1289,6 +1299,43 @@ public class Robot: WorkspaceObject
             }
         )
     }
+    
+    /// Performing state
+    public var performing_state: PerformingState
+    {
+        if !performed
+        {
+            if last_error == nil
+            {
+                if finished
+                {
+                    return PerformingState.completed
+                }
+                else if paused
+                {
+                    return PerformingState.current
+                }
+                else
+                {
+                    return PerformingState.none
+                }
+            }
+            else
+            {
+                return PerformingState.error
+            }
+        }
+        else
+        {
+            return PerformingState.processing
+        }
+    }
+    
+    /// A finished state of tool.
+    private var finished = false
+    
+    /// A paused state of tool.
+    private var paused = false
     
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey

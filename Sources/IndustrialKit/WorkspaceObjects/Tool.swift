@@ -485,7 +485,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         if !performed
         {
             reset_error()
-            paused = false
+            paused = false // State light
             
             // Perform next action if performing was stop
             performed = true
@@ -502,7 +502,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         {
             selected_program.codes[selected_code_index].performing_state = .current
             
-            paused = true
+            paused = true // State light
             
             if demo
             {
@@ -595,11 +595,11 @@ public class Tool: WorkspaceObject, @unchecked Sendable
             selected_code_index = 0
             performed = false
             
-            finished = true
+            finished = true // State light
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
             {
-                self.finished = false
+                self.finished = false // State light
                 
                 self.selected_program.reset_codes_states()
             }
