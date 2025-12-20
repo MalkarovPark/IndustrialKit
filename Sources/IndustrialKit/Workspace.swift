@@ -461,7 +461,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Selects and performs program element by workspace.
     private func perform_next_element()
     {
-        selected_program_element.performing_state = .processing
+        DispatchQueue.main.async
+        {
+            self.selected_program_element.performing_state = .processing
+        }
+        
         perform(selected_program_element, completion: select_new_element)
     }
     
