@@ -530,7 +530,7 @@ public class Robot: WorkspaceObject
         if demo
         {
             pointer_position_to_robot()
-            model_controller.move_to(point: selected_position_point)
+            model_controller.move_to(point: point)
             { result in
                 switch result
                 {
