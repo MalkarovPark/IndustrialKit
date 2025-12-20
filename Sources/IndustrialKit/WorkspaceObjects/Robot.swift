@@ -535,7 +535,7 @@ public class Robot: WorkspaceObject
                 switch result
                 {
                 case .success:
-                    self.select_new_point()
+                    completion(.success(()))
                 case .failure(let error):
                     completion(.failure(error))
                 }
