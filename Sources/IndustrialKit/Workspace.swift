@@ -515,7 +515,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
         // Performers
         case let performer_element as RobotPerformerElement:
-            perform_robot(by: performer_element, completion: { _ in completion() }, error_handler: { error in self.error_handler(error) })
+            //perform_robot(by: performer_element, completion: { _ in completion() }, error_handler: { error in self.error_handler(error) })
+            perform_robot(by: performer_element, completion: { _ in completion() }, error_handler: { error in DispatchQueue.main.async {
+                self.error_handler(error)
+            }
+            })
             /*do
             {
                 try perform_robot(by: performer_element, completion: completion, error_handler: { error in self.error_handler(error) })
