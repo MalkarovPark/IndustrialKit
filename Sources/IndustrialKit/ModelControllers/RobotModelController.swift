@@ -280,7 +280,25 @@ open class RobotModelController: ModelController, @unchecked Sendable
     public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
     {
         canceled = false
+        moving_task = Task
+        {
+            do
+            {
+                try self.move_to(point: point)
+            }
+            catch
+            {
+                completion(.failure(error))
+            }
+            
+            if !canceled
+            {
+                completion(.success(()))
+            }
+            canceled = false
+        }
         
+        /*canceled = false
         moving_task = Task
         {
             do
@@ -296,7 +314,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
                 completion(.failure(error))
             }
             canceled = false
-        }
+        }*/
     }
     
     /**
