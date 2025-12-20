@@ -701,6 +701,8 @@ public class Robot: WorkspaceObject
         
         target_point_index = 0
         selected_program.reset_points_states()
+        
+        reset_error()
     }
     
     /// Pass pointer position from model controller or connector to robot.
