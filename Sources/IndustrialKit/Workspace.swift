@@ -540,9 +540,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             catch
             {
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
                 check_registers(registers_count)
-                completion()
+                error_handler(error)
             }
             //changer_element.change(&registers)
             //check_registers(registers_count)
