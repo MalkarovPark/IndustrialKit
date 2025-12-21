@@ -17,7 +17,7 @@ open class ChangerModule: IndustrialModule
     
     // MARK: Module init for in-app mounting
     /// Internal module init.
-    public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) -> Void)
+    public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) throws -> Void) //public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) -> Void)
     {
         super.init(name: name, description: description)
         
