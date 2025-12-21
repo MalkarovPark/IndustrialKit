@@ -662,7 +662,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         selected_program_element.performing_state = .error
         
-        switch selected_program_element
+        /*switch selected_program_element
         {
         case is RobotPerformerElement:
             robot_error_handling()
@@ -684,7 +684,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             //selected_tool.start_pause_performing()
             //selected_tool.disable_update()
             //deselect_tool()
-        }
+        }*/
     }
     
     /// A default count of data registers for workspace.
@@ -792,6 +792,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     completion(.success(()))
                 }
                 selected_robot.error_handler = { error in
+                    self.selected_robot.disable_update()
                     error_handler(error)
                 }
                 
@@ -866,6 +867,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     completion(.success(()))
                 }
                 selected_tool.error_handler = { error in
+                    self.selected_tool.disable_update()
                     error_handler(error)
                 }
                 

@@ -515,8 +515,14 @@ public class Robot: WorkspaceObject
         {
             pointer_position_to_robot()
             connector.move_to(point: point)
-            {
-                completion(.success(()))
+            { result in
+                switch result
+                {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
         }
     }

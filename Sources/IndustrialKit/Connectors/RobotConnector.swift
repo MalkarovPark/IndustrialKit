@@ -30,17 +30,6 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
     private var moving_task = Task {}
     
     /**
-     Performs movement on real robot by target position.
-     
-     - Parameters:
-        - point: The target position performed by the real robot.
-     */
-    open func move_to(point: PositionPoint)
-    {
-        
-    }
-    
-    /**
      Performs movement on real robot by target position with completion handler.
      
      - Parameters:
@@ -48,26 +37,37 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
         - update_model: Update model by connector.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void)
+    public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
     {
-        if connected
+        canceled = false
+        
+        moving_task = Task
         {
-            canceled = false
-            moving_task = Task
+            do
             {
-                self.move_to(point: point)
-                
+                try self.move_to(point: point)
                 if !canceled
                 {
-                    completion()
+                    completion(.success(()))
                 }
-                canceled = false
             }
+            catch
+            {
+                completion(.failure(error))
+            }
+            canceled = false
         }
-        else
-        {
-            completion()
-        }
+    }
+    
+    /**
+     Performs movement on real robot by target position.
+     
+     - Parameters:
+        - point: The target position performed by the real robot.
+     */
+    open func move_to(point: PositionPoint) throws
+    {
+        
     }
     
     // MARK: - Model handling

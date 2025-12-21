@@ -274,6 +274,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
             {
                 completion(.failure(error))
             }
+            
             canceled = false
         }
     }
