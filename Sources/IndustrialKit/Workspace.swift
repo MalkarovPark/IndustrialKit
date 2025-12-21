@@ -412,7 +412,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var selected_element_index = 0
     
     /// Last performing error
-    public var last_error: Error?
+    @Published public var last_error: Error?
+    
+    /// Resets last hanled error.
+    public func reset_error()
+    {
+        last_error = nil
+    }
     
     /// Selects program element and performs by workcell.
     public func start_pause_performing()
@@ -820,13 +826,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             selected_robot.move_to(point: target_point)
             { result in
+                self.selected_robot.performed = false
                 switch result
                 {
                 case .success:
-                    self.selected_robot.performed = false
                     self.selected_robot.pointer_position_to_robot()
                     completion(.success(()))
                 case .failure(let error):
+                    self.selected_robot.process_error(error)
                     error_handler(error)
                 }
             }
@@ -892,7 +899,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             catch
             {
-                //selected_tool.performed = false
+                self.selected_tool.process_error(error)
                 error_handler(error)
             }
         }

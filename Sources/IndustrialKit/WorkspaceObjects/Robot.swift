@@ -601,33 +601,35 @@ public class Robot: WorkspaceObject
                 
                 self.select_new_point()
             case .failure(let error):
-                process_error(error)
+                self.process_error(error)
+                self.error_handler(error)
             }
         }
+    }
+    
+    /**
+     Processes an error that occurred during the operation performing.
+     - Parameters:
+        - error: A robot moving error.
+     */
+    @Sendable func process_error(_ error: Error)
+    {
+        performed = false // Pause performing
         
-        @Sendable func process_error(_ error: Error)
+        last_error = error
+        
+        selected_position_point.performing_state = .error
+        
+        if demo
         {
-            performed = false // Pause performing
-            
-            last_error = error
-            
-            selected_position_point.performing_state = .error
-            
-            if demo
-            {
-                //model_controller.remove_all_model_actions()
-                model_controller.reset_nodes()
-            }
-            else
-            {
-                //model_controller.remove_all_model_actions()
-                
-                // Remove actions for real tool
-                connector.canceled = true
-                connector.reset_device()
-            }
-            
-            error_handler(error)
+            //model_controller.remove_all_model_actions()
+            model_controller.reset_nodes()
+        }
+        else
+        {
+            // Remove actions for real tool
+            connector.canceled = true
+            connector.reset_device()
         }
     }
     

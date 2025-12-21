@@ -544,31 +544,35 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         catch
         {
             process_error(error)
-        }
-        
-        func process_error(_ error: Error)
-        {
-            performed = false // Pause performing
-            
-            last_error = error
-            
-            selected_operation_code.performing_state = .error
-            
-            if demo
-            {
-                model_controller.remove_all_model_actions()
-                model_controller.reset_nodes()
-            }
-            else
-            {
-                model_controller.remove_all_model_actions()
-                
-                // Remove actions for real tool
-                connector.canceled = true
-                connector.reset_device()
-            }
-            
             error_handler(error)
+        }
+    }
+    
+    /**
+     Processes an error that occurred during the operation performing.
+     - Parameters:
+        - error: A tool performing error.
+     */
+    public func process_error(_ error: Error)
+    {
+        performed = false // Pause performing
+        
+        last_error = error
+        
+        selected_operation_code.performing_state = .error
+        
+        if demo
+        {
+            model_controller.remove_all_model_actions()
+            model_controller.reset_nodes()
+        }
+        else
+        {
+            model_controller.remove_all_model_actions()
+            
+            // Remove actions for real tool
+            connector.canceled = true
+            connector.reset_device()
         }
     }
     
