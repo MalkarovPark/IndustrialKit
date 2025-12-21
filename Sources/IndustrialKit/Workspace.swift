@@ -617,6 +617,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                 {
+                    self.performing_state = .none // State light
                     self.reset_program_elements_states()
                     self.update_view()
                 }
@@ -1081,6 +1082,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         reset_program_elements_states()
         
+        performing_state = .none // State light
         reset_error()
     }
     
