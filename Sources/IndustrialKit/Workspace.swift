@@ -517,14 +517,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         case let performer_element as RobotPerformerElement:
             perform_robot(by: performer_element, completion: { _ in completion() }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
         case let performer_element as ToolPerformerElement:
-            do
-            {
-                try perform_tool(by: performer_element, completion: completion, error_handler: { error in self.error_handler(error) })
-            }
-            catch
-            {
-                error_handler(error)
-            }
+            perform_tool(by: performer_element, completion: { _ in completion() }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
             
         // Modifiers
         case let mover_element as MoverModifierElement:
@@ -844,7 +837,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - element: A tool performer element.
      */
-    private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable () -> Void, error_handler: @escaping (Error) -> Void) throws
+    private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
         select_tool(name: element.object_name)
         deselect_robot()
@@ -870,7 +863,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 
                 selected_tool.finish_handler = {
                     self.selected_tool.disable_update()
-                    completion()
+                    completion(.success(()))
                 }
                 selected_tool.error_handler = { error in
                     error_handler(error)
@@ -880,7 +873,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             else
             {
-                completion()
+                completion(.success(()))
             }
         }
         else
@@ -892,13 +885,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 try selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
                 {
                     self.selected_tool.performed = false
-                    completion()
+                    completion(.success(()))
                 }
             }
             catch
             {
                 //selected_tool.performed = false
-                throw error
+                error_handler(error)
             }
         }
     }
