@@ -75,7 +75,8 @@ open class ChangerModule: IndustrialModule
      - Parameters:
         - registers: A changeable registers data.
      */
-    public var change: (inout [Float]) -> Void = { _ in }
+    public var change: (inout [Float]) throws -> Void = { _ in }
+    //public var change: (inout [Float]) -> Void = { _ in }
     
     #if os(macOS)
     override open var program_components_paths: [(file: String, socket: String)]

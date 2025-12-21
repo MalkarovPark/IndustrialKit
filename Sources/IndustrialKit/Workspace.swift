@@ -528,9 +528,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
             completion()
         case let changer_element as ChangerModifierElement:
             let registers_count = registers.count
-            changer_element.change(&registers)
-            check_registers(registers_count)
-            completion()
+            do
+            {
+                try changer_element.change(&registers)
+                check_registers(registers_count)
+                completion()
+            }
+            catch
+            {
+                print(error.localizedDescription)
+                check_registers(registers_count)
+                completion()
+            }
+            //changer_element.change(&registers)
+            //check_registers(registers_count)
+            //completion()
         case let observer_element as ObserverModifierElement:
             observe(by: observer_element)
             completion()

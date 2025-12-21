@@ -311,7 +311,7 @@ public class ChangerModifierElement: ModifierElement
         return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [module_name])
     }
     
-    public var change: ((_ registers: inout [Float]) -> Void) = { registers in }
+    public var change: (inout [Float]) throws -> Void = { _ in }
     
     // MARK: - Module handling
     /**
