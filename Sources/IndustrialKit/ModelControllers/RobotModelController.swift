@@ -256,27 +256,6 @@ open class RobotModelController: ModelController, @unchecked Sendable
         - point: The target position performed by the robot visual model.
         - completion: A completion function that is calls when the performing completes.
      */
-    /*public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void) throws
-    {
-        canceled = false
-        moving_task = Task
-        {
-            do
-            {
-                try self.move_to(point: point)
-            }
-            catch
-            {
-                throw error
-            }
-            
-            if !canceled
-            {
-                completion()
-            }
-            canceled = false
-        }
-    }*/
     public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
     {
         canceled = false

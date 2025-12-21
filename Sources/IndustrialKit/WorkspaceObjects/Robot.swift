@@ -492,36 +492,6 @@ public class Robot: WorkspaceObject
         - point: The target position performed by the robot.
         - completion: A completion function that is calls when the performing completes.
      */
-    /*public func move_to(point: PositionPoint, completion: @escaping @Sendable () -> Void = {}) throws
-    {
-        // pointer_position_to_robot()
-        performed = true
-        
-        if demo
-        {
-            // Move to point for virtual robot
-            do
-            {
-                pointer_position_to_robot()
-                try model_controller.move_to(point: point)
-                {
-                    completion()
-                }
-            }
-            catch
-            {
-                throw error
-            }
-        }
-        else
-        {
-            pointer_position_to_robot()
-            connector.move_to(point: point)
-            {
-                completion()
-            }
-        }
-    }*/
     public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
         // pointer_position_to_robot()
@@ -605,57 +575,6 @@ public class Robot: WorkspaceObject
     }
     
     /// Performs robot to selected point movement and select next.
-    /*public func move_to_next_point()
-    {
-        selected_position_point.performing_state = .processing
-        
-        do
-        {
-            try move_to(point: selected_position_point) //(point: programs[selected_program_index].points[target_point_index])
-            {
-                if self.demo
-                {
-                    self.selected_position_point.performing_state = .completed
-                }
-                else if self.connector.connected
-                {
-                    self.selected_position_point.performing_state = self.connector.performing_state.output
-                }
-                
-                self.select_new_point()
-            }
-        }
-        catch
-        {
-            process_error(error)
-        }
-        
-        func process_error(_ error: Error)
-        {
-            performed = false // Pause performing
-            
-            last_error = error
-            
-            selected_position_point.performing_state = .error
-            
-            if demo
-            {
-                //model_controller.remove_all_model_actions()
-                model_controller.reset_nodes()
-            }
-            else
-            {
-                //model_controller.remove_all_model_actions()
-                
-                // Remove actions for real tool
-                connector.canceled = true
-                connector.reset_device()
-            }
-            
-            error_handler(error)
-        }
-    }*/
-    
     public func move_to_next_point()
     {
         selected_position_point.performing_state = .processing
