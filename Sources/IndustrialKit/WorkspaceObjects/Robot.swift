@@ -388,15 +388,6 @@ public class Robot: WorkspaceObject
         }
     }
     
-    /// Last performing error
-    public var last_error: Error?
-    
-    /// Resets last hanled error.
-    public func reset_error()
-    {
-        last_error = nil
-    }
-    
     /**
      A robot pointer position.
      
@@ -1307,7 +1298,17 @@ public class Robot: WorkspaceObject
         )
     }
     
-    /// Performing state
+    // MARK: - Performing State
+    /// Last performing error.
+    public var last_error: Error?
+    
+    /// Resets last hanled error.
+    public func reset_error()
+    {
+        last_error = nil
+    }
+    
+    /// Performing state light.
     public var performing_state: PerformingState
     {
         if !performed

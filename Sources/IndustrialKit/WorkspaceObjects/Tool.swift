@@ -377,15 +377,6 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         }
     }
     
-    /// Last performing error
-    @Published public var last_error: Error?
-    
-    /// Resets last hanled error.
-    public func reset_error()
-    {
-        last_error = nil
-    }
-    
     /**
      Demo state of tool.
      
@@ -917,7 +908,17 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         )
     }
     
-    /// Performing state
+    // MARK: - Performing State
+    /// Last performing error.
+    @Published public var last_error: Error?
+    
+    /// Resets last hanled error.
+    public func reset_error()
+    {
+        last_error = nil
+    }
+    
+    /// Performing state light.
     public var performing_state: PerformingState
     {
         if !performed

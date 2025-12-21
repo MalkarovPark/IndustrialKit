@@ -411,15 +411,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// An Index of target element in control program array.
     private var selected_element_index = 0
     
-    /// Last performing error
-    @Published public var last_error: Error?
-    
-    /// Resets last hanled error.
-    public func reset_error()
-    {
-        last_error = nil
-    }
-    
     /// Selects program element and performs by workcell.
     public func start_pause_performing()
     {
@@ -661,8 +652,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         performed = false // Pause performing
         
-        last_error = error
-        print(last_error?.localizedDescription ?? "No Errors")
+        //last_error = error
+        //print(last_error?.localizedDescription ?? "No Errors")
         
         disable_constant_objects_update()
         
@@ -760,6 +751,44 @@ public class Workspace: ObservableObject, @unchecked Sendable
         if index < registers.count && index >= 0
         {
             registers[safe: index] = new_value
+        }
+    }
+    
+    // MARK: - Performing State
+    /// Last performing error
+    /*@Published public var last_error: Error?
+    
+    /// Resets last hanled error.
+    public func reset_error()
+    {
+        last_error = nil
+    }*/
+    
+    /// Last performing error
+    public var last_error: Error?
+    {
+        switch selected_object_type
+        {
+        case .robot:
+            return selected_robot.last_error
+        case .tool:
+            return selected_tool.last_error
+        default:
+            return nil
+        }
+    }
+    
+    /// Performing state light.
+    public var performing_state: PerformingState
+    {
+        switch selected_object_type
+        {
+        case .robot:
+            return selected_robot.performing_state
+        case .tool:
+            return selected_tool.performing_state
+        default:
+            return .none
         }
     }
     
