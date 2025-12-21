@@ -435,7 +435,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // Handling workspace performing
         if !performed
         {
-            // Move to next point if moving was stop
+            reset_error()
+            
+            // Move to next element if moving was stop
             performed = true
             perform_constant_objects_update()
             
@@ -459,6 +461,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private func perform_next_element()
     {
         selected_program_element.performing_state = .processing //BOOM
+        performing_state = .processing // State light
+        
         perform(selected_program_element, completion: select_new_element)
     }
     
@@ -576,6 +580,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private func select_new_element()
     {
         selected_program_element.performing_state = .completed //BOOM
+        performing_state = .completed // State light
         
         if performed
         {
@@ -625,6 +630,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         disable_constant_objects_update()
         
         selected_program_element.performing_state = .current
+        performing_state = .current // State light
         
         switch selected_program_element
         {
@@ -670,6 +676,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         disable_constant_objects_update()
         
         selected_program_element.performing_state = .error
+        performing_state = .error // State light
+        last_error = error
         
         /*switch selected_program_element
         {
@@ -768,15 +776,17 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     // MARK: - Performing State
     /// Last performing error
-    /*@Published public var last_error: Error?
+    @Published public var last_error: Error?
     
     /// Resets last hanled error.
     public func reset_error()
     {
         last_error = nil
-    }*/
+    }
     
-    /// Last performing error
+    @Published public var performing_state: PerformingState = .none
+    
+    /*/// Last performing error
     public var last_error: Error?
     {
         switch selected_object_type
@@ -802,7 +812,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         default:
             return .none
         }
-    }
+    }*/
     
     // MARK: - Elements processing
     /**
@@ -1069,7 +1079,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         performed = false // Enable workspace program edit
         selected_element_index = 0 // Select first program element
         
-        self.reset_program_elements_states()
+        reset_program_elements_states()
+        
+        reset_error()
     }
     
     /// Prepare workspace program to perform.
