@@ -406,7 +406,7 @@ public struct RegistersDataView: View
                                 .modifier(CircleButtonImageFramer())
                         }
                         .modifier(CircleButtonGlassBorderer())
-                        .padding(.trailing, 8)
+                        .padding(.trailing, 16)
                         
                         Button(action: save_registers)
                         {
@@ -414,7 +414,7 @@ public struct RegistersDataView: View
                                 .modifier(CircleButtonImageFramer())
                         }
                         .modifier(CircleButtonGlassBorderer())
-                        .padding(.trailing, 8)
+                        .padding(.trailing, 16)
                         
                         Button(action: { is_registers_count_presented = true })
                         {
