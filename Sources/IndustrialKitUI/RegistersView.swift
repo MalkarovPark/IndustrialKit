@@ -356,7 +356,7 @@ public struct RegistersDataView: View
     {
         VStack(spacing: 0)
         {
-            RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: top_spacing, bottom_spacing: 40)
+            RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
                 .overlay(alignment: .bottom)
                 {
                     #if !os(visionOS)
@@ -462,8 +462,10 @@ public struct RegistersDataView: View
     
     #if !os(visionOS)
     private let top_spacing: CGFloat = 48
+    private let bottom_spacing: CGFloat = 40
     #else
-    private let top_spacing: CGFloat = 64
+    private let top_spacing: CGFloat = 96
+    private let bottom_spacing: CGFloat = 48
     #endif
 }
 
