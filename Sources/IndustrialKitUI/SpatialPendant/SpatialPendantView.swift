@@ -315,7 +315,7 @@ private struct WorkspaceToolbar: View
             }
             .buttonStyle(.borderless)
             .buttonBorderShape(.circle)
-            .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+            .popover(isPresented: $performing_state_view_presented, arrowEdge: .top)
             {
                 PerformingStateView(performing_state: controller.performing_state, error: controller.last_error)
             }
@@ -392,7 +392,7 @@ private struct ProgramPicker: View
             }
             .buttonStyle(.borderless)
             .buttonBorderShape(.circle)
-            .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+            .popover(isPresented: $performing_state_view_presented, arrowEdge: .top)
             {
                 PerformingStateView(performing_state: controller.performing_state, error: controller.last_error)
             }
