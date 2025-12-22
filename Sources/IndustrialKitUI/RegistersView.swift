@@ -357,9 +357,9 @@ public struct RegistersDataView: View
         VStack(spacing: 0)
         {
             RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: 48, bottom_spacing: 40)
+            #if !os(visionOS)
                 .overlay(alignment: .bottom)
                 {
-                    #if !os(visionOS)
                     GlassEffectContainer
                     {
                         HStack(spacing: 10)
@@ -397,40 +397,40 @@ public struct RegistersDataView: View
                         }
                         .padding()
                     }
-                    #else
+                }
+            #else
+                .ornament(attachmentAnchor: .scene(.bottom))
+                {
                     HStack(spacing: 0)
                     {
                         Button(role: .destructive, action: clear_registers)
                         {
                             Image(systemName: "eraser")
                                 .imageScale(.large)
-                                .frame(width: 24, height: 24)
-                                .padding(8)
+                                .padding()
                         }
+                        .buttonStyle(.borderless)
                         .buttonBorderShape(.circle)
-                        .glassBackgroundEffect()
                         .padding(.trailing, 8)
                         
                         Button(action: save_registers)
                         {
                             Image(systemName: "arrow.down.doc")
                                 .imageScale(.large)
-                                .frame(width: 24, height: 24)
-                                .padding(8)
+                                .padding()
                         }
+                        .buttonStyle(.borderless)
                         .buttonBorderShape(.circle)
-                        .glassBackgroundEffect()
                         .padding(.trailing, 8)
                         
                         Button(action: { is_registers_count_presented = true })
                         {
                             Image(systemName: "square.grid.2x2")
                                 .imageScale(.large)
-                                .frame(width: 24, height: 24)
-                                .padding(8)
+                                .padding()
                         }
+                        .buttonStyle(.borderless)
                         .buttonBorderShape(.circle)
-                        .glassBackgroundEffect()
                         .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
                         {
                             RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)
@@ -439,9 +439,11 @@ public struct RegistersDataView: View
                             }
                         }
                     }
-                    .padding()
-                    #endif
+                    .padding(8)
+                    .labelStyle(.iconOnly)
+                    .glassBackgroundEffect()
                 }
+            #endif
         }
         .controlSize(.regular)
         .modifier(SheetCaption(is_presented: $is_presented, label: "Registers", plain: false))
