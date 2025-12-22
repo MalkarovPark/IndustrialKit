@@ -465,7 +465,7 @@ public struct RegistersDataView: View
     private let bottom_spacing: CGFloat = 40
     #else
     private let top_spacing: CGFloat = 96
-    private let bottom_spacing: CGFloat = 48
+    private let bottom_spacing: CGFloat = 44
     #endif
 }
 
