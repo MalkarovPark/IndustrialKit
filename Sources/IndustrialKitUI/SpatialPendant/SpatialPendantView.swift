@@ -308,7 +308,7 @@ private struct WorkspaceToolbar: View
                 ZStack
                 {
                     Rectangle()
-                        .foregroundStyle(controller.view_type != nil ? .red : .secondary)
+                        .foregroundStyle(controller.performing_state.color)
                         .glassBackgroundEffect()
                 }
                 .frame(width: 32, height: 32)
@@ -385,7 +385,7 @@ private struct ProgramPicker: View
                 ZStack
                 {
                     Rectangle()
-                        .foregroundStyle(controller.view_type != nil ? .red : .secondary)
+                        .foregroundStyle(controller.performing_state.color)
                         .glassBackgroundEffect()
                 }
                 .frame(width: 32, height: 32)
