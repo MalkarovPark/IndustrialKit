@@ -399,7 +399,7 @@ public struct RegistersDataView: View
                     }
                 }
             #else
-                .ornament(attachmentAnchor: .scene(.bottom))
+                .ornament(attachmentAnchor: .scene(.leading))
                 {
                     HStack(spacing: 0)
                     {
