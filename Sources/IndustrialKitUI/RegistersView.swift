@@ -356,7 +356,7 @@ public struct RegistersDataView: View
     {
         VStack(spacing: 0)
         {
-            RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: 48, bottom_spacing: 40)
+            RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: top_spacing, bottom_spacing: 40)
                 .overlay(alignment: .bottom)
                 {
                     #if !os(visionOS)
@@ -455,9 +455,15 @@ public struct RegistersDataView: View
     }*/
     
     #if os(macOS)
-    let default_popover_edge: Edge = .top
+    private let default_popover_edge: Edge = .top
     #else
-    let default_popover_edge: Edge = .bottom
+    private let default_popover_edge: Edge = .bottom
+    #endif
+    
+    #if !os(visionOS)
+    private let top_spacing: CGFloat = 48
+    #else
+    private let top_spacing: CGFloat = 64
     #endif
 }
 

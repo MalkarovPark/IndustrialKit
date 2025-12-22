@@ -349,6 +349,7 @@ private struct WorkspaceToolbar: View
 private struct ProgramPicker: View
 {
     @State private var add_program_view_presented = false
+    @State private var performing_state_view_presented = false
     
     let programs_names: [String]
     @Binding var selected_program_index: Int
@@ -360,6 +361,28 @@ private struct ProgramPicker: View
     {
         HStack(spacing: 0)
         {
+            Button(action: { performing_state_view_presented = true })
+            {
+                ZStack
+                {
+                    Rectangle()
+                        .foregroundStyle(controller.view_type != nil ? .red : .secondary)
+                        .glassBackgroundEffect()
+                    /*Image(systemName: "stop")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .padding()*/
+                }
+                .frame(width: 32, height: 32)
+            }
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+            {
+                PerformingStateView(performing_state: controller.performing_state, error: controller.last_error)
+            }
+            .padding(.trailing)
+            
             Picker("Program", selection: $selected_program_index)
             {
                 if programs_names.count > 0
@@ -378,13 +401,14 @@ private struct ProgramPicker: View
             .disabled(programs_names.count == 0)
             .frame(maxWidth: .infinity)
             .buttonStyle(.borderedProminent)
+            .padding(.trailing)
             
             Button(action: delete_program)
             {
                 Image(systemName: "minus")
             }
             .buttonBorderShape(.circle)
-            .padding(.horizontal)
+            .padding(.trailing)
             
             Button(action: { add_program_view_presented.toggle() })
             {
@@ -524,6 +548,41 @@ private struct AddProgramView: View
         
         workspace.update_view()
         add_program_view_presented.toggle()
+    }
+}
+
+// MARK: - Performing State View
+private struct PerformingStateView: View
+{
+    let performing_state: PerformingState
+    let error: Error?
+    
+    var body: some View
+    {
+        VStack(alignment: .leading)
+        {
+            /*Label("\(error?.localizedDescription ?? "No Errors")", systemImage:"xmark.circle.fill")
+                .foregroundStyle(.red)
+                .padding()*/
+            
+            Text("Current State – \(performing_state.rawValue)")
+            
+            Divider()
+            
+            if let error = error
+            {
+                Text("\(error.localizedDescription)")
+            }
+            else
+            {
+                Text("No Errors")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(minWidth: 192)
+        .padding(8)
+        .modifier(ListBorderer())
+        .padding()
     }
 }
 

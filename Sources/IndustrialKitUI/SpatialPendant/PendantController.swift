@@ -159,6 +159,38 @@ public class PendantController: ObservableObject
     
     @Published public var code_editor_text = String()
     
+    /// Last performing error.
+    public var last_error: Error?
+    {
+        switch view_type
+        {
+        case .workspace:
+            return workspace.last_error
+        case .robot:
+            return workspace.selected_robot.last_error
+        case .tool:
+            return workspace.selected_tool.last_error
+        case nil:
+            return nil
+        }
+    }
+    
+    /// Performing state light.
+    public var performing_state: PerformingState
+    {
+        switch view_type
+        {
+        case .workspace:
+            return workspace.performing_state
+        case .robot:
+            return workspace.selected_robot.performing_state
+        case .tool:
+            return workspace.selected_tool.performing_state
+        case nil:
+            return .none
+        }
+    }
+    
     // MARK: - New data
     @Published var new_operation_code = OperationCodeInfo()
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
