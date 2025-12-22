@@ -297,11 +297,30 @@ private struct WorkspaceToolbar: View
     @EnvironmentObject var workspace: Workspace
     
     @State private var registers_view_presented = false
+    @State private var performing_state_view_presented = false
     
     var body: some View
     {
         HStack(spacing: 0)
         {
+            Button(action: { performing_state_view_presented = true })
+            {
+                ZStack
+                {
+                    Rectangle()
+                        .foregroundStyle(controller.view_type != nil ? .red : .secondary)
+                        .glassBackgroundEffect()
+                }
+                .frame(width: 32, height: 32)
+            }
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            .popover(isPresented: $performing_state_view_presented, arrowEdge: .bottom)
+            {
+                PerformingStateView(performing_state: controller.performing_state, error: controller.last_error)
+            }
+            .padding(.trailing)
+            
             Button(action: { registers_view_presented = true })
             {
                 Image(systemName: "number")
@@ -368,10 +387,6 @@ private struct ProgramPicker: View
                     Rectangle()
                         .foregroundStyle(controller.view_type != nil ? .red : .secondary)
                         .glassBackgroundEffect()
-                    /*Image(systemName: "stop")
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                        .padding()*/
                 }
                 .frame(width: 32, height: 32)
             }
