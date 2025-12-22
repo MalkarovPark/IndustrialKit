@@ -72,6 +72,7 @@ public struct AddNewView: View
     }
 }
 
+// MARK: - Previews
 #Preview
 {
     AddNewView(is_presented: .constant(true), add_item: { _ in })

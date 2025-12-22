@@ -39,6 +39,7 @@ public struct ControlProgramTextView: View
     }
 }
 
+// MARK: - Previews
 #Preview
 {
     ControlProgramTextView(elements: .constant([WorkspaceProgramElement]()))

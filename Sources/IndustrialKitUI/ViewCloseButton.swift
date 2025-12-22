@@ -18,19 +18,6 @@ public struct ViewCloseButton: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        /*ZStack(alignment: .topLeading)
-        {
-            content
-            
-            Button(action: { is_presented.toggle() })
-            {
-                Image(systemName: "xmark")
-                    .modifier(CircleButtonImageFramer())
-            }
-            .keyboardShortcut(.cancelAction)
-            .modifier(CircleButtonGlassBorderer())
-            .padding(10)
-        }*/
         content
             .overlay(alignment: .topLeading)
             {
@@ -115,7 +102,6 @@ public struct CircleButtonGlassBorderer: ViewModifier
             .glassBackgroundEffect()
             .frame(depth: 24)
         #endif
-            //.padding()
     }
 }
 

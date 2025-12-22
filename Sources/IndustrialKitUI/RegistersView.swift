@@ -327,7 +327,6 @@ private struct RegistersSelectorCardView: View
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .brightness(is_selected ? 0.25 : 0)
         #if !os(visionOS)
-        //.shadow(color: .black.opacity(0.2), radius: 2)
         .shadow(color: color.opacity(is_selected ? 0.2 : 0.1), radius: 4)
         #else
         .frame(depth: 4)
@@ -442,17 +441,6 @@ public struct RegistersDataView: View
     {
         workspace.clear_registers()
     }
-    
-    /*private func save_registers()
-    {
-        controller.registers_document_data_update.toggle()
-    }*/
-    
-    /*private func update_registers_count()
-    {
-        workspace.update_registers_count(Workspace.default_registers_count)
-        save_registers()
-    }*/
     
     #if os(macOS)
     private let default_popover_edge: Edge = .top

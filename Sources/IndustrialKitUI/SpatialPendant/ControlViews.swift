@@ -250,6 +250,7 @@ internal struct ToolControl: View
     }
 }
 
+// MARK: - Previews
 #Preview
 {
     RobotControl()

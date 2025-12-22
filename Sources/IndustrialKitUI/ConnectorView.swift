@@ -338,6 +338,7 @@ public struct ConnectionParameterView: View
     }
 }
 
+// MARK: - Previews
 struct ConnectorView_Previews: PreviewProvider
 {
     static var previews: some View
@@ -352,7 +353,7 @@ struct ConnectorView_Previews: PreviewProvider
         .frame(width: 320)
     }
     
-    class Test_Connector: ToolConnector
+    class Test_Connector: ToolConnector, @unchecked Sendable
     {
         override var parameters: [ConnectionParameter]
         {

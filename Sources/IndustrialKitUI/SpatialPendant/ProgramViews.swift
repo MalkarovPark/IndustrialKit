@@ -728,6 +728,7 @@ internal struct OperationItemView: View
     }
 }
 
+// MARK: - Previews
 #Preview
 {
     RobotProgramView()

@@ -460,7 +460,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Selects and performs program element by workspace.
     private func perform_next_element()
     {
-        selected_program_element.performing_state = .processing //BOOM
+        selected_program_element.performing_state = .processing
         performing_state = .processing // State light
         
         perform(selected_program_element, completion: select_new_element)
@@ -579,7 +579,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Set the new target program element index.
     private func select_new_element()
     {
-        selected_program_element.performing_state = .completed //BOOM
+        selected_program_element.performing_state = .completed
         performing_state = .completed // State light
         
         if performed
