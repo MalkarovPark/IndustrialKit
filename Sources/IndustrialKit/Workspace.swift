@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SceneKit
+//import SceneKit
 import SwiftUI
 
 /**
@@ -44,7 +44,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     // MARK: - Workspace visual handling functions
     /// A SceneKit scene for complex visual model of workspace.
-    public var scene = SCNScene()
+    //public var scene = SCNScene()
     
     /// A selected workspace object type value in industrial complex.
     public var selected_object_type: WorkspaceObjectType?
@@ -420,10 +420,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
             return
         }
         
-        if !(object_pointer_node?.isHidden ?? false)
+        /*if !(object_pointer_node?.isHidden ?? false)
         {
             deselect_object_for_edit()
-        }
+        }*/
         
         prepare_program()
         
@@ -1147,11 +1147,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Sets new pointer position by selected workspace object.
     public func update_pointer()
     {
-        update_object_pointer_position(by_node: edited_object_node ?? SCNNode())
+        //update_object_pointer_position(by_node: edited_object_node ?? SCNNode())
     }
     
     /// Updates opject selection pointer position.
-    private func update_object_pointer_position(by_node: SCNNode)
+    /*private func update_object_pointer_position(by_node: SCNNode)
     {
         // Remove old and add new constraint
         object_pointer_node?.constraints?.removeAll()
@@ -1164,10 +1164,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // object_pointer_node?.rotation.x -= 1
         
         object_pointer_node?.isHidden = false // Unhide pointer node
-    }
+    }*/
     
     /// A link to edited object node.
-    public var edited_object_node: SCNNode?
+    //public var edited_object_node: SCNNode?
     
     /// A workcell scene adress.
     nonisolated(unsafe) public static var workcell_scene_address = String()
@@ -1188,8 +1188,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
             break
         }
         
-        edited_object_node?.removeFromParentNode() // Remove old node
-        edited_object_node = SCNNode() // Remove old reference
+        //edited_object_node?.removeFromParentNode() // Remove old node
+        //edited_object_node = SCNNode() // Remove old reference
         
         switch type
         {
@@ -1200,12 +1200,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             // Get new node
             select_robot(name: name) // Select robot in the workspace
-            robots_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)?.rootNode.childNode(withName: "unit", recursively: false) ?? SCNNode())
+            //robots_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)?.rootNode.childNode(withName: "unit", recursively: false) ?? SCNNode())
             
-            edited_object_node = robots_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
+            //edited_object_node = robots_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
             
-            edited_object_node?.name = name
-            selected_robot.workcell_connect(scene: scene, name: name, connect_camera: false)
+            //edited_object_node?.name = name
+            //selected_robot.workcell_connect(scene: scene, name: name, connect_camera: false)
             selected_robot.update()
         case .tool:
             // Deselect other
@@ -1215,11 +1215,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
             // Get new node
             select_tool(name: name)
             
-            edited_object_node = selected_tool.node?.clone()
-            edited_object_node?.name = name
+            //edited_object_node = selected_tool.node?.clone()
+            //edited_object_node?.name = name
             
-            tools_node?.addChildNode(edited_object_node ?? SCNNode())
-            selected_tool.workcell_connect(scene: scene, name: name)
+            //tools_node?.addChildNode(edited_object_node ?? SCNNode())
+            //selected_tool.workcell_connect(scene: scene, name: name)
         case .part:
             // Deselect other
             deselect_robot()
@@ -1229,14 +1229,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
             select_part(name: name)
             selected_part.model_position_reset()
             
-            edited_object_node = selected_part.node?.clone()
-            edited_object_node?.name = name
+            //edited_object_node = selected_part.node?.clone()
+            //edited_object_node?.name = name
             
-            parts_node?.addChildNode(edited_object_node ?? SCNNode())
+            //parts_node?.addChildNode(edited_object_node ?? SCNNode())
         }
         
         // Unhide pointer and move to object position
-        object_pointer_node?.isHidden = false
+        //object_pointer_node?.isHidden = false
         update_pointer()
     }
     
@@ -1258,7 +1258,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             break
         }
         
-        // Apply position to node
+        /*// Apply position to node
         #if os(macOS)
         edited_object_node?.worldPosition = SCNVector3(x: CGFloat(position.y), y: CGFloat(position.z), z: CGFloat(position.x))
         
@@ -1271,7 +1271,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         edited_object_node?.eulerAngles.x = position.p.to_rad
         edited_object_node?.eulerAngles.y = position.w.to_rad
         edited_object_node?.eulerAngles.z = position.r.to_rad
-        #endif
+        #endif*/
     }
     
     /// Places object in the workspace.
@@ -1281,19 +1281,19 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
         case .robot:
             selected_robot.is_placed = true
-            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.robot_bit_mask) // Apply category bit mask
+            //apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.robot_bit_mask) // Apply category bit mask
             
             deselect_robot()
         case .tool:
             selected_tool.is_placed = true
-            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.tool_bit_mask) // Apply category bit mask
+            //apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.tool_bit_mask) // Apply category bit mask
             
             deselect_tool()
         case.part:
             selected_part.is_placed = true
             
-            apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.part_bit_mask) // Apply category bit mask
-            edited_object_node?.physicsBody = selected_part.physics // Apply physics
+            //apply_bit_mask(node: edited_object_node ?? SCNNode(), Workspace.part_bit_mask) // Apply category bit mask
+            //edited_object_node?.physicsBody = selected_part.physics // Apply physics
             
             deselect_part()
         default:
@@ -1301,8 +1301,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         
         // Disconnecting from edited node
-        edited_object_node = SCNNode() // Remove old reference
-        edited_object_node?.removeFromParentNode() // Remove old node
+        //edited_object_node = SCNNode() // Remove old reference
+        //edited_object_node?.removeFromParentNode() // Remove old node
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
         {
@@ -1313,10 +1313,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Removes selected object model from workspace scene.
     public func dismiss_object()
     {
-        object_pointer_node?.isHidden = true
+        //object_pointer_node?.isHidden = true
         
-        edited_object_node?.removeFromParentNode() // Remove edited object node
-        edited_object_node = SCNNode() // Remove scnnode link
+        //edited_object_node?.removeFromParentNode() // Remove edited object node
+        //edited_object_node = SCNNode() // Remove scnnode link
         
         deselect_object()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
@@ -1365,7 +1365,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Process object node selection in the workspace scene.
-    public func select_object_in_scene(result: SCNHitTestResult)
+    /*public func select_object_in_scene(result: SCNHitTestResult)
     {
         // print(result.localCoordinates)
         // print("tapped – \(result.node.name!), category \(result.node.categoryBitMask)")
@@ -1400,11 +1400,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             return saved_node
         }
-    }
+    }*/
     
     private var previous_selected_type: WorkspaceObjectType = .robot // Current selected object type for new selection
     
-    private func select_object_for_edit(node: SCNNode, type: WorkspaceObjectType) // Create editable node with name
+    /*private func select_object_for_edit(node: SCNNode, type: WorkspaceObjectType) // Create editable node with name
     {
         // Connect to old part node
         var old_part_node = SCNNode()
@@ -1539,7 +1539,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             deselect_tool()
             deselect_part()
         }
-    }
+    }*/
     
     /// Deselects edited object node.
     public func deselect_object_for_edit()
@@ -1547,7 +1547,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         if any_object_selected
         {
             update_view()
-            object_pointer_node?.isHidden = true
+            //object_pointer_node?.isHidden = true
             
             switch selected_object_type
             {
@@ -1558,7 +1558,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             case .part:
                 if selected_part.is_placed
                 {
-                    edited_object_node?.physicsBody = selected_part.physics
+                    //edited_object_node?.physicsBody = selected_part.physics
                 }
                 deselect_part()
             default:
@@ -1566,7 +1566,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             
             // Disconnect from edited node
-            edited_object_node = SCNNode() // Remove old reference
+            //edited_object_node = SCNNode() // Remove old reference
             // edited_object_node?.removeFromParentNode() // Remove old node
         }
     }
@@ -1597,10 +1597,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         
         // Disconnect from edited node
-        edited_object_node?.removeFromParentNode() // Remove old node
-        edited_object_node = SCNNode() // Remove old reference
+        //edited_object_node?.removeFromParentNode() // Remove old node
+        //edited_object_node = SCNNode() // Remove old reference
         
-        object_pointer_node?.isHidden = true
+        //object_pointer_node?.isHidden = true
     }
     
     /// Deselects selected object.
@@ -2006,23 +2006,23 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         update_pointer()
         
-        if let edited_node = edited_object_node,
+        /*if let edited_node = edited_object_node,
            let robot_tool_node = robot_by_name(robot_name).tool_node
         {
             attach(node: edited_node, to: robot_tool_node)
             selected_tool.attached_to = robot_name
-        }
+        }*/
     }
 
     /// Moves the node to be child of the end_point_node, preserving its world transform.
-    private func attach(node: SCNNode, to new_parent: SCNNode)
+    /*private func attach(node: SCNNode, to new_parent: SCNNode)
     {
         let local_transform = node.transform
         
         new_parent.addChildNode(node)
         
         node.transform = local_transform
-    }
+    }*/
     
     /*/// Removes the node from its parent and re-adds to scene root, preserving world transform.
     public func remove_attachment()
@@ -2046,14 +2046,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         - node: The node to be detached and moved.
         - root_node: The node that will become the new parent (typically the scene root).
      */
-    public func remove_attachment(from node: SCNNode, to root_node: SCNNode)
+    /*public func remove_attachment(from node: SCNNode, to root_node: SCNNode)
     {
         let local_transform = node.transform
         root_node.addChildNode(node)
         node.transform = local_transform
         
         node.simdTransform = node.simdTransform
-    }
+    }*/
     
     /**
      Detaches the specified tool from its current parent node and restores it to the scene root,
@@ -2067,22 +2067,22 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if tool.attached_to != nil
         {
-            guard let tool_node = tool.node, let scene_root_node = tools_node else { return }
+            /*guard let tool_node = tool.node, let scene_root_node = tools_node else { return }
             
             remove_attachment(from: tool_node, to: scene_root_node)
             
             if !node_only
             {
                 tool.attached_to = nil
-            }
+            }*/
         }
     }
     
     /// Detaches the currently edited node and restores it to the tools root node.
     public func remove_edited_node_attachment()
     {
-        guard let edited_object_node = edited_object_node, let tools_node = tools_node else { return }
-        remove_attachment(from: edited_object_node, to: tools_node)
+        //guard let edited_object_node = edited_object_node, let tools_node = tools_node else { return }
+        //remove_attachment(from: edited_object_node, to: tools_node)
     }
     
     /**
@@ -2409,7 +2409,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     // MARK: - Visual functions
     /// Scene camera node.
-    public var camera_node: SCNNode?
+    /*public var camera_node: SCNNode?
     
     /// Robots workcells node.
     public var robots_node: SCNNode?
@@ -2608,7 +2608,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 }
             }
         }
-    }
+    }*/
 }
 
 public enum WorkspaceObjectType: String, Equatable, CaseIterable

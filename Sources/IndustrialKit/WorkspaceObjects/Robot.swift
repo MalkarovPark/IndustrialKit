@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SceneKit
+//import SceneKit
 import SwiftUI
 
 /**
@@ -32,7 +32,7 @@ public class Robot: WorkspaceObject
     }
     
     /// Inits robot by name, controller, connector and SceneKit scene.
-    public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene: SCNScene)
+    /*public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene: SCNScene)
     {
         super.init(name: name)
         
@@ -43,14 +43,14 @@ public class Robot: WorkspaceObject
         
         apply_statistics_flags()
         set_default_cell_parameters()
-    }
+    }*/
     
     /// Inits robot by name, controller, connector and SceneKit scene name.
     public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene_name: String)
     {
         super.init(name: name)
         
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
+        //self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
         
         self.model_controller = model_controller
         self.connector = connector
@@ -96,7 +96,7 @@ public class Robot: WorkspaceObject
     {
         module_name = module.name
         
-        node = module.node.clone()
+        //node = module.node.clone()
         
         if !(module.model_controller is ExternalRobotModelController)
         {
@@ -457,10 +457,10 @@ public class Robot: WorkspaceObject
     }
     
     /// Returns robot pointer position for nodes.
-    private func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
+    /*private func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
     {
         return(SCNVector3(pointer_position.y, pointer_position.z, pointer_position.x), pointer_position.r.to_rad, pointer_position.p.to_rad, pointer_position.w.to_rad)
-    }
+    }*/
     
     // MARK: Update functions
     /// Updates robot statistics and model by current pointer position.
@@ -769,7 +769,7 @@ public class Robot: WorkspaceObject
     }
     
     // Robot workcell unit nodes references
-    /// Robot unit node with manipulator node.
+    /*/// Robot unit node with manipulator node.
     public var unit_node: SCNNode?
     
     /// Box bordered cell workspace.
@@ -794,7 +794,7 @@ public class Robot: WorkspaceObject
     public var space_node:SCNNode?
     
     /// Node for tool attachment.
-    public var tool_node: SCNNode?
+    public var tool_node: SCNNode?*/
     
     /**
      Connects to robot model in scene.
@@ -805,7 +805,7 @@ public class Robot: WorkspaceObject
      
      > The scene should contain nodes named: box, space, pointer, internal, points.
      */
-    public func workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
+    /*public func workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
     {
         // Find nodes from scene by names or add them
         if let node = scene.rootNode.childNode(withName: name, recursively: true)
@@ -902,7 +902,7 @@ public class Robot: WorkspaceObject
         update_position()
         
         update_points_model()
-    }
+    }*/
     
     /// Sets robot pointer node position.
     private func update_position()
@@ -968,15 +968,15 @@ public class Robot: WorkspaceObject
     }
     
     /// A modified node reference.
-    private var modified_node = SCNNode()
+    //private var modified_node = SCNNode()
     
     /// A saved SCNMateral for edited node.
-    private var saved_material = SCNMaterial()
+    //private var saved_material = SCNMaterial()
     
     /// Places cell workspace relative to manipulator.
     public func robot_location_place()
     {
-        sync_model_controller_parameters()
+        /*sync_model_controller_parameters()
         
         // MARK: Place workcell box
         #if os(macOS)
@@ -1006,13 +1006,13 @@ public class Robot: WorkspaceObject
         camera_node?.position.x += Float(origin_position.y)
         camera_node?.position.y += Float(origin_position.z)
         camera_node?.position.z += Float(origin_position.x)
-        #endif
+        #endif*/
     }
     
     /// Updates cell box model scale.
     public func update_space_scale()
     {
-        guard box_node?.childNodes.count ?? 0 > 0
+        /*guard box_node?.childNodes.count ?? 0 > 0
         else
         {
             return
@@ -1082,7 +1082,7 @@ public class Robot: WorkspaceObject
         #endif
         
         model_controller.space_scale = space_scale
-        position_points_shift()
+        position_points_shift()*/
     }
     
     /**
@@ -1145,12 +1145,12 @@ public class Robot: WorkspaceObject
     
     private func update_points_model() // Update selected positions program model for robot
     {
-        if Robot.view_current_program_model
+        /*if Robot.view_current_program_model
         {
             points_node?.remove_all_child_nodes()
             selected_program.visual_build()
             points_node?.addChildNode(selected_program.positions_group)
-        }
+        }*/
     }
     
     // MARK: - Chart functions
@@ -1249,10 +1249,10 @@ public class Robot: WorkspaceObject
      
      Color sets by the manufacturer name.
      */
-    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
+    /*public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
     {
         return("\(self.name)", "\(self.module_name)", .green, UIImage(), SCNNode())
-    }
+    }*/
     
     /// Connects robot charts to UI.
     public func charts_binding() -> Binding<[WorkspaceObjectChart]?>

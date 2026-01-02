@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SceneKit
+//import SceneKit
 import SwiftUI
 
 /**
@@ -22,7 +22,7 @@ public class Part: WorkspaceObject
     private var material_name: String? // Material for part without scene figure
     
     /// Physics body for part model node by physics type.
-    public var physics: SCNPhysicsBody?
+    /*public var physics: SCNPhysicsBody?
     {
         switch physics_type
         {
@@ -37,7 +37,7 @@ public class Part: WorkspaceObject
         default:
             return .none
         }
-    }
+    }*/
     
     /**
      Physics type of part.
@@ -51,14 +51,14 @@ public class Part: WorkspaceObject
     {
         didSet
         {
-            if enable_physics
+            /*if enable_physics
             {
                 node?.physicsBody = physics // Return original physics
             }
             else
             {
                 node?.physicsBody = nil // Remove physic body
-            }
+            }*/
         }
     }
     
@@ -77,15 +77,15 @@ public class Part: WorkspaceObject
     public init(name: String, scene_name: String)
     {
         super.init(name: name)
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
+        //self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
     }
     
     /// Inits part by name and scene.
-    public init(name: String, scene: SCNScene)
+    /*public init(name: String, scene: SCNScene)
     {
         super.init(name: name)
         self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
-    }
+    }*/
     
     /// Inits part by name and part module.
     public init(name: String, module: PartModule)
@@ -113,7 +113,7 @@ public class Part: WorkspaceObject
         module_name = module.name
         
         // node = module.node.clone()
-        node = module.node.deep_clone()
+        //node = module.node.deep_clone()
         color_from_model()
     }
     
@@ -158,7 +158,7 @@ public class Part: WorkspaceObject
     
     private func color_import()
     {
-        if node != nil
+        /*if node != nil
         {
             if figure_color != nil
             {
@@ -168,23 +168,23 @@ public class Part: WorkspaceObject
             {
                 color_from_model()
             }
-        }
+        }*/
     }
     
     private func color_from_model()
     {
-        if node != nil
+        /*if node != nil
         {
             let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? UIColor
             
             figure_color = node_color?.to_hex()
-        }
+        }*/
     }
     
     /// Applies color to part node by components.
     public func color_to_model()
     {
-        if node != nil
+        /*if node != nil
         {
             /*var viewed_nodes = node?.childNodes ?? []
             let color = UIColor(hex: figure_color ?? "#453CCC")
@@ -204,13 +204,13 @@ public class Part: WorkspaceObject
                 }
             }*/
             node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
-        }
+        }*/
     }
     
     // MARK: - Visual build functions
     public override var scene_node_name: String { "part" }
     
-    public func node_by_description()
+    /*public func node_by_description()
     {
         node = SCNNode()
         
@@ -334,16 +334,16 @@ public class Part: WorkspaceObject
         }
         
         node?.name = "part"
-    }
+    }*/
     
     // MARK: Part in workspace handling
     /// Resets model postion.
     public func model_position_reset()
     {
-        node?.position = SCNVector3(0, 0, 0)
+        /*node?.position = SCNVector3(0, 0, 0)
         node?.rotation.x = 0
         node?.rotation.y = 0
-        node?.rotation.z = 0
+        node?.rotation.z = 0*/
     }
     
     // MARK: - UI functions
@@ -364,10 +364,10 @@ public class Part: WorkspaceObject
     }
     
     /// Returns info for part card view.
-    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
+    /*public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
     {
         return("\(self.name)", "Subtitle", self.color, UIImage(), self.node ?? SCNNode())
-    }
+    }*/
     
     // MARK: - Work with file system
     enum CodingKeys: String, CodingKey

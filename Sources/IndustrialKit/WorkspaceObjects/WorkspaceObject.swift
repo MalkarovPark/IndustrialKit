@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SceneKit
+//import SceneKit
 import SwiftUI
 
 /**
@@ -178,7 +178,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     public var scene_address = ""
     
     /// Connected object scene node.
-    public var node: SCNNode?
+    //public var node: SCNNode?
     
     /// Name of node for connect to instance node variable.
     open var scene_node_name: String? { nil }
@@ -190,32 +190,10 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     // nonisolated(unsafe) public static var folder_bookmark: Data?
     
     // MARK: - UI functions
-    /*///Universal data storage for NSImage or UIImage.
-    public var image_data: Data? = nil*/
-    
-    /*///Workspace object preview image.
-    public var image: UIImage
-    {
-        get
-        {
-            return UIImage(data: image_data ?? Data()) ?? UIImage() // Retrun UIImage from image data
-        }
-        set
-        {
-            image_data = newValue.pngData() ?? Data() // Convert UIImage to image data
-        }
-    }*/
-    
     /// Returns info for object card view (with UIImage).
-    open var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode)
+    /*open var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode)
     {
         return("Title", "Subtitle", Color.clear, UIImage(), SCNNode())
-    }
-    
-    /// Clears preview image in object.
-    /*public func clear_preview()
-    {
-        image_data = nil
     }*/
     
     // MARK: - Work with file system

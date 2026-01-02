@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SceneKit
+//import SceneKit
 import SwiftUI
 
 /**
@@ -29,7 +29,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     }
     
     /// Inits tool by name, controller, connector and scene.
-    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene, codes: [OperationCodeInfo] = [OperationCodeInfo]())
+    /*public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
         
@@ -41,14 +41,14 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         apply_statistics_flags()
         
         self.codes = codes
-    }
+    }*/
     
     /// Inits tool by name, controller, connector and scene name.
     public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         super.init(name: name)
         
-        self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() // !
+        //self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() // !
         
         self.model_controller = model_controller
         self.connector = connector
@@ -86,7 +86,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     {
         module_name = module.name
         
-        node = module.node.clone()
+        //node = module.node.clone()
         
         if !(module.model_controller is ExternalToolModelController)
         {
@@ -695,7 +695,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         - scene: A current scene.
         - name: A tool name.
      */
-    public func workcell_connect(scene: SCNScene, name: String) // Connect tool parts from scene
+    /*public func workcell_connect(scene: SCNScene, name: String) // Connect tool parts from scene
     {
         // let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
         var unit_node = SCNNode()
@@ -713,7 +713,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         model_controller.connect_nodes(of: unit_node)
         
         //model_controller.info_output = self.info_output
-    }
+    }*/
     
     /// Disconnect tool model parts from workcell.
     public func workcell_disconnect()
@@ -844,11 +844,11 @@ public class Tool: WorkspaceObject, @unchecked Sendable
      
      Output avaliable codes count. If their number is zero, the instrument is listed as *static*.
      */
-    public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode) // Get info for robot card view
+    /*public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode) // Get info for robot card view
     {
         return("\(self.name)", "\(self.module_name)", .teal, UIImage(), SCNNode())
         //return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, UIImage(), node: SCNNode()) // Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
-    }
+    }*/
     
     /// Apply corresponded label and SF Symbol to operation code.
     public func code_info(_ value: Int) -> OperationCodeInfo
