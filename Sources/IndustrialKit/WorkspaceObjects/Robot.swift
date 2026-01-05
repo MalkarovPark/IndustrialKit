@@ -37,7 +37,7 @@ public class Robot: WorkspaceObject, @unchecked Sendable
         set_default_cell_parameters()
     }
     
-    override init(name: String, entity_name: String)
+    public override init(name: String, entity_name: String)
     {
         working_area_entity = Entity()
         

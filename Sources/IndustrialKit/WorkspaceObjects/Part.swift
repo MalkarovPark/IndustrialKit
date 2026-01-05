@@ -75,7 +75,7 @@ public class Part: WorkspaceObject
         super.init(name: name)
     }
     
-    override init(name: String, entity_name: String)
+    public override init(name: String, entity_name: String)
     {
         super.init(name: name, entity_name: entity_name)
     }
