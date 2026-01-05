@@ -398,10 +398,25 @@ public struct WorkspaceObjectModel: Identifiable, Equatable, Hashable, Codable
 }
 
 // MARK: - Entity Tag
-public struct EntityModelIdentifier: Component
+/*public struct EntityModelIdentifier: Component
 {
     var type: WorkspaceObjectType? = .none // Associated Workspace Object type
     var name = String() // Associated Workspace Object name
+}*/
+// MARK: - Entity Tag
+public struct EntityModelIdentifier: Component
+{
+    public var type: WorkspaceObjectType?
+    public var name: String
+
+    public init(
+        type: WorkspaceObjectType? = .none,
+        name: String
+    )
+    {
+        self.type = type
+        self.name = name
+    }
 }
 
 // MARK: - Enums
