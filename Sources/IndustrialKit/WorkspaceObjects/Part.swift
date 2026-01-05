@@ -216,7 +216,7 @@ public class Part: WorkspaceObject
     
     // MARK: - Visual Functions
     #if canImport(RealityKit)
-    override public var entity_tag: any Component
+    override public var entity_tag: Component
     {
         return EntityModelIdentifier(type: .part, name: name)
     }
