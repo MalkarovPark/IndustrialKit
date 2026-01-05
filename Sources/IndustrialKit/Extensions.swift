@@ -388,7 +388,7 @@ public extension String
 
 // MARK: - RealityKit extensions
 #if canImport(RealityKit)
-extension Entity
+public extension Entity
 {
     func childEntity(withName name: String, recursively: Bool) -> Entity?
     {
@@ -412,7 +412,7 @@ extension Entity
     }
 }
 
-extension Entity
+public extension Entity
 {
     func visit(_ action: (Entity) -> Void)
     {
@@ -424,7 +424,7 @@ extension Entity
     }
 }
 
-extension Entity
+public extension Entity
 {
     func update_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
@@ -440,7 +440,7 @@ extension Entity
     }
 }
 
-extension Entity
+public extension Entity
 {
     func rotate_x(by radians: Float)
     {
