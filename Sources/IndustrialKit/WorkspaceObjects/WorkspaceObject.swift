@@ -226,6 +226,56 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     {
         
     }
+    
+    /// Places entity to "scene" and connects with handling avalibility.
+    @MainActor public func place_entity(to content: RealityViewCameraContent)
+    {
+        Task
+        { @MainActor in
+            // Wait until bot.entity becomes available, then place it once
+            while entity == nil
+            {
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+            }
+            
+            // Place entity
+            guard let entity = entity else { return }
+            
+            content.add(entity)
+            
+            extend_entity_placement(entity)
+        }
+    }
+    
+    /// Places entity to "scene" and connects with handling avalibility.
+    @MainActor func place_entity_at_position(to content: RealityViewCameraContent)
+    {
+        place_entity(to: content)
+        
+        Task
+        { @MainActor in
+            // Wait until bot.entity becomes available, then place it once
+            while entity == nil
+            {
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+            }
+            
+            // Place entity
+            //guard let entity = entity else { return }
+            
+            update_model_position() //entity.update_position(position)
+        }
+    }
+    
+    @MainActor public func update_model_position()
+    {
+        entity?.update_position(position)
+    }
+    
+    @MainActor open func extend_entity_placement(_ entity: Entity)
+    {
+        //reality_controller.connect_entities(of: entity)
+    }
     #endif
     
     ///Old
