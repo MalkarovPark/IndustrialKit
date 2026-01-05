@@ -203,7 +203,9 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
                 
                 entity.visit
                 { entity in
-                    entity.components.set(entity_tag)
+                    print(EntityModelIdentifier(type: .robot, name: name))
+                    entity.components.set(EntityModelIdentifier(type: .robot, name: name))
+                    //entity.components.set(entity_tag)
                 }
                 
                 entity.components.set(InputTargetComponent())
