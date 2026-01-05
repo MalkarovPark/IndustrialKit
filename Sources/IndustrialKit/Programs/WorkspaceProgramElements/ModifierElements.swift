@@ -387,7 +387,7 @@ public class ChangerModifierElement: ModifierElement
     public static func external_modules_servers_start()
     {
         Task
-        {
+        { @MainActor in
             for module in external_modules
             {
                 await module.start_program_components()

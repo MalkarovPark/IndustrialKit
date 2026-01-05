@@ -16,6 +16,7 @@ import SwiftUI
  
  Also can build a visual model of the production system with editing functions.
  */
+@MainActor
 public class Workspace: ObservableObject, @unchecked Sendable
 {
     // MARK: - Init functions
@@ -463,7 +464,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         selected_program_element.performing_state = .processing
         performing_state = .processing // State light
         
-        perform(selected_program_element, completion: select_new_element)
+        //perform(selected_program_element, completion: select_new_element)
+        perform(selected_program_element)
+        { [weak self] in
+            Task
+            { @MainActor in
+                self?.select_new_element()
+            }
+        }
     }
     
     private func perform_constant_objects_update()
@@ -878,7 +886,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             selected_robot.move_to(point: target_point)
             { result in
-                self.selected_robot.performed = false
+                Task
+                { @MainActor in
+                    self.selected_robot.performed = false
+                    switch result
+                    {
+                    case .success:
+                        self.selected_robot.pointer_position_to_robot()
+                        completion(.success(()))
+                    case .failure(let error):
+                        self.selected_robot.process_error(error)
+                        error_handler(error)
+                    }
+                }
+                
+                /*self.selected_robot.performed = false
                 switch result
                 {
                 case .success:
@@ -887,7 +909,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 case .failure(let error):
                     self.selected_robot.process_error(error)
                     error_handler(error)
-                }
+                }*/
             }
         }
     }
@@ -945,7 +967,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 selected_tool.performed = true
                 try selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
                 {
-                    self.selected_tool.performed = false
+                    Task
+                    { @MainActor in
+                        self.selected_tool.performed = false
+                    }
+                    //self.selected_tool.performed = false
                     completion(.success(()))
                 }
             }

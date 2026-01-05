@@ -16,7 +16,7 @@ import SwiftUI
  
  Permorms operation by codes order in selected operations program.
  */
-public class Tool: WorkspaceObject, @unchecked Sendable
+public class Tool: WorkspaceObject
 {
     // MARK: - Init functions
     public override init()
@@ -525,7 +525,21 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         
         do
         {
-            try perform(code: selected_operation_code.value)
+            try perform(code: selected_operation_code.value) { [weak self] in
+                guard let self = self else { return }
+
+                Task { @MainActor in
+                    if self.demo {
+                        self.selected_operation_code.performing_state = .completed
+                    } else if self.connector.connected {
+                        self.selected_operation_code.performing_state = self.connector.performing_state.output
+                    }
+
+                    self.select_new_code()
+                }
+            }
+            
+            /*try perform(code: selected_operation_code.value)
             {
                 if self.demo
                 {
@@ -537,7 +551,7 @@ public class Tool: WorkspaceObject, @unchecked Sendable
                 }
                 
                 self.select_new_code()
-            }
+            }*/
         }
         catch
         {

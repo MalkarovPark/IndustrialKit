@@ -141,7 +141,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }
     
     /// Start all program components in module.
-    public func start_program_components() async
+    @MainActor public func start_program_components() async
     {
         for program_components_path in program_components_paths
         {

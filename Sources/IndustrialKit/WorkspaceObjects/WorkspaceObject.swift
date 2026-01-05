@@ -16,7 +16,8 @@ import SwiftUI
  
  Industrial production objects are represented by equipment that provide technological operations performing.
  */
-open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject, Codable, @unchecked Sendable // , NSCopying
+@MainActor
+open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable, @preconcurrency Codable
 {
     public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool // Identity condition by names
     {
@@ -190,7 +191,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     private func perform_load_entity(named name: String)
     {
         Task
-        { @MainActor in
+        {
             do
             {
                 self.entity = try await Entity(named: name)
@@ -200,7 +201,6 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
                 guard let entity = entity else { return }
                 
                 entity.generateCollisionShapes(recursive: true)
-                
                 entity.visit
                 { entity in
                     entity.components.set(entity_tag)
@@ -222,16 +222,16 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         return EntityModelIdentifier(type: .none, name: name)
     }
     
-    @MainActor open func extend_entity_preparation(_ entity: Entity)
+    open func extend_entity_preparation(_ entity: Entity)
     {
         
     }
     
     /// Places entity to "scene" and connects with handling avalibility.
-    @MainActor public func place_entity(to content: RealityViewCameraContent)
+    public func place_entity(to content: RealityViewCameraContent)
     {
         Task
-        { @MainActor in
+        {
             // Wait until bot.entity becomes available, then place it once
             while entity == nil
             {
@@ -248,31 +248,28 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     }
     
     /// Places entity to "scene" and connects with handling avalibility.
-    @MainActor public func place_entity_at_position(to content: RealityViewCameraContent)
+    public func place_entity_at_position(to content: RealityViewCameraContent)
     {
         place_entity(to: content)
         
         Task
-        { @MainActor in
+        {
             // Wait until bot.entity becomes available, then place it once
             while entity == nil
             {
                 try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
             }
             
-            // Place entity
-            //guard let entity = entity else { return }
-            
             update_model_position() //entity.update_position(position)
         }
     }
     
-    @MainActor public func update_model_position()
+    public func update_model_position()
     {
         entity?.update_position(position)
     }
     
-    @MainActor open func extend_entity_placement(_ entity: Entity)
+    open func extend_entity_placement(_ entity: Entity)
     {
         //reality_controller.connect_entities(of: entity)
     }
@@ -357,6 +354,46 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
         
         try container.encode(update_interval, forKey: .update_interval)
         try container.encode(scope_type, forKey: .scope_type)
+    }
+}
+
+// MARK: Workspace Object Data
+public struct WorkspaceObjectModel: Identifiable, Equatable, Hashable, Codable
+{
+    public let id: UUID
+    public var name: String
+    public var module_name: String
+    public var is_internal_module: Bool
+    public var position: [Float] // x, y, z, r, p, w
+    public var is_placed: Bool
+    public var update_interval: Double
+    public var scope_type: ScopeType
+    public var physics_type: PhysicsType?
+    public var figure_color: String?
+    
+    public init(
+        id: UUID = UUID(),
+        name: String,
+        module_name: String,
+        is_internal_module: Bool,
+        position: [Float] = [0, 0, 0, 0, 0, 0],
+        is_placed: Bool = false,
+        update_interval: Double = 0.01,
+        scope_type: ScopeType = .selected,
+        physics_type: PhysicsType? = nil,
+        figure_color: String? = nil
+    )
+    {
+        self.id = id
+        self.name = name
+        self.module_name = module_name
+        self.is_internal_module = is_internal_module
+        self.position = position
+        self.is_placed = is_placed
+        self.update_interval = update_interval
+        self.scope_type = scope_type
+        self.physics_type = physics_type
+        self.figure_color = figure_color
     }
 }
 

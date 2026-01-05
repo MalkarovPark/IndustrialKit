@@ -16,7 +16,7 @@ import SwiftUI
  
  Permorms reposition operation by target points order in selected positions program.
  */
-public class Robot: WorkspaceObject, @unchecked Sendable
+public class Robot: WorkspaceObject
 {
     // MARK: - Init functions
     /// Inits robot with default parameters.
@@ -201,10 +201,6 @@ public class Robot: WorkspaceObject, @unchecked Sendable
                 await module.start_program_components()
             }
         }
-        /*for module in external_modules
-        {
-            module.start_program_components()
-        }*/
     }
     
     /// Stop all program components in module.
@@ -595,7 +591,30 @@ public class Robot: WorkspaceObject, @unchecked Sendable
     {
         selected_position_point.performing_state = .processing
         
-        move_to(point: selected_position_point) //(point: programs[selected_program_index].points[target_point_index])
+        move_to(point: selected_position_point)
+        { result in
+            Task
+            { @MainActor in
+                switch result
+                {
+                case .success:
+                    if self.demo
+                    {
+                        self.selected_position_point.performing_state = .completed
+                    }
+                    else if self.connector.connected
+                    {
+                        self.selected_position_point.performing_state = self.connector.performing_state.output
+                    }
+                    
+                    self.select_new_point()
+                case .failure(let error):
+                    self.process_error(error)
+                    self.error_handler(error)
+                }
+            }
+        }
+        /*move_to(point: selected_position_point) //(point: programs[selected_program_index].points[target_point_index])
         { result in
             switch result
             {
@@ -614,7 +633,7 @@ public class Robot: WorkspaceObject, @unchecked Sendable
                 self.process_error(error)
                 self.error_handler(error)
             }
-        }
+        }*/
     }
     
     /**
@@ -622,7 +641,7 @@ public class Robot: WorkspaceObject, @unchecked Sendable
      - Parameters:
         - error: A robot moving error.
      */
-    @Sendable func process_error(_ error: Error)
+    /*@Sendable*/ func process_error(_ error: Error)
     {
         performed = false // Pause performing
         
