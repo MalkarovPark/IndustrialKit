@@ -41,7 +41,43 @@ public class Robot: WorkspaceObject, @unchecked Sendable
     {
         working_area_entity = Entity()
         
-        super.init(name: name, entity_name: entity_name)
+        super.init(name: name)
+        self.perform_load_entity2(named: entity_name)
+        //super.init(name: name, entity_name: entity_name)
+    }
+    
+    private func perform_load_entity2(named name: String)
+    {
+        Task
+        { @MainActor in
+            do
+            {
+                self.entity = try await Entity(named: name)
+                
+                print("🥂 Loaded! (\(name))")
+                
+                guard let entity = entity else { return }
+                
+                entity.generateCollisionShapes(recursive: true)
+                
+                entity.visit
+                { entity in
+                    entity.components.set(EntityModelIdentifier(type: .robot, name: name))
+                }
+                
+                entity.components.set(InputTargetComponent())
+                
+                // Place robot accesories
+                working_area_entity = build_working_area_entity(scale: space_scale)
+                working_area_entity.update_position(origin_position)
+                working_area_entity.isEnabled = false
+                entity.addChild(working_area_entity)
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
     }
     
     /// Inits robot by name, controller, connector and SceneKit scene.
