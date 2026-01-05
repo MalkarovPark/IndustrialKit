@@ -41,8 +41,15 @@ public class Robot: WorkspaceObject, @unchecked Sendable
     {
         working_area_entity = Entity()
         
+        super.init(name: name, entity_name: entity_name)
+    }
+    
+    public init(name: String, entity_name2: String)
+    {
+        working_area_entity = Entity()
+        
         super.init(name: name)
-        self.perform_load_entity2(named: entity_name)
+        self.perform_load_entity2(named: entity_name2)
         //super.init(name: name, entity_name: entity_name)
     }
     
