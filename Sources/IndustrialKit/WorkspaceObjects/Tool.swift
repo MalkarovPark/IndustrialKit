@@ -30,6 +30,11 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         super.init(name: name)
     }
     
+    override init(name: String, entity_name: String)
+    {
+        super.init(name: name, entity_name: entity_name)
+    }
+    
     /// Inits tool by name, controller, connector and scene.
     /*public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {

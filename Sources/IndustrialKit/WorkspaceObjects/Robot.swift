@@ -37,6 +37,13 @@ public class Robot: WorkspaceObject, @unchecked Sendable
         set_default_cell_parameters()
     }
     
+    override init(name: String, entity_name: String)
+    {
+        working_area_entity = Entity()
+        
+        super.init(name: name, entity_name: entity_name)
+    }
+    
     /// Inits robot by name, controller, connector and SceneKit scene.
     /*public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene: SCNScene)
     {
