@@ -7,8 +7,9 @@
 
 import Foundation
 
-//import SceneKit
+#if canImport(RealityKit)
 import RealityKit
+#endif
 import SwiftUI
 
 /**

@@ -7,8 +7,9 @@
 
 import Foundation
 
-//import SceneKit
+#if canImport(RealityKit)
 import RealityKit
+#endif
 import SwiftUI
 
 /**
@@ -22,8 +23,6 @@ public class Robot: WorkspaceObject
     /// Inits robot with default parameters.
     public override init()
     {
-        working_area_entity = Entity()
-        
         super.init()
         set_default_cell_parameters()
     }
@@ -31,16 +30,12 @@ public class Robot: WorkspaceObject
     /// Inits robot by name.
     public override init(name: String)
     {
-        working_area_entity = Entity()
-        
         super.init(name: name)
         set_default_cell_parameters()
     }
     
     public override init(name: String, entity_name: String)
     {
-        working_area_entity = Entity()
-        
         super.init(name: name, entity_name: entity_name)
     }
     
@@ -61,8 +56,6 @@ public class Robot: WorkspaceObject
     /// Inits robot by name, controller, connector and SceneKit scene name.
     public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene_name: String)
     {
-        working_area_entity = Entity()
-        
         super.init(name: name)
         
         //self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
@@ -77,8 +70,6 @@ public class Robot: WorkspaceObject
     /// Inits robot by name and part module.
     public init(name: String, module: RobotModule)
     {
-        working_area_entity = Entity()
-        
         super.init(name: name)
         module_import(module)
         
@@ -87,8 +78,6 @@ public class Robot: WorkspaceObject
     
     public override init(name: String, module_name: String, is_internal: Bool)
     {
-        working_area_entity = Entity()
-        
         super.init(name: name, module_name: module_name, is_internal: is_internal)
         
         set_default_cell_parameters()
@@ -789,7 +778,7 @@ public class Robot: WorkspaceObject
         entity.addChild(working_area_entity)
     }
     
-    private var working_area_entity: Entity //private var working_area_entity = Entity()
+    private var working_area_entity = Entity()
     
     @MainActor public func toggle_working_area_visibility()
     {
@@ -1529,7 +1518,6 @@ public class Robot: WorkspaceObject
         
         self.programs = try container.decode([PositionsProgram].self, forKey: .programs)
         
-        working_area_entity = Entity()
         try super.init(from: decoder)
         
         self.connector.import_connection_parameters_values(try container.decodeIfPresent([String].self, forKey: .connection_parameters))

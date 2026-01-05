@@ -7,8 +7,9 @@
 
 import Foundation
 
-//import SceneKit
+#if canImport(RealityKit)
 import RealityKit
+#endif
 import SwiftUI
 
 /**
@@ -357,52 +358,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     }
 }
 
-// MARK: Workspace Object Data
-public struct WorkspaceObjectModel: Identifiable, Equatable, Hashable, Codable
-{
-    public let id: UUID
-    public var name: String
-    public var module_name: String
-    public var is_internal_module: Bool
-    public var position: [Float] // x, y, z, r, p, w
-    public var is_placed: Bool
-    public var update_interval: Double
-    public var scope_type: ScopeType
-    public var physics_type: PhysicsType?
-    public var figure_color: String?
-    
-    public init(
-        id: UUID = UUID(),
-        name: String,
-        module_name: String,
-        is_internal_module: Bool,
-        position: [Float] = [0, 0, 0, 0, 0, 0],
-        is_placed: Bool = false,
-        update_interval: Double = 0.01,
-        scope_type: ScopeType = .selected,
-        physics_type: PhysicsType? = nil,
-        figure_color: String? = nil
-    )
-    {
-        self.id = id
-        self.name = name
-        self.module_name = module_name
-        self.is_internal_module = is_internal_module
-        self.position = position
-        self.is_placed = is_placed
-        self.update_interval = update_interval
-        self.scope_type = scope_type
-        self.physics_type = physics_type
-        self.figure_color = figure_color
-    }
-}
-
-// MARK: - Entity Tag
-/*public struct EntityModelIdentifier: Component
-{
-    var type: WorkspaceObjectType? = .none // Associated Workspace Object type
-    var name = String() // Associated Workspace Object name
-}*/
 // MARK: - Entity Tag
 public struct EntityModelIdentifier: Component
 {
