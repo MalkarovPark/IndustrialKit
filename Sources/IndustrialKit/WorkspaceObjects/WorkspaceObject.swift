@@ -248,7 +248,7 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     }
     
     /// Places entity to "scene" and connects with handling avalibility.
-    @MainActor func place_entity_at_position(to content: RealityViewCameraContent)
+    @MainActor public func place_entity_at_position(to content: RealityViewCameraContent)
     {
         place_entity(to: content)
         
