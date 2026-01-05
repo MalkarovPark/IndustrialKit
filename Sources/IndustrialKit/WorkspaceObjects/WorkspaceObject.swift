@@ -6,7 +6,9 @@
 //
 
 import Foundation
+
 //import SceneKit
+import RealityKit
 import SwiftUI
 
 /**
@@ -52,6 +54,12 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     public init(name: String)
     {
         self.name = name
+    }
+    
+    public init(name: String, entity_name: String)
+    {
+        self.name = name
+        perform_load_entity(named: entity_name)
     }
     
     /// Inits object by name and module name of installed module.
@@ -174,6 +182,54 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     }
     
     // MARK: - Visual functions
+    
+    #if canImport(RealityKit)
+    /// A workspace object entity for visual modeling and physical simulation.
+    public var entity: Entity?
+    
+    private func perform_load_entity(named name: String)
+    {
+        Task
+        { @MainActor in
+            do
+            {
+                self.entity = try await Entity(named: name)
+                
+                print("🥂 Loaded! (\(name))")
+                
+                guard let entity = entity else { return }
+                
+                entity.generateCollisionShapes(recursive: true)
+                
+                entity.visit
+                { entity in
+                    entity.components.set(entity_tag)
+                }
+                
+                entity.components.set(InputTargetComponent())
+                
+                extend_entity_preparation(entity)
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    open var entity_tag: Component
+    {
+        return EntityModelIdentifier(type: .none, name: name)
+    }
+    
+    @MainActor open func extend_entity_preparation(_ entity: Entity)
+    {
+        
+    }
+    #endif
+    
+    ///Old
+    
     /// Scene file address.
     public var scene_address = ""
     
@@ -187,7 +243,9 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     open var scene_internal_folder_address: String? { nil }
     
     /// Folder access bookmark.
-    // nonisolated(unsafe) public static var folder_bookmark: Data?
+    nonisolated(unsafe) public static var folder_bookmark: Data?
+    
+    ///Old
     
     // MARK: - UI functions
     /// Returns info for object card view (with UIImage).
@@ -252,6 +310,14 @@ open class WorkspaceObject: Identifiable, Equatable, Hashable, ObservableObject,
     }
 }
 
+// MARK: - Entity Tag
+struct EntityModelIdentifier: Component
+{
+    var type: WorkspaceObjectType? = .none // Associated Workspace Object type
+    var name = String() // Associated Workspace Object name
+}
+
+// MARK: - Enums
 public enum ScopeType: String, Codable, Equatable, CaseIterable
 {
     case selected = "Selected"

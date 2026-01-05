@@ -6,7 +6,9 @@
 //
 
 import Foundation
+
 //import SceneKit
+import RealityKit
 import SwiftUI
 
 /**
@@ -662,7 +664,15 @@ public class Tool: WorkspaceObject, @unchecked Sendable
         connector.disconnect()
     }
     
-    // MARK: - Visual build functions
+    // MARK: - Visual Functions
+    #if canImport(RealityKit)
+    override public var entity_tag: any Component
+    {
+        return EntityModelIdentifier(type: .tool, name: name)
+    }
+    #endif
+    
+    /// Old
     public override var scene_node_name: String { "tool" }
     
     /// A tool visual model controller.
@@ -735,6 +745,8 @@ public class Tool: WorkspaceObject, @unchecked Sendable
     {
         attached_to = nil
     }
+    
+    /// Old
     
     // MARK: - Chart functions
     /// A tool charts data.

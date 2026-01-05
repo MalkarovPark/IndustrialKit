@@ -6,13 +6,15 @@
 //
 
 import Foundation
-import SceneKit
+
+import RealityKit
+//import SceneKit
 import SwiftUI//Core
 #if os(macOS)
 import AppKit
 #endif
 
-//MARK: - Angles convertion extension
+// MARK: - Angles convertion extension
 public extension Float
 {
     /// Radians to degrees
@@ -28,8 +30,8 @@ public extension Float
     }
 }
 
-//MARK: - SCNNode edit extensions
-public extension SCNNode
+// MARK: - SCNNode edit extensions
+/*public extension SCNNode
 {
     /// Removes all constraints and refreshes node
     func remove_all_constraints()
@@ -56,9 +58,9 @@ public extension SCNNode
     {
         self.childNodes.forEach { $0.removeFromParentNode() }
     }
-}
+}*/
 
-//MARK: - NSImage to UIImage
+// MARK: - NSImage to UIImage
 #if os(macOS)
 public typealias UIImage = NSImage
 public typealias UIColor = NSColor
@@ -78,7 +80,7 @@ public extension UIImage
 }
 #endif
 
-//MARK: - Safe access to array elements
+// MARK: - Safe access to array elements
 public extension Array
 {
     /// Safe get/set element by index, returns nil if out of bounds
@@ -132,7 +134,7 @@ extension Array where Element == Float
     }
 }*/
 
-public extension Dictionary where Key == String
+/*public extension Dictionary where Key == String
 {
     /// Safe SCNNode get by key with default
     subscript(safe_name key: String, default defaultValue: SCNNode) -> SCNNode
@@ -145,7 +147,7 @@ public extension Dictionary where Key == String
     {
         return self[key] as? SCNNode ?? SCNNode()
     }
-}
+}*/
 
 public extension Dictionary where Key == String
 {
@@ -162,7 +164,7 @@ public extension Dictionary where Key == String
     }
 }
 
-//MARK: - Color by hex import
+// MARK: - Color by hex import
 public extension Color
 {
     /// Initialize Color from HEX string with optional alpha
@@ -264,7 +266,7 @@ extension UIColor
     }
 }
 
-//MARK: - Color to hex
+// MARK: - Color to hex
 extension Color
 {
     /// Returns HEX string of Color
@@ -303,7 +305,7 @@ extension UIColor
 }
 
 //MARK: - Deep SCNNode clone
-public extension SCNNode
+/*public extension SCNNode
 {
     /// Deep clone node including geometry, materials, and children
     func deep_clone() -> SCNNode
@@ -321,9 +323,9 @@ public extension SCNNode
         }
         return clonedNode
     }
-}
+}*/
 
-//MARK: - JSON data output of codable objects
+// MARK: - JSON data output of codable objects
 public extension Encodable
 {
     /// Encodes object to JSON Data (pretty-printed)
@@ -346,7 +348,7 @@ public extension Encodable
     }
 }
 
-//MARK: - JSON string output of codable objects
+// MARK: - JSON string output of codable objects
 public extension Encodable
 {
     /// Encodes object to JSON String (pretty-printed)
@@ -373,7 +375,7 @@ public extension Encodable
     }
 }
 
-//MARK: - Code correction functions
+// MARK: - Code correction functions
 public extension String
 {
     /// Returns code-safe string: spaces → underscores, digits → prefixed _
@@ -383,3 +385,113 @@ public extension String
         return correctedName.prefix(1).rangeOfCharacter(from: .decimalDigits) != nil ? "_\(correctedName)" : correctedName
     }
 }
+
+// MARK: - RealityKit extensions
+#if canImport(RealityKit)
+extension Entity
+{
+    func childEntity(withName name: String, recursively: Bool) -> Entity?
+    {
+        for child in children
+        {
+            if child.name == name
+            {
+                return child
+            }
+            
+            if recursively
+            {
+                if let found = child.childEntity(withName: name, recursively: true)
+                {
+                    return found
+                }
+            }
+        }
+        
+        return nil
+    }
+}
+
+extension Entity
+{
+    func visit(_ action: (Entity) -> Void)
+    {
+        action(self)
+        for child in children
+        {
+            child.visit(action)
+        }
+    }
+}
+
+extension Entity
+{
+    func update_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    {
+        let location = SIMD3<Float>(position.y / 1000, position.z / 1000, position.x / 1000)
+        self.position = location
+        
+        // Apply rotations ONLY to pointer_entity
+        let r_rot = simd_quatf(angle: Float(position.r.to_rad), axis: [0, 0, 1])
+        let p_rot = simd_quatf(angle: Float(position.p.to_rad), axis: [1, 0, 0])
+        let w_rot = simd_quatf(angle: Float(position.w.to_rad), axis: [0, 1, 0])
+        
+        self.orientation = w_rot * p_rot * r_rot
+    }
+}
+
+extension Entity
+{
+    func rotate_x(by radians: Float)
+    {
+        let delta = simd_quatf(angle: radians, axis: [1, 0, 0])
+        transform.rotation = delta * transform.rotation
+    }
+    
+    func rotate_y(by radians: Float)
+    {
+        let delta = simd_quatf(angle: radians, axis: [0, 1, 0])
+        transform.rotation = delta * transform.rotation
+    }
+    
+    func rotate_z(by radians: Float)
+    {
+        let delta = simd_quatf(angle: radians, axis: [0, 0, 1])
+        transform.rotation = delta * transform.rotation
+    }
+    
+    var eulerAngles: SIMD3<Float>
+    {
+        get
+        {
+            let q = transform.rotation
+            
+            let sinr = 2 * (q.real * q.imag.x + q.imag.y * q.imag.z)
+            let cosr = 1 - 2 * (q.imag.x * q.imag.x + q.imag.y * q.imag.y)
+            let x = atan2(sinr, cosr)
+            
+            let sinp = 2 * (q.real * q.imag.y - q.imag.z * q.imag.x)
+            let y = abs(sinp) >= 1 ? copysign(.pi/2, sinp) : asin(sinp)
+            
+            let siny = 2 * (q.real * q.imag.z + q.imag.x * q.imag.y)
+            let cosy = 1 - 2 * (q.imag.y * q.imag.y + q.imag.z * q.imag.z)
+            let z = atan2(siny, cosy)
+            
+            return SIMD3<Float>(x, y, z)
+        }
+        set
+        {
+            let (cx, sx) = (cos(newValue.x * 0.5), sin(newValue.x * 0.5))
+            let (cy, sy) = (cos(newValue.y * 0.5), sin(newValue.y * 0.5))
+            let (cz, sz) = (cos(newValue.z * 0.5), sin(newValue.z * 0.5))
+            
+            let qw = cx * cy * cz + sx * sy * sz
+            let qx = sx * cy * cz - cx * sy * sz
+            let qy = cx * sy * cz + sx * cy * sz
+            let qz = cx * cy * sz - sx * sy * cz
+            
+            transform.rotation = simd_quatf(ix: qx, iy: qy, iz: qz, r: qw)
+        }
+    }
+}
+#endif

@@ -6,7 +6,9 @@
 //
 
 import Foundation
+
 //import SceneKit
+import RealityKit
 import SwiftUI
 
 /**
@@ -14,12 +16,14 @@ import SwiftUI
  
  Permorms reposition operation by target points order in selected positions program.
  */
-public class Robot: WorkspaceObject
+public class Robot: WorkspaceObject, @unchecked Sendable
 {
     // MARK: - Init functions
     /// Inits robot with default parameters.
     public override init()
     {
+        working_area_entity = Entity()
+        
         super.init()
         set_default_cell_parameters()
     }
@@ -27,6 +31,8 @@ public class Robot: WorkspaceObject
     /// Inits robot by name.
     public override init(name: String)
     {
+        working_area_entity = Entity()
+        
         super.init(name: name)
         set_default_cell_parameters()
     }
@@ -48,6 +54,8 @@ public class Robot: WorkspaceObject
     /// Inits robot by name, controller, connector and SceneKit scene name.
     public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene_name: String)
     {
+        working_area_entity = Entity()
+        
         super.init(name: name)
         
         //self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
@@ -62,6 +70,8 @@ public class Robot: WorkspaceObject
     /// Inits robot by name and part module.
     public init(name: String, module: RobotModule)
     {
+        working_area_entity = Entity()
+        
         super.init(name: name)
         module_import(module)
         
@@ -70,6 +80,8 @@ public class Robot: WorkspaceObject
     
     public override init(name: String, module_name: String, is_internal: Bool)
     {
+        working_area_entity = Entity()
+        
         super.init(name: name, module_name: module_name, is_internal: is_internal)
         
         set_default_cell_parameters()
@@ -735,7 +747,106 @@ public class Robot: WorkspaceObject
         connector.disconnect()
     }
     
-    // MARK: - Visual build functions
+    // MARK: - Visual Functions
+    #if canImport(RealityKit)
+    override public var entity_tag: any Component
+    {
+        return EntityModelIdentifier(type: .robot, name: name)
+    }
+    
+    override open func extend_entity_preparation(_ entity: Entity)
+    {
+        // Place robot accesories
+        working_area_entity = build_working_area_entity(scale: space_scale)
+        working_area_entity.update_position(origin_position)
+        working_area_entity.isEnabled = false
+        entity.addChild(working_area_entity)
+    }
+    
+    private var working_area_entity: Entity //private var working_area_entity = Entity()
+    
+    @MainActor public func toggle_working_area_visibility()
+    {
+        working_area_entity.isEnabled.toggle()
+    }
+    
+    @MainActor public func update_working_area_scale()
+    {
+        let is_enabled = working_area_entity.isEnabled
+        
+        working_area_entity.removeFromParent()
+        working_area_entity = build_working_area_entity(scale: space_scale)
+        working_area_entity.isEnabled = is_enabled
+        
+        entity?.addChild(working_area_entity)
+    }
+    
+    @MainActor public func update_working_area_position()
+    {
+        working_area_entity.update_position(origin_position)
+    }
+    
+    @MainActor func build_working_area_entity(scale: (x: Float, y: Float, z: Float)) -> Entity
+    {
+        let box = Entity()
+        
+        let scale = (x: scale.x / 1000, y: scale.y / 1000, z: scale.z / 1000)
+        
+        // Transparent materials for each pair of walls (50% opacity)
+        let red = UIColor.systemRed.withAlphaComponent(0.5)
+        let green = UIColor.systemGreen.withAlphaComponent(0.5)
+        let blue = UIColor.systemBlue.withAlphaComponent(0.5)
+        
+        // Half sizes for positioning
+        let hx = scale.x / 2
+        let hy = scale.y / 2
+        let hz = scale.z / 2
+        
+        // Nested function to create a single wall
+        func make_wall(width: Float, height: Float, color: UIColor, pos: SIMD3<Float>, rot: simd_quatf) -> Entity
+        {
+            let mesh = MeshResource.generatePlane(width: width, depth: height)
+            let wall = ModelEntity(mesh: mesh, materials: [SimpleMaterial(color: color, roughness: 1.0, isMetallic: false)])
+            wall.position = pos
+            wall.orientation = rot
+            return wall
+        }
+        
+        // XY wall (red)
+        let pos_x = SIMD3<Float>(hy, 0, hx)
+        let rot_pos_x = simd_quatf(angle: .pi/2, axis: [0,1,0])
+        box.addChild(make_wall(width: scale.x, height: scale.y, color: red, pos: pos_x, rot: rot_pos_x))
+        
+        // XY wall 2 (red)
+        let neg_x = SIMD3<Float>(hy, scale.z, hx)
+        let rot_neg_x = simd_mul(simd_quatf(angle: .pi/2, axis: [0,1,0]), simd_quatf(angle: .pi, axis: [1,0,0]))
+        box.addChild(make_wall(width: scale.x, height: scale.y, color: red, pos: neg_x, rot: rot_neg_x))
+        
+        // XZ wall (blue)
+        let pos_z = SIMD3<Float>(0, hz, hx)
+        let rot_pos_z = simd_mul(simd_quatf(angle: .pi/2, axis: [1,0,0]), simd_quatf(angle: -.pi/2, axis: [0,0,1]))
+        box.addChild(make_wall(width: scale.x, height: scale.z, color: blue, pos: pos_z, rot: rot_pos_z))
+        
+        // XZ wall 2 (blue)
+        let neg_z = SIMD3<Float>(scale.y, hz, hx)
+        let rot_neg_z = simd_mul(simd_quatf(angle: .pi/2, axis: [1,0,0]), simd_quatf(angle: .pi/2, axis: [0,0,1]))
+        box.addChild(make_wall(width: scale.x, height: scale.z, color: blue, pos: neg_z, rot: rot_neg_z))
+        
+        // YZ wall (green)
+        let pos_y = SIMD3<Float>(hy, hz, 0)
+        let rot_pos_y = simd_quatf(angle: .pi/2, axis: [1,0,0])
+        box.addChild(make_wall(width: scale.y, height: scale.z, color: green, pos: pos_y, rot: rot_pos_y))
+        
+        // YZ wall 2 (green)
+        let neg_y = SIMD3<Float>(hy, hz, scale.x)
+        let rot_neg_y = simd_quatf(angle: -.pi/2, axis: [1,0,0])
+        box.addChild(make_wall(width: scale.y, height: scale.z, color: green, pos: neg_y, rot: rot_neg_y))
+        
+        return box
+    }
+    #endif
+    
+    /// Old
     public override var scene_node_name: String { "robot" }
     
     /// A robot visual model controller.
@@ -1153,6 +1264,8 @@ public class Robot: WorkspaceObject
         }*/
     }
     
+    /// Old
+    
     // MARK: - Chart functions
     /// A robot charts data.
     @Published public var charts_data: [WorkspaceObjectChart]?
@@ -1390,6 +1503,7 @@ public class Robot: WorkspaceObject
         
         self.programs = try container.decode([PositionsProgram].self, forKey: .programs)
         
+        working_area_entity = Entity()
         try super.init(from: decoder)
         
         self.connector.import_connection_parameters_values(try container.decodeIfPresent([String].self, forKey: .connection_parameters))

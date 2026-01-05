@@ -6,7 +6,9 @@
 //
 
 import Foundation
-import SceneKit
+
+//import SceneKit
+import RealityKit
 import SwiftUI
 
 /**
@@ -101,8 +103,149 @@ public class PositionsProgram: Identifiable, Codable, Equatable
     }
     
     // MARK: - Visual functions
+    
+    #if canImport(RealityKit)
+    @MainActor public func entity(_ point_index: Int? = nil) -> Entity
+    {
+        // MARK: - Color definitions
+        let target_point_color = UIColor.systemPurple
+        let selected_point_color = UIColor.systemIndigo
+        let cylinder_color = UIColor.white.withAlphaComponent(0.75)
+        
+        let positions_group = Entity()
+        
+        if points.count > 0
+        {
+            var point_location = SIMD3<Float>()
+            
+            if points.count > 1
+            {
+                var is_first = true
+                var pivot_points: [SIMD3<Float>] = [SIMD3<Float>(), SIMD3<Float>()]
+                var index = 0
+                
+                for point in points
+                {
+                    let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: target_point_color, isMetallic: false)])
+                    
+                    node_by_data(node: visual_point, point: point, location: &point_location)
+                    
+                    if let selected_index = point_index, selected_index == index
+                    {
+                        visual_point.model?.materials = [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)]
+                    }
+                    else
+                    {
+                        visual_point.model?.materials = [SimpleMaterial(color: target_point_color, roughness: 1.0, isMetallic: false)]
+                    }
+                    
+                    if is_first
+                    {
+                        pivot_points[0] = point_location
+                        is_first = false
+                    }
+                    else
+                    {
+                        pivot_points[1] = point_location + SIMD3<Float>(.random(in: Float(-0.000001)..<Float(0.000001)), .random(in: Float(-0.000001)..<Float(0.000001)), .random(in: Float(-0.000001)..<Float(0.000001)))
+                        
+                        positions_group.addChild(build_ptp_line(from: pivot_points[0], to: pivot_points[1]))
+                        pivot_points[0] = pivot_points[1]
+                    }
+                    
+                    positions_group.addChild(visual_point)
+                    index += 1
+                }
+            }
+            else
+            {
+                let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.002)), materials: [SimpleMaterial(color: target_point_color, isMetallic: false)])
+                
+                let point = points.first ?? PositionPoint()
+                node_by_data(node: visual_point, point: point, location: &point_location)
+                
+                if point_index == 0
+                {
+                    visual_point.model?.materials = [SimpleMaterial(color: selected_point_color, isMetallic: false)]
+                }
+                else
+                {
+                    visual_point.model?.materials = [SimpleMaterial(color: target_point_color, isMetallic: false)]
+                }
+                
+                positions_group.addChild(visual_point)
+            }
+        }
+        
+        return positions_group
+        
+        // Functions
+        func build_ptp_line(from: SIMD3<Float>, to: SIMD3<Float>) -> Entity
+        {
+            let vector = to - from
+            let height = length(vector)
+            
+            let cylinder_mesh = MeshResource.generateCylinder(height: height, radius: Float(0.001))
+            let line_entity = ModelEntity(mesh: cylinder_mesh, materials: [SimpleMaterial(color: cylinder_color, roughness: 1.0, isMetallic: false)])
+            
+            line_entity.position = from + vector / 2
+            
+            let up_axis = SIMD3<Float>(0, 1, 0)
+            let rotation_quat = simd_quaternion(up_axis, normalize(vector))
+            line_entity.orientation = rotation_quat
+            
+            return line_entity
+        }
+        
+        func node_by_data(node: ModelEntity, point: PositionPoint, location: inout SIMD3<Float>)
+        {
+            location = SIMD3<Float>(point.y / 1000, point.z / 1000, point.x / 1000)
+            node.position = location
+            
+            let cones_entity = build_cones() // pointer without rotation
+            
+            // Apply rotations ONLY to pointer_entity
+            let r_rot = simd_quatf(angle: Float(point.r.to_rad), axis: [0, 0, 1])
+            let p_rot = simd_quatf(angle: Float(point.p.to_rad), axis: [1, 0, 0])
+            let w_rot = simd_quatf(angle: Float(point.w.to_rad), axis: [0, 1, 0])
+            
+            cones_entity.orientation = w_rot * p_rot * r_rot
+            
+            node.addChild(cones_entity)
+            
+            // The node itself remains without rotation or has identity rotation
+            node.orientation = simd_quatf() // optional, explicit identity rotation
+        }
+        
+        func build_cones() -> Entity
+        {
+            let colors: [UIColor] = [
+                UIColor.systemIndigo/*.withAlphaComponent(0.75)*/,
+                UIColor.systemPink/*.withAlphaComponent(0.75)*/,
+                UIColor.systemTeal/*.withAlphaComponent(0.75)*/
+            ]
+            let rotations: [SIMD3<Float>] = [[.pi/2,0,0],[0,0,-.pi/2],[0,0,0]]
+            let positions: [SIMD3<Float>] = [[0,0,Float(0.008)],[Float(0.008),0,0],[0,Float(0.008),0]]
+            
+            let parent = Entity()
+            
+            for i in 0..<3
+            {
+                let cone = ModelEntity(mesh: .generateCone(height: 0.004, radius: 0.002), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
+                
+                cone.position = positions[i]
+                cone.eulerAngles = rotations[i]
+                
+                parent.addChild(cone)
+            }
+            
+            return parent
+        }
+    }
+    #endif
+    
+    /// Old
     /// A node with all positions points model.
-    public var positions_group = SCNNode()
+    //public var positions_group = SCNNode()
     
     /// An index of selected point for edit.
     public var selected_point_index = -1
@@ -131,7 +274,7 @@ public class PositionsProgram: Identifiable, Codable, Equatable
     #endif
     
     /// Returns a cone node for point.
-    private var cone_node: SCNNode
+    /*private var cone_node: SCNNode
     {
         // Building cones showing tool rotation at point
         let cone_node = SCNNode()
@@ -149,13 +292,13 @@ public class PositionsProgram: Identifiable, Codable, Equatable
         }
         
         return cone_node
-    }
+    }*/
     
     // MARK: Build points visual model
     /// Builds visual model of positions program.
     public func visual_build()
     {
-        visual_clear()
+        /*visual_clear()
         
         if points.count > 0
         {
@@ -284,14 +427,16 @@ public class PositionsProgram: Identifiable, Codable, Equatable
             node.eulerAngles.x = point.p.to_rad
             node.eulerAngles.y = point.w.to_rad
             #endif
-        }
+        }*/
     }
     
     /// Removes positions points models from cell.
     public func visual_clear()
     {
-        positions_group.remove_all_child_nodes()
+        //positions_group.remove_all_child_nodes()
     }
+    
+    /// Old
     
     // MARK: - Work with file system
     private enum CodingKeys: String, CodingKey

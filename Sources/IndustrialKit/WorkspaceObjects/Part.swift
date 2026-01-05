@@ -6,7 +6,9 @@
 //
 
 import Foundation
+
 //import SceneKit
+import RealityKit
 import SwiftUI
 
 /**
@@ -207,7 +209,15 @@ public class Part: WorkspaceObject
         }*/
     }
     
-    // MARK: - Visual build functions
+    // MARK: - Visual Functions
+    #if canImport(RealityKit)
+    override public var entity_tag: any Component
+    {
+        return EntityModelIdentifier(type: .part, name: name)
+    }
+    #endif
+    
+    /// Old
     public override var scene_node_name: String { "part" }
     
     /*public func node_by_description()
@@ -345,6 +355,7 @@ public class Part: WorkspaceObject
         node?.rotation.y = 0
         node?.rotation.z = 0*/
     }
+    /// Old
     
     // MARK: - UI functions
     /// Part model color.

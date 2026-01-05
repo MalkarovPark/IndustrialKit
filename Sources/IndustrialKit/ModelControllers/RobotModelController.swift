@@ -221,7 +221,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     public func nodes_connect(_ node: SCNNode, pointer: SCNNode, pointer_internal: SCNNode)
     {
-        connect_nodes(of: node)
+        /*connect_nodes(of: node)
         
         pointer_node = pointer
         pointer_node_internal = pointer_internal
@@ -235,7 +235,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         if let parent_node = pointer.parent, let alt_pointer_node = alt_pointer_node
         {
             parent_node.addChildNode(alt_pointer_node)
-        }
+        }*/
     }
     
     public override func disconnect_nodes()
