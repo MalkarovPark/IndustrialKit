@@ -73,16 +73,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     public func update_pointer_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
-        // Apply origin shift
-        var position = position
-        position.x += origin_shift.x
-        position.y += origin_shift.y
-        position.z += origin_shift.z
-        
         pointer_entity?.update_position(position)
     }
-    
-    public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
     
     /// Robot teach pointer.
     public var pointer_entity: Entity?

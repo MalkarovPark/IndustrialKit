@@ -773,17 +773,21 @@ public class Robot: WorkspaceObject
         working_area_entity.update_position(origin_position)
         working_area_entity.isEnabled = false
         
-        entity.addChild(working_area_entity)
+        origin_entity.addChild(working_area_entity)
         
         position_pointer_entity = build_position_pointer_entity()
         position_pointer_entity.isEnabled = false
         
-        entity.addChild(position_pointer_entity)
+        origin_entity.addChild(position_pointer_entity)
+        
+        entity.addChild(origin_entity)
         
         // Connect robot parts
         model_controller.disconnect_entities()
         model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
     }
+    
+    private var origin_entity = Entity()
     
     // MARK: Working Area Entity
     private var working_area_entity = Entity()
@@ -801,10 +805,10 @@ public class Robot: WorkspaceObject
         working_area_entity = build_working_area_entity(scale: space_scale)
         working_area_entity.isEnabled = is_enabled
         
-        entity?.addChild(working_area_entity)
+        origin_entity.addChild(working_area_entity)
     }
     
-    @MainActor public func update_working_area_position()
+    @MainActor public func update_origin_position()
     {
         var origin_position = origin_position
         
@@ -812,7 +816,7 @@ public class Robot: WorkspaceObject
         origin_position.y += origin_shift.y
         origin_position.z += origin_shift.z
         
-        working_area_entity.update_position(origin_position)
+        origin_entity.update_position(origin_position)
     }
     
     @MainActor func build_working_area_entity(scale: (x: Float, y: Float, z: Float)) -> Entity
@@ -948,13 +952,6 @@ public class Robot: WorkspaceObject
         {
             if demo
             {
-                // Origin Position + Origin Shift for Model Controller
-                var origin_shift = origin_shift
-                origin_shift.x += origin_position.x
-                origin_shift.y += origin_position.y
-                origin_shift.z += origin_position.z
-                model_controller.origin_shift = origin_shift
-                
                 model_controller.pointer_position = pointer_position
                 
                 do
@@ -992,7 +989,7 @@ public class Robot: WorkspaceObject
             update_position()
             
             #if canImport(RealityKit)
-            update_working_area_position()
+            update_origin_position()
             #endif
         }
     }
@@ -1016,7 +1013,7 @@ public class Robot: WorkspaceObject
         didSet
         {
             #if canImport(RealityKit)
-            update_working_area_position()
+            update_origin_position()
             #endif
         }
     }
