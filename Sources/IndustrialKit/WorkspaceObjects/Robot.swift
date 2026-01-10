@@ -990,6 +990,10 @@ public class Robot: WorkspaceObject
         didSet
         {
             update_position()
+            
+            #if canImport(RealityKit)
+            update_working_area_position()
+            #endif
         }
     }
     
@@ -999,17 +1003,23 @@ public class Robot: WorkspaceObject
         didSet
         {
             position_points_shift()
+            
+            #if canImport(RealityKit)
+            update_working_area_scale()
+            #endif
         }
     }
     
     /// A robot cell box default shift.
     public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
-    /*{
+    {
         didSet
         {
-            
+            #if canImport(RealityKit)
+            update_working_area_position()
+            #endif
         }
-    }*/
+    }
     
     /**
      Shifts positions when reducing the robot workcell area.
