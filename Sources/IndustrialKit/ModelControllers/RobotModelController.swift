@@ -59,12 +59,6 @@ open class RobotModelController: ModelController, @unchecked Sendable
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
     public var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
-    /*{
-        didSet
-        {
-            update_model()
-        }
-    }*/
     
     /**
      Updates the pointer’s position and orientation in the scene.
@@ -79,19 +73,16 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     public func update_pointer_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
-        pointer_entity?.update_position(position)
-        /*pointer_node?.position = SCNVector3(position.y, position.z, position.x)
+        // Apply origin shift
+        var position = position
+        position.x += origin_shift.x
+        position.y += origin_shift.y
+        position.z += origin_shift.z
         
-        #if os(macOS)
-        pointer_node?.eulerAngles.x = CGFloat(position.p.to_rad)
-        pointer_node?.eulerAngles.y = CGFloat(position.w.to_rad)
-        pointer_node_internal?.eulerAngles.z = CGFloat(position.r.to_rad)
-        #else
-        pointer_node?.eulerAngles.x = position.r.to_rad
-        pointer_node?.eulerAngles.y = position.p.to_rad
-        pointer_node_internal?.eulerAngles.z = position.w.to_rad
-        #endif*/
+        pointer_entity?.update_position(position)
     }
+    
+    public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
     
     /// Robot teach pointer.
     public var pointer_entity: Entity?
@@ -133,17 +124,6 @@ open class RobotModelController: ModelController, @unchecked Sendable
     private func update_alt_pointer_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
         alt_pointer_entity?.update_position(position)
-        /*alt_pointer_node?.position = SCNVector3(position.y, position.z, position.x)
-        
-        #if os(macOS)
-        alt_pointer_node?.eulerAngles.x = CGFloat(position.y.to_rad)
-        alt_pointer_node?.eulerAngles.y = CGFloat(position.z.to_rad)
-        alt_pointer_node?.eulerAngles.z = CGFloat(position.x.to_rad)
-        #else
-        alt_pointer_node?.eulerAngles.x = position.y.to_rad
-        alt_pointer_node?.eulerAngles.y = position.z.to_rad
-        alt_pointer_node?.eulerAngles.z = position.x.to_rad
-        #endif*/
     }
     
     /// Robot alt teach pointer.
@@ -190,6 +170,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
     public func update_model() throws
     {
         update_pointer_position(pointer_position)
+        
         do
         {
             try update_entities_by_pointer_position()
@@ -219,7 +200,6 @@ open class RobotModelController: ModelController, @unchecked Sendable
      - Parameters:
         - node: A root node of workspace object model.
         - pointer: A node of pointer for robot.
-        - pointer_internal: An internal node of pointer for robot.
      */
     public func connect_entities(_ entity: Entity, pointer_entity: Entity)
     {

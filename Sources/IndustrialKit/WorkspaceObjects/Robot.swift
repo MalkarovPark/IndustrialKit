@@ -948,7 +948,15 @@ public class Robot: WorkspaceObject
         {
             if demo
             {
+                // Origin Position + Origin Shift for Model Controller
+                var origin_shift = origin_shift
+                origin_shift.x += origin_position.x
+                origin_shift.y += origin_position.y
+                origin_shift.z += origin_position.z
+                model_controller.origin_shift = origin_shift
+                
                 model_controller.pointer_position = pointer_position
+                
                 do
                 {
                     try model_controller.update_model()
