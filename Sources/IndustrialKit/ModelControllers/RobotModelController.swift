@@ -6,13 +6,13 @@
 //
 
 import Foundation
-import SceneKit
+import RealityKit
 
 ///Provides control over visual model for robot.
 open class RobotModelController: ModelController, @unchecked Sendable
 {
     /**
-     Updates nodes positions of robot model by target position and origin parameters.
+     Updates entities positions of robot model by target position and origin parameters.
      
      - Parameters:
         - pointer_location: The target position location components – *x*, *y*, *z*.
@@ -22,12 +22,12 @@ open class RobotModelController: ModelController, @unchecked Sendable
      
      > Pre-transforms the position in space depending on the rotation of the tool coordinate system.
      */
-    public func update_nodes(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
+    public func update_entities(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
                              origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
     {
         do
         {
-            try update_nodes_positions(pointer_position: origin_transform(pointer_position: pointer_position,
+            try update_entities_positions(pointer_position: origin_transform(pointer_position: pointer_position,
                                                                           origin_position: origin_position),
                                        origin_position: origin_position)
         }
@@ -38,7 +38,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
     }
     
     /**
-     Updates nodes positions of robot model by target position and origin parameters.
+     Updates entities positions of robot model by target position and origin parameters.
      
      - Parameters:
         - pointer_location: The target position location components – *x*, *y*, *z*.
@@ -46,7 +46,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         - origin_location: The workcell origin location components – *x*, *y*, *z*.
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      */
-    open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
+    open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
                                      origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
     {
         
@@ -79,7 +79,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     public func update_pointer_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
-        pointer_node?.position = SCNVector3(position.y, position.z, position.x)
+        pointer_entity?.update_position(position)
+        /*pointer_node?.position = SCNVector3(position.y, position.z, position.x)
         
         #if os(macOS)
         pointer_node?.eulerAngles.x = CGFloat(position.p.to_rad)
@@ -89,14 +90,14 @@ open class RobotModelController: ModelController, @unchecked Sendable
         pointer_node?.eulerAngles.x = position.r.to_rad
         pointer_node?.eulerAngles.y = position.p.to_rad
         pointer_node_internal?.eulerAngles.z = position.w.to_rad
-        #endif
+        #endif*/
     }
     
     /// Robot teach pointer.
-    public var pointer_node: SCNNode?
+    public var pointer_entity: Entity?
     
     /// Node for internal element.
-    public var pointer_node_internal: SCNNode?
+    public var pointer_entity_internal: Entity?
     
     // MARK: Alt pointer
     /**
@@ -131,7 +132,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     private func update_alt_pointer_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
-        alt_pointer_node?.position = SCNVector3(position.y, position.z, position.x)
+        alt_pointer_entity?.update_position(position)
+        /*alt_pointer_node?.position = SCNVector3(position.y, position.z, position.x)
         
         #if os(macOS)
         alt_pointer_node?.eulerAngles.x = CGFloat(position.y.to_rad)
@@ -141,16 +143,16 @@ open class RobotModelController: ModelController, @unchecked Sendable
         alt_pointer_node?.eulerAngles.x = position.y.to_rad
         alt_pointer_node?.eulerAngles.y = position.z.to_rad
         alt_pointer_node?.eulerAngles.z = position.x.to_rad
-        #endif
+        #endif*/
     }
     
     /// Robot alt teach pointer.
-    public var alt_pointer_node: SCNNode?
+    public var alt_pointer_entity: Entity?
     
     /// Toggles view for alt pointer.
     public func toggle_alt_pointer(_ hidden: Bool)
     {
-        alt_pointer_node?.isHidden = hidden
+        alt_pointer_entity?.isEnabled = !hidden
         
         if hidden
         {
@@ -190,7 +192,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         update_pointer_position(pointer_position)
         do
         {
-            try update_nodes_by_pointer_position()
+            try update_entities_by_pointer_position()
         }
         catch
         {
@@ -198,12 +200,12 @@ open class RobotModelController: ModelController, @unchecked Sendable
         }
     }
     
-    /// Updates robot nodes by current pointer and origin parameters.
-    public func update_nodes_by_pointer_position() throws
+    /// Updates robot entities by current pointer and origin parameters.
+    public func update_entities_by_pointer_position() throws
     {
         do
         {
-            try update_nodes(pointer_position: pointer_position, origin_position: origin_position)
+            try update_entities(pointer_position: pointer_position, origin_position: origin_position)
         }
         catch
         {
@@ -212,16 +214,19 @@ open class RobotModelController: ModelController, @unchecked Sendable
     }
     
     /**
-     Gets parts nodes links from model root node and pass to array.
+     Gets parts entities links from model root node and pass to array.
      
      - Parameters:
         - node: A root node of workspace object model.
         - pointer: A node of pointer for robot.
         - pointer_internal: An internal node of pointer for robot.
      */
-    public func nodes_connect(_ node: SCNNode, pointer: SCNNode, pointer_internal: SCNNode)
+    public func connect_entities(_ entity: Entity, pointer_entity: Entity)
     {
-        /*connect_nodes(of: node)
+        connect_entities(of: entity)
+        self.pointer_entity = pointer_entity
+        
+        /*connect_entities(of: node)
         
         pointer_node = pointer
         pointer_node_internal = pointer_internal
@@ -238,10 +243,10 @@ open class RobotModelController: ModelController, @unchecked Sendable
         }*/
     }
     
-    public override func disconnect_nodes()
+    public override func disconnect_entities()
     {
-        nodes.removeAll()
-        pointer_node = SCNNode()
+        entities.removeAll()
+        pointer_entity = Entity()
     }
     
     /// Cancel perform flag.
@@ -375,13 +380,13 @@ open class RobotModelController: ModelController, @unchecked Sendable
         }
     }
     
-    open override func reset_nodes()
+    open override func reset_entities()
     {
         
     }
     
     /**
-     Applies position updates to scene nodes based on a list of string commands.
+     Applies position updates to scene entities based on a list of string commands.
      
      Each string in `lines` must be in the format `"nodeName position"`, where:
      - `nodeName` is the identifier of the node to update.
@@ -391,7 +396,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
      
      - Parameter lines: An array of strings, each containing a node name and its target position separated by a space.
      */
-    public func apply_nodes_positions(by lines: [String])
+    public func apply_entities_positions(by lines: [String])
     {
         #if os(macOS)
         let updates: [(String, String)] = lines.compactMap
@@ -400,20 +405,20 @@ open class RobotModelController: ModelController, @unchecked Sendable
             return components.count == 2 ? (components[0], components[1]) : nil
         }
         
-        DispatchQueue.main.async
+        /*DispatchQueue.main.async
         {
             for (node_name, action_string) in updates
             {
-                set_position(for: self.nodes[safe: node_name, default: SCNNode()], from: action_string)
+                set_position(for: self.entities[safe: node_name, default: Entity()], from: action_string)
             }
             
-            self.is_nodes_updating = false
-        }
+            self.is_entities_updating = false
+        }*/
         #endif
     }
     
     #if os(macOS)
-    internal var is_nodes_updating = false
+    internal var is_entities_updating = false
     #endif
 }
 
@@ -427,12 +432,12 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     /// For access to code.
     public var package_url: URL
     
-    public init(_ module_name: String, package_url: URL, nodes_names: [String])
+    public init(_ module_name: String, package_url: URL, entities_names: [String])
     {
         self.module_name = module_name
         self.package_url = package_url
         
-        self.external_nodes_names = nodes_names
+        self.external_entities_names = entities_names
     }
     
     required init()
@@ -442,20 +447,20 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     }
     
     // MARK: Parameters import
-    override open var nodes_names: [String]
+    override open var entities_names: [String]
     {
-        return external_nodes_names
+        return external_entities_names
     }
     
-    public var external_nodes_names = [String]()
+    public var external_entities_names = [String]()
     
     // MARK: Modeling
-    override open func update_nodes_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
+    override open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
                                               origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
         #if os(macOS)
-        guard !is_nodes_updating else { return }
-        is_nodes_updating = true
+        guard !is_entities_updating else { return }
+        is_entities_updating = true
         
         DispatchQueue.global(qos: .utility).async
         {
@@ -471,20 +476,20 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
                 "\(origin_position.r)",  "\(origin_position.p)",  "\(origin_position.w)"
             ]
 
-            send_via_unix_socket(at:   "/tmp/\(self.module_name)_robot_controller_socket", with: ["update_nodes_positions"] + (pointer_position + origin_position).map { "\($0)" })
+            send_via_unix_socket(at:   "/tmp/\(self.module_name)_robot_controller_socket", with: ["update_entities_positions"] + (pointer_position + origin_position).map { "\($0)" })
             { output in
-                self.apply_nodes_positions(by: output.split(separator: "\n").map { String($0) })
+                self.apply_entities_positions(by: output.split(separator: "\n").map { String($0) })
             }
         }
         #endif
     }
     
-    open override func reset_nodes()
+    open override func reset_entities()
     {
         #if os(macOS)
-        send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["reset_nodes"])
+        send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["reset_entities"])
         { output in
-            self.apply_nodes_positions(by: output.split(separator: "\n").map { String($0) })
+            self.apply_entities_positions(by: output.split(separator: "\n").map { String($0) })
         }
         #endif
     }

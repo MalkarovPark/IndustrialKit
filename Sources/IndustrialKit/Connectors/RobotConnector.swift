@@ -277,13 +277,13 @@ public class ExternalRobotConnector: RobotConnector
             
             if let nodes_positions = external_nodes_positions // Update nodes positions by connector (real device)
             {
-                model_controller?.apply_nodes_positions(by: nodes_positions)
+                model_controller?.apply_entities_positions(by: nodes_positions)
             }
             else // Update nodes positions by model controller (simulated device)
             {
                 do
                 {
-                    try model_controller?.update_nodes(pointer_position: position, origin_position: origin_position)
+                    try model_controller?.update_entities(pointer_position: position, origin_position: origin_position)
                 }
                 catch
                 {

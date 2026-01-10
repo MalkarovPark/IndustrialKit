@@ -506,7 +506,7 @@ public class Tool: WorkspaceObject
             if demo
             {
                 model_controller.remove_all_model_actions()
-                model_controller.reset_nodes()
+                model_controller.reset_entities()
             }
             else
             {
@@ -577,7 +577,7 @@ public class Tool: WorkspaceObject
         if demo
         {
             model_controller.remove_all_model_actions()
-            model_controller.reset_nodes()
+            model_controller.reset_entities()
         }
         else
         {
@@ -651,7 +651,7 @@ public class Tool: WorkspaceObject
             if demo
             {
                 model_controller.remove_all_model_actions()
-                model_controller.reset_nodes()
+                model_controller.reset_entities()
             }
             else
             {
@@ -713,7 +713,7 @@ public class Tool: WorkspaceObject
             }
             else
             {
-                connector.model_controller?.reset_nodes()
+                connector.model_controller?.reset_entities()
                 connector.model_controller = nil
             }
         }
@@ -739,7 +739,7 @@ public class Tool: WorkspaceObject
             }
         }
         
-        // model_controller.disconnect_nodes()
+        // model_controller.disconnect_entities()
         model_controller.connect_nodes(of: unit_node)
         
         //model_controller.info_output = self.info_output
@@ -749,7 +749,7 @@ public class Tool: WorkspaceObject
     public func workcell_disconnect()
     {
         model_controller.remove_all_model_actions()
-        model_controller.disconnect_nodes()
+        model_controller.disconnect_entities()
         //model_controller.info_output = nil
         
         // connector.model_controller = nil

@@ -46,14 +46,14 @@ open class ToolModelController: ModelController, @unchecked Sendable
     /// Stops connected model actions performation.
     public final func remove_all_model_actions()
     {
-        for (_, node) in nodes // Remove all node actions
+        /*for (_, node) in nodes // Remove all node actions
         {
             node.removeAllActions()
         }
         
         #if os(macOS)
         nodes_actions_performing_count = 0
-        #endif
+        #endif*/
     }
     
     /// Inforamation code updated by model controller.
@@ -73,7 +73,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
      */
     public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
-        #if os(macOS)
+        /*#if os(macOS)
         if nodes_actions_performing_count > 0
         {
             completion()
@@ -109,7 +109,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
         }
         #else
         completion()
-        #endif
+        #endif*/
     }
     
     #if os(macOS)
@@ -155,7 +155,7 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     }
     
     // MARK: Parameters import
-    override open var nodes_names: [String]
+    override open var entities_names: [String]
     {
         return external_nodes_names
     }
@@ -182,7 +182,7 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
         #endif
     }
     
-    open override func reset_nodes()
+    open override func reset_entities()
     {
         #if os(macOS)
         send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["reset_nodes"])

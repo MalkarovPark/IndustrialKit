@@ -370,9 +370,6 @@ public class Robot: WorkspaceObject
     }
     
     // MARK: - Moving functions
-    /// A drawing path flag.
-    public var draw_path = false
-    
     /// A moving state of robot.
     public var performed = false
     
@@ -564,7 +561,7 @@ public class Robot: WorkspaceObject
             if demo
             {
                 model_controller.canceled = true
-                model_controller.reset_nodes()
+                model_controller.reset_entities()
             }
             else
             {
@@ -641,7 +638,7 @@ public class Robot: WorkspaceObject
         if demo
         {
             //model_controller.remove_all_model_actions()
-            model_controller.reset_nodes()
+            model_controller.reset_entities()
         }
         else
         {
@@ -708,7 +705,7 @@ public class Robot: WorkspaceObject
             if demo
             {
                 model_controller.canceled = true
-                model_controller.reset_nodes()
+                model_controller.reset_entities()
             }
             else
             {
@@ -775,9 +772,20 @@ public class Robot: WorkspaceObject
         working_area_entity = build_working_area_entity(scale: space_scale)
         working_area_entity.update_position(origin_position)
         working_area_entity.isEnabled = false
+        
         entity.addChild(working_area_entity)
+        
+        position_pointer_entity = build_position_pointer_entity()
+        position_pointer_entity.isEnabled = false
+        
+        entity.addChild(position_pointer_entity)
+        
+        // Connect robot parts
+        model_controller.disconnect_entities()
+        model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
     }
     
+    // MARK: Working Area Entity
     private var working_area_entity = Entity()
     
     @MainActor public func toggle_working_area_visibility()
@@ -798,6 +806,12 @@ public class Robot: WorkspaceObject
     
     @MainActor public func update_working_area_position()
     {
+        var origin_position = origin_position
+        
+        origin_position.x += origin_shift.x
+        origin_position.y += origin_shift.y
+        origin_position.z += origin_shift.z
+        
         working_area_entity.update_position(origin_position)
     }
     
@@ -859,10 +873,38 @@ public class Robot: WorkspaceObject
         
         return box
     }
-    #endif
     
-    /// Old
-    public override var scene_node_name: String { "robot" }
+    // MARK: Position Pointer Entity
+    private var position_pointer_entity = Entity()
+    
+    @MainActor func build_position_pointer_entity() -> Entity
+    {
+        let colors: [UIColor] = [
+            UIColor.systemIndigo/*.withAlphaComponent(0.75)*/,
+            UIColor.systemPink/*.withAlphaComponent(0.75)*/,
+            UIColor.systemTeal/*.withAlphaComponent(0.75)*/
+        ]
+        let rotations: [SIMD3<Float>] = [[.pi/2,0,0],[0,0,-.pi/2],[0,0,0]]
+        let positions: [SIMD3<Float>] = [[0,0,Float(0.00425)],[Float(0.00425),0,0],[0,Float(0.00425),0]]
+        
+        let parent = Entity()
+        
+        for i in 0..<3
+        {
+            //let point = ModelEntity(mesh: .generateSphere(radius: Float(0.005)), materials: [SimpleMaterial(color: .white.withAlphaComponent(0.5), roughness: 1.0, isMetallic: false)])
+            
+            let cone = ModelEntity(mesh: .generateCylinder(height: Float(0.0125), radius: Float(0.002)), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
+            
+            cone.position = positions[i]
+            cone.eulerAngles = rotations[i]
+            
+            //parent.addChild(point)
+            parent.addChild(cone)
+        }
+        
+        return parent
+    }
+    #endif
     
     /// A robot visual model controller.
     public var model_controller = RobotModelController()
@@ -888,147 +930,11 @@ public class Robot: WorkspaceObject
             }
             else
             {
-                connector.model_controller?.reset_nodes()
+                connector.model_controller?.reset_entities()
                 connector.model_controller = nil
             }
         }
     }
-    
-    // Robot workcell unit nodes references
-    /*/// Robot unit node with manipulator node.
-    public var unit_node: SCNNode?
-    
-    /// Box bordered cell workspace.
-    public var box_node: SCNNode?
-    
-    /// Camera.
-    public var camera_node: SCNNode?
-    
-    /// Robot teach pointer.
-    public var pointer_node: SCNNode?
-    
-    /// Node for internal element.
-    public var pointer_node_internal: SCNNode?
-    
-    /// Teach points.
-    public var points_node: SCNNode?
-    
-    /// Current robot.
-    public var robot_node: SCNNode?
-    
-    /// Robot space.
-    public var space_node:SCNNode?
-    
-    /// Node for tool attachment.
-    public var tool_node: SCNNode?*/
-    
-    /**
-     Connects to robot model in scene.
-     - Parameters:
-        - scene: A current scene.
-        - name: A robot name.
-        - connect_camera: Place camera to robot's camera node.
-     
-     > The scene should contain nodes named: box, space, pointer, internal, points.
-     */
-    /*public func workcell_connect(scene: SCNScene, name: String, connect_camera: Bool)
-    {
-        // Find nodes from scene by names or add them
-        if let node = scene.rootNode.childNode(withName: name, recursively: true)
-        {
-            self.unit_node = node
-        }
-        else
-        {
-            self.unit_node = SCNNode()
-            self.unit_node?.name = name
-            scene.rootNode.addChildNode(self.unit_node!)
-        }
-
-        if let node = self.unit_node?.childNode(withName: "space", recursively: true)
-        {
-            self.space_node = node
-        }
-        else
-        {
-            self.space_node = SCNNode()
-            self.space_node?.name = "space"
-            self.unit_node?.addChildNode(self.space_node!)
-        }
-        
-        if let node = self.space_node?.childNode(withName: "box", recursively: true)
-        {
-            self.box_node = node
-        }
-        else
-        {
-            self.box_node = SCNNode()
-            self.box_node?.name = "box"
-            self.space_node?.addChildNode(self.box_node!)
-        }
-
-        if let node = self.space_node?.childNode(withName: "pointer", recursively: true)
-        {
-            self.pointer_node = node
-        }
-        else
-        {
-            self.pointer_node = SCNNode()
-            self.pointer_node?.name = "pointer"
-            self.space_node?.addChildNode(self.pointer_node!)
-        }
-
-        if let node = self.pointer_node?.childNode(withName: "internal", recursively: true)
-        {
-            self.pointer_node_internal = node
-        }
-        else
-        {
-            self.pointer_node_internal = SCNNode()
-            self.pointer_node_internal?.name = "internal"
-            self.pointer_node?.addChildNode(self.pointer_node_internal!)
-        }
-
-        if let node = self.space_node?.childNode(withName: "points", recursively: true)
-        {
-            self.points_node = node
-        }
-        else
-        {
-            self.points_node = SCNNode()
-            self.points_node?.name = "points"
-            self.space_node?.addChildNode(self.points_node!)
-        }
-
-        // Connect robot parts
-        self.tool_node = node?.childNode(withName: "tool", recursively: true)
-        self.unit_node?.addChildNode(node ?? SCNNode())
-        model_controller.disconnect_nodes()
-        model_controller.nodes_connect(node ?? SCNNode(), pointer: self.pointer_node ?? SCNNode(), pointer_internal: self.pointer_node_internal ?? SCNNode())
-        
-        // Connect robot camera
-        if connect_camera
-        {
-            if let node = scene.rootNode.childNode(withName: "camera", recursively: true)
-            {
-                self.camera_node = node
-            }
-            else
-            {
-                self.camera_node = SCNNode()
-                self.camera_node?.name = "camera"
-                scene.rootNode.addChildNode(self.camera_node!)
-            }
-        }
-        
-        // Place and scale cell box
-        robot_location_place()
-        update_space_scale() // Set space scale by connected robot parameters
-        
-        update_position()
-        
-        update_points_model()
-    }*/
     
     /// Sets robot pointer node position.
     private func update_position()
@@ -1056,10 +962,10 @@ public class Robot: WorkspaceObject
     
     // MARK: Cell box handling
     /// A default location of robot cell origin.
-    nonisolated(unsafe) public static var default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    public static var default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     /// A default scale of robot cell box.
-    nonisolated(unsafe) public static var default_space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
+    public static var default_space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
     /**
      A robot cell origin position.
@@ -1070,7 +976,6 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            robot_location_place()
             update_position()
         }
     }
@@ -1080,136 +985,18 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
-            update_space_scale()
+            position_points_shift()
         }
     }
     
     /// A robot cell box default shift.
     public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
-    {
+    /*{
         didSet
         {
-            robot_location_place()
+            
         }
-    }
-    
-    /// A modified node reference.
-    //private var modified_node = SCNNode()
-    
-    /// A saved SCNMateral for edited node.
-    //private var saved_material = SCNMaterial()
-    
-    /// Places cell workspace relative to manipulator.
-    public func robot_location_place()
-    {
-        /*sync_model_controller_parameters()
-        
-        // MARK: Place workcell box
-        #if os(macOS)
-        space_node?.position.x = CGFloat(origin_position.y + origin_shift.y)
-        space_node?.position.y = CGFloat(origin_position.z + origin_shift.z)
-        space_node?.position.z = CGFloat(origin_position.x + origin_shift.x)
-        
-        space_node?.eulerAngles.x = CGFloat(origin_position.p.to_rad)
-        space_node?.eulerAngles.y = CGFloat(origin_position.w.to_rad)
-        space_node?.eulerAngles.z = CGFloat(origin_position.r.to_rad)
-        #else
-        space_node?.position.x = Float(origin_position.y) + origin_shift.y
-        space_node?.position.y = Float(origin_position.z) + origin_shift.z
-        space_node?.position.z = Float(origin_position.x) + origin_shift.x
-        
-        space_node?.eulerAngles.x = origin_position.p.to_rad
-        space_node?.eulerAngles.y = origin_position.w.to_rad
-        space_node?.eulerAngles.z = origin_position.r.to_rad
-        #endif
-        
-        // MARK: Place camera
-        #if os(macOS)
-        camera_node?.position.x += CGFloat(origin_position.y)
-        camera_node?.position.y += CGFloat(origin_position.z)
-        camera_node?.position.z += CGFloat(origin_position.x)
-        #else
-        camera_node?.position.x += Float(origin_position.y)
-        camera_node?.position.y += Float(origin_position.z)
-        camera_node?.position.z += Float(origin_position.x)
-        #endif*/
-    }
-    
-    /// Updates cell box model scale.
-    public func update_space_scale()
-    {
-        /*guard box_node?.childNodes.count ?? 0 > 0
-        else
-        {
-            return
-        }
-        
-        // XY planes
-        modified_node = box_node?.childNode(withName: "w0", recursively: true) ?? SCNNode()
-        saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.y), height: CGFloat(space_scale.x))
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.y = -CGFloat(space_scale.z) / 2
-        #else
-        modified_node.position.y = -space_scale.z / 2
-        #endif
-        modified_node = box_node?.childNode(withName: "w1", recursively: true) ?? SCNNode()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.y), height: CGFloat(space_scale.x))
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.y = CGFloat(space_scale.z) / 2
-        #else
-        modified_node.position.y = space_scale.z / 2
-        #endif
-        
-        // YZ plane
-        modified_node = box_node?.childNode(withName: "w2", recursively: true) ?? SCNNode()
-        saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.y), height: CGFloat(space_scale.z))
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.z = -CGFloat(space_scale.x) / 2
-        #else
-        modified_node.position.z = -space_scale.x / 2
-        #endif
-        modified_node = box_node?.childNode(withName: "w3", recursively: true) ?? SCNNode()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.y), height: CGFloat(space_scale.z))
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.z = CGFloat(space_scale.x) / 2
-        #else
-        modified_node.position.z = space_scale.x / 2
-        #endif
-        
-        // XZ plane
-        modified_node = box_node?.childNode(withName: "w4", recursively: true) ?? SCNNode()
-        saved_material = (modified_node.geometry?.firstMaterial) ?? SCNMaterial()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.x), height: CGFloat(space_scale.z))
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.x = -CGFloat(space_scale.y) / 2
-        #else
-        modified_node.position.x = -space_scale.y / 2
-        #endif
-        modified_node = box_node?.childNode(withName: "w5", recursively: true) ?? SCNNode()
-        modified_node.geometry = SCNPlane(width: CGFloat(space_scale.x), height: CGFloat(space_scale.z))
-        modified_node.geometry?.firstMaterial = saved_material
-        #if os(macOS)
-        modified_node.position.x = CGFloat(space_scale.y) / 2
-        #else
-        modified_node.position.x = space_scale.y / 2
-        #endif
-        
-        #if os(macOS)
-        box_node?.position = SCNVector3(x: CGFloat(space_scale.y) / 2, y: CGFloat(space_scale.z) / 2, z: CGFloat(space_scale.x) / 2)
-        #else
-        box_node?.position = SCNVector3(x: space_scale.y / 2, y: space_scale.z / 2, z: space_scale.x / 2)
-        #endif
-        
-        model_controller.space_scale = space_scale
-        position_points_shift()*/
-    }
+    }*/
     
     /**
      Shifts positions when reducing the robot workcell area.
@@ -1265,6 +1052,8 @@ public class Robot: WorkspaceObject
             }
         }
     }
+    
+    /// Old
     
     /// An option of view current position program model.
     nonisolated(unsafe) public static var view_current_program_model = true

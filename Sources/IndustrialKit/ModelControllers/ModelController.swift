@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SceneKit
+import RealityKit
 
 /**
  Provides control over visual model for workspace object.
@@ -30,10 +30,10 @@ open class ModelController: NSCopying
     
     // MARK: - Scene handling
     /// Model nodes from connected root node.
-    public var nodes = [String: SCNNode]()
+    public var entities = [String: Entity]()
 
     /// A sequence of node names nested within the main node used for model connection.
-    open var nodes_names: [String]
+    open var entities_names: [String]
     {
         return [String]()
     }
@@ -44,27 +44,27 @@ open class ModelController: NSCopying
      - Parameters:
         - node: The root node of the workspace object model.
      */
-    open func connect_nodes(of node: SCNNode)
+    open func connect_entities(of entity: Entity)
     {
-        nodes.removeAll()
+        entities.removeAll()
         
-        for node_name in nodes_names
+        for entity_name in entities_names
         {
-            if let found_node = node.childNode(withName: node_name, recursively: true)
+            if let found_entity = entity.childEntity(withName: entity_name, recursively: true)
             {
-                nodes[node_name] = found_node
+                entities[entity_name] = found_entity
             }
         }
     }
     
     /// Removes all nodes in object model from controller.
-    public func disconnect_nodes()
+    public func disconnect_entities()
     {
-        nodes.removeAll()
+        entities.removeAll()
     }
     
     /// Resets nodes position of connected visual model.
-    open func reset_nodes()
+    open func reset_entities()
     {
         
     }
@@ -72,15 +72,6 @@ open class ModelController: NSCopying
     // MARK: - Statistics handling
     /// A get statistics flag.
     public var get_statistics = false
-    /*{
-        didSet
-        {
-            if !get_statistics
-            {
-                reset_charts_data()
-            }
-        }
-    }*/
     
     /// Charts data.
     @Published public var charts_data: [WorkspaceObjectChart]?
