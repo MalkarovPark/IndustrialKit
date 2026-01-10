@@ -877,6 +877,11 @@ public class Robot: WorkspaceObject
     // MARK: Position Pointer Entity
     private var position_pointer_entity = Entity()
     
+    @MainActor public func toggle_position_pointer_visibility()
+    {
+        position_pointer_entity.isEnabled.toggle()
+    }
+    
     @MainActor func build_position_pointer_entity() -> Entity
     {
         let colors: [UIColor] = [
