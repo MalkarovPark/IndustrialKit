@@ -79,6 +79,26 @@ public class Robot: WorkspaceObject
         self.space_scale = Robot.default_space_scale
     }
     
+    override open func extend_entity_preparation(_ entity: Entity)
+    {
+        // Place robot accesories
+        working_area_entity = build_working_area_entity(scale: space_scale)
+        working_area_entity.isEnabled = false
+        
+        origin_entity.addChild(working_area_entity)
+        
+        position_pointer_entity = build_position_pointer_entity()
+        position_pointer_entity.isEnabled = false
+        
+        origin_entity.addChild(position_pointer_entity)
+        
+        entity.addChild(origin_entity)
+        
+        // Connect robot parts
+        model_controller.disconnect_entities()
+        model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
+    }
+    
     // MARK: - Module handling
     /**
      Sets modular components to object instance.
@@ -760,26 +780,6 @@ public class Robot: WorkspaceObject
         return EntityModelIdentifier(type: .robot, name: name)
     }
     
-    override open func extend_entity_preparation(_ entity: Entity)
-    {
-        // Place robot accesories
-        working_area_entity = build_working_area_entity(scale: space_scale)
-        working_area_entity.isEnabled = false
-        
-        origin_entity.addChild(working_area_entity)
-        
-        position_pointer_entity = build_position_pointer_entity()
-        position_pointer_entity.isEnabled = false
-        
-        origin_entity.addChild(position_pointer_entity)
-        
-        entity.addChild(origin_entity)
-        
-        // Connect robot parts
-        model_controller.disconnect_entities()
-        model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
-    }
-    
     private var origin_entity = Entity()
     
     // MARK: Working Area Entity
@@ -787,11 +787,15 @@ public class Robot: WorkspaceObject
     
     @MainActor public func toggle_working_area_visibility()
     {
+        if !entity_loaded { return }
+        
         working_area_entity.isEnabled.toggle()
     }
     
     @MainActor public func update_working_area_scale()
     {
+        if !entity_loaded { return }
+        
         let is_enabled = working_area_entity.isEnabled
         
         working_area_entity.removeFromParent()
@@ -803,6 +807,8 @@ public class Robot: WorkspaceObject
     
     @MainActor public func update_origin_position()
     {
+        if !entity_loaded { return }
+        
         var origin_position = origin_position
         
         origin_position.x += origin_shift.x
