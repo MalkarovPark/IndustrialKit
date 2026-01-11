@@ -243,10 +243,10 @@ public class Robot: WorkspaceObject
     {
         program.name = mismatched_name(name: program.name, names: programs_names)
         programs.append(program)
-        if selected_program_index != -1
+        /*if selected_program_index != -1
         {
             selected_program.visual_clear()
-        }
+        }*/
     }
     
     /**
@@ -260,7 +260,7 @@ public class Robot: WorkspaceObject
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
         {
             programs[index] = program
-            selected_program.visual_clear()
+            //selected_program.visual_clear()
         }
     }
     
@@ -284,7 +284,7 @@ public class Robot: WorkspaceObject
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to delete
         {
-            selected_program.visual_clear()
+            //selected_program.visual_clear()
             programs.remove(at: index)
         }
     }
@@ -1085,7 +1085,7 @@ public class Robot: WorkspaceObject
                         point_shift(&program.points[i])
                     }
                     
-                    program.visual_build()
+                    //program.visual_build()
                 }
             }
         }
