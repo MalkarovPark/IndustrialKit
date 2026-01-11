@@ -775,7 +775,7 @@ public class Robot: WorkspaceObject
         model_controller.disconnect_entities()
         model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
         
-        // Set parameters to components
+        // Set default parameters
         apply_statistics_flags()
         set_default_cell_parameters()
     }
@@ -808,6 +808,8 @@ public class Robot: WorkspaceObject
         origin_position.x += origin_shift.x
         origin_position.y += origin_shift.y
         origin_position.z += origin_shift.z
+        
+        sync_model_controller_parameters()
         
         origin_entity.update_position(origin_position)
     }
