@@ -759,7 +759,6 @@ public class Robot: WorkspaceObject
     {
         // Place robot accesories
         working_area_entity = build_working_area_entity(scale: space_scale)
-        working_area_entity.update_position(origin_position)
         working_area_entity.isEnabled = false
         
         origin_entity.addChild(working_area_entity)
@@ -776,7 +775,7 @@ public class Robot: WorkspaceObject
         model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
         
         // Set default parameters
-        //apply_statistics_flags()
+        apply_statistics_flags()
         //set_default_cell_parameters()
     }
     
