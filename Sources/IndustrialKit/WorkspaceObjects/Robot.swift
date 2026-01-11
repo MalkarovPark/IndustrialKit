@@ -24,14 +24,14 @@ public class Robot: WorkspaceObject
     public override init()
     {
         super.init()
-        set_default_cell_parameters()
+        //set_default_cell_parameters()
     }
     
     /// Inits robot by name.
     public override init(name: String)
     {
         super.init(name: name)
-        set_default_cell_parameters()
+        //set_default_cell_parameters()
     }
     
     /// Inits robot by name and entity name.
@@ -39,9 +39,7 @@ public class Robot: WorkspaceObject
     {
         super.init(name: name, entity_name: entity_name)
         
-        // Set default parameters
-        apply_statistics_flags()
-        set_default_cell_parameters()
+        //set_default_cell_parameters()
     }
     
     /// Inits robot by name, entity name, controller and connector .
@@ -52,9 +50,8 @@ public class Robot: WorkspaceObject
         self.model_controller = model_controller
         self.connector = connector
         
-        // Set default parameters
         apply_statistics_flags()
-        set_default_cell_parameters()
+        //set_default_cell_parameters()
     }
     
     /// Inits robot by name and part module.
@@ -63,14 +60,14 @@ public class Robot: WorkspaceObject
         super.init(name: name)
         module_import(module)
         
-        set_default_cell_parameters()
+        //set_default_cell_parameters()
     }
     
     public override init(name: String, module_name: String, is_internal: Bool)
     {
         super.init(name: name, module_name: module_name, is_internal: is_internal)
         
-        set_default_cell_parameters()
+        //set_default_cell_parameters()
     }
     
     private func set_default_cell_parameters()
@@ -787,15 +784,11 @@ public class Robot: WorkspaceObject
     
     @MainActor public func toggle_working_area_visibility()
     {
-        if !entity_loaded { return }
-        
         working_area_entity.isEnabled.toggle()
     }
     
     @MainActor public func update_working_area_scale()
     {
-        if !entity_loaded { return }
-        
         let is_enabled = working_area_entity.isEnabled
         
         working_area_entity.removeFromParent()
@@ -807,8 +800,6 @@ public class Robot: WorkspaceObject
     
     @MainActor public func update_origin_position()
     {
-        if !entity_loaded { return }
-        
         var origin_position = origin_position
         
         origin_position.x += origin_shift.x

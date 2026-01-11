@@ -190,7 +190,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     public var entity: Entity?
     
     /// A entity loading state.
-    public var entity_loaded = false
+    //public var entity_loaded = false
     
     private func perform_load_entity(named name: String)
     {
@@ -212,12 +212,12 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                 
                 entity.components.set(InputTargetComponent())
                 
-                entity_loaded = true
+                //entity_loaded = true
                 extend_entity_preparation(entity)
             }
             catch
             {
-                entity_loaded = false
+                //entity_loaded = false
                 print(error.localizedDescription)
             }
         }
