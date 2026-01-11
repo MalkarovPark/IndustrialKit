@@ -81,7 +81,7 @@ public class Robot: WorkspaceObject
         origin_entity.addChild(position_pointer_entity)
         
         //position_program_entity = build_position_program_entity()
-        position_pointer_entity.isEnabled = false
+        position_program_entity.isEnabled = false
         
         origin_entity.addChild(position_program_entity)
         
