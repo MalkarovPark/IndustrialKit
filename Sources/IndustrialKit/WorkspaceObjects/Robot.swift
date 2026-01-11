@@ -80,6 +80,11 @@ public class Robot: WorkspaceObject
         
         origin_entity.addChild(position_pointer_entity)
         
+        //position_program_entity = build_position_program_entity()
+        position_pointer_entity.isEnabled = false
+        
+        origin_entity.addChild(position_program_entity)
+        
         entity.addChild(origin_entity)
         
         // Connect robot parts
@@ -771,6 +776,19 @@ public class Robot: WorkspaceObject
     
     private var origin_entity = Entity()
     
+    @MainActor public func update_origin_position()
+    {
+        var origin_position = origin_position
+        
+        origin_position.x += origin_shift.x
+        origin_position.y += origin_shift.y
+        origin_position.z += origin_shift.z
+        
+        sync_model_controller_parameters()
+        
+        origin_entity.update_position(origin_position)
+    }
+    
     // MARK: Working Area Entity
     private var working_area_entity = Entity()
     
@@ -788,19 +806,6 @@ public class Robot: WorkspaceObject
         working_area_entity.isEnabled = is_enabled
         
         origin_entity.addChild(working_area_entity)
-    }
-    
-    @MainActor public func update_origin_position()
-    {
-        var origin_position = origin_position
-        
-        origin_position.x += origin_shift.x
-        origin_position.y += origin_shift.y
-        origin_position.z += origin_shift.z
-        
-        sync_model_controller_parameters()
-        
-        origin_entity.update_position(origin_position)
     }
     
     @MainActor func build_working_area_entity(scale: (x: Float, y: Float, z: Float)) -> Entity
@@ -897,6 +902,26 @@ public class Robot: WorkspaceObject
         
         return parent
     }
+    
+    //MARK: Position Program Entity
+    private var position_program_entity = Entity()
+    
+    @MainActor public func toggle_position_program_visibility()
+    {
+        position_program_entity.isEnabled.toggle()
+    }
+    
+    @MainActor public func update_position_program_entity(by program: PositionsProgram, edited_point: Int? = nil)
+    {
+        let is_enabled = position_program_entity.isEnabled
+        
+        position_program_entity.removeFromParent()
+        position_program_entity = program.entity(edited_point)
+        position_program_entity.isEnabled = is_enabled
+        
+        origin_entity.addChild(position_program_entity)
+    }
+    
     #endif
     
     /// A robot visual model controller.
