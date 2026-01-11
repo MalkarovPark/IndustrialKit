@@ -134,20 +134,20 @@ extension Array where Element == Float
     }
 }*/
 
-/*public extension Dictionary where Key == String
+public extension Dictionary where Key == String
 {
-    /// Safe SCNNode get by key with default
-    subscript(safe_name key: String, default defaultValue: SCNNode) -> SCNNode
+    /// Safe entity get by key with default
+    subscript(safe_name key: String, default defaultValue: Entity) -> Entity
     {
-        return self[key] as? SCNNode ?? defaultValue
+        return self[key] as? Entity ?? defaultValue
     }
     
-    /// Safe SCNNode get by key, returns new node if missing
-    subscript(safe_name key: String) -> SCNNode
+    /// Safe entity get by key, returns new node if missing
+    subscript(safe_name key: String) -> Entity
     {
-        return self[key] as? SCNNode ?? SCNNode()
+        return self[key] as? Entity ?? Entity()
     }
-}*/
+}
 
 public extension Dictionary where Key == String
 {
