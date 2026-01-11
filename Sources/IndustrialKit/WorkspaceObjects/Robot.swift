@@ -48,8 +48,8 @@ public class Robot: WorkspaceObject
         self.model_controller = model_controller
         self.connector = connector
         
-        apply_statistics_flags()
-        set_default_cell_parameters()
+        //apply_statistics_flags()
+        //set_default_cell_parameters()
     }
     
     /// Inits robot by name and part module.
