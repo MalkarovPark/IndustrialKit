@@ -771,13 +771,13 @@ public class Robot: WorkspaceObject
         
         entity.addChild(origin_entity)
         
-        /*// Connect robot parts
+        // Connect robot parts
         model_controller.disconnect_entities()
         model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
         
         // Set default parameters
-        apply_statistics_flags()
-        set_default_cell_parameters()*/
+        //apply_statistics_flags()
+        //set_default_cell_parameters()
     }
     
     private var origin_entity = Entity()
