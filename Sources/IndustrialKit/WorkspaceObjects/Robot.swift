@@ -906,7 +906,7 @@ public class Robot: WorkspaceObject
     
     /// A robot visual model controller.
     public var model_controller = RobotModelController()
-    {
+    /*{
         didSet // Entities reconnection if model contoller changed
         {
             if let entity = entity
@@ -914,7 +914,7 @@ public class Robot: WorkspaceObject
                 model_controller.connect_entities(of: entity)
             }
         }
-    }
+    }*/
     
     private func sync_model_controller_parameters()
     {

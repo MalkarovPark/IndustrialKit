@@ -431,7 +431,6 @@ public extension Entity
         let location = SIMD3<Float>(position.y / 1000, position.z / 1000, position.x / 1000)
         self.position = location
         
-        // Apply rotations ONLY to pointer_entity
         let r_rot = simd_quatf(angle: Float(position.r.to_rad), axis: [0, 0, 1])
         let p_rot = simd_quatf(angle: Float(position.p.to_rad), axis: [1, 0, 0])
         let w_rot = simd_quatf(angle: Float(position.w.to_rad), axis: [0, 1, 0])
