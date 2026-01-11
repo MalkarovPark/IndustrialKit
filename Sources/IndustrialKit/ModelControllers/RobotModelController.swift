@@ -23,13 +23,13 @@ open class RobotModelController: ModelController, @unchecked Sendable
      > Pre-transforms the position in space depending on the rotation of the tool coordinate system.
      */
     public func update_entities(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
-                             origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
+                                origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
     {
         do
         {
             try update_entities_positions(pointer_position: origin_transform(pointer_position: pointer_position,
-                                                                          origin_position: origin_position),
-                                       origin_position: origin_position)
+                                                                             origin_position: origin_position),
+                                          origin_position: origin_position)
         }
         catch
         {
@@ -47,7 +47,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      */
     open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
-                                     origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
+                                        origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
     {
         
     }

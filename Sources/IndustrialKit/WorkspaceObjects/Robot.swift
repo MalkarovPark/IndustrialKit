@@ -34,31 +34,16 @@ public class Robot: WorkspaceObject
         set_default_cell_parameters()
     }
     
+    /// Inits robot by name and entity name.
     public override init(name: String, entity_name: String)
     {
         super.init(name: name, entity_name: entity_name)
     }
     
-    /// Inits robot by name, controller, connector and SceneKit scene.
-    /*public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene: SCNScene)
+    /// Inits robot by name, entity name, controller and connector .
+    public init(name: String, entity_name: String, model_controller: RobotModelController = RobotModelController(), connector: RobotConnector = RobotConnector())
     {
-        super.init(name: name)
-        
-        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
-        
-        self.model_controller = model_controller
-        self.connector = connector
-        
-        apply_statistics_flags()
-        set_default_cell_parameters()
-    }*/
-    
-    /// Inits robot by name, controller, connector and SceneKit scene name.
-    public init(name: String, model_controller: RobotModelController, connector: RobotConnector, scene_name: String)
-    {
-        super.init(name: name)
-        
-        //self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
+        super.init(name: name, entity_name: entity_name)
         
         self.model_controller = model_controller
         self.connector = connector
@@ -921,6 +906,15 @@ public class Robot: WorkspaceObject
     
     /// A robot visual model controller.
     public var model_controller = RobotModelController()
+    {
+        didSet // Entities reconnection if model contoller changed
+        {
+            if let entity = entity
+            {
+                model_controller.connect_entities(of: entity)
+            }
+        }
+    }
     
     private func sync_model_controller_parameters()
     {
