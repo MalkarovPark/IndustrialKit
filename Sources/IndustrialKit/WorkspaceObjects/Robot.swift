@@ -38,6 +38,10 @@ public class Robot: WorkspaceObject
     public override init(name: String, entity_name: String)
     {
         super.init(name: name, entity_name: entity_name)
+        
+        // Set default parameters
+        apply_statistics_flags()
+        set_default_cell_parameters()
     }
     
     /// Inits robot by name, entity name, controller and connector .
@@ -48,8 +52,9 @@ public class Robot: WorkspaceObject
         self.model_controller = model_controller
         self.connector = connector
         
-        //apply_statistics_flags()
-        //set_default_cell_parameters()
+        // Set default parameters
+        apply_statistics_flags()
+        set_default_cell_parameters()
     }
     
     /// Inits robot by name and part module.
@@ -773,10 +778,6 @@ public class Robot: WorkspaceObject
         // Connect robot parts
         model_controller.disconnect_entities()
         model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
-        
-        // Set default parameters
-        apply_statistics_flags()
-        //set_default_cell_parameters()
     }
     
     private var origin_entity = Entity()
