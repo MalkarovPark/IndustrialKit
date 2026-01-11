@@ -24,22 +24,18 @@ public class Robot: WorkspaceObject
     public override init()
     {
         super.init()
-        //set_default_cell_parameters()
     }
     
     /// Inits robot by name.
     public override init(name: String)
     {
         super.init(name: name)
-        //set_default_cell_parameters()
     }
     
     /// Inits robot by name and entity name.
     public override init(name: String, entity_name: String)
     {
         super.init(name: name, entity_name: entity_name)
-        
-        //set_default_cell_parameters()
     }
     
     /// Inits robot by name, entity name, controller and connector .
@@ -51,7 +47,6 @@ public class Robot: WorkspaceObject
         self.connector = connector
         
         apply_statistics_flags()
-        //set_default_cell_parameters()
     }
     
     /// Inits robot by name and part module.
@@ -59,15 +54,11 @@ public class Robot: WorkspaceObject
     {
         super.init(name: name)
         module_import(module)
-        
-        //set_default_cell_parameters()
     }
     
     public override init(name: String, module_name: String, is_internal: Bool)
     {
         super.init(name: name, module_name: module_name, is_internal: is_internal)
-        
-        //set_default_cell_parameters()
     }
     
     private func set_default_cell_parameters()
@@ -94,6 +85,7 @@ public class Robot: WorkspaceObject
         // Connect robot parts
         model_controller.disconnect_entities()
         model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
+        update_position()
     }
     
     // MARK: - Module handling
