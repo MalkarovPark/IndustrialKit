@@ -774,6 +774,10 @@ public class Robot: WorkspaceObject
         // Connect robot parts
         model_controller.disconnect_entities()
         model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
+        
+        // Set parameters to components
+        apply_statistics_flags()
+        set_default_cell_parameters()
     }
     
     private var origin_entity = Entity()
