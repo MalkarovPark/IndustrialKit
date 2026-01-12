@@ -16,7 +16,7 @@ import SwiftUI
  
  Contains an array of positions and a custom name used for identification. Builds a visual model of the points with trajectory and provides actions for the robot model.
  */
-public class PositionsProgram: Identifiable, Codable, Equatable
+public class PositionsProgram: Identifiable, Codable, Equatable, ObservableObject
 {
     public let id: UUID = UUID()
     
