@@ -29,7 +29,7 @@ public class PositionsProgram: Identifiable, Codable, Equatable, ObservableObjec
     public var name: String
     
     /// An array of positions points.
-    public var points = [PositionPoint]()
+    @Published public var points = [PositionPoint]()
     
     // MARK: - Positions program init functions
     /// Creates a new positions program.
