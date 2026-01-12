@@ -28,17 +28,23 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
     }
     
     /// A point location component.
-    public var x, y, z: Float
+    //public var x, y, z: Float
+    @Published public var x: Float
+    @Published public var y: Float
+    @Published public var z: Float
     
     /// A point rotation component.
-    public var r, p, w: Float
+    //public var r, p, w: Float
+    @Published public var r: Float
+    @Published public var p: Float
+    @Published public var w: Float
     
     /// Type of moving to point.
-    public var move_type: MoveType
+    @Published public var move_type: MoveType
     
     /// Moving to point speed.
     /// > In mm/sec
-    public var move_speed: Float
+    @Published public var move_speed: Float
     
     // MARK: - Init functions
     /**
