@@ -18,6 +18,8 @@ import SwiftUI
  */
 public class PositionsProgram: Identifiable, Codable, Equatable
 {
+    public let id: UUID = UUID()
+    
     public static func == (lhs: PositionsProgram, rhs: PositionsProgram) -> Bool
     {
         return lhs.name == rhs.name // Identity condition by names
