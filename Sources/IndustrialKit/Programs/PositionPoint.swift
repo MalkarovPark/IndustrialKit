@@ -15,6 +15,8 @@ import SceneKit
  */
 public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @unchecked Sendable
 {
+    public let id: UUID = UUID()
+    
     public static func == (lhs: PositionPoint, rhs: PositionPoint) -> Bool
     {
         lhs.id == rhs.id
