@@ -403,6 +403,7 @@ public class Robot: WorkspaceObject
         didSet
         {
             //position_point_shift(&pointer_position)
+            self.objectWillChange.send()
             
             update_position()
             
