@@ -402,7 +402,39 @@ public class Robot: WorkspaceObject
     {
         didSet
         {
+            position_point_shift(&pointer_position)
+            
             update_position()
+            
+            func position_point_shift(_ point: inout (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+            {
+                if point.x > Float(space_scale.x)
+                {
+                    point.x = Float(space_scale.x)
+                }
+                else if point.x < 0
+                {
+                    point.x = 0
+                }
+                
+                if point.y > Float(space_scale.y)
+                {
+                    point.y = Float(space_scale.y)
+                }
+                else if point.y < 0
+                {
+                    point.y = 0
+                }
+                
+                if point.z > Float(space_scale.z)
+                {
+                    point.z = Float(space_scale.z)
+                }
+                else if point.z < 0
+                {
+                    point.z = 0
+                }
+            }
         }
     }
     
