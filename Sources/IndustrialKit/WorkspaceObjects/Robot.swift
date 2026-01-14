@@ -398,15 +398,15 @@ public class Robot: WorkspaceObject
      
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
-    @Published public var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    public var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     {
         didSet
         {
-            position_point_shift(&pointer_position)
+            //position_point_shift(&pointer_position)
             
             update_position()
             
-            func position_point_shift(_ point: inout (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+            /*func position_point_shift(_ point: inout (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
             {
                 if point.x > Float(space_scale.x)
                 {
@@ -434,7 +434,7 @@ public class Robot: WorkspaceObject
                 {
                     point.z = 0
                 }
-            }
+            }*/
         }
     }
     
