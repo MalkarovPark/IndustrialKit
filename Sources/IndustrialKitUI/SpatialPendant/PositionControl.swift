@@ -303,7 +303,7 @@ public struct PositionControl: View
 }
 
 // MARK: - Position Pane
-struct PositionPane: View
+public struct PositionPane: View
 {
     @ObservedObject var robot: Robot
 
