@@ -80,7 +80,7 @@ public struct PositionView: View
     }
 }
 
-public struct PositionControl: View
+/*public struct PositionControl: View
 {
     @Binding var position: (x: Float, y: Float, z: Float,
                             r: Float, p: Float, w: Float)
@@ -283,7 +283,7 @@ struct PositionParameterView: View
         .presentationDetents([.height(96)])
         #endif
     }
-}
+}*/
 
 #if !os(visionOS)
 let button_width = 64.0
@@ -370,9 +370,9 @@ struct PositionView_Previews: PreviewProvider
                 .frame(width: 256)
                 .modifier(PreviewBorder())
                 
-                PositionControl(position: $position, scale: .constant((x: 100, y: 100, z: 100)))
+                /*PositionControl(position: $position, scale: .constant((x: 100, y: 100, z: 100)))
                     .frame(width: 208)
-                    .modifier(PreviewBorder())
+                    .modifier(PreviewBorder())*/
             }
             .padding()
         }
