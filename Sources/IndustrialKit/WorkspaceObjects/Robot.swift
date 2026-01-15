@@ -438,6 +438,11 @@ public class Robot: WorkspaceObject
         }
     }
     
+    public var output_x: Float //!!!
+    {
+        return pointer_position.x
+    }
+    
     /// A robot default pointer position.
     private var default_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
     
