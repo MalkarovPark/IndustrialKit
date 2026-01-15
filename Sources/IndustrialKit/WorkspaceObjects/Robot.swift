@@ -404,6 +404,8 @@ public class Robot: WorkspaceObject
         {
             position_point_shift(&pointer_position)
             
+            self.objectWillChange.send()
+            
             update_position()
             
             func position_point_shift(_ point: inout (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
@@ -436,11 +438,6 @@ public class Robot: WorkspaceObject
                 }
             }
         }
-    }
-    
-    public var output_x: Float //!!!
-    {
-        return pointer_position.x
     }
     
     /// A robot default pointer position.
