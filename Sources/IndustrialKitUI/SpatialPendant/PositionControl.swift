@@ -153,8 +153,11 @@ public struct PositionControl: View
                         }
                         .onEnded
                         { _ in
-                            long_press_action()
-                            is_central_pressed = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                            {
+                                long_press_action()
+                                is_central_pressed = false
+                            }
                         }
                         .simultaneously(with:
                             TapGesture()
@@ -162,7 +165,7 @@ public struct PositionControl: View
                                 {
                                     is_central_pressed = true
                                     
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.025)
                                     {
                                         //is_central_pressed = false
                                         tap_action()
@@ -386,17 +389,30 @@ public struct PositionPane: View
                     )
                     .gesture(
                         LongPressGesture(minimumDuration: 0.5)
-                            .onChanged { _ in
+                            .onChanged
+                            { _ in
                                 is_central_pressed = true
                             }
-                            .onEnded { _ in
-                                long_press_action()
-                                is_central_pressed = false
+                            .onEnded
+                            { _ in
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                                {
+                                    long_press_action()
+                                    is_central_pressed = false
+                                }
                             }
                             .simultaneously(with:
                                 TapGesture()
-                                    .onEnded {
-                                        tap_action()
+                                    .onEnded
+                                    {
+                                        is_central_pressed = true
+                                        
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.025)
+                                        {
+                                            //is_central_pressed = false
+                                            tap_action()
+                                            is_central_pressed = false
+                                        }
                                     }
                             )
                     )
