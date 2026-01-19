@@ -729,6 +729,8 @@ public class Robot: WorkspaceObject
             
             finished = true // State light
             
+            program_performed = false // UI only
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
             {
                 self.finished = false // State light
