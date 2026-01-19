@@ -355,7 +355,7 @@ public class Robot: WorkspaceObject
     
     // MARK: - Moving functions
     /// A moving state of robot.
-    nonisolated(unsafe) public var performed = false
+    @Published /*nonisolated(unsafe)*/ public var performed = false
     
     /// An Index of target point in points array.
     public var target_point_index = 0
@@ -512,7 +512,7 @@ public class Robot: WorkspaceObject
             pointer_position_to_robot()
             model_controller.move_to(point: point)
             { result in
-                self.performed = false
+                /*self.performed = false
                 
                 switch result
                 {
@@ -520,6 +520,19 @@ public class Robot: WorkspaceObject
                     completion(.success(()))
                 case .failure(let error):
                     completion(.failure(error))
+                }*/
+                
+                Task
+                { @MainActor in
+                    self.performed = false
+                    
+                    switch result
+                    {
+                    case .success:
+                        completion(.success(()))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
                 }
             }
         }
@@ -528,7 +541,7 @@ public class Robot: WorkspaceObject
             pointer_position_to_robot()
             connector.move_to(point: point)
             { result in
-                self.performed = false
+                /*self.performed = false
                 
                 switch result
                 {
@@ -536,6 +549,19 @@ public class Robot: WorkspaceObject
                     completion(.success(()))
                 case .failure(let error):
                     completion(.failure(error))
+                }*/
+                
+                Task
+                { @MainActor in
+                    self.performed = false
+                    
+                    switch result
+                    {
+                    case .success:
+                        completion(.success(()))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
                 }
             }
         }
