@@ -101,7 +101,10 @@ public struct RobotControlView: View
             {
                 HStack(spacing: 0)
                 {
-                    PerformingControlView(robot: robot)
+                    if selected_program != nil
+                    {
+                        PerformingControlView(robot: robot)
+                    }
                     
                     Spacer()
                     
@@ -111,6 +114,7 @@ public struct RobotControlView: View
                             .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                             .modifier(CircleButtonImageFramer())
                     }
+                    .disabled(robot.program_performed)
                     #if os(macOS)
                     .popover(isPresented: $new_program_view_presented, arrowEdge: .leading)
                     {
