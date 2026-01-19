@@ -33,7 +33,7 @@ public struct RobotControlView: View
             {
                 Rectangle()
                     .fill(.clear)
-                    .glassEffect(.regular/*.tint(.white)*/, in: .rect(cornerRadius: 16, style: .continuous))
+                    .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
                 
                 ScrollView
                 {
@@ -41,7 +41,7 @@ public struct RobotControlView: View
                     {
                         ForEach(robot.programs)
                         { program in
-                            if selected_program == nil //selectedProgram == nil //selectedProgram?.id != program.id
+                            if selected_program == nil
                             {
                                 ProgramItemView(
                                     name: Binding(
@@ -65,14 +65,7 @@ public struct RobotControlView: View
                                 .matchedGeometryEffect(id: program.id, in: animation_namespace)
                                 .onTapGesture
                                 {
-                                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
-                                    {
-                                        selected_program = program
-                                        robot.update_position_program_entity(by: program)
-                                        
-                                        single_program_edit = true
-                                        robot.toggle_position_program_visibility()
-                                    }
+                                    select_program(program)
                                 }
                                 .onDrag
                                 {
@@ -97,13 +90,7 @@ public struct RobotControlView: View
                 {
                     PositionProgramView(robot: robot, program: program)
                     {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
-                        {
-                            selected_program = nil
-                            
-                            single_program_edit = false
-                            robot.toggle_position_program_visibility()
-                        }
+                        deselect_program()
                     }
                     .matchedGeometryEffect(id: program.id, in: animation_namespace)
                     .zIndex(1)
@@ -114,6 +101,10 @@ public struct RobotControlView: View
             {
                 HStack(spacing: 0)
                 {
+                    PerformingControlView(robot: robot)
+                    
+                    Spacer()
+                    
                     Button(action: add_item)
                     {
                         Image(systemName: "plus")
@@ -178,12 +169,45 @@ public struct RobotControlView: View
             }
         }
     }
+    
+    private func select_program(_ program: PositionsProgram)
+    {
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
+        {
+            // Editor handling
+            selected_program = program
+            robot.update_position_program_entity(by: program)
+            
+            single_program_edit = true
+            robot.toggle_position_program_visibility()
+            
+            // Performing Handling
+            robot.select_program(name: program.name)
+        }
+    }
+    
+    private func deselect_program()
+    {
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
+        {
+            // Editor handling
+            selected_program = nil
+            
+            single_program_edit = false
+            robot.toggle_position_program_visibility()
+            
+            // Performing handling
+            robot.reset_moving()
+            robot.deselect_program()
+        }
+    }
 }
 
 struct ProgramDropDelegate: DropDelegate
 {
     let current_program: PositionsProgram
     let robot: Robot
+    
     @Binding var dragging_program_id: UUID?
     
     func dropEntered(info: DropInfo)
@@ -211,6 +235,7 @@ struct ProgramDropDelegate: DropDelegate
 struct ProgramItemView: View
 {
     @Binding var name: String
+    
     let count: Int
     let on_delete: () -> Void
     
@@ -412,6 +437,8 @@ struct PositionProgramView: View
                         .onDrop(of: [.text], delegate: PositionDropDelegate(current_point: point, program: program, dragging_point_id: $dragging_point_id, robot: robot))
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
+                    
+                    Spacer(minLength: 48)
                 }
                 .padding(8)
             }
@@ -421,11 +448,8 @@ struct PositionProgramView: View
                 Image(systemName: "plus")
             }*/
         }
-        //.background(.quinary)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(.rect(cornerRadius: 16, style: .continuous))
-        //.clipShape(.rect(cornerRadius: 8, style: .continuous))
-        //.padding(8)
     }
 }
 
@@ -433,6 +457,7 @@ struct PositionDropDelegate: DropDelegate
 {
     let current_point: PositionPoint
     let program: PositionsProgram
+    
     @Binding var dragging_point_id: UUID?
     
     let robot: Robot
@@ -664,6 +689,56 @@ struct PositionPointView: View
                 point.w = new_value.w*/
             }
         )
+    }
+}
+
+struct PerformingControlView: View
+{
+    @ObservedObject var robot: Robot
+    
+    var body: some View
+    {
+        HStack(spacing: 2)
+        {
+            Button(action: {
+                robot.reset_moving()
+            })
+            {
+                Image(systemName: "stop.fill")
+                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    .modifier(CircleButtonImageFramer())
+            }
+            .buttonStyle(.plain)
+            .buttonBorderShape(.circle)
+            
+            Divider()
+                .frame(height: 24)
+            
+            Button(action: {
+                robot.start_pause_moving()
+            })
+            {
+                Image(systemName: robot.program_performed ? "pause.fill" : "play.fill")
+                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    .modifier(CircleButtonImageFramer())
+            }
+            .buttonStyle(.plain)
+            .buttonBorderShape(.circle)
+        }
+        .padding(4)
+        #if !os(visionOS)
+        .glassEffect(.regular.interactive())
+        #else
+        .controlSize(.large)
+        .buttonStyle(.borderless)
+        .glassBackgroundEffect()
+        .frame(depth: 24)
+        #endif
+        #if os(macOS) || os(iOS)
+        .padding(10)
+        #else
+        .padding(16)
+        #endif
     }
 }
 
