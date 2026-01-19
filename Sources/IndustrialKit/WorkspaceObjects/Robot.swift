@@ -225,13 +225,6 @@ public class Robot: WorkspaceObject
             performed = false
             target_point_index = 0
         }
-        didSet
-        {
-            if selected_program_index != -1
-            {
-                update_points_model()
-            }
-        }
     }
     
     /**
@@ -243,10 +236,6 @@ public class Robot: WorkspaceObject
     {
         program.name = mismatched_name(name: program.name, names: programs_names)
         programs.append(program)
-        /*if selected_program_index != -1
-        {
-            selected_program.visual_clear()
-        }*/
     }
     
     /**
@@ -320,30 +309,15 @@ public class Robot: WorkspaceObject
     }
     
     /// A selected positions program.
-    public var selected_program: PositionsProgram
+    public var selected_program: PositionsProgram?
     {
         get // Return positions program by selected index
         {
-            if programs.count > 0 && selected_program_index < programs.count
-            {
-                if selected_program_index < programs_count
-                {
-                    return programs[selected_program_index]
-                }
-                else
-                {
-                    return programs[selected_program_index - 1]
-                }
-                // return programs[selected_program_index]
-            }
-            else
-            {
-                return PositionsProgram()
-            }
+            return programs[safe: selected_program_index]
         }
         set
         {
-            programs[selected_program_index] = newValue
+            programs[safe: selected_program_index] = newValue
         }
     }
     
@@ -385,11 +359,11 @@ public class Robot: WorkspaceObject
     {
         get
         {
-            return selected_program.points[safe: target_point_index] ?? PositionPoint()
+            return selected_program?.points[safe: target_point_index] ?? PositionPoint()
         }
         set
         {
-            selected_program.points[safe: target_point_index] = newValue
+            selected_program?.points[safe: target_point_index] = newValue
         }
     }
     
@@ -564,7 +538,7 @@ public class Robot: WorkspaceObject
     /// A robot moving performation toggle.
     public func start_pause_moving()
     {
-        guard selected_program.points_count > 0
+        guard let selected_program = self.selected_program, selected_program.points_count > 0
         else
         {
             finish_handler()
@@ -693,6 +667,13 @@ public class Robot: WorkspaceObject
     /// Set the new target point index.
     private func select_new_point()
     {
+        guard let selected_program = self.selected_program
+        else
+        {
+            finish_handler()
+            return
+        }
+        
         if target_point_index < selected_program.points_count - 1
         {
             // Select and move to next point
@@ -711,7 +692,7 @@ public class Robot: WorkspaceObject
             {
                 self.finished = false // State light
                 
-                self.selected_program.reset_points_states()
+                self.selected_program?.reset_points_states()
             }
             
             update()
@@ -742,6 +723,8 @@ public class Robot: WorkspaceObject
     /// Resets robot moving.
     public func reset_moving()
     {
+        guard let selected_program = self.selected_program else { return }
+        
         if performed
         {
             if demo
@@ -1124,23 +1107,6 @@ public class Robot: WorkspaceObject
             }
         }
     }
-    
-    /// Old
-    
-    /// An option of view current position program model.
-    nonisolated(unsafe) public static var view_current_program_model = true
-    
-    private func update_points_model() // Update selected positions program model for robot
-    {
-        /*if Robot.view_current_program_model
-        {
-            points_node?.remove_all_child_nodes()
-            selected_program.visual_build()
-            points_node?.addChildNode(selected_program.positions_group)
-        }*/
-    }
-    
-    /// Old
     
     // MARK: - Chart functions
     /// A robot charts data.
