@@ -708,7 +708,7 @@ struct PerformingControlView: View
                     .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                     .modifier(CircleButtonImageFramer())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.borderless)
             .buttonBorderShape(.circle)
             
             Divider()
@@ -722,10 +722,12 @@ struct PerformingControlView: View
                     .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                     .modifier(CircleButtonImageFramer())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.borderless)
             .buttonBorderShape(.circle)
         }
+        #if os(macOS)
         .padding(4)
+        #endif
         #if !os(visionOS)
         .glassEffect(.regular.interactive())
         #else
