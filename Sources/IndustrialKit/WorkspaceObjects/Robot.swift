@@ -357,6 +357,9 @@ public class Robot: WorkspaceObject
     /// A moving state of robot.
     @Published /*nonisolated(unsafe)*/ public var performed = false
     
+    /// A program performing state of robot.
+    @Published public var program_performed = false // UI only
+    
     /// An Index of target point in points array.
     public var target_point_index = 0
     
@@ -590,6 +593,9 @@ public class Robot: WorkspaceObject
             
             // Move to next point if moving was stop
             performed = false //???
+            
+            program_performed = true // UI only
+            
             move_to_next_point()
         }
         else
@@ -597,6 +603,9 @@ public class Robot: WorkspaceObject
             // Remove all action if moving was perform
             pointer_position_to_robot()
             performed = false
+            
+            program_performed = false // UI only
+            
             pause_handler()
         }
         
@@ -756,6 +765,8 @@ public class Robot: WorkspaceObject
     public func reset_moving()
     {
         guard let selected_program = self.selected_program else { return }
+        
+        program_performed = false // UI only
         
         if performed
         {
