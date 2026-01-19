@@ -308,6 +308,12 @@ public class Robot: WorkspaceObject
         select_program(index: index_by_name(name: name))
     }
     
+    /// Deselects positions program in robot.
+    public func deselect_program()
+    {
+        selected_program_index = -1
+    }
+    
     /// A selected positions program.
     public var selected_program: PositionsProgram?
     {
