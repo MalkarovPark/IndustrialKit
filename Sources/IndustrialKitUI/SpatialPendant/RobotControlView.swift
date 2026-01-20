@@ -147,7 +147,7 @@ public struct RobotControlView: View
                     .frame(width: 120)
             }
         }
-        .padding(16)
+        /*.padding(16)
         .background
         {
             Rectangle()
@@ -155,7 +155,7 @@ public struct RobotControlView: View
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
                 .padding(8)
-        }
+        }*/
     }
     
     private func add_item()
@@ -750,7 +750,18 @@ struct PerformingControlView: View
 
 #Preview
 {
-    RobotControlView(robot: Robot())
-        .frame(width: 400, height: 480)
-        .padding(.vertical, 64)
+    ZStack
+    {
+        FloatingView(alignment: .trailing)
+        {
+            RobotControlView(robot: Robot())
+                .padding(8)
+        }
+        .padding(10)
+    }
+    .frame(height: 480)
+    
+    //RobotControlView(robot: Robot())
+        //.frame(width: 400, height: 480)
+        //.padding(.vertical, 64)
 }
