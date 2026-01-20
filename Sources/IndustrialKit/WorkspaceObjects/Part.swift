@@ -387,7 +387,7 @@ public class Part: WorkspaceObject
     }*/
     
     // MARK: - Work with file system
-    enum CodingKeys: String, CodingKey
+    /*enum CodingKeys: String, CodingKey
     {
         case physics_type
         case figure_color
@@ -413,6 +413,30 @@ public class Part: WorkspaceObject
         try container.encode(figure_color, forKey: .figure_color)
         
         try super.encode(to: encoder)
+    }*/
+    
+    public convenience init(file: PartFileData)
+    {
+        self.init()
+        
+        self.physics_type = file.physics_type
+        self.figure_color = file.figure_color
+        
+        color_import()
+    }
+    
+    public func file_data() -> PartFileData
+    {
+        return PartFileData(
+            physics_type: physics_type,
+            figure_color: figure_color
+        )
+    }
+    
+    public convenience init(file_from_object object: Part)
+    {
+        let file: PartFileData = object.file_data()
+        self.init(file: file)
     }
 }
 
@@ -422,4 +446,21 @@ public enum PhysicsType: String, Codable, Equatable, CaseIterable
     case ph_dynamic = "Dynamic"
     case ph_kinematic = "Kinematic"
     case ph_none = "None"
+}
+
+// MARK: - File Data
+public struct PartFileData: Codable
+{
+    public var physics_type: PhysicsType
+    public var figure_color: String?
+    
+    // MARK: - Init
+    public init(
+        physics_type: PhysicsType,
+        figure_color: String?
+    )
+    {
+        self.physics_type = physics_type
+        self.figure_color = figure_color
+    }
 }

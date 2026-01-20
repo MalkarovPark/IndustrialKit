@@ -988,7 +988,7 @@ public class Tool: WorkspaceObject
     private var paused = false
     
     // MARK: - Work with file system
-    enum CodingKeys: String, CodingKey
+    /*enum CodingKeys: String, CodingKey
     {
         case codes
         
@@ -1053,6 +1053,54 @@ public class Tool: WorkspaceObject
         try container.encode(programs, forKey: .programs)
         
         try super.encode(to: encoder)
+    }*/
+    
+    public convenience init(file: ToolFileData)
+    {
+        self.init()
+        
+        self.codes = file.codes
+        
+        self.is_attached = file.is_attached
+        self.attached_to = file.attached_to
+        
+        self.demo = file.demo
+        self.update_model_by_connector = file.update_model_by_connector
+        
+        self.get_statistics = file.get_statistics
+        self.charts_data = file.charts_data
+        self.states_data = file.states_data
+        
+        self.programs = file.programs
+        
+        self.connector.import_connection_parameters_values(file.connection_parameters)
+        
+        if self.update_model_by_connector
+        {
+            self.connector.model_controller = self.model_controller
+        }
+    }
+    
+    public func file_data() -> ToolFileData
+    {
+        return ToolFileData(
+            codes: codes,
+            is_attached: is_attached,
+            attached_to: attached_to,
+            demo: demo,
+            connection_parameters: connector.connection_parameters_values,
+            update_model_by_connector: update_model_by_connector,
+            get_statistics: get_statistics,
+            charts_data: charts_data,
+            states_data: states_data,
+            programs: programs
+        )
+    }
+    
+    public convenience init(file_from_object object: Tool)
+    {
+        let file: ToolFileData = object.file_data()
+        self.init(file: file)
     }
 }
 
@@ -1086,5 +1134,58 @@ public struct OperationCodeInfo: Equatable, Codable, Hashable
     public var image: Image
     {
         return Image(systemName: symbol)
+    }
+}
+
+// MARK: - File Data
+public struct ToolFileData: Codable
+{
+    public var codes: [OperationCodeInfo]
+    
+    public var is_attached: Bool
+    public var attached_to: String?
+    
+    public var demo: Bool
+    public var connection_parameters: [String]?
+    public var update_model_by_connector: Bool
+    
+    public var get_statistics: Bool
+    public var charts_data: [WorkspaceObjectChart]?
+    public var states_data: [StateItem]?
+    
+    public var programs: [OperationsProgram]
+    
+    // MARK: - Init
+    public init(
+        codes: [OperationCodeInfo],
+        
+        is_attached: Bool,
+        attached_to: String?,
+        
+        demo: Bool,
+        connection_parameters: [String]?,
+        update_model_by_connector: Bool,
+        
+        get_statistics: Bool,
+        charts_data: [WorkspaceObjectChart]?,
+        states_data: [StateItem]?,
+        
+        programs: [OperationsProgram]
+    )
+    {
+        self.codes = codes
+        
+        self.is_attached = is_attached
+        self.attached_to = attached_to
+        
+        self.demo = demo
+        self.connection_parameters = connection_parameters
+        self.update_model_by_connector = update_model_by_connector
+        
+        self.get_statistics = get_statistics
+        self.charts_data = charts_data
+        self.states_data = states_data
+        
+        self.programs = programs
     }
 }

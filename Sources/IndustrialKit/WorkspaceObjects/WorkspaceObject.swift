@@ -18,7 +18,7 @@ import SwiftUI
  Industrial production objects are represented by equipment that provide technological operations performing.
  */
 @MainActor
-open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable, @preconcurrency Codable
+open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable//, @preconcurrency Codable
 {
     public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool // Identity condition by names
     {
@@ -308,7 +308,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     }*/
     
     // MARK: - Work with file system
-    private enum CodingKeys: String, CodingKey
+    /*private enum CodingKeys: String, CodingKey
     {
         case name
         
@@ -360,6 +360,117 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         
         try container.encode(update_interval, forKey: .update_interval)
         try container.encode(scope_type, forKey: .scope_type)
+    }*/
+    
+    public convenience init(file: WorkspaceObjectFileData)
+    {
+        self.init()
+        
+        self.name = file.name
+        self.module_name = file.module_name
+        self.is_internal_module = file.is_internal_module
+        
+        /*self.position = (
+         file.location[0],
+         file.location[1],
+         file.location[2],
+         file.rotation[0],
+         file.rotation[1],
+         file.rotation[2]
+         )*/
+        self.position = (
+            file.location[safe: 0] ?? 0,
+            file.location[safe: 1] ?? 0,
+            file.location[safe: 2] ?? 0,
+            file.rotation[safe: 0] ?? 0,
+            file.rotation[safe: 1] ?? 0,
+            file.rotation[safe: 2] ?? 0
+        )
+        
+        self.is_placed = file.is_placed
+        self.update_interval = file.update_interval
+        self.scope_type = file.scope_type
+        
+        module_import_by_name(module_name, is_internal: is_internal_module)
+    }
+    
+    public func file_data() -> WorkspaceObjectFileData
+    {
+        return WorkspaceObjectFileData(
+            name: name,
+            
+            module_name: module_name,
+            is_internal_module: is_internal_module,
+            
+            location: [position.x, position.y, position.z],
+            rotation: [position.r, position.p, position.w],
+            
+            is_placed: is_placed,
+            
+            update_interval: update_interval,
+            scope_type: scope_type
+        )
+    }
+    
+    public convenience init(file_from_object object: WorkspaceObject)
+    {
+        self.init(file: WorkspaceObjectFileData(
+            name: object.name,
+            module_name: object.module_name,
+            is_internal_module: object.is_internal_module,
+            location: [object.position.x, object.position.y, object.position.z],
+            rotation: [object.position.r, object.position.p, object.position.w],
+            is_placed: object.is_placed,
+            update_interval: object.update_interval,
+            scope_type: object.scope_type
+        ))
+    }
+}
+
+// MARK: - File
+public struct WorkspaceObjectFileData: Codable
+{
+    public var name: String
+    
+    public var module_name: String
+    public var is_internal_module: Bool
+    
+    public var location: [Float]      // [x, y, z]
+    public var rotation: [Float]      // [r, p, w]
+    
+    public var is_placed: Bool
+    
+    public var update_interval: Double
+    public var scope_type: ScopeType
+    
+    // MARK: - Init
+    public init(
+        name: String,
+        
+        module_name: String,
+        is_internal_module: Bool,
+        
+        location: [Float],
+        rotation: [Float],
+        
+        is_placed: Bool,
+        
+        update_interval: Double,
+        scope_type: ScopeType
+    )
+    {
+        self.name = name
+        
+        self.module_name = module_name
+        self.is_internal_module = is_internal_module
+        
+        self.location = location
+        self.rotation = rotation
+        
+        self.is_placed = is_placed
+        
+        self.update_interval = update_interval
+        self.scope_type = scope_type
     }
 }
 

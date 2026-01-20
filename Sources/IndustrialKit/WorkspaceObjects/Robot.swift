@@ -1346,7 +1346,7 @@ public class Robot: WorkspaceObject
     private var paused = false
     
     // MARK: - Work with file system
-    enum CodingKeys: String, CodingKey
+    /*enum CodingKeys: String, CodingKey
     {
         case origin_location
         case origin_rotation
@@ -1426,5 +1426,156 @@ public class Robot: WorkspaceObject
         try container.encode(programs, forKey: .programs)
         
         try super.encode(to: encoder)
+    }*/
+    
+    public convenience init(file: RobotFileData)
+    {
+        self.init()
+        
+        self.origin_position = (
+            file.origin_location[safe: 0] ?? 0,
+            file.origin_location[safe: 1] ?? 0,
+            file.origin_location[safe: 2] ?? 0,
+            file.origin_rotation[safe: 0] ?? 0,
+            file.origin_rotation[safe: 1] ?? 0,
+            file.origin_rotation[safe: 2] ?? 0
+        )
+        
+        self.space_scale = (
+            file.space_scale[safe: 0] ?? 1,
+            file.space_scale[safe: 1] ?? 1,
+            file.space_scale[safe: 2] ?? 1
+        )
+        
+        if let pl = file.default_pointer_location,
+           let pr = file.default_pointer_rotation
+        {
+            self.default_pointer_position = (
+                pl[safe: 0] ?? 0,
+                pl[safe: 1] ?? 0,
+                pl[safe: 2] ?? 0,
+                pr[safe: 0] ?? 0,
+                pr[safe: 1] ?? 0,
+                pr[safe: 2] ?? 0
+            )
+        }
+        
+        self.demo = file.demo
+        self.update_model_by_connector = file.update_model_by_connector
+        
+        self.get_statistics = file.get_statistics
+        self.charts_data = file.charts_data
+        self.states_data = file.states_data
+        
+        self.programs = file.programs
+        
+        // runtime / side effects
+        self.connector.import_connection_parameters_values(file.connection_parameters)
+        
+        if self.update_model_by_connector
+        {
+            self.connector.model_controller = self.model_controller
+        }
+        
+        self.reset_pointer_to_default()
+    }
+    
+    public func file_data() -> RobotFileData
+    {
+        return RobotFileData(
+            origin_location: [
+                origin_position.x,
+                origin_position.y,
+                origin_position.z
+            ],
+            origin_rotation: [
+                origin_position.r,
+                origin_position.p,
+                origin_position.w
+            ],
+            space_scale: [
+                space_scale.x,
+                space_scale.y,
+                space_scale.z
+            ],
+            default_pointer_location: default_pointer_position.map {
+                [$0.x, $0.y, $0.z]
+            },
+            default_pointer_rotation: default_pointer_position.map {
+                [$0.r, $0.p, $0.w]
+            },
+            demo: demo,
+            connection_parameters: connector.connection_parameters_values,
+            update_model_by_connector: update_model_by_connector,
+            get_statistics: get_statistics,
+            charts_data: charts_data,
+            states_data: states_data,
+            programs: programs
+        )
+    }
+
+    public convenience init(file_from_object object: Robot)
+    {
+        let file: RobotFileData = object.file_data()
+        self.init(file: file)
+    }
+}
+
+// MARK: - File Data
+public struct RobotFileData: Codable
+{
+    public var origin_location: [Float]      // [x, y, z]
+    public var origin_rotation: [Float]      // [r, p, w]
+    public var space_scale: [Float]          // [x, y, z]
+    
+    public var default_pointer_location: [Float]?
+    public var default_pointer_rotation: [Float]?
+    
+    public var demo: Bool
+    public var connection_parameters: [String]?
+    public var update_model_by_connector: Bool
+    
+    public var get_statistics: Bool
+    public var charts_data: [WorkspaceObjectChart]?
+    public var states_data: [StateItem]?
+    
+    public var programs: [PositionsProgram]
+    
+    // MARK: - Init
+    public init(
+        origin_location: [Float],
+        origin_rotation: [Float],
+        space_scale: [Float],
+        
+        default_pointer_location: [Float]?,
+        default_pointer_rotation: [Float]?,
+        
+        demo: Bool,
+        connection_parameters: [String]?,
+        update_model_by_connector: Bool,
+        
+        get_statistics: Bool,
+        charts_data: [WorkspaceObjectChart]?,
+        states_data: [StateItem]?,
+        
+        programs: [PositionsProgram]
+    )
+    {
+        self.origin_location = origin_location
+        self.origin_rotation = origin_rotation
+        self.space_scale = space_scale
+        
+        self.default_pointer_location = default_pointer_location
+        self.default_pointer_rotation = default_pointer_rotation
+        
+        self.demo = demo
+        self.connection_parameters = connection_parameters
+        self.update_model_by_connector = update_model_by_connector
+        
+        self.get_statistics = get_statistics
+        self.charts_data = charts_data
+        self.states_data = states_data
+        
+        self.programs = programs
     }
 }

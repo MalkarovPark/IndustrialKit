@@ -1710,7 +1710,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             robots.append(Robot())
             
-            robots[new_index] = clone_codable(robots[index]) ?? Robot() // Robot(robot_struct: robots[index].file_info)
+            //robots[new_index] = clone_codable(robots[index]) ?? Robot() // Robot(robot_struct: robots[index].file_info)
             robots[new_index].name = new_name
             robots[new_index].is_placed = false
         }
@@ -1895,7 +1895,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             tools.append(Tool())
             
-            tools[new_index] = clone_codable(tools[index]) ?? Tool() // Tool(tool_struct: tools[index].file_info)
+            //tools[new_index] = clone_codable(tools[index]) ?? Tool() // Tool(tool_struct: tools[index].file_info)
             tools[new_index].name = new_name
             tools[new_index].is_placed = false
         }
@@ -2178,7 +2178,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
 
             parts.append(Part())
 
-            parts[new_index] = clone_codable(parts[index]) ?? Part() // Part(part_struct: parts[index].file_info)
+            //parts[new_index] = clone_codable(parts[index]) ?? Part() // Part(part_struct: parts[index].file_info)
             parts[new_index].name = new_name
             parts[new_index].is_placed = false
         }
@@ -2318,37 +2318,46 @@ public class Workspace: ObservableObject, @unchecked Sendable
      
      - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
      */
-    public func file_data() -> (robots: [Robot], tools: [Tool], parts: [Part], elements: [WorkspaceProgramElementStruct], registers: [Float])
+    public func file_data()
+    -> (
+        robots: [RobotFileData],
+        tools: [ToolFileData],
+        parts: [PartFileData],
+        elements: [WorkspaceProgramElementStruct],
+        registers: [Float]
+    )
     {
-        // Get robots info for save to file
-        var robots_file_info = [Robot]()
-        for robot in robots
+        // Robots
+        let robots_file_info: [RobotFileData] = robots.map
         {
-            robots_file_info.append(robot)
+            $0.file_data()
         }
         
-        // Get tools info for save to file
-        var tools_file_info = [Tool]()
-        for tool in tools
+        // Tools
+        let tools_file_info: [ToolFileData] = tools.map
         {
-            tools_file_info.append(tool)
+            $0.file_data()
         }
         
-        // Get parts info for save to file
-        var parts_file_info = [Part]()
-        for part in parts
+        // Parts
+        let parts_file_info: [PartFileData] = parts.map
         {
-            parts_file_info.append(part)
+            $0.file_data()
         }
         
-        // Get workspace program elements info for save to file
-        var elements_file_info = [WorkspaceProgramElementStruct]()
-        for element in elements
+        // Workspace program elements
+        let elements_file_info: [WorkspaceProgramElementStruct] = elements.map
         {
-            elements_file_info.append(element.file_info)
+            $0.file_info
         }
         
-        return(robots_file_info, tools_file_info, parts_file_info, elements_file_info, registers)
+        return (
+            robots: robots_file_info,
+            tools: tools_file_info,
+            parts: parts_file_info,
+            elements: elements_file_info,
+            registers: registers
+        )
     }
     
     /**
@@ -2359,41 +2368,44 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     public func file_view(preset: WorkspacePreset)
     {
-        // Update robots data from file
+        // MARK: - Robots
         robots.removeAll()
         
-        for robot in preset.robots
+        for robot_file in preset.robots
         {
+            let robot = Robot(file: robot_file)
             robots.append(robot)
         }
         
-        // Update tools data from file
+        // MARK: - Tools
         tools.removeAll()
         
-        for tool in preset.tools
+        for tool_file in preset.tools
         {
+            let tool = Tool(file: tool_file)
             tools.append(tool)
         }
         
-        // Update parts data from file
+        // MARK: - Parts
         parts.removeAll()
         
-        for part in preset.parts
+        for part_file in preset.parts
         {
-            // part.get_node_from_scene()
-            // part.color_to_model()
-            
+            let part = Part(file: part_file)
             parts.append(part)
         }
         
-        // Update workspace program elements data from file
+        // MARK: - Workspace program elements
         elements.removeAll()
+        
         for element in preset.elements
         {
             elements.append(element_from_struct(element))
         }
         
-        registers = preset.registers ?? [Float](repeating: 0, count: Workspace.default_registers_count)
+        // MARK: - Registers
+        registers = preset.registers
+        ?? [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
     // MARK: - UI Functions
@@ -2650,22 +2662,22 @@ public enum WorkspaceObjectType: String, Equatable, CaseIterable
 //MARK: - Structures for workspace preset document handling
 public struct WorkspacePreset: Codable
 {
-    public var robots = [Robot]()
+    public var robots = [RobotFileData]()
     public var elements = [WorkspaceProgramElementStruct]()
-    public var tools = [Tool]()
-    public var parts = [Part]()
+    public var tools = [ToolFileData]()
+    public var parts = [PartFileData]()
     
     public var registers: [Float]?
     
     public init()
     {
-        robots = [Robot]()
+        robots = [RobotFileData]()
         elements = [WorkspaceProgramElementStruct]()
-        tools = [Tool]()
-        parts = [Part]()
+        tools = [ToolFileData]()
+        parts = [PartFileData]()
     }
     
-    public init(robots: [Robot], elements: [WorkspaceProgramElementStruct], tools: [Tool], parts: [Part])
+    public init(robots: [RobotFileData], elements: [WorkspaceProgramElementStruct], tools: [ToolFileData], parts: [PartFileData])
     {
         self.robots = robots
         self.elements = elements
