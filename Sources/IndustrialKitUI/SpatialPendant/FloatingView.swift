@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FloatingView<Content: View>: View
+public struct FloatingView<Content: View>: View
 {
     // MARK: - States
     @State private var position: CGPoint = .zero
@@ -19,13 +19,13 @@ struct FloatingView<Content: View>: View
     let alignment: Alignment
     let content: () -> Content
     
-    init(alignment: Alignment = .center, @ViewBuilder content: @escaping () -> Content)
+    public init(alignment: Alignment = .center, @ViewBuilder content: @escaping () -> Content)
     {
         self.alignment = alignment
         self.content = content
     }
     
-    var body: some View
+    public var body: some View
     {
         GeometryReader
         { container in
