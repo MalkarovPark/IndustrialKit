@@ -1368,6 +1368,8 @@ public class Robot: WorkspaceObject
     
     public required init(from decoder: any Decoder) throws
     {
+        try super.init(from: decoder) //?
+        
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let location = try container.decode([Float].self, forKey: .origin_location)
@@ -1390,7 +1392,7 @@ public class Robot: WorkspaceObject
         
         self.programs = try container.decode([PositionsProgram].self, forKey: .programs)
         
-        try super.init(from: decoder)
+        //try super.init(from: decoder)
         
         self.connector.import_connection_parameters_values(try container.decodeIfPresent([String].self, forKey: .connection_parameters))
         if self.update_model_by_connector
