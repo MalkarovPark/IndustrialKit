@@ -6,7 +6,10 @@
 //
 
 import Foundation
-//import SceneKit
+
+#if canImport(RealityKit)
+import RealityKit
+#endif
 import SwiftUI
 
 /**
@@ -2647,7 +2650,7 @@ public enum WorkspaceObjectType: String, Equatable, CaseIterable
 //MARK: - Structures for workspace preset document handling
 public struct WorkspacePreset: Codable
 {
-    public var robots = [Robot]()
+    public var robots: [Robot] = [] //public var robots = [Robot]()
     public var elements = [WorkspaceProgramElementStruct]()
     public var tools = [Tool]()
     public var parts = [Part]()
