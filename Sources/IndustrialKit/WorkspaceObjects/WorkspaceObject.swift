@@ -184,7 +184,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     }
     
     // MARK: - Visual functions
-    
     #if canImport(RealityKit)
     /// A workspace object entity for visual modeling and physical simulation.
     public var entity: Entity?

@@ -20,7 +20,7 @@ import SwiftUI
  Also can build a visual model of the production system with editing functions.
  */
 @MainActor
-public class Workspace: ObservableObject, @unchecked Sendable
+open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
 {
     // MARK: - Init functions
     public init()
@@ -1171,6 +1171,40 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
         }
     }
+    
+    // MARK: - Visual Functions
+    #if canImport(RealityKit)
+    /*private var workspace_entity = Entity()
+    
+    private var floor_entity = Entity()
+    //private var origin_entity = Entity()
+    
+    /// Places entity to "scene" and connects with handling avalibility.
+    public func place_entity(to content: RealityViewCameraContent)
+    {
+        Task
+        {
+            // Place workspace entity
+            content.add(workspace_entity)
+            
+            floor_entity = build_floor()
+            workspace_entity.addChild(floor_entity)
+        }
+    }
+    
+    public func remove_entity(from content: RealityViewCameraContent)
+    {
+        Task
+        {
+            content.remove(workspace_entity)
+        }
+    }
+    
+    public func build_floor(grid_size: Float = 10) -> Entity
+    {
+        return Entity()
+    }*/
+    #endif
     
     // MARK: - Visual edit handling
     /// Sets new pointer position by selected workspace object.
