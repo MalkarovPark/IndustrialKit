@@ -1174,36 +1174,143 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     
     // MARK: - Visual Functions
     #if canImport(RealityKit)
-    /*private var workspace_entity = Entity()
+    private var workspace_entity = Entity()
+    private var camera_entity: PerspectiveCamera?
     
-    private var floor_entity = Entity()
-    //private var origin_entity = Entity()
-    
-    /// Places entity to "scene" and connects with handling avalibility.
     public func place_entity(to content: RealityViewCameraContent)
     {
-        Task
+        content.add(workspace_entity)
+        
+        if camera_entity == nil
         {
-            // Place workspace entity
-            content.add(workspace_entity)
+            // Place (connect) camera
+            let camera = PerspectiveCamera()
+            camera.camera.fieldOfViewInDegrees = 60
+            camera.position = [0, 1, 0]
+            camera.rotate_x(by: -.pi / 6)
             
-            floor_entity = build_floor()
-            workspace_entity.addChild(floor_entity)
+            // Add entities
+            workspace_entity.addChild(camera)
+            camera_entity = camera
+        }
+        
+        _ = content.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self, let camera = self.camera_entity else { return }
+            self.update_grid(camera_position: camera.position)
         }
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
     {
-        Task
-        {
-            content.remove(workspace_entity)
-        }
+        content.remove(workspace_entity)
+        grid_lines.removeAll()
     }
     
-    public func build_floor(grid_size: Float = 10) -> Entity
+    // MARK: Grid
+    private var grid_visible = true
+    private var grid_lines: [String: ModelEntity] = [:]
+    
+    private let cell_size: Float = 0.1 // 100 mm
+    private let render_radius: Int = 200
+    
+    private let minor_width: Float = 0.002 //0.001
+    private let major_width: Float = 0.0025
+    
+    private let major_step = 10
+    
+    public func toggle_grid_visiblity()
     {
-        return Entity()
-    }*/
+        grid_visible.toggle()
+        grid_lines.values.forEach { $0.isEnabled = grid_visible }
+    }
+    
+    private func update_grid(camera_position: SIMD3<Float>)
+    {
+        if !grid_visible { return }
+        
+        let cx = Int(round(camera_position.x / cell_size))
+        let cz = Int(round(camera_position.z / cell_size))
+        
+        for i in -render_radius...render_radius
+        {
+            add_line(index: cx + i, axis: .x)
+            add_line(index: cz + i, axis: .z)
+        }
+        
+        cleanup_lines(center_x: cx, center_z: cz)
+    }
+    
+    private enum Axis { case x, z }
+    
+    private func add_line(index: Int, axis: Axis)
+    {
+        let key = "\(axis)_\(index)"
+        if grid_lines[key] != nil { return }
+        
+        let is_major = index % major_step == 0
+        let is_axis  = index == 0
+        
+        let width = is_axis ? major_width * 1.5
+        : is_major ? major_width
+        : minor_width
+        
+        let color = is_axis
+        ? UIColor.gray.withAlphaComponent(0.5)
+        : is_major
+        ? UIColor.gray.withAlphaComponent(0.4)
+        : UIColor.gray.withAlphaComponent(0.3)
+        
+        let length = Float(render_radius * 2) * cell_size
+        
+        let mesh: MeshResource
+        switch axis
+        {
+        case .x:
+            mesh = MeshResource.generatePlane(width: length, depth: width)
+        case .z:
+            mesh = MeshResource.generatePlane(width: width, depth: length)
+        }
+        
+        var material = SimpleMaterial(color: color, roughness: 1, isMetallic: false)
+        material.faceCulling = .none
+        
+        let line = ModelEntity(mesh: mesh, materials: [material])
+        line.orientation = simd_quatf(angle: .pi, axis: [1,0,0])
+        
+        switch axis
+        {
+        case .x:
+            line.position = [0, Float(-0.001), Float(index) * cell_size]
+        case .z:
+            line.position = [Float(index) * cell_size, Float(-0.002), 0]
+        }
+        
+        workspace_entity.addChild(line)
+        grid_lines[key] = line
+    }
+    
+    private func cleanup_lines(center_x: Int, center_z: Int)
+    {
+        for (key, line) in grid_lines
+        {
+            if key.hasPrefix("x_"),
+               let idx = Int(key.dropFirst(2)),
+               abs(idx - center_x) > render_radius
+            {
+                line.removeFromParent()
+                grid_lines.removeValue(forKey: key)
+            }
+            
+            if key.hasPrefix("z_"),
+               let idx = Int(key.dropFirst(2)),
+               abs(idx - center_z) > render_radius
+            {
+                line.removeFromParent()
+                grid_lines.removeValue(forKey: key)
+            }
+        }
+    }
     #endif
     
     // MARK: - Visual edit handling
