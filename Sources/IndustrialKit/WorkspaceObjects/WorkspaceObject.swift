@@ -416,11 +416,15 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     {
         self.init(file: WorkspaceObjectFileData(
             name: object.name,
+            
             module_name: object.module_name,
             is_internal_module: object.is_internal_module,
+            
             location: [object.position.x, object.position.y, object.position.z],
             rotation: [object.position.r, object.position.p, object.position.w],
+            
             is_placed: object.is_placed,
+            
             update_interval: object.update_interval,
             scope_type: object.scope_type
         ))
