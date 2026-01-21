@@ -1057,7 +1057,7 @@ public class Tool: WorkspaceObject
     
     public convenience init(file: ToolFileData)
     {
-        self.init()
+        self.init(file: file.object) //self.init()
         
         self.codes = file.codes
         
@@ -1084,6 +1084,20 @@ public class Tool: WorkspaceObject
     public func file_data() -> ToolFileData
     {
         return ToolFileData(
+            object: WorkspaceObjectFileData(
+                name: name,
+                
+                module_name: module_name,
+                is_internal_module: is_internal_module,
+                
+                location: [position.x, position.y, position.z],
+                rotation: [position.r, position.p, position.w],
+                is_placed: is_placed,
+                
+                update_interval: update_interval,
+                scope_type: scope_type
+            ),
+            
             codes: codes,
             
             is_attached: is_attached,
@@ -1144,6 +1158,8 @@ public struct OperationCodeInfo: Equatable, Codable, Hashable
 // MARK: - File Data
 public struct ToolFileData: Codable
 {
+    public var object: WorkspaceObjectFileData
+    
     public var codes: [OperationCodeInfo]
     
     public var is_attached: Bool
@@ -1161,6 +1177,8 @@ public struct ToolFileData: Codable
     
     // MARK: - Init
     public init(
+        object: WorkspaceObjectFileData,
+        
         codes: [OperationCodeInfo],
         
         is_attached: Bool,
@@ -1177,6 +1195,8 @@ public struct ToolFileData: Codable
         programs: [OperationsProgram]
     )
     {
+        self.object = object
+        
         self.codes = codes
         
         self.is_attached = is_attached

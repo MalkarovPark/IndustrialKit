@@ -417,7 +417,7 @@ public class Part: WorkspaceObject
     
     public convenience init(file: PartFileData)
     {
-        self.init()
+        self.init(file: file.object) //self.init()
         
         self.physics_type = file.physics_type
         self.figure_color = file.figure_color
@@ -428,6 +428,20 @@ public class Part: WorkspaceObject
     public func file_data() -> PartFileData
     {
         return PartFileData(
+            object: WorkspaceObjectFileData(
+                name: name,
+                
+                module_name: module_name,
+                is_internal_module: is_internal_module,
+                
+                location: [position.x, position.y, position.z],
+                rotation: [position.r, position.p, position.w],
+                is_placed: is_placed,
+                
+                update_interval: update_interval,
+                scope_type: scope_type
+            ),
+            
             physics_type: physics_type,
             figure_color: figure_color
         )
@@ -451,15 +465,21 @@ public enum PhysicsType: String, Codable, Equatable, CaseIterable
 // MARK: - File Data
 public struct PartFileData: Codable
 {
+    public var object: WorkspaceObjectFileData
+    
     public var physics_type: PhysicsType
     public var figure_color: String?
     
     // MARK: - Init
     public init(
+        object: WorkspaceObjectFileData,
+        
         physics_type: PhysicsType,
         figure_color: String?
     )
     {
+        self.object = object
+        
         self.physics_type = physics_type
         self.figure_color = figure_color
     }

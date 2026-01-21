@@ -1430,7 +1430,7 @@ public class Robot: WorkspaceObject
     
     public convenience init(file: RobotFileData)
     {
-        self.init()
+        self.init(file: file.object) //self.init()
         
         self.origin_position = (
             file.origin_location[safe: 0] ?? 0,
@@ -1483,21 +1483,23 @@ public class Robot: WorkspaceObject
     public func file_data() -> RobotFileData
     {
         return RobotFileData(
-            origin_location: [
-                origin_position.x,
-                origin_position.y,
-                origin_position.z
-            ],
-            origin_rotation: [
-                origin_position.r,
-                origin_position.p,
-                origin_position.w
-            ],
-            space_scale: [
-                space_scale.x,
-                space_scale.y,
-                space_scale.z
-            ],
+            object: WorkspaceObjectFileData(
+                name: name,
+                
+                module_name: module_name,
+                is_internal_module: is_internal_module,
+                
+                location: [position.x, position.y, position.z],
+                rotation: [position.r, position.p, position.w],
+                is_placed: is_placed,
+                
+                update_interval: update_interval,
+                scope_type: scope_type
+            ),
+            
+            origin_location: [origin_position.x, origin_position.y, origin_position.z],
+            origin_rotation: [origin_position.r, origin_position.p, origin_position.w],
+            space_scale: [space_scale.x, space_scale.y, space_scale.z],
             default_pointer_location: default_pointer_position.map {
                 [$0.x, $0.y, $0.z]
             },
@@ -1528,9 +1530,11 @@ public class Robot: WorkspaceObject
 // MARK: - File Data
 public struct RobotFileData: Codable
 {
-    public var origin_location: [Float]      // [x, y, z]
-    public var origin_rotation: [Float]      // [r, p, w]
-    public var space_scale: [Float]          // [x, y, z]
+    public var object: WorkspaceObjectFileData
+    
+    public var origin_location: [Float]
+    public var origin_rotation: [Float]
+    public var space_scale: [Float]
     
     public var default_pointer_location: [Float]?
     public var default_pointer_rotation: [Float]?
@@ -1547,6 +1551,8 @@ public struct RobotFileData: Codable
     
     // MARK: - Init
     public init(
+        object: WorkspaceObjectFileData,
+        
         origin_location: [Float],
         origin_rotation: [Float],
         space_scale: [Float],
@@ -1565,6 +1571,8 @@ public struct RobotFileData: Codable
         programs: [PositionsProgram]
     )
     {
+        self.object = object
+        
         self.origin_location = origin_location
         self.origin_rotation = origin_rotation
         self.space_scale = space_scale
