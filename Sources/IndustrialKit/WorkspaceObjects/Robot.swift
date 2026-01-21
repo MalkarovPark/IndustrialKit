@@ -1504,12 +1504,16 @@ public class Robot: WorkspaceObject
             default_pointer_rotation: default_pointer_position.map {
                 [$0.r, $0.p, $0.w]
             },
+            
             demo: demo,
+            
             connection_parameters: connector.connection_parameters_values,
             update_model_by_connector: update_model_by_connector,
+            
             get_statistics: get_statistics,
             charts_data: charts_data,
             states_data: states_data,
+            
             programs: programs
         )
     }

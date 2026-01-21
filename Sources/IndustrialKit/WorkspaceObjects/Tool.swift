@@ -1085,14 +1085,18 @@ public class Tool: WorkspaceObject
     {
         return ToolFileData(
             codes: codes,
+            
             is_attached: is_attached,
             attached_to: attached_to,
+            
             demo: demo,
             connection_parameters: connector.connection_parameters_values,
             update_model_by_connector: update_model_by_connector,
+            
             get_statistics: get_statistics,
             charts_data: charts_data,
             states_data: states_data,
+            
             programs: programs
         )
     }
