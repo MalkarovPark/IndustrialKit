@@ -1219,12 +1219,14 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     
     private let major_step = 10
     
-    public var is_grid_visible: Bool { grid_visible } // UI
+    public var is_grid_visible: Bool { grid_visible } // UI Only
     
     public func toggle_grid_visiblity()
     {
         grid_visible.toggle()
         grid_lines.values.forEach { $0.isEnabled = grid_visible }
+        
+        self.objectWillChange.send() // UI Only
     }
     
     private func update_grid(camera_position: SIMD3<Float>)
