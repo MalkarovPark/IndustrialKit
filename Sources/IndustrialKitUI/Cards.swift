@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SceneKit
+import RealityKit
 import IndustrialKit
 
 //MARK: - Box card view
@@ -233,7 +233,7 @@ public struct GlassBoxCard<Content: View>: View
     @State public var subtitle: String?
     let color: Color
     let image: UIImage?
-    let node: SCNNode?
+    let entity: Entity?
     
     // Rename parameters
     @Binding public var to_rename: Bool
@@ -257,7 +257,7 @@ public struct GlassBoxCard<Content: View>: View
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
-        self.node = nil
+        self.entity = nil
         self.title = title
         self.subtitle = subtitle
         self.color = color ?? default_color
@@ -292,7 +292,7 @@ public struct GlassBoxCard<Content: View>: View
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
-        self.node = nil
+        self.entity = nil
         self.title = title
         self.subtitle = subtitle
         self.color = color ?? default_color
@@ -318,7 +318,7 @@ public struct GlassBoxCard<Content: View>: View
         title: String,
         subtitle: String? = nil,
         color: Color? = nil,
-        node: SCNNode?,
+        entity: Entity?,
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
@@ -335,7 +335,7 @@ public struct GlassBoxCard<Content: View>: View
             endPoint: .trailing
         )
         self.image = nil
-        self.node = node
+        self.entity = entity
         
         self._to_rename = .constant(false)
         self._edited_name = .constant("")
@@ -349,7 +349,7 @@ public struct GlassBoxCard<Content: View>: View
         title: String,
         subtitle: String? = nil,
         color: Color? = nil,
-        node: SCNNode?,
+        entity: Entity?,
         
         to_rename: Binding<Bool>,
         edited_name: Binding<String>,
@@ -370,7 +370,7 @@ public struct GlassBoxCard<Content: View>: View
             endPoint: .trailing
         )
         self.image = nil
-        self.node = node
+        self.entity = entity
         
         self._to_rename = to_rename
         self._edited_name = edited_name
@@ -445,11 +445,15 @@ public struct GlassBoxCard<Content: View>: View
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 
-                if node != nil
+                if entity != nil
                 {
-                    ObjectSceneView(node: node!)
-                        .disabled(true)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    //ObjectSceneView(entity: entity!)
+                    RealityView
+                    { content in
+                        content.add(entity ?? Entity())
+                    }
+                    .disabled(true)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 
                 // Forward Side
@@ -814,7 +818,13 @@ struct Cards_Previews: PreviewProvider
                     
                     VStack()
                     {
-                        GlassBoxCard(title: names[1], node: SCNNode(geometry: SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.1)), to_rename: $to_rename[1], edited_name: $names[1], on_rename: {})
+                        GlassBoxCard(
+                            title: names[1],
+                            entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .white, isMetallic: false)]),
+                            to_rename: $to_rename[1],
+                            edited_name: $names[1],
+                            on_rename: {}
+                        )
                             .contextMenu
                             {
                                 RenameButton()

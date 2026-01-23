@@ -5,7 +5,7 @@
 //  Created by Artem on 06.11.2023.
 //
 
-import SwiftUI
+/*import SwiftUI
 import SceneKit
 import IndustrialKit
 
@@ -271,4 +271,4 @@ struct ObjectSceneView_PreviewsContainer: PreviewProvider
                 }
         }
     }
-}
+}*/
