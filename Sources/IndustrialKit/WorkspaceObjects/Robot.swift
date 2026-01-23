@@ -17,7 +17,7 @@ import SwiftUI
  
  Permorms reposition operation by target points order in selected positions program.
  */
-public class Robot: WorkspaceObject
+open class Robot: WorkspaceObject
 {
     // MARK: - Init functions
     /// Inits robot with default parameters.

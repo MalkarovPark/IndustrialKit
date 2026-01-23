@@ -17,7 +17,7 @@ import SwiftUI
  
  Permorms operation by codes order in selected operations program.
  */
-public class Tool: WorkspaceObject
+open class Tool: WorkspaceObject
 {
     // MARK: - Init functions
     public override init()

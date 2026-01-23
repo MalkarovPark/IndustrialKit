@@ -17,7 +17,7 @@ import SwiftUI
  
  Forms environment, and represent objects with which executing devices interact directly.
  */
-public class Part: WorkspaceObject
+open class Part: WorkspaceObject
 {
     private var figure: String? // Part figure name
     private var lengths: [Float]? // lengths for part without scene figure
