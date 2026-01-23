@@ -185,13 +185,49 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     
     // MARK: - Visual functions
     #if canImport(RealityKit)
+    /// A complex workspace object entity.
+    public var entity = Entity() //public var entity: Entity?
+    
     /// A workspace object entity for visual modeling and physical simulation.
-    public var entity: Entity?
+    public var model_entity: Entity?
     
     /// A entity loading state.
     //public var entity_loaded = false
     
     private func perform_load_entity(named name: String)
+    {
+        Task
+        {
+            do
+            {
+                self.model_entity = try await Entity(named: name)
+                
+                print("🥂 Loaded! (\(name))")
+                
+                guard let model_entity = model_entity else { return }
+                
+                model_entity.generateCollisionShapes(recursive: true)
+                model_entity.visit
+                { entity in
+                    entity.components.set(entity_tag)
+                }
+                
+                model_entity.components.set(InputTargetComponent())
+                
+                self.entity.addChild(model_entity)
+                
+                //entity_loaded = true
+                extend_entity_preparation(entity)
+            }
+            catch
+            {
+                //entity_loaded = false
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    /*private func perform_load_entity(named name: String)
     {
         Task
         {
@@ -220,7 +256,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                 print(error.localizedDescription)
             }
         }
-    }
+    }*/
     
     open var entity_tag: EntityModelIdentifier
     {
@@ -238,6 +274,25 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         Task
         {
             // Wait until bot.entity becomes available, then place it once
+            while model_entity == nil
+            {
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+            }
+            
+            // Place entity
+            //guard let entity = entity else { return }
+            
+            content.add(entity)
+            
+            extend_entity_placement(entity)
+        }
+    }
+    
+    /*public func place_entity(to content: RealityViewCameraContent)
+    {
+        Task
+        {
+            // Wait until bot.entity becomes available, then place it once
             while entity == nil
             {
                 try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
@@ -250,7 +305,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
             
             extend_entity_placement(entity)
         }
-    }
+    }*/
     
     /// Places entity to "scene" and connects with handling avalibility.
     public func place_entity_at_position(to content: RealityViewCameraContent)
@@ -271,8 +326,13 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     
     public func update_model_position()
     {
-        entity?.update_position(position)
+        entity.update_position(position)
     }
+    
+    /*public func update_model_position()
+    {
+        entity?.update_position(position)
+    }*/
     
     open func extend_entity_placement(_ entity: Entity)
     {

@@ -991,12 +991,22 @@ open class Robot: WorkspaceObject
     {
         didSet // Entities reconnection if model contoller changed
         {
-            if let entity = entity
+            if let entity = model_entity
             {
                 model_controller.connect_entities(of: entity)
             }
         }
     }
+    /*public var model_controller = RobotModelController()
+    {
+        didSet // Entities reconnection if model contoller changed
+        {
+            if let entity = entity
+            {
+                model_controller.connect_entities(of: entity)
+            }
+        }
+    }*/
     
     private func sync_model_controller_parameters()
     {
