@@ -1219,6 +1219,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     
     private let major_step = 10
     
+    public var is_grid_visible: Bool { grid_visible } // UI
+    
     public func toggle_grid_visiblity()
     {
         grid_visible.toggle()
