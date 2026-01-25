@@ -235,6 +235,8 @@ public struct GlassBoxCard<Content: View>: View
     let image: UIImage?
     let entity: Entity?
     
+    private var vertical_entity_reposition = false
+    
     // Rename parameters
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
@@ -319,6 +321,7 @@ public struct GlassBoxCard<Content: View>: View
         subtitle: String? = nil,
         color: Color? = nil,
         entity: Entity?,
+        vertical_repostion: Bool = false,
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
@@ -336,6 +339,7 @@ public struct GlassBoxCard<Content: View>: View
         )
         self.image = nil
         self.entity = entity
+        self.vertical_entity_reposition = vertical_repostion
         
         self._to_rename = .constant(false)
         self._edited_name = .constant("")
@@ -350,6 +354,7 @@ public struct GlassBoxCard<Content: View>: View
         subtitle: String? = nil,
         color: Color? = nil,
         entity: Entity?,
+        vertical_repostion: Bool = false,
         
         to_rename: Binding<Bool>,
         edited_name: Binding<String>,
@@ -371,6 +376,7 @@ public struct GlassBoxCard<Content: View>: View
         )
         self.image = nil
         self.entity = entity
+        self.vertical_entity_reposition = vertical_repostion
         
         self._to_rename = to_rename
         self._edited_name = edited_name
@@ -454,7 +460,7 @@ public struct GlassBoxCard<Content: View>: View
                         // Camera reposition
                         let camera = PerspectiveCamera()
                         //camera.camera.fieldOfViewInDegrees = 60
-                        camera.position = [0, 0, (entity?.visualBounds(relativeTo: nil).extents.z ?? 0) * 2]
+                        camera.position = [0, vertical_entity_reposition ? (entity?.visualBounds(relativeTo: nil).extents.y ?? 0) / 2 : 0, (entity?.visualBounds(relativeTo: nil).extents.z ?? 0) * 2]
                         
                         content.add(camera)
                         
