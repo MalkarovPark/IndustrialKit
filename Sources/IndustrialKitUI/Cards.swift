@@ -447,10 +447,22 @@ public struct GlassBoxCard<Content: View>: View
                 
                 if entity != nil
                 {
-                    //ObjectSceneView(entity: entity!)
                     RealityView
                     { content in
                         content.add(entity ?? Entity())
+                        
+                        // Camera reposition
+                        let camera = PerspectiveCamera()
+                        //camera.camera.fieldOfViewInDegrees = 60
+                        camera.position = [0, 0, (entity?.visualBounds(relativeTo: nil).extents.z ?? 0) + 1.25]
+                        
+                        content.add(camera)
+                        
+                        /*let camera = PerspectiveCamera()
+                        camera.camera.fieldOfViewInDegrees = 60
+                        camera.position = [0, 0, 1]
+                        //camera.rotate_x(by: -.pi / 6)
+                        content.add(camera)*/
                     }
                     .disabled(true)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -820,23 +832,35 @@ struct Cards_Previews: PreviewProvider
                     {
                         GlassBoxCard(
                             title: names[1],
-                            entity: ModelEntity(mesh: .generateBox(size: 1.0, cornerRadius: 0.1), materials: [SimpleMaterial(color: .white, isMetallic: false)]),
+                            entity: ModelEntity(
+                                mesh: .generateBox(size: 1.0, cornerRadius: 0.1),
+                                materials: [SimpleMaterial(color: .white, isMetallic: false)]
+                            ),
+                            /*entity: ModelEntity(
+                                mesh: .generateBox(
+                                    size: SIMD3<Float>(1.0, 1.0, 0.5), // X, Y, Z
+                                    cornerRadius: 0.1
+                                ),
+                                materials: [
+                                    SimpleMaterial(color: .white, isMetallic: false)
+                                ]
+                            ),*/
                             to_rename: $to_rename[1],
                             edited_name: $names[1],
                             on_rename: {}
                         )
-                            .contextMenu
+                        .contextMenu
+                        {
+                            RenameButton()
+                                .renameAction
                             {
-                                RenameButton()
-                                    .renameAction
+                                withAnimation
                                 {
-                                    withAnimation
-                                    {
-                                        to_rename[1].toggle()
-                                    }
+                                    to_rename[1].toggle()
                                 }
                             }
-                            .padding()
+                        }
+                        .padding()
                     }
                     .padding(4)
                     .frame(width: 320, height: 192)
