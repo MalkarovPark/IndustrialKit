@@ -67,11 +67,8 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     public convenience init(name: String, entity: Entity)
     {
         self.init(name: name)
-        self.entity = entity
-        Task
-        {
-            model_entity_preparation(entity)
-        }
+        self.model_entity = entity
+        model_entity_preparation(entity)
     }
     
     /// Inits object by name and module name of installed module.
