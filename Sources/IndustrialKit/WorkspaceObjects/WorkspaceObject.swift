@@ -64,6 +64,13 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         perform_load_entity(named: entity_name)
     }
     
+    public convenience init(name: String, entity: Entity)
+    {
+        self.init(name: name)
+        self.entity = entity
+        model_entity_preparation(entity)
+    }
+    
     /// Inits object by name and module name of installed module.
     public init(name: String, module_name: String, is_internal: Bool = true)
     {
@@ -192,7 +199,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     public var model_entity: Entity?
     
     /// A entity loading state.
-    //public var entity_loaded = false
+    @Published public var entity_loaded = false
     
     private func perform_load_entity(named name: String)
     {
@@ -204,7 +211,12 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                 
                 print("🥂 Loaded! (\(name))")
                 
-                guard let model_entity = model_entity else { return }
+                guard let model_entity = model_entity
+                else
+                {
+                    entity_loaded = false
+                    return
+                }
                 
                 model_entity.generateCollisionShapes(recursive: true)
                 model_entity.visit
@@ -212,19 +224,31 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                     entity.components.set(entity_tag)
                 }
                 
-                model_entity.components.set(InputTargetComponent())
+                model_entity_preparation(model_entity)
+                
+                /*model_entity.components.set(InputTargetComponent())
                 
                 self.entity.addChild(model_entity)
                 
-                //entity_loaded = true
-                extend_entity_preparation(entity)
+                entity_loaded = true
+                extend_entity_preparation(entity)*/
             }
             catch
             {
-                //entity_loaded = false
+                entity_loaded = false
                 print(error.localizedDescription)
             }
         }
+    }
+    
+    private func model_entity_preparation(_ model_entity: Entity)
+    {
+        model_entity.components.set(InputTargetComponent())
+        
+        self.entity.addChild(model_entity)
+        
+        entity_loaded = true
+        extend_entity_preparation(entity)
     }
     
     /*private func perform_load_entity(named name: String)
