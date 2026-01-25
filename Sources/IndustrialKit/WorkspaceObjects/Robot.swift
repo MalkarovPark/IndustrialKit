@@ -49,6 +49,16 @@ open class Robot: WorkspaceObject
         apply_statistics_flags()
     }
     
+    public convenience init(name: String, entity: Entity, model_controller: RobotModelController = RobotModelController(), connector: RobotConnector = RobotConnector())
+    {
+        self.init(name: name, entity: entity)
+        
+        self.model_controller = model_controller
+        self.connector = connector
+        
+        apply_statistics_flags()
+    }
+    
     /// Inits robot by name and part module.
     public init(name: String, module: RobotModule)
     {
