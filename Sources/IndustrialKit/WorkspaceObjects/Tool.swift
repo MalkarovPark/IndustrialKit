@@ -169,6 +169,24 @@ open class Tool: WorkspaceObject
         #endif*/
     }
     
+    /// Performs loading to all entities from internal modules.
+    public static func load_all_internal_modules_entities()
+    {
+        for module in Tool.internal_modules
+        {
+            module.perform_load_entity()
+        }
+    }
+    
+    /// Performs loading to all entities from external modules.
+    public static func load_all_external_modules_entities()
+    {
+        for module in Tool.external_modules
+        {
+            module.perform_load_entity()
+        }
+    }
+    
     #if os(macOS)
     /// Start all program components in module.
     public static func external_modules_servers_start()

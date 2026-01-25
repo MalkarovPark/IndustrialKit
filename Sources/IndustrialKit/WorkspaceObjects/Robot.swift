@@ -170,6 +170,24 @@ open class Robot: WorkspaceObject
         module_import(modules[index])
     }
     
+    /// Performs loading to all entities from internal modules.
+    public static func load_all_internal_modules_entities()
+    {
+        for module in Robot.internal_modules
+        {
+            module.perform_load_entity()
+        }
+    }
+    
+    /// Performs loading to all entities from external modules.
+    public static func load_all_external_modules_entities()
+    {
+        for module in Robot.external_modules
+        {
+            module.perform_load_entity()
+        }
+    }
+    
     /**
      Imports external modules by names.
      - Parameters:

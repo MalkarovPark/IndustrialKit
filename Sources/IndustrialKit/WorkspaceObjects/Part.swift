@@ -164,6 +164,24 @@ open class Part: WorkspaceObject
         }
     }
     
+    /// Performs loading to all entities from internal modules.
+    public static func load_all_internal_modules_entities()
+    {
+        for module in Part.internal_modules
+        {
+            module.perform_load_entity()
+        }
+    }
+    
+    /// Performs loading to all entities from external modules.
+    public static func load_all_external_modules_entities()
+    {
+        for module in Part.external_modules
+        {
+            module.perform_load_entity()
+        }
+    }
+    
     private func color_import()
     {
         /*if node != nil
