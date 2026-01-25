@@ -112,7 +112,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     // MARK: - Entities handling
     private var is_internal_entity = true
     
-    @MainActor private var entity: Entity?
+    @MainActor public var entity: Entity?
     
     /// A scene passed to object.
     public var internal_entity_name: String
