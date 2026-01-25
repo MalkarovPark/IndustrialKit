@@ -454,7 +454,7 @@ public struct GlassBoxCard<Content: View>: View
                         // Camera reposition
                         let camera = PerspectiveCamera()
                         //camera.camera.fieldOfViewInDegrees = 60
-                        camera.position = [0, 0, (entity?.visualBounds(relativeTo: nil).extents.z ?? 0) + 1.25]
+                        camera.position = [0, 0, (entity?.visualBounds(relativeTo: nil).extents.z ?? 0) * 2]
                         
                         content.add(camera)
                         
