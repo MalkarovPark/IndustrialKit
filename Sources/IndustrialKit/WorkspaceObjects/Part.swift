@@ -120,9 +120,12 @@ open class Part: WorkspaceObject
     {
         module_name = module.name
         
-        // node = module.node.clone()
-        //node = module.node.deep_clone()
-        color_from_model()
+        if let module_entity = module.entity
+        {
+            perform_load_entity(module_entity.clone(recursive: true))
+        }
+        
+        //color_from_model()
     }
     
     /// Imported internal part modules.

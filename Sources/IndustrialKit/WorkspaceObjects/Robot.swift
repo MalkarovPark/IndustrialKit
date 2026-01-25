@@ -118,7 +118,10 @@ open class Robot: WorkspaceObject
     {
         module_name = module.name
         
-        //node = module.node.clone()
+        if let module_entity = module.entity
+        {
+            perform_load_entity(module_entity.clone(recursive: true))
+        }
         
         if !(module.model_controller is ExternalRobotModelController)
         {

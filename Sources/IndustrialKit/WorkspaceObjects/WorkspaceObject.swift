@@ -68,7 +68,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     {
         self.init(name: name)
         self.model_entity = entity
-        model_entity_preparation(entity)
+        perform_load_entity(model_entity)
     }
     
     /// Inits object by name and module name of installed module.
@@ -199,7 +199,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     public var model_entity: Entity?
     
     /// An entity loading state.
-    @Published public var entity_loaded = false
+    //@Published public var entity_loaded = false
     
     private func perform_load_entity(named name: String)
     {
@@ -207,16 +207,13 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         {
             do
             {
-                self.model_entity = try await Entity(named: name)
+                let model_entity = try await Entity(named: name)
                 
                 print("🥂 Loaded! (\(name))")
                 
-                guard let model_entity = model_entity
-                else
-                {
-                    entity_loaded = false
-                    return
-                }
+                perform_load_entity(model_entity)
+                
+                /*guard let model_entity = model_entity else { return }
                 
                 model_entity.generateCollisionShapes(recursive: true)
                 model_entity.visit
@@ -224,9 +221,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                     entity.components.set(entity_tag)
                 }
                 
-                model_entity_preparation(model_entity)
-                
-                /*model_entity.components.set(InputTargetComponent())
+                model_entity.components.set(InputTargetComponent())
                 
                 self.entity.addChild(model_entity)
                 
@@ -235,19 +230,28 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
             }
             catch
             {
-                entity_loaded = false
+                //entity_loaded = false
                 print(error.localizedDescription)
             }
         }
     }
     
-    private func model_entity_preparation(_ model_entity: Entity)
+    public func perform_load_entity(_ model_entity: Entity?)
     {
+        guard let model_entity = model_entity else { return }
+        
+        model_entity.generateCollisionShapes(recursive: true)
+        model_entity.visit
+        { entity in
+            entity.components.set(entity_tag)
+        }
+        
         model_entity.components.set(InputTargetComponent())
         
+        self.model_entity = model_entity
         self.entity.addChild(model_entity)
         
-        entity_loaded = true
+        //entity_loaded = true
         extend_entity_preparation(entity)
     }
     
