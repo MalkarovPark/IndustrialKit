@@ -68,7 +68,10 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     {
         self.init(name: name)
         self.entity = entity
-        model_entity_preparation(entity)
+        Task
+        {
+            model_entity_preparation(entity)
+        }
     }
     
     /// Inits object by name and module name of installed module.
