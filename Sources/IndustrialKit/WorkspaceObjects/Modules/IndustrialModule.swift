@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SceneKit
+import RealityKit
 
 /**
  A base class of industrial production object.
@@ -35,27 +35,13 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     @Published public var linked_components = [String: String]()
     
     // MARK: - File handling
-    /**
-     An additional resources files names.
-     
-     Used to check files in a package and during the STC package compilation process.
-     
-     > Such as images, scenes etc.
-     */
-    @Published public var resources_names: [String]?
+    /// A folder bookmark to resources access.
+    nonisolated(unsafe) public static var work_folder_bookmark: Data?
     
-    /**
-     A main scene file name of visual model.
-     
-     > This, all other visual components are used by the main scene.
-     */
-    @Published public var main_scene_name: String?
+    /// An object package extension name.
+    open var extension_name: String { "module" }
     
-    nonisolated(unsafe) public static var work_folder_bookmark: Data? /// A folder bookmark to resources access.
-    
-    open var extension_name: String { "module" } /// An object package extension name.
-    
-    // MARK: - Init functions    
+    // MARK: - Init functions
     /**
      New module init.
      
@@ -85,7 +71,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.name = external_name
         self.description = String()
         
-        // import_external_resources()
+        is_internal_entity = false
     }
     
     public var internal_url: String? /// An adress to package contents access.
@@ -110,7 +96,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         }
     }
     
-    // MARK: - Designer functions
+    // MARK: - Module design functions
     /// Default code items for module design process.
     open var default_code_items: [String: String]
     {
@@ -123,10 +109,63 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         return [String: String]()
     }
     
-    // MARK: - Components
-    /// A scene passed to object.
-    open var node = SCNNode()
+    // MARK: - Entities handling
+    private var is_internal_entity = true
     
+    @MainActor private var entity: Entity?
+    
+    /// A scene passed to object.
+    public var internal_entity_name: String
+    {
+        return "\(name).\(extension_name).\(scene_file_name)" // name.module.scene 6DOF.robot.scene
+    }
+    
+    private var scene_file_name: String { "Scene" }
+    
+    /// A module package url of external module.
+    open var package_url: URL
+    {
+        return URL(filePath: "")
+    }
+    
+    @MainActor public func perform_load_entity()//(named name: String)
+    {
+        Task
+        {
+            do
+            {
+                if is_internal_entity
+                {
+                    self.entity = try await Entity(named: internal_entity_name)
+                    print("🥂 Internal Loaded! (\(internal_entity_name))")
+                }
+                else
+                {
+                    self.entity = try await load_external_entity()
+                    print("🥂 External Loaded! (\(name))")
+                }
+            }
+            catch
+            {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    private func load_external_entity() async throws -> Entity
+    {
+        let scene_url = package_url.appendingPathComponent(scene_file_name + ".usdz")
+        
+        guard FileManager.default.fileExists(atPath: scene_url.path) else
+        {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        
+        let entity = try await Entity(contentsOf: scene_url)
+        return entity
+    }
+    
+    // MARK: - External Program Components
     #if os(macOS)
     /**
      Returns an array of program component paths used in the module.
@@ -163,51 +202,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }
     #endif
     
-    // MARK: - Import functions
-    /// A module package url of external module.
-    open var package_url: URL
-    {
-        return URL(filePath: "")
-    }
-    
-    /// A scene of external module passed to object.
-    open var external_node: SCNNode
-    {
-        return SCNNode()
-    }
-    
-    /**
-     Builds model node by description without external scene.
-     
-     Name of the scene corresponds to name of the module.
-     */
-    open func node_by_description()
-    {
-        no_model_node()
-    }
-    
-    /// Builds a filler node for object without model description.
-    open func no_model_node()
-    {
-        // Build filler model node
-        node.geometry = SCNBox(width: 40, height: 40, length: 40, chamferRadius: 10)
-        
-        node.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
-        node.geometry?.firstMaterial?.lightingModel = .physicallyBased
-        
-        // node.name = scene_node_name
-    }
-    
-    /// Imports data from info header file of module.
-    /*open func import_external_resources()
-    {
-        // import_info()
-        // import_external_node(external_scene_url)
-    }*/
-    
-    // MARK: - Listing elements
-    open var scene_code_name: String { (main_scene_name ?? "\(name).scn") } /// A class SCNScene variable name.
-    
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
@@ -231,9 +225,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         self.code_items = try container.decode([String: String].self, forKey: .code_items)
         self.linked_components = try container.decode([String: String].self, forKey: .linked_components)
-        
-        self.resources_names = try container.decodeIfPresent([String].self, forKey: .resources_names)
-        self.main_scene_name = try container.decodeIfPresent(String.self, forKey: .main_scene_name)
     }
     
     public func encode(to encoder: any Encoder) throws
@@ -245,9 +236,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         try container.encode(code_items, forKey: .code_items)
         try container.encode(linked_components, forKey: .linked_components)
-        
-        try container.encodeIfPresent(resources_names, forKey: .resources_names)
-        try container.encodeIfPresent(main_scene_name, forKey: .main_scene_name)
     }
 }
 

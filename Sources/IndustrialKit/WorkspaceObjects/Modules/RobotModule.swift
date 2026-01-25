@@ -22,8 +22,6 @@ open class RobotModule: IndustrialModule
         name: String = String(),
         description: String = String(),
         
-        node: SCNNode,
-        
         origin_shift: (x: Float, y: Float, z: Float),
         
         model_controller: RobotModelController,        
@@ -32,7 +30,6 @@ open class RobotModule: IndustrialModule
     {
         super.init(name: name, description: description)
         
-        self.node = node
         self.model_controller = model_controller
         
         self.origin_shift = origin_shift
@@ -130,7 +127,7 @@ open class RobotModule: IndustrialModule
         return nil
     }
     
-    override open var external_node: SCNNode
+    /*override open var external_node: SCNNode
     {
         if let main_scene_name = external_module_info?.main_scene_name
         {
@@ -158,7 +155,7 @@ open class RobotModule: IndustrialModule
         }
         
         return SCNNode()
-    }
+    }*/
     
     public var external_origin_shift: (x: Float, y: Float, z: Float)
     {
@@ -178,8 +175,8 @@ open class RobotModule: IndustrialModule
     /// Imports components from external or from other modules.
     private func components_import()
     {
-        // Set visual model from internal module
-        if let linked_name = linked_components["Model"]
+        // Set Entity
+        /*if let linked_name = linked_components["Model"]
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
             {
@@ -189,7 +186,7 @@ open class RobotModule: IndustrialModule
         else
         {
             node = external_node
-        }
+        }*/
         
         // Set origin shift from internal module
         if let linked_name = linked_components["Shift"]
@@ -204,7 +201,7 @@ open class RobotModule: IndustrialModule
             origin_shift = external_origin_shift
         }
         
-        // Set contoller
+        // Set Model Contoller
         if let linked_name = linked_components["Controller"], linked_name.isEmpty
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -215,11 +212,11 @@ open class RobotModule: IndustrialModule
         else
         {
             #if os(macOS)
-            //model_controller = ExternalRobotModelController(name.code_correct_format, package_url: package_url, nodes_names: external_module_info?.nodes_names ?? [String]())
+            model_controller = ExternalRobotModelController(name.code_correct_format, package_url: package_url, entities_names: external_module_info?.nodes_names ?? [String]())
             #endif
         }
         
-        // Set connector
+        // Set Connector
         if let linked_name = linked_components["Connector"], linked_name.isEmpty
         {
             if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })

@@ -22,8 +22,6 @@ open class ToolModule: IndustrialModule
         name: String = String(),
         description: String = String(),
         
-        node: SCNNode,
-        
         operation_codes: [OperationCodeInfo] = [OperationCodeInfo](),
         
         model_controller: ToolModelController = ToolModelController(),
@@ -32,7 +30,6 @@ open class ToolModule: IndustrialModule
     {
         super.init(name: name, description: description)
         
-        self.node = node
         self.model_controller = model_controller
         
         self.codes = operation_codes
@@ -131,7 +128,7 @@ open class ToolModule: IndustrialModule
         return nil
     }
     
-    override open var external_node: SCNNode
+    /*override open var external_node: SCNNode
     {
         if let main_scene_name = external_module_info?.main_scene_name
         {
@@ -159,7 +156,7 @@ open class ToolModule: IndustrialModule
         }
         
         return SCNNode()
-    }
+    }*/
     
     public var external_codes: [OperationCodeInfo]
     {
@@ -180,7 +177,7 @@ open class ToolModule: IndustrialModule
     /// Imports components from external or from other modules.
     private func components_import()
     {
-        // Set visual model
+        /*// Set visual model
         if let linked_name = linked_components["Model"]
         {
             if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
@@ -191,7 +188,7 @@ open class ToolModule: IndustrialModule
         else
         {
             node = external_node
-        }
+        }*/
         
         // Set codes from internal module
         if let linked_name = linked_components["Codes"]

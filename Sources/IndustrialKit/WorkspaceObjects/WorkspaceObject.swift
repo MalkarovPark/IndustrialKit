@@ -198,7 +198,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     /// A workspace object entity for visual modeling and physical simulation.
     public var model_entity: Entity?
     
-    /// A entity loading state.
+    /// An entity loading state.
     @Published public var entity_loaded = false
     
     private func perform_load_entity(named name: String)

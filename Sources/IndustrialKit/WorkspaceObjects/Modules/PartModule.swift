@@ -18,23 +18,17 @@ open class PartModule: IndustrialModule
     
     // MARK: Module init for in-app mounting
     /// Internal init.
-    public init(
+    public override init(
         name: String = String(),
-        description: String = String(),
-        
-        node: SCNNode
+        description: String = String()
     )
     {
         super.init(name: name, description: description)
-        
-        self.node = node
     }
     
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
-        
-        node = external_node
     }
     
     open override var extension_name: String { "part" }
@@ -83,7 +77,7 @@ open class PartModule: IndustrialModule
         return nil
     }
     
-    open override var external_node: SCNNode
+    /*open override var external_node: SCNNode
     {
         if let main_scene_name = external_module_info?.main_scene_name
         {
@@ -111,7 +105,7 @@ open class PartModule: IndustrialModule
         }
         
         return SCNNode()
-    }
+    }*/
     
     // MARK: - Codable handling
     public required init(from decoder: any Decoder) throws
