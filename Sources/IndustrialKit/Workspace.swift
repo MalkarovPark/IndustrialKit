@@ -1317,7 +1317,19 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     }
     #endif
     
-    // MARK: - Visual edit handling
+    // MARK: Workspace Objects Placement
+    public func place_object_entity(object: WorkspaceObject)
+    {
+        workspace_entity.addChild(object.entity)
+        object.entity.update_position(object.position)
+    }
+    
+    public func remove_object_entity(object: WorkspaceObject)
+    {
+        object.entity.removeFromParent()
+    }
+    
+    // MARK: - Visual edit handling (old?)
     /// Sets new pointer position by selected workspace object.
     public func update_pointer()
     {

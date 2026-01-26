@@ -212,21 +212,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                 print("🥂 Loaded! (\(name))")
                 
                 perform_load_entity(model_entity)
-                
-                /*guard let model_entity = model_entity else { return }
-                
-                model_entity.generateCollisionShapes(recursive: true)
-                model_entity.visit
-                { entity in
-                    entity.components.set(entity_tag)
-                }
-                
-                model_entity.components.set(InputTargetComponent())
-                
-                self.entity.addChild(model_entity)
-                
-                entity_loaded = true
-                extend_entity_preparation(entity)*/
             }
             catch
             {
@@ -255,37 +240,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         extend_entity_preparation(entity)
     }
     
-    /*private func perform_load_entity(named name: String)
-    {
-        Task
-        {
-            do
-            {
-                self.entity = try await Entity(named: name)
-                
-                print("🥂 Loaded! (\(name))")
-                
-                guard let entity = entity else { return }
-                
-                entity.generateCollisionShapes(recursive: true)
-                entity.visit
-                { entity in
-                    entity.components.set(entity_tag)
-                }
-                
-                entity.components.set(InputTargetComponent())
-                
-                //entity_loaded = true
-                extend_entity_preparation(entity)
-            }
-            catch
-            {
-                //entity_loaded = false
-                print(error.localizedDescription)
-            }
-        }
-    }*/
-    
     open var entity_tag: EntityModelIdentifier
     {
         return EntityModelIdentifier(type: .none, name: name)
@@ -307,33 +261,11 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                 try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
             }
             
-            // Place entity
-            //guard let entity = entity else { return }
-            
             content.add(entity)
             
             extend_entity_placement(entity)
         }
     }
-    
-    /*public func place_entity(to content: RealityViewCameraContent)
-    {
-        Task
-        {
-            // Wait until bot.entity becomes available, then place it once
-            while entity == nil
-            {
-                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
-            }
-            
-            // Place entity
-            guard let entity = entity else { return }
-            
-            content.add(entity)
-            
-            extend_entity_placement(entity)
-        }
-    }*/
     
     /// Places entity to "scene" and connects with handling avalibility.
     public func place_entity_at_position(to content: RealityViewCameraContent)
@@ -343,10 +275,11 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         Task
         {
             // Wait until bot.entity becomes available, then place it once
-            while entity == nil
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+            /*while model_entity == nil
             {
                 try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
-            }
+            }*/
             
             update_model_position() //entity.update_position(position)
         }
@@ -357,35 +290,11 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         entity.update_position(position)
     }
     
-    /*public func update_model_position()
-    {
-        entity?.update_position(position)
-    }*/
-    
     open func extend_entity_placement(_ entity: Entity)
     {
         //reality_controller.connect_entities(of: entity)
     }
     #endif
-    
-    ///Old
-    
-    /// Scene file address.
-    public var scene_address = ""
-    
-    /// Connected object scene node.
-    //public var node: SCNNode?
-    
-    /// Name of node for connect to instance node variable.
-    open var scene_node_name: String? { nil }
-    
-    /// Addres of internal folder with workspace objects scenes.
-    open var scene_internal_folder_address: String? { nil }
-    
-    /// Folder access bookmark.
-    nonisolated(unsafe) public static var folder_bookmark: Data?
-    
-    ///Old
     
     // MARK: - UI functions
     /// Returns info for object card view (with UIImage).

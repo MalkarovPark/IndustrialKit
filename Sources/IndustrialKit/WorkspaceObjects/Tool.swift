@@ -117,8 +117,8 @@ open class Tool: WorkspaceObject
             connector = module.connector
         }
         
-        // model_controller = module.model_controller.copy() as! ToolModelController
-        // connector = module.connector.copy() as! ToolConnector
+        model_controller = module.model_controller.copy() as! ToolModelController
+        connector = module.connector.copy() as! ToolConnector
         
         apply_statistics_flags()
         
@@ -712,9 +712,6 @@ open class Tool: WorkspaceObject
         return EntityModelIdentifier(type: .tool, name: name)
     }
     #endif
-    
-    /// Old
-    public override var scene_node_name: String { "tool" }
     
     /// A tool visual model controller.
     private var model_controller = ToolModelController()

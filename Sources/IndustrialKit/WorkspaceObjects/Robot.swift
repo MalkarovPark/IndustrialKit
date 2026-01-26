@@ -141,8 +141,8 @@ open class Robot: WorkspaceObject
             connector = module.connector
         }
         
-        // model_controller = module.model_controller.copy() as! RobotModelController
-        // connector = module.connector.copy() as! RobotConnector
+        model_controller = module.model_controller.copy() as! RobotModelController
+        connector = module.connector.copy() as! RobotConnector
         
         apply_statistics_flags()
         
