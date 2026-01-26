@@ -2293,6 +2293,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     {
         part.name = mismatched_name(name: part.name, names: parts_names)
         parts.append(part)
+        
+        place_object_entity(object: part) //!
     }
     
     /**
