@@ -1370,11 +1370,17 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
             select_object_by_entity_identifier(object_identifier)
         }
-        else
+        /*else
         {
             deselect_object()
             pointer_entity.removeFromParent()
-        }
+        }*/
+    }
+    
+    public func process_empty_tap()
+    {
+        deselect_object()
+        pointer_entity.removeFromParent()
     }
     
     private func select_object_by_entity_identifier(_ entity_identifier: EntityModelIdentifier)
