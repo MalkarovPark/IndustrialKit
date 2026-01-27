@@ -929,32 +929,32 @@ open class Robot: WorkspaceObject
         
         // XY wall (red)
         let pos_x = SIMD3<Float>(hy, 0, hx)
-        let rot_pos_x = simd_quatf(angle: .pi/2, axis: [0,1,0])
+        let rot_pos_x = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
         box.addChild(make_wall(width: scale.x, height: scale.y, color: red, pos: pos_x, rot: rot_pos_x))
         
         // XY wall 2 (red)
         let neg_x = SIMD3<Float>(hy, scale.z, hx)
-        let rot_neg_x = simd_mul(simd_quatf(angle: .pi/2, axis: [0,1,0]), simd_quatf(angle: .pi, axis: [1,0,0]))
+        let rot_neg_x = simd_mul(simd_quatf(angle: .pi/2, axis: [0, 1, 0]), simd_quatf(angle: .pi, axis: [1,0,0]))
         box.addChild(make_wall(width: scale.x, height: scale.y, color: red, pos: neg_x, rot: rot_neg_x))
         
         // XZ wall (blue)
         let pos_z = SIMD3<Float>(0, hz, hx)
-        let rot_pos_z = simd_mul(simd_quatf(angle: .pi/2, axis: [1,0,0]), simd_quatf(angle: -.pi/2, axis: [0,0,1]))
+        let rot_pos_z = simd_mul(simd_quatf(angle: .pi/2, axis: [1, 0, 0]), simd_quatf(angle: -.pi/2, axis: [0,0,1]))
         box.addChild(make_wall(width: scale.x, height: scale.z, color: blue, pos: pos_z, rot: rot_pos_z))
         
         // XZ wall 2 (blue)
         let neg_z = SIMD3<Float>(scale.y, hz, hx)
-        let rot_neg_z = simd_mul(simd_quatf(angle: .pi/2, axis: [1,0,0]), simd_quatf(angle: .pi/2, axis: [0,0,1]))
+        let rot_neg_z = simd_mul(simd_quatf(angle: .pi/2, axis: [1, 0, 0]), simd_quatf(angle: .pi/2, axis: [0,0,1]))
         box.addChild(make_wall(width: scale.x, height: scale.z, color: blue, pos: neg_z, rot: rot_neg_z))
         
         // YZ wall (green)
         let pos_y = SIMD3<Float>(hy, hz, 0)
-        let rot_pos_y = simd_quatf(angle: .pi/2, axis: [1,0,0])
+        let rot_pos_y = simd_quatf(angle: .pi/2, axis: [1, 0, 0])
         box.addChild(make_wall(width: scale.y, height: scale.z, color: green, pos: pos_y, rot: rot_pos_y))
         
         // YZ wall 2 (green)
         let neg_y = SIMD3<Float>(hy, hz, scale.x)
-        let rot_neg_y = simd_quatf(angle: -.pi/2, axis: [1,0,0])
+        let rot_neg_y = simd_quatf(angle: -.pi/2, axis: [1, 0, 0])
         box.addChild(make_wall(width: scale.y, height: scale.z, color: green, pos: neg_y, rot: rot_neg_y))
         
         return box

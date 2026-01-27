@@ -1280,7 +1280,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         material.faceCulling = .none
         
         let line = ModelEntity(mesh: mesh, materials: [material])
-        line.orientation = simd_quatf(angle: .pi, axis: [1,0,0])
+        line.orientation = simd_quatf(angle: .pi, axis: [1, 0, 0])
         
         switch axis
         {
