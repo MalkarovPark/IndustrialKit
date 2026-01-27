@@ -1433,8 +1433,10 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         
         let bounds = entity.visualBounds(relativeTo: entity)
         
-        pointer_entity = make_object_pointer(bounds: bounds)
-        pointer_entity.addChild(make_wire_bounding_box(bounds: bounds, color: .gray))
+        //pointer_entity = make_object_pointer(bounds: bounds)
+        //pointer_entity.addChild(make_wire_bounding_box(bounds: bounds, color: .gray))
+        pointer_entity = make_wire_bounding_box(bounds: bounds, color: .gray)
+        pointer_entity.addChild(make_object_pointer(bounds: bounds))
         
         entity.addChild(pointer_entity)
     }
@@ -1500,10 +1502,10 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             cylinder.position = positions2[i]
             cylinder.eulerAngles = rotations[i]
             
-            cylinder.position.y = size.y / 2 // Center reposition
-            
             parent.addChild(cylinder)
         }
+        
+        parent.position.y = size.y / 2 // Center reposition
         
         return parent
     }
