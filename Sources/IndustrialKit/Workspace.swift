@@ -1365,7 +1365,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         {
             print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
             
-            if !already_selecting_same_object(object_identifier.name)
+            if !already_selecting_same_object(object_identifier)
             {
                 select_object_by_entity_identifier(object_identifier)
             }
@@ -1374,20 +1374,27 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
                 process_empty_tap()
             }
         }
-        
-        func already_selecting_same_object(_ identifier_name: String) -> Bool
+        else
         {
-            switch selected_object
+            process_empty_tap()
+        }
+        
+        func already_selecting_same_object(_ object_identifier: EntityModelIdentifier) -> Bool
+        {
+            guard let identifierType = object_identifier.type, let selected = selected_object else
             {
-            case is Robot:
-                return selected_robot.name == identifier_name
-            case is Tool:
-                return selected_tool.name == identifier_name
-            case is Part:
-                return selected_part.name == identifier_name
-            case .none:
                 return false
-            case .some(_):
+            }
+            
+            switch (selected, identifierType)
+            {
+            case (let robot as Robot, .robot):
+                return robot.name == object_identifier.name
+            case (let tool as Tool, .tool):
+                return tool.name == object_identifier.name
+            case (let part as Part, .part):
+                return part.name == object_identifier.name
+            default:
                 return false
             }
         }
