@@ -46,9 +46,18 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    // MARK: - Workspace visual handling functions
-    /// A SceneKit scene for complex visual model of workspace.
-    //public var scene = SCNScene()
+    // MARK: - Selection Handling Functions
+    /**
+     Returns index number of workspace object by name.
+     
+     - Parameters:
+        - name: A name of object for index find.
+        - objects: An array of objects where the index searches.
+     */
+    private func index_by_name(_ name: String, objects: [WorkspaceObject]) -> Int
+    {
+        return objects.firstIndex(where: { $0.name == name }) ?? -1
+    }
     
     /// A selected workspace object type value in industrial complex.
     public var selected_object_type: WorkspaceObjectType?
@@ -101,6 +110,22 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             default:
                 break
             }
+        }
+    }
+    
+    /// Deselects selected object.
+    public func deselect_object()
+    {
+        switch selected_object_type
+        {
+        case .robot:
+            deselect_robot()
+        case .tool:
+            deselect_tool()
+        case .part:
+            deselect_part()
+        default:
+            break
         }
     }
     
@@ -1172,35 +1197,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    // MARK: - Selection Handling Functions
-    /// Deselects selected object.
-    public func deselect_object()
-    {
-        switch selected_object_type
-        {
-        case .robot:
-            deselect_robot()
-        case .tool:
-            deselect_tool()
-        case .part:
-            deselect_part()
-        default:
-            break
-        }
-    }
-    
-    /**
-     Returns index number of workspace object by name.
-     
-     - Parameters:
-        - name: A name of object for index find.
-        - objects: An array of objects where the index searches.
-     */
-    private func index_by_name(_ name: String, objects: [WorkspaceObject]) -> Int
-    {
-        return objects.firstIndex(where: { $0.name == name }) ?? -1
-    }
-    
     // MARK: - Visual Functions
     #if canImport(RealityKit)
     private var workspace_entity = Entity()
@@ -1368,13 +1364,33 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         if let object_identifier = tapped_entity.components[EntityModelIdentifier.self]
         {
             print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
-            select_object_by_entity_identifier(object_identifier)
+            
+            if !already_selecting_same_object(object_identifier.name)
+            {
+                select_object_by_entity_identifier(object_identifier)
+            }
+            else
+            {
+                process_empty_tap()
+            }
         }
-        /*else
+        
+        func already_selecting_same_object(_ identifier_name: String) -> Bool
         {
-            deselect_object()
-            pointer_entity.removeFromParent()
-        }*/
+            switch selected_object
+            {
+            case is Robot:
+                return selected_robot.name == identifier_name
+            case is Tool:
+                return selected_tool.name == identifier_name
+            case is Part:
+                return selected_part.name == identifier_name
+            case .none:
+                return false
+            case .some(_):
+                return false
+            }
+        }
     }
     
     public func process_empty_tap()
