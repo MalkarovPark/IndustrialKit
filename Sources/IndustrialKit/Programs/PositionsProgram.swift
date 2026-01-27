@@ -221,8 +221,8 @@ public class PositionsProgram: Identifiable, Codable, Equatable, ObservableObjec
                 UIColor.systemPink/*.withAlphaComponent(0.75)*/,
                 UIColor.systemTeal/*.withAlphaComponent(0.75)*/
             ]
-            let rotations: [SIMD3<Float>] = [[.pi/2,0,0],[0,0,-.pi/2],[0,0,0]]
-            let positions: [SIMD3<Float>] = [[0,0,Float(0.008)],[Float(0.008),0,0],[0,Float(0.008),0]]
+            let rotations: [SIMD3<Float>] = [[.pi/2, 0, 0],[0, 0, -.pi / 2],[0, 0, 0]]
+            let positions: [SIMD3<Float>] = [[0, 0, Float(0.008)],[Float(0.008), 0, 0],[0, Float(0.008), 0]]
             
             let parent = Entity()
             

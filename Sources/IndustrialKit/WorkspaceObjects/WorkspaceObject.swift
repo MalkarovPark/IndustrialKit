@@ -427,7 +427,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     }
 }
 
-private func make_wire_bounding_box(bounds: BoundingBox, color: UIColor, line_width: Float = 0.002) -> Entity
+@MainActor private func make_wire_bounding_box(bounds: BoundingBox, color: UIColor, line_width: Float = 0.002) -> Entity
 {
     let root = Entity()
 
