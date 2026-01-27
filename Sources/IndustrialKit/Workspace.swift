@@ -1500,10 +1500,10 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             cylinder.position = positions2[i]
             cylinder.eulerAngles = rotations[i]
             
+            cylinder.position.y = size.y / 2 // Center reposition
+            
             parent.addChild(cylinder)
         }
-        
-        parent.position.y = size.y / 2 // Center reposition
         
         return parent
     }
