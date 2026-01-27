@@ -1339,6 +1339,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         if let object_identifier = tapped_entity.components[EntityModelIdentifier.self]
         {
             print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
+            select_object_by_entity_identifier(object_identifier)
         }
     }
     
