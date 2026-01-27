@@ -1435,6 +1435,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         
         //pointer_entity = make_object_pointer(bounds: bounds)
         //pointer_entity.addChild(make_wire_bounding_box(bounds: bounds, color: .gray))
+        
+        // For center reposition
         pointer_entity = make_wire_bounding_box(bounds: bounds, color: .gray)
         pointer_entity.addChild(make_object_pointer(bounds: bounds))
         
@@ -1504,8 +1506,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             
             parent.addChild(cylinder)
         }
-        
-        parent.position.y = size.y / 4 // Center reposition
         
         return parent
     }
