@@ -1330,7 +1330,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     }
     
     // MARK: Pointer Handling
-    public func workspace_tap(value: EntityTargetValue<TapGesture.Value>)
+    public func process_tap(value: EntityTargetValue<TapGesture.Value>)
     {
         print("Tapped on entity: \(value.entity.name)")
         
