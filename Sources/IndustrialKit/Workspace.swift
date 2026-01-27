@@ -1510,7 +1510,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         return parent
     }
 
-    private func make_wire_bounding_box(bounds: BoundingBox, color: UIColor, line_width: Float = 0.002) -> Entity
+    private func make_wire_bounding_box(bounds: BoundingBox, color: UIColor, line_width: Float = 0.001) -> Entity
     {
         let root = Entity()
 
@@ -1522,7 +1522,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         let hz = size.z / 2
 
         var material = SimpleMaterial(
-            color: color,
+            color: color.withAlphaComponent(0.5),
             roughness: 1.0,
             isMetallic: false
         )
