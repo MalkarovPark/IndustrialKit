@@ -1172,6 +1172,35 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
+    // MARK: - Selection Handling Functions
+    /// Deselects selected object.
+    public func deselect_object()
+    {
+        switch selected_object_type
+        {
+        case .robot:
+            deselect_robot()
+        case .tool:
+            deselect_tool()
+        case .part:
+            deselect_part()
+        default:
+            break
+        }
+    }
+    
+    /**
+     Returns index number of workspace object by name.
+     
+     - Parameters:
+        - name: A name of object for index find.
+        - objects: An array of objects where the index searches.
+     */
+    private func index_by_name(_ name: String, objects: [WorkspaceObject]) -> Int
+    {
+        return objects.firstIndex(where: { $0.name == name }) ?? -1
+    }
+    
     // MARK: - Visual Functions
     #if canImport(RealityKit)
     private var workspace_entity = Entity()
@@ -1340,6 +1369,11 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         {
             print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
             select_object_by_entity_identifier(object_identifier)
+        }
+        else
+        {
+            deselect_object()
+            pointer_entity.removeFromParent()
         }
     }
     
@@ -2065,34 +2099,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         //edited_object_node = SCNNode() // Remove old reference
         
         //object_pointer_node?.isHidden = true
-    }
-    
-    /// Deselects selected object.
-    public func deselect_object()
-    {
-        switch selected_object_type
-        {
-        case .robot:
-            deselect_robot()
-        case .tool:
-            deselect_tool()
-        case .part:
-            deselect_part()
-        default:
-            break
-        }
-    }
-    
-    /**
-     Returns index number of workspace object by name.
-     
-     - Parameters:
-        - name: A name of object for index find.
-        - objects: An array of objects where the index searches.
-     */
-    private func index_by_name(_ name: String, objects: [WorkspaceObject]) -> Int
-    {
-        return objects.firstIndex(where: { $0.name == name }) ?? -1
     }
     
     // MARK: - Robots handling functions
