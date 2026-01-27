@@ -1505,7 +1505,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             parent.addChild(cylinder)
         }
         
-        parent.position.y = size.y / 2 // Center reposition
+        parent.position.y = size.y / 4 // Center reposition
         
         return parent
     }
