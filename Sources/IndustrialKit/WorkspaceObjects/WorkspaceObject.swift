@@ -245,6 +245,28 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         return EntityModelIdentifier(type: .none, name: name)
     }
     
+    public func update_entity_model_identifier()
+    {
+        guard let model_entity = model_entity else { return }
+        
+        model_entity.visit
+        { entity in
+            entity.components.remove(EntityModelIdentifier.self)
+            entity.components.set(entity_tag)
+        }
+    }
+    
+    /*public func update_entity_model_identifier(for model_entity: Entity?, entity_tag: EntityModelIdentifier)
+    {
+        guard let model_entity = model_entity else { return }
+        
+        model_entity.visit
+        { entity in
+            entity.components.remove(EntityModelIdentifier.self)
+            entity.components.set(entity_tag)
+        }
+    }*/
+    
     open func extend_entity_preparation(_ entity: Entity)
     {
         
