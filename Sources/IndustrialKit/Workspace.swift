@@ -1145,24 +1145,28 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     {
         content.add(workspace_entity)
         
+        // Place (connect) camera
         if camera_entity == nil
         {
-            // Place (connect) camera
+            
             let camera = PerspectiveCamera()
             camera.camera.fieldOfViewInDegrees = 60
             camera.position = [0, 1, 0]
             camera.rotate_x(by: -.pi / 6)
             
-            // Add entities
             workspace_entity.addChild(camera)
             camera_entity = camera
         }
         
+        // Place grid
         _ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self, let camera = self.camera_entity else { return }
             self.update_grid(camera_position: camera.position)
         }
+        
+        // Place objects
+        place_objects() //(to: workspace_entity)
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
@@ -1291,6 +1295,25 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func remove_object_entity(object: WorkspaceObject)
     {
         object.entity.removeFromParent()
+    }
+    
+    private func place_objects()//(to entity: Entity)
+    {
+        // Placing robots
+        for robot in robots
+        {
+            place_object_entity(object: robot)
+        }
+        
+        for tool in tools
+        {
+            place_object_entity(object: tool)
+        }
+        
+        for part in parts
+        {
+            place_object_entity(object: part)
+        }
     }
     
     // MARK: Pointer Handling
@@ -1620,7 +1643,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func add_robot(_ robot: Robot)
     {
         robot.name = mismatched_name(name: robot.name, names: robots_names)
-        //robot.update_entity_model_identifier()
+        robot.is_placed = true
         robots.append(robot)
         
         place_object_entity(object: robot) //!
@@ -1809,7 +1832,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func add_tool(_ tool: Tool)
     {
         tool.name = mismatched_name(name: tool.name, names: tools_names)
-        //tool.update_entity_model_identifier()
+        tool.is_placed = true
         tools.append(tool)
         
         place_object_entity(object: tool) //!
@@ -2097,7 +2120,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func add_part(_ part: Part)
     {
         part.name = mismatched_name(name: part.name, names: parts_names)
-        //part.update_entity_model_identifier()
+        part.is_placed = true
         parts.append(part)
         
         place_object_entity(object: part) //!
@@ -2488,132 +2511,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         object_pointer_node?.constraints = []
         
         place_objects(scene: scene)
-    }
-    
-    private func place_objects(scene: SCNScene)
-    {
-        // Nodes for placement operations
-        var unit_node: SCNNode?
-        var tool_node: SCNNode?
-        var part_node: SCNNode?
-        
-        // Placing robots
-        if self.avaliable_robots_names.count < self.robots.count // If there are placed robots in the workspace
-        {
-            var connect_camera = true
-            for robot in robots
-            {
-                if robot.is_placed
-                {
-                    robots_node?.addChildNode(SCNScene(named: Workspace.workcell_scene_address)?.rootNode.childNode(withName: "unit", recursively: false) ??
-                    {
-                        let node = SCNNode()
-                        node.name = "unit"
-                        scene.rootNode.addChildNode(node)
-                        return node
-                    }())
-                    unit_node = robots_node?.childNode(withName: "unit", recursively: false) ?? SCNNode() // Connect to unit node in the workspace scene
-                    
-                    unit_node?.name = robot.name // Select robot cell node
-                    robot.workcell_connect(scene: scene, name: robot.name, connect_camera: connect_camera) // Connect to robot model, place manipulator
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25)
-                    {
-                        robot.update() // Update robot by current position
-                    }
-                    //robot.update() // Update robot by current position
-                    
-                    apply_bit_mask(node: robot.unit_node ?? SCNNode(), Workspace.robot_bit_mask)
-                    
-                    connect_camera = false // Disable camera connect for next robots in array
-                    
-                    // Set robot cell node position
-                    #if os(macOS)
-                    unit_node?.worldPosition = SCNVector3(x: CGFloat(robot.position.y), y: CGFloat(robot.position.z), z: CGFloat(robot.position.x))
-                    
-                    unit_node?.eulerAngles.x = CGFloat(robot.position.p.to_rad)
-                    unit_node?.eulerAngles.y = CGFloat(robot.position.w.to_rad)
-                    unit_node?.eulerAngles.z = CGFloat(robot.position.r.to_rad)
-                    #else
-                    unit_node?.worldPosition = SCNVector3(x: robot.position.y, y: robot.position.z, z: robot.position.x)
-
-                    unit_node?.eulerAngles.x = robot.position.p.to_rad
-                    unit_node?.eulerAngles.y = robot.position.w.to_rad
-                    unit_node?.eulerAngles.z = robot.position.r.to_rad
-                    #endif
-                }
-            }
-        }
-        
-        // Placing tools
-        if self.avaliable_tools_names.count < self.tools.count // If there are placed tools in the workspace
-        {
-            for tool in tools
-            {
-                if tool.is_placed
-                {
-                    tool_node = tool.node
-                    apply_bit_mask(node: tool_node ?? SCNNode(), Workspace.tool_bit_mask)
-                    tool_node?.name = tool.name
-                    tools_node?.addChildNode(tool_node ?? SCNNode())
-                    tool.workcell_connect(scene: scene, name: tool.name) // Connect to robot model, place manipulator
-                    
-                    // Set tool node position
-                    #if os(macOS)
-                    tool_node?.position = SCNVector3(x: CGFloat(tool.position.y), y: CGFloat(tool.position.z), z: CGFloat(tool.position.x))
-                    
-                    tool_node?.eulerAngles.x = CGFloat(tool.position.p.to_rad)
-                    tool_node?.eulerAngles.y = CGFloat(tool.position.w.to_rad)
-                    tool_node?.eulerAngles.z = CGFloat(tool.position.r.to_rad)
-                    #else
-                    tool_node?.position = SCNVector3(x: Float(tool.position.y), y: Float(tool.position.z), z: Float(tool.position.x))
-                    
-                    tool_node?.eulerAngles.x = tool.position.p.to_rad
-                    tool_node?.eulerAngles.y = tool.position.w.to_rad
-                    tool_node?.eulerAngles.z = tool.position.r.to_rad
-                    #endif
-                    
-                    if tool.is_attached
-                    {
-                        if let edited_node = tool_node, let robot_tool_node = robot_by_name(tool.attached_to ?? "").tool_node
-                        {
-                            attach(node: edited_node, to: robot_tool_node)
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Placing parts
-        if self.avaliable_parts_names.count < self.parts.count // If there are placed parts in the workspace
-        {
-            for part in parts
-            {
-                if part.is_placed
-                {
-                    part_node = part.node
-                    part.enable_physics = true
-                    apply_bit_mask(node: part_node ?? SCNNode(), Workspace.part_bit_mask)
-                    part_node?.name = part.name
-                    parts_node?.addChildNode(part_node ?? SCNNode())
-                    
-                    // Set part node position
-                    #if os(macOS)
-                    part_node?.position = SCNVector3(x: CGFloat(part.position.y), y: CGFloat(part.position.z), z: CGFloat(part.position.x))
-                    
-                    part_node?.eulerAngles.x = CGFloat(part.position.p.to_rad)
-                    part_node?.eulerAngles.y = CGFloat(part.position.w.to_rad)
-                    part_node?.eulerAngles.z = CGFloat(part.position.r.to_rad)
-                    #else
-                    part_node?.position = SCNVector3(x: Float(part.position.y), y: Float(part.position.z), z: Float(part.position.x))
-                    
-                    part_node?.eulerAngles.x = part.position.p.to_rad
-                    part_node?.eulerAngles.y = part.position.w.to_rad
-                    part_node?.eulerAngles.z = part.position.r.to_rad
-                    #endif
-                }
-            }
-        }
     }*/
 }
 
