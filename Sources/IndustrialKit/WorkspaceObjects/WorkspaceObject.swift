@@ -125,6 +125,12 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
     @Published public var position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    {
+        didSet
+        {
+            update_model_position() //! Test
+        }
+    }
     
     // MARK: - Update functions
     /// Flag indicating whether the update loop is active.
