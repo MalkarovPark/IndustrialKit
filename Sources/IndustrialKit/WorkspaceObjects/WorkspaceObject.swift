@@ -34,7 +34,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     public var id = UUID()
     
     /// Object name in workspace.
-    public var name = String()
+    @Published public var name = String()
     
     /// A name of module to describe scene, controller and connector.
     public var module_name = ""
@@ -124,7 +124,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
      
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
-    public var position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    @Published public var position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     // MARK: - Update functions
     /// Flag indicating whether the update loop is active.

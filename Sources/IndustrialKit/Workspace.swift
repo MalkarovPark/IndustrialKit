@@ -1381,12 +1381,12 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         
         func already_selecting_same_object(_ object_identifier: EntityModelIdentifier) -> Bool
         {
-            guard let identifierType = object_identifier.type, let selected = selected_object else
+            guard let identifier_type = object_identifier.type, let selected = selected_object else
             {
                 return false
             }
             
-            switch (selected, identifierType)
+            switch (selected, identifier_type)
             {
             case (let robot as Robot, .robot):
                 return robot.name == object_identifier.name
