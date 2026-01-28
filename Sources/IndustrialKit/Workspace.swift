@@ -110,8 +110,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             default:
                 break
             }
-            
-            self.objectWillChange.send()
         }
     }
     
@@ -1370,15 +1368,18 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             if !already_selecting_same_object(object_identifier)
             {
                 select_object_by_entity_identifier(object_identifier)
+                self.objectWillChange.send()
             }
             else
             {
                 process_empty_tap()
+                self.objectWillChange.send()
             }
         }
         else
         {
             process_empty_tap()
+            self.objectWillChange.send()
         }
         
         func already_selecting_same_object(_ object_identifier: EntityModelIdentifier) -> Bool
