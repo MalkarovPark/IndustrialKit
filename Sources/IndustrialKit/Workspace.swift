@@ -1368,18 +1368,15 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             if !already_selecting_same_object(object_identifier)
             {
                 select_object_by_entity_identifier(object_identifier)
-                self.objectWillChange.send()
             }
             else
             {
                 process_empty_tap()
-                self.objectWillChange.send()
             }
         }
         else
         {
             process_empty_tap()
-            self.objectWillChange.send()
         }
         
         func already_selecting_same_object(_ object_identifier: EntityModelIdentifier) -> Bool
@@ -1407,6 +1404,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     {
         deselect_object()
         pointer_entity.removeFromParent()
+        
+        self.objectWillChange.send()
     }
     
     private func select_object_by_entity_identifier(_ entity_identifier: EntityModelIdentifier)
@@ -1425,6 +1424,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         case .none:
             break
         }
+        
+        self.objectWillChange.send()
     }
     
     // MARK: Pointer Entity
