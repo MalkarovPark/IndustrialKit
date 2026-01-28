@@ -2370,8 +2370,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         }
         
         // MARK: - Registers
-        registers = preset.registers
-        ?? [Float](repeating: 0, count: Workspace.default_registers_count)
+        registers = preset.registers ?? [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
     // MARK: - UI Functions
