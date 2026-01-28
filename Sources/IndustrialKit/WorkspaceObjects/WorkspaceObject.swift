@@ -108,7 +108,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     // MARK: - Object in workspace handling
     /// In workspace placement state.
     @Published public var is_placed = false
-    {
+    /*{
         didSet
         {
             if !is_placed
@@ -117,7 +117,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                 on_remove()
             }
         }
-    }
+    }*/
     
     /// Additional operations after remowing an object from the workspace.
     open func on_remove()
