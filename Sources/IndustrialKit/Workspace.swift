@@ -1682,7 +1682,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func add_robot(_ robot: Robot)
     {
         robot.name = mismatched_name(name: robot.name, names: robots_names)
-        robot.update_entity_model_identifier()
+        //robot.update_entity_model_identifier()
         robots.append(robot)
         
         place_object_entity(object: robot) //!
@@ -1871,7 +1871,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func add_tool(_ tool: Tool)
     {
         tool.name = mismatched_name(name: tool.name, names: tools_names)
-        tool.update_entity_model_identifier()
+        //tool.update_entity_model_identifier()
         tools.append(tool)
         
         place_object_entity(object: tool) //!
@@ -2159,7 +2159,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func add_part(_ part: Part)
     {
         part.name = mismatched_name(name: part.name, names: parts_names)
-        part.update_entity_model_identifier()
+        //part.update_entity_model_identifier()
         parts.append(part)
         
         place_object_entity(object: part) //!

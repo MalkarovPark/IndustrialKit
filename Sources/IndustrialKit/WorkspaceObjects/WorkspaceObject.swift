@@ -35,6 +35,12 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     
     /// Object name in workspace.
     @Published public var name = String()
+    {
+        didSet
+        {
+            update_entity_model_identifier() //! Test
+        }
+    }
     
     /// A name of module to describe scene, controller and connector.
     public var module_name = ""
