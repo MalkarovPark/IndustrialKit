@@ -20,9 +20,9 @@ import SwiftUI
 @MainActor
 open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable//, @preconcurrency Codable
 {
-    public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool // Identity condition by names
+    public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool // Identity condition by names & types
     {
-        return lhs.name == rhs.name
+        return lhs.name == rhs.name && type(of: lhs) == type(of: rhs)
     }
     
     public func hash(into hasher: inout Hasher)
