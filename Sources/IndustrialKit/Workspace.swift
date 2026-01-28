@@ -110,6 +110,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             default:
                 break
             }
+            
+            self.objectWillChange.send()
         }
     }
     
