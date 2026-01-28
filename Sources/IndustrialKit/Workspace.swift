@@ -60,7 +60,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// A selected workspace object type value in industrial complex.
-    public var selected_object_type: WorkspaceObjectType?
+    /*public var selected_object_type: WorkspaceObjectType?
     {
         if selected_robot_index > -1 && selected_part_index == -1 && selected_tool_index == -1
         {
@@ -78,11 +78,11 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         }
         
         return nil
-    }
+    }*/
     
     /// Selected workspace object.
     public var selected_object: WorkspaceObject?
-    {
+    /*{
         get
         {
             switch selected_object_type
@@ -111,12 +111,13 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
                 break
             }
         }
-    }
+    }*/
     
     /// Deselects selected object.
     public func deselect_object()
     {
-        switch selected_object_type
+        selected_object = nil
+        /*switch selected_object_type
         {
         case .robot:
             deselect_robot()
@@ -126,7 +127,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             deselect_part()
         default:
             break
-        }
+        }*/
     }
     
     // MARK: - Workspace update handling
@@ -189,7 +190,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
      */
     public func update()
     {
-        switch selected_object_type
+        /*switch selected_object_type
         {
         case .robot:
             selected_robot.update()
@@ -199,7 +200,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             break
         case .none:
             break
-        }
+        }*/
     }
     
     // MARK: - Control program functions
@@ -1767,7 +1768,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
      */
     public func select_robot(name: String)
     {
-        select_robot(index: index_by_name(name, objects: robots))
+        selected_object = robots[index_by_name(name, objects: robots)]
+        //select_robot(index: index_by_name(name, objects: robots))
     }
     
     /// Deselects selected robot.
@@ -1978,7 +1980,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
      */
     public func select_tool(name: String) // Select tool by name
     {
-        select_tool(index: index_by_name(name, objects: tools))
+        selected_object = tools[index_by_name(name, objects: tools)]
+        //select_tool(index: index_by_name(name, objects: tools))
     }
     
     /// Deselects selected tool.
@@ -2264,7 +2267,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
      */
     public func select_part(name: String)
     {
-        select_part(index: index_by_name(name, objects: parts))
+        selected_object = parts[index_by_name(name, objects: parts)]
+        //select_part(index: index_by_name(name, objects: parts))
     }
     
     /// Deselects selected part.
