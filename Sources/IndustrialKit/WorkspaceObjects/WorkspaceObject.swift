@@ -422,7 +422,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         self.update_interval = file.update_interval
         self.scope_type = file.scope_type
         
-        //module_import_by_name(module_name, is_internal: is_internal_module)
+        module_import_by_name(module_name, is_internal: is_internal_module)
     }
     
     public func file_data() -> WorkspaceObjectFileData
