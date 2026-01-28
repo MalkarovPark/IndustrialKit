@@ -1415,13 +1415,13 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         {
         case .robot:
             select_robot(name: entity_identifier.name)
-            set_pointer_entity(to: selected_robot.model_entity ?? Entity())
+            set_pointer_entity(to: selected_object?.model_entity ?? Entity())
         case .tool:
             select_tool(name: entity_identifier.name)
-            set_pointer_entity(to: selected_tool.model_entity ?? Entity())
+            set_pointer_entity(to: selected_object?.model_entity ?? Entity())
         case .part:
             select_part(name: entity_identifier.name)
-            set_pointer_entity(to: selected_part.model_entity ?? Entity())
+            set_pointer_entity(to: selected_object?.model_entity ?? Entity())
         case .none:
             break
         }
