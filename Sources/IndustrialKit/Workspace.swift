@@ -59,75 +59,13 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         return objects.firstIndex(where: { $0.name == name }) ?? -1
     }
     
-    /// A selected workspace object type value in industrial complex.
-    /*public var selected_object_type: WorkspaceObjectType?
-    {
-        if selected_robot_index > -1 && selected_part_index == -1 && selected_tool_index == -1
-        {
-            return .robot
-        }
-        
-        if selected_tool_index > -1 && selected_robot_index == -1 && selected_part_index == -1
-        {
-            return .tool
-        }
-        
-        if selected_part_index > -1 && selected_robot_index == -1 && selected_tool_index == -1
-        {
-            return .part
-        }
-        
-        return nil
-    }*/
-    
     /// Selected workspace object.
     public var selected_object: WorkspaceObject?
-    /*{
-        get
-        {
-            switch selected_object_type
-            {
-            case .robot:
-                return selected_robot
-            case .tool:
-                return selected_tool
-            case .part:
-                return selected_part
-            default:
-                return nil
-            }
-        }
-        set
-        {
-            switch selected_object_type
-            {
-            case .robot:
-                selected_robot = newValue as! Robot
-            case .tool:
-                selected_tool = newValue as! Tool
-            case .part:
-                selected_part = newValue as! Part
-            default:
-                break
-            }
-        }
-    }*/
     
     /// Deselects selected object.
     public func deselect_object()
     {
         selected_object = nil
-        /*switch selected_object_type
-        {
-        case .robot:
-            deselect_robot()
-        case .tool:
-            deselect_tool()
-        case .part:
-            deselect_part()
-        default:
-            break
-        }*/
     }
     
     // MARK: - Workspace update handling
