@@ -408,7 +408,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
          file.rotation[1],
          file.rotation[2]
          )*/
-        print(self.position)
         
         self.position = (
             file.location[safe: 0] ?? 0,
@@ -418,8 +417,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
             file.rotation[safe: 1] ?? 0,
             file.rotation[safe: 2] ?? 0
         )
-        
-        print(self.position)
         
         self.is_placed = file.is_placed
         self.update_interval = file.update_interval
