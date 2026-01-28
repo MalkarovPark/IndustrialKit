@@ -96,9 +96,11 @@ open class Part: WorkspaceObject
     }*/
     
     /// Inits part by name and part module.
-    public init(name: String, module: PartModule)
+    public init(name: String, module: PartModule, is_internal: Bool = true)
     {
         super.init(name: name)
+        
+        is_internal_module = is_internal
         module_import(module)
     }
     

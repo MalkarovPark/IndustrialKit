@@ -67,9 +67,11 @@ open class Tool: WorkspaceObject
     }
     
     /// Inits part by name and tool module.
-    public init(name: String, module: ToolModule)
+    public init(name: String, module: ToolModule, is_internal: Bool = true)
     {
         super.init(name: name)
+        
+        is_internal_module = is_internal
         module_import(module)
     }
     

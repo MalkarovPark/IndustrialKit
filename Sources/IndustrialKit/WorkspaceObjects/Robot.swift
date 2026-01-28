@@ -60,9 +60,11 @@ open class Robot: WorkspaceObject
     }
     
     /// Inits robot by name and part module.
-    public init(name: String, module: RobotModule)
+    public init(name: String, module: RobotModule, is_internal: Bool = true)
     {
         super.init(name: name)
+        
+        is_internal_module = is_internal
         module_import(module)
     }
     
