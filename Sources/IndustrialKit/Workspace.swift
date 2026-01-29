@@ -46,7 +46,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    // MARK: - Selection Handling Functions
+    // MARK: - Selection handling functions
     /**
      Returns index number of workspace object by name.
      
@@ -66,6 +66,23 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func deselect_object()
     {
         selected_object = nil
+    }
+    
+    public func delete_object(_ object: WorkspaceObject)
+    {
+        object.entity.removeFromParent()
+        
+        switch selected_object
+        {
+        case is Robot:
+            robots.removeAll(where: { $0.name == object.name })
+        case is Tool:
+            tools.removeAll(where: { $0.name == object.name })
+        case is Part:
+            parts.removeAll(where: { $0.name == object.name })
+        default:
+            break
+        }
     }
     
     // MARK: - Workspace update handling
@@ -585,8 +602,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             {
                 performed = false
                 
-                deselect_robot()
-                deselect_tool()
+                //deselect_robot()
+                //deselect_tool()
                 
                 disable_constant_objects_update()
                 
@@ -620,16 +637,16 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         
         func pause_robot()
         {
-            selected_robot.start_pause_moving()
-            selected_robot.disable_update()
-            deselect_robot()
+            //selected_robot.start_pause_moving()
+            //selected_robot.disable_update()
+            //deselect_robot()
         }
         
         func pause_tool()
         {
-            selected_tool.start_pause_performing()
-            selected_tool.disable_update()
-            deselect_tool()
+            //selected_tool.start_pause_performing()
+            //selected_tool.disable_update()
+            //deselect_tool()
         }
     }
     
@@ -799,12 +816,12 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     private func perform_robot(by element: RobotPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
         select_robot(name: element.object_name)
-        deselect_tool()
+        //deselect_tool()
         
         if !element.is_single_perfrom
         {
             // Program tool perform
-            if selected_robot_index != -1
+            /*if selected_robot_index != -1
             {
                 if selected_robot.scope_type == .selected
                 {
@@ -834,12 +851,12 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             else
             {
                 completion(.success(()))
-            }
+            }*/
         }
         else
         {
             // Single robot perform
-            selected_robot.performed = true
+            /*selected_robot.performed = true
             
             var target_point = PositionPoint(x: registers[safe_float: element.x_index],
                                              y: registers[safe_float: element.y_index],
@@ -877,7 +894,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
                     self.selected_robot.process_error(error)
                     error_handler(error)
                 }*/
-            }
+            }*/
         }
     }
     
@@ -889,12 +906,12 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
         select_tool(name: element.object_name)
-        deselect_robot()
+        //deselect_robot()
         
         if !element.is_single_perfrom
         {
             // Program tool perform
-            if selected_tool_index != -1
+            /*if selected_tool_index != -1
             {
                 if selected_tool.scope_type == .selected
                 {
@@ -924,12 +941,12 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             else
             {
                 completion(.success(()))
-            }
+            }*/
         }
         else
         {
             // Single tool perform
-            do
+            /*do
             {
                 selected_tool.performed = true
                 try selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
@@ -946,7 +963,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             {
                 self.selected_tool.process_error(error)
                 error_handler(error)
-            }
+            }*/
         }
     }
     
@@ -1058,16 +1075,16 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         
         func reset_robot()
         {
-            selected_robot.reset_moving()
-            selected_robot.disable_update()
-            deselect_robot()
+            //selected_robot.reset_moving()
+            //selected_robot.disable_update()
+            //deselect_robot()
         }
         
         func reset_tool()
         {
-            selected_tool.reset_performing()
-            selected_tool.disable_update()
-            deselect_tool()
+            //selected_tool.reset_performing()
+            //selected_tool.disable_update()
+            //deselect_tool()
         }
         
         performed = false // Enable workspace program edit
@@ -1708,19 +1725,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     }
     
     // MARK: Robot selection functions
-    private var selected_robot_index = -1
-    
-    /**
-     Selects robot by index.
-     
-     - Parameters:
-        - index: An index of robot to be selected.
-     */
-    public func select_robot(index: Int)
-    {
-        selected_robot_index = index
-    }
-    
     /**
      Selects robot by name.
      
@@ -1731,35 +1735,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     {
         selected_object = robots[index_by_name(name, objects: robots)]
         //select_robot(index: index_by_name(name, objects: robots))
-    }
-    
-    /// Deselects selected robot.
-    public func deselect_robot()
-    {
-        selected_robot_index = -1
-    }
-    
-    /// Selected robot.
-    public var selected_robot: Robot
-    {
-        get
-        {
-            if selected_robot_index > -1 && selected_robot_index < robots.count
-            {
-                return robots[selected_robot_index]
-            }
-            else
-            {
-                return Robot()
-            }
-        }
-        set
-        {
-            if selected_robot_index > -1
-            {
-                robots[selected_robot_index] = newValue
-            }
-        }
     }
     
     // MARK: Robots naming
@@ -1897,42 +1872,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     }
 
     // MARK: Tools selection functions
-    private var selected_tool_index = -1
-    
-    /// Selected tool.
-    public var selected_tool: Tool
-    {
-        get
-        {
-            if selected_tool_index > -1 && selected_tool_index < tools.count
-            {
-                return tools[selected_tool_index]
-            }
-            else
-            {
-                return Tool(name: "None")
-            }
-        }
-        set
-        {
-            if selected_tool_index > -1
-            {
-                tools[selected_tool_index] = newValue
-            }
-        }
-    }
-    
-    /**
-     Selects tool by index.
-     
-     - Parameters:
-        - index: An index of tool to be selected.
-     */
-    public func select_tool(index: Int) // Select tool by number
-    {
-        selected_tool_index = index
-    }
-    
     /**
      Selects tool by name.
      
@@ -1943,12 +1882,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     {
         selected_object = tools[index_by_name(name, objects: tools)]
         //select_tool(index: index_by_name(name, objects: tools))
-    }
-    
-    /// Deselects selected tool.
-    public func deselect_tool()
-    {
-        selected_tool_index = -1
     }
     
     /**
@@ -2184,42 +2117,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     }
     
     // MARK: Parts selection functions
-    private var selected_part_index = -1
-    
-    /// Selected part.
-    public var selected_part: Part // Return part by selected index
-    {
-        get
-        {
-            if selected_part_index > -1 && selected_part_index < parts.count
-            {
-                return parts[selected_part_index]
-            }
-            else
-            {
-                return Part(name: "None")
-            }
-        }
-        set
-        {
-            if selected_part_index > -1
-            {
-                parts[selected_part_index] = newValue
-            }
-        }
-    }
-    
-    /**
-     Selects part by index.
-     
-     - Parameters:
-        - index: An index of part to be selected.
-     */
-    public func select_part(index: Int)
-    {
-        selected_part_index = index
-    }
-    
     /**
      Selects part by name.
      
@@ -2229,13 +2126,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func select_part(name: String)
     {
         selected_object = parts[index_by_name(name, objects: parts)]
-        //select_part(index: index_by_name(name, objects: parts))
-    }
-    
-    /// Deselects selected part.
-    public func deselect_part()
-    {
-        selected_part_index = -1
     }
     
     /**
@@ -2404,19 +2294,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     public func update_view()
     {
         self.objectWillChange.send()
-    }
-    
-    /// Selection workspace object state.
-    public var any_object_selected: Bool
-    {
-        if selected_robot_index == -1 && selected_part_index == -1 && selected_tool_index == -1
-        {
-            return false
-        }
-        else
-        {
-            return true
-        }
     }
     
     /// Determines whether a given program element is currently selected for performing.
