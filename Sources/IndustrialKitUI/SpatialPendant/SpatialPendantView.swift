@@ -11,7 +11,9 @@ import IndustrialKit
 public struct SpatialPendantView: View
 {
     @ObservedObject var controller: PendantController
+    @ObservedObject var workspace: Workspace
     @ObservedObject var robot: Robot
+    @ObservedObject var tool: Tool
     
     public var body: some View
     {
@@ -22,13 +24,13 @@ public struct SpatialPendantView: View
                 switch controller.view_type
                 {
                 case .workspace:
-                    Text("Workspace")
+                    WorkspaceControlView(workspace: workspace)
                 case .robot:
                     RobotControlView(robot: robot)
                 case .tool:
-                    Text("Tool")
+                    ToolControlView(tool: tool)
                 case .none:
-                    Text("Nothing")
+                    WorkspaceControlView(workspace: workspace)
                     //EmptyView()
                 }
             }
@@ -46,14 +48,16 @@ struct SpatialPendant_Previews: PreviewProvider
 {
     struct Container: View
     {
+        @StateObject var workspace = Workspace()
         @StateObject var robot = Robot()
+        @StateObject var tool = Tool()
         @StateObject var pendant_controller = PendantController()
         
         var body: some View
         {
             ZStack
             {
-                SpatialPendantView(controller: pendant_controller, robot: robot)
+                SpatialPendantView(controller: pendant_controller, workspace: workspace, robot: robot, tool: tool)
             }
             .frame(height: 480)
             .padding(10)
@@ -63,7 +67,7 @@ struct SpatialPendant_Previews: PreviewProvider
             }
         }
         
-        @State var inc = 0
+        @State var inc = 1
         
         private func button_tap()
         {
