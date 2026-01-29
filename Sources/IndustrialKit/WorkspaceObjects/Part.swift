@@ -122,10 +122,24 @@ open class Part: WorkspaceObject
     {
         module_name = module.name
         
-        if let module_entity = module.entity
+        Task
+        {
+            while module.entity == nil
+            {
+                try await Task.sleep(nanoseconds: 30_000_000)
+            }
+            
+            guard let entity = module.entity else { return }
+            
+            await MainActor.run
+            {
+                perform_load_entity(entity.clone(recursive: true))
+            }
+        }
+        /*if let module_entity = module.entity
         {
             perform_load_entity(module_entity.clone(recursive: true))
-        }
+        }*/
         
         //color_from_model()
     }
