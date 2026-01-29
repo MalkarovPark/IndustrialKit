@@ -7,10 +7,10 @@
 
 import Foundation
 
+import SwiftUI
 #if canImport(RealityKit)
 import RealityKit
 #endif
-import SwiftUI
 
 /**
  A base class of industrial production object.
@@ -108,16 +108,12 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     // MARK: - Object in workspace handling
     /// In workspace placement state.
     @Published public var is_placed = false
-    /*{
+    {
         didSet
         {
-            if !is_placed
-            {
-                position = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
-                on_remove()
-            }
+            entity.isEnabled = is_placed
         }
-    }*/
+    }
     
     /// Additional operations after remowing an object from the workspace.
     open func on_remove()
