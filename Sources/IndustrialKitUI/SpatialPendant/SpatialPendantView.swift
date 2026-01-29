@@ -5,6 +5,103 @@
 //  Created by Artem on 09.02.2024.
 //
 
+import SwiftUI
+import IndustrialKit
+
+public struct SpatialPendantView: View
+{
+    @ObservedObject var controller: PendantController
+    @ObservedObject var robot: Robot
+    
+    public var body: some View
+    {
+        FloatingView(alignment: .trailing)
+        {
+            ZStack
+            {
+                switch controller.view_type
+                {
+                case .workspace:
+                    Text("Workspace")
+                case .robot:
+                    RobotControlView(robot: robot)
+                case .tool:
+                    Text("Tool")
+                case .none:
+                    Text("Nothing")
+                    //EmptyView()
+                }
+            }
+            //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+            //.animation(.spring(), value: controller.view_type)
+            .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+            .animation(.easeInOut(duration: 0.3), value: controller.view_type)
+            .padding(8)
+        }
+    }
+}
+
+// MARK: - Previews
+struct SpatialPendant_Previews: PreviewProvider
+{
+    struct Container: View
+    {
+        @StateObject var robot = Robot()
+        @StateObject var pendant_controller = PendantController()
+        
+        var body: some View
+        {
+            ZStack
+            {
+                SpatialPendantView(controller: pendant_controller, robot: robot)
+            }
+            .frame(height: 480)
+            .padding(10)
+            .overlay(alignment: .topLeading)
+            {
+                Button("Test") { button_tap() }.padding()
+            }
+        }
+        
+        @State var inc = 0
+        
+        private func button_tap()
+        {
+            switch inc
+            {
+            case 0:
+                pendant_controller.view_workspace()
+            case 1:
+                pendant_controller.view_robot()
+            case 2:
+                pendant_controller.view_tool()
+            default:
+                pendant_controller.view_dismiss()
+            }
+            
+            inc += 1
+            if inc > 2 { inc = 0 }
+        }
+    }
+    
+    static var previews: some View
+    {
+        Container()
+    }
+}
+
+/*#Preview
+{
+    ZStack
+    {
+        SpatialPendantView(controller: PendantController(), robot: Robot())
+    }
+    .frame(height: 480)
+    .padding(10)
+    //.padding([.horizontal, .bottom], 10)
+    //.padding(.top, 10)
+}*/
+
 #if os(visionOS)
 import SwiftUI
 import IndustrialKit
@@ -44,6 +141,7 @@ public struct SpatialPendant: Scene
 ///The default widow id of Spatial Pendant.
 public let SPendantDefaultID = "pendant"
 
+//MARK: - Old SPV
 private struct SpatialPendantView: View
 {
     @EnvironmentObject var controller: PendantController

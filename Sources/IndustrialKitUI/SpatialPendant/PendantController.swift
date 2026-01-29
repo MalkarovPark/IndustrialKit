@@ -5,14 +5,13 @@
 //  Created by Artem on 10.02.2024.
 //
 
-#if os(visionOS)
 import Foundation
 import IndustrialKit
 
 /**
  A class that provides integration between applications and the Spatial Pendant.
  */
-public class PendantController: ObservableObject
+@MainActor public class PendantController: ObservableObject
 {
     public init()
     {
@@ -133,10 +132,10 @@ public class PendantController: ObservableObject
     
     public func view_dismiss()
     {
-        if workspace.any_object_selected
+        /*if workspace.any_object_selected
         {
             workspace.deselect_object()
-        }
+        }*/
         
         view_type = nil
     }
@@ -144,7 +143,8 @@ public class PendantController: ObservableObject
     // MARK: - UI functions
     public var add_item_button_avaliable: Bool
     {
-        switch view_type
+        return false
+        /*switch view_type
         {
         case .workspace:
             return true
@@ -154,7 +154,7 @@ public class PendantController: ObservableObject
             return workspace.selected_tool.programs_count > 0
         case nil:
             return false
-        }
+        }*/
     }
     
     @Published public var code_editor_text = String()
@@ -162,7 +162,8 @@ public class PendantController: ObservableObject
     /// Last performing error.
     public var last_error: Error?
     {
-        switch view_type
+        return nil
+        /*switch view_type
         {
         case .workspace:
             return workspace.last_error
@@ -172,13 +173,14 @@ public class PendantController: ObservableObject
             return workspace.selected_tool.last_error
         case nil:
             return nil
-        }
+        }*/
     }
     
     /// Performing state light.
     public var performing_state: PerformingState
     {
-        switch view_type
+        return .none
+        /*switch view_type
         {
         case .workspace:
             return workspace.performing_state
@@ -188,7 +190,7 @@ public class PendantController: ObservableObject
             return workspace.selected_tool.performing_state
         case nil:
             return .none
-        }
+        }*/
     }
     
     // MARK: - New data
@@ -213,4 +215,3 @@ public enum pendant_selection_type: Equatable, CaseIterable
     case robot
     case tool
 }
-#endif
