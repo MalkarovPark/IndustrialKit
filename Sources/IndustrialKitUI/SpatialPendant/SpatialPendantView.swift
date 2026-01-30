@@ -13,6 +13,12 @@ public struct SpatialPendantView: View
     @ObservedObject var controller: PendantController
     @ObservedObject var workspace: Workspace
     
+    public init(controller: PendantController, workspace: Workspace)
+    {
+        self.controller = controller
+        self.workspace = workspace
+    }
+    
     public var body: some View
     {
         FloatingView(alignment: .trailing)
@@ -114,18 +120,6 @@ struct SpatialPendant_Previews: PreviewProvider
         Container()
     }
 }
-
-/*#Preview
-{
-    ZStack
-    {
-        SpatialPendantView(controller: PendantController(), robot: Robot())
-    }
-    .frame(height: 480)
-    .padding(10)
-    //.padding([.horizontal, .bottom], 10)
-    //.padding(.top, 10)
-}*/
 
 #if os(visionOS)
 import SwiftUI
