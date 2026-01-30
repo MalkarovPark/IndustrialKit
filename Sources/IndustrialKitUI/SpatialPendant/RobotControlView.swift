@@ -27,8 +27,41 @@ public struct RobotControlView: View
     
     public var body: some View
     {
-        VStack(alignment: .center, spacing: 16)
+        VStack(alignment: .center, spacing: 10)
         {
+            ZStack
+            {
+                Rectangle()
+                    .fill(.clear)
+                    .glassEffect(.clear, in: .rect(cornerRadius: 16, style: .continuous))
+                
+                VStack
+                {
+                    Text(robot.name)
+                    #if os(macOS)
+                        .font(.system(size: 14, design: .rounded))
+                    #else
+                        .font(.system(size: 16, design: .rounded))
+                    #endif
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                }
+                
+                HStack
+                {
+                    Spacer()
+                    Image(systemName:"circlebadge.fill")
+                    #if os(macOS)
+                        .foregroundColor(robot.performing_state.color)
+                    #else
+                        .tint(robot.performing_state.color)
+                    #endif
+                        .padding(.trailing, 10)
+                }
+                
+            }
+            .frame(width: 200, height: 32)
+            
             ZStack
             {
                 Rectangle()
@@ -748,20 +781,30 @@ struct PerformingControlView: View
     }
 }
 
-#Preview
+// MARK: - Previews
+struct RobotControlView_Previews: PreviewProvider
 {
-    ZStack
+    struct Container: View
     {
-        FloatingView(alignment: .trailing)
+        @StateObject var robot = Robot(name: "6DOF Robot")
+        
+        var body: some View
         {
-            RobotControlView(robot: Robot())
-                .padding(8)
+            ZStack
+            {
+                FloatingView(alignment: .trailing)
+                {
+                    RobotControlView(robot: robot)
+                        .padding(8)
+                }
+                .padding(10)
+            }
+            .frame(height: 480)
         }
-        .padding(10)
     }
-    .frame(height: 480)
     
-    //RobotControlView(robot: Robot())
-        //.frame(width: 400, height: 480)
-        //.padding(.vertical, 64)
+    static var previews: some View
+    {
+        Container()
+    }
 }

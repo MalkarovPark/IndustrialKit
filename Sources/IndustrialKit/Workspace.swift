@@ -60,7 +60,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Selected workspace object.
-    public var selected_object: WorkspaceObject?
+    @Published public var selected_object: WorkspaceObject?
     
     /// Deselects selected object.
     public func deselect_object()

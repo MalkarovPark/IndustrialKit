@@ -140,58 +140,7 @@ import IndustrialKit
         view_type = nil
     }
     
-    // MARK: - UI functions
-    public var add_item_button_avaliable: Bool
-    {
-        return false
-        /*switch view_type
-        {
-        case .workspace:
-            return true
-        case .robot:
-            return workspace.selected_robot.programs_count > 0
-        case .tool:
-            return workspace.selected_tool.programs_count > 0
-        case nil:
-            return false
-        }*/
-    }
-    
     @Published public var code_editor_text = String()
-    
-    /// Last performing error.
-    public var last_error: Error?
-    {
-        return nil
-        /*switch view_type
-        {
-        case .workspace:
-            return workspace.last_error
-        case .robot:
-            return workspace.selected_robot.last_error
-        case .tool:
-            return workspace.selected_tool.last_error
-        case nil:
-            return nil
-        }*/
-    }
-    
-    /// Performing state light.
-    public var performing_state: PerformingState
-    {
-        return .none
-        /*switch view_type
-        {
-        case .workspace:
-            return workspace.performing_state
-        case .robot:
-            return workspace.selected_robot.performing_state
-        case .tool:
-            return workspace.selected_tool.performing_state
-        case nil:
-            return .none
-        }*/
-    }
     
     // MARK: - New data
     @Published var new_operation_code = OperationCodeInfo()

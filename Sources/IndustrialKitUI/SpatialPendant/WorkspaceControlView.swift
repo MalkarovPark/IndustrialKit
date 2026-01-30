@@ -34,5 +34,14 @@ struct WorkspaceControlView: View
 
 #Preview
 {
-    WorkspaceControlView(workspace: Workspace())
+    ZStack
+    {
+        FloatingView(alignment: .trailing)
+        {
+            WorkspaceControlView(workspace: Workspace())
+                .padding(8)
+        }
+        .padding(10)
+    }
+    .frame(height: 480)
 }

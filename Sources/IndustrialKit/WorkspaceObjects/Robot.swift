@@ -402,10 +402,10 @@ open class Robot: WorkspaceObject
     
     // MARK: - Moving functions
     /// A moving state of robot.
-    @Published /*nonisolated(unsafe)*/ public var performed = false
+    @Published public var performed = false
     
     /// A program performing state of robot.
-    @Published public var program_performed = false // UI only
+    @Published public var program_performed = false // Control Buttons (UI)
     
     /// An Index of target point in points array.
     public var target_point_index = 0
@@ -631,7 +631,6 @@ open class Robot: WorkspaceObject
         if !performed
         {
             reset_error()
-            paused = false // State light
             
             if !demo // Pass workcell parameters to model controller
             {
@@ -641,7 +640,8 @@ open class Robot: WorkspaceObject
             // Move to next point if moving was stop
             performed = false //???
             
-            program_performed = true // UI only
+            program_performed = true // Control Buttons (UI)
+            performing_state = .processing // State light (UI)
             
             move_to_next_point()
         }
@@ -651,7 +651,7 @@ open class Robot: WorkspaceObject
             pointer_position_to_robot()
             performed = false
             
-            program_performed = false // UI only
+            //program_performed = false // Control Buttons (UI)
             
             pause_handler()
         }
@@ -660,7 +660,8 @@ open class Robot: WorkspaceObject
         {
             selected_program.points[target_point_index].performing_state = .current
             
-            paused = true // State light
+            program_performed = false // Control Buttons (UI)
+            performing_state = .current // State light (UI)
             
             if demo
             {
@@ -738,10 +739,10 @@ open class Robot: WorkspaceObject
         last_error = error
         
         selected_position_point.performing_state = .error
+        performing_state = .processing // State light (UI)
         
         if demo
         {
-            //model_controller.remove_all_model_actions()
             model_controller.reset_entities()
         }
         else
@@ -774,14 +775,12 @@ open class Robot: WorkspaceObject
             target_point_index = 0
             performed = false
             
-            finished = true // State light
-            
-            program_performed = false // UI only
+            performing_state = .completed // State light (UI)
+            program_performed = false // Control Buttons (UI)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
             {
-                self.finished = false // State light
-                
+                self.performing_state = .none // State light (UI)
                 self.selected_program?.reset_points_states()
             }
             
@@ -815,7 +814,8 @@ open class Robot: WorkspaceObject
     {
         guard let selected_program = self.selected_program else { return }
         
-        program_performed = false // UI only
+        program_performed = false // Control Buttons (UI)
+        performing_state = .none // State light (UI)
         
         if performed
         {
@@ -1363,44 +1363,11 @@ open class Robot: WorkspaceObject
     public func reset_error()
     {
         last_error = nil
+        //performing_state = .processing // State light (UI)
     }
     
     /// Performing state light.
-    public var performing_state: PerformingState
-    {
-        if !performed
-        {
-            if last_error == nil
-            {
-                if finished
-                {
-                    return PerformingState.completed
-                }
-                else if paused
-                {
-                    return PerformingState.current
-                }
-                else
-                {
-                    return PerformingState.none
-                }
-            }
-            else
-            {
-                return PerformingState.error
-            }
-        }
-        else
-        {
-            return PerformingState.processing
-        }
-    }
-    
-    /// A finished state of tool.
-    private var finished = false
-    
-    /// A paused state of tool.
-    private var paused = false
+    @Published public var performing_state: PerformingState = .none
     
     // MARK: - Work with file system
     /*enum CodingKeys: String, CodingKey

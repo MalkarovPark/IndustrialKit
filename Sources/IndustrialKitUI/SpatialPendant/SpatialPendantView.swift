@@ -12,8 +12,6 @@ public struct SpatialPendantView: View
 {
     @ObservedObject var controller: PendantController
     @ObservedObject var workspace: Workspace
-    @ObservedObject var robot: Robot
-    @ObservedObject var tool: Tool
     
     public var body: some View
     {
@@ -21,23 +19,31 @@ public struct SpatialPendantView: View
         {
             ZStack
             {
-                switch controller.view_type
+                switch workspace.selected_object
                 {
-                case .workspace:
-                    WorkspaceControlView(workspace: workspace)
-                case .robot:
+                case let robot as Robot:
                     RobotControlView(robot: robot)
-                case .tool:
+                case let tool as Tool:
                     ToolControlView(tool: tool)
+                case is Part:
+                    ZStack
+                    {
+                        Rectangle()
+                            .fill(.clear)
+                            .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                        
+                        Text("Part")
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(width: 200)
+                case .some(_):
+                    Text("Nothing")
                 case .none:
                     WorkspaceControlView(workspace: workspace)
-                    //EmptyView()
                 }
             }
-            //.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-            //.animation(.spring(), value: controller.view_type)
             .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-            .animation(.easeInOut(duration: 0.3), value: controller.view_type)
+            .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
             .padding(8)
         }
     }
@@ -49,18 +55,17 @@ struct SpatialPendant_Previews: PreviewProvider
     struct Container: View
     {
         @StateObject var workspace = Workspace()
-        @StateObject var robot = Robot()
-        @StateObject var tool = Tool()
         @StateObject var pendant_controller = PendantController()
         
         var body: some View
         {
             ZStack
             {
-                SpatialPendantView(controller: pendant_controller, workspace: workspace, robot: robot, tool: tool)
+                SpatialPendantView(controller: pendant_controller, workspace: workspace)
             }
             .frame(height: 480)
             .padding(10)
+            .onAppear { workspace_preparation() }
             .overlay(alignment: .topLeading)
             {
                 Button("Test") { button_tap() }.padding()
@@ -74,17 +79,33 @@ struct SpatialPendant_Previews: PreviewProvider
             switch inc
             {
             case 0:
-                pendant_controller.view_workspace()
+                workspace.select_robot(name: "6DOF Robot")
             case 1:
-                pendant_controller.view_robot()
+                workspace.select_tool(name: "Drill")
             case 2:
-                pendant_controller.view_tool()
+                workspace.select_part(name: "Cup")
             default:
-                pendant_controller.view_dismiss()
+                workspace.deselect_object()
             }
             
+            print(workspace.selected_object?.name ?? "Nothing")
+            
             inc += 1
-            if inc > 2 { inc = 0 }
+            if inc > 3 { inc = 0 }
+        }
+        
+        private func workspace_preparation()
+        {
+            workspace.robots.append(Robot(name: "6DOF Robot"))
+            workspace.robots.append(Robot(name: "Portal Robot"))
+            
+            workspace.tools.append(Tool(name: "Drill"))
+            workspace.tools.append(Tool(name: "Gripper"))
+            
+            workspace.parts.append(Part(name: "Cup"))
+            workspace.parts.append(Part(name: "Book"))
+            
+            print("Added")
         }
     }
     

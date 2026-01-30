@@ -34,5 +34,14 @@ struct ToolControlView: View
 
 #Preview
 {
-    ToolControlView(tool: Tool())
+    ZStack
+    {
+        FloatingView(alignment: .trailing)
+        {
+            ToolControlView(tool: Tool())
+                .padding(8)
+        }
+        .padding(10)
+    }
+    .frame(height: 480)
 }
