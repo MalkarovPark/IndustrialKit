@@ -65,6 +65,21 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     /// Deselects selected object.
     public func deselect_object()
     {
+        switch selected_object
+        {
+        case let robot as Robot:
+            // Disable robot accessories
+            robot.toggle_position_pointer_visibility()
+            robot.toggle_working_area_visibility()
+            if robot.selected_program != nil { robot.toggle_position_program_visibility() }
+        case let tool as Tool:
+            break
+        case let part as Part:
+            break
+        default:
+            break
+        }
+        
         selected_object = nil
     }
     
@@ -1734,8 +1749,18 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
      */
     public func select_robot(name: String)
     {
+        // Disable accessories
+        var robot = selected_object as? Robot
+        robot?.toggle_position_pointer_visibility()
+        robot?.toggle_working_area_visibility()
+        if robot?.selected_program != nil { robot?.toggle_position_program_visibility() }
+        
         selected_object = robots[index_by_name(name, objects: robots)]
-        //select_robot(index: index_by_name(name, objects: robots))
+        
+        // Enable accessories
+        robot = selected_object as? Robot
+        robot?.toggle_position_pointer_visibility()
+        robot?.toggle_working_area_visibility()
     }
     
     // MARK: Robots naming
