@@ -1320,6 +1320,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         for robot in robots
         {
             place_object_entity(object: robot)
+            robot.update_origin_position()
         }
         
         for tool in tools
