@@ -51,11 +51,7 @@ public struct RobotControlView: View
                 {
                     Spacer()
                     Image(systemName:"circlebadge.fill")
-                    #if os(macOS)
                         .foregroundColor(robot.performing_state.color)
-                    #else
-                        .tint(robot.performing_state.color)
-                    #endif
                         .padding(.trailing, 10)
                 }
                 
