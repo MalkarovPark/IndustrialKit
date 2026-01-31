@@ -223,7 +223,7 @@ public struct RobotControlView: View
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
             // Editor handling
-            robot.selected_program = nil
+            //robot.selected_program = nil
             
             robot.toggle_position_program_visibility()
             
