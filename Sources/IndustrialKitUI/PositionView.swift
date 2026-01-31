@@ -107,9 +107,6 @@ public struct PositionView: View
                 }
             }
         }
-        #if os(iOS)
-        .scaleEffect(0.85)
-        #endif
     }
 }
 
