@@ -16,7 +16,7 @@ public struct RobotControlView: View
     @State private var dragging_program_id: UUID?
     @State private var new_program_view_presented = false
     //@State private var selected_program: PositionsProgram? = nil
-    @State private var single_program_edit = false
+    //@State private var single_program_edit = false
     
     @Namespace private var animation_namespace
     
@@ -189,7 +189,7 @@ public struct RobotControlView: View
     
     private func add_item()
     {
-        if !single_program_edit
+        if robot.selected_program == nil
         {
             new_program_view_presented = true
         }
@@ -211,7 +211,6 @@ public struct RobotControlView: View
             robot.selected_program = program
             robot.update_position_program_entity(by: program)
             
-            single_program_edit = true
             robot.toggle_position_program_visibility()
             
             // Performing Handling
@@ -226,8 +225,7 @@ public struct RobotControlView: View
             // Editor handling
             robot.selected_program = nil
             
-            single_program_edit = false
-            //robot.toggle_position_program_visibility()
+            robot.toggle_position_program_visibility()
             
             // Performing handling
             //robot.reset_moving()
