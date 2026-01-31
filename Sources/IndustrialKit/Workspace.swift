@@ -68,10 +68,16 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         switch selected_object
         {
         case let robot as Robot:
-            // Disable robot accessories
-            robot.deselect_program()
+            robot.deselect_program() // Deselect program
+            
+            // Disable accessories
             robot.toggle_position_pointer_visibility()
             robot.toggle_working_area_visibility()
+            
+            /*// Disable robot accessories
+            robot.deselect_program()
+            robot.toggle_position_pointer_visibility()
+            robot.toggle_working_area_visibility()*/
             //if robot.selected_program != nil { robot.toggle_position_program_visibility() }
         case let tool as Tool:
             break
@@ -1406,6 +1412,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     
     private func select_object_by_entity_identifier(_ entity_identifier: EntityModelIdentifier)
     {
+        deselect_object() // Test
+        
         switch entity_identifier.type
         {
         case .robot:
@@ -1750,17 +1758,17 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
      */
     public func select_robot(name: String)
     {
-        // Disable accessories
-        var robot = selected_object as? Robot
+        /*var robot = selected_object as? Robot
         robot?.deselect_program()
+        
+        // Disable accessories
         robot?.toggle_position_pointer_visibility()
-        robot?.toggle_working_area_visibility()
-        //if robot?.selected_program != nil { robot?.toggle_position_program_visibility() }
+        robot?.toggle_working_area_visibility()*/
         
         selected_object = robots[index_by_name(name, objects: robots)]
         
         // Enable accessories
-        robot = selected_object as? Robot
+        let robot = selected_object as? Robot
         robot?.toggle_position_pointer_visibility()
         robot?.toggle_working_area_visibility()
     }
