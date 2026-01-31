@@ -41,50 +41,53 @@ public struct PositionView: View
     
     public var body: some View
     {
-        ForEach(PositionComponents.Group.allCases, id: \.self)
-        { group in
-            GroupBox(label: Text(group.rawValue)
-                .font(.headline))
-            {
-                VStack(spacing: 12)
+        VStack(spacing: 16)
+        {
+            ForEach(PositionComponents.Group.allCases, id: \.self)
+            { group in
+                VStack
                 {
-                    ForEach(PositionComponents.components(for: group), id: \.self)
-                    { component in
-                        HStack(spacing: 8)
-                        {
-                            Text(component.info.text)
-                            #if os(macOS)
-                                .frame(width: 20.0)
-                            #else
-                                .frame(width: 30.0)
-                            #endif
-                            TextField("0", value: binding(for: component), format: .number)
-                                .textFieldStyle(.roundedBorder)
-                            #if os(iOS)
-                                .frame(minWidth: 60)
-                                .keyboardType(.decimalPad)
-                            #elseif os(visionOS)
-                                .frame(minWidth: 80)
-                                .keyboardType(.decimalPad)
-                            #endif
-                            Stepper("Enter",
-                                    value: binding(for: component),
-                                    in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
-                            .labelsHidden()
+                    HStack
+                    {
+                        Text(group.rawValue)
+                            .font(.system(size: 14))//, weight: .light))
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 12)
+                    {
+                        ForEach(PositionComponents.components(for: group), id: \.self)
+                        { component in
+                            VStack
+                            {
+                                HStack(spacing: 8)
+                                {
+                                    TextField("0", value: binding(for: component), format: .number)
+                                        .textFieldStyle(.roundedBorder)
+                                    #if os(iOS)
+                                        .frame(minWidth: 60)
+                                        .keyboardType(.decimalPad)
+                                    #elseif os(visionOS)
+                                        .frame(minWidth: 80)
+                                        .keyboardType(.decimalPad)
+                                    #endif
+                                    Stepper("Enter",
+                                            value: binding(for: component),
+                                            in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                    .labelsHidden()
+                                }
+                                
+                                Text(component.info.text)
+                                    .font(.system(size: 14, weight: .light))
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                 }
-                .padding(8)
             }
         }
     }
 }
-
-#if !os(visionOS)
-let button_width = 64.0
-#else
-let button_width = 96.0
-#endif
 
 ///Sendable struct for onChange handling.
 public struct PositionSnapshot: Equatable
@@ -164,10 +167,6 @@ struct PositionView_Previews: PreviewProvider
                 }
                 .frame(width: 256)
                 .modifier(PreviewBorder())
-                
-                /*PositionControl(position: $position, scale: .constant((x: 100, y: 100, z: 100)))
-                    .frame(width: 208)
-                    .modifier(PreviewBorder())*/
             }
             .padding()
         }
