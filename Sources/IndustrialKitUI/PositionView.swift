@@ -94,8 +94,9 @@ public struct PositionView: View
                                             value: binding(for: component),
                                             in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
                                     .labelsHidden()
-                                    .scaleEffect(0.85)
+                                    //.scaleEffect(0.85)
                                 }
+                                .scaleEffect(0.85)
                                 #endif
                                 
                                 Text(component.info.text)
