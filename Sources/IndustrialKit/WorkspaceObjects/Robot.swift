@@ -341,6 +341,8 @@ open class Robot: WorkspaceObject
      */
     public func select_program(index: Int)
     {
+        
+        
         selected_program_index = index
     }
     

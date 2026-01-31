@@ -225,7 +225,7 @@ public struct RobotControlView: View
             // Editor handling
             //robot.selected_program = nil
             
-            robot.toggle_position_program_visibility()
+            //robot.toggle_position_program_visibility()
             
             // Performing handling
             //robot.reset_moving()
