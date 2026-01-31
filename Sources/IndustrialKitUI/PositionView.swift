@@ -61,6 +61,7 @@ public struct PositionView: View
                         { component in
                             VStack
                             {
+                                #if os(macOS)
                                 HStack(spacing: 8)
                                 {
                                     TextField("0", value: binding(for: component), format: .number)
@@ -77,6 +78,24 @@ public struct PositionView: View
                                             in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
                                     .labelsHidden()
                                 }
+                                #else
+                                VStack(spacing: 8)
+                                {
+                                    TextField("0", value: binding(for: component), format: .number)
+                                        .textFieldStyle(.roundedBorder)
+                                    #if os(iOS)
+                                        .frame(minWidth: 60)
+                                        .keyboardType(.decimalPad)
+                                    #elseif os(visionOS)
+                                        .frame(minWidth: 80)
+                                        .keyboardType(.decimalPad)
+                                    #endif
+                                    Stepper("Enter",
+                                            value: binding(for: component),
+                                            in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                    .labelsHidden()
+                                }
+                                #endif
                                 
                                 Text(component.info.text)
                                     .fontWeight(.light)
