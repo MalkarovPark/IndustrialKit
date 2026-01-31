@@ -13,10 +13,20 @@ public struct PositionView: View
     @Binding public var position: (x: Float, y: Float, z: Float,
                                    r: Float, p: Float, w: Float)
     
+    private var with_steppers: Bool = true
+    
     public init(position: Binding<(x: Float, y: Float, z: Float,
                                    r: Float, p: Float, w: Float)>)
     {
         self._position = position
+    }
+    
+    public init(position: Binding<(x: Float, y: Float, z: Float,
+                                   r: Float, p: Float, w: Float)>,
+                with_steppers: Bool)
+    {
+        self._position = position
+        self.with_steppers = with_steppers
     }
     
     private func binding(for component: PositionComponents) -> Binding<Float>
@@ -73,7 +83,7 @@ public struct PositionView: View
                                         .frame(minWidth: 80)
                                         .keyboardType(.decimalPad)
                                     #endif
-                                    Stepper("Enter",
+                                    Stepper("Position",
                                             value: binding(for: component),
                                             in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
                                     .labelsHidden()
@@ -90,10 +100,13 @@ public struct PositionView: View
                                         .frame(minWidth: 80)
                                         .keyboardType(.decimalPad)
                                     #endif
-                                    Stepper("Enter",
-                                            value: binding(for: component),
-                                            in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
-                                    .labelsHidden()
+                                    if with_steppers
+                                    {
+                                        Stepper("Position",
+                                                value: binding(for: component),
+                                                in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                        .labelsHidden()
+                                    }
                                 }
                                 #endif
                                 
