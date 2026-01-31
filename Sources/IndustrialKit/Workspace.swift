@@ -69,9 +69,10 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         {
         case let robot as Robot:
             // Disable robot accessories
+            robot.deselect_program()
             robot.toggle_position_pointer_visibility()
             robot.toggle_working_area_visibility()
-            if robot.selected_program != nil { robot.toggle_position_program_visibility() }
+            //if robot.selected_program != nil { robot.toggle_position_program_visibility() }
         case let tool as Tool:
             break
         case let part as Part:
@@ -1753,7 +1754,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         var robot = selected_object as? Robot
         robot?.toggle_position_pointer_visibility()
         robot?.toggle_working_area_visibility()
-        if robot?.selected_program != nil { robot?.toggle_position_program_visibility() }
+        //if robot?.selected_program != nil { robot?.toggle_position_program_visibility() }
         
         selected_object = robots[index_by_name(name, objects: robots)]
         
@@ -2338,83 +2339,6 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         
         return flag
     }
-    
-    // MARK: - Visual functions
-    /// Scene camera node.
-    /*public var camera_node: SCNNode?
-    
-    /// Robots workcells node.
-    public var robots_node: SCNNode?
-    
-    /// Tools node.
-    public var tools_node: SCNNode?
-    
-    /// Parts node.
-    public var parts_node: SCNNode?
-    
-    /// Viusal object pointer node.
-    public var object_pointer_node: SCNNode?
-    
-    /// Robot node category bit mask.
-    nonisolated(unsafe) public static var robot_bit_mask = 2
-    
-    /// Tool node category bit mask.
-    nonisolated(unsafe) public static var tool_bit_mask = 4
-    
-    /// Part node category bit mask.
-    nonisolated(unsafe) public static var part_bit_mask = 6
-    
-    /// Connects and places objects to workspace scene.
-    public func connect_scene(_ scene: SCNScene)
-    {
-        deselect_robot()
-        deselect_tool()
-        deselect_part()
-        
-        camera_node = scene.rootNode.childNode(withName: "camera", recursively: true) ??
-        {
-            let node = SCNNode()
-            node.name = "camera"
-            scene.rootNode.addChildNode(node)
-            return node
-        }()
-        
-        robots_node = scene.rootNode.childNode(withName: "robots", recursively: true) ??
-        {
-            let node = SCNNode()
-            node.name = "robots"
-            scene.rootNode.addChildNode(node)
-            return node
-        }()
-        
-        tools_node = scene.rootNode.childNode(withName: "tools", recursively: true) ??
-        {
-            let node = SCNNode()
-            node.name = "tools"
-            scene.rootNode.addChildNode(node)
-            return node
-        }()
-        
-        parts_node = scene.rootNode.childNode(withName: "parts", recursively: true) ??
-        {
-            let node = SCNNode()
-            node.name = "parts"
-            scene.rootNode.addChildNode(node)
-            return node
-        }()
-        
-        object_pointer_node = scene.rootNode.childNode(withName: "object_pointer", recursively: false) ??
-        {
-            let node = SCNNode()
-            node.name = "object_pointer"
-            scene.rootNode.addChildNode(node)
-            return node
-        }()
-        
-        object_pointer_node?.constraints = []
-        
-        place_objects(scene: scene)
-    }*/
 }
 
 public enum WorkspaceObjectType: String, Equatable, CaseIterable

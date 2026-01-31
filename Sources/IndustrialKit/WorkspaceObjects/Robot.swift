@@ -296,7 +296,6 @@ open class Robot: WorkspaceObject
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
         {
             programs[index] = program
-            //selected_program.visual_clear()
         }
     }
     
@@ -358,6 +357,9 @@ open class Robot: WorkspaceObject
     /// Deselects positions program in robot.
     public func deselect_program()
     {
+        reset_moving()
+        if selected_program_index > -1 { toggle_position_program_visibility() }
+        
         selected_program_index = -1
     }
     

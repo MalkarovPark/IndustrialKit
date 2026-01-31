@@ -227,10 +227,10 @@ public struct RobotControlView: View
             selected_program = nil
             
             single_program_edit = false
-            robot.toggle_position_program_visibility()
+            //robot.toggle_position_program_visibility()
             
             // Performing handling
-            robot.reset_moving()
+            //robot.reset_moving()
             robot.deselect_program()
         }
     }
