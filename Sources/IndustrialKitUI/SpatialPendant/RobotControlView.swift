@@ -15,7 +15,7 @@ public struct RobotControlView: View
     
     @State private var dragging_program_id: UUID?
     @State private var new_program_view_presented = false
-    @State private var selected_program: PositionsProgram? = nil
+    //@State private var selected_program: PositionsProgram? = nil
     @State private var single_program_edit = false
     
     @Namespace private var animation_namespace
@@ -70,7 +70,7 @@ public struct RobotControlView: View
                     {
                         ForEach(robot.programs)
                         { program in
-                            if selected_program == nil
+                            if robot.selected_program == nil
                             {
                                 ProgramItemView(
                                     name: Binding(
@@ -115,7 +115,7 @@ public struct RobotControlView: View
                 .frame(maxWidth: .infinity)
                 .clipShape(.rect(cornerRadius: 16, style: .continuous))
                 
-                if let program = selected_program
+                if let program = robot.selected_program
                 {
                     PositionProgramView(robot: robot, program: program)
                     {
@@ -130,7 +130,7 @@ public struct RobotControlView: View
             {
                 HStack(spacing: 0)
                 {
-                    if selected_program != nil
+                    if robot.selected_program != nil
                     {
                         PerformingControlView(robot: robot)
                     }
@@ -195,7 +195,7 @@ public struct RobotControlView: View
         }
         else
         {
-            if let program = selected_program
+            if let program = robot.selected_program
             {
                 program.add_point(PositionPoint(x: robot.pointer_position.x, y: robot.pointer_position.y, z: robot.pointer_position.z, r: robot.pointer_position.r, p: robot.pointer_position.p, w: robot.pointer_position.w))
                 robot.update_position_program_entity(by: program)
@@ -208,7 +208,7 @@ public struct RobotControlView: View
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
             // Editor handling
-            selected_program = program
+            robot.selected_program = program
             robot.update_position_program_entity(by: program)
             
             single_program_edit = true
@@ -224,7 +224,7 @@ public struct RobotControlView: View
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
             // Editor handling
-            selected_program = nil
+            robot.selected_program = nil
             
             single_program_edit = false
             //robot.toggle_position_program_visibility()

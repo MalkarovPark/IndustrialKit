@@ -264,7 +264,7 @@ open class Robot: WorkspaceObject
     @Published public var programs = [PositionsProgram]()
     
     /// A selected positions program index.
-    public var selected_program_index = 0
+    public var selected_program_index = -1
     {
         willSet
         {
