@@ -41,7 +41,7 @@ public struct PositionView: View
     
     public var body: some View
     {
-        VStack(spacing: 16)
+        VStack(spacing: 10)
         {
             ForEach(PositionComponents.Group.allCases, id: \.self)
             { group in
@@ -50,7 +50,8 @@ public struct PositionView: View
                     HStack
                     {
                         Text(group.rawValue)
-                            .font(.system(size: 14, weight: .light))
+                            .fontWeight(.light)
+                            //.font(.system(size: 14, weight: .light))
                         Spacer()
                     }
                     
@@ -78,7 +79,8 @@ public struct PositionView: View
                                 }
                                 
                                 Text(component.info.text)
-                                    .font(.system(size: 13, weight: .light))
+                                    .fontWeight(.light)
+                                    //.font(.system(size: 13, weight: .light))
                                     .foregroundStyle(.secondary)
                             }
                         }
