@@ -1752,6 +1752,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     {
         // Disable accessories
         var robot = selected_object as? Robot
+        robot?.deselect_program()
         robot?.toggle_position_pointer_visibility()
         robot?.toggle_working_area_visibility()
         //if robot?.selected_program != nil { robot?.toggle_position_program_visibility() }
