@@ -448,11 +448,11 @@ public struct PositionPane: View
                         .contentShape(Rectangle())
                         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_editor_mode)
                     }
-                    //#if os(macOS)
+                    #if os(macOS)
                     .frame(width: is_editor_mode ? 280 : 120)
-                    /*#else
-                    .frame(width: is_editor_mode ? 576 : 120)
-                    #endif*/
+                    #else
+                    .frame(width: is_editor_mode ? 300 : 120)
+                    #endif
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
                     .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_editor_mode)
