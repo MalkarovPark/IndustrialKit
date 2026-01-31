@@ -50,7 +50,7 @@ public struct PositionView: View
                     HStack
                     {
                         Text(group.rawValue)
-                            .font(.system(size: 14))//, weight: .light))
+                            .font(.system(size: 14, weight: .light))
                         Spacer()
                     }
                     
@@ -78,7 +78,7 @@ public struct PositionView: View
                                 }
                                 
                                 Text(component.info.text)
-                                    .font(.system(size: 14, weight: .light))
+                                    .font(.system(size: 13, weight: .light))
                                     .foregroundStyle(.secondary)
                             }
                         }
