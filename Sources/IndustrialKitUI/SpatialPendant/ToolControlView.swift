@@ -55,7 +55,7 @@ struct ToolControlView: View
                                         set: { new_value in
                                             if let index = tool.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                tool.programs[index].name = mismatched_name(name: new_value, names: tool.programs_names)//new_value
+                                                tool.programs[index].name = mismatched_name(name: new_value, names: tool.programs_names)
                                             }
                                         }
                                     ),
@@ -227,7 +227,7 @@ struct OperationProgramView: View
     
     @ObservedObject var program: OperationsProgram
     var dismiss_function: () -> ()
-    @State private var dragging_point_id: UUID?
+    @State private var dragging_code_id: UUID?
     
     var body: some View
     {
@@ -263,33 +263,33 @@ struct OperationProgramView: View
             
             ScrollView
             {
-                /*LazyVStack(spacing: 8)
+                LazyVStack(spacing: 8)
                 {
-                    ForEach($program.points)
-                    { $point in
-                        PositionItemView(
+                    ForEach($program.codes)
+                    { $code in
+                        OperationItemView(
                             tool: tool,
                             program: program,
-                            point_item: point
+                            code_item: code
                         )
-                        { if let index = program.points.firstIndex(where: { $0.id == point.id })
+                        { if let index = program.codes.firstIndex(where: { $0.id == code.id })
                             {
-                                program.points.remove(at: index)
-                                tool.update_position_program_entity(by: program)
+                                program.codes.remove(at: index)
+                                //tool.update_position_program_entity(by: program)
                             }
                         }
                         .onDrag
                         {
-                            dragging_point_id = point.id
-                            return NSItemProvider(object: point.id.uuidString as NSString)
+                            dragging_code_id = code.id
+                            return NSItemProvider(object: code.id.uuidString as NSString)
                         }
-                        .onDrop(of: [.text], delegate: PositionDropDelegate(current_point: point, program: program, dragging_point_id: $dragging_point_id, tool: tool))
+                        .onDrop(of: [.text], delegate: OperationDropDelegate(current_code: code, program: program, dragging_code_id: $dragging_code_id, tool: tool))
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
                     
                     Spacer(minLength: 48)
                 }
-                .padding(8)*/
+                .padding(8)
             }
             
             /*Button(action: { program.add_point(PositionPoint(x: 0, y: 0, z: 0)) })
@@ -302,7 +302,248 @@ struct OperationProgramView: View
     }
 }
 
-//...
+private struct OperationItemView: View
+{
+    @ObservedObject var tool: Tool
+    @ObservedObject var program: OperationsProgram
+    @ObservedObject var code_item: OperationCode
+    
+    @State private var position_item_view_presented = false
+    
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
+    #endif
+    
+    let on_delete: () -> ()
+    
+    var body: some View
+    {
+        HStack
+        {
+            Image(systemName: "circle.fill")
+                .foregroundColor(code_item.performing_state.color)
+                .font(.system(size: 6))
+                .padding(.leading, 6)
+            
+            ZStack
+            {
+                Rectangle()
+                    .fill(.clear)
+                    .frame(maxWidth: .infinity, maxHeight: 256)
+                    .overlay
+                    {
+                        HStack(spacing: 0)
+                        {
+                            ZStack
+                            {
+                                //Text(tool.code_info(code_item.value).name)
+                                    //.font(.system(size: 10))
+                                
+                                Picker(tool.code_info(code_item.value).name, selection: $code_item.value)
+                                {
+                                    if tool.codes.count > 0
+                                    {
+                                        ForEach(tool.codes.map { $0.value }, id:\.self)
+                                        { code in
+                                            Text(tool.code_info(code).name)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .disabled(tool.codes.count == 0)
+                                .frame(maxWidth: .infinity)
+                                .pickerStyle(.menu)
+                                .buttonStyle(.borderless)
+                                .labelsHidden()
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        }
+                    }
+            }
+            .frame(height: 24)
+            
+            Image(systemName: tool.code_info(code_item.value).symbol)
+                .foregroundColor(code_item.performing_state.color)
+                .font(.system(size: 12))
+                .frame(width: 24, height: 24)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture
+        {
+            position_item_view_presented.toggle()
+        }
+        .contextMenu
+        {
+            Button(role: .destructive)
+            {
+                on_delete()
+            }
+            label:
+            {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+    }
+}
+
+private struct OperationDropDelegate: DropDelegate
+{
+    let current_code: OperationCode
+    let program: OperationsProgram
+    
+    @Binding var dragging_code_id: UUID?
+    
+    let tool: Tool
+    
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
+    #endif
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragging_id = dragging_code_id else { return }
+        
+        if dragging_id != current_code.id,
+           let from_index = program.codes.firstIndex(where: { $0.id == dragging_id }),
+           let to_index = program.codes.firstIndex(where: { $0.id == current_code.id })
+        {
+            withAnimation
+            {
+                program.codes.move(fromOffsets: IndexSet(integer: from_index), toOffset: to_index > from_index ? to_index + 1 : to_index)
+            }
+        }
+    }
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        dragging_code_id = nil
+        //robot.update_position_program_entity(by: program)
+        return true
+    }
+}
+
+/*private struct PositionPointView: View
+{
+    @ObservedObject var robot: Robot
+    @ObservedObject var program: PositionsProgram
+    
+    @ObservedObject var point: PositionPoint
+    @Binding var position_item_view_presented: Bool
+
+    #if os(iOS)
+    let is_compact: Bool
+    #endif
+
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            #if os(macOS)
+            HStack
+            {
+                PositionView(position: positionBinding())
+            }
+            .padding([.horizontal, .top])
+            #else
+            if !is_compact
+            {
+                HStack
+                {
+                    PositionView(position: positionBinding())
+                }
+                .padding([.horizontal, .top])
+            }
+            else
+            {
+                VStack
+                {
+                    PositionView(position: positionBinding())
+                }
+                .padding([.horizontal, .top])
+                
+                Spacer()
+            }
+            #endif
+            
+            HStack
+            {
+                Picker("Type", selection: $point.move_type)
+                {
+                    ForEach(MoveType.allCases, id: \.self)
+                    { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.menu)
+                #if os(macOS)
+                .frame(maxWidth: .infinity)
+                #else
+                .frame(width: 96)
+                .buttonStyle(.borderedProminent)
+                #endif
+                
+                Text("Speed")
+                #if os(macOS)
+                    .frame(width: 40)
+                #else
+                    .frame(width: 60)
+                #endif
+                TextField("0", value: $point.move_speed, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                #if os(macOS)
+                    .frame(width: 48)
+                #else
+                    .frame(maxWidth: .infinity)
+                    .keyboardType(.decimalPad)
+                #endif
+                Stepper("Enter", value: $point.move_speed, in: 0...100)
+                    .labelsHidden()
+            }
+            .padding()
+        }
+    }
+
+    private func positionBinding() -> Binding<(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)>
+    {
+        Binding(
+            get:
+            {
+                (
+                    x: point.x,
+                    y: point.y,
+                    z: point.z,
+                    r: point.r,
+                    p: point.p,
+                    w: point.w
+                )
+            },
+            set:
+            { new_value in
+                var new_point = PositionPoint(x: new_value.x, y: new_value.y, z: new_value.z, r: new_value.r, p: new_value.p, w: new_value.w)
+                robot.point_shift(&new_point)
+                
+                point.x = new_point.x
+                point.y = new_point.y
+                point.z = new_point.z
+                point.r = new_point.r
+                point.p = new_point.p
+                point.w = new_point.w
+                
+                robot.update_position_program_entity(by: program)
+                
+                /*point.x = new_value.x
+                point.y = new_value.y
+                point.z = new_value.z
+                point.r = new_value.r
+                point.p = new_value.p
+                point.w = new_value.w*/
+            }
+        )
+    }
+}*/
 
 private struct PerformingControlView: View
 {

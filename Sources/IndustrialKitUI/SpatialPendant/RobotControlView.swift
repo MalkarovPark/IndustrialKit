@@ -306,43 +306,7 @@ struct PositionProgramView: View
     }
 }
 
-struct PositionDropDelegate: DropDelegate
-{
-    let current_point: PositionPoint
-    let program: PositionsProgram
-    
-    @Binding var dragging_point_id: UUID?
-    
-    let robot: Robot
-    
-    #if os(iOS)
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
-    #endif
-    
-    func dropEntered(info: DropInfo)
-    {
-        guard let dragging_id = dragging_point_id else { return }
-        
-        if dragging_id != current_point.id,
-           let from_index = program.points.firstIndex(where: { $0.id == dragging_id }),
-           let to_index = program.points.firstIndex(where: { $0.id == current_point.id })
-        {
-            withAnimation
-            {
-                program.points.move(fromOffsets: IndexSet(integer: from_index), toOffset: to_index > from_index ? to_index + 1 : to_index)
-            }
-        }
-    }
-    
-    func performDrop(info: DropInfo) -> Bool
-    {
-        dragging_point_id = nil
-        robot.update_position_program_entity(by: program)
-        return true
-    }
-}
-
-struct PositionItemView: View
+private struct PositionItemView: View
 {
     @ObservedObject var robot: Robot
     @ObservedObject var program: PositionsProgram
@@ -425,7 +389,43 @@ struct PositionItemView: View
     }
 }
 
-struct PositionPointView: View
+private struct PositionDropDelegate: DropDelegate
+{
+    let current_point: PositionPoint
+    let program: PositionsProgram
+    
+    @Binding var dragging_point_id: UUID?
+    
+    let robot: Robot
+    
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
+    #endif
+    
+    func dropEntered(info: DropInfo)
+    {
+        guard let dragging_id = dragging_point_id else { return }
+        
+        if dragging_id != current_point.id,
+           let from_index = program.points.firstIndex(where: { $0.id == dragging_id }),
+           let to_index = program.points.firstIndex(where: { $0.id == current_point.id })
+        {
+            withAnimation
+            {
+                program.points.move(fromOffsets: IndexSet(integer: from_index), toOffset: to_index > from_index ? to_index + 1 : to_index)
+            }
+        }
+    }
+    
+    func performDrop(info: DropInfo) -> Bool
+    {
+        dragging_point_id = nil
+        robot.update_position_program_entity(by: program)
+        return true
+    }
+}
+
+private struct PositionPointView: View
 {
     @ObservedObject var robot: Robot
     @ObservedObject var program: PositionsProgram
