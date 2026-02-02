@@ -331,7 +331,6 @@ public struct PositionPane: View
                 {
                     HStack
                     {
-                        Spacer()
                         Image(systemName: "ellipsis")
                             .font(.system(size: 14))
                             .foregroundStyle(.secondary)
@@ -340,20 +339,24 @@ public struct PositionPane: View
                         #else
                             .frame(width: 40, height: 40)
                         #endif
-                            .background(.clear)
-                            .clipShape(Circle())
-                            .glassEffect(.regular.interactive(), in: .circle)
-                            .matchedGeometryEffect(id: "glass", in: pane_glass)
-                            .contentShape(Circle())
-                            .onTapGesture
-                            {
-                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
-                                {
-                                    is_expanded = true
-                                }
-                            }
                     }
+                    .background(.clear)
                     .frame(width: 120)
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
+                    .matchedGeometryEffect(id: "glass", in: pane_glass)
+                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .onTapGesture
+                    {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                        {
+                            is_central_pressed = true
+                            is_expanded = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                            {
+                                is_central_pressed = false
+                            }
+                        }
+                    }
                     .transition(.opacity.combined(with: .scale(scale: 1.0)))
                 }
                 else if is_expanded && !is_editor_mode

@@ -109,7 +109,7 @@ struct ToolControlView: View
                 {
                     if tool.selected_program != nil
                     {
-                        //PerformingControlView(tool: tool)
+                        PerformingControlView(tool: tool)
                     }
                     
                     Spacer()
@@ -268,14 +268,14 @@ struct OperationProgramView: View
                     ForEach($program.points)
                     { $point in
                         PositionItemView(
-                            robot: robot,
+                            tool: tool,
                             program: program,
                             point_item: point
                         )
                         { if let index = program.points.firstIndex(where: { $0.id == point.id })
                             {
                                 program.points.remove(at: index)
-                                robot.update_position_program_entity(by: program)
+                                tool.update_position_program_entity(by: program)
                             }
                         }
                         .onDrag
@@ -283,7 +283,7 @@ struct OperationProgramView: View
                             dragging_point_id = point.id
                             return NSItemProvider(object: point.id.uuidString as NSString)
                         }
-                        .onDrop(of: [.text], delegate: PositionDropDelegate(current_point: point, program: program, dragging_point_id: $dragging_point_id, robot: robot))
+                        .onDrop(of: [.text], delegate: PositionDropDelegate(current_point: point, program: program, dragging_point_id: $dragging_point_id, tool: tool))
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
                     
@@ -299,6 +299,60 @@ struct OperationProgramView: View
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(.rect(cornerRadius: 16, style: .continuous))
+    }
+}
+
+//...
+
+private struct PerformingControlView: View
+{
+    @ObservedObject var tool: Tool
+    
+    var body: some View
+    {
+        HStack(spacing: 2)
+        {
+            Button(action: {
+                tool.reset_performing()
+            })
+            {
+                Image(systemName: "stop.fill")
+                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    .modifier(CircleButtonImageFramer())
+            }
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            
+            Divider()
+                .frame(height: 24)
+            
+            Button(action: {
+                tool.start_pause_performing()
+            })
+            {
+                Image(systemName: tool.program_performed ? "pause.fill" : "play.fill")
+                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    .modifier(CircleButtonImageFramer())
+            }
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+        }
+        #if os(macOS)
+        .padding(4)
+        #endif
+        #if !os(visionOS)
+        .glassEffect(.regular.interactive())
+        #else
+        .controlSize(.large)
+        .buttonStyle(.borderless)
+        .glassBackgroundEffect()
+        .frame(depth: 24)
+        #endif
+        #if os(macOS) || os(iOS)
+        .padding(10)
+        #else
+        .padding(16)
+        #endif
     }
 }
 

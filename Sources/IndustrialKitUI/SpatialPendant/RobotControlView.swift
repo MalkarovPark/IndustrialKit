@@ -545,7 +545,7 @@ struct PositionPointView: View
     }
 }
 
-struct PerformingControlView: View
+private struct PerformingControlView: View
 {
     @ObservedObject var robot: Robot
     
