@@ -128,9 +128,9 @@ struct OperationControl: View
                                         Text("No Info")
                                             .frame(maxWidth: .infinity)
                                             #if os(macOS)
-                                            .font(.system(size: 10))
-                                            #else
                                             .font(.system(size: 12))
+                                            #else
+                                            .font(.system(size: 14))
                                             #endif
                                             .foregroundStyle(.secondary)
                                     }

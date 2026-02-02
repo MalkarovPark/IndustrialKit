@@ -87,7 +87,7 @@ struct SpatialPendant_Previews: PreviewProvider
             case 0:
                 workspace.select_robot(name: "6DOF Robot")
             case 1:
-                workspace.select_tool(name: "Drill")
+                workspace.select_tool(name: "Gripper")
             case 2:
                 workspace.select_part(name: "Cup")
             default:
@@ -107,6 +107,11 @@ struct SpatialPendant_Previews: PreviewProvider
             
             workspace.tools.append(Tool(name: "Drill"))
             workspace.tools.append(Tool(name: "Gripper"))
+            
+            workspace.tool_by_name("Gripper").codes = [
+                OperationCodeInfo(value: 0, name: "Close", symbol: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", info: "UwU"),
+                OperationCodeInfo(value: 1, name: "Open", symbol: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", info: "OwO")
+            ]
             
             workspace.parts.append(Part(name: "Cup"))
             workspace.parts.append(Part(name: "Book"))

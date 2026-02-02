@@ -426,13 +426,6 @@ public struct PositionPane: View
                     // Editor
                     VStack(spacing: 0)
                     {
-                        HStack
-                        {
-                            PositionView(position: $robot.pointer_position)
-                                .opacity(is_editor_mode ? 1 : 0)
-                        }
-                        .padding(10)
-                        
                         Button(action: {
                             withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
                                 is_editor_mode = false
@@ -446,10 +439,17 @@ public struct PositionPane: View
                             #endif
                         }
                         .buttonStyle(.plain)
-                        .padding(.bottom, 10)
+                        .padding(.top, 10)
                         .scaleEffect(is_editor_mode ? 1 : 0.01)
                         .contentShape(Rectangle())
                         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_editor_mode)
+                        
+                        HStack
+                        {
+                            PositionView(position: $robot.pointer_position)
+                                .opacity(is_editor_mode ? 1 : 0)
+                        }
+                        .padding(10)
                     }
                     #if os(macOS)
                     .frame(width: is_editor_mode ? 280 : 120)
