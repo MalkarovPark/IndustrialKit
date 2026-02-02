@@ -161,7 +161,7 @@ struct ToolControlView: View
         {
             if let program = tool.selected_program
             {
-                program.add_code(OperationCode(code_value))
+                program.add_code(tool.current_operation)
                 //tool.update_position_program_entity(by: program)
             }
         }
@@ -291,11 +291,6 @@ struct OperationProgramView: View
                 }
                 .padding(8)
             }
-            
-            /*Button(action: { program.add_point(PositionPoint(x: 0, y: 0, z: 0)) })
-            {
-                Image(systemName: "plus")
-            }*/
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(.rect(cornerRadius: 16, style: .continuous))

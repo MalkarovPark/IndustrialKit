@@ -12,7 +12,7 @@ struct OperationControl: View
 {
     @ObservedObject var tool: Tool
     
-    @State/*Object*/ private var current_operation = OperationCode(0)
+    //@State/*Object*/ private var current_operation = OperationCode(0)
     
     @State private var is_expanded = false
     @State private var is_central_pressed = false
@@ -32,7 +32,7 @@ struct OperationControl: View
                     {
                         VStack
                         {
-                            Text(tool.code_info(current_operation.value).name)
+                            Text(tool.code_info(tool.current_operation.value).name)
                             #if os(macOS)
                                 .font(.system(size: 14, design: .rounded))
                             #else
@@ -146,7 +146,7 @@ struct OperationControl: View
                                     get: { current_code_info },
                                     set:
                                         { new_value in
-                                            current_operation = OperationCode(new_value.value)
+                                            tool.current_operation = OperationCode(new_value.value)
                                         }
                                 )
                                 
@@ -210,7 +210,7 @@ struct OperationControl: View
                                     get: { current_code_info.value },
                                     set:
                                         { new_value in
-                                            current_operation = OperationCode(new_value)
+                                            tool.current_operation = OperationCode(new_value)
                                         }
                                 )
                                 
@@ -249,7 +249,7 @@ struct OperationControl: View
                 {
                     do
                     {
-                        try tool.perform(code: current_operation.value)
+                        try tool.perform(code: tool.current_operation.value)
                         {
                             //<#code#>
                         }
@@ -293,7 +293,7 @@ struct OperationControl: View
     
     private var current_code_info: OperationCodeInfo
     {
-        return tool.code_info(current_operation.value)
+        return tool.code_info(tool.current_operation.value)
     }
 }
 

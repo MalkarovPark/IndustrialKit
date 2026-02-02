@@ -22,17 +22,23 @@ open class Tool: WorkspaceObject
     // MARK: - Init functions
     public override init()
     {
+        current_operation = OperationCode(0)
+        
         super.init()
     }
     
     /// Inits tool by name.
     public override init(name: String)
     {
+        current_operation = OperationCode(0)
+        
         super.init(name: name)
     }
     
     public override init(name: String, entity_name: String)
     {
+        current_operation = OperationCode(0)
+        
         super.init(name: name, entity_name: entity_name)
     }
     
@@ -54,9 +60,9 @@ open class Tool: WorkspaceObject
     /// Inits tool by name, controller, connector and scene name.
     public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String, codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
-        super.init(name: name)
+        current_operation = OperationCode(0)
         
-        //self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone() // !
+        super.init(name: name)
         
         self.model_controller = model_controller
         self.connector = connector
@@ -64,11 +70,15 @@ open class Tool: WorkspaceObject
         apply_statistics_flags()
         
         self.codes = codes
+        
+        current_operation = OperationCode(codes.first?.value ?? 0)
     }
     
     /// Inits part by name and tool module.
     public init(name: String, module: ToolModule, is_internal: Bool = true)
     {
+        current_operation = OperationCode(0)
+        
         super.init(name: name)
         
         is_internal_module = is_internal
@@ -77,6 +87,8 @@ open class Tool: WorkspaceObject
     
     public override init(name: String, module_name: String, is_internal: Bool)
     {
+        current_operation = OperationCode(0)
+        
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
     
@@ -139,6 +151,8 @@ open class Tool: WorkspaceObject
         apply_statistics_flags()
         
         codes = module.codes
+        
+        current_operation = OperationCode(codes.first?.value ?? 0)
     }
     
     override open var has_avaliable_module: Bool
@@ -510,6 +524,8 @@ open class Tool: WorkspaceObject
             }
         }
     }
+    
+    @Published public var current_operation: OperationCode
     
     /// Selects codes and performs tool operation.
     public func start_pause_performing()
