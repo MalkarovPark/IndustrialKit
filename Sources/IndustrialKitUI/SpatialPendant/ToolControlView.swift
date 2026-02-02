@@ -369,7 +369,9 @@ private struct OperationItemView: View
                                 .pickerStyle(.menu)
                                 .buttonStyle(.plain)
                                 .labelsHidden()
+                                #if !os(macOS)
                                 .scaleEffect(0.8)
+                                #endif
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                         }
