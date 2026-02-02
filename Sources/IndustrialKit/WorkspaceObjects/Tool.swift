@@ -57,12 +57,12 @@ open class Tool: WorkspaceObject
         self.codes = codes
     }*/
     
-    /// Inits tool by name, controller, connector and scene name.
-    public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene_name: String, codes: [OperationCodeInfo] = [OperationCodeInfo]())
+    /// Inits tool by name, entity name, controller and connector.
+    public init(name: String, entity_name: String, model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
         current_operation = OperationCode(0)
         
-        super.init(name: name)
+        super.init(name: name, entity_name: entity_name)
         
         self.model_controller = model_controller
         self.connector = connector

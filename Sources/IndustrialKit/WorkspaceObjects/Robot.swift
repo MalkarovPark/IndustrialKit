@@ -38,7 +38,7 @@ open class Robot: WorkspaceObject
         super.init(name: name, entity_name: entity_name)
     }
     
-    /// Inits robot by name, entity name, controller and connector .
+    /// Inits robot by name, entity name, controller and connector.
     public init(name: String, entity_name: String, model_controller: RobotModelController = RobotModelController(), connector: RobotConnector = RobotConnector())
     {
         super.init(name: name, entity_name: entity_name)
