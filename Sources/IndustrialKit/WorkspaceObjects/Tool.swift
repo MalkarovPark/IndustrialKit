@@ -490,7 +490,7 @@ open class Tool: WorkspaceObject
             // Move to point for virtual tool
             do
             {
-                try model_controller.nodes_perform(code: code)
+                try model_controller.entities_perform(code: code)
                 {
                     completion()
                 }
@@ -814,7 +814,7 @@ open class Tool: WorkspaceObject
         }
         
         // model_controller.disconnect_entities()
-        model_controller.connect_nodes(of: unit_node)
+        model_controller.connect_entities(of: unit_node)
         
         //model_controller.info_output = self.info_output
     }*/

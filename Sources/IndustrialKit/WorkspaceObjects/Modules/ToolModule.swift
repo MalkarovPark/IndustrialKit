@@ -214,7 +214,7 @@ open class ToolModule: IndustrialModule
         else
         {
             #if os(macOS)
-            model_controller = ExternalToolModelController(name.code_correct_format, package_url: package_url, nodes_names: external_module_info?.nodes_names ?? [String]())
+            model_controller = ExternalToolModelController(name.code_correct_format, package_url: package_url, entities_names: external_module_info?.nodes_names ?? [String]())
             #endif
         }
         

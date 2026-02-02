@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SceneKit
+import RealityKit
 
 ///Provides control over visual model for robot.
 open class ToolModelController: ModelController, @unchecked Sendable
@@ -17,7 +17,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
      - Parameters:
         - code: The operation code value of the operation performed by the tool visual model.
      */
-    open func nodes_perform(code: Int) throws
+    open func entities_perform(code: Int) throws
     {
         
     }
@@ -29,11 +29,11 @@ open class ToolModelController: ModelController, @unchecked Sendable
         - code: The operation code value of the operation performed by the tool visual model.
         - completion: A completion function that is calls when the performing completes.
      */
-    open func nodes_perform(code: Int, completion: @escaping @Sendable () -> Void) throws
+    open func entities_perform(code: Int, completion: @escaping @Sendable () -> Void) throws
     {
         do
         {
-            try nodes_perform(code: code)
+            try entities_perform(code: code)
         }
         catch
         {
@@ -46,13 +46,13 @@ open class ToolModelController: ModelController, @unchecked Sendable
     /// Stops connected model actions performation.
     public final func remove_all_model_actions()
     {
-        /*for (_, node) in nodes // Remove all node actions
+        /*for (_, node) in entities // Remove all node actions
         {
             node.removeAllActions()
         }
         
         #if os(macOS)
-        nodes_actions_performing_count = 0
+        entities_actions_performing_count = 0
         #endif*/
     }
     
@@ -63,7 +63,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
     }
     
     /**
-     Applies a sequence of actions to scene nodes based on string commands and calls a completion handler when all actions are finished.
+     Applies a sequence of actions to scene entities based on string commands and calls a completion handler when all actions are finished.
      
      Each string in `lines` must follow the format `"nodeName action"`, where `nodeName` is the identifier of the node to apply the action to, and `action` is a string representing the action to perform.
      
@@ -71,16 +71,16 @@ open class ToolModelController: ModelController, @unchecked Sendable
      - lines: An array of command strings, each specifying a node name and an action.
      - completion: A closure called once all actions have been completed.
      */
-    public func apply_nodes_actions(by lines: [String], completion: @escaping () -> Void = {})
+    public func apply_entities_actions(by lines: [String], completion: @escaping () -> Void = {})
     {
         /*#if os(macOS)
-        if nodes_actions_performing_count > 0
+        if entities_actions_performing_count > 0
         {
             completion()
             return
         }
         
-        nodes_actions_performing_count = lines.count
+        entities_actions_performing_count = lines.count
         
         for i in 0..<lines.count // line in lines
         {
@@ -93,7 +93,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
                 
                 if let action = string_to_action(from: command)
                 {
-                    self.nodes[safe: name, default: SCNNode()].runAction(action, completionHandler: {
+                    self.entities[safe: name, default: Entity()].runAction(action, completionHandler: {
                         self.local_completion(index: i, completion: completion)
                     })
                 }
@@ -113,15 +113,15 @@ open class ToolModelController: ModelController, @unchecked Sendable
     }
     
     #if os(macOS)
-    private var nodes_actions_performing_count = 0
+    private var entities_actions_performing_count = 0
     
     private func local_completion(index: Int, completion: @escaping () -> Void = {})
     {
-        if nodes_actions_performing_count > 0
+        if entities_actions_performing_count > 0
         {
-            nodes_actions_performing_count -= 1
+            entities_actions_performing_count -= 1
             
-            if nodes_actions_performing_count == 0
+            if entities_actions_performing_count == 0
             {
                 completion()
             }
@@ -140,12 +140,12 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     /// For access to code.
     public var package_url: URL
     
-    public init(_ module_name: String, package_url: URL, nodes_names: [String])
+    public init(_ module_name: String, package_url: URL, entities_names: [String])
     {
         self.module_name = module_name
         self.package_url = package_url
         
-        self.external_nodes_names = nodes_names
+        self.external_entities_names = entities_names
     }
     
     required init()
@@ -157,23 +157,23 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     // MARK: Parameters import
     override open var entities_names: [String]
     {
-        return external_nodes_names
+        return external_entities_names
     }
     
-    public var external_nodes_names = [String]()
+    public var external_entities_names = [String]()
     
     // MARK: Modeling
-    open override func nodes_perform(code: Int, completion: @escaping @Sendable () -> Void)
+    open override func entities_perform(code: Int, completion: @escaping @Sendable () -> Void)
     {
         #if os(macOS)
         DispatchQueue.global(qos: .utility).async
         {
-            send_via_unix_socket(at: "/tmp/\(self.module_name)_tool_controller_socket", with: ["nodes_perform", "\(code)"])
+            send_via_unix_socket(at: "/tmp/\(self.module_name)_tool_controller_socket", with: ["entities_perform", "\(code)"])
             { output in
                 // Split the output into lines
                 let lines = output.split(separator: "\n").map { String($0) }
                 
-                self.apply_nodes_actions(by: lines, completion: completion)
+                self.apply_entities_actions(by: lines, completion: completion)
             }
         }
         
@@ -185,7 +185,7 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     open override func reset_entities()
     {
         #if os(macOS)
-        send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["reset_nodes"])
+        send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["reset_entities"])
         #endif
     }
     

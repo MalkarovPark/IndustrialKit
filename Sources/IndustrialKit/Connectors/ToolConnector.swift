@@ -71,7 +71,7 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
     
     override open func sync_model()
     {
-        // model_controller?.nodes[safe: "Node", default: SCNNode()].runAction(SCNAction())
+        // model_controller?.entities[safe: "Node", default: SCNNode()].runAction(SCNAction())
     }
 }
 
@@ -220,7 +220,7 @@ public class ExternalToolConnector: ToolConnector
         #endif
     }
     
-    private var nodes_actions: [String]?
+    private var entities_actions: [String]?
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(
@@ -262,15 +262,15 @@ public class ExternalToolConnector: ToolConnector
             sync_model()
         }
         
-        model_controller?.remove_all_model_actions() // Remove nodes actions if performing finished
+        model_controller?.remove_all_model_actions() // Remove entities actions if performing finished
         #endif
     }
     
     open override func sync_model()
     {
-        if let actions = nodes_actions // Apply nodes actions by connector
+        if let actions = entities_actions // Apply entities actions by connector
         {
-            model_controller?.apply_nodes_actions(by: actions)
+            model_controller?.apply_entities_actions(by: actions)
         }
     }
     
@@ -426,7 +426,7 @@ public class ExternalToolConnector: ToolConnector
             
             if let action = string_to_action(from: components[1])
             {
-                model_controller?.nodes[safe: components[0], default: SCNNode()].runAction(action)
+                model_controller?.entities[safe: components[0], default: SCNNode()].runAction(action)
             }
         }
         #endif
