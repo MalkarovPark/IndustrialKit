@@ -12,8 +12,6 @@ struct OperationControl: View
 {
     @ObservedObject var tool: Tool
     
-    //@State/*Object*/ private var current_operation = OperationCode(0)
-    
     @State private var is_expanded = false
     @State private var is_central_pressed = false
     
@@ -36,7 +34,7 @@ struct OperationControl: View
                             #if os(macOS)
                                 .font(.system(size: 14, design: .rounded))
                             #else
-                                .font(.system(size: 16, design: .rounded))
+                                .font(.system(size: 18, design: .rounded))
                             #endif
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity)
@@ -44,7 +42,7 @@ struct OperationControl: View
                                 //.truncationMode(.tail)
                                 .padding(10)
                             #if os(iOS)
-                                .padding(4)
+                                .padding(tool.codes.count > 0 ? 0 : 4)
                                 .foregroundStyle(.black)
                             #endif
                         }
@@ -113,13 +111,17 @@ struct OperationControl: View
                                     #if os(macOS)
                                         .font(.system(size: 10))
                                     #else
-                                        .font(.system(size: 12))
+                                        .font(.system(size: 14))
                                     #endif
                                         .foregroundStyle(.secondary)
                                 }
                             }
                             .background(.quinary)
+                            #if os(macOS)
                             .frame(width: 80, height: 80)
+                            #else
+                            .frame(width: 80, height: 96)
+                            #endif
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay
                             {
@@ -132,11 +134,15 @@ struct OperationControl: View
                                             #if os(macOS)
                                             .font(.system(size: 12))
                                             #else
-                                            .font(.system(size: 14))
+                                            .font(.system(size: 16))
                                             #endif
                                             .foregroundStyle(.secondary)
                                     }
+                                    #if os(macOS)
                                     .frame(width: 80, height: 80)
+                                    #else
+                                    .frame(width: 80, height: 96)
+                                    #endif
                                     .background(.quinary)
                                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                                 }
@@ -185,6 +191,7 @@ struct OperationControl: View
                                         ForEach(tool.codes, id:\.self)
                                         { code in
                                             Text(code.name)
+                                                .font(.system(size: 16))
                                         }
                                     }
                                     else
@@ -201,7 +208,7 @@ struct OperationControl: View
                             #if os(macOS)
                             .frame(maxWidth: 120, maxHeight: 80)
                             #else
-                            .frame(maxWidth: 192)
+                            .frame(height: 96)
                             #endif
                             
                             ZStack
@@ -221,19 +228,21 @@ struct OperationControl: View
                                 #if os(macOS)
                                     .font(.system(size: 20))
                                 #else
-                                    .font(.system(size: 32))
+                                    .font(.system(size: 24))
                                     .keyboardType(.decimalPad)
                                 #endif
                                     .multilineTextAlignment(.center)
                                     .textFieldStyle(.plain)
                             }
+                            #if os(macOS)
                             .frame(height: 80)
+                            #else
+                            .frame(width: 80, height: 96)
+                            #endif
                             .background(.quinary)
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         }
                         .padding(10)
-                        
-                        
                     }
                     #if os(macOS)
                     .frame(width: is_expanded ? 280 : 120)

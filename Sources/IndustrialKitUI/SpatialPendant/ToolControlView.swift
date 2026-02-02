@@ -363,11 +363,13 @@ private struct OperationItemView: View
                                         Text("None")
                                     }
                                 }
+                                .font(.system(size: 4))
                                 .disabled(tool.codes.count == 0)
                                 .frame(maxWidth: .infinity)
                                 .pickerStyle(.menu)
-                                .buttonStyle(.borderless)
+                                .buttonStyle(.plain)
                                 .labelsHidden()
+                                .scaleEffect(0.8)
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                         }
