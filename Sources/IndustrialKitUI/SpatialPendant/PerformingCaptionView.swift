@@ -25,7 +25,7 @@ struct PerformingCaptionView: View
         {
             Rectangle()
                 .fill(.clear)
-                .glassEffect(.clear, in: .rect(cornerRadius: 16, style: .continuous))
+                .glassEffect(.clear, in: .capsule(style: .continuous))//.rect(cornerRadius: 16, style: .continuous))
             
             VStack
             {

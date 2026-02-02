@@ -117,7 +117,7 @@ struct ToolControlView: View
                     Button(action: add_item)
                     {
                         Image(systemName: "plus")
-                            .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                            //.contentTransition(.symbolEffect(.replace.offUp.byLayer))
                             .modifier(CircleButtonImageFramer())
                     }
                     .disabled(tool.program_performed)

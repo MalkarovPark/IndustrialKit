@@ -384,7 +384,7 @@ open class Tool: WorkspaceObject
     
     // MARK: - Info codes functions
     /// An array of avaliable operation codes values for tool.
-    public var codes = [OperationCodeInfo]()
+    @Published public var codes = [OperationCodeInfo]()
     
     /// An information output code.
     public var info_output: [Float]?
@@ -1016,73 +1016,6 @@ open class Tool: WorkspaceObject
     @Published public var program_performed = false
     
     // MARK: - Work with file system
-    /*enum CodingKeys: String, CodingKey
-    {
-        case codes
-        
-        case is_attached
-        case attached_to
-        
-        case demo
-        case connection_parameters
-        case update_model_by_connector
-        
-        case get_statistics
-        case charts_data
-        case states_data
-        
-        case programs
-    }
-    
-    public required init(from decoder: any Decoder) throws
-    {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        self.codes = try container.decode([OperationCodeInfo].self, forKey: .codes)
-        
-        self.is_attached = try container.decode(Bool.self, forKey: .is_attached)
-        self.attached_to = try container.decodeIfPresent(String.self, forKey: .attached_to)
-        
-        self.demo = try container.decode(Bool.self, forKey: .demo)
-        self.update_model_by_connector = try container.decode(Bool.self, forKey: .update_model_by_connector)
-        
-        self.get_statistics = try container.decode(Bool.self, forKey: .get_statistics)
-        self.charts_data = try container.decodeIfPresent([WorkspaceObjectChart].self, forKey: .charts_data)
-        self.states_data = try container.decodeIfPresent([StateItem].self, forKey: .states_data)
-        
-        self.programs = try container.decode([OperationsProgram].self, forKey: .programs)
-        
-        try super.init(from: decoder)
-        
-        self.connector.import_connection_parameters_values(try container.decodeIfPresent([String].self, forKey: .connection_parameters))
-        if self.update_model_by_connector
-        {
-            self.connector.model_controller = self.model_controller
-        }
-    }
-    
-    public override func encode(to encoder: any Encoder) throws
-    {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(codes, forKey: .codes)
-        
-        try container.encode(is_attached, forKey: .is_attached)
-        try container.encode(attached_to, forKey: .attached_to)
-        
-        try container.encode(demo, forKey: .demo)
-        try container.encode(connector.connection_parameters_values, forKey: .connection_parameters)
-        try container.encode(update_model_by_connector, forKey: .update_model_by_connector)
-        
-        try container.encode(get_statistics, forKey: .get_statistics)
-        try container.encode(charts_data, forKey: .charts_data)
-        try container.encode(states_data, forKey: .states_data)
-        
-        try container.encode(programs, forKey: .programs)
-        
-        try super.encode(to: encoder)
-    }*/
-    
     public convenience init(file: ToolFileData)
     {
         self.init(file: file.object) //self.init()
