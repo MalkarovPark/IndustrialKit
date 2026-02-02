@@ -14,6 +14,8 @@ import Foundation
  */
 public class OperationCode: Identifiable, Codable, Hashable, ObservableObject, @unchecked Sendable
 {
+    public let id: UUID = UUID()
+    
     public static func == (lhs: OperationCode, rhs: OperationCode) -> Bool
     {
         lhs.id == rhs.id
@@ -25,8 +27,9 @@ public class OperationCode: Identifiable, Codable, Hashable, ObservableObject, @
     }
     
     /// Operation code value.
-    public var value = 0
+    @Published public var value = 0
     
+    // MARK: - Init functions
     /**
      Creates a performable operation code element.
      - Parameters:

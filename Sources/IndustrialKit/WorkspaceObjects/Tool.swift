@@ -241,14 +241,15 @@ open class Tool: WorkspaceObject
     
     // MARK: - Program manage functions
     /// An array of tool operations programs.
-    @Published private var programs = [OperationsProgram]()
+    @Published public var programs = [OperationsProgram]()
     
     /// A selected operations program index.
-    public var selected_program_index = 0
+    public var selected_program_index = -1
     {
         willSet
         {
             // Stop tool performing before program change
+            performed = false
             reset_performing()
         }
     }
@@ -260,7 +261,7 @@ open class Tool: WorkspaceObject
      */
     public func add_program(_ program: OperationsProgram)
     {
-        program.name = mismatched_name(name: program.name!, names: programs_names)
+        program.name = mismatched_name(name: program.name, names: programs_names)
         programs.append(program)
     }
     
@@ -322,6 +323,15 @@ open class Tool: WorkspaceObject
         selected_program_index = index
     }
     
+    /// Deselects operations program in robot.
+    public func deselect_program()
+    {
+        reset_performing()
+        //if selected_program_index > -1 { toggle_position_program_visibility() }
+        
+        selected_program_index = -1
+    }
+    
     /**
      Selects operations program in tool by name.
      - Parameters:
@@ -333,22 +343,15 @@ open class Tool: WorkspaceObject
     }
     
     /// A selected operations program.
-    public var selected_program: OperationsProgram
+    public var selected_program: OperationsProgram?
     {
-        get // Return positions program by selected index
+        get // Return operations program by selected index
         {
-            if programs.count > 0 && selected_program_index < programs.count
-            {
-                return programs[selected_program_index]
-            }
-            else
-            {
-                return OperationsProgram()
-            }
+            return programs[safe: selected_program_index]
         }
         set
         {
-            programs[selected_program_index] = newValue
+            programs[safe: selected_program_index] = newValue
         }
     }
     
@@ -366,7 +369,7 @@ open class Tool: WorkspaceObject
         {
             for program in programs
             {
-                prog_names.append(program.name ?? "None")
+                prog_names.append(program.name)
             }
         }
         return prog_names
@@ -414,11 +417,11 @@ open class Tool: WorkspaceObject
     {
         get
         {
-            return selected_program.codes[safe: selected_code_index] ?? OperationCode(0)
+            return selected_program?.codes[safe: selected_code_index] ?? OperationCode(0)
         }
         set
         {
-            selected_program.codes[safe: selected_code_index] = newValue
+            selected_program?.codes[safe: selected_code_index] = newValue
         }
     }
     
@@ -510,27 +513,39 @@ open class Tool: WorkspaceObject
     /// Selects codes and performs tool operation.
     public func start_pause_performing()
     {
-        guard selected_program.codes_count > 0
+        guard let selected_program = self.selected_program, selected_program.codes_count > 0
         else
         {
             finish_handler()
             return
         }
         
-        // Handling tool performing
+        // Tool performing handling
         if !performed
         {
             reset_error()
-            paused = false // State light
             
-            // Perform next action if performing was stop
-            performed = true
+            /*if !demo // Pass workcell parameters to model controller
+            {
+                sync_connector_parameters()
+            }*/
+            
+            // Move to next point if moving was stop
+            performed = false //???
+            
+            program_performed = true // Control Buttons (UI)
+            performing_state = .processing // State light (UI)
+            
             perform_next_code()
         }
         else
         {
-            // Pause moving if tool perform
+            // Remove all action if moving was perform
+            //pointer_position_to_robot()
             performed = false
+            
+            //program_performed = false // Control Buttons (UI)
+            
             pause_handler()
         }
         
@@ -538,18 +553,17 @@ open class Tool: WorkspaceObject
         {
             selected_program.codes[selected_code_index].performing_state = .current
             
-            paused = true // State light
+            program_performed = false // Control Buttons (UI)
+            performing_state = .current // State light (UI)
             
             if demo
             {
-                model_controller.remove_all_model_actions()
+                //model_controller.canceled = true
                 model_controller.reset_entities()
             }
             else
             {
-                model_controller.remove_all_model_actions()
-                
-                // Remove actions for real tool
+                // Remove actions for real robot
                 connector.canceled = true
                 connector.reset_device()
             }
@@ -629,6 +643,13 @@ open class Tool: WorkspaceObject
     /// Set the new target operation code index.
     private func select_new_code()
     {
+        guard let selected_program = self.selected_program
+        else
+        {
+            finish_handler()
+            return
+        }
+        
         if performed
         {
             selected_code_index += 1
@@ -649,13 +670,13 @@ open class Tool: WorkspaceObject
             selected_code_index = 0
             performed = false
             
-            finished = true // State light
+            performing_state = .completed // State light (UI)
+            program_performed = false // Control Buttons (UI)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
             {
-                self.finished = false // State light
-                
-                self.selected_program.reset_codes_states()
+                self.performing_state = .none // State light (UI)
+                self.selected_program?.reset_codes_states()
             }
             
             finish_handler()
@@ -683,6 +704,8 @@ open class Tool: WorkspaceObject
     /// Resets tool operation performation.
     public func reset_performing()
     {
+        guard let selected_program = self.selected_program else { return }
+        
         if performed
         {
             if demo
@@ -976,50 +999,20 @@ open class Tool: WorkspaceObject
     
     // MARK: - Performing State
     /// Last performing error.
-    @Published public var last_error: Error?
+    public var last_error: Error?
     
     /// Resets last hanled error.
     public func reset_error()
     {
         last_error = nil
+        //performing_state = .processing
     }
     
     /// Performing state light.
-    public var performing_state: PerformingState
-    {
-        if !performed
-        {
-            if last_error == nil
-            {
-                if finished
-                {
-                    return PerformingState.completed
-                }
-                else if paused
-                {
-                    return PerformingState.current
-                }
-                else
-                {
-                    return PerformingState.none
-                }
-            }
-            else
-            {
-                return PerformingState.error
-            }
-        }
-        else
-        {
-            return PerformingState.processing
-        }
-    }
+    @Published public var performing_state: PerformingState = .none
     
-    /// A finished state of tool.
-    private var finished = false
-    
-    /// A paused state of tool.
-    private var paused = false
+    /// A program performing state of robot.
+    @Published public var program_performed = false
     
     // MARK: - Work with file system
     /*enum CodingKeys: String, CodingKey

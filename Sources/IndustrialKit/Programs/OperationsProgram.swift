@@ -12,23 +12,20 @@ import Foundation
  
  Contains an array of opcodes and a custom name used for identification.
  */
-public class OperationsProgram: Identifiable, Codable, Hashable
+public class OperationsProgram: Identifiable, Codable, Equatable, ObservableObject
 {
+    public let id: UUID = UUID()
+    
     public static func == (lhs: OperationsProgram, rhs: OperationsProgram) -> Bool
     {
         return lhs.name == rhs.name // Identity condition by names
     }
     
-    public func hash(into hasher: inout Hasher)
-    {
-        hasher.combine(id)
-    }
-    
     /// An operations program name
-    public var name: String?
+    public var name: String
     
     /// An array of opertaions codes.
-    public var codes = [OperationCode]()
+    @Published public var codes = [OperationCode]()
     
     // MARK: - Init functions
     
@@ -117,5 +114,28 @@ public class OperationsProgram: Identifiable, Codable, Hashable
         {
             code.performing_state = .none
         }
+    }
+    
+    // MARK: - Work with file system
+    private enum CodingKeys: String, CodingKey
+    {
+        case name
+        case codes
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.name = try container.decode(String.self, forKey: .name)
+        self.codes = try container.decode([OperationCode].self, forKey: .codes)
+    }
+    
+    public func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(name, forKey: .name)
+        try container.encode(codes, forKey: .codes)
     }
 }

@@ -341,8 +341,6 @@ open class Robot: WorkspaceObject
      */
     public func select_program(index: Int)
     {
-        
-        
         selected_program_index = index
     }
     
@@ -407,9 +405,6 @@ open class Robot: WorkspaceObject
     // MARK: - Moving functions
     /// A moving state of robot.
     @Published public var performed = false
-    
-    /// A program performing state of robot.
-    @Published public var program_performed = false // Control Buttons (UI)
     
     /// An Index of target point in points array.
     public var target_point_index = 0
@@ -1367,11 +1362,14 @@ open class Robot: WorkspaceObject
     public func reset_error()
     {
         last_error = nil
-        //performing_state = .processing // State light (UI)
+        //performing_state = .processing
     }
     
     /// Performing state light.
     @Published public var performing_state: PerformingState = .none
+    
+    /// A program performing state of robot.
+    @Published public var program_performed = false
     
     // MARK: - Work with file system
     /*enum CodingKeys: String, CodingKey

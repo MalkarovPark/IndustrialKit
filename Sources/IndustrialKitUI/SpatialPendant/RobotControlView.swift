@@ -9,14 +9,13 @@ import SwiftUI
 import IndustrialKit
 import UniformTypeIdentifiers
 
+// MARK: - Control View
 public struct RobotControlView: View
 {
     @ObservedObject var robot: Robot
     
     @State private var dragging_program_id: UUID?
     @State private var new_program_view_presented = false
-    //@State private var selected_program: PositionsProgram? = nil
-    //@State private var single_program_edit = false
     
     @Namespace private var animation_namespace
     
@@ -29,35 +28,11 @@ public struct RobotControlView: View
     {
         VStack(alignment: .center, spacing: 10)
         {
-            ZStack
-            {
-                Rectangle()
-                    .fill(.clear)
-                    .glassEffect(.clear, in: .rect(cornerRadius: 16, style: .continuous))
-                
-                VStack
-                {
-                    Text(robot.name)
-                    #if os(macOS)
-                        .font(.system(size: 14, design: .rounded))
-                    #else
-                        .font(.system(size: 16, design: .rounded))
-                    #endif
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity)
-                }
-                
-                HStack
-                {
-                    Spacer()
-                    Image(systemName:"circlebadge.fill")
-                        .foregroundColor(robot.performing_state.color)
-                        .padding(.trailing, 10)
-                }
-                
-            }
-            .frame(width: 200, height: 32)
+            // MARK: Caption
+            PerformingCaptionView(name: robot.name, performing_state: robot.performing_state)
+                .frame(width: 200)
             
+            // MARK: Program
             ZStack
             {
                 Rectangle()
@@ -75,10 +50,10 @@ public struct RobotControlView: View
                                 ProgramItemView(
                                     name: Binding(
                                         get: { program.name },
-                                        set: { newValue in
+                                        set: { new_value in
                                             if let index = robot.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                robot.programs[index].name = mismatched_name(name: newValue, names: robot.programs_names)//newValue
+                                                robot.programs[index].name = mismatched_name(name: new_value, names: robot.programs_names)//new_value
                                             }
                                         }
                                     ),
@@ -168,6 +143,7 @@ public struct RobotControlView: View
                 }
             }
             
+            // MARK: Controls
             VStack(alignment: .center, spacing: 10)
             {
                 PositionPane(robot: robot)
@@ -176,17 +152,9 @@ public struct RobotControlView: View
                     .frame(width: 120)
             }
         }
-        /*.padding(16)
-        .background
-        {
-            Rectangle()
-                .fill(.clear)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
-                .padding(8)
-        }*/
     }
     
+    // MARK: Functions
     private func add_item()
     {
         if robot.selected_program == nil
@@ -222,19 +190,12 @@ public struct RobotControlView: View
     {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
-            // Editor handling
-            //robot.selected_program = nil
-            
-            //robot.toggle_position_program_visibility()
-            
-            // Performing handling
-            //robot.reset_moving()
             robot.deselect_program()
         }
     }
 }
 
-struct ProgramDropDelegate: DropDelegate
+private struct ProgramDropDelegate: DropDelegate
 {
     let current_program: PositionsProgram
     let robot: Robot
@@ -263,7 +224,7 @@ struct ProgramDropDelegate: DropDelegate
     }
 }
 
-struct ProgramItemView: View
+public struct ProgramItemView: View
 {
     @Binding var name: String
     
@@ -274,7 +235,14 @@ struct ProgramItemView: View
     @State private var new_name = String()
     @FocusState private var is_focused: Bool
     
-    var body: some View
+    public init(name: Binding<String>, count: Int, on_delete: @escaping () -> Void)
+    {
+        self._name = name
+        self.count = count
+        self.on_delete = on_delete
+    }
+    
+    public var body: some View
     {
         HStack
         {
@@ -346,63 +314,7 @@ struct ProgramItemView: View
     }
 }
 
-struct AdaptiveDotGrid: View
-{
-    let count: Int
-    let square_size: CGFloat
-    let spacing_ratio: CGFloat = 0.75
-
-    private var side: Int
-    {
-        if count > 1
-        {
-            Int(ceil(sqrt(Double(count))))
-        }
-        else
-        {
-            Int(ceil(sqrt(Double(2))))
-        }
-    }
-
-    var body: some View
-    {
-        GeometryReader
-        { _ in
-            let spacing = square_size / CGFloat(side) * spacing_ratio
-            let dot_size = (square_size - spacing * CGFloat(side - 1)) / CGFloat(side)
-
-            VStack(spacing: spacing)
-            {
-                ForEach(0..<side, id: \.self)
-                { row in
-                    HStack(spacing: spacing)
-                    {
-                        ForEach(0..<side, id: \.self)
-                        { column in
-                            let index = row * side + (side - 1 - column)
-
-                            if index < count
-                            {
-                                Circle()
-                                    .fill(.tertiary)
-                                    .frame(width: dot_size, height: dot_size)
-                            }
-                            else
-                            {
-                                Color.clear
-                                    .frame(width: dot_size, height: dot_size)
-                            }
-                        }
-                    }
-                }
-            }
-            .frame(width: square_size, height: square_size)
-        }
-        .frame(width: square_size, height: square_size)
-    }
-}
-
-// MARK: - Position Program
+// MARK: - Program Views
 struct PositionProgramView: View
 {
     @ObservedObject var robot: Robot

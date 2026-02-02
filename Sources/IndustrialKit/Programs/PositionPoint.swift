@@ -28,13 +28,11 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
     }
     
     /// A point location component.
-    //public var x, y, z: Float
     @Published public var x: Float
     @Published public var y: Float
     @Published public var z: Float
     
     /// A point rotation component.
-    //public var r, p, w: Float
     @Published public var r: Float
     @Published public var p: Float
     @Published public var w: Float
