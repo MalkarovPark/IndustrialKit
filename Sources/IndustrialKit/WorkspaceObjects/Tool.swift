@@ -328,6 +328,7 @@ open class Tool: WorkspaceObject
     {
         reset_performing()
         //if selected_program_index > -1 { toggle_position_program_visibility() }
+        self.objectWillChange.send()
         
         selected_program_index = -1
     }

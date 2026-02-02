@@ -92,15 +92,15 @@ struct ToolControlView: View
                 .frame(maxWidth: .infinity)
                 .clipShape(.rect(cornerRadius: 16, style: .continuous))
                 
-                /*if let program = tool.selected_program
+                if let program = tool.selected_program
                 {
-                    PositionProgramView(tool: tool, program: program)
+                    OperationProgramView(tool: tool, program: program)
                     {
                         deselect_program()
                     }
                     .matchedGeometryEffect(id: program.id, in: animation_namespace)
                     .zIndex(1)
-                }*/
+                }
             }
             .frame(width: 200)
             .overlay(alignment: .bottomTrailing)
@@ -217,6 +217,88 @@ private struct ProgramDropDelegate: DropDelegate
     {
         dragging_program_id = nil
         return true
+    }
+}
+
+// MARK: - Program View
+struct OperationProgramView: View
+{
+    @ObservedObject var tool: Tool
+    
+    @ObservedObject var program: OperationsProgram
+    var dismiss_function: () -> ()
+    @State private var dragging_point_id: UUID?
+    
+    var body: some View
+    {
+        VStack(spacing: 0)
+        {
+            HStack
+            {
+                Text(program.name)
+                #if os(macOS)
+                    .font(.system(size: 14, design: .rounded))
+                #else
+                    .font(.system(size: 16, design: .rounded))
+                #endif
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+            }
+            .padding(8)
+            .overlay(alignment: .leading)
+            {
+                Button(action: dismiss_function)
+                {
+                    Image(systemName: "chevron.left")
+                    #if os(iOS)
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
+                    #endif
+                }
+                .buttonStyle(.plain)
+                .padding(.leading, 8)
+            }
+            
+            Divider()
+            
+            ScrollView
+            {
+                /*LazyVStack(spacing: 8)
+                {
+                    ForEach($program.points)
+                    { $point in
+                        PositionItemView(
+                            robot: robot,
+                            program: program,
+                            point_item: point
+                        )
+                        { if let index = program.points.firstIndex(where: { $0.id == point.id })
+                            {
+                                program.points.remove(at: index)
+                                robot.update_position_program_entity(by: program)
+                            }
+                        }
+                        .onDrag
+                        {
+                            dragging_point_id = point.id
+                            return NSItemProvider(object: point.id.uuidString as NSString)
+                        }
+                        .onDrop(of: [.text], delegate: PositionDropDelegate(current_point: point, program: program, dragging_point_id: $dragging_point_id, robot: robot))
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    }
+                    
+                    Spacer(minLength: 48)
+                }
+                .padding(8)*/
+            }
+            
+            /*Button(action: { program.add_point(PositionPoint(x: 0, y: 0, z: 0)) })
+            {
+                Image(systemName: "plus")
+            }*/
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .clipShape(.rect(cornerRadius: 16, style: .continuous))
     }
 }
 
