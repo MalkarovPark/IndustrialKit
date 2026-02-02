@@ -101,6 +101,17 @@ struct ToolControlView: View
                     .matchedGeometryEffect(id: program.id, in: animation_namespace)
                     .zIndex(1)
                 }
+                
+                if tool.codes.count == 0
+                {
+                    Text("No Acceptable")
+                        #if os(macOS)
+                        .font(.system(size: 12))
+                        #else
+                        .font(.system(size: 14))
+                        #endif
+                        .foregroundStyle(.secondary)
+                }
             }
             .frame(width: 200)
             .overlay(alignment: .bottomTrailing)
@@ -114,34 +125,37 @@ struct ToolControlView: View
                     
                     Spacer()
                     
-                    Button(action: add_item)
+                    if tool.codes.count > 0
                     {
-                        Image(systemName: "plus")
-                            //.contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                            .modifier(CircleButtonImageFramer())
-                    }
-                    .disabled(tool.program_performed)
-                    #if os(macOS)
-                    .popover(isPresented: $new_program_view_presented, arrowEdge: .leading)
-                    {
-                        AddNewView(is_presented: $new_program_view_presented, names: tool.programs_names) { new_name in
-                            tool.add_program(OperationsProgram(name: new_name))
+                        Button(action: add_item)
+                        {
+                            Image(systemName: "plus")
+                                //.contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                                .modifier(CircleButtonImageFramer())
                         }
-                    }
-                    #else
-                    .popover(isPresented: $new_program_view_presented, arrowEdge: .trailing)
-                    {
-                        AddNewView(is_presented: $new_program_view_presented, names: tool.programs_names) { new_name in
-                            tool.add_program(OperationsProgram(name: new_name))
+                        .disabled(tool.program_performed)
+                        #if os(macOS)
+                        .popover(isPresented: $new_program_view_presented, arrowEdge: .leading)
+                        {
+                            AddNewView(is_presented: $new_program_view_presented, names: tool.programs_names) { new_name in
+                                tool.add_program(OperationsProgram(name: new_name))
+                            }
                         }
+                        #else
+                        .popover(isPresented: $new_program_view_presented, arrowEdge: .trailing)
+                        {
+                            AddNewView(is_presented: $new_program_view_presented, names: tool.programs_names) { new_name in
+                                tool.add_program(OperationsProgram(name: new_name))
+                            }
+                        }
+                        #endif
+                        .modifier(CircleButtonGlassBorderer())
+                        #if os(macOS) || os(iOS)
+                        .padding(10)
+                        #else
+                        .padding(16)
+                        #endif
                     }
-                    #endif
-                    .modifier(CircleButtonGlassBorderer())
-                    #if os(macOS) || os(iOS)
-                    .padding(10)
-                    #else
-                    .padding(16)
-                    #endif
                 }
             }
             
@@ -341,6 +355,7 @@ private struct OperationItemView: View
                                         ForEach(tool.codes.map { $0.value }, id:\.self)
                                         { code in
                                             Text(tool.code_info(code).name)
+                                                .lineLimit(1)
                                         }
                                     }
                                     else
@@ -419,126 +434,6 @@ private struct OperationDropDelegate: DropDelegate
         return true
     }
 }
-
-/*private struct PositionPointView: View
-{
-    @ObservedObject var robot: Robot
-    @ObservedObject var program: PositionsProgram
-    
-    @ObservedObject var point: PositionPoint
-    @Binding var position_item_view_presented: Bool
-
-    #if os(iOS)
-    let is_compact: Bool
-    #endif
-
-    var body: some View
-    {
-        VStack(spacing: 0)
-        {
-            #if os(macOS)
-            HStack
-            {
-                PositionView(position: positionBinding())
-            }
-            .padding([.horizontal, .top])
-            #else
-            if !is_compact
-            {
-                HStack
-                {
-                    PositionView(position: positionBinding())
-                }
-                .padding([.horizontal, .top])
-            }
-            else
-            {
-                VStack
-                {
-                    PositionView(position: positionBinding())
-                }
-                .padding([.horizontal, .top])
-                
-                Spacer()
-            }
-            #endif
-            
-            HStack
-            {
-                Picker("Type", selection: $point.move_type)
-                {
-                    ForEach(MoveType.allCases, id: \.self)
-                    { type in
-                        Text(type.rawValue).tag(type)
-                    }
-                }
-                .pickerStyle(.menu)
-                #if os(macOS)
-                .frame(maxWidth: .infinity)
-                #else
-                .frame(width: 96)
-                .buttonStyle(.borderedProminent)
-                #endif
-                
-                Text("Speed")
-                #if os(macOS)
-                    .frame(width: 40)
-                #else
-                    .frame(width: 60)
-                #endif
-                TextField("0", value: $point.move_speed, format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if os(macOS)
-                    .frame(width: 48)
-                #else
-                    .frame(maxWidth: .infinity)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: $point.move_speed, in: 0...100)
-                    .labelsHidden()
-            }
-            .padding()
-        }
-    }
-
-    private func positionBinding() -> Binding<(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)>
-    {
-        Binding(
-            get:
-            {
-                (
-                    x: point.x,
-                    y: point.y,
-                    z: point.z,
-                    r: point.r,
-                    p: point.p,
-                    w: point.w
-                )
-            },
-            set:
-            { new_value in
-                var new_point = PositionPoint(x: new_value.x, y: new_value.y, z: new_value.z, r: new_value.r, p: new_value.p, w: new_value.w)
-                robot.point_shift(&new_point)
-                
-                point.x = new_point.x
-                point.y = new_point.y
-                point.z = new_point.z
-                point.r = new_point.r
-                point.p = new_point.p
-                point.w = new_point.w
-                
-                robot.update_position_program_entity(by: program)
-                
-                /*point.x = new_value.x
-                point.y = new_value.y
-                point.z = new_value.z
-                point.r = new_value.r
-                point.p = new_value.p
-                point.w = new_value.w*/
-            }
-        )
-    }
-}*/
 
 private struct PerformingControlView: View
 {

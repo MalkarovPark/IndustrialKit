@@ -39,6 +39,11 @@ public struct SpatialPendantView: View
                             .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
                         
                         Text("Part")
+                            #if os(macOS)
+                            .font(.system(size: 12))
+                            #else
+                            .font(.system(size: 14))
+                            #endif
                             .foregroundStyle(.secondary)
                     }
                     .frame(width: 200)

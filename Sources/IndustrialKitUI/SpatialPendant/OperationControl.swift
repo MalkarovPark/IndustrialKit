@@ -32,7 +32,7 @@ struct OperationControl: View
                     {
                         VStack
                         {
-                            Text(tool.code_info(tool.current_operation.value).name)
+                            Text(tool.codes.count > 0 ? tool.code_info(tool.current_operation.value).name : "")
                             #if os(macOS)
                                 .font(.system(size: 14, design: .rounded))
                             #else
@@ -40,6 +40,8 @@ struct OperationControl: View
                             #endif
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity)
+                                .lineLimit(1)
+                                //.truncationMode(.tail)
                                 .padding(10)
                             #if os(iOS)
                                 .padding(4)
@@ -48,7 +50,7 @@ struct OperationControl: View
                         }
                     }
                     .background(.clear)
-                    .frame(width: 80) //.frame(maxWidth: .infinity)
+                    .frame(width: 104) //.frame(maxWidth: .infinity)
                     .glassEffect(.regular.interactive(), in: .capsule(style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
                     .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -170,7 +172,6 @@ struct OperationControl: View
                                             Text("None")
                                         }
                                     }
-                                    .disabled(tool.codes.count == 0)
                                     .pickerStyle(.radioGroup)
                                     .labelsHidden()
                                     .padding(10)
@@ -191,7 +192,6 @@ struct OperationControl: View
                                         Text("None")
                                     }
                                 }
-                                .disabled(tool.codes.count == 0)
                                 .pickerStyle(.wheel)
                                 .buttonStyle(.borderedProminent)
                                 #endif
@@ -261,13 +261,22 @@ struct OperationControl: View
                 }
                 label:
                 {
-                    Image(systemName:
-                            is_valid_symbol(current_code_info.symbol) ?
-                            current_code_info.symbol :
-                            "play"
-                    )
-                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    .modifier(CircleButtonImageFramer())
+                    if tool.codes.count > 0
+                    {
+                        Image(systemName:
+                                is_valid_symbol(current_code_info.symbol) ?
+                                current_code_info.symbol :
+                                "play"
+                        )
+                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                        .modifier(CircleButtonImageFramer())
+                    }
+                    else
+                    {
+                        Rectangle()
+                            .fill(.clear)
+                            .modifier(CircleButtonImageFramer())
+                    }
                 }
                 .modifier(CircleButtonGlassBorderer())
                 #if os(macOS) || os(iOS)
@@ -276,8 +285,7 @@ struct OperationControl: View
                 .padding(16)
                 #endif
             }
-            //.frame(width: 200)
-            //.border(.gray)
+            .disabled(tool.codes.count == 0)
         }
         //.animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
     }
@@ -318,8 +326,7 @@ struct OperationControl_Previews: PreviewProvider
             {
                 tool.codes = [
                     OperationCodeInfo(value: 0, name: "Close", symbol: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", info: "UwU"),
-                    OperationCodeInfo(value: 1, name: "Open", symbol: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", info: "OwO"),
-                    OperationCodeInfo(value: 2, name: "??", symbol: "questionmark")
+                    OperationCodeInfo(value: 1, name: "Open", symbol: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", info: "OwO")
                 ]
             }
         }
