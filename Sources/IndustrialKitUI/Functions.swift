@@ -2,7 +2,7 @@
 //  Functions.swift
 //  IndustrialKit
 //
-//  Created by Artem Malkarov on 04.07.2025.
+//  Created by Artem on 04.07.2025.
 //
 
 import Foundation

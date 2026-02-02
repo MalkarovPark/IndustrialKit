@@ -2,7 +2,7 @@
 //  ControlProgramTextView.swift
 //  IndustrialKit
 //
-//  Created by Artem Malkarov on 23.06.2025.
+//  Created by Artem on 23.06.2025.
 //
 
 import SwiftUI

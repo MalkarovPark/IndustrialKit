@@ -146,7 +146,7 @@ struct ToolControlView: View
             }
             
             // MARK: Controls
-            // ??
+            OperationControl(tool: tool)
         }
     }
     

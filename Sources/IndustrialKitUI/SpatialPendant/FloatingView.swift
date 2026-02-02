@@ -2,7 +2,7 @@
 //  FloatingView.swift
 //  IndustrialKit
 //
-//  Created by Artem Malkarov on 20.01.2026.
+//  Created by Artem on 20.01.2026.
 //
 
 import SwiftUI

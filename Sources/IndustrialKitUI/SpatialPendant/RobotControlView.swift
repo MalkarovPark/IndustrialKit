@@ -2,7 +2,7 @@
 //  RobotControlView.swift
 //  IndustrialKit
 //
-//  Created by Artem Malkarov on 19.01.2026.
+//  Created by Artem on 19.01.2026.
 //
 
 import SwiftUI
