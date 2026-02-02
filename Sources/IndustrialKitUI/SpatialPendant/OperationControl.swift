@@ -12,7 +12,7 @@ struct OperationControl: View
 {
     @ObservedObject var tool: Tool
     
-    @StateObject private var current_operation = OperationCode(0)
+    @State/*Object*/ private var current_operation = OperationCode(0)
     
     @State private var is_expanded = false
     @State private var is_central_pressed = false
@@ -81,18 +81,6 @@ struct OperationControl: View
                     // Editor
                     VStack(spacing: 0)
                     {
-                        HStack
-                        {
-                            Rectangle()
-                                .fill(.clear)
-                                .frame(width: 80, height: 80)
-                                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
-                                .opacity(is_expanded ? 1 : 0)
-                            //PositionView(position: $robot.pointer_position)
-                                //.opacity(is_expanded ? 1 : 0)
-                        }
-                        .padding(10)
-                        
                         Button(action: {
                             withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
                                 is_expanded = false
@@ -106,10 +94,146 @@ struct OperationControl: View
                             #endif
                         }
                         .buttonStyle(.plain)
-                        .padding(.bottom, 10)
+                        .padding(.top, 10)
                         .scaleEffect(is_expanded ? 1 : 0.01)
                         .contentShape(Rectangle())
                         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
+                        
+                        HStack
+                        {
+                            ScrollView
+                            {
+                                if !current_code_info.info.isEmpty
+                                {
+                                    Text(current_code_info.info)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    #if os(macOS)
+                                        .font(.system(size: 10))
+                                    #else
+                                        .font(.system(size: 12))
+                                    #endif
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .background(.quinary)
+                            .frame(width: 80, height: 80)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .overlay
+                            {
+                                if current_code_info.info.isEmpty
+                                {
+                                    ZStack
+                                    {
+                                        Text("No Info")
+                                            .frame(maxWidth: .infinity)
+                                            #if os(macOS)
+                                            .font(.system(size: 10))
+                                            #else
+                                            .font(.system(size: 12))
+                                            #endif
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .frame(width: 80, height: 80)
+                                    .background(.quinary)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                }
+                            }
+                            
+                            ZStack
+                            {
+                                let operation_binding = Binding(
+                                    get: { current_code_info },
+                                    set:
+                                        { new_value in
+                                            current_operation = OperationCode(new_value.value)
+                                        }
+                                )
+                                
+                                Rectangle()
+                                    .fill(.clear)
+                                
+                                #if os(macOS)
+                                ScrollView
+                                {
+                                    Picker("Code", selection: operation_binding)
+                                    {
+                                        if tool.codes.count > 0
+                                        {
+                                            ForEach(tool.codes, id:\.self)
+                                            { code in
+                                                Text(code.name)
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Text("None")
+                                        }
+                                    }
+                                    .disabled(tool.codes.count == 0)
+                                    .pickerStyle(.radioGroup)
+                                    .labelsHidden()
+                                    .padding(10)
+                                    .frame(maxWidth: .infinity)
+                                }
+                                #else
+                                Picker("Code", selection: operation_binding)
+                                {
+                                    if tool.codes.count > 0
+                                    {
+                                        ForEach(tool.codes, id:\.self)
+                                        { code in
+                                            Text(code.name)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Text("None")
+                                    }
+                                }
+                                .disabled(tool.codes.count == 0)
+                                .pickerStyle(.wheel)
+                                .buttonStyle(.borderedProminent)
+                                #endif
+                            }
+                            .background(.quinary)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            #if os(macOS)
+                            .frame(maxWidth: 120, maxHeight: 80)
+                            #else
+                            .frame(maxWidth: 192)
+                            #endif
+                            
+                            ZStack
+                            {
+                                let value_binding = Binding(
+                                    get: { current_code_info.value },
+                                    set:
+                                        { new_value in
+                                            current_operation = OperationCode(new_value)
+                                        }
+                                )
+                                
+                                Rectangle()
+                                    .fill(.clear)
+                                
+                                TextField("Value", value: value_binding, format: .number)
+                                #if os(macOS)
+                                    .font(.system(size: 20))
+                                #else
+                                    .font(.system(size: 32))
+                                    .keyboardType(.decimalPad)
+                                #endif
+                                    .multilineTextAlignment(.center)
+                                    .textFieldStyle(.plain)
+                            }
+                            .frame(height: 80)
+                            .background(.quinary)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        }
+                        .padding(10)
+                        
+                        
                     }
                     #if os(macOS)
                     .frame(width: is_expanded ? 280 : 120)
@@ -138,8 +262,8 @@ struct OperationControl: View
                 label:
                 {
                     Image(systemName:
-                            is_valid_symbol(tool.code_info(current_operation.value).symbol) ?
-                            tool.code_info(current_operation.value).symbol :
+                            is_valid_symbol(current_code_info.symbol) ?
+                            current_code_info.symbol :
                             "play"
                     )
                     .contentTransition(.symbolEffect(.replace.offUp.byLayer))
@@ -166,6 +290,11 @@ struct OperationControl: View
         return UIImage(systemName: symbol) != nil
         #endif
     }
+    
+    private var current_code_info: OperationCodeInfo
+    {
+        return tool.code_info(current_operation.value)
+    }
 }
 
 // MARK: - Previews
@@ -189,7 +318,8 @@ struct OperationControl_Previews: PreviewProvider
             {
                 tool.codes = [
                     OperationCodeInfo(value: 0, name: "Close", symbol: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", info: "UwU"),
-                    OperationCodeInfo(value: 1, name: "Open", symbol: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", info: "OwO")
+                    OperationCodeInfo(value: 1, name: "Open", symbol: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", info: "OwO"),
+                    OperationCodeInfo(value: 2, name: "??", symbol: "questionmark")
                 ]
             }
         }
@@ -200,26 +330,3 @@ struct OperationControl_Previews: PreviewProvider
         Container()
     }
 }
-
-
-/*Button
-{
-    
-}
-label:
-{
-    Image(systemName: "info")
-        .imageScale(.large)
-    #if os(macOS)
-        .frame(width: 16, height: 16)
-    #else
-        .frame(width: 24, height: 24)
-    #endif
-        .padding(10)
-    #if os(iOS)
-        .padding(4)
-        .foregroundStyle(.black)
-    #endif
-}
-.buttonBorderShape(.circle)
-.buttonStyle(.borderless)*/
