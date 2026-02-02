@@ -375,6 +375,13 @@ struct ToolControlView_Previews: PreviewProvider
                 .padding(10)
             }
             .frame(height: 480)
+            .onAppear
+            {
+                tool.codes = [
+                    OperationCodeInfo(value: 0, name: "Close", symbol: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", info: "UwU"),
+                    OperationCodeInfo(value: 1, name: "Open", symbol: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", info: "OwO")
+                ]
+            }
         }
     }
     

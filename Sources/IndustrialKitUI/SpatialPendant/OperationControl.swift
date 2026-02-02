@@ -48,7 +48,7 @@ struct OperationControl: View
                         }
                     }
                     .background(.clear)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: 80) //.frame(maxWidth: .infinity)
                     .glassEffect(.regular.interactive(), in: .capsule(style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
                     .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -152,7 +152,7 @@ struct OperationControl: View
                 .padding(16)
                 #endif
             }
-            .frame(width: 200)
+            //.frame(width: 200)
             //.border(.gray)
         }
         //.animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
@@ -173,7 +173,7 @@ struct OperationControl_Previews: PreviewProvider
 {
     struct Container: View
     {
-        @StateObject var tool = Tool()
+        @StateObject var tool = Tool(name: "Gripper")
         
         var body: some View
         {
