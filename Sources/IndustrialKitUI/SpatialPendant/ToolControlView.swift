@@ -380,7 +380,7 @@ private struct OperationItemView: View
             .frame(height: 24)
             
             Image(systemName: tool.code_info(code_item.value).symbol)
-                .foregroundColor(code_item.performing_state.color)
+                //.foregroundColor(.secondary)
                 .font(.system(size: 12))
                 .frame(width: 24, height: 24)
         }
