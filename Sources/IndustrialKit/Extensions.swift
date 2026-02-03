@@ -501,7 +501,7 @@ public extension Entity
         scale: (x: Float, y: Float, z: Float) = (1, 1, 1),
         duration: Double = 1,
         timing_function: AnimationTimingFunction = .linear,
-        completion_action: (() -> Void)? = nil
+        completion_handler: (() -> Void)? = nil
     )
     {
         self.move(
@@ -522,7 +522,7 @@ public extension Entity
             timingFunction: timing_function
         )
         
-        if let completion = completion_action
+        if let completion = completion_handler
         {
             DispatchQueue.main.asyncAfter(deadline: .now() + duration)
             {
