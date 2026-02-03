@@ -58,7 +58,7 @@ open class ModelController: NSCopying
     }
     
     /// Removes all nodes in object model from controller.
-    public func disconnect_entities()
+    open func disconnect_entities()
     {
         entities.removeAll()
     }

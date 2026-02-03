@@ -256,16 +256,9 @@ struct OperationControl: View
                 
                 Button
                 {
-                    do
-                    {
-                        try tool.perform(code: tool.current_operation.value)
-                        {
-                            //<#code#>
-                        }
-                    }
-                    catch
-                    {
-                        print(error.localizedDescription)
+                    tool.perform(code: tool.current_operation.value)
+                    { _ in
+                        //<#code#>
                     }
                 }
                 label:

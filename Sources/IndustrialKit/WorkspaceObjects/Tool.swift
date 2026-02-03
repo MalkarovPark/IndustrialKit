@@ -483,44 +483,46 @@ open class Tool: WorkspaceObject
         - code: The operation code value of the operation performed by the tool.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func perform(code: Int, completion: @escaping @Sendable () -> Void = {}) throws
+    public func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
+        performed = true
+        
         if demo
         {
-            // Move to point for virtual tool
-            do
-            {
-                try model_controller.entities_perform(code: code)
-                {
-                    completion()
+            // Perform operation on virtual tool
+            model_controller.perform(code: code)
+            { result in
+                Task
+                { @MainActor in
+                    self.performed = false
+                    
+                    switch result
+                    {
+                    case .success:
+                        completion(.success(()))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
                 }
-            }
-            catch
-            {
-                throw error
             }
         }
         else
         {
-            // Move to point for real tool
-            if connector.connected
-            {
-                do
-                {
-                    try connector.perform(code: code)
+            // Perform operation on real tool
+            connector.perform(code: code)
+            { result in
+                Task
+                { @MainActor in
+                    self.performed = false
+                    
+                    switch result
                     {
-                        completion()
+                    case .success:
+                        completion(.success(()))
+                    case .failure(let error):
+                        completion(.failure(error))
                     }
                 }
-                catch
-                {
-                    throw error
-                }
-            }
-            else
-            {
-                // Skip operation if real tool is not connected
-                completion()
             }
         }
     }
@@ -592,40 +594,28 @@ open class Tool: WorkspaceObject
     {
         selected_operation_code.performing_state = .processing
         
-        do
-        {
-            try perform(code: selected_operation_code.value) { [weak self] in
-                guard let self = self else { return }
-
-                Task { @MainActor in
-                    if self.demo {
+        perform(code: selected_operation_code.value)
+        { result in
+            Task
+            { @MainActor in
+                switch result
+                {
+                case .success:
+                    if self.demo
+                    {
                         self.selected_operation_code.performing_state = .completed
-                    } else if self.connector.connected {
+                    }
+                    else if self.connector.connected
+                    {
                         self.selected_operation_code.performing_state = self.connector.performing_state.output
                     }
-
+                    
                     self.select_new_code()
+                case .failure(let error):
+                    self.process_error(error)
+                    self.error_handler(error)
                 }
             }
-            
-            /*try perform(code: selected_operation_code.value)
-            {
-                if self.demo
-                {
-                    self.selected_operation_code.performing_state = .completed
-                }
-                else if self.connector.connected
-                {
-                    self.selected_operation_code.performing_state = self.connector.performing_state.output
-                }
-                
-                self.select_new_code()
-            }*/
-        }
-        catch
-        {
-            process_error(error)
-            error_handler(error)
         }
     }
     

@@ -55,6 +55,7 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
             {
                 completion(.failure(error))
             }
+            
             canceled = false
         }
     }

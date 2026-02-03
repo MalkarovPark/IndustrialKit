@@ -36,25 +36,25 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
         - code: The operation code value of the operation performed by the real tool.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func perform(code: Int, completion: @escaping @Sendable () -> Void) throws
+    public func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
     {
         canceled = false
+        
         performing_task = Task
         {
             do
             {
                 try self.perform(code: code)
+                if !canceled
+                {
+                    completion(.success(()))
+                }
             }
             catch
             {
-                throw error
+                completion(.failure(error))
             }
             
-            if !canceled
-            {
-                // canceled = true
-                completion()
-            }
             canceled = false
         }
     }

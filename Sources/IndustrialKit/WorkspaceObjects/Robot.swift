@@ -7,10 +7,10 @@
 
 import Foundation
 
+import SwiftUI
 #if canImport(RealityKit)
 import RealityKit
 #endif
-import SwiftUI
 
 /**
  An industrial robot class.
@@ -558,19 +558,11 @@ open class Robot: WorkspaceObject
         
         if demo
         {
+            // Move to target on virtual robot
             pointer_position_to_robot()
+            
             model_controller.move_to(point: point)
             { result in
-                /*self.performed = false
-                
-                switch result
-                {
-                case .success:
-                    completion(.success(()))
-                case .failure(let error):
-                    completion(.failure(error))
-                }*/
-                
                 Task
                 { @MainActor in
                     self.performed = false
@@ -587,19 +579,11 @@ open class Robot: WorkspaceObject
         }
         else
         {
+            // Move to target on real robot
             pointer_position_to_robot()
+            
             connector.move_to(point: point)
             { result in
-                /*self.performed = false
-                
-                switch result
-                {
-                case .success:
-                    completion(.success(()))
-                case .failure(let error):
-                    completion(.failure(error))
-                }*/
-                
                 Task
                 { @MainActor in
                     self.performed = false

@@ -11,15 +11,34 @@ import RealityKit
 ///Provides control over visual model for robot.
 open class ToolModelController: ModelController, @unchecked Sendable
 {
+    /// Cancel perform flag.
+    public var canceled = false
+    
+    private var performing_task = Task<Void, Error> {}
+    
     /**
      Performs tool model action by operation code value.
      
      - Parameters:
         - code: The operation code value of the operation performed by the tool visual model.
      */
-    open func entities_perform(code: Int) throws
+    open func perform(code: Int) throws
     {
+        //...
         
+        /*if !canceled
+        {
+            pointer_position = (x: point.x, y: point.y, z: point.z,
+                                r: point.r, p: point.p, w: point.w)
+            do
+            {
+                try update_model()
+            }
+            catch
+            {
+                throw error
+            }
+        }*/
     }
     
     /**
@@ -29,18 +48,27 @@ open class ToolModelController: ModelController, @unchecked Sendable
         - code: The operation code value of the operation performed by the tool visual model.
         - completion: A completion function that is calls when the performing completes.
      */
-    open func entities_perform(code: Int, completion: @escaping @Sendable () -> Void) throws
+    open func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
     {
-        do
-        {
-            try entities_perform(code: code)
-        }
-        catch
-        {
-            throw error
-        }
+        canceled = false
         
-        completion()
+        performing_task = Task
+        {
+            do
+            {
+                try self.perform(code: code)
+                if !canceled
+                {
+                    completion(.success(()))
+                }
+            }
+            catch
+            {
+                completion(.failure(error))
+            }
+            
+            canceled = false
+        }
     }
     
     /// Stops connected model actions performation.
@@ -163,7 +191,7 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     public var external_entities_names = [String]()
     
     // MARK: Modeling
-    open override func entities_perform(code: Int, completion: @escaping @Sendable () -> Void)
+    /*open override func entities_perform(code: Int, completion: @escaping @Sendable () -> Void)
     {
         #if os(macOS)
         DispatchQueue.global(qos: .utility).async
@@ -180,7 +208,7 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
         #else
         completion()
         #endif
-    }
+    }*/
     
     open override func reset_entities()
     {
