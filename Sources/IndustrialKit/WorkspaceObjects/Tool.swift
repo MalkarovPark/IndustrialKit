@@ -7,10 +7,10 @@
 
 import Foundation
 
+import SwiftUI
 #if canImport(RealityKit)
 import RealityKit
 #endif
-import SwiftUI
 
 /**
  An industrial tool class.

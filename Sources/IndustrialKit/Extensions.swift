@@ -493,4 +493,60 @@ public extension Entity
         }
     }
 }
+
+public extension Entity
+{
+    func move_to(
+        position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0),
+        scale: (x: Float, y: Float, z: Float) = (1, 1, 1),
+        duration: Double = 1,
+        timing_function: AnimationTimingFunction = .linear,
+        completion_action: (() -> Void)? = nil
+    )
+    {
+        self.move(
+            to: Transform(
+                scale: SIMD3<Float>(x: scale.y, y: scale.z, z: scale.x),
+                rotation:
+                    simd_quatf(angle: position.w.to_rad, axis: [0, 1, 0]) *
+                simd_quatf(angle: position.p.to_rad, axis: [1, 0, 0]) *
+                simd_quatf(angle: position.r.to_rad, axis: [0, 0, 1]),
+                translation: SIMD3<Float>(
+                    position.y / 1000,
+                    position.z / 1000,
+                    position.x / 1000
+                )
+            ),
+            relativeTo: self.parent,
+            duration: TimeInterval(duration),
+            timingFunction: timing_function
+        )
+        
+        if let completion = completion_action
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration)
+            {
+                completion()
+            }
+        }
+    }
+    
+    /*func move_to(
+        position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0),
+        scale: (x: Float, y: Float, z: Float) = (x: 1, y: 1, z: 1),
+        duration: Double = 1, timing_function: AnimationTimingFunction = .linear
+    )
+    {
+        self.move(
+            to: Transform(
+                scale: SIMD3<Float>(x: scale.y, y: scale.z, z: scale.x),
+                rotation: simd_quatf(angle: position.w.to_rad, axis: [0, 1, 0]) * simd_quatf(angle: position.p.to_rad, axis: [1, 0, 0]) * simd_quatf(angle: position.r.to_rad, axis: [0, 0, 1]),
+                translation: SIMD3<Float>(position.y / 1000, position.z / 1000, position.x / 1000)
+            ),
+            relativeTo: self.parent,
+            duration: TimeInterval(duration),
+            timingFunction: timing_function
+        )
+    }*/
+}
 #endif
