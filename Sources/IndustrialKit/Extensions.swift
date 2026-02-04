@@ -7,9 +7,9 @@
 
 import Foundation
 
+import SwiftUI
 import RealityKit
-//import SceneKit
-import SwiftUI//Core
+import Combine
 #if os(macOS)
 import AppKit
 #endif
@@ -529,6 +529,31 @@ public extension Entity
                 completion()
             }
         }
+    }
+    
+    @discardableResult
+    func playAnimation(
+        _ animation: AnimationResource,
+        transitionDuration: TimeInterval = 0,
+        completion: @escaping () -> Void
+    ) -> AnimationPlaybackController
+    {
+        let controller = self.playAnimation(
+            animation,
+            transitionDuration: transitionDuration
+        )
+        
+        var cancellable: Cancellable?
+        cancellable = self.scene?.subscribe(
+            to: AnimationEvents.PlaybackCompleted.self,
+            on: self
+        )
+        { event in
+            completion()
+            cancellable?.cancel()
+        }
+        
+        return controller
     }
     
     /*func move_to(
