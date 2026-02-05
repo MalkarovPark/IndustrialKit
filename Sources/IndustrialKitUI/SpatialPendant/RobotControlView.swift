@@ -225,7 +225,7 @@ private struct ProgramDropDelegate: DropDelegate
 }
 
 // MARK: - Program View
-struct PositionProgramView: View
+private struct PositionProgramView: View
 {
     @ObservedObject var robot: Robot
     

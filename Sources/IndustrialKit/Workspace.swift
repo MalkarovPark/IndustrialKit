@@ -20,7 +20,7 @@ import SwiftUI
  Also can build a visual model of the production system with editing functions.
  */
 @MainActor
-open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
+public class Workspace: ObservableObject, @unchecked Sendable
 {
     // MARK: - Init functions
     public init()
@@ -33,6 +33,7 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     @Published public var tools = [Tool]()
     @Published public var parts = [Part]()
     
+    //Old program data
     @Published public var elements = [WorkspaceProgramElement]()
     {
         didSet
@@ -174,8 +175,149 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
         }*/
     }
     
-    // MARK: - Control program functions
-    // MARK: Workspace program elements handling
+    // MARK: - Program manage functions
+    /// An array of tool operations programs.
+    @Published public var programs = [ProductionProgram]()
+    
+    /// A selected operations program index.
+    public var selected_program_index = -1
+    {
+        willSet
+        {
+            // Stop tool performing before program change
+            performed = false
+            selected_element_index = 0
+        }
+    }
+    
+    /**
+     Adds new operations program to tool.
+     - Parameters:
+        - program: A new tool operations program.
+     */
+    public func add_program(_ program: ProductionProgram)
+    {
+        program.name = mismatched_name(name: program.name, names: programs_names)
+        programs.append(program)
+    }
+    
+    /**
+     Updates operations program in tool by index.
+     - Parameters:
+        - index: Updated program index.
+        - program: A new tool operations program.
+     */
+    public func update_program(index: Int, _ program: ProductionProgram) // Update program by index
+    {
+        if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
+        {
+            programs[index] = program
+        }
+    }
+    
+    /**
+     Updates operations program by name.
+     - Parameters:
+        - name: Updated program name.
+        - program: A new tool operations program.
+     */
+    public func update_program(name: String, _ program: ProductionProgram) // Update program by name
+    {
+        update_program(index: index_by_name(name: name), program)
+    }
+    
+    /**
+     Deletes operations program in tool by index.
+     - Parameters:
+        - index: Deleted program index.
+     */
+    public func delete_program(index: Int) // Delete program by index
+    {
+        if programs.indices.contains(index) // Checking for the presence of a position program with a given number to delete
+        {
+            programs.remove(at: index)
+        }
+    }
+    
+    /**
+     Deletes operations program in tool by name.
+     - Parameters:
+        - name: Deleted program name.
+     */
+    public func delete_program(name: String) // Delete program by name
+    {
+        delete_program(index: index_by_name(name: name))
+    }
+    
+    /**
+     Selects operations program in tool by index.
+     - Parameters:
+        - index: Selected program index.
+     */
+    public func select_program(index: Int) // Delete program by index
+    {
+        selected_program_index = index
+    }
+    
+    /// Deselects operations program in robot.
+    public func deselect_program()
+    {
+        reset_performing()
+        self.objectWillChange.send()
+        
+        selected_program_index = -1
+    }
+    
+    /**
+     Selects operations program in tool by name.
+     - Parameters:
+        - name: Selected program name.
+     */
+    public func select_program(name: String) // Select program by name
+    {
+        select_program(index: index_by_name(name: name))
+    }
+    
+    /// A selected operations program.
+    public var selected_program: ProductionProgram?
+    {
+        get // Return operations program by selected index
+        {
+            return programs[safe: selected_program_index]
+        }
+        set
+        {
+            programs[safe: selected_program_index] = newValue
+        }
+    }
+    
+    /// Returns index by program name.
+    private func index_by_name(name: String) -> Int // Get index of program by name
+    {
+        return programs.firstIndex(of: ProductionProgram(name: name)) ?? -1
+    }
+    
+    /// All operations programs names in tool.
+    public var programs_names: [String] // Get all names of programs in tool
+    {
+        var prog_names = [String]()
+        if programs.count > 0
+        {
+            for program in programs
+            {
+                prog_names.append(program.name)
+            }
+        }
+        return prog_names
+    }
+    
+    /// A operations programs coount in tool.
+    public var programs_count: Int
+    {
+        return programs.count
+    }
+    
+    // MARK: - Workspace program elements handling
     /// All marks in the workspace program.
     public var marks_names: [String]
     {
@@ -784,16 +926,21 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
     }
     
     // MARK: - Performing State
-    /// Last performing error
-    @Published public var last_error: Error?
+    /// Last performing error.
+    public var last_error: Error?
     
     /// Resets last hanled error.
     public func reset_error()
     {
         last_error = nil
+        //performing_state = .processing
     }
     
+    /// Performing state light.
     @Published public var performing_state: PerformingState = .none
+    
+    /// A program performing state of robot.
+    @Published public var program_performed = false
     
     /*/// Last performing error
     public var last_error: Error?
