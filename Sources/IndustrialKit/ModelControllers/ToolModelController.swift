@@ -24,24 +24,69 @@ open class ToolModelController: ModelController, @unchecked Sendable
      */
     public func perform(code: Int) throws
     {
-        //...
+        var animation_time: TimeInterval = 0
         
-        /*if !canceled
+        for entity_animation in entity_animations(code: code)
         {
-            pointer_position = (x: point.x, y: point.y, z: point.z,
-                                r: point.r, p: point.p, w: point.w)
+            process_animation(by: entity_animation)
+        }
+        
+        usleep(UInt32(animation_time * 1_000_000))
+        
+        func process_animation(by data: EntityAnimationData)
+        {
+            let transform = Transform(
+                scale: SIMD3<Float>(x: data.scale.y, y: data.scale.z, z: data.scale.x),
+                rotation:
+                    simd_quatf(angle: data.position.w.to_rad, axis: [0, 1, 0]) *
+                    simd_quatf(angle: data.position.p.to_rad, axis: [1, 0, 0]) *
+                    simd_quatf(angle: data.position.r.to_rad, axis: [0, 0, 1]),
+                translation:
+                    SIMD3<Float>(
+                        data.position.y / 1000,
+                        data.position.z / 1000,
+                        data.position.x / 1000
+                    )
+                )
+            
+            let animation_view = AnimationView(
+                source: FromToByAnimation(
+                    to: transform,
+                    duration: data.duration,
+                    bindTarget: .transform
+                ),
+                delay: data.delay,
+                speed: data.speed
+            )
+            
             do
             {
-                try update_model()
+                let resource = try AnimationResource.generate(with: animation_view)
+                if let entity = entities[data.entity_name]
+                {
+                    switch data.repeat_count
+                    {
+                    case 1:
+                        entity.playAnimation(resource)
+                    case 0:
+                        break
+                    case nil:
+                        entity.playAnimation(resource.repeat(duration: .infinity))
+                    default:
+                        entity.playAnimation(resource.repeat(count: data.repeat_count ?? 1))
+                    }
+                    
+                    animation_time += (data.duration * Double(data.speed)) * Double(data.repeat_count ?? 1) + data.delay
+                }
             }
             catch
             {
-                throw error
+                print(error.localizedDescription)
             }
-        }*/
+        }
     }
     
-    open func entity_animation(code: Int) -> [EntityAnimationData]
+    open func entity_animations(code: Int) -> [EntityAnimationData]
     {
         return []
     }
@@ -214,7 +259,7 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
         completion()
         #endif
     }*/
-    override open func entity_animation(code: Int) -> [EntityAnimationData]
+    override open func entity_animations(code: Int) -> [EntityAnimationData]
     {
         return [EntityAnimationData]()
     }
@@ -338,6 +383,8 @@ public struct EntityAnimationData: Codable
     public var delay: Double = 0
     public var speed: Float = 1
     
+    public var repeat_count: Int? = 1 //nil – infinity
+    
     // MARK: Work with file system
     private enum CodingKeys: String, CodingKey
     {
@@ -349,10 +396,12 @@ public struct EntityAnimationData: Codable
         case scale        // [x, y, z]
         
         case duration
-        case timing_function
+        //case timing_function
         
         case delay
         case speed
+        
+        case repeat_count
     }
     
     public init(from decoder: Decoder) throws
@@ -392,10 +441,12 @@ public struct EntityAnimationData: Codable
         )
         
         duration = try container.decodeIfPresent(Double.self, forKey: .duration) ?? 1
-        timing_function = try container.decodeIfPresent(TimingFunction.self, forKey: .timing_function) ?? .linear
+        //timing_function = try container.decodeIfPresent(TimingFunction.self, forKey: .timing_function) ?? .linear
         
         delay = try container.decodeIfPresent(Double.self, forKey: .delay) ?? 0
         speed = try container.decodeIfPresent(Float.self, forKey: .speed) ?? 1
+        
+        repeat_count = try container.decodeIfPresent(Int.self, forKey: .repeat_count) ?? 1
     }
     
     public func encode(to encoder: Encoder) throws
@@ -420,7 +471,7 @@ public struct EntityAnimationData: Codable
         )
         
         try container.encode(duration, forKey: .duration)
-        try container.encode(timing_function, forKey: .timing_function)
+        //try container.encode(timing_function, forKey: .timing_function)
         
         if delay != 0
         {
@@ -433,6 +484,8 @@ public struct EntityAnimationData: Codable
         }
         /*try container.encode(delay, forKey: .delay)
         try container.encode(speed, forKey: .speed)*/
+        
+        try container.encode(repeat_count, forKey: .repeat_count)
     }
 }
 
