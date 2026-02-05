@@ -262,7 +262,7 @@ public class ExternalToolConnector: ToolConnector
             sync_model()
         }
         
-        model_controller?.remove_all_model_actions() // Remove entities actions if performing finished
+        model_controller?.reset_entities() // Remove entities actions if performing finished
         #endif
     }
     

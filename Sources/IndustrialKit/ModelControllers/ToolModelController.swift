@@ -22,7 +22,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
      - Parameters:
         - code: The operation code value of the operation performed by the tool visual model.
      */
-    open func perform(code: Int) throws
+    public func perform(code: Int) throws
     {
         //...
         
@@ -38,6 +38,24 @@ open class ToolModelController: ModelController, @unchecked Sendable
             {
                 throw error
             }
+        }*/
+    }
+    
+    open func entity_animation(code: Int) -> [EntityAnimationData]
+    {
+        return []
+    }
+    
+    open override func reset_entities()
+    {
+        for (_, entity) in entities // Remove all node actions
+        {
+            entity.stopAllAnimations()
+        }
+        
+        /*for entity_name in entities_names
+        {
+            entities[entity_name]?.stopAllAnimations()
         }*/
     }
     
@@ -69,19 +87,6 @@ open class ToolModelController: ModelController, @unchecked Sendable
             
             canceled = false
         }
-    }
-    
-    /// Stops connected model actions performation.
-    public final func remove_all_model_actions()
-    {
-        /*for (_, node) in entities // Remove all node actions
-        {
-            node.removeAllActions()
-        }
-        
-        #if os(macOS)
-        entities_actions_performing_count = 0
-        #endif*/
     }
     
     /// Inforamation code updated by model controller.
@@ -158,7 +163,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
     #endif
 }
 
-//MARK: - External Model Controller
+// MARK: - External Model Controller
 public class ExternalToolModelController: ToolModelController, @unchecked Sendable
 {
     // MARK: Init functions
@@ -209,6 +214,10 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
         completion()
         #endif
     }*/
+    override open func entity_animation(code: Int) -> [EntityAnimationData]
+    {
+        return [EntityAnimationData]()
+    }
     
     open override func reset_entities()
     {
@@ -309,4 +318,125 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
         
         return nil
     }
+}
+
+// MARK: - Animation Storage
+/**
+ A storage for entity animation.
+ */
+public struct EntityAnimationData: Codable
+{
+    public var entity_name: String
+    
+    public var position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0)
+    
+    public var scale: (x: Float, y: Float, z: Float) = (1, 1, 1)
+    
+    public var duration: Double = 1
+    public var timing_function: TimingFunction = .linear
+    
+    public var delay: Double = 0
+    public var speed: Float = 1
+    
+    // MARK: Work with file system
+    private enum CodingKeys: String, CodingKey
+    {
+        case entity_name
+        
+        case location     // [x, y, z]
+        case rotation     // [r, p, w]
+        
+        case scale        // [x, y, z]
+        
+        case duration
+        case timing_function
+        
+        case delay
+        case speed
+    }
+    
+    public init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        entity_name = try container.decode(String.self, forKey: .entity_name)
+        
+        let location = try container.decodeIfPresent([Float].self, forKey: .location) ?? [0, 0, 0]
+        let rotation = try container.decodeIfPresent([Float].self, forKey: .rotation) ?? [0, 0, 0]
+        let scaleArr = try container.decodeIfPresent([Float].self, forKey: .scale) ?? [1, 1, 1]
+        
+        guard location.count == 3, rotation.count == 3, scaleArr.count == 3
+        else
+        {
+            throw DecodingError.dataCorrupted(
+                .init(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Location, rotation and scale must contain exactly 3 elements"
+                )
+            )
+        }
+        
+        position = (
+            x: location[0],
+            y: location[1],
+            z: location[2],
+            r: rotation[0],
+            p: rotation[1],
+            w: rotation[2]
+        )
+        
+        scale = (
+            x: scaleArr[0],
+            y: scaleArr[1],
+            z: scaleArr[2]
+        )
+        
+        duration = try container.decodeIfPresent(Double.self, forKey: .duration) ?? 1
+        timing_function = try container.decodeIfPresent(TimingFunction.self, forKey: .timing_function) ?? .linear
+        
+        delay = try container.decodeIfPresent(Double.self, forKey: .delay) ?? 0
+        speed = try container.decodeIfPresent(Float.self, forKey: .speed) ?? 1
+    }
+    
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(entity_name, forKey: .entity_name)
+        
+        try container.encode(
+            [position.x, position.y, position.z],
+            forKey: .location
+        )
+        
+        try container.encode(
+            [position.r, position.p, position.w],
+            forKey: .rotation
+        )
+        
+        try container.encode(
+            [scale.x, scale.y, scale.z],
+            forKey: .scale
+        )
+        
+        try container.encode(duration, forKey: .duration)
+        try container.encode(timing_function, forKey: .timing_function)
+        
+        if delay != 0
+        {
+            try container.encode(delay, forKey: .delay)
+        }
+        
+        if speed != 1
+        {
+            try container.encode(speed, forKey: .speed)
+        }
+        /*try container.encode(delay, forKey: .delay)
+        try container.encode(speed, forKey: .speed)*/
+    }
+}
+
+public enum TimingFunction: Codable
+{
+    case linear, easeIn, easeOut, easeInOut
 }

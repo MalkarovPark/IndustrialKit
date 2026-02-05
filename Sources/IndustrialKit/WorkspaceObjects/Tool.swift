@@ -42,21 +42,6 @@ open class Tool: WorkspaceObject
         super.init(name: name, entity_name: entity_name)
     }
     
-    /// Inits tool by name, controller, connector and scene.
-    /*public init(name: String, model_controller: ToolModelController, connector: ToolConnector, scene: SCNScene, codes: [OperationCodeInfo] = [OperationCodeInfo]())
-    {
-        super.init(name: name)
-        
-        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
-        
-        self.model_controller = model_controller
-        self.connector = connector
-        
-        apply_statistics_flags()
-        
-        self.codes = codes
-    }*/
-    
     /// Inits tool by name, entity name, controller and connector.
     public init(name: String, entity_name: String, model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), codes: [OperationCodeInfo] = [OperationCodeInfo]())
     {
@@ -90,6 +75,40 @@ open class Tool: WorkspaceObject
         current_operation = OperationCode(0)
         
         super.init(name: name, module_name: module_name, is_internal: is_internal)
+    }
+    
+    //MARK: Model Controller and Connector
+    /// A tool visual model controller.
+    public var model_controller = ToolModelController()
+    {
+        didSet // Entities reconnection if model contoller changed
+        {
+            if let entity = model_entity
+            {
+                model_controller.connect_entities(of: entity)
+            }
+        }
+    }
+    
+    /**
+     Updates tool visual model by model controller in connector.
+     
+     Called on the SCNScene *rendrer* function.
+     */
+    public var update_model_by_connector = false
+    {
+        didSet
+        {
+            if update_model_by_connector
+            {
+                connector.model_controller = model_controller
+            }
+            else
+            {
+                connector.model_controller?.reset_entities()
+                connector.model_controller = nil
+            }
+        }
     }
     
     // MARK: - Module handling
@@ -440,6 +459,8 @@ open class Tool: WorkspaceObject
         }
     }
     
+    @Published public var current_operation: OperationCode
+    
     /**
      Demo state of tool.
      
@@ -527,9 +548,7 @@ open class Tool: WorkspaceObject
         }
     }
     
-    @Published public var current_operation: OperationCode
-    
-    /// Selects codes and performs tool operation.
+    /// A tool performation toggle.
     public func start_pause_performing()
     {
         guard let selected_program = self.selected_program, selected_program.codes_count > 0
@@ -549,7 +568,7 @@ open class Tool: WorkspaceObject
                 sync_connector_parameters()
             }*/
             
-            // Move to next point if moving was stop
+            // Perform next code if performing was stop
             performed = false //???
             
             program_performed = true // Control Buttons (UI)
@@ -577,7 +596,7 @@ open class Tool: WorkspaceObject
             
             if demo
             {
-                //model_controller.canceled = true
+                model_controller.canceled = true
                 model_controller.reset_entities()
             }
             else
@@ -631,16 +650,16 @@ open class Tool: WorkspaceObject
         last_error = error
         
         selected_operation_code.performing_state = .error
+        performing_state = .processing // State light (UI)
+        
+        model_controller.reset_entities()
         
         if demo
         {
-            model_controller.remove_all_model_actions()
-            model_controller.reset_entities()
+            //model_controller.reset_entities()
         }
         else
         {
-            model_controller.remove_all_model_actions()
-            
             // Remove actions for real tool
             connector.canceled = true
             connector.reset_device()
@@ -657,18 +676,10 @@ open class Tool: WorkspaceObject
             return
         }
         
-        if performed
+        if selected_code_index < selected_program.codes_count - 1
         {
+            // Select and perform next code
             selected_code_index += 1
-        }
-        else
-        {
-            return
-        }
-        
-        if selected_code_index < selected_program.codes_count
-        {
-            // Select and move to next point
             perform_next_code()
         }
         else
@@ -685,6 +696,9 @@ open class Tool: WorkspaceObject
                 self.performing_state = .none // State light (UI)
                 self.selected_program?.reset_codes_states()
             }
+            
+            update()
+            //pointer_position_to_robot()
             
             finish_handler()
         }
@@ -713,21 +727,23 @@ open class Tool: WorkspaceObject
     {
         guard let selected_program = self.selected_program else { return }
         
+        program_performed = false // Control Buttons (UI)
+        performing_state = .none // State light (UI)
+        
         if performed
         {
             if demo
             {
-                model_controller.remove_all_model_actions()
+                model_controller.canceled = true
                 model_controller.reset_entities()
             }
             else
             {
-                model_controller.remove_all_model_actions()
-                
                 connector.canceled = true
                 connector.reset_device()
             }
             
+            //pointer_position_to_robot()
             performed = false
             
             clear_chart_data()
@@ -759,66 +775,6 @@ open class Tool: WorkspaceObject
     }
     #endif
     
-    /// A tool visual model controller.
-    private var model_controller = ToolModelController()
-    
-    /**
-     Updates tool visual model by model controller in connector.
-     
-     Called on the SCNScene *rendrer* function.
-     */
-    public var update_model_by_connector = false
-    {
-        didSet
-        {
-            if update_model_by_connector
-            {
-                connector.model_controller = model_controller
-            }
-            else
-            {
-                connector.model_controller?.reset_entities()
-                connector.model_controller = nil
-            }
-        }
-    }
-    
-    /**
-     Connects to robot model in scene.
-     - Parameters:
-        - scene: A current scene.
-        - name: A tool name.
-     */
-    /*public func workcell_connect(scene: SCNScene, name: String) // Connect tool parts from scene
-    {
-        // let unit_node = scene.rootNode.childNode(withName: name, recursively: true)
-        var unit_node = SCNNode()
-        var stopped = false
-        scene.rootNode.enumerateChildNodes
-        { (_node, stop) in
-            if _node.name == name && _node.categoryBitMask == Workspace.tool_bit_mask && !stopped
-            {
-                unit_node = _node
-                stopped = true
-            }
-        }
-        
-        // model_controller.disconnect_entities()
-        model_controller.connect_entities(of: unit_node)
-        
-        //model_controller.info_output = self.info_output
-    }*/
-    
-    /// Disconnect tool model parts from workcell.
-    public func workcell_disconnect()
-    {
-        model_controller.remove_all_model_actions()
-        model_controller.disconnect_entities()
-        //model_controller.info_output = nil
-        
-        // connector.model_controller = nil
-    }
-    
     /// A flag determines if tool is attached to the robot manipulator.
     public var is_attached = false
     
@@ -829,8 +785,6 @@ open class Tool: WorkspaceObject
     {
         attached_to = nil
     }
-    
-    /// Old
     
     // MARK: - Chart functions
     /// A tool charts data.

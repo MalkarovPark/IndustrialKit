@@ -146,7 +146,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         }
     }
     
-    // MARK: Workcell
+    // MARK: Operational Space
     /**
      A robot cell origin position.
      
@@ -321,7 +321,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
             }
         }
         
-        if !canceled
+        if !canceled // Final step to point
         {
             pointer_position = (x: point.x, y: point.y, z: point.z,
                                 r: point.r, p: point.p, w: point.w)

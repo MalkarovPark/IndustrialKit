@@ -105,6 +105,46 @@ open class Robot: WorkspaceObject
         update_position()
     }
     
+    //MARK: Model Controller and Connector
+    /// A robot visual model controller.
+    public var model_controller = RobotModelController()
+    {
+        didSet // Entities reconnection if model contoller changed
+        {
+            if let entity = model_entity
+            {
+                model_controller.connect_entities(of: entity)
+            }
+        }
+    }
+    
+    private func sync_model_controller_parameters()
+    {
+        model_controller.origin_position = origin_position
+        model_controller.space_scale = space_scale
+    }
+    
+    /**
+     Updates robot visual model by model controller in connector.
+     
+     Called on the SCNScene *rendrer* function.
+     */
+    public var update_model_by_connector = false
+    {
+        didSet
+        {
+            if update_model_by_connector
+            {
+                connector.model_controller = model_controller
+            }
+            else
+            {
+                connector.model_controller?.reset_entities()
+                connector.model_controller = nil
+            }
+        }
+    }
+    
     // MARK: - Module handling
     /**
      Sets modular components to object instance.
@@ -524,12 +564,6 @@ open class Robot: WorkspaceObject
         }
     }
     
-    /// Returns robot pointer position for nodes.
-    /*private func get_pointer_position() -> (location: SCNVector3, rot_x: Float, rot_y: Float, rot_z: Float)
-    {
-        return(SCNVector3(pointer_position.y, pointer_position.z, pointer_position.x), pointer_position.r.to_rad, pointer_position.p.to_rad, pointer_position.w.to_rad)
-    }*/
-    
     // MARK: Update functions
     /// Updates robot statistics and model by current pointer position.
     public override func update()
@@ -688,26 +722,6 @@ open class Robot: WorkspaceObject
                 }
             }
         }
-        /*move_to(point: selected_position_point) //(point: programs[selected_program_index].points[target_point_index])
-        { result in
-            switch result
-            {
-            case .success:
-                if self.demo
-                {
-                    self.selected_position_point.performing_state = .completed
-                }
-                else if self.connector.connected
-                {
-                    self.selected_position_point.performing_state = self.connector.performing_state.output
-                }
-                
-                self.select_new_point()
-            case .failure(let error):
-                self.process_error(error)
-                self.error_handler(error)
-            }
-        }*/
     }
     
     /**
@@ -724,13 +738,15 @@ open class Robot: WorkspaceObject
         selected_position_point.performing_state = .error
         performing_state = .processing // State light (UI)
         
+        model_controller.reset_entities()
+        
         if demo
         {
-            model_controller.reset_entities()
+            //model_controller.reset_entities()
         }
         else
         {
-            // Remove actions for real tool
+            // Remove actions for real robot
             connector.canceled = true
             connector.reset_device()
         }
@@ -1015,55 +1031,6 @@ open class Robot: WorkspaceObject
     }
     
     #endif
-    
-    /// A robot visual model controller.
-    public var model_controller = RobotModelController()
-    {
-        didSet // Entities reconnection if model contoller changed
-        {
-            if let entity = model_entity
-            {
-                model_controller.connect_entities(of: entity)
-            }
-        }
-    }
-    /*public var model_controller = RobotModelController()
-    {
-        didSet // Entities reconnection if model contoller changed
-        {
-            if let entity = entity
-            {
-                model_controller.connect_entities(of: entity)
-            }
-        }
-    }*/
-    
-    private func sync_model_controller_parameters()
-    {
-        model_controller.origin_position = origin_position
-        model_controller.space_scale = space_scale
-    }
-    
-    /**
-     Updates robot visual model by model controller in connector.
-     
-     Called on the SCNScene *rendrer* function.
-     */
-    public var update_model_by_connector = false
-    {
-        didSet
-        {
-            if update_model_by_connector
-            {
-                connector.model_controller = model_controller
-            }
-            else
-            {
-                connector.model_controller?.reset_entities()
-                connector.model_controller = nil
-            }
-        }
-    }
     
     /// Sets robot pointer node position.
     private func update_position()

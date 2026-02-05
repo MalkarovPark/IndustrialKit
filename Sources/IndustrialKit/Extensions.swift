@@ -509,8 +509,8 @@ public extension Entity
                 scale: SIMD3<Float>(x: scale.y, y: scale.z, z: scale.x),
                 rotation:
                     simd_quatf(angle: position.w.to_rad, axis: [0, 1, 0]) *
-                simd_quatf(angle: position.p.to_rad, axis: [1, 0, 0]) *
-                simd_quatf(angle: position.r.to_rad, axis: [0, 0, 1]),
+                    simd_quatf(angle: position.p.to_rad, axis: [1, 0, 0]) *
+                    simd_quatf(angle: position.r.to_rad, axis: [0, 0, 1]),
                 translation: SIMD3<Float>(
                     position.y / 1000,
                     position.z / 1000,
