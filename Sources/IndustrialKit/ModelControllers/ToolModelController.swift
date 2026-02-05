@@ -26,19 +26,10 @@ open class ToolModelController: ModelController, @unchecked Sendable
     {
         var animation_time: TimeInterval = 0
         
-        /*for entity_animation in entity_animations(code: code)
+        for entity_animation in entity_animations(code: code)
         {
             process_animation(by: entity_animation)
-        }*/
-        
-        process_animation( //Test
-            by: EntityAnimationData(
-                entity_name: "jaw",
-                position: (x: 0, y: 200, z: 0, r: 0, p: 0, w: 0),
-                duration: 1
-            )
-        )
-        animation_time = 1 //Test
+        }
         
         usleep(UInt32(animation_time * 1_000_000))
         
