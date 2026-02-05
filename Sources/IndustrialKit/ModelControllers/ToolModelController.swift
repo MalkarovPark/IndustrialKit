@@ -385,6 +385,27 @@ public struct EntityAnimationData: Codable
     
     public var repeat_count: Int? = 1 //nil – infinity
     
+    public init(
+        entity_name: String,
+        position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0),
+        scale: (x: Float, y: Float, z: Float) = (1, 1, 1),
+        duration: Double = 1,
+        timing_function: TimingFunction = .linear,
+        delay: Double = 0,
+        speed: Float = 1,
+        repeat_count: Int? = 1
+    )
+    {
+        self.entity_name = entity_name
+        self.position = position
+        self.scale = scale
+        self.duration = duration
+        self.timing_function = timing_function
+        self.delay = delay
+        self.speed = speed
+        self.repeat_count = repeat_count
+    }
+    
     // MARK: Work with file system
     private enum CodingKeys: String, CodingKey
     {
@@ -493,3 +514,4 @@ public enum TimingFunction: Codable
 {
     case linear, easeIn, easeOut, easeInOut
 }
+
