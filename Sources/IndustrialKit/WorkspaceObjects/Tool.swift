@@ -459,7 +459,7 @@ open class Tool: WorkspaceObject
         }
     }
     
-    @Published public var current_operation: OperationCode
+    @Published public var current_operation: OperationCode // Single pendant action
     
     /**
      Demo state of tool.

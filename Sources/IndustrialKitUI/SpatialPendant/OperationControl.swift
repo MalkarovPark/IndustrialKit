@@ -257,8 +257,8 @@ struct OperationControl: View
                 Button
                 {
                     tool.perform(code: tool.current_operation.value)
-                    { _ in
-                        //<#code#>
+                    { result in
+                        print(result)
                     }
                 }
                 label:
