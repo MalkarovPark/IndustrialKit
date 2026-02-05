@@ -31,7 +31,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
             process_animation(by: entity_animation)
         }
         
-        usleep(UInt32(animation_time * 1_000_000))
+        //usleep(UInt32(animation_time * 1_000_000))
         
         func process_animation(by data: EntityAnimationData)
         {
