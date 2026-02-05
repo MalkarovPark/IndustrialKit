@@ -73,14 +73,8 @@ open /*public*/ class Workspace: ObservableObject, @unchecked Sendable
             // Disable accessories
             robot.toggle_position_pointer_visibility()
             robot.toggle_working_area_visibility()
-            
-            /*// Disable robot accessories
-            robot.deselect_program()
-            robot.toggle_position_pointer_visibility()
-            robot.toggle_working_area_visibility()*/
-            //if robot.selected_program != nil { robot.toggle_position_program_visibility() }
         case let tool as Tool:
-            break
+            tool.deselect_program() // Deselect program
         case let part as Part:
             break
         default:

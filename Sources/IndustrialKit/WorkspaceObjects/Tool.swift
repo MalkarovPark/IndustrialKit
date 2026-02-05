@@ -291,7 +291,7 @@ open class Tool: WorkspaceObject
         {
             // Stop tool performing before program change
             performed = false
-            reset_performing()
+            selected_code_index = 0
         }
     }
     
@@ -368,7 +368,6 @@ open class Tool: WorkspaceObject
     public func deselect_program()
     {
         reset_performing()
-        //if selected_program_index > -1 { toggle_position_program_visibility() }
         self.objectWillChange.send()
         
         selected_program_index = -1

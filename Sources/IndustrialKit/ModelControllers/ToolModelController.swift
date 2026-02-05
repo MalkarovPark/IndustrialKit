@@ -17,6 +17,36 @@ open class ToolModelController: ModelController, @unchecked Sendable
     private var performing_task = Task<Void, Error> {}
     
     /**
+     Performs tool model action by operation code value with completion handler.
+     
+     - Parameters:
+        - code: The operation code value of the operation performed by the tool visual model.
+        - completion: A completion function that is calls when the performing completes.
+     */
+    open func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+    {
+        canceled = false
+        
+        performing_task = Task
+        {
+            do
+            {
+                try self.perform(code: code)
+                if !canceled
+                {
+                    completion(.success(()))
+                }
+            }
+            catch
+            {
+                completion(.failure(error))
+            }
+            
+            canceled = false
+        }
+    }
+    
+    /**
      Performs tool model action by operation code value.
      
      - Parameters:
@@ -108,36 +138,6 @@ open class ToolModelController: ModelController, @unchecked Sendable
         {
             entities[entity_name]?.stopAllAnimations()
         }*/
-    }
-    
-    /**
-     Performs tool model action by operation code value with completion handler.
-     
-     - Parameters:
-        - code: The operation code value of the operation performed by the tool visual model.
-        - completion: A completion function that is calls when the performing completes.
-     */
-    open func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
-    {
-        canceled = false
-        
-        performing_task = Task
-        {
-            do
-            {
-                try self.perform(code: code)
-                if !canceled
-                {
-                    completion(.success(()))
-                }
-            }
-            catch
-            {
-                completion(.failure(error))
-            }
-            
-            canceled = false
-        }
     }
     
     /// Inforamation code updated by model controller.
