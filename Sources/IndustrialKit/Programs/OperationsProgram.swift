@@ -54,7 +54,7 @@ public class OperationsProgram: Identifiable, Codable, Equatable, ObservableObje
     public func add_code(_ code: OperationCode)
     {
         codes.append(code)
-        new_code_check(index: codes.count - 1)
+        //new_code_check(index: codes.count - 1)
     }
     
     /**
