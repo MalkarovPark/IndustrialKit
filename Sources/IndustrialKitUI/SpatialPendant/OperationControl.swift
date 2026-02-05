@@ -171,11 +171,13 @@ struct OperationControl: View
                                             ForEach(tool.codes, id:\.self)
                                             { code in
                                                 Text(code.name)
+                                                    .font(.system(size: 12))
                                             }
                                         }
                                         else
                                         {
                                             Text("None")
+                                                .font(.system(size: 12))
                                         }
                                     }
                                     .pickerStyle(.radioGroup)
@@ -268,7 +270,7 @@ struct OperationControl: View
                         Image(systemName:
                                 is_valid_symbol(current_code_info.symbol) ?
                                 current_code_info.symbol :
-                                "play"
+                                ""
                         )
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                         .modifier(CircleButtonImageFramer())

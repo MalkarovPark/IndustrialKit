@@ -424,7 +424,6 @@ public struct EntityAnimationData: Codable
         
         case duration
         //case timing_function
-        
         case delay
         case speed
         
@@ -520,4 +519,3 @@ public enum TimingFunction: Codable
 {
     case linear, easeIn, easeOut, easeInOut
 }
-

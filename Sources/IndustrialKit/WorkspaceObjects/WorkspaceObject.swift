@@ -326,68 +326,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     }
     #endif
     
-    // MARK: - UI functions
-    /// Returns info for object card view (with UIImage).
-    /*open var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode)
-    {
-        return("Title", "Subtitle", Color.clear, UIImage(), SCNNode())
-    }*/
-    
     // MARK: - Work with file system
-    /*private enum CodingKeys: String, CodingKey
-    {
-        case name
-        
-        case module_name
-        case is_internal_module
-        
-        case location
-        case rotation
-        case is_placed
-        
-        case update_interval
-        case scope_type
-    }
-    
-    public required init(from decoder: any Decoder) throws
-    {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        self.name = try container.decode(String.self, forKey: .name)
-        
-        self.module_name = try container.decode(String.self, forKey: .module_name)
-        self.is_internal_module = try container.decodeIfPresent(Bool.self, forKey: .is_internal_module) ?? true // self.is_internal_module = try container.decode(Bool.self, forKey: .is_internal_module)
-        
-        let location = try container.decode([Float].self, forKey: .location)
-        let rotation = try container.decode([Float].self, forKey: .rotation)
-        self.position = (location[0], location[1], location[2], rotation[0], rotation[1], rotation[2])
-        
-        self.is_placed = try container.decode(Bool.self, forKey: .is_placed)
-        
-        self.update_interval = try container.decodeIfPresent(Double.self, forKey: .update_interval) ?? 0.01
-        self.scope_type = try container.decodeIfPresent(ScopeType.self, forKey: .scope_type) ?? .selected
-        
-        module_import_by_name(module_name, is_internal: self.is_internal_module)
-    }
-    
-    public func encode(to encoder: any Encoder) throws
-    {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(name, forKey: .name)
-        
-        try container.encode(module_name, forKey: .module_name)
-        try container.encode(is_internal_module, forKey: .is_internal_module)
-        
-        try container.encode([position.x, position.y, position.z], forKey: .location)
-        try container.encode([position.r, position.p, position.w], forKey: .rotation)
-        
-        try container.encode(is_placed, forKey: .is_placed)
-        
-        try container.encode(update_interval, forKey: .update_interval)
-        try container.encode(scope_type, forKey: .scope_type)
-    }*/
-    
     public convenience init(file: WorkspaceObjectFileData)
     {
         self.init()
