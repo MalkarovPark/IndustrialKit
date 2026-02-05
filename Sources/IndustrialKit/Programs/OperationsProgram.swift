@@ -53,7 +53,8 @@ public class OperationsProgram: Identifiable, Codable, Equatable, ObservableObje
      */
     public func add_code(_ code: OperationCode)
     {
-        codes.append(code)
+        codes.append(OperationCode(code.value))
+        //codes.append(code)
         //new_code_check(index: codes.count - 1)
     }
     
@@ -68,7 +69,7 @@ public class OperationsProgram: Identifiable, Codable, Equatable, ObservableObje
         if codes.indices.contains(index)
         {
             codes[index] = code
-            new_code_check(index: index)
+            //new_code_check(index: index)
         }
     }
     
@@ -91,7 +92,7 @@ public class OperationsProgram: Identifiable, Codable, Equatable, ObservableObje
         return codes.count
     }
     
-    /**
+    /*/**
      Resets code values to zero if their values are negative.
      - Parameters:
         - index: Checkable number index.
@@ -105,7 +106,7 @@ public class OperationsProgram: Identifiable, Codable, Equatable, ObservableObje
                 codes[codes.count].value = 0
             }
         }
-    }
+    }*/
     
     /// Resets the performing state of all operation codes to the `.none` state.
     public func reset_codes_states()
