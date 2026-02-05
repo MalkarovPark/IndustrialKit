@@ -190,7 +190,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
      Gets parts entities links from model root node and pass to array.
      
      - Parameters:
-        - node: A root node of workspace object model.
+        - entity: A root entity of workspace object model.
         - pointer: A node of pointer for robot.
      */
     public func connect_entities(_ entity: Entity, pointer_entity: Entity)

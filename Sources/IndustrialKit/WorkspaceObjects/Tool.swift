@@ -77,6 +77,14 @@ open class Tool: WorkspaceObject
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
     
+    override open func extend_entity_preparation(_ entity: Entity)
+    {
+        // Connect tool parts
+        model_controller.disconnect_entities()
+        model_controller.connect_entities(of: entity)
+        //update_position()
+    }
+    
     //MARK: Model Controller and Connector
     /// A tool visual model controller.
     public var model_controller = ToolModelController()
