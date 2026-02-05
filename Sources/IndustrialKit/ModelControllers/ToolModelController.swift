@@ -76,7 +76,13 @@ open class ToolModelController: ModelController, @unchecked Sendable
                         entity.playAnimation(resource.repeat(count: data.repeat_count ?? 1))
                     }
                     
-                    animation_time += (data.duration * Double(data.speed)) * Double(data.repeat_count ?? 1) + data.delay
+                    let current_animation_time = (data.duration * Double(data.speed)) * Double(data.repeat_count ?? 1) + data.delay
+                    if current_animation_time > animation_time
+                    {
+                        animation_time = current_animation_time
+                    }
+                    
+                    //animation_time += (data.duration * Double(data.speed)) * Double(data.repeat_count ?? 1) + data.delay
                 }
             }
             catch
