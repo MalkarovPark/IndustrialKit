@@ -663,7 +663,7 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
             }
         }
     }
-
+    
     struct ModifiersView: View
     {
         var body: some View

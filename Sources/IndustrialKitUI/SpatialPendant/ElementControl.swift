@@ -25,41 +25,23 @@ struct ElementControl: View
             {
                 if !is_expanded
                 {
-                    // Operation Pane
+                    // Element Pane
                     HStack(spacing: 0)
                     {
                         VStack(alignment: .leading)
                         {
                             Text(workspace.current_element.title)
-                                .font(.title3)
+                                .font(.title3.scaled(by: 0.95))
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.title)
                             Text(workspace.current_element.info)
+                                .font(.default.scaled(by: 0.95))
                                 .foregroundColor(.secondary)
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
                         }
-                        .padding()
-                        
-                        /*VStack
-                        {
-                            Text(workspace.current_element.info)
-                            #if os(macOS)
-                                .font(.system(size: 14, design: .rounded))
-                            #else
-                                .font(.system(size: 18, design: .rounded))
-                            #endif
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity)
-                                .lineLimit(1)
-                                //.truncationMode(.tail)
-                                .padding(10)
-                            #if os(iOS)
-                                .padding(tool.codes.count > 0 ? 0 : 4)
-                                .foregroundStyle(.black)
-                            #endif
-                        }*/
+                        .padding(10)
                     }
                     .background(.clear)
-                    .frame(width: 160) //.frame(maxWidth: .infinity)
+                    .frame(width: 120) //.frame(maxWidth: .infinity)
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
                     .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -81,11 +63,6 @@ struct ElementControl: View
                         }
                     }
                     .transition(.opacity.combined(with: .scale(scale: 1.0)))
-                    #if os(macOS)
-                    .padding(.leading, 10)
-                    #else
-                    .padding(.leading, 16)
-                    #endif
                 }
                 else
                 {
@@ -110,9 +87,56 @@ struct ElementControl: View
                         .contentShape(Rectangle())
                         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
                         
-                        HStack
+                        VStack
                         {
+                            GroupBox
+                            {
+                                RobotPerformerElementView(element: .constant(RobotPerformerElement()))
+                                {
+                                    //
+                                }
+                                .padding(4)
+                            }
                             
+                            Menu("Update Element")
+                            {
+                                Section(header: Text("Performer"))
+                                {
+                                    ForEach(PerformerType.allCases, id: \.self)
+                                    { type in
+                                        Button(type.rawValue)
+                                        {
+                                            workspace.current_element = type.element
+                                        }
+                                        .tag(type)
+                                    }
+                                }
+                                
+                                Section(header: Text("Modifier"))
+                                {
+                                    ForEach(ModifierType.allCases, id: \.self)
+                                    { type in
+                                        Button(type.rawValue)
+                                        {
+                                            workspace.current_element = type.element
+                                        }
+                                        .tag(type)
+                                    }
+                                }
+                                
+                                Section(header: Text("Logic"))
+                                {
+                                    ForEach(LogicType.allCases, id: \.self)
+                                    { type in
+                                        Button(type.rawValue)
+                                        {
+                                            workspace.current_element = type.element
+                                        }
+                                        .tag(type)
+                                    }
+                                }
+                            }
+                            .pickerStyle(.menu)
                         }
                         .padding(10)
                     }
@@ -129,17 +153,6 @@ struct ElementControl: View
                 Button
                 {
                     print("Finished")
-                    /*workspace.perform(workspace.current_element)
-                    {
-                        print("Finished")
-                        /*Task
-                        { @MainActor in
-                            print("Finished")
-                        }*/
-                    }*/
-                    /*{ result in
-                        print(result)
-                    }*/
                 }
                 label:
                 {
@@ -174,6 +187,65 @@ struct ElementControl: View
     }
 }
 
+//MARK: Type enums
+///A performer program element type enum.
+public enum PerformerType: String, Codable, Equatable, CaseIterable
+{
+    case robot = "Robot"
+    case tool = "Tool"
+    
+    public var element: PerformerElement
+    {
+        switch self
+        {
+        case .robot: RobotPerformerElement()
+        case .tool: ToolPerformerElement()
+        }
+    }
+}
+
+///A modifier program element type enum.
+public enum ModifierType: String, Codable, Equatable, CaseIterable
+{
+    case mover = "Mover"
+    case writer = "Writer"
+    case math = "Math"
+    case changer = "Changer"
+    case observer = "Observer"
+    case cleaner = "Cleaner"
+    
+    public var element: ModifierElement
+    {
+        switch self
+        {
+        case .mover: MoverModifierElement()
+        case .writer: WriterModifierElement()
+        case .math: MathModifierElement()
+        case .changer: ChangerModifierElement()
+        case .observer: ObserverModifierElement()
+        case .cleaner: CleanerModifierElement()
+        }
+    }
+}
+
+///A logic program element type enum.
+public enum LogicType: String, Codable, Equatable, CaseIterable
+{
+    case jump = "Jump"
+    case comparator = "Comparator"
+    case mark = "Mark"
+    
+    public var element: LogicElement
+    {
+        switch self
+        {
+        case .jump: JumpLogicElement()
+        case .comparator: ComparatorLogicElement()
+        case .mark: MarkLogicElement()
+        }
+    }
+}
+
 // MARK: - Previews
 struct ElementControl_Previews: PreviewProvider
 {
@@ -191,6 +263,20 @@ struct ElementControl_Previews: PreviewProvider
                     .padding()
             }
             .frame(width: 400, height: 400)
+            .environmentObject(workspace)
+            .onAppear
+            {
+                let robot = Robot(name: "6DOF")
+                robot.is_placed = true
+                robot.add_program(PositionsProgram(name: "Square"))
+                
+                let tool = Tool(name: "Gripper")
+                tool.is_placed = true
+                tool.add_program(OperationsProgram(name: "Close"))
+                
+                workspace.robots.append(robot)
+                workspace.tools.append(tool)
+            }
         }
     }
     
