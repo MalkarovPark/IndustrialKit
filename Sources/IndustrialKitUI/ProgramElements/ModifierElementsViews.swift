@@ -336,12 +336,17 @@ public struct ObserverElementView: View
         
         self.on_update = on_update
         
-        switch self.element.object_type
+        if self.element.object_name == ""
         {
-        case .robot:
-            element.object_name = workspace.placed_robots_names.first ?? "New Robot"
-        case .tool:
-            element.object_name = workspace.placed_tools_names.first ?? "New Tool"
+            self.element.object_name = self.workspace.placed_robots_names.first ?? "???"
+            
+            switch self.element.object_type
+            {
+            case .robot:
+                element.object_name = workspace.placed_robots_names.first ?? "New Robot"
+            case .tool:
+                element.object_name = workspace.placed_tools_names.first ?? "New Tool"
+            }
         }
     }
     
@@ -494,7 +499,7 @@ public struct ObserverElementView: View
                     
                     Text("No items to ouput")
                 }
-                .frame(height: 64)
+                .frame(height: 160)
                 .modifier(ListBorderer())
                 .padding(.bottom)
             }

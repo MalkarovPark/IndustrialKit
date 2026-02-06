@@ -33,10 +33,12 @@ struct ElementControl: View
                             Text(workspace.current_element.title)
                                 .font(.title3.scaled(by: 0.8))
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.title)
+                                .lineLimit(2)
                             Text(workspace.current_element.info)
                                 .font(.default.scaled(by: 0.8))
                                 .foregroundColor(.secondary)
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
+                                .lineLimit(2)
                         }
                         .padding(10)
                     }
