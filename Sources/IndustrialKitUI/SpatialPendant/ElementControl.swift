@@ -31,10 +31,10 @@ struct ElementControl: View
                         VStack(alignment: .leading)
                         {
                             Text(workspace.current_element.title)
-                                .font(.title3.scaled(by: 0.95))
+                                .font(.title3.scaled(by: 0.8))
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.title)
                             Text(workspace.current_element.info)
-                                .font(.default.scaled(by: 0.95))
+                                .font(.default.scaled(by: 0.8))
                                 .foregroundColor(.secondary)
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
                         }
@@ -286,6 +286,13 @@ public struct WorkspaceProgramElementView: View
             case let element as CleanerModifierElement:
                 Text("Clean all registers")
                     .padding()
+                
+            case let element as JumpLogicElement:
+                JumpElementView(element: element, workspace: workspace)
+            case let element as ComparatorLogicElement:
+                ComparatorElementView(element: element, workspace: workspace)
+            case let element as MarkLogicElement:
+                MarkLogicElementView(element: element, workspace: workspace)
                 
             default:
                 EmptyView()

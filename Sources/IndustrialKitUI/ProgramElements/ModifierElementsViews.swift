@@ -561,7 +561,7 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                         workspace.tools.append(tool)
                         
                         Changer.internal_modules_list.append("Forces To Position")
-                }
+                    }
             }
         }
     }

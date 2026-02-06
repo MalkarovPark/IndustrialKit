@@ -10,22 +10,29 @@ import IndustrialKit
 
 public struct JumpElementView: View
 {
-    @Binding var element: WorkspaceProgramElement
+    @ObservedObject var element: JumpLogicElement
     
-    @State var target_mark_name = ""
-    
-    @EnvironmentObject var workspace: Workspace
-    @State private var picker_is_presented = false
+    @ObservedObject var workspace: Workspace
     
     let on_update: () -> ()
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    @State private var picker_is_presented = false
+    
+    public init(
+        element: JumpLogicElement,
+        workspace: Workspace,
+        on_update: @escaping () -> () = {}
+    )
     {
-        self._element = element
-        
-        _target_mark_name = State(initialValue: (_element.wrappedValue as! JumpLogicElement).target_mark_name)
+        self.element = element
+        self.workspace = workspace
         
         self.on_update = on_update
+        
+        if self.workspace.marks_names.count > 0 && self.element.target_mark_name == ""
+        {
+            self.element.target_mark_name = self.workspace.marks_names[0]
+        }
     }
     
     public var body: some View
@@ -34,11 +41,21 @@ public struct JumpElementView: View
         {
             HStack
             {
+                let target_mark_name = Binding(
+                    get: { element.target_mark_name },
+                    set:
+                        { new_value in
+                            element.target_mark_name = new_value
+                            
+                            on_update()
+                        }
+                )
+                
                 #if !os(macOS)
                 Text("Jump to")
                 #endif
                 
-                Picker("Jump to", selection: $target_mark_name) // Target mark picker
+                Picker("Jump to", selection: target_mark_name) // Target mark picker
                 {
                     if workspace.marks_names.count > 0
                     {
@@ -54,46 +71,39 @@ public struct JumpElementView: View
                 }
                 .onAppear
                 {
-                    if workspace.marks_names.count > 0 && target_mark_name == ""
-                    {
-                        target_mark_name = workspace.marks_names[0]
-                    }
+                    
                 }
                 .buttonStyle(.bordered)
                 .disabled(workspace.marks_names.count == 0)
             }
-        }
-        .onChange(of: target_mark_name) { new_value in
-            (element as! JumpLogicElement).target_mark_name = new_value
-            on_update()
         }
     }
 }
 
 public struct ComparatorElementView: View
 {
-    @Binding var element: WorkspaceProgramElement
-    
-    @State var compare_type: CompareType = .equal
-    @State var value_index = [Int]()
-    @State var value2_index = [Int]()
-    @State var target_mark_name = ""
-    
-    @EnvironmentObject var workspace: Workspace
-    @State private var picker_is_presented = false
+    @ObservedObject var element: ComparatorLogicElement
+    @ObservedObject var workspace: Workspace
     
     private let on_update: () -> ()
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    @State private var picker_is_presented = false
+    
+    public init(
+        element: ComparatorLogicElement,
+        workspace: Workspace,
+        on_update: @escaping () -> () = {}
+    )
     {
-        self._element = element
-        
-        _compare_type = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).compare_type)
-        _value_index = State(initialValue: [(_element.wrappedValue as! ComparatorLogicElement).value_index])
-        _value2_index = State(initialValue: [(_element.wrappedValue as! ComparatorLogicElement).value2_index])
-        _target_mark_name = State(initialValue: (_element.wrappedValue as! ComparatorLogicElement).target_mark_name)
+        self.element = element
+        self.workspace = workspace
         
         self.on_update = on_update
+        
+        if self.workspace.marks_names.count > 0 && self.element.target_mark_name == ""
+        {
+            self.element.target_mark_name = self.workspace.marks_names[0]
+        }
     }
     
     public var body: some View
@@ -102,18 +112,48 @@ public struct ComparatorElementView: View
         {
             HStack(spacing: 8)
             {
+                let value_index = Binding(
+                    get: { [element.value_index] },
+                    set:
+                        { new_value in
+                            element.value_index = new_value[0]
+                            
+                            on_update()
+                        }
+                )
+                
+                let value2_index = Binding(
+                    get: { [element.value2_index] },
+                    set:
+                        { new_value in
+                            element.value2_index = new_value[0]
+                            
+                            on_update()
+                        }
+                )
+                
+                let compare_type = Binding(
+                    get: { element.compare_type },
+                    set:
+                        { new_value in
+                            element.compare_type = new_value
+                            
+                            on_update()
+                        }
+                )
+                
                 Text("If value of")
                     .frame(minWidth: 60)
                 
-                RegistersSelector(text: "\(value_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $value_index, names: ["Value 1"])
+                RegistersSelector(text: "\(element.value_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: value_index, names: ["Value 1"])
                 
-                Button(compare_type.rawValue)
+                Button(element.compare_type.rawValue)
                 {
                     picker_is_presented = true
                 }
                 .popover(isPresented: $picker_is_presented)
                 {
-                    CompareTypePicker(compare_type: $compare_type)
+                    CompareTypePicker(compare_type: compare_type)
                     #if !os(macOS)
                         .presentationDetents([.height(96)])
                     #endif
@@ -122,17 +162,27 @@ public struct ComparatorElementView: View
                 Text("value of")
                     .frame(minWidth: 48)
                 
-                RegistersSelector(text: "\(value2_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $value2_index, names: ["Value 2"])
+                RegistersSelector(text: "\(element.value2_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: value2_index, names: ["Value 2"])
             }
             .padding(.bottom)
             
             HStack
             {
+                let target_mark_name = Binding(
+                    get: { element.target_mark_name },
+                    set:
+                        { new_value in
+                            element.target_mark_name = new_value
+                            
+                            on_update()
+                        }
+                )
+                
                 #if !os(macOS)
                 Text("jump to")
                 #endif
                 
-                Picker("jump to", selection: $target_mark_name) // Target mark picker
+                Picker("jump to", selection: target_mark_name) // Target mark picker
                 {
                     if workspace.marks_names.count > 0
                     {
@@ -146,32 +196,9 @@ public struct ComparatorElementView: View
                         Text("None")
                     }
                 }
-                .onAppear
-                {
-                    if workspace.marks_names.count > 0 && target_mark_name == ""
-                    {
-                        target_mark_name = workspace.marks_names[0]
-                    }
-                }
                 .buttonStyle(.bordered)
                 .disabled(workspace.marks_names.count == 0)
             }
-        }
-        .onChange(of: compare_type) { new_value in
-            (element as! ComparatorLogicElement).compare_type = new_value
-            on_update()
-        }
-        .onChange(of: value_index) { new_value in
-            (element as! ComparatorLogicElement).value_index = new_value[0]
-            on_update()
-        }
-        .onChange(of: value2_index) { new_value in
-            (element as! ComparatorLogicElement).value2_index = new_value[0]
-            on_update()
-        }
-        .onChange(of: target_mark_name) { new_value in
-            (element as! ComparatorLogicElement).target_mark_name = new_value
-            on_update()
         }
     }
 }
@@ -202,30 +229,41 @@ public struct CompareTypePicker: View
 
 public struct MarkLogicElementView: View
 {
-    @Binding var element: WorkspaceProgramElement
+    @ObservedObject var element: MarkLogicElement
     
-    @State private var name: String
+    @ObservedObject var workspace: Workspace
     
     let on_update: () -> ()
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(
+        element: MarkLogicElement,
+        workspace: Workspace,
+        on_update: @escaping () -> () = {}
+    )
     {
-        self._element = element
-        _name = State(initialValue: (_element.wrappedValue as! MarkLogicElement).name)
+        self.element = element
+        self.workspace = workspace
+        
         self.on_update = on_update
     }
     
     public var body: some View
     {
+        let name = Binding(
+            get: { element.name },
+            set:
+                { new_value in
+                    element.name = new_value
+                    
+                    on_update()
+                }
+        )
+        
         HStack
         {
             Text("Name")
-            TextField("Mark name", text: $name) // Mark name field
+            TextField("Mark Name", text: name) // Mark name field
                 .textFieldStyle(.roundedBorder)
-        }
-        .onChange(of: name) { new_value in
-            (element as! MarkLogicElement).name = new_value
-            on_update()
         }
     }
 }
@@ -244,15 +282,18 @@ struct IMALogicPreviewsContainer: PreviewProvider
 
         var body: some View
         {
-            LogicView()
-                .environmentObject(workspace)
+            LogicView(workspace: workspace)
+                .onAppear
+                {
+                    workspace.elements.append(MarkLogicElement(name: "Mark"))
+                }
         }
     }
 
     struct LogicView: View
     {
-        @EnvironmentObject var workspace: Workspace
-        var mark = MarkLogicElement(name: "Mark")
+        @ObservedObject var workspace: Workspace
+        //var mark = MarkLogicElement(name: "Mark")
         
         var body: some View
         {
@@ -268,18 +309,14 @@ struct IMALogicPreviewsContainer: PreviewProvider
                 
                 HStack(alignment: .top)
                 {
-                    ComparatorElementView(element: .constant(ComparatorLogicElement()), on_update: {})
+                    ComparatorElementView(element: ComparatorLogicElement(), workspace: workspace)
                         .modifier(PreviewBorder())
 
-                    MarkLogicElementView(element: .constant(mark), on_update: {})
+                    MarkLogicElementView(element: workspace.elements.first as? MarkLogicElement ?? MarkLogicElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                 }
             }
             .padding()
-            .onAppear
-            {
-                workspace.elements.append(mark)
-            }
         }
     }
     
