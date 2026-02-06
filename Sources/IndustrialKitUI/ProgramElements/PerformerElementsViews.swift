@@ -10,40 +10,33 @@ import IndustrialKit
 
 public struct RobotPerformerElementView: View
 {
-    @Binding var element: WorkspaceProgramElement
-    
-    @State private var object_name = ""
-    @State private var is_single_perfrom = false
-    @State private var is_program_by_index = false
-    @State private var program_name = ""
-    @State private var program_index_from = [Int]()
-    
-    @State private var location_indices = [Int]()
-    @State private var rotation_indices = [Int]()
-    @State private var speed_index = [Int]()
-    @State private var type_index = [Int]()
-    
-    @EnvironmentObject var workspace: Workspace
+    @ObservedObject var element: RobotPerformerElement
+    @ObservedObject var workspace: Workspace
     @State private var picker_is_presented = false
     
     let on_update: () -> ()
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(
+        element: RobotPerformerElement,
+        workspace: Workspace,
+        on_update: @escaping () -> ()
+    )
     {
-        self._element = element
+        self.element = element
         
-        _object_name = State(initialValue: (_element.wrappedValue as! RobotPerformerElement).object_name)
-        _is_single_perfrom = State(initialValue: (_element.wrappedValue as! RobotPerformerElement).is_single_perfrom)
-        _is_program_by_index = State(initialValue: (_element.wrappedValue as! RobotPerformerElement).is_program_by_index)
-        _program_name = State(initialValue: (_element.wrappedValue as! RobotPerformerElement).program_name)
-        _program_index_from = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).program_index])
-        
-        _location_indices = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).x_index, (_element.wrappedValue as! RobotPerformerElement).y_index, (_element.wrappedValue as! RobotPerformerElement).z_index])
-        _rotation_indices = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).r_index, (_element.wrappedValue as! RobotPerformerElement).p_index, (_element.wrappedValue as! RobotPerformerElement).w_index])
-        _speed_index = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).speed_index])
-        _type_index = State(initialValue: [(_element.wrappedValue as! RobotPerformerElement).type_index])
+        self.workspace = workspace
         
         self.on_update = on_update
+        
+        if self.element.object_name == ""
+        {
+            self.element.object_name = self.workspace.placed_robots_names.first ?? ""
+            
+            if workspace.robot_by_name(element.object_name).programs_names.count > 0
+            {
+                element.program_name = workspace.robot_by_name(element.object_name).programs_names.first ?? ""
+            }
+        }
     }
     
     public var body: some View
@@ -53,30 +46,24 @@ public struct RobotPerformerElementView: View
             if workspace.placed_robots_names.count > 0
             {
                 // MARK: Robot subview
-                Picker("Name", selection: $object_name) // Robot picker
+                let object_name = Binding(
+                    get: { element.object_name },
+                    set:
+                        { new_value in
+                            element.object_name = new_value
+                            
+                            if workspace.robot_by_name(new_value).programs_names.count > 0
+                            {
+                                element.program_name = workspace.robot_by_name(new_value).programs_names.first ?? ""
+                            }
+                        }
+                )
+                
+                Picker("Name", selection: object_name) // Robot picker
                 {
                     ForEach(workspace.placed_robots_names, id: \.self)
                     { name in
                         Text(name)
-                    }
-                }
-                .onChange(of: object_name)
-                { _, name in
-                    if workspace.robot_by_name(name).programs_names.count > 0
-                    {
-                        program_name = workspace.robot_by_name(name).programs_names.first ?? ""
-                    }
-                    workspace.update_view()
-                }
-                .onAppear
-                {
-                    if object_name == ""
-                    {
-                        object_name = workspace.placed_robots_names.first!
-                    }
-                    else
-                    {
-                        workspace.update_view()
                     }
                 }
                 .buttonStyle(.bordered)
@@ -84,7 +71,7 @@ public struct RobotPerformerElementView: View
                 .frame(maxWidth: .infinity)
                 .padding(.bottom)
                 
-                Picker("", selection: $is_single_perfrom)
+                Picker("Is Single", selection: $element.is_single_perfrom)
                 {
                     Text("Single").tag(true)
                     Text("Program").tag(false)
@@ -93,20 +80,56 @@ public struct RobotPerformerElementView: View
                 .labelsHidden()
                 .frame(maxWidth: .infinity)
                 
-                if is_single_perfrom
+                if element.is_single_perfrom
                 {
-                    RegistersSelector(text: "Location X: \(location_indices[0]), Y: \(location_indices[1]), Z: \(location_indices[2])", registers_count: workspace.registers.count, colors: registers_colors, indices: $location_indices, names: ["X", "Y", "Z"])
+                    let location_indices = Binding(
+                        get: { [element.x_index, element.y_index, element.z_index] },
+                        set:
+                            { new_value in
+                                element.x_index = new_value[0]
+                                element.y_index = new_value[1]
+                                element.z_index = new_value[2]
+                            }
+                    )
+                    
+                    let rotation_indices = Binding(
+                        get: { [element.r_index, element.p_index, element.w_index] },
+                        set:
+                            { new_value in
+                                element.r_index = new_value[0]
+                                element.p_index = new_value[1]
+                                element.w_index = new_value[2]
+                            }
+                    )
+                    
+                    let speed_index = Binding(
+                        get: { [element.speed_index] },
+                        set:
+                            { new_value in
+                                element.speed_index = new_value[0]
+                            }
+                    )
+                    
+                    let type_index = Binding(
+                        get: { [element.type_index] },
+                        set:
+                            { new_value in
+                                element.type_index = new_value[0]
+                            }
+                    )
+                    
+                    RegistersSelector(text: "Location X: \(element.x_index), Y: \(element.y_index), Z: \(element.z_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: location_indices, names: ["X", "Y", "Z"])
                         .padding(.top)
                     
-                    RegistersSelector(text: "Rotation R: \(rotation_indices[0]), P: \(rotation_indices[1]), W: \(rotation_indices[2])", registers_count: workspace.registers.count, colors: registers_colors, indices: $rotation_indices, names: ["R", "P", "W"])
+                    RegistersSelector(text: "Rotation R: \(element.r_index), P: \(element.p_index), W: \(element.w_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: rotation_indices, names: ["R", "P", "W"])
                         .padding(.top)
                     
                     HStack(spacing: 0)
                     {
-                        RegistersSelector(text: "Speed: \(speed_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $speed_index, names: ["Speed"])
+                        RegistersSelector(text: "Speed: \(element.speed_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: speed_index, names: ["Speed"])
                             .padding(.trailing)
                         
-                        RegistersSelector(text: "Type: \(type_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $type_index, names: ["Type"])
+                        RegistersSelector(text: "Type: \(element.type_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: type_index, names: ["Type"])
                     }
                     .padding(.top)
                 }
@@ -114,7 +137,7 @@ public struct RobotPerformerElementView: View
                 {
                     VStack(spacing: 0)
                     {
-                        Picker("", selection: $is_program_by_index)
+                        Picker("", selection: $element.is_program_by_index)
                         {
                             Text("Name").tag(false)
                             Text("Index").tag(true)
@@ -123,17 +146,25 @@ public struct RobotPerformerElementView: View
                         .labelsHidden()
                         .padding(.bottom)
                         
-                        if is_program_by_index
+                        if element.is_program_by_index
                         {
-                            RegistersSelector(text: "From: \(program_index_from[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $program_index_from, names: ["Program"])
+                            let program_index = Binding(
+                                get: { [element.program_index] },
+                                set:
+                                    { new_value in
+                                        element.program_index = new_value[0]
+                                    }
+                            )
+                            
+                            RegistersSelector(text: "From: \(element.program_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: program_index, names: ["Program"])
                         }
                         else
                         {
-                            Picker("Program", selection: $program_name) // Robot program picker
+                            Picker("Program", selection: $element.program_name) // Robot program picker
                             {
-                                if workspace.robot_by_name(object_name).programs_names.count > 0
+                                if workspace.robot_by_name(element.object_name).programs_names.count > 0
                                 {
-                                    ForEach(workspace.robot_by_name(object_name).programs_names, id: \.self)
+                                    ForEach(workspace.robot_by_name(element.object_name).programs_names, id: \.self)
                                     { name in
                                         Text(name)
                                     }
@@ -144,7 +175,7 @@ public struct RobotPerformerElementView: View
                                 }
                             }
                             .buttonStyle(.bordered)
-                            .disabled(workspace.robot_by_name(object_name).programs_names.count == 0)
+                            .disabled(workspace.robot_by_name(element.object_name).programs_names.count == 0)
                         }
                     }
                     .padding(.top)
@@ -158,83 +189,38 @@ public struct RobotPerformerElementView: View
                 Text("No robots placed in this workspace")
             }
         }
-        .onChange(of: object_name)
-        { _, new_value in
-            (element as! RobotPerformerElement).object_name = new_value
-            on_update()
-        }
-        .onChange(of: is_single_perfrom)
-        { _, new_value in
-            (element as! RobotPerformerElement).is_single_perfrom = new_value
-            on_update()
-        }
-        .onChange(of: is_program_by_index)
-        { _, new_value in
-            (element as! RobotPerformerElement).is_program_by_index = new_value
-            on_update()
-        }
-        .onChange(of: program_name)
-        { _, new_value in
-            (element as! RobotPerformerElement).program_name = new_value
-            on_update()
-        }
-        .onChange(of: program_index_from)
-        { _, new_value in
-            (element as! RobotPerformerElement).program_index = new_value[0]
-            on_update()
-        }
-        .onChange(of: location_indices)
-        { _, new_value in
-            (element as! RobotPerformerElement).x_index = new_value[0]
-            (element as! RobotPerformerElement).y_index = new_value[1]
-            (element as! RobotPerformerElement).z_index = new_value[2]
-            on_update()
-        }
-        .onChange(of: rotation_indices)
-        { _, new_value in
-            (element as! RobotPerformerElement).r_index = new_value[0]
-            (element as! RobotPerformerElement).p_index = new_value[1]
-            (element as! RobotPerformerElement).w_index = new_value[2]
-            on_update()
-        }
-        .onChange(of: speed_index)
-        { _, new_value in
-            (element as! RobotPerformerElement).speed_index = new_value[0]
-            on_update()
-        }
     }
 }
 
 public struct ToolPerformerElementView: View
 {
-    @Binding var element: WorkspaceProgramElement
-    
-    @State private var object_name = ""
-    @State private var is_single_perfrom = false
-    @State private var is_program_by_index = false
-    @State private var program_name = ""
-    @State private var program_index_from = [Int]()
-    
-    @State private var opcode_index = [Int]()
-    
-    @EnvironmentObject var workspace: Workspace
+    @ObservedObject var element: ToolPerformerElement
+    @ObservedObject var workspace: Workspace
     @State private var picker_is_presented = false
     
     let on_update: () -> ()
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(
+        element: ToolPerformerElement,
+        workspace: Workspace,
+        on_update: @escaping () -> ()
+    )
     {
-        self._element = element
+        self.element = element
         
-        _object_name = State(initialValue: (_element.wrappedValue as! ToolPerformerElement).object_name)
-        _is_single_perfrom = State(initialValue: (_element.wrappedValue as! ToolPerformerElement).is_single_perfrom)
-        _is_program_by_index = State(initialValue: (_element.wrappedValue as! ToolPerformerElement).is_program_by_index)
-        _program_name = State(initialValue: (_element.wrappedValue as! ToolPerformerElement).program_name)
-        _program_index_from = State(initialValue: [(_element.wrappedValue as! ToolPerformerElement).program_index])
-        
-        _opcode_index = State(initialValue: [(_element.wrappedValue as! ToolPerformerElement).opcode_index])
+        self.workspace = workspace
         
         self.on_update = on_update
+        
+        if self.element.object_name == ""
+        {
+            self.element.object_name = self.workspace.placed_tools_names.first ?? ""
+            
+            if workspace.tool_by_name(element.object_name).programs_names.count > 0
+            {
+                element.program_name = workspace.tool_by_name(element.object_name).programs_names.first ?? ""
+            }
+        }
     }
     
     public var body: some View
@@ -243,31 +229,25 @@ public struct ToolPerformerElementView: View
         {
             if workspace.placed_tools_names.count > 0
             {
-                // MARK: Robot subview
-                Picker("Name", selection: $object_name) // Robot picker
+                // MARK: Tool subview
+                let object_name = Binding(
+                    get: { element.object_name },
+                    set:
+                        { new_value in
+                            element.object_name = new_value
+                            
+                            if workspace.robot_by_name(new_value).programs_names.count > 0
+                            {
+                                element.program_name = workspace.robot_by_name(new_value).programs_names.first ?? ""
+                            }
+                        }
+                )
+                
+                Picker("Name", selection: object_name) // Tool picker
                 {
                     ForEach(workspace.placed_tools_names, id: \.self)
                     { name in
                         Text(name)
-                    }
-                }
-                .onChange(of: object_name)
-                { _, name in
-                    if workspace.tool_by_name(name).programs_names.count > 0
-                    {
-                        program_name = workspace.tool_by_name(name).programs_names.first ?? ""
-                    }
-                    workspace.update_view()
-                }
-                .onAppear
-                {
-                    if object_name == ""
-                    {
-                        object_name = workspace.placed_tools_names.first!
-                    }
-                    else
-                    {
-                        workspace.update_view()
                     }
                 }
                 .buttonStyle(.bordered)
@@ -275,7 +255,7 @@ public struct ToolPerformerElementView: View
                 .frame(maxWidth: .infinity)
                 .padding(.bottom)
                 
-                Picker("", selection: $is_single_perfrom)
+                Picker("", selection: $element.is_single_perfrom)
                 {
                     Text("Single").tag(true)
                     Text("Program").tag(false)
@@ -284,16 +264,24 @@ public struct ToolPerformerElementView: View
                 .labelsHidden()
                 .frame(maxWidth: .infinity)
                 
-                if is_single_perfrom
+                if element.is_single_perfrom
                 {
-                    RegistersSelector(text: "Opcode from \(opcode_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $opcode_index, names: ["Operation code"])
+                    let opcode_index = Binding(
+                        get: { [element.opcode_index] },
+                        set:
+                            { new_value in
+                                element.opcode_index = new_value[0]
+                            }
+                    )
+                    
+                    RegistersSelector(text: "Opcode from \(element.opcode_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: opcode_index, names: ["Operation code"])
                         .padding(.top)
                 }
                 else
                 {
                     VStack(spacing: 0)
                     {
-                        Picker("", selection: $is_program_by_index)
+                        Picker("", selection: $element.is_program_by_index)
                         {
                             Text("Name").tag(false)
                             Text("Index").tag(true)
@@ -302,17 +290,25 @@ public struct ToolPerformerElementView: View
                         .labelsHidden()
                         .padding(.bottom)
                         
-                        if is_program_by_index
+                        if element.is_program_by_index
                         {
-                            RegistersSelector(text: "From: \(program_index_from[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $program_index_from, names: ["Program"])
+                            let program_index = Binding(
+                                get: { [element.program_index] },
+                                set:
+                                    { new_value in
+                                        element.program_index = new_value[0]
+                                    }
+                            )
+                            
+                            RegistersSelector(text: "From: \(element.program_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: program_index, names: ["Program"])
                         }
                         else
                         {
-                            Picker("Program", selection: $program_name) // Robot program picker
+                            Picker("Program", selection: $element.program_name) // Robot program picker
                             {
-                                if workspace.tool_by_name(object_name).programs_names.count > 0
+                                if workspace.tool_by_name(element.object_name).programs_names.count > 0
                                 {
-                                    ForEach(workspace.tool_by_name(object_name).programs_names, id: \.self)
+                                    ForEach(workspace.tool_by_name(element.object_name).programs_names, id: \.self)
                                     { name in
                                         Text(name)
                                     }
@@ -323,7 +319,7 @@ public struct ToolPerformerElementView: View
                                 }
                             }
                             .buttonStyle(.bordered)
-                            .disabled(workspace.tool_by_name(object_name).programs_names.count == 0)
+                            .disabled(workspace.tool_by_name(element.object_name).programs_names.count == 0)
                         }
                     }
                     .padding(.top)
@@ -336,36 +332,6 @@ public struct ToolPerformerElementView: View
             {
                 Text("No tools placed in this workspace")
             }
-        }
-        .onChange(of: object_name)
-        { _, new_value in
-            (element as! ToolPerformerElement).object_name = new_value
-            on_update()
-        }
-        .onChange(of: is_single_perfrom)
-        { _, new_value in
-            (element as! ToolPerformerElement).is_single_perfrom = new_value
-            on_update()
-        }
-        .onChange(of: is_program_by_index)
-        { _, new_value in
-            (element as! ToolPerformerElement).is_program_by_index = new_value
-            on_update()
-        }
-        .onChange(of: program_name)
-        { _, new_value in
-            (element as! ToolPerformerElement).program_name = new_value
-            on_update()
-        }
-        .onChange(of: program_index_from)
-        { _, new_value in
-            (element as! ToolPerformerElement).program_index = new_value[0]
-            on_update()
-        }
-        .onChange(of: opcode_index)
-        { _, new_value in
-            (element as! ToolPerformerElement).opcode_index = new_value[0]
-            on_update()
         }
     }
 }
@@ -384,26 +350,28 @@ struct IMAPerformersPreviewsContainer: PreviewProvider
 
         var body: some View
         {
-            PerformersView()
-                .environmentObject(workspace)
+            PerformersView(workspace: workspace)
                 .onAppear
-            {
-                let robot = Robot(name: "6DOF")
-                robot.is_placed = true
-                robot.add_program(PositionsProgram(name: "Square"))
-                
-                let tool = Tool(name: "Gripper")
-                tool.is_placed = true
-                tool.add_program(OperationsProgram(name: "Close"))
-                
-                workspace.robots.append(robot)
-                workspace.tools.append(tool)
-            }
+                {
+                    let robot = Robot(name: "6DOF")
+                    robot.is_placed = true
+                    robot.add_program(PositionsProgram(name: "Square"))
+                    
+                    let tool = Tool(name: "Gripper")
+                    tool.is_placed = true
+                    tool.add_program(OperationsProgram(name: "Close"))
+                    
+                    workspace.robots.append(robot)
+                    workspace.tools.append(tool)
+                }
+                .environmentObject(workspace)
         }
     }
 
     struct PerformersView: View
     {
+        @ObservedObject var workspace: Workspace
+        
         var body: some View
         {
             VStack(alignment: .leading, spacing: 8)
@@ -418,10 +386,10 @@ struct IMAPerformersPreviewsContainer: PreviewProvider
                 
                 HStack
                 {
-                    RobotPerformerElementView(element: .constant(RobotPerformerElement()), on_update: {})
+                    RobotPerformerElementView(element: RobotPerformerElement(), workspace: workspace, on_update: {})
                         .modifier(PreviewBorder())
 
-                    ToolPerformerElementView(element: .constant(ToolPerformerElement()), on_update: {})
+                    ToolPerformerElementView(element: ToolPerformerElement(), workspace: workspace, on_update: {})
                         .modifier(PreviewBorder())
                 }
             }
@@ -431,6 +399,8 @@ struct IMAPerformersPreviewsContainer: PreviewProvider
     
     private struct PreviewBorder: ViewModifier
     {
+        @ObservedObject var workspace = Workspace()
+        
         public func body(content: Content) -> some View
         {
             content

@@ -91,11 +91,8 @@ struct ElementControl: View
                         {
                             GroupBox
                             {
-                                RobotPerformerElementView(element: .constant(RobotPerformerElement()))
-                                {
-                                    //
-                                }
-                                .padding(4)
+                                WorkspaceProgramElementView(workspace: workspace, element: workspace.current_element)
+                                    .padding(4)
                             }
                             
                             Menu("Update Element")
@@ -242,6 +239,37 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
         case .jump: JumpLogicElement()
         case .comparator: ComparatorLogicElement()
         case .mark: MarkLogicElement()
+        }
+    }
+}
+
+public struct WorkspaceProgramElementView: View
+{
+    @ObservedObject var workspace: Workspace
+    @ObservedObject var element: WorkspaceProgramElement
+    
+    public var body: some View
+    {
+        ZStack
+        {
+            switch element
+            {
+            case let element as RobotPerformerElement:
+                RobotPerformerElementView(element: element, workspace: workspace, on_update: {})
+            case let element as ToolPerformerElement:
+                ToolPerformerElementView(element: element, workspace: workspace, on_update: {})
+            default:
+                EmptyView()
+            }
+            /*let value_binding = Binding(
+                get: { current_code_info.value },
+                set:
+                    { new_value in
+                        tool.current_operation = OperationCode(new_value)
+                    }
+            )*/
+            
+            EmptyView()
         }
     }
 }
