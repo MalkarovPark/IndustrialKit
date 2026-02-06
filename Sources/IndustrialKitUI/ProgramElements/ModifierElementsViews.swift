@@ -59,10 +59,15 @@ public struct MoverElementView: View
                 get: { [element.from_index, element.to_index] },
                 set:
                     { new_value in
-                        element.from_index = new_value[0]
-                        element.to_index = new_value[1]
-                        
-                        on_update()
+                        //element.from_index = new_value[0]
+                        //element.to_index = new_value[1]
+                        if let from_index = new_value[safe: 0], let to_index = new_value[safe: 1]
+                        {
+                            element.from_index = from_index
+                            element.to_index = to_index
+                            
+                            on_update()
+                        }
                     }
             )
             
@@ -128,9 +133,12 @@ public struct WriterElementView: View
                 get: { [element.to_index] },
                 set:
                     { new_value in
-                        element.to_index = new_value[0]
-                        
-                        on_update()
+                        //element.to_index = new_value[0]
+                        if let first = new_value.first
+                        {
+                            element.to_index = first
+                            on_update()
+                        }
                     }
             )
             
@@ -164,7 +172,7 @@ public struct MathElementView: View
     
     public var body: some View
     {
-        HStack(spacing: 8)
+        HStack(spacing: 0)
         {
             let expression = Binding(
                 get: { element.expression },
@@ -180,14 +188,18 @@ public struct MathElementView: View
                 get: { [element.to_index] },
                 set:
                     { new_value in
-                        element.to_index = new_value[0]
-                        
-                        on_update()
+                        //element.to_index = new_value[0]
+                        if let first = new_value.first
+                        {
+                            element.to_index = first
+                            on_update()
+                        }
                     }
             )
             
             TextField("Expression", text: expression)
                 .textFieldStyle(.roundedBorder)
+                .padding(.trailing)
             
             RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: to_index, names: ["To"])
         }
@@ -214,7 +226,7 @@ public struct ChangerElementView: View
         
         self.on_update = on_update
         
-        if Changer.internal_modules_list.count > 0 && element.module_name == ""
+        if Changer.internal_modules_list.count > 0 && element.module_name == "???"
         {
             element.module_name = Changer.internal_modules_list[0]
         }

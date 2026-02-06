@@ -116,9 +116,12 @@ public struct ComparatorElementView: View
                     get: { [element.value_index] },
                     set:
                         { new_value in
-                            element.value_index = new_value[0]
-                            
-                            on_update()
+                            //element.value_index = new_value[0]
+                            if let first = new_value.first
+                            {
+                                element.value_index = first
+                                on_update()
+                            }
                         }
                 )
                 
@@ -126,9 +129,12 @@ public struct ComparatorElementView: View
                     get: { [element.value2_index] },
                     set:
                         { new_value in
-                            element.value2_index = new_value[0]
-                            
-                            on_update()
+                            //element.value2_index = new_value[0]
+                            if let first = new_value.first
+                            {
+                                element.value2_index = first
+                                on_update()
+                            }
                         }
                 )
                 

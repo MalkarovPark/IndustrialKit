@@ -474,16 +474,42 @@ private struct PerformingControlView: View
 }
 
 // MARK: - Previews
-#Preview
+struct WorkspaceControl_Previews: PreviewProvider
 {
-    ZStack
+    struct Container: View
     {
-        FloatingView(alignment: .trailing)
+        @StateObject var workspace = Workspace()
+        
+        var body: some View
         {
-            WorkspaceControlView(workspace: Workspace())
-                .padding(8)
+            ZStack
+            {
+                FloatingView(alignment: .trailing)
+                {
+                    WorkspaceControlView(workspace: workspace)
+                        .padding(8)
+                }
+                .padding(10)
+            }
+            .frame(height: 480)
+            .onAppear
+            {
+                let robot = Robot(name: "6DOF")
+                robot.is_placed = true
+                robot.add_program(PositionsProgram(name: "Square"))
+                
+                let tool = Tool(name: "Gripper")
+                tool.is_placed = true
+                tool.add_program(OperationsProgram(name: "Close"))
+                
+                workspace.robots.append(robot)
+                workspace.tools.append(tool)
+            }
         }
-        .padding(10)
     }
-    .frame(height: 480)
+    
+    static var previews: some View
+    {
+        Container()
+    }
 }

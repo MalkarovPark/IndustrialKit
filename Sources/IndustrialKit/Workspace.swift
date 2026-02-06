@@ -1970,6 +1970,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public var placed_robots_names: [String] // Array of robots names added to workspace
     {
         var names = [String]()
+        
         for robot in robots
         {
             if robot.is_placed
@@ -1977,6 +1978,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 names.append(robot.name)
             }
         }
+        
         return names
     }
     

@@ -30,7 +30,7 @@ public struct RobotPerformerElementView: View
         
         if self.element.object_name == ""
         {
-            self.element.object_name = self.workspace.placed_robots_names.first ?? ""
+            self.element.object_name = self.workspace.placed_robots_names.first ?? "???"
             
             if workspace.robot_by_name(element.object_name).programs_names.count > 0
             {
@@ -122,9 +122,12 @@ public struct RobotPerformerElementView: View
                         get: { [element.speed_index] },
                         set:
                             { new_value in
-                                element.speed_index = new_value[0]
-                                
-                                on_update()
+                                //element.speed_index = new_value[0]
+                                if let first = new_value.first
+                                {
+                                    element.speed_index = first
+                                    on_update()
+                                }
                             }
                     )
                     
@@ -134,7 +137,11 @@ public struct RobotPerformerElementView: View
                             { new_value in
                                 element.type_index = new_value[0]
                                 
-                                on_update()
+                                if let first = new_value.first
+                                {
+                                    element.type_index = first
+                                    on_update()
+                                }
                             }
                     )
                     
@@ -182,7 +189,12 @@ public struct RobotPerformerElementView: View
                                 get: { [element.program_index] },
                                 set:
                                     { new_value in
-                                        element.program_index = new_value[0]
+                                        //element.program_index = new_value[0]
+                                        if let first = new_value.first
+                                        {
+                                            element.program_index = first
+                                            on_update()
+                                        }
                                     }
                             )
                             
@@ -310,7 +322,12 @@ public struct ToolPerformerElementView: View
                         get: { [element.opcode_index] },
                         set:
                             { new_value in
-                                element.opcode_index = new_value[0]
+                                //element.opcode_index = new_value[0]
+                                if let first = new_value.first
+                                {
+                                    element.opcode_index = first
+                                    on_update()
+                                }
                             }
                     )
                     
@@ -346,7 +363,12 @@ public struct ToolPerformerElementView: View
                                 get: { [element.program_index] },
                                 set:
                                     { new_value in
-                                        element.program_index = new_value[0]
+                                        //element.program_index = new_value[0]
+                                        if let first = new_value.first
+                                        {
+                                            element.program_index = first
+                                            on_update()
+                                        }
                                     }
                             )
                             

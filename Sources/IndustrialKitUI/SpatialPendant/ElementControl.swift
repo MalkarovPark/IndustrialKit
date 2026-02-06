@@ -86,6 +86,7 @@ struct ElementControl: View
                         .scaleEffect(is_expanded ? 1 : 0.01)
                         .contentShape(Rectangle())
                         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
+                        //.animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
                         
                         VStack
                         {
@@ -144,7 +145,9 @@ struct ElementControl: View
                     #endif
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
+                    //.animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
+                    //.transition(.opacity.combined(with: .scale(scale: 1.0)))
                 }
                 
                 Button
@@ -179,6 +182,7 @@ struct ElementControl: View
                 #else
                 .padding(16)
                 #endif
+                .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
             }
         }
     }
@@ -297,13 +301,6 @@ public struct WorkspaceProgramElementView: View
             default:
                 EmptyView()
             }
-            /*let value_binding = Binding(
-                get: { current_code_info.value },
-                set:
-                    { new_value in
-                        tool.current_operation = OperationCode(new_value)
-                    }
-            )*/
             
             EmptyView()
         }
@@ -327,7 +324,6 @@ struct ElementControl_Previews: PreviewProvider
                     .padding()
             }
             .frame(width: 400, height: 400)
-            .environmentObject(workspace)
             .onAppear
             {
                 let robot = Robot(name: "6DOF")
