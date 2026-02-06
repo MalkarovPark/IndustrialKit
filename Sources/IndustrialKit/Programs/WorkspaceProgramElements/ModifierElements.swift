@@ -25,6 +25,19 @@ public class ModifierElement: WorkspaceProgramElement
 ///Moves data between registers.
 public class MoverModifierElement: ModifierElement
 {
+    public init(
+        move_type: ModifierCopyType = .duplicate,
+        from_index: Int = 0,
+        to_index: Int = 0
+    )
+    {
+        self.move_type = move_type
+        self.from_index = from_index
+        self.to_index = to_index
+        
+        super.init()
+    }
+    
     /// A type of copy
     @Published public var move_type: ModifierCopyType = .duplicate
     
@@ -57,46 +70,47 @@ public class MoverModifierElement: ModifierElement
     }
     
     // File handling
-    // Data [<#type#>, <#from#>, <#to#>]
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    private enum CodingKeys: String, CodingKey
     {
-        return .mover_modifier
+        case move_type, from_index, to_index
     }
-    
-    public override var data_count: Int
+
+    public required init(from decoder: Decoder) throws
     {
-        return 3
-    }
-    
-    public override func data_from_array(_ data: [String])
-    {
-        move_type = type_from_string(data[0])
-        from_index = Int(data[1]) ?? 0
-        to_index = Int(data[2]) ?? 0
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        func type_from_string(_ string: String) -> ModifierCopyType
-        {
-            switch string
-            {
-            case "Duplicate":
-                return .duplicate
-            case "Move":
-                return .move
-            default:
-                return .duplicate
-            }
-        }
+        self.move_type = try container.decodeIfPresent(ModifierCopyType.self, forKey: .move_type) ?? .duplicate
+        self.from_index = try container.decodeIfPresent(Int.self, forKey: .from_index) ?? 0
+        self.to_index = try container.decodeIfPresent(Int.self, forKey: .to_index) ?? 0
+        
+        try super.init(from: decoder)
     }
-    
-    public override var file_info: WorkspaceProgramElementStruct
+
+    public override func encode(to encoder: Encoder) throws
     {
-        return WorkspaceProgramElementStruct(identifier: .mover_modifier, data: [move_type.rawValue, String(from_index), String(to_index)])
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(move_type, forKey: .move_type)
+        try container.encode(from_index, forKey: .from_index)
+        try container.encode(to_index, forKey: .to_index)
+        
+        try super.encode(to: encoder)
     }
 }
 
 ///Writes data to selected register.
 public class WriterModifierElement: ModifierElement
 {
+    public init(
+        value: Float = 0,
+        to_index: Int = 0
+    )
+    {
+        self.value = value
+        self.to_index = to_index
+        
+        super.init()
+    }
+    
     /// A writable value.
     @Published public var value: Float = 0
     
@@ -120,43 +134,54 @@ public class WriterModifierElement: ModifierElement
     }
     
     // File handling
-    // Data [<#to#>, <#value#>]
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    private enum CodingKeys: String, CodingKey
     {
-        return .writer_modifier
+        case value, to_index
     }
-    
-    public override var data_count: Int
+
+    public required init(from decoder: Decoder) throws
     {
-        return 2
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.value = try container.decodeIfPresent(Float.self, forKey: .value) ?? 0
+        self.to_index = try container.decodeIfPresent(Int.self, forKey: .to_index) ?? 0
+        
+        try super.init(from: decoder)
     }
-    
-    public override func data_from_array(_ data: [String])
+
+    public override func encode(to encoder: Encoder) throws
     {
-        to_index = Int(data[0]) ?? 0
-        value = Float(data[1]) ?? 0
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        return WorkspaceProgramElementStruct(identifier: .writer_modifier, data: [String(value), String(to_index)])
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(value, forKey: .value)
+        try container.encode(to_index, forKey: .to_index)
+        
+        try super.encode(to: encoder)
     }
 }
 
 public class MathModifierElement: ModifierElement
 {
+    public init(
+        expression: String = "",
+        to_index: Int = 0
+    )
+    {
+        self.expression = expression
+        self.to_index = to_index
+        
+        super.init()
+    }
+    
     /// A type of compare.
-    @Published public var operation: MathType = .add
+    @Published public var expression: String = ""
     
-    /// An index of register with compared value.
-    @Published public var value_index = 0
-    
-    /// An index of register with compared value.
-    @Published public var value2_index = 0
+    /// An index of register to write.
+    @Published public var to_index = 0
     
     public override var info: String
     {
-        return "Value of \(value_index) \(operation.rawValue) value of \(value2_index)"
+        return "Value of \(expression) to \(to_index)"
     }
     
     public override var symbol_name: String
@@ -167,51 +192,33 @@ public class MathModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return "m: [\(value_index)] \(operation.code_string) [\(value2_index)]"
+        return "m: [\(to_index)] [\(expression)]"
     }
     
     // File handling
-    // Data [<#operation#>, <#value#>, <#value2#>]
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    private enum CodingKeys: String, CodingKey
     {
-        return .math_modifier
+        case expression, to_index
     }
-    
-    public override var data_count: Int
+
+    public required init(from decoder: Decoder) throws
     {
-        return 3
-    }
-    
-    public override func data_from_array(_ data: [String])
-    {
-        operation = operation_from_string(data[0])
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        value_index = Int(data[1]) ?? 0
-        value2_index = Int(data[2]) ?? 0
+        self.expression = try container.decodeIfPresent(String.self, forKey: .expression) ?? ""
+        self.to_index = try container.decodeIfPresent(Int.self, forKey: .to_index) ?? 0
         
-        func operation_from_string(_ string: String) -> MathType
-        {
-            switch string
-            {
-            case "+":
-                return .add
-            case "-":
-                return .substract
-            case "·":
-                return .multiply
-            case "÷":
-                return .divide
-            case "^":
-                return .power
-            default:
-                return .add
-            }
-        }
+        try super.init(from: decoder)
     }
-    
-    public override var file_info: WorkspaceProgramElementStruct
+
+    public override func encode(to encoder: Encoder) throws
     {
-        return WorkspaceProgramElementStruct(identifier: .math_modifier, data: [operation.rawValue, String(value_index), String(value2_index)])
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(expression, forKey: .expression)
+        try container.encode(to_index, forKey: .to_index)
+        
+        try super.encode(to: encoder)
     }
 }
 
@@ -262,6 +269,13 @@ public enum MathType: String, Codable, Equatable, CaseIterable
 ///Changes registers by changer module.
 public class ChangerModifierElement: ModifierElement
 {
+    public init(module_name: String = "")
+    {
+        self.module_name = module_name
+        
+        super.init()
+    }
+    
     /// A name of modifier module.
     @Published public var module_name = ""
     
@@ -285,30 +299,6 @@ public class ChangerModifierElement: ModifierElement
     public override var code_string: String
     {
         return "m: change.(\(module_name))"
-    }
-    
-    // File handling
-    // Data [<#changer_module_name#>]
-    public override var identifier: WorkspaceProgramElementIdentifier?
-    {
-        return .changer_modifier
-    }
-    
-    public override var data_count: Int
-    {
-        return 1
-    }
-    
-    public override func data_from_array(_ data: [String])
-    {
-        module_name = data[0]
-        
-        module_import_by_name(module_name, is_internal: is_internal_module)
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        return WorkspaceProgramElementStruct(identifier: .changer_modifier, data: [module_name])
     }
     
     public var change: (inout [Float]) throws -> Void = { _ in }
@@ -408,6 +398,30 @@ public class ChangerModifierElement: ModifierElement
         }
     }
     #endif
+    
+    // File handling
+    private enum CodingKeys: String, CodingKey
+    {
+        case module_name
+    }
+
+    public required init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.module_name = try container.decodeIfPresent(String.self, forKey: .module_name) ?? ""
+        
+        try super.init(from: decoder)
+    }
+
+    public override func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(module_name, forKey: .module_name)
+        
+        try super.encode(to: encoder)
+    }
 }
 
 public typealias Changer = ChangerModifierElement
@@ -415,6 +429,21 @@ public typealias Changer = ChangerModifierElement
 ///Pushes info code from tool to registers.
 public class ObserverModifierElement: ModifierElement
 {
+    public init(
+        object_type: ObserverObjectType = .robot,
+        object_name: String = "",
+        from_indices: [Int] = [],
+        to_indices: [Int] = []
+    )
+    {
+        self.object_type = object_type
+        self.object_name = object_name
+        self.from_indices = from_indices
+        self.to_indices = to_indices
+        
+        super.init()
+    }
+    
     /// A type of observed object
     @Published public var object_type: ObserverObjectType = .robot
     
@@ -449,57 +478,44 @@ public class ObserverModifierElement: ModifierElement
     }
     
     // File handling
-    // Data [<#type#>, <#name#>, <#from indices#>, <#to indices#>]
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    private enum CodingKeys: String, CodingKey
     {
-        return .observer_modifier
+        case object_type, object_name, from_indices, to_indices
     }
-    
-    public override var data_count: Int
+
+    public required init(from decoder: Decoder) throws
     {
-        return 4
-    }
-    
-    public override func data_from_array(_ data: [String])
-    {
-        object_type = type_from_string(data[0])
-        object_name = data[1]
-        from_indices = string_to_indices(data[2])
-        to_indices = string_to_indices(data[3])
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        func type_from_string(_ string: String) -> ObserverObjectType
-        {
-            switch string
-            {
-            case "Robot":
-                return .robot
-            case "Tool":
-                return .tool
-            default:
-                return .robot
-            }
-        }
+        self.object_type = try container.decodeIfPresent(ObserverObjectType.self, forKey: .object_type) ?? .robot
+        self.object_name = try container.decodeIfPresent(String.self, forKey: .object_name) ?? ""
+        self.from_indices = try container.decodeIfPresent([Int].self, forKey: .from_indices) ?? []
+        self.to_indices = try container.decodeIfPresent([Int].self, forKey: .to_indices) ?? []
+        
+        try super.init(from: decoder)
     }
-    
-    public override var file_info: WorkspaceProgramElementStruct
+
+    public override func encode(to encoder: Encoder) throws
     {
-        return WorkspaceProgramElementStruct(identifier: .observer_modifier, data: [object_type.rawValue, object_name, indices_to_string(from_indices), indices_to_string(to_indices)])
-    }
-    
-    private func string_to_indices(_ string: String) -> [Int]
-    {
-        return string.components(separatedBy: "|").compactMap { Int($0) }
-    }
-    
-    private func indices_to_string(_ indices: [Int]) -> String
-    {
-        return indices.map { String($0) }.joined(separator: "|")
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(object_type, forKey: .object_type)
+        try container.encode(object_name, forKey: .object_name)
+        try container.encode(from_indices, forKey: .from_indices)
+        try container.encode(to_indices, forKey: .to_indices)
+        
+        try super.encode(to: encoder)
     }
 }
 
 ///Cleares data in all registers.
 public class CleanerModifierElement: ModifierElement
 {
+    public override init()
+    {
+        super.init()
+    }
+    
     public override var info: String
     {
         return "Clear all registers"
@@ -517,24 +533,13 @@ public class CleanerModifierElement: ModifierElement
     }
     
     // File handling
-    // Data |nothing|
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    public required init(from decoder: Decoder) throws
     {
-        return .cleaner_modifier
+        try super.init(from: decoder)
     }
-    
-    public override var data_count: Int
+
+    public override func encode(to encoder: Encoder) throws
     {
-        return 0
-    }
-    
-    public override func data_from_array(_ data: [String])
-    {
-        // Nothing...
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        return WorkspaceProgramElementStruct(identifier: .cleaner_modifier, data: [String]())
+        try super.encode(to: encoder)
     }
 }

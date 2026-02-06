@@ -793,9 +793,9 @@ struct Cards_Previews: PreviewProvider
 {
     struct Container: View
     {
-        @State var performer_element = RobotPerformerElement(element_struct: WorkspaceProgramElementStruct(identifier: .robot_performer, data: ["Device", "Program", "", "false", "false", "", "", "", "", "", "", "", ""]))
-        @State var modifier_element = MoverModifierElement(element_struct: WorkspaceProgramElementStruct(identifier: .mover_modifier, data: ["duplicate", "2", "4"]))
-        @State var logic_element = JumpLogicElement(element_struct: WorkspaceProgramElementStruct(identifier: .jump_logic, data: ["Mark"]))
+        @State var performer_element = RobotPerformerElement() //"Device", "Program", "", "false", "false", "", "", "", "", "", "", "", ""
+        @State var modifier_element = MoverModifierElement() //"duplicate", "2", "4"
+        @State var logic_element = JumpLogicElement() //"Mark"
         
         @State var to_rename = [false, false]
         @State var names = ["Image", "Scene"]

@@ -25,6 +25,17 @@ public class LogicElement: WorkspaceProgramElement
 ///Jumps to the specified mark.
 public class JumpLogicElement: LogicElement
 {
+    public init(
+        target_mark_name: String = "",
+        target_element_index: Int = 0
+    )
+    {
+        self.target_mark_name = target_mark_name
+        self.target_element_index = target_element_index
+        
+        super.init()
+    }
+    
     /// A name of the target mark.
     @Published public var target_mark_name = ""
     
@@ -55,31 +66,52 @@ public class JumpLogicElement: LogicElement
     }
     
     // File handling
-    // Data [<#target#>]
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    private enum CodingKeys: String, CodingKey
     {
-        return .jump_logic
+        case target_mark_name, target_element_index
     }
-    
-    public override var data_count: Int
+
+    public required init(from decoder: Decoder) throws
     {
-        return 1
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.target_mark_name = try container.decodeIfPresent(String.self, forKey: .target_mark_name) ?? ""
+        self.target_element_index = try container.decodeIfPresent(Int.self, forKey: .target_element_index) ?? 0
+        
+        try super.init(from: decoder)
     }
-    
-    public override func data_from_array(_ data: [String])
+
+    public override func encode(to encoder: Encoder) throws
     {
-        target_mark_name = data[0]
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        return WorkspaceProgramElementStruct(identifier: .jump_logic, data: [target_mark_name])
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(target_mark_name, forKey: .target_mark_name)
+        try container.encode(target_element_index, forKey: .target_element_index)
+        
+        try super.encode(to: encoder)
     }
 }
 
 ///Jumps to the specified mark when the conditions are met.
 public class ComparatorLogicElement: LogicElement
 {
+    public init(
+        compare_type: CompareType = .equal,
+        value_index: Int = 0,
+        value2_index: Int = 0,
+        target_mark_name: String = "",
+        target_element_index: Int = 0
+    )
+    {
+        self.compare_type = compare_type
+        self.value_index = value_index
+        self.value2_index = value2_index
+        self.target_mark_name = target_mark_name
+        self.target_element_index = target_element_index
+        
+        super.init()
+    }
+    
     /// A type of compare.
     @Published public var compare_type: CompareType = .equal
     
@@ -119,51 +151,35 @@ public class ComparatorLogicElement: LogicElement
     }
     
     // File handling
-    // Data [<#compare#>, <#value#>, <#value2#>, <#target#>]
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    private enum CodingKeys: String, CodingKey
     {
-        return .comparator_logic
+        case compare_type, value_index, value2_index, target_mark_name, target_element_index
     }
-    
-    public override var data_count: Int
+
+    public required init(from decoder: Decoder) throws
     {
-        return 4
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.compare_type = try container.decodeIfPresent(CompareType.self, forKey: .compare_type) ?? .equal
+        self.value_index = try container.decodeIfPresent(Int.self, forKey: .value_index) ?? 0
+        self.value2_index = try container.decodeIfPresent(Int.self, forKey: .value2_index) ?? 0
+        self.target_mark_name = try container.decodeIfPresent(String.self, forKey: .target_mark_name) ?? ""
+        self.target_element_index = try container.decodeIfPresent(Int.self, forKey: .target_element_index) ?? 0
+        
+        try super.init(from: decoder)
     }
-    
-    public override func data_from_array(_ data: [String])
+
+    public override func encode(to encoder: Encoder) throws
     {
-        compare_type = compare_from_string(data[0])
+        var container = encoder.container(keyedBy: CodingKeys.self)
         
-        value_index = Int(data[1]) ?? 0
-        value2_index = Int(data[2]) ?? 0
+        try container.encode(compare_type, forKey: .compare_type)
+        try container.encode(value_index, forKey: .value_index)
+        try container.encode(value2_index, forKey: .value2_index)
+        try container.encode(target_mark_name, forKey: .target_mark_name)
+        try container.encode(target_element_index, forKey: .target_element_index)
         
-        target_mark_name = data[3]
-        
-        func compare_from_string(_ string: String) -> CompareType
-        {
-            switch string
-            {
-            case "=":
-                return .equal
-            case "≠":
-                return .unequal
-            case ">":
-                return .greater
-            case "⩾":
-                return .greater_equal
-            case "<":
-                return .less
-            case "⩽":
-                return .less_equal
-            default:
-                return .equal
-            }
-        }
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        return WorkspaceProgramElementStruct(identifier: .comparator_logic, data: [compare_type.rawValue, String(value_index), String(value2_index), target_mark_name])
+        try super.encode(to: encoder)
     }
 }
 
@@ -219,6 +235,13 @@ public enum CompareType: String, Codable, Equatable, CaseIterable
 ///A logic mark to jump.
 public class MarkLogicElement: LogicElement
 {
+    public init(name: String = "")
+    {
+        self.name = name
+        
+        super.init()
+    }
+    
     /// A target mark name.
     @Published public var name = "None"
     
@@ -244,24 +267,26 @@ public class MarkLogicElement: LogicElement
     }
     
     // File handling
-    // Data [name]
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    private enum CodingKeys: String, CodingKey
     {
-        return .mark_logic
+        case name
     }
-    
-    public override var data_count: Int
+
+    public required init(from decoder: Decoder) throws
     {
-        return 1
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.name = try container.decodeIfPresent(String.self, forKey: .name) ?? "None"
+        
+        try super.init(from: decoder)
     }
-    
-    public override func data_from_array(_ data: [String])
+
+    public override func encode(to encoder: Encoder) throws
     {
-        name = data[0]
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        return WorkspaceProgramElementStruct(identifier: .mark_logic, data: [name])
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(name, forKey: .name)
+        
+        try super.encode(to: encoder)
     }
 }

@@ -164,7 +164,7 @@ public func pass_positions_programs(names: [String], from: Robot, to: Robot)
  
  - Returns: Inherited from the workspace program element class instance.
  */
-public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct) -> WorkspaceProgramElement
+/*public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct) -> WorkspaceProgramElement
 {
     switch element_struct.identifier
     {
@@ -193,7 +193,7 @@ public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct)
     case .none:
         return WorkspaceProgramElement()
     }
-}
+}*/
 
 ///Deep copy for codable objects.
 func clone_codable<T: Codable>(_ object: T) -> T?
@@ -970,7 +970,7 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
     
     func line_to_element(_ input: String) -> WorkspaceProgramElement?
     {
-        switch input
+        /*switch input
         {
         // Performers
         // p: r.(name).(program)
@@ -1102,7 +1102,7 @@ public func code_to_elements(code: String) -> [WorkspaceProgramElement]
             
         default:
             break
-        }
+        }*/
         
         return nil
     }

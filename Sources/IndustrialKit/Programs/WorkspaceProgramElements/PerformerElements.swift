@@ -11,6 +11,23 @@ import SwiftUI
 ///Initiates operations on controllable devices such as robots or tools.
 public class PerformerElement: WorkspaceProgramElement
 {
+    public init(
+        object_name: String = "",
+        is_single_perfrom: Bool = false,
+        is_program_by_index: Bool = false,
+        program_name: String = "",
+        program_index: Int = 0
+    )
+    {
+        self.object_name = object_name
+        self.is_single_perfrom = is_single_perfrom
+        self.is_program_by_index = is_program_by_index
+        self.program_name = program_name
+        self.program_index = program_index
+        
+        super.init()
+    }
+    
     /// A name of workspace object.
     @Published public var object_name = ""
     
@@ -63,11 +80,61 @@ public class PerformerElement: WorkspaceProgramElement
     {
         return .green
     }
+    
+    // File handling
+    private enum CodingKeys: String, CodingKey
+    {
+        case object_name, is_single_perfrom, is_program_by_index, program_name, program_index
+    }
+
+    public required init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.object_name = try container.decodeIfPresent(String.self, forKey: .object_name) ?? ""
+        self.is_single_perfrom = try container.decodeIfPresent(Bool.self, forKey: .is_single_perfrom) ?? false
+        self.is_program_by_index = try container.decodeIfPresent(Bool.self, forKey: .is_program_by_index) ?? false
+        self.program_name = try container.decodeIfPresent(String.self, forKey: .program_name) ?? ""
+        self.program_index = try container.decodeIfPresent(Int.self, forKey: .program_index) ?? 0
+        
+        try super.init(from: decoder)
+    }
+
+    public override func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(object_name, forKey: .object_name)
+        try container.encode(is_single_perfrom, forKey: .is_single_perfrom)
+        try container.encode(is_program_by_index, forKey: .is_program_by_index)
+        try container.encode(program_name, forKey: .program_name)
+        try container.encode(program_index, forKey: .program_index)
+        
+        try super.encode(to: encoder)
+    }
 }
 
 ///Performs program or position on selected robot.
 public class RobotPerformerElement: PerformerElement
 {
+    public init(
+        x_index: Int = 0, y_index: Int = 0, z_index: Int = 0,
+        r_index: Int = 0, p_index: Int = 0, w_index: Int = 0,
+        speed_index: Int = 0, type_index: Int = 0
+    )
+    {
+        self.x_index = x_index
+        self.y_index = y_index
+        self.z_index = z_index
+        
+        self.r_index = r_index
+        self.p_index = p_index
+        self.w_index = w_index
+        
+        self.speed_index = speed_index
+        self.type_index = type_index
+        
+        super.init()
+    }
+    
     /// Index of *x* location component.
     @Published public var x_index = 0
     /// Index of *y* location component.
@@ -119,67 +186,55 @@ public class RobotPerformerElement: PerformerElement
     }
     
     // File handling
-    // Data [<#robot name#>, <#program name#>, <#program index#>, <#is single#>, <#is by index#>, <#x#>, <#y#>, <#z#>, <#r#>, <#p#>, <#w#>, <#speed#>, <#type#>]
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    private enum CodingKeys: String, CodingKey
     {
-        return .robot_performer
+        case x_index, y_index, z_index, r_index, p_index, w_index, speed_index, type_index
     }
-    
-    public override var data_count: Int
+
+    public required init(from decoder: Decoder) throws
     {
-        return 13
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.x_index = try container.decodeIfPresent(Int.self, forKey: .x_index) ?? 0
+        self.y_index = try container.decodeIfPresent(Int.self, forKey: .y_index) ?? 0
+        self.z_index = try container.decodeIfPresent(Int.self, forKey: .z_index) ?? 0
+        self.r_index = try container.decodeIfPresent(Int.self, forKey: .r_index) ?? 0
+        self.p_index = try container.decodeIfPresent(Int.self, forKey: .p_index) ?? 0
+        self.w_index = try container.decodeIfPresent(Int.self, forKey: .w_index) ?? 0
+        
+        self.speed_index = try container.decodeIfPresent(Int.self, forKey: .speed_index) ?? 0
+        self.type_index = try container.decodeIfPresent(Int.self, forKey: .type_index) ?? 0
+        
+        try super.init(from: decoder)
     }
-    
-    public override func data_from_array(_ data: [String])
+
+    public override func encode(to encoder: Encoder) throws
     {
-        object_name = data[0]
+        var container = encoder.container(keyedBy: CodingKeys.self)
         
-        program_name = data[1]
-        program_index = Int(data[2]) ?? 0
-        is_single_perfrom = Bool(data[3]) ?? false
-        is_program_by_index = Bool(data[4]) ?? false
+        try container.encode(x_index, forKey: .x_index)
+        try container.encode(y_index, forKey: .y_index)
+        try container.encode(z_index, forKey: .z_index)
+        try container.encode(r_index, forKey: .r_index)
+        try container.encode(p_index, forKey: .p_index)
+        try container.encode(w_index, forKey: .w_index)
+        try container.encode(speed_index, forKey: .speed_index)
+        try container.encode(type_index, forKey: .type_index)
         
-        x_index = Int(data[5]) ?? 0
-        y_index = Int(data[6]) ?? 0
-        z_index = Int(data[7]) ?? 0
-        
-        r_index = Int(data[8]) ?? 0
-        p_index = Int(data[9]) ?? 0
-        w_index = Int(data[10]) ?? 0
-        
-        speed_index = Int(data[11]) ?? 0
-        type_index = Int(data[12]) ?? 0
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        var info = [String]()
-        
-        info.append(object_name)
-        
-        info.append(program_name)
-        info.append(String(program_index))
-        info.append(String(is_single_perfrom))
-        info.append(String(is_program_by_index))
-        
-        info.append(String(x_index))
-        info.append(String(y_index))
-        info.append(String(z_index))
-        
-        info.append(String(r_index))
-        info.append(String(p_index))
-        info.append(String(w_index))
-        
-        info.append(String(speed_index))
-        info.append(String(type_index))
-        
-        return WorkspaceProgramElementStruct(identifier: .robot_performer, data: info)
+        try super.encode(to: encoder)
     }
 }
 
 ///Performs program or position on selected tool.
 public class ToolPerformerElement: PerformerElement
 {
+    public init(opcode_index: Int = 0)
+    {
+        self.opcode_index = opcode_index
+        
+        super.init()
+    }
+    
     /// Index of operation code location component.
     @Published public var opcode_index = 0
     
@@ -214,42 +269,24 @@ public class ToolPerformerElement: PerformerElement
     }
     
     // File handling
-    // Data [<#tool name#>, <#program name#>, <#program index#>, <#is single#>, <#is by index#>, <#opcode#>]
-    public override var identifier: WorkspaceProgramElementIdentifier?
+    private enum CodingKeys: String, CodingKey
     {
-        return .tool_performer
+        case opcode_index
+    }
+
+    public required init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.opcode_index = try container.decodeIfPresent(Int.self, forKey: .opcode_index) ?? 0
+        
+        try super.init(from: decoder)
     }
     
-    public override var data_count: Int
+    public override func encode(to encoder: Encoder) throws
     {
-        return 6
-    }
-    
-    public override func data_from_array(_ data: [String])
-    {
-        object_name = data[0]
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(opcode_index, forKey: .opcode_index)
         
-        program_name = data[1]
-        program_index = Int(data[2]) ?? 0
-        is_single_perfrom = Bool(data[3]) ?? false
-        is_program_by_index = Bool(data[4]) ?? false
-        
-        opcode_index = Int(data[5]) ?? 0
-    }
-    
-    public override var file_info: WorkspaceProgramElementStruct
-    {
-        var info = [String]()
-        
-        info.append(object_name)
-        
-        info.append(program_name)
-        info.append(String(program_index))
-        info.append(String(is_single_perfrom))
-        info.append(String(is_program_by_index))
-        
-        info.append(String(opcode_index))
-        
-        return WorkspaceProgramElementStruct(identifier: .tool_performer, data: info)
+        try super.encode(to: encoder)
     }
 }

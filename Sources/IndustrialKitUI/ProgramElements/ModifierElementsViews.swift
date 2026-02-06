@@ -125,9 +125,8 @@ public struct MathElementView: View
     
     @EnvironmentObject var workspace: Workspace
     
-    @State var operation: MathType = .add
-    @State var value_index = [Int]()
-    @State var value2_index = [Int]()
+    @State var to_index = [Int]()
+    @State var expression = ""
     
     @State private var picker_is_presented = false
     
@@ -137,9 +136,8 @@ public struct MathElementView: View
     {
         self._element = element
         
-        _operation = State(initialValue: (_element.wrappedValue as! MathModifierElement).operation)
-        _value_index = State(initialValue: [(_element.wrappedValue as! MathModifierElement).value_index])
-        _value2_index = State(initialValue: [(_element.wrappedValue as! MathModifierElement).value2_index])
+        _to_index = State(initialValue: [(_element.wrappedValue as! MathModifierElement).to_index])
+        _expression = State(initialValue: (_element.wrappedValue as! MathModifierElement).expression)
         
         self.on_update = on_update
     }
@@ -151,38 +149,20 @@ public struct MathElementView: View
             Text("Value of")
                 .frame(minWidth: 50)
             
-            RegistersSelector(text: "\(value_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $value_index, names: ["Value 1"])
+            RegistersSelector(text: "\(to_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
             
-            Button(operation.rawValue)
-            {
-                picker_is_presented = true
-            }
-            .popover(isPresented: $picker_is_presented)
-            {
-                MathTypePicker(operation: $operation)
-                #if !os(macOS)
-                    .presentationDetents([.height(96)])
-                #endif
-            }
-            
-            Text("value of")
-                .frame(minWidth: 48)
-            
-            RegistersSelector(text: "\(value2_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $value2_index, names: ["Value 2"])
+            Text("Expression")
+            TextField("Expression", text: $expression) // Expression field
+                .textFieldStyle(.roundedBorder)
         }
-        .onChange(of: operation)
+        .onChange(of: to_index)
         { _, new_value in
-            (element as! MathModifierElement).operation = new_value
+            (element as! MathModifierElement).to_index = new_value[0]
             on_update()
         }
-        .onChange(of: value_index)
+        .onChange(of: expression)
         { _, new_value in
-            (element as! MathModifierElement).value_index = new_value[0]
-            on_update()
-        }
-        .onChange(of: value2_index)
-        { _, new_value in
-            (element as! MathModifierElement).value2_index = new_value[0]
+            (element as! MathModifierElement).expression = new_value
             on_update()
         }
     }

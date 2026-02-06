@@ -63,8 +63,7 @@ public struct JumpElementView: View
                 .disabled(workspace.marks_names.count == 0)
             }
         }
-        .onChange(of: target_mark_name)
-        { _, new_value in
+        .onChange(of: target_mark_name) { new_value in
             (element as! JumpLogicElement).target_mark_name = new_value
             on_update()
         }
@@ -158,23 +157,19 @@ public struct ComparatorElementView: View
                 .disabled(workspace.marks_names.count == 0)
             }
         }
-        .onChange(of: compare_type)
-        { _, new_value in
+        .onChange(of: compare_type) { new_value in
             (element as! ComparatorLogicElement).compare_type = new_value
             on_update()
         }
-        .onChange(of: value_index)
-        { _, new_value in
+        .onChange(of: value_index) { new_value in
             (element as! ComparatorLogicElement).value_index = new_value[0]
             on_update()
         }
-        .onChange(of: value2_index)
-        { _, new_value in
+        .onChange(of: value2_index) { new_value in
             (element as! ComparatorLogicElement).value2_index = new_value[0]
             on_update()
         }
-        .onChange(of: target_mark_name)
-        { _, new_value in
+        .onChange(of: target_mark_name) { new_value in
             (element as! ComparatorLogicElement).target_mark_name = new_value
             on_update()
         }
@@ -228,8 +223,7 @@ public struct MarkLogicElementView: View
             TextField("Mark name", text: $name) // Mark name field
                 .textFieldStyle(.roundedBorder)
         }
-        .onChange(of: name)
-        { _, new_value in
+        .onChange(of: name) { new_value in
             (element as! MarkLogicElement).name = new_value
             on_update()
         }
@@ -305,3 +299,4 @@ struct IMALogicPreviewsContainer: PreviewProvider
         }
     }
 }
+

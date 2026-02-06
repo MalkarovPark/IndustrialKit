@@ -13,7 +13,7 @@ import SwiftUI
  
  The element contains some action performed by the production system.
  */
-public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject//, Codable
+public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject, Codable
 {
     public static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
@@ -26,53 +26,17 @@ public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject//
     }
     
     public var id = UUID()
+    public var type: String { String(describing: Self.self) }
     
     public init()
     {
         
     }
     
-    /// Inits workspace program element by appropriate codable structure.
-    public init(element_struct: WorkspaceProgramElementStruct)
-    {
-        if element_struct.identifier == identifier && element_struct.data.count == data_count
-        {
-            data_from_array(element_struct.data)
-        }
-    }
-    
-    /// Inits workspace program element by appropriate identifier.
-    public init(element_identifier: WorkspaceProgramElementIdentifier)
-    {
-        data_from_array([String]())
-    }
-    
-    /// Inits workspace program element by appropriate data array.
-    public init(data_array: [String])
-    {
-        data_from_array(data_array)
-    }
-    
     /// Element type identifier.
     open var identifier: WorkspaceProgramElementIdentifier?
     {
         return nil
-    }
-    
-    /// Element data components count for type.
-    open var data_count: Int
-    {
-        return 0
-    }
-    
-    /**
-     Input program element data from data array.
-     - Parameters:
-        - array: Appropriate data array.
-     */
-    open func data_from_array(_ data: [String])
-    {
-        
     }
     
     // MARK: - UI functions
@@ -116,30 +80,61 @@ public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject//
     }
     
     // MARK: - Work with file system
-    /// Converts tool data to codable tool struct.
-    public var file_info: WorkspaceProgramElementStruct
+    private enum CodingKeys: String, CodingKey { case id }
+
+    public required init(from decoder: Decoder) throws
     {
-        return WorkspaceProgramElementStruct()
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+    }
+
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
     }
 }
 
-//MARK: - Codable Types
-///A codable tool struct.
-public struct WorkspaceProgramElementStruct: Codable
+public class NewElement: WorkspaceProgramElement
 {
-    public var identifier: WorkspaceProgramElementIdentifier?
-    
-    public var data: [String]
-    
-    public init()
+    @Published public var link: String = ""
+    @Published public var scale: Int = 100
+    @Published public var description: String = ""
+
+    public init(link: String, scale: Int = 100, description: String = "")
     {
-        data = [String]()
+        self.link = link
+        self.scale = scale
+        self.description = description
+        
+        super.init()
     }
-    
-    public init(identifier: WorkspaceProgramElementIdentifier, data: [String])
+
+    private enum CodingKeys: String, CodingKey
     {
-        self.identifier = identifier
-        self.data = data
+        case link, scale, description
+    }
+
+    public required init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        link = try container.decode(String.self, forKey: .link)
+        scale = try container.decodeIfPresent(Int.self, forKey: .scale) ?? 100
+        description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
+        
+        try super.init(from: decoder)
+    }
+
+    public override func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(link, forKey: .link)
+        try container.encode(scale, forKey: .scale)
+        try container.encode(description, forKey: .description)
+        
+        try super.encode(to: encoder)
     }
 }
 

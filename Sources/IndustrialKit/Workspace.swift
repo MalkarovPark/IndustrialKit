@@ -1156,7 +1156,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func math(by element: MathModifierElement)
     {
-        element.operation.operation(&registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
+        //element.operation.operation(&registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
     }
     
     /**
@@ -2379,7 +2379,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         robots: [RobotFileData],
         tools: [ToolFileData],
         parts: [PartFileData],
-        elements: [WorkspaceProgramElementStruct],
+        elements: [WorkspaceProgramElement], //[WorkspaceProgramElementStruct],
         registers: [Float]
     )
     {
@@ -2402,16 +2402,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         
         // Workspace program elements
-        let elements_file_info: [WorkspaceProgramElementStruct] = elements.map
+        /*let elements_file_info: [WorkspaceProgramElementStruct] = elements.map
         {
             $0.file_info
-        }
+        }*/
         
         return (
             robots: robots_file_info,
             tools: tools_file_info,
             parts: parts_file_info,
-            elements: elements_file_info,
+            elements: elements, //elements_file_info,
             registers: registers
         )
     }
@@ -2456,7 +2456,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         for element in preset.elements
         {
-            elements.append(element_from_struct(element))
+            //elements.append(element_from_struct(element))
         }
         
         // MARK: - Registers
@@ -2502,7 +2502,7 @@ public enum WorkspaceObjectType: String, Equatable, CaseIterable
 public struct WorkspacePreset: Codable
 {
     public var robots = [RobotFileData]()
-    public var elements = [WorkspaceProgramElementStruct]()
+    public var elements = [WorkspaceProgramElement]()
     public var tools = [ToolFileData]()
     public var parts = [PartFileData]()
     
@@ -2511,12 +2511,12 @@ public struct WorkspacePreset: Codable
     public init()
     {
         robots = [RobotFileData]()
-        elements = [WorkspaceProgramElementStruct]()
+        elements = [WorkspaceProgramElement]()
         tools = [ToolFileData]()
         parts = [PartFileData]()
     }
     
-    public init(robots: [RobotFileData], elements: [WorkspaceProgramElementStruct], tools: [ToolFileData], parts: [PartFileData])
+    public init(robots: [RobotFileData], elements: [WorkspaceProgramElement], tools: [ToolFileData], parts: [PartFileData])
     {
         self.robots = robots
         self.elements = elements
