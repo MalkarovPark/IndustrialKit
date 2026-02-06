@@ -10,21 +10,21 @@ import IndustrialKit
 
 public struct MoverElementView: View
 {
-    @Binding var element: WorkspaceProgramElement
+    @ObservedObject var element: MoverModifierElement
     
-    @EnvironmentObject var workspace: Workspace
-    
-    @State private var move_type: ModifierCopyType = .duplicate
-    @State private var indices = [Int]()
+    @ObservedObject var workspace: Workspace
     
     private let on_update: () -> ()
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(
+        element: MoverModifierElement,
+        workspace: Workspace,
+        on_update: @escaping () -> () = {}
+    )
     {
-        self._element = element
+        self.element = element
         
-        _move_type = State(initialValue: (_element.wrappedValue as! MoverModifierElement).move_type)
-        _indices = State(initialValue: [(_element.wrappedValue as! MoverModifierElement).from_index, (_element.wrappedValue as! MoverModifierElement).to_index])
+        self.workspace = workspace
         
         self.on_update = on_update
     }
@@ -33,7 +33,17 @@ public struct MoverElementView: View
     {
         HStack(spacing: 0)
         {
-            Picker("Type", selection: $move_type)
+            let move_type = Binding(
+                get: { element.move_type },
+                set:
+                    { new_value in
+                        element.move_type = new_value
+                        
+                        on_update()
+                    }
+            )
+            
+            Picker("Type", selection: move_type)
             {
                 ForEach(ModifierCopyType.allCases, id: \.self)
                 { type in
@@ -45,39 +55,39 @@ public struct MoverElementView: View
             .buttonStyle(.bordered)
             .padding(.trailing)
             
-            RegistersSelector(text: "From \(indices[0]) to \(indices[1])", registers_count: workspace.registers.count, colors: registers_colors, indices: $indices, names: ["From", "To"])
-        }
-        .onChange(of: move_type)
-        { _, new_value in
-            (element as! MoverModifierElement).move_type = new_value
-            on_update()
-        }
-        .onChange(of: indices)
-        { _, new_value in
-            (element as! MoverModifierElement).from_index = new_value[0]
-            (element as! MoverModifierElement).to_index = new_value[1]
-            on_update()
+            let indices = Binding(
+                get: { [element.from_index, element.to_index] },
+                set:
+                    { new_value in
+                        element.from_index = new_value[0]
+                        element.to_index = new_value[1]
+                        
+                        on_update()
+                    }
+            )
+            
+            RegistersSelector(text: "From \(element.from_index) to \(element.to_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: indices, names: ["From", "To"])
         }
     }
 }
 
 public struct WriterElementView: View
 {
-    @Binding var element: WorkspaceProgramElement
+    @ObservedObject var element: WriterModifierElement
     
-    @EnvironmentObject var workspace: Workspace
-    
-    @State private var value: Float = 0
-    @State private var to_index = [Int]()
+    @ObservedObject var workspace: Workspace
     
     private let on_update: () -> ()
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(
+        element: WriterModifierElement,
+        workspace: Workspace,
+        on_update: @escaping () -> () = {}
+    )
     {
-        self._element = element
+        self.element = element
         
-        _value = State(initialValue: (_element.wrappedValue as! WriterModifierElement).value)
-        _to_index = State(initialValue: [(_element.wrappedValue as! WriterModifierElement).to_index])
+        self.workspace = workspace
         
         self.on_update = on_update
     }
@@ -88,56 +98,66 @@ public struct WriterElementView: View
         {
             HStack(spacing: 8)
             {
+                let value = Binding(
+                    get: { element.value },
+                    set:
+                        { new_value in
+                            element.value = new_value
+                            
+                            on_update()
+                        }
+                )
+                
                 Text("Write")
                 #if !os(visionOS)
                     .frame(width: 34)
                 #else
                     .frame(width: 60)
                 #endif
-                TextField("0", value: $value, format: .number)
+                TextField("0", value: value, format: .number)
                     .textFieldStyle(.roundedBorder)
                 #if !os(macOS)
                     .keyboardType(.decimalPad)
                 #endif
-                Stepper("Enter", value: $value, in: (-Float.infinity)...(Float.infinity))
+                Stepper("Enter", value: value, in: (-Float.infinity)...(Float.infinity))
                     .labelsHidden()
             }
             .padding(.trailing)
             
-            RegistersSelector(text: "to \(to_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
-        }
-        .onChange(of: value)
-        { _, new_value in
-            (element as! WriterModifierElement).value = new_value
-            on_update()
-        }
-        .onChange(of: to_index)
-        { _, new_value in
-            (element as! WriterModifierElement).to_index = new_value[0]
-            on_update()
+            let to_index = Binding(
+                get: { [element.to_index] },
+                set:
+                    { new_value in
+                        element.to_index = new_value[0]
+                        
+                        on_update()
+                    }
+            )
+            
+            RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: to_index, names: ["To"])
         }
     }
 }
 
 public struct MathElementView: View
 {
-    @Binding var element: WorkspaceProgramElement
+    @ObservedObject var element: MathModifierElement
     
-    @EnvironmentObject var workspace: Workspace
-    
-    @State var to_index = [Int]()
-    @State var expression = ""
-    
-    @State private var picker_is_presented = false
+    @ObservedObject var workspace: Workspace
     
     private let on_update: () -> ()
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    @State private var picker_is_presented = false
+    
+    public init(
+        element: MathModifierElement,
+        workspace: Workspace,
+        on_update: @escaping () -> () = {}
+    )
     {
-        self._element = element
+        self.element = element
         
-        _to_index = State(initialValue: [(_element.wrappedValue as! MathModifierElement).to_index])
-        _expression = State(initialValue: (_element.wrappedValue as! MathModifierElement).expression)
+        self.workspace = workspace
         
         self.on_update = on_update
     }
@@ -146,74 +166,77 @@ public struct MathElementView: View
     {
         HStack(spacing: 8)
         {
-            TextField("Expression", text: $expression)
+            let expression = Binding(
+                get: { element.expression },
+                set:
+                    { new_value in
+                        element.expression = new_value
+                        
+                        on_update()
+                    }
+            )
+            
+            let to_index = Binding(
+                get: { [element.to_index] },
+                set:
+                    { new_value in
+                        element.to_index = new_value[0]
+                        
+                        on_update()
+                    }
+            )
+            
+            TextField("Expression", text: expression)
                 .textFieldStyle(.roundedBorder)
             
-            RegistersSelector(text: "to \(to_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
+            RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: to_index, names: ["To"])
         }
-        .onChange(of: to_index)
-        { _, new_value in
-            (element as! MathModifierElement).to_index = new_value[0]
-            on_update()
-        }
-        .onChange(of: expression)
-        { _, new_value in
-            (element as! MathModifierElement).expression = new_value
-            on_update()
-        }
-    }
-}
-
-public struct MathTypePicker: View
-{
-    @Binding var operation: MathType
-    
-    public init(operation: Binding<MathType>)
-    {
-        self._operation = operation
-    }
-    
-    public var body: some View
-    {
-        Picker("Operation", selection: $operation)
-        {
-            ForEach(MathType.allCases, id: \.self)
-            { math_type in
-                Text(math_type.rawValue)
-            }
-        }
-        .pickerStyle(.segmented)
-        .labelsHidden()
-        .padding()
     }
 }
 
 public struct ChangerElementView: View
 {
-    @EnvironmentObject var workspace: Workspace
+    @ObservedObject var element: ChangerModifierElement
     
-    @Binding var element: WorkspaceProgramElement
-    
-    @State private var module_name = String()
+    @ObservedObject var workspace: Workspace
     
     let on_update: () -> ()
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(
+        element: ChangerModifierElement,
+        workspace: Workspace,
+        on_update: @escaping () -> () = {}
+    )
     {
-        self._element = element
+        self.element = element
         
-        _module_name = State(initialValue: (_element.wrappedValue as! Changer).module_name)
+        self.workspace = workspace
         
         self.on_update = on_update
+        
+        if Changer.internal_modules_list.count > 0 && element.module_name == ""
+        {
+            element.module_name = Changer.internal_modules_list[0]
+        }
     }
     
     public var body: some View
     {
         // MARK: Changer subview
+        let module_name = Binding(
+            get: { element.module_name },
+            set:
+                { new_value in
+                    element.module_name = new_value
+                    
+                    on_update()
+                }
+        )
+        
         #if os(macOS)
         HStack
         {
-            Picker("Module", selection: $module_name) // Changer module picker
+            Picker("Module", selection: module_name) // Changer module picker
             {
                 if Changer.internal_modules_list.count > 0 || Changer.external_modules_list.count > 0
                 {
@@ -238,24 +261,12 @@ public struct ChangerElementView: View
                     Text("None")
                 }
             }
-            .onAppear
-            {
-                if Changer.internal_modules_list.count > 0 && module_name == ""
-                {
-                    module_name = Changer.internal_modules_list[0]
-                }
-            }
             .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
-        }
-        .onChange(of: module_name)
-        { _, new_value in
-            (element as! ChangerModifierElement).module_name = new_value
-            on_update()
         }
         #else
         VStack
         {
-            Picker("Module", selection: $module_name) // Changer module picker
+            Picker("Module", selection: module_name) // Changer module picker
             {
                 if Changer.internal_modules_list.count > 0
                 {
@@ -280,13 +291,6 @@ public struct ChangerElementView: View
                     Text("None")
                 }
             }
-            .onAppear
-            {
-                if Changer.internal_modules_list.count > 0 && module_name == ""
-                {
-                    module_name = Changer.internal_modules_list[0]
-                }
-            }
             .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
         }
         .onChange(of: module_name)
@@ -298,72 +302,35 @@ public struct ChangerElementView: View
     }
 }
 
-public struct OutputValueItmeView: View
-{
-    @EnvironmentObject var workspace: Workspace
-    
-    @Binding var from: Int
-    @Binding var to: Int
-    
-    public var body: some View
-    {
-        HStack
-        {
-            Text("From")
-            TextField("0", value: $from, format: .number)
-            Stepper("Enter", value: $from, in: 0...10000)
-                .labelsHidden()
-            #if !os(macOS)
-                .keyboardType(.decimalPad)
-            #endif
-            
-            RegistersSelector(text: "to \(to)", registers_count: workspace.registers.count, colors: registers_colors, indices: binding_for_single($to), names: ["To"])
-        }
-    }
-    
-    private func binding_for_single(_ value: Binding<Int>) -> Binding<[Int]>
-    {
-        Binding(
-            get:
-                {
-                    [value.wrappedValue]
-                },
-            set:
-                { newValue in
-                if let firstValue = newValue.first
-                {
-                    value.wrappedValue = firstValue
-                }
-            }
-        )
-    }
-}
-
 public struct ObserverElementView: View
 {
-    @Binding var element: WorkspaceProgramElement
+    @ObservedObject var element: ObserverModifierElement
     
-    @State private var object_type: ObserverObjectType = .robot
-    @State private var object_name = ""
-    @State private var from_indices = [Int]()
-    @State private var to_indices = [Int]()
+    @ObservedObject var workspace: Workspace
     
-    private let on_update: () -> ()
-    
-    @EnvironmentObject var workspace: Workspace
+    let on_update: () -> ()
     
     @State private var viewed_object: WorkspaceObject?
     
-    public init(element: Binding<WorkspaceProgramElement>, on_update: @escaping () -> ())
+    public init(
+        element: ObserverModifierElement,
+        workspace: Workspace,
+        on_update: @escaping () -> () = {}
+    )
     {
-        self._element = element
+        self.element = element
         
-        _object_type = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).object_type)
-        _object_name = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).object_name)
-        _from_indices = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).from_indices)
-        _to_indices = State(initialValue: (_element.wrappedValue as! ObserverModifierElement).to_indices)
+        self.workspace = workspace
         
         self.on_update = on_update
+        
+        switch self.element.object_type
+        {
+        case .robot:
+            element.object_name = workspace.placed_robots_names.first ?? "New Robot"
+        case .tool:
+            element.object_name = workspace.placed_tools_names.first ?? "New Tool"
+        }
     }
     
     public var body: some View
@@ -371,7 +338,25 @@ public struct ObserverElementView: View
         // MARK: tool subview
         VStack(spacing: 0)
         {
-            Picker("Type", selection: $object_type)
+            let object_type = Binding(
+                get: { element.object_type },
+                set:
+                    { new_value in
+                        element.object_type = new_value
+                        
+                        switch new_value
+                        {
+                        case .robot:
+                            element.object_name = workspace.placed_robots_names.first ?? "New Robot"
+                        case .tool:
+                            element.object_name = workspace.placed_tools_names.first ?? "New Tool"
+                        }
+                        
+                        on_update()
+                    }
+            )
+            
+            Picker("Type", selection: object_type)
             {
                 ForEach(ObserverObjectType.allCases, id: \.self)
                 { object_type in
@@ -382,33 +367,36 @@ public struct ObserverElementView: View
             .labelsHidden()
             .padding(.bottom)
             
-            switch object_type
+            let object_name = Binding(
+                get: { element.object_name },
+                set:
+                    { new_value in
+                        element.object_name = new_value
+                        
+                        on_update()
+                    }
+            )
+            
+            let outputs = Binding(
+                get: { element.outputs },
+                set:
+                    { new_value in
+                        element.outputs = new_value
+                        
+                        on_update()
+                    }
+            )
+            
+            switch element.object_type
             {
             case .robot:
                 if workspace.placed_robots_names.count > 0
                 {
-                    Picker("Name", selection: $object_name) // robot picker
+                    Picker("Name", selection: object_name) // robot picker
                     {
                         ForEach(workspace.placed_robots_names, id: \.self)
                         { name in
                             Text(name)
-                        }
-                    }
-                    .onChange(of: object_name)
-                    { _, new_value in
-                        viewed_object = workspace.robot_by_name(new_value)
-                        workspace.update_view()
-                    }
-                    .onAppear
-                    {
-                        if object_name == ""
-                        {
-                            object_name = workspace.placed_robots_names[0]
-                        }
-                        else
-                        {
-                            viewed_object = workspace.robot_by_name(object_name)
-                            workspace.update_view()
                         }
                     }
                     #if !os(macOS)
@@ -417,88 +405,14 @@ public struct ObserverElementView: View
                     .disabled(workspace.placed_robots_names.count == 0)
                     .padding(.bottom)
                 }
-                
-                if workspace.placed_robots_names.count > 0
-                {
-                    if from_indices.count > 0
-                    {
-                        List
-                        {
-                            ForEach(from_indices.indices, id: \.self)
-                            { index in
-                                OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
-                                    .contextMenu
-                                    {
-                                        Button(role: .destructive)
-                                        {
-                                            delete_items(at: IndexSet(integer: index))
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-                            }
-                            .onDelete(perform: delete_items)
-                        }
-                        .frame(minHeight: 160)
-                        /*#if os(macOS)
-                        .frame(height: 256) // (width: 256, height: 256)
-                        #else
-                        .frame(width: 320, height: 256)
-                        #endif*/
-                        .modifier(ListBorderer())
-                        .padding(.bottom)
-                    }
-                    else
-                    {
-                        ZStack
-                        {
-                            Rectangle()
-                                .foregroundStyle(.white)
-                            
-                            Text("No items to ouput")
-                        }
-                        .frame(height: 64) // (width: 256, height: 256)
-                        .modifier(ListBorderer())
-                        .padding(.bottom)
-                    }
-                    
-                    Button(action: add_item)
-                    {
-                        Text("Add")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .keyboardShortcut(.defaultAction)
-                }
-                else
-                {
-                    Text("No robots placed")
-                }
             case .tool:
                 if workspace.placed_tools_names.count > 0
                 {
-                    Picker("Name", selection: $object_name) // tool picker
+                    Picker("Name", selection: object_name) // tool picker
                     {
                         ForEach(workspace.placed_tools_names, id: \.self)
                         { name in
                             Text(name)
-                        }
-                    }
-                    .onChange(of: object_name)
-                    { _, new_value in
-                        viewed_object = workspace.tool_by_name(new_value)
-                        workspace.update_view()
-                    }
-                    .onAppear
-                    {
-                        if object_name == ""
-                        {
-                            object_name = workspace.placed_tools_names[0]
-                        }
-                        else
-                        {
-                            viewed_object = workspace.tool_by_name(object_name)
-                            workspace.update_view()
                         }
                     }
                     #if !os(macOS)
@@ -507,119 +421,108 @@ public struct ObserverElementView: View
                     .disabled(workspace.placed_tools_names.count == 0)
                     .padding(.bottom)
                 }
-                
-                if workspace.placed_tools_names.count > 0
-                {
-                    if from_indices.count > 0
-                    {
-                        List
-                        {
-                            ForEach(from_indices.indices, id: \.self)
-                            { index in
-                                OutputValueItmeView(from: $from_indices[index], to: $to_indices[index])
-                                    .contextMenu
-                                    {
-                                        Button(role: .destructive)
-                                        {
-                                            delete_items(at: IndexSet(integer: index))
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-                            }
-                            .onDelete(perform: delete_items)
-                        }
-                        .frame(minHeight: 160)
-                        /*#if os(macOS)
-                        .frame(height: 256) // (width: 256, height: 256)
-                        #else
-                        .frame(width: 320, height: 256)
-                        #endif*/
-                        .modifier(ListBorderer())
-                        .padding(.bottom)
-                    }
-                    else
-                    {
-                        ZStack
-                        {
-                            Rectangle()
-                                .foregroundStyle(.white)
-                            
-                            Text("No items to ouput")
-                        }
-                        .frame(height: 64) // (width: 256, height: 256)
-                        .modifier(ListBorderer())
-                        .padding(.bottom)
-                    }
-                    
-                    Button(action: add_item)
-                    {
-                        Text("Add")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .keyboardShortcut(.defaultAction)
-                }
-                else
-                {
-                    Text("No tools placed")
-                }
-            }
-        }
-        .onChange(of: object_type)
-        { _, new_value in
-            switch object_type
-            {
-            case .robot:
-                if workspace.placed_robots_names.count > 0
-                {
-                    object_name = workspace.placed_robots_names[0]
-                }
-                else
-                {
-                    object_name = ""
-                }
-            case .tool:
-                if workspace.placed_tools_names.count > 0
-                {
-                    object_name = workspace.placed_tools_names[0]
-                }
-                else
-                {
-                    object_name = ""
-                }
             }
             
-            (element as! ObserverModifierElement).object_type = new_value
-            on_update()
-        }
-        .onChange(of: object_name)
-        { _, new_value in
-            (element as! ObserverModifierElement).object_name = new_value
-            on_update()
-        }
-        .onChange(of: from_indices)
-        { _, new_value in
-            (element as! ObserverModifierElement).from_indices = new_value
-            on_update()
-        }
-        .onChange(of: to_indices)
-        { _, new_value in
-            (element as! ObserverModifierElement).to_indices = new_value
-            on_update()
+            if outputs.count > 0
+            {
+                List
+                {
+                    ForEach($element.outputs) { $output in
+                        HStack {
+                            let output_to = binding_for_single($output.to)
+                            let output_from = Binding(
+                                get: { $output.from.wrappedValue },
+                                set: { $output.from.wrappedValue = $0; on_update() }
+                            )
+
+                            Text("From")
+                            TextField("0", value: output_from, format: .number)
+                            Stepper("Enter", value: output_from, in: 0...10000)
+                                .labelsHidden()
+                    #if !os(macOS)
+                                .keyboardType(.decimalPad)
+                    #endif
+
+                            RegistersSelector(
+                                text: "to \($output.to.wrappedValue)",
+                                registers_count: workspace.registers.count,
+                                colors: registers_colors,
+                                indices: output_to,
+                                names: ["To"]
+                            )
+                        }
+                        .contextMenu
+                        {
+                            Button(role: .destructive)
+                            {
+                                delete_item($output.wrappedValue)
+                            }
+                            label:
+                            {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                    }
+                    .onDelete
+                    { offsets in
+                        element.outputs.remove(atOffsets: offsets)
+                    }
+
+                }
+                .frame(minHeight: 160)
+                .modifier(ListBorderer())
+                .padding(.bottom)
+            }
+            else
+            {
+                ZStack
+                {
+                    Rectangle()
+                        .foregroundStyle(.white)
+                    
+                    Text("No items to ouput")
+                }
+                .frame(height: 64)
+                .modifier(ListBorderer())
+                .padding(.bottom)
+            }
+            
+            Button(action: add_item)
+            {
+                Text("Add")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
         }
     }
     
-    func add_item()
+    private func add_item()
     {
-        from_indices.append(0)
-        to_indices.append(0)
+        element.outputs.append(ObserverOutput(from: 0, to: 0))
     }
     
-    func delete_items(at offsets: IndexSet)
+    private func delete_item(_ output: ObserverOutput)
     {
-        from_indices.remove(atOffsets: offsets)
-        to_indices.remove(atOffsets: offsets)
+        if let index = element.outputs.firstIndex(where: { $0.id == output.id })
+        {
+            element.outputs.remove(at: index)
+        }
+    }
+    
+    private func binding_for_single(_ value: Binding<Int>) -> Binding<[Int]>
+    {
+        Binding(
+            get: { [value.wrappedValue] },
+            set:
+                { new_value in
+                    if let first = new_value.first
+                    {
+                        value.wrappedValue = first
+                        on_update()
+                    }
+                }
+        )
     }
 }
 
@@ -643,22 +546,21 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                 Rectangle()
                     .foregroundStyle(.white)
                 
-                ModifiersView()
-                    .environmentObject(workspace)
+                ModifiersView(workspace: workspace)
                     .onAppear
-                {
-                    let robot = Robot(name: "6DOF")
-                    robot.is_placed = true
-                    robot.add_program(PositionsProgram(name: "Square"))
-                    
-                    let tool = Tool(name: "Gripper")
-                    tool.is_placed = true
-                    tool.add_program(OperationsProgram(name: "Close"))
-                    
-                    workspace.robots.append(robot)
-                    workspace.tools.append(tool)
-                    
-                    Changer.internal_modules_list.append("Forces To Position")
+                    {
+                        let robot = Robot(name: "6DOF")
+                        robot.is_placed = true
+                        robot.add_program(PositionsProgram(name: "Square"))
+                        
+                        let tool = Tool(name: "Gripper")
+                        tool.is_placed = true
+                        tool.add_program(OperationsProgram(name: "Close"))
+                        
+                        workspace.robots.append(robot)
+                        workspace.tools.append(tool)
+                        
+                        Changer.internal_modules_list.append("Forces To Position")
                 }
             }
         }
@@ -666,6 +568,8 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
     
     struct ModifiersView: View
     {
+        @ObservedObject var workspace: Workspace
+        
         var body: some View
         {
             VStack(alignment: .leading, spacing: 8)
@@ -680,24 +584,24 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                 
                 HStack
                 {
-                    MoverElementView(element: .constant(MoverModifierElement()), on_update: {})
+                    MoverElementView(element: MoverModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
 
-                    ChangerElementView(element: .constant(ChangerModifierElement()), on_update: {})
+                    ChangerElementView(element: ChangerModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                 }
 
                 HStack
                 {
-                    ObserverElementView(element: .constant(ObserverModifierElement()), on_update: {})
+                    ObserverElementView(element: ObserverModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                     
                     VStack
                     {
-                        WriterElementView(element: .constant(WriterModifierElement()), on_update: {})
+                        WriterElementView(element: WriterModifierElement(), workspace: workspace)
                             .modifier(PreviewBorder())
 
-                        MathElementView(element: .constant(MathModifierElement()), on_update: {})
+                        MathElementView(element: MathModifierElement(), workspace: workspace)
                             .modifier(PreviewBorder())
                         
                         Spacer()

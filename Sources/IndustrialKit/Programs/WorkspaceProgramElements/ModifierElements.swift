@@ -432,14 +432,12 @@ public class ObserverModifierElement: ModifierElement
     public init(
         object_type: ObserverObjectType = .robot,
         object_name: String = "",
-        from_indices: [Int] = [],
-        to_indices: [Int] = []
+        outputs: [ObserverOutput] = []
     )
     {
         self.object_type = object_type
         self.object_name = object_name
-        self.from_indices = from_indices
-        self.to_indices = to_indices
+        self.outputs = outputs
         
         super.init()
     }
@@ -450,15 +448,14 @@ public class ObserverModifierElement: ModifierElement
     /// A name of object to observe output.
     @Published public var object_name = ""
     
-    /// An index of target register.
-    @Published public var from_indices = [Int]()
-    @Published public var to_indices = [Int]()
+    /// Output bindings
+    @Published public var outputs = [ObserverOutput]()
     
     public override var info: String
     {
-        if from_indices.count > 0
+        if outputs.count > 0
         {
-            return "Observe form \(object_name) of \(from_indices.map { String($0) }.joined(separator: ", ")) to \(to_indices.map { String($0) }.joined(separator: ", "))"
+            return "Observe form \(object_name) of \(outputs.map { String($0.from) }.joined(separator: ", ")) to \(outputs.map { String($0.to) }.joined(separator: ", "))"
         }
         else
         {
@@ -474,13 +471,13 @@ public class ObserverModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return "m: \(object_type.code_string).(\(object_name)).observe.[\(from_indices.map { String($0) }.joined(separator: ", "))] [\(to_indices.map { String($0) }.joined(separator: ", "))]"
+        return "m: \(object_type.code_string).(\(object_name)).observe.[\(outputs.map { String($0.from) }.joined(separator: ", "))] [\(outputs.map { String($0.to) }.joined(separator: ", "))]"
     }
     
     // File handling
     private enum CodingKeys: String, CodingKey
     {
-        case object_type, object_name, from_indices, to_indices
+        case object_type, object_name, outputs
     }
 
     public required init(from decoder: Decoder) throws
@@ -489,8 +486,7 @@ public class ObserverModifierElement: ModifierElement
         
         self.object_type = try container.decodeIfPresent(ObserverObjectType.self, forKey: .object_type) ?? .robot
         self.object_name = try container.decodeIfPresent(String.self, forKey: .object_name) ?? ""
-        self.from_indices = try container.decodeIfPresent([Int].self, forKey: .from_indices) ?? []
-        self.to_indices = try container.decodeIfPresent([Int].self, forKey: .to_indices) ?? []
+        self.outputs = try container.decodeIfPresent([ObserverOutput].self, forKey: .outputs) ?? []
         
         try super.init(from: decoder)
     }
@@ -501,10 +497,43 @@ public class ObserverModifierElement: ModifierElement
         
         try container.encode(object_type, forKey: .object_type)
         try container.encode(object_name, forKey: .object_name)
-        try container.encode(from_indices, forKey: .from_indices)
-        try container.encode(to_indices, forKey: .to_indices)
+        try container.encode(outputs, forKey: .outputs)
         
         try super.encode(to: encoder)
+    }
+}
+
+public class ObserverOutput: ObservableObject, Codable, Identifiable
+{
+    @Published public var from: Int
+    @Published public var to: Int
+    
+    public var id = UUID()
+    
+    public init(from: Int, to: Int)
+    {
+        self.from = from
+        self.to = to
+    }
+    
+    // Codable
+    private enum CodingKeys: String, CodingKey
+    {
+        case from, to
+    }
+    
+    public required init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.from = try container.decode(Int.self, forKey: .from)
+        self.to = try container.decode(Int.self, forKey: .to)
+    }
+    
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(from, forKey: .from)
+        try container.encode(to, forKey: .to)
     }
 }
 

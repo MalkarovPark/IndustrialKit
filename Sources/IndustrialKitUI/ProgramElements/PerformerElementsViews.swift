@@ -19,7 +19,7 @@ public struct RobotPerformerElementView: View
     public init(
         element: RobotPerformerElement,
         workspace: Workspace,
-        on_update: @escaping () -> ()
+        on_update: @escaping () -> () = {}
     )
     {
         self.element = element
@@ -56,6 +56,8 @@ public struct RobotPerformerElementView: View
                             {
                                 element.program_name = workspace.robot_by_name(new_value).programs_names.first ?? ""
                             }
+                            
+                            on_update()
                         }
                 )
                 
@@ -71,7 +73,17 @@ public struct RobotPerformerElementView: View
                 .frame(maxWidth: .infinity)
                 .padding(.bottom)
                 
-                Picker("Is Single", selection: $element.is_single_perfrom)
+                let is_single_perfrom = Binding(
+                    get: { element.is_single_perfrom },
+                    set:
+                        { new_value in
+                            element.is_single_perfrom = new_value
+                            
+                            on_update()
+                        }
+                )
+                
+                Picker("Is Single", selection: is_single_perfrom)
                 {
                     Text("Single").tag(true)
                     Text("Program").tag(false)
@@ -89,6 +101,8 @@ public struct RobotPerformerElementView: View
                                 element.x_index = new_value[0]
                                 element.y_index = new_value[1]
                                 element.z_index = new_value[2]
+                                
+                                on_update()
                             }
                     )
                     
@@ -99,6 +113,8 @@ public struct RobotPerformerElementView: View
                                 element.r_index = new_value[0]
                                 element.p_index = new_value[1]
                                 element.w_index = new_value[2]
+                                
+                                on_update()
                             }
                     )
                     
@@ -107,6 +123,8 @@ public struct RobotPerformerElementView: View
                         set:
                             { new_value in
                                 element.speed_index = new_value[0]
+                                
+                                on_update()
                             }
                     )
                     
@@ -115,6 +133,8 @@ public struct RobotPerformerElementView: View
                         set:
                             { new_value in
                                 element.type_index = new_value[0]
+                                
+                                on_update()
                             }
                     )
                     
@@ -137,7 +157,17 @@ public struct RobotPerformerElementView: View
                 {
                     VStack(spacing: 0)
                     {
-                        Picker("", selection: $element.is_program_by_index)
+                        let is_program_by_index = Binding(
+                            get: { element.is_program_by_index },
+                            set:
+                                { new_value in
+                                    element.is_program_by_index = new_value
+                                    
+                                    on_update()
+                                }
+                        )
+                        
+                        Picker("", selection: is_program_by_index)
                         {
                             Text("Name").tag(false)
                             Text("Index").tag(true)
@@ -203,7 +233,7 @@ public struct ToolPerformerElementView: View
     public init(
         element: ToolPerformerElement,
         workspace: Workspace,
-        on_update: @escaping () -> ()
+        on_update: @escaping () -> () = {}
     )
     {
         self.element = element
@@ -255,7 +285,17 @@ public struct ToolPerformerElementView: View
                 .frame(maxWidth: .infinity)
                 .padding(.bottom)
                 
-                Picker("", selection: $element.is_single_perfrom)
+                let is_single_perfrom = Binding(
+                    get: { element.is_single_perfrom },
+                    set:
+                        { new_value in
+                            element.is_single_perfrom = new_value
+                            
+                            on_update()
+                        }
+                )
+                
+                Picker("", selection: is_single_perfrom)
                 {
                     Text("Single").tag(true)
                     Text("Program").tag(false)
@@ -281,7 +321,17 @@ public struct ToolPerformerElementView: View
                 {
                     VStack(spacing: 0)
                     {
-                        Picker("", selection: $element.is_program_by_index)
+                        let is_program_by_index = Binding(
+                            get: { element.is_program_by_index },
+                            set:
+                                { new_value in
+                                    element.is_program_by_index = new_value
+                                    
+                                    on_update()
+                                }
+                        )
+                        
+                        Picker("", selection: is_program_by_index)
                         {
                             Text("Name").tag(false)
                             Text("Index").tag(true)

@@ -1188,13 +1188,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
             info_output = tool_by_name(element.object_name).info_output ?? [Float]()
         }
         
-        if element.from_indices.count > 0
+        if element.outputs.count > 0
         {
-            for i in 0..<element.from_indices.count
+            for i in 0..<element.outputs.count
             {
-                if element.to_indices[i] <= 255 && element.to_indices[i] >= 0 && (element.from_indices[i] < info_output.count)
+                if element.outputs[i].to <= 255 && element.outputs[i].to >= 0 && (element.outputs[i].from < info_output.count)
                 {
-                    registers[safe: element.to_indices[i]] = info_output[element.from_indices[i]]
+                    registers[safe: element.outputs[i].to] = info_output[element.outputs[i].from]
                 }
             }
         }

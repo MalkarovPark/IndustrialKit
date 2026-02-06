@@ -91,7 +91,7 @@ struct ElementControl: View
                         {
                             GroupBox
                             {
-                                WorkspaceProgramElementView(workspace: workspace, element: workspace.current_element)
+                                WorkspaceProgramElementView(element: workspace.current_element, workspace: workspace)
                                     .padding(4)
                             }
                             
@@ -245,8 +245,22 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
 
 public struct WorkspaceProgramElementView: View
 {
-    @ObservedObject var workspace: Workspace
     @ObservedObject var element: WorkspaceProgramElement
+    @ObservedObject var workspace: Workspace
+    
+    let on_update: () -> ()
+    
+    public init(
+        element: WorkspaceProgramElement,
+        workspace: Workspace,
+        on_update: @escaping () -> Void = {}
+    )
+    {
+        self.element = element
+        self.workspace = workspace
+        
+        self.on_update = on_update
+    }
     
     public var body: some View
     {
@@ -258,6 +272,21 @@ public struct WorkspaceProgramElementView: View
                 RobotPerformerElementView(element: element, workspace: workspace, on_update: {})
             case let element as ToolPerformerElement:
                 ToolPerformerElementView(element: element, workspace: workspace, on_update: {})
+                
+            case let element as MoverModifierElement:
+                MoverElementView(element: element, workspace: workspace)
+            case let element as WriterModifierElement:
+                WriterElementView(element: element, workspace: workspace)
+            case let element as MathModifierElement:
+                MathElementView(element: element, workspace: workspace)
+            case let element as ChangerModifierElement:
+                ChangerElementView(element: element, workspace: workspace)
+            case let element as ObserverModifierElement:
+                ObserverElementView(element: element, workspace: workspace)
+            case let element as CleanerModifierElement:
+                Text("Clean all registers")
+                    .padding()
+                
             default:
                 EmptyView()
             }
