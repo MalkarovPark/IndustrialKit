@@ -25,6 +25,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: - Init functions
     public init()
     {
+        current_element = RobotPerformerElement()//MarkLogicElement(name: "")
+        
         registers = [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
@@ -102,8 +104,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    // MARK: - Workspace update handling
-    /// A flag that prevents concurrent execution of the update function.
     // MARK: - Update functions
     ///  Flag indicating whether the update loop is active.
     private var updated = false
@@ -316,6 +316,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         return programs.count
     }
+    
+    @Published public var current_element: WorkspaceProgramElement // Single program element
     
     // MARK: - Workspace program elements handling
     /// All marks in the workspace program.

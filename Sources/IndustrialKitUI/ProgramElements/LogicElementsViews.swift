@@ -252,7 +252,7 @@ struct IMALogicPreviewsContainer: PreviewProvider
     struct LogicView: View
     {
         @EnvironmentObject var workspace: Workspace
-        var mark = MarkLogicElement()
+        var mark = MarkLogicElement(name: "Mark")
         
         var body: some View
         {
@@ -278,8 +278,6 @@ struct IMALogicPreviewsContainer: PreviewProvider
             .padding()
             .onAppear
             {
-                mark.name = "Cycle"
-                
                 workspace.elements.append(mark)
             }
         }

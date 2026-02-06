@@ -146,14 +146,10 @@ public struct MathElementView: View
     {
         HStack(spacing: 8)
         {
-            Text("Value of")
-                .frame(minWidth: 50)
-            
-            RegistersSelector(text: "\(to_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
-            
-            Text("Expression")
-            TextField("Expression", text: $expression) // Expression field
+            TextField("Expression", text: $expression)
                 .textFieldStyle(.roundedBorder)
+            
+            RegistersSelector(text: "to \(to_index[0])", registers_count: workspace.registers.count, colors: registers_colors, indices: $to_index, names: ["To"])
         }
         .onChange(of: to_index)
         { _, new_value in

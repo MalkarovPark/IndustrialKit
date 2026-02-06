@@ -422,6 +422,8 @@ open class Tool: WorkspaceObject
         return programs.count
     }
     
+    @Published public var current_operation: OperationCode // Single pendant action
+    
     // MARK: - Info codes functions
     /// An array of avaliable operation codes values for tool.
     @Published public var codes = [OperationCodeInfo]()
@@ -465,8 +467,6 @@ open class Tool: WorkspaceObject
             selected_program?.codes[safe: selected_code_index] = newValue
         }
     }
-    
-    @Published public var current_operation: OperationCode // Single pendant action
     
     /**
      Demo state of tool.
