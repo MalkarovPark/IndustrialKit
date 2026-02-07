@@ -81,60 +81,67 @@ public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject, 
     
     // MARK: - Work with file system
     private enum CodingKeys: String, CodingKey { case id }
-
+    
     public required init(from decoder: Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(UUID.self, forKey: .id)
     }
-
+    
     public func encode(to encoder: Encoder) throws
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
     }
 }
 
-public class NewElement: WorkspaceProgramElement
+// MARK: - Anytype Wrapper
+public class AnyWorkspaceProgramElement: ObservableObject, Codable, Identifiable
 {
-    @Published public var link: String = ""
-    @Published public var scale: Int = 100
-    @Published public var description: String = ""
-
-    public init(link: String, scale: Int = 100, description: String = "")
+    @Published public var base: WorkspaceProgramElement
+    public var id: UUID { base.id }
+    
+    public init(_ base: WorkspaceProgramElement)
     {
-        self.link = link
-        self.scale = scale
-        self.description = description
-        
-        super.init()
+        self.base = base
     }
-
-    private enum CodingKeys: String, CodingKey
+    
+    private enum CodingKeys: String, CodingKey { case type, data }
+    
+    public func encode(to encoder: Encoder) throws
     {
-        case link, scale, description
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(base.type, forKey: .type)
+        let data = try JSONEncoder().encode(base)
+        try container.encode(data, forKey: .data)
     }
-
+    
     public required init(from decoder: Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+        let data = try container.decode(Data.self, forKey: .data)
         
-        link = try container.decode(String.self, forKey: .link)
-        scale = try container.decodeIfPresent(Int.self, forKey: .scale) ?? 100
-        description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
-        
-        try super.init(from: decoder)
-    }
+        switch type
+        {
+        // Performers
+        case "RobotPerformerElement": base = try JSONDecoder().decode(RobotPerformerElement.self, from: data)
+        case "ToolPerformerElement": base = try JSONDecoder().decode(ToolPerformerElement.self, from: data)
 
-    public override func encode(to encoder: Encoder) throws
-    {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(link, forKey: .link)
-        try container.encode(scale, forKey: .scale)
-        try container.encode(description, forKey: .description)
-        
-        try super.encode(to: encoder)
+        // Modifiers
+        case "MoverModifierElement": base = try JSONDecoder().decode(MoverModifierElement.self, from: data)
+        case "WriterModifierElement": base = try JSONDecoder().decode(WriterModifierElement.self, from: data)
+        case "MathModifierElement": base = try JSONDecoder().decode(MathModifierElement.self, from: data)
+        case "ChangerModifierElement": base = try JSONDecoder().decode(ChangerModifierElement.self, from: data)
+        case "ObserverModifierElement": base = try JSONDecoder().decode(ObserverModifierElement.self, from: data)
+        case "CleanerModifierElement": base = try JSONDecoder().decode(CleanerModifierElement.self, from: data)
+
+        // Logic
+        case "JumpLogicElement": base = try JSONDecoder().decode(JumpLogicElement.self, from: data)
+        case "ComparatorLogicElement": base = try JSONDecoder().decode(ComparatorLogicElement.self, from: data)
+        case "MarkLogicElement": base = try JSONDecoder().decode(MarkLogicElement.self, from: data)
+            
+        default:
+            throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown WorkspaceProgramElement type: \(type)")
+        }
     }
 }
 

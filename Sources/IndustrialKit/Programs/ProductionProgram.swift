@@ -105,7 +105,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     }
     
     // MARK: - Work with file system
-    private enum CodingKeys: String, CodingKey
+    /*private enum CodingKeys: String, CodingKey
     {
         case name
         case elements
@@ -125,5 +125,31 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         
         try container.encode(name, forKey: .name)
         try container.encode(elements, forKey: .elements)
+    }*/
+    
+    private enum CodingKeys: String, CodingKey
+    {
+        case name
+        case elements
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.name = try container.decode(String.self, forKey: .name)
+        
+        let wrapped = try container.decode([AnyWorkspaceProgramElement].self, forKey: .elements)
+        self.elements = wrapped.map { $0.base }
+    }
+    
+    public func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(name, forKey: .name)
+        
+        let wrapped = elements.map { AnyWorkspaceProgramElement($0) }
+        try container.encode(wrapped, forKey: .elements)
     }
 }
