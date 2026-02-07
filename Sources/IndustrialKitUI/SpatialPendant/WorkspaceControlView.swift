@@ -222,8 +222,12 @@ private struct ProductionProgramView: View
     @ObservedObject var workspace: Workspace
     
     @ObservedObject var program: ProductionProgram
+    
     var dismiss_function: () -> ()
+    
     @State private var dragging_element_id: UUID?
+    
+    private let columns: [GridItem] = [.init(.adaptive(minimum: element_card_maximum, maximum: element_card_maximum), spacing: 0)]
     
     var body: some View
     {
@@ -259,7 +263,7 @@ private struct ProductionProgramView: View
             
             ScrollView
             {
-                LazyVStack(spacing: 8)
+                LazyVGrid(columns: columns, spacing: element_card_spacing)
                 {
                     ForEach($program.elements)
                     { $element in
@@ -282,10 +286,13 @@ private struct ProductionProgramView: View
                         .onDrop(of: [.text], delegate: ElementDropDelegate(current_element: element, program: program, dragging_element_id: $dragging_element_id, workspace: workspace))
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
-                    
-                    Spacer(minLength: 48)
                 }
-                .padding(8)
+                //.border(.gray)
+                #if os(macOS)
+                .padding(.vertical, 16)//.padding(8)
+                #else
+                .padding(.vertical, 16)//.padding(8)
+                #endif
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -309,66 +316,30 @@ private struct ElementItemView: View
     
     var body: some View
     {
-        HStack
+        ZStack
         {
-            Image(systemName: "circle.fill")
-                .foregroundColor(element.performing_state.color)
-                .font(.system(size: 6))
-                .padding(.leading, 6)
-            
-            ZStack
-            {
-                Rectangle()
-                    .fill(.clear)
-                    .frame(maxWidth: .infinity, maxHeight: 256)
-                    .overlay
-                    {
-                        HStack(spacing: 0)
-                        {
-                            ZStack
-                            {
-                                Rectangle()
-                                    .fill(element.color)
-                                /*//Text(workspace.element_info(element_item.value).name)
-                                    //.font(.system(size: 10))
-                                
-                                Picker(workspace.element_info(element_item.value).name, selection: $element_item.value)
-                                {
-                                    if workspace.elements.count > 0
-                                    {
-                                        ForEach(workspace.elements.map { $0.value }, id:\.self)
-                                        { element in
-                                            Text(workspace.element_info(element).name)
-                                                .lineLimit(1)
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Text("None")
-                                    }
-                                }
-                                .font(.system(size: 4))
-                                .disabled(workspace.elements.count == 0)
-                                .frame(maxWidth: .infinity)
-                                .pickerStyle(.menu)
-                                .buttonStyle(.plain)
-                                .labelsHidden()
-                                #if !os(macOS)
-                                .scaleEffect(0.8)
-                                #endif*/
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        }
-                    }
-            }
-            .frame(height: 24)
+            Rectangle()
+                .fill(element.color.opacity(0.25))
             
             Image(systemName: element.symbol_name)
-                //.foregroundColor(.secondary)
-                .font(.system(size: 12))
+                .foregroundColor(element.color)
+                .font(.system(size: element_card_font_size))
                 .frame(width: 24, height: 24)
         }
+        .aspectRatio(1, contentMode: .fit)
+        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+        .frame(width: element_card_scale, height: element_card_scale)
         .contentShape(Rectangle())
+        .overlay(alignment: .topLeading)
+        {
+            if element.performing_state != .none
+            {
+                Image(systemName: "circle.fill")
+                    .foregroundColor(element.performing_state.color)
+                    .font(.system(size: element_card_light_size))
+                    .padding(4)
+            }
+        }
         .onTapGesture
         {
             position_item_view_presented.toggle()
@@ -384,6 +355,7 @@ private struct ElementItemView: View
                 Label("Delete", systemImage: "trash")
             }
         }
+        .help(element.info)
     }
 }
 
@@ -482,6 +454,12 @@ struct WorkspaceControl_Previews: PreviewProvider
     {
         @StateObject var workspace = Workspace()
         
+        //
+        private let columns: [GridItem] = [.init(.adaptive(minimum: element_card_maximum, maximum: element_card_maximum), spacing: 0)]
+        
+        @State private var element = MathModifierElement()
+        //
+        
         var body: some View
         {
             ZStack
@@ -507,6 +485,39 @@ struct WorkspaceControl_Previews: PreviewProvider
                 workspace.robots.append(robot)
                 workspace.tools.append(tool)
             }
+            
+            ZStack()
+            {
+                ScrollView
+                {
+                    LazyVGrid(columns: columns, spacing: element_card_spacing)
+                    {
+                        ElementItemView(workspace: workspace, program: ProductionProgram(), element: RobotPerformerElement())
+                        {
+                            
+                        }
+                        
+                        ElementItemView(workspace: workspace, program: ProductionProgram(), element: MathModifierElement())
+                        {
+                            
+                        }
+                        
+                        
+                        ElementItemView(workspace: workspace, program: ProductionProgram(), element: JumpLogicElement())
+                        {
+                            
+                        }
+                        
+                        /*ElementItemView(workspace: workspace, program: ProductionProgram(), element: element)
+                        {
+                            
+                        }*/
+                    }
+                }
+                //.border(.green)
+                .padding()
+            }
+            .frame(width: 256, height: 256)
         }
     }
     
@@ -515,3 +526,17 @@ struct WorkspaceControl_Previews: PreviewProvider
         Container()
     }
 }
+
+let element_card_maximum = element_card_scale + element_card_spacing
+
+#if os(macOS)
+let element_card_scale: CGFloat = 35//40
+let element_card_spacing: CGFloat = 10
+let element_card_font_size: CGFloat = 14 //16
+let element_card_light_size: CGFloat = 5 //6
+#else
+let element_card_scale: CGFloat = 40
+let element_card_spacing: CGFloat = 10
+let element_card_font_size: CGFloat = 16
+let element_card_light_size: CGFloat = 6
+#endif

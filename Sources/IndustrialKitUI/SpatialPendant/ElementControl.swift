@@ -98,7 +98,7 @@ struct ElementControl: View
                                     .padding(4)
                             }
                             
-                            Menu("Update Element")
+                            Menu("Create Element")
                             {
                                 Section(header: Text("Performer"))
                                 {

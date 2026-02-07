@@ -252,7 +252,7 @@ public class MarkLogicElement: LogicElement
     
     public override var info: String
     {
-        return name
+        return !name.isEmpty ? name : "Mark without name"
     }
     
     public override var symbol_name: String
