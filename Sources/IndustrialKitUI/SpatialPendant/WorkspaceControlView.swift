@@ -323,6 +323,7 @@ private struct ProductionProgramView: View
                         { if let index = program.elements.firstIndex(where: { $0.id == element.id })
                             {
                                 program.elements.remove(at: index)
+                                workspace.elements_check(program: program)
                                 
                                 on_update()
                             }
@@ -397,7 +398,7 @@ private struct ElementItemView: View
         }
         .popover(isPresented: $element_view_presented)
         {
-            WorkspaceProgramElementView(element: element, workspace: workspace, on_update: on_update)
+            WorkspaceProgramElementView(element: element, workspace: workspace, program: program, on_update: on_update)
                 .padding()
         }
         .contextMenu

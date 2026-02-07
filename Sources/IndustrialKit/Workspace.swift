@@ -35,20 +35,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     @Published public var tools = [Tool]()
     @Published public var parts = [Part]()
     
-    //Old program data
-    @Published public var elements = [WorkspaceProgramElement]()
-    {
-        didSet
-        {
-            // Reset performing if elements array was changed
-            if elements.count > 0
-            {
-                performed = false // Enable workspace program edit
-                selected_element_index = 0 // Select first program element
-            }
-        }
-    }
-    
     // MARK: - Selection handling functions
     /**
      Returns index number of workspace object by name.
@@ -320,49 +306,25 @@ public class Workspace: ObservableObject, @unchecked Sendable
     @Published public var current_element: WorkspaceProgramElement // Single program element
     
     // MARK: - Workspace program elements handling
-    /// All marks in the workspace program.
-    public var marks_names: [String]
-    {
-        var marks_names = [String]()
-        for program_element in self.elements
-        {
-            if program_element is MarkLogicElement
-            {
-                marks_names.append((program_element as! MarkLogicElement).name)
-            }
-        }
-        
-        return marks_names
-    }
-    
-    /// Deletes program element by number.
-    public func delete_element(index: Int)
-    {
-        if elements.indices.contains(index)
-        {
-            elements.remove(at: index)
-        }
-    }
-    
     // MARK: Workspace progem elements checking functions
-    public func elements_check()
+    public func elements_check(program: ProductionProgram)
     {
-        for element in elements
+        for element in program.elements
         {
             switch element
             {
-            case is RobotPerformerElement:
-                robot_element_check(element as! RobotPerformerElement)
-            case is ToolPerformerElement:
-                tool_element_check(element as! ToolPerformerElement)
-            case is ObserverModifierElement:
-                observer_element_check(element as! ObserverModifierElement)
-            case is ChangerModifierElement:
-                changer_element_check(element as! ChangerModifierElement)
-            case is JumpLogicElement:
-                jump_element_check(element as! JumpLogicElement)
-            case is ComparatorLogicElement:
-                comparator_element_check(element as! ComparatorLogicElement)
+            case let element as RobotPerformerElement:
+                robot_element_check(element)
+            case let element as ToolPerformerElement:
+                tool_element_check(element)
+            case let element as ObserverModifierElement:
+                observer_element_check(element)
+            case let element as ChangerModifierElement:
+                changer_element_check(element)
+            case let element as JumpLogicElement:
+                jump_element_check(element)
+            case let element as ComparatorLogicElement:
+                comparator_element_check(element)
             default:
                 break
             }
@@ -485,7 +447,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
             
-            /*if !Changer.internal_modules_list.contains(element.module_name)
+            if !Changer.internal_modules_list.contains(element.module_name)
             {
                 if Changer.internal_modules_list.count > 0
                 {
@@ -506,7 +468,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 {
                     element.module_name = "None"
                 }
-            }*/
+            }
         }
         
         func jump_element_check(_ element: JumpLogicElement)
@@ -521,11 +483,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         func mark_check(name: inout String)
         {
-            if marks_names.count > 0
+            if program.mark_names.count > 0
             {
                 var mark_founded = false
                 
-                for mark_name in self.marks_names
+                for mark_name in program.mark_names
                 {
                     if mark_name == name
                     {
@@ -536,7 +498,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 
                 if !mark_founded // && name == ""
                 {
-                    name = marks_names[0]
+                    name = program.mark_names[0]
                 }
             }
             else
@@ -559,7 +521,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Selects program element and performs by workcell.
     public func start_pause_performing()
     {
-        guard elements.count > 0
+        /*guard elements.count > 0
         else
         {
             return
@@ -593,19 +555,19 @@ public class Workspace: ObservableObject, @unchecked Sendable
             // Remove all action if moving was perform
             performed = false
             pause_performing()
-        }
+        }*/
     }
     
     /// A selected workspace program element.
-    private var selected_program_element: WorkspaceProgramElement
+    /*private var selected_program_element: WorkspaceProgramElement
     {
         return elements[safe: selected_element_index] ?? WorkspaceProgramElement()
-    }
+    }*/
     
     /// Selects and performs program element by workspace.
     private func perform_next_element()
     {
-        selected_program_element.performing_state = .processing
+        /*selected_program_element.performing_state = .processing
         performing_state = .processing // State light
         
         //perform(selected_program_element, completion: select_new_element)
@@ -615,7 +577,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             { @MainActor in
                 self?.select_new_element()
             }
-        }
+        }*/
     }
     
     private func perform_constant_objects_update()
@@ -731,7 +693,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Set the new target program element index.
     private func select_new_element()
     {
-        selected_program_element.performing_state = .completed
+        /*selected_program_element.performing_state = .completed
         performing_state = .completed // State light
         
         if performed
@@ -774,13 +736,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     self.update_view()
                 }
             }
-        }
+        }*/
     }
     
     /// Pauses program element performing.
     public func pause_performing()
     {
-        disable_constant_objects_update()
+        /*disable_constant_objects_update()
         
         selected_program_element.performing_state = .current
         performing_state = .current // State light
@@ -807,21 +769,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
             //selected_tool.start_pause_performing()
             //selected_tool.disable_update()
             //deselect_tool()
-        }
+        }*/
     }
     
     /// Resets the performing state of all operation codes to the `.none` state.
     public func reset_program_elements_states()
     {
-        for element in elements
+        /*for element in elements
         {
             element.performing_state = .none
-        }
+        }*/
     }
     
     private func error_handler(_ error: Error)
     {
-        performed = false // Pause performing
+        /*performed = false // Pause performing
         
         //last_error = error
         //print(last_error?.localizedDescription ?? "No Errors")
@@ -854,7 +816,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             //selected_tool.start_pause_performing()
             //selected_tool.disable_update()
             //deselect_tool()
-        }*/
+        }*/*/
     }
     
     /// A default count of data registers for workspace.
@@ -1226,7 +1188,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Resets workspace performing.
     public func reset_performing()
     {
-        disable_constant_objects_update()
+        /*disable_constant_objects_update()
         
         switch selected_program_element
         {
@@ -1258,21 +1220,55 @@ public class Workspace: ObservableObject, @unchecked Sendable
         reset_program_elements_states()
         
         performing_state = .none // State light
-        reset_error()
+        reset_error()*/
     }
     
     /// Prepare workspace program to perform.
-    private func prepare_program()
+    private func prepare_program(_ program: ProductionProgram)
     {
-        defining_elements_indexes()
+        defining_elements_indexes(for: program)
     }
     
     /// Define program element indexes.
-    private func defining_elements_indexes()
+    private func defining_elements_indexes(for program: ProductionProgram)
+    {
+        // Build map of mark name – index in one pass
+        let marks: [String: Int] = program.elements.enumerated().reduce(into: [:])
+        { dict, pair in
+            let (index, element) = pair
+            
+            if let mark = element as? MarkLogicElement
+            {
+                dict[mark.name] = index
+            }
+        }
+        
+        // Assign target indexes for jump/comparator elements in one pass
+        for element in program.elements
+        {
+            switch element
+            {
+            case let jump as JumpLogicElement:
+                if !jump.target_mark_name.isEmpty, let target = marks[jump.target_mark_name]
+                {
+                    jump.target_element_index = target
+                }
+            case let cmp as ComparatorLogicElement:
+                if !cmp.target_mark_name.isEmpty, let target = marks[cmp.target_mark_name]
+                {
+                    cmp.target_element_index = target
+                }
+            default:
+                break
+            }
+        }
+    }
+    /*private func defining_elements_indexes(for program: ProductionProgram)
     {
         // Find mark elements indexes
         var marks_associations = [(String, Int)]()
         var element = WorkspaceProgramElement()
+        let elements = program.elements
         
         for i in 0..<elements.count
         {
@@ -1316,7 +1312,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 }
             }
         }
-    }
+    }*/
     
     // MARK: - Visual Functions
     #if canImport(RealityKit)
@@ -1845,7 +1841,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         if robots.indices.contains(index)
         {
             robots.remove(at: index)
-            elements_check()
+            
+            if let selected_program = selected_program { elements_check(program: selected_program) }
         }
     }
     
@@ -2005,7 +2002,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         if tools.indices.contains(index)
         {
             tools.remove(at: index)
-            elements_check()
+            
+            if let selected_program = selected_program { elements_check(program: selected_program) }
         }
     }
     
@@ -2383,7 +2381,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         robots: [RobotFileData],
         tools: [ToolFileData],
         parts: [PartFileData],
-        elements: [WorkspaceProgramElement], //[WorkspaceProgramElementStruct],
+        
+        programs: [ProductionProgram],
         registers: [Float]
     )
     {
@@ -2405,17 +2404,18 @@ public class Workspace: ObservableObject, @unchecked Sendable
             $0.file_data()
         }
         
-        // Workspace program elements
-        /*let elements_file_info: [WorkspaceProgramElementStruct] = elements.map
+        // Workspace production programs
+        /*let programs_file_info: [ProductionProgram] = programs.map
         {
-            $0.file_info
+            $0.file_data()
         }*/
         
         return (
             robots: robots_file_info,
             tools: tools_file_info,
             parts: parts_file_info,
-            elements: elements, //elements_file_info,
+            
+            programs: programs,
             registers: registers
         )
     }
@@ -2455,12 +2455,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
             parts.append(part)
         }
         
-        // MARK: - Workspace program elements
-        elements.removeAll()
+        // MARK: - Workspace production programs
+        programs.removeAll()
         
-        for element in preset.elements
+        for program in preset.programs
         {
-            //elements.append(element_from_struct(element))
+            programs.append(program)
         }
         
         // MARK: - Registers
@@ -2472,13 +2472,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public var in_visual_edit_mode = false
     
     /// Force updates SwiftUI view.
-    public func update_view()
+    public func update_view() // Old
     {
         self.objectWillChange.send()
-    }
+    } // Old
     
     /// Determines whether a given program element is currently selected for performing.
-    public func is_current_element(element: WorkspaceProgramElement) -> Bool
+    /*public func is_current_element(element: WorkspaceProgramElement) -> Bool
     {
         var flag = false
         let element_index = self.elements.firstIndex(of: element) // Index of selected code
@@ -2492,7 +2492,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         
         return flag
-    }
+    }*/
 }
 
 public enum WorkspaceObjectType: String, Equatable, CaseIterable
@@ -2506,25 +2506,34 @@ public enum WorkspaceObjectType: String, Equatable, CaseIterable
 public struct WorkspacePreset: Codable
 {
     public var robots = [RobotFileData]()
-    public var elements = [WorkspaceProgramElement]()
     public var tools = [ToolFileData]()
     public var parts = [PartFileData]()
     
+    public var programs = [ProductionProgram]()
     public var registers: [Float]?
     
     public init()
     {
         robots = [RobotFileData]()
-        elements = [WorkspaceProgramElement]()
         tools = [ToolFileData]()
         parts = [PartFileData]()
+        
+        programs = [ProductionProgram]()
     }
     
-    public init(robots: [RobotFileData], elements: [WorkspaceProgramElement], tools: [ToolFileData], parts: [PartFileData])
+    public init(
+        robots: [RobotFileData],
+        tools: [ToolFileData],
+        parts: [PartFileData],
+        
+        programs: [ProductionProgram]
+    )
     {
         self.robots = robots
-        self.elements = elements
         self.tools = tools
         self.parts = parts
+        
+        self.programs = programs
     }
 }
+

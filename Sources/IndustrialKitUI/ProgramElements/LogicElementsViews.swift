@@ -12,7 +12,7 @@ public struct JumpElementView: View
 {
     @ObservedObject var element: JumpLogicElement
     
-    @ObservedObject var workspace: Workspace
+    @ObservedObject var program: ProductionProgram
     
     let on_update: () -> ()
     
@@ -20,18 +20,18 @@ public struct JumpElementView: View
     
     public init(
         element: JumpLogicElement,
-        workspace: Workspace,
+        program: ProductionProgram,
         on_update: @escaping () -> () = {}
     )
     {
         self.element = element
-        self.workspace = workspace
+        self.program = program
         
         self.on_update = on_update
         
-        if self.workspace.marks_names.count > 0 && self.element.target_mark_name == ""
+        if self.program.mark_names.count > 0 && self.element.target_mark_name.isEmpty
         {
-            self.element.target_mark_name = self.workspace.marks_names[0]
+            self.element.target_mark_name = self.program.mark_names[0]
         }
     }
     
@@ -57,9 +57,9 @@ public struct JumpElementView: View
                 
                 Picker("Jump to", selection: target_mark_name) // Target mark picker
                 {
-                    if workspace.marks_names.count > 0
+                    if program.mark_names.count > 0
                     {
-                        ForEach(workspace.marks_names, id: \.self)
+                        ForEach(program.mark_names, id: \.self)
                         { name in
                             Text(name)
                         }
@@ -74,7 +74,7 @@ public struct JumpElementView: View
                     
                 }
                 .buttonStyle(.bordered)
-                .disabled(workspace.marks_names.count == 0)
+                .disabled(program.mark_names.count == 0)
             }
         }
     }
@@ -84,6 +84,7 @@ public struct ComparatorElementView: View
 {
     @ObservedObject var element: ComparatorLogicElement
     @ObservedObject var workspace: Workspace
+    @ObservedObject var program: ProductionProgram
     
     private let on_update: () -> ()
     
@@ -92,17 +93,20 @@ public struct ComparatorElementView: View
     public init(
         element: ComparatorLogicElement,
         workspace: Workspace,
+        program: ProductionProgram,
+        
         on_update: @escaping () -> () = {}
     )
     {
         self.element = element
         self.workspace = workspace
+        self.program = program
         
         self.on_update = on_update
         
-        if self.workspace.marks_names.count > 0 && self.element.target_mark_name == ""
+        if self.program.mark_names.count > 0 && self.element.target_mark_name.isEmpty
         {
-            self.element.target_mark_name = self.workspace.marks_names[0]
+            self.element.target_mark_name = self.program.mark_names[0]
         }
     }
     
@@ -190,9 +194,9 @@ public struct ComparatorElementView: View
                 
                 Picker("jump to", selection: target_mark_name) // Target mark picker
                 {
-                    if workspace.marks_names.count > 0
+                    if program.mark_names.count > 0
                     {
-                        ForEach(workspace.marks_names, id: \.self)
+                        ForEach(program.mark_names, id: \.self)
                         { name in
                             Text(name)
                         }
@@ -203,7 +207,7 @@ public struct ComparatorElementView: View
                     }
                 }
                 .buttonStyle(.bordered)
-                .disabled(workspace.marks_names.count == 0)
+                .disabled(program.mark_names.count == 0)
             }
         }
     }
@@ -236,19 +240,22 @@ public struct CompareTypePicker: View
 public struct MarkLogicElementView: View
 {
     @ObservedObject var element: MarkLogicElement
-    
     @ObservedObject var workspace: Workspace
+    @ObservedObject var program: ProductionProgram
     
     let on_update: () -> ()
     
     public init(
         element: MarkLogicElement,
         workspace: Workspace,
+        program: ProductionProgram,
+        
         on_update: @escaping () -> () = {}
     )
     {
         self.element = element
         self.workspace = workspace
+        self.program = program
         
         self.on_update = on_update
     }
@@ -260,8 +267,6 @@ public struct MarkLogicElementView: View
             set:
                 { new_value in
                     element.name = new_value
-                    
-                    on_update()
                 }
         )
         
@@ -270,6 +275,12 @@ public struct MarkLogicElementView: View
             Text("Name")
             TextField("Mark Name", text: name) // Mark name field
                 .textFieldStyle(.roundedBorder)
+                .onSubmit
+                {
+                    workspace.elements_check(program: program)
+                    
+                    on_update()
+                }
         }
     }
 }
@@ -291,7 +302,14 @@ struct IMALogicPreviewsContainer: PreviewProvider
             LogicView(workspace: workspace)
                 .onAppear
                 {
-                    workspace.elements.append(MarkLogicElement(name: "Mark"))
+                    workspace.programs.append(ProductionProgram(name: "Program"))
+                    workspace.select_program(name: "Program")
+                    
+                    if let selected_program = workspace.selected_program
+                    {
+                        selected_program.elements.append(ComparatorLogicElement())
+                        selected_program.elements.append(MarkLogicElement(name: "Mark"))
+                    }
                 }
         }
     }
@@ -315,11 +333,25 @@ struct IMALogicPreviewsContainer: PreviewProvider
                 
                 HStack(alignment: .top)
                 {
-                    ComparatorElementView(element: ComparatorLogicElement(), workspace: workspace)
-                        .modifier(PreviewBorder())
-
-                    MarkLogicElementView(element: workspace.elements.first as? MarkLogicElement ?? MarkLogicElement(), workspace: workspace)
-                        .modifier(PreviewBorder())
+                    if let selected_program = workspace.selected_program
+                    {
+                        if let element = selected_program.elements.first as? ComparatorLogicElement, let element2 = selected_program.elements.last as? MarkLogicElement
+                        {
+                            ComparatorElementView(element: element, workspace: workspace, program: selected_program)
+                                .modifier(PreviewBorder())
+                            
+                            MarkLogicElementView(element: element2, workspace: workspace, program: selected_program)
+                                .modifier(PreviewBorder())
+                        }
+                    }
+                    else
+                    {
+                        ComparatorElementView(element: ComparatorLogicElement(), workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
+                            .modifier(PreviewBorder())
+                        
+                        MarkLogicElementView(element: MarkLogicElement(), workspace: workspace, program: ProductionProgram())
+                            .modifier(PreviewBorder())
+                    }
                 }
             }
             .padding()

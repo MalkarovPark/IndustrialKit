@@ -98,6 +98,12 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
     }
     
+    // MARK: - Editor functions
+    public var mark_names: [String]
+    {
+        return elements.compactMap { ($0 as? MarkLogicElement)?.name }
+    }
+    
     // MARK: - Work with file system
     private enum CodingKeys: String, CodingKey
     {

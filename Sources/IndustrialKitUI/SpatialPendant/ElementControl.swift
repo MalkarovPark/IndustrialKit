@@ -94,7 +94,7 @@ struct ElementControl: View
                         {
                             GroupBox
                             {
-                                WorkspaceProgramElementView(element: workspace.current_element, workspace: workspace)
+                                WorkspaceProgramElementView(element: workspace.current_element, workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
                                     .padding(4)
                             }
                             
@@ -253,17 +253,21 @@ public struct WorkspaceProgramElementView: View
 {
     @ObservedObject var element: WorkspaceProgramElement
     @ObservedObject var workspace: Workspace
+    @ObservedObject var program: ProductionProgram
     
     let on_update: () -> ()
     
     public init(
         element: WorkspaceProgramElement,
         workspace: Workspace,
+        program: ProductionProgram = ProductionProgram(),
+        
         on_update: @escaping () -> Void = {}
     )
     {
         self.element = element
         self.workspace = workspace
+        self.program = program
         
         self.on_update = on_update
     }
@@ -294,11 +298,11 @@ public struct WorkspaceProgramElementView: View
                     .padding()
                 
             case let element as JumpLogicElement:
-                JumpElementView(element: element, workspace: workspace, on_update: on_update)
+                JumpElementView(element: element, program: program, on_update: on_update)
             case let element as ComparatorLogicElement:
-                ComparatorElementView(element: element, workspace: workspace, on_update: on_update)
+                ComparatorElementView(element: element, workspace: workspace, program: program, on_update: on_update)
             case let element as MarkLogicElement:
-                MarkLogicElementView(element: element, workspace: workspace, on_update: on_update)
+                MarkLogicElementView(element: element, workspace: workspace, program: program, on_update: on_update)
                 
             default:
                 EmptyView()
