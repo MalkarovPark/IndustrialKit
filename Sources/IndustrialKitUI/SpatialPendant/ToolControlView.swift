@@ -317,8 +317,6 @@ private struct OperationItemView: View
     @ObservedObject var program: OperationsProgram
     @ObservedObject var code_item: OperationCode
     
-    @State private var position_item_view_presented = false
-    
     #if os(iOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
@@ -385,10 +383,6 @@ private struct OperationItemView: View
                 .frame(width: 24, height: 24)
         }
         .contentShape(Rectangle())
-        .onTapGesture
-        {
-            position_item_view_presented.toggle()
-        }
         .contextMenu
         {
             Button(role: .destructive)

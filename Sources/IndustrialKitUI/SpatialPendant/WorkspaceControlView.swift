@@ -159,9 +159,9 @@ struct WorkspaceControlView: View
         }
         else
         {
-            if let program = workspace.selected_program
+            if let selected_program = workspace.selected_program
             {
-                //program.add_code(workspace.current_operation)
+                clone_element(workspace.current_element, to: selected_program)
             }
         }
     }
@@ -223,7 +223,7 @@ private struct ProductionProgramView: View
     
     @ObservedObject var program: ProductionProgram
     var dismiss_function: () -> ()
-    @State private var dragging_code_id: UUID?
+    @State private var dragging_element_id: UUID?
     
     var body: some View
     {
@@ -261,29 +261,29 @@ private struct ProductionProgramView: View
             {
                 LazyVStack(spacing: 8)
                 {
-                    /*ForEach($program.codes)
-                    { $code in
-                        OperationItemView(
+                    ForEach($program.elements)
+                    { $element in
+                        ElementItemView(
                             workspace: workspace,
                             program: program,
-                            code_item: code
+                            element: element
                         )
-                        { if let index = program.codes.firstIndex(where: { $0.id == code.id })
+                        { if let index = program.elements.firstIndex(where: { $0.id == element.id })
                             {
-                                program.codes.remove(at: index)
+                                program.elements.remove(at: index)
                                 //workspace.update_position_program_entity(by: program)
                             }
                         }
                         .onDrag
                         {
-                            dragging_code_id = code.id
-                            return NSItemProvider(object: code.id.uuidString as NSString)
+                            dragging_element_id = element.id
+                            return NSItemProvider(object: element.id.uuidString as NSString)
                         }
-                        .onDrop(of: [.text], delegate: OperationDropDelegate(current_code: code, program: program, dragging_code_id: $dragging_code_id, workspace: workspace))
+                        .onDrop(of: [.text], delegate: ElementDropDelegate(current_element: element, program: program, dragging_element_id: $dragging_element_id, workspace: workspace))
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
                     
-                    Spacer(minLength: 48)*/
+                    Spacer(minLength: 48)
                 }
                 .padding(8)
             }
@@ -293,11 +293,11 @@ private struct ProductionProgramView: View
     }
 }
 
-/*private struct OperationItemView: View
+private struct ElementItemView: View
 {
     @ObservedObject var workspace: Workspace
     @ObservedObject var program: ProductionProgram
-    @ObservedObject var code_item: OperationCode
+    @ObservedObject var element: WorkspaceProgramElement
     
     @State private var position_item_view_presented = false
     
@@ -312,7 +312,7 @@ private struct ProductionProgramView: View
         HStack
         {
             Image(systemName: "circle.fill")
-                .foregroundColor(code_item.performing_state.color)
+                .foregroundColor(element.performing_state.color)
                 .font(.system(size: 6))
                 .padding(.leading, 6)
             
@@ -327,16 +327,18 @@ private struct ProductionProgramView: View
                         {
                             ZStack
                             {
-                                //Text(workspace.code_info(code_item.value).name)
+                                Rectangle()
+                                    .fill(element.color)
+                                /*//Text(workspace.element_info(element_item.value).name)
                                     //.font(.system(size: 10))
                                 
-                                Picker(workspace.code_info(code_item.value).name, selection: $code_item.value)
+                                Picker(workspace.element_info(element_item.value).name, selection: $element_item.value)
                                 {
-                                    if workspace.codes.count > 0
+                                    if workspace.elements.count > 0
                                     {
-                                        ForEach(workspace.codes.map { $0.value }, id:\.self)
-                                        { code in
-                                            Text(workspace.code_info(code).name)
+                                        ForEach(workspace.elements.map { $0.value }, id:\.self)
+                                        { element in
+                                            Text(workspace.element_info(element).name)
                                                 .lineLimit(1)
                                         }
                                     }
@@ -346,14 +348,14 @@ private struct ProductionProgramView: View
                                     }
                                 }
                                 .font(.system(size: 4))
-                                .disabled(workspace.codes.count == 0)
+                                .disabled(workspace.elements.count == 0)
                                 .frame(maxWidth: .infinity)
                                 .pickerStyle(.menu)
                                 .buttonStyle(.plain)
                                 .labelsHidden()
                                 #if !os(macOS)
                                 .scaleEffect(0.8)
-                                #endif
+                                #endif*/
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                         }
@@ -361,7 +363,7 @@ private struct ProductionProgramView: View
             }
             .frame(height: 24)
             
-            Image(systemName: workspace.code_info(code_item.value).symbol)
+            Image(systemName: element.symbol_name)
                 //.foregroundColor(.secondary)
                 .font(.system(size: 12))
                 .frame(width: 24, height: 24)
@@ -385,12 +387,12 @@ private struct ProductionProgramView: View
     }
 }
 
-private struct OperationDropDelegate: DropDelegate
+private struct ElementDropDelegate: DropDelegate
 {
-    let current_code: OperationCode
+    let current_element: WorkspaceProgramElement
     let program: ProductionProgram
     
-    @Binding var dragging_code_id: UUID?
+    @Binding var dragging_element_id: UUID?
     
     let workspace: Workspace
     
@@ -400,26 +402,26 @@ private struct OperationDropDelegate: DropDelegate
     
     func dropEntered(info: DropInfo)
     {
-        guard let dragging_id = dragging_code_id else { return }
+        guard let dragging_id = dragging_element_id else { return }
         
-        if dragging_id != current_code.id,
-           let from_index = program.codes.firstIndex(where: { $0.id == dragging_id }),
-           let to_index = program.codes.firstIndex(where: { $0.id == current_code.id })
+        if dragging_id != current_element.id,
+           let from_index = program.elements.firstIndex(where: { $0.id == dragging_id }),
+           let to_index = program.elements.firstIndex(where: { $0.id == current_element.id })
         {
             withAnimation
             {
-                program.codes.move(fromOffsets: IndexSet(integer: from_index), toOffset: to_index > from_index ? to_index + 1 : to_index)
+                program.elements.move(fromOffsets: IndexSet(integer: from_index), toOffset: to_index > from_index ? to_index + 1 : to_index)
             }
         }
     }
     
     func performDrop(info: DropInfo) -> Bool
     {
-        dragging_code_id = nil
+        dragging_element_id = nil
         //robot.update_position_program_entity(by: program)
         return true
     }
-}*/
+}
 
 private struct PerformingControlView: View
 {

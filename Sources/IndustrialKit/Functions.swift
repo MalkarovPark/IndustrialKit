@@ -84,6 +84,54 @@ public func apply_bit_mask(node: SCNNode, _ value: Int)
     }
 }
 
+///Deep copy for codable objects.
+public func clone_codable<T: WorkspaceProgramElement>(_ object: T) -> T?
+{
+    do
+    {
+        let encoded = try JSONEncoder().encode(object)
+        let clone = try JSONDecoder().decode(T.self, from: encoded)
+        clone.id = UUID()
+        return clone
+    }
+    catch
+    {
+        print(error)
+        return nil
+    }
+}
+
+/// Deep copy of any program element with preserving subclass and properties.
+public func clone_element(_ element: WorkspaceProgramElement, to program: ProductionProgram)
+{
+    // Performer
+    if let e = element as? RobotPerformerElement { insert(e); return }
+    if let e = element as? ToolPerformerElement { insert(e); return }
+
+    // Modifier
+    if let e = element as? MoverModifierElement { insert(e); return }
+    if let e = element as? WriterModifierElement { insert(e); return }
+    if let e = element as? MathModifierElement { insert(e); return }
+    if let e = element as? ChangerModifierElement { insert(e); return }
+    if let e = element as? ObserverModifierElement { insert(e); return }
+    if let e = element as? CleanerModifierElement { insert(e); return }
+
+    // Logic
+    if let e = element as? JumpLogicElement { insert(e); return }
+    if let e = element as? ComparatorLogicElement { insert(e); return }
+    if let e = element as? MarkLogicElement { insert(e); return }
+
+    //print("clone_element: unsupported type:", type(of: element))
+    
+    func insert<T: WorkspaceProgramElement>(_ original: T)
+    {
+        if let copy = clone_codable(original)
+        {
+            program.add_element(copy)
+        }
+    }
+}
+
 //MARK: - Conversion functions for space parameters
 public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] // Scaling lengths by divider
 {

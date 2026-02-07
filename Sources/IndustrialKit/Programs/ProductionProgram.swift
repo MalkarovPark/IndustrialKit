@@ -51,7 +51,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
      - Parameters:
         - element: An added element.
      */
-    public func add_code(_ element: WorkspaceProgramElement)
+    public func add_element(_ element: WorkspaceProgramElement)
     {
         elements.append(element)
     }
@@ -62,7 +62,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         - index: Updated operation element index.
         - element: New operation element.
      */
-    public func update_code(index: Int, _ element: WorkspaceProgramElement)
+    public func update_element(index: Int, _ element: WorkspaceProgramElement)
     {
         if elements.indices.contains(index)
         {
@@ -75,7 +75,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
      - Parameters:
         - index: An index of deleted element.
      */
-    public func delete_code(index: Int)
+    public func delete_element(index: Int)
     {
         if elements.indices.contains(index)
         {
