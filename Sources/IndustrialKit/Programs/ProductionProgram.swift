@@ -116,7 +116,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.name = try container.decode(String.self, forKey: .name)
-        //self.elements = try container.decode([WorkspaceProgramElement].self, forKey: .elements)
+        self.elements = try container.decode([WorkspaceProgramElement].self, forKey: .elements)
     }
     
     public func encode(to encoder: any Encoder) throws
@@ -124,6 +124,6 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(name, forKey: .name)
-        //try container.encode(elements, forKey: .elements)
+        try container.encode(elements, forKey: .elements)
     }
 }
