@@ -341,13 +341,14 @@ public struct RegistersDataView: View
     
     @State private var is_registers_count_presented = false
     
-    @EnvironmentObject var workspace: Workspace
+    @ObservedObject var workspace: Workspace
     
     let save_registers: () -> ()
     
-    public init(is_presented: Binding<Bool>, save_registers: @escaping () -> Void = {})
+    public init(is_presented: Binding<Bool>, workspace: Workspace, save_registers: @escaping () -> Void = {})
     {
         self._is_presented = is_presented
+        self.workspace = workspace
         self.save_registers = save_registers
     }
     
@@ -637,9 +638,8 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
                 Rectangle()
                     .foregroundStyle(.white)
                 
-                RegistersDataView(is_presented: $is_presented)
+                RegistersDataView(is_presented: $is_presented, workspace: Workspace())
                     .frame(width: 420, height: 480)
-                    .environmentObject(Workspace())
                     .background(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                     .shadow(color: .black.opacity(0.25), radius: 16)

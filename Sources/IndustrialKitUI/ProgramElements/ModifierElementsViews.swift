@@ -179,8 +179,6 @@ public struct MathElementView: View
                 set:
                     { new_value in
                         element.expression = new_value
-                        
-                        on_update()
                     }
             )
             
@@ -200,6 +198,7 @@ public struct MathElementView: View
             TextField("Expression", text: expression)
                 .textFieldStyle(.roundedBorder)
                 .padding(.trailing)
+                .onSubmit(on_update)
             
             RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: to_index, names: ["To"])
         }

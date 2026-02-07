@@ -19,11 +19,18 @@ struct WorkspaceControlView: View
     
     @Namespace private var animation_namespace
     
-    @State private var code_value = 0
+    @State private var registers_view_presented = false
     
-    public init(workspace: Workspace)
+    let on_update: () -> ()
+    
+    public init(
+        workspace: Workspace,
+        on_update: @escaping () -> Void = {}
+    )
     {
         self.workspace = workspace
+        
+        self.on_update = on_update
     }
     
     var body: some View
@@ -33,6 +40,38 @@ struct WorkspaceControlView: View
             // MARK: Caption
             PerformingCaptionView(name: "Workspace", performing_state: workspace.performing_state)
                 .frame(width: 200)
+                .overlay(alignment: .leading)
+                {
+                    HStack
+                    {
+                        Button
+                        {
+                            registers_view_presented = true
+                        }
+                        label:
+                        {
+                            Image(systemName:"number")
+                                .padding(.leading, 10)
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                }
+                .sheet(isPresented: $registers_view_presented)
+                {
+                    RegistersDataView(is_presented: $registers_view_presented, workspace: workspace)
+                    {
+                        //document_handler.document_update_registers()
+                    }
+                    .onDisappear()
+                    {
+                        registers_view_presented = false
+                    }
+                    #if os(macOS)
+                    .frame(width: 420, height: 480)
+                    #elseif os(visionOS)
+                    .frame(width: 600, height: 600)
+                    #endif
+                }
             
             // MARK: Programs
             ZStack
@@ -65,6 +104,8 @@ struct WorkspaceControlView: View
                                         if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
                                         {
                                             workspace.programs.remove(at: index)
+                                            
+                                            on_update()
                                         }
                                     }
                                 )
@@ -94,7 +135,7 @@ struct WorkspaceControlView: View
                 
                 if let program = workspace.selected_program
                 {
-                    ProductionProgramView(workspace: workspace, program: program)
+                    ProductionProgramView(workspace: workspace, program: program, on_update: on_update)
                     {
                         deselect_program()
                     }
@@ -126,6 +167,8 @@ struct WorkspaceControlView: View
                     {
                         AddNewView(is_presented: $new_program_view_presented, names: workspace.programs_names) { new_name in
                             workspace.add_program(ProductionProgram(name: new_name))
+                            
+                            on_update()
                         }
                     }
                     #else
@@ -162,6 +205,8 @@ struct WorkspaceControlView: View
             if let selected_program = workspace.selected_program
             {
                 clone_element(workspace.current_element, to: selected_program)
+                
+                on_update()
             }
         }
     }
@@ -223,6 +268,8 @@ private struct ProductionProgramView: View
     
     @ObservedObject var program: ProductionProgram
     
+    var on_update: () -> () = {}
+    
     var dismiss_function: () -> ()
     
     @State private var dragging_element_id: UUID?
@@ -270,12 +317,14 @@ private struct ProductionProgramView: View
                         ElementItemView(
                             workspace: workspace,
                             program: program,
-                            element: element
+                            element: element,
+                            on_update: on_update
                         )
                         { if let index = program.elements.firstIndex(where: { $0.id == element.id })
                             {
                                 program.elements.remove(at: index)
-                                //workspace.update_position_program_entity(by: program)
+                                
+                                on_update()
                             }
                         }
                         .onDrag
@@ -283,7 +332,7 @@ private struct ProductionProgramView: View
                             dragging_element_id = element.id
                             return NSItemProvider(object: element.id.uuidString as NSString)
                         }
-                        .onDrop(of: [.text], delegate: ElementDropDelegate(current_element: element, program: program, dragging_element_id: $dragging_element_id, workspace: workspace))
+                        .onDrop(of: [.text], delegate: ElementDropDelegate(current_element: element, program: program, dragging_element_id: $dragging_element_id, workspace: workspace, on_update: on_update))
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
                 }
@@ -306,11 +355,13 @@ private struct ElementItemView: View
     @ObservedObject var program: ProductionProgram
     @ObservedObject var element: WorkspaceProgramElement
     
-    @State private var position_item_view_presented = false
+    @State private var element_view_presented = false
     
     #if os(iOS)
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
+    
+    let on_update: () -> ()
     
     let on_delete: () -> ()
     
@@ -342,7 +393,12 @@ private struct ElementItemView: View
         }
         .onTapGesture
         {
-            position_item_view_presented.toggle()
+            element_view_presented.toggle()
+        }
+        .popover(isPresented: $element_view_presented)
+        {
+            WorkspaceProgramElementView(element: element, workspace: workspace, on_update: on_update)
+                .padding()
         }
         .contextMenu
         {
@@ -368,6 +424,8 @@ private struct ElementDropDelegate: DropDelegate
     
     let workspace: Workspace
     
+    let on_update: () -> ()
+    
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
     #endif
@@ -383,6 +441,8 @@ private struct ElementDropDelegate: DropDelegate
             withAnimation
             {
                 program.elements.move(fromOffsets: IndexSet(integer: from_index), toOffset: to_index > from_index ? to_index + 1 : to_index)
+                
+                on_update()
             }
         }
     }
@@ -454,19 +514,13 @@ struct WorkspaceControl_Previews: PreviewProvider
     {
         @StateObject var workspace = Workspace()
         
-        //
-        private let columns: [GridItem] = [.init(.adaptive(minimum: element_card_maximum, maximum: element_card_maximum), spacing: 0)]
-        
-        @State private var element = MathModifierElement()
-        //
-        
         var body: some View
         {
             ZStack
             {
                 FloatingView(alignment: .trailing)
                 {
-                    WorkspaceControlView(workspace: workspace)
+                    WorkspaceControlView(workspace: workspace, on_update: { print("Program Updated") })
                         .padding(8)
                 }
                 .padding(10)
@@ -486,38 +540,36 @@ struct WorkspaceControl_Previews: PreviewProvider
                 workspace.tools.append(tool)
             }
             
-            ZStack()
+            VStack
             {
-                ScrollView
+                HStack
                 {
-                    LazyVGrid(columns: columns, spacing: element_card_spacing)
+                    ElementItemView(workspace: workspace, program: ProductionProgram(), element: RobotPerformerElement(), on_update: {})
                     {
-                        ElementItemView(workspace: workspace, program: ProductionProgram(), element: RobotPerformerElement())
-                        {
-                            
-                        }
                         
-                        ElementItemView(workspace: workspace, program: ProductionProgram(), element: MathModifierElement())
-                        {
-                            
-                        }
+                    }
+                    
+                    ElementItemView(workspace: workspace, program: ProductionProgram(), element: MathModifierElement(), on_update: {})
+                    {
                         
-                        
-                        ElementItemView(workspace: workspace, program: ProductionProgram(), element: JumpLogicElement())
-                        {
-                            
-                        }
-                        
-                        /*ElementItemView(workspace: workspace, program: ProductionProgram(), element: element)
-                        {
-                            
-                        }*/
                     }
                 }
-                //.border(.green)
-                .padding()
+                
+                HStack
+                {
+                    ElementItemView(workspace: workspace, program: ProductionProgram(), element: JumpLogicElement(), on_update: {})
+                    {
+                        
+                    }
+                    
+                    ElementItemView(workspace: workspace, program: ProductionProgram(), element: JumpLogicElement(), on_update: {})
+                    {
+                        
+                    }
+                    .hidden()
+                }
             }
-            .frame(width: 256, height: 256)
+            .frame(width: 160, height: 160)
         }
     }
     

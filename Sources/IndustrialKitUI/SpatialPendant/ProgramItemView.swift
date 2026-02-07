@@ -16,9 +16,14 @@ public struct ProgramItemView: View
     
     @State private var to_rename = false
     @State private var new_name = String()
+    
     @FocusState private var is_focused: Bool
     
-    public init(name: Binding<String>, count: Int, on_delete: @escaping () -> Void)
+    public init(
+        name: Binding<String>,
+        count: Int,
+        on_delete: @escaping () -> Void
+    )
     {
         self._name = name
         self.count = count

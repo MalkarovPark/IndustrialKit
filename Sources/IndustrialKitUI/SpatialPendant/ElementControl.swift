@@ -275,30 +275,30 @@ public struct WorkspaceProgramElementView: View
             switch element
             {
             case let element as RobotPerformerElement:
-                RobotPerformerElementView(element: element, workspace: workspace, on_update: {})
+                RobotPerformerElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as ToolPerformerElement:
-                ToolPerformerElementView(element: element, workspace: workspace, on_update: {})
+                ToolPerformerElementView(element: element, workspace: workspace, on_update: on_update)
                 
             case let element as MoverModifierElement:
-                MoverElementView(element: element, workspace: workspace)
+                MoverElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as WriterModifierElement:
-                WriterElementView(element: element, workspace: workspace)
+                WriterElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as MathModifierElement:
-                MathElementView(element: element, workspace: workspace)
+                MathElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as ChangerModifierElement:
-                ChangerElementView(element: element, workspace: workspace)
+                ChangerElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as ObserverModifierElement:
-                ObserverElementView(element: element, workspace: workspace)
+                ObserverElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as CleanerModifierElement:
                 Text("Clean all registers")
                     .padding()
                 
             case let element as JumpLogicElement:
-                JumpElementView(element: element, workspace: workspace)
+                JumpElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as ComparatorLogicElement:
-                ComparatorElementView(element: element, workspace: workspace)
+                ComparatorElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as MarkLogicElement:
-                MarkLogicElementView(element: element, workspace: workspace)
+                MarkLogicElementView(element: element, workspace: workspace, on_update: on_update)
                 
             default:
                 EmptyView()
