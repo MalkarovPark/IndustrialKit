@@ -123,14 +123,14 @@ public struct RobotControlView: View
                     .popover(isPresented: $new_program_view_presented, arrowEdge: .leading)
                     {
                         AddNewView(is_presented: $new_program_view_presented, names: robot.programs_names) { new_name in
-                            robot.add_program(PositionsProgram(name: new_name))
+                            robot.add_program(PositionProgram(name: new_name))
                         }
                     }
                     #else
                     .popover(isPresented: $new_program_view_presented, arrowEdge: .trailing)
                     {
                         AddNewView(is_presented: $new_program_view_presented, names: robot.programs_names) { new_name in
-                            robot.add_program(PositionsProgram(name: new_name))
+                            robot.add_program(PositionProgram(name: new_name))
                         }
                     }
                     #endif
@@ -171,7 +171,7 @@ public struct RobotControlView: View
         }
     }
     
-    private func select_program(_ program: PositionsProgram)
+    private func select_program(_ program: PositionProgram)
     {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
@@ -197,7 +197,7 @@ public struct RobotControlView: View
 
 private struct ProgramDropDelegate: DropDelegate
 {
-    let current_program: PositionsProgram
+    let current_program: PositionProgram
     let robot: Robot
     
     @Binding var dragging_program_id: UUID?
@@ -229,7 +229,7 @@ private struct PositionProgramView: View
 {
     @ObservedObject var robot: Robot
     
-    @ObservedObject var program: PositionsProgram
+    @ObservedObject var program: PositionProgram
     var dismiss_function: () -> ()
     @State private var dragging_point_id: UUID?
     
@@ -309,7 +309,7 @@ private struct PositionProgramView: View
 private struct PositionItemView: View
 {
     @ObservedObject var robot: Robot
-    @ObservedObject var program: PositionsProgram
+    @ObservedObject var program: PositionProgram
     @ObservedObject var point_item: PositionPoint
     
     @State private var position_item_view_presented = false
@@ -392,7 +392,7 @@ private struct PositionItemView: View
 private struct PositionDropDelegate: DropDelegate
 {
     let current_point: PositionPoint
-    let program: PositionsProgram
+    let program: PositionProgram
     
     @Binding var dragging_point_id: UUID?
     
@@ -428,7 +428,7 @@ private struct PositionDropDelegate: DropDelegate
 private struct PositionPointView: View
 {
     @ObservedObject var robot: Robot
-    @ObservedObject var program: PositionsProgram
+    @ObservedObject var program: PositionProgram
     
     @ObservedObject var point: PositionPoint
     @Binding var position_item_view_presented: Bool

@@ -282,7 +282,7 @@ open class Tool: WorkspaceObject
     
     // MARK: - Program manage functions
     /// An array of tool operations programs.
-    @Published public var programs = [OperationsProgram]()
+    @Published public var programs = [OperationProgram]()
     
     /// A selected operations program index.
     public var selected_program_index = -1
@@ -300,7 +300,7 @@ open class Tool: WorkspaceObject
      - Parameters:
         - program: A new tool operations program.
      */
-    public func add_program(_ program: OperationsProgram)
+    public func add_program(_ program: OperationProgram)
     {
         program.name = mismatched_name(name: program.name, names: programs_names)
         programs.append(program)
@@ -312,7 +312,7 @@ open class Tool: WorkspaceObject
         - index: Updated program index.
         - program: A new tool operations program.
      */
-    public func update_program(index: Int, _ program: OperationsProgram) // Update program by index
+    public func update_program(index: Int, _ program: OperationProgram) // Update program by index
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
         {
@@ -326,7 +326,7 @@ open class Tool: WorkspaceObject
         - name: Updated program name.
         - program: A new tool operations program.
      */
-    public func update_program(name: String, _ program: OperationsProgram) // Update program by name
+    public func update_program(name: String, _ program: OperationProgram) // Update program by name
     {
         update_program(index: index_by_name(name: name), program)
     }
@@ -384,7 +384,7 @@ open class Tool: WorkspaceObject
     }
     
     /// A selected operations program.
-    public var selected_program: OperationsProgram?
+    public var selected_program: OperationProgram?
     {
         get // Return operations program by selected index
         {
@@ -399,7 +399,7 @@ open class Tool: WorkspaceObject
     /// Returns index by program name.
     private func index_by_name(name: String) -> Int // Get index of program by name
     {
-        return programs.firstIndex(of: OperationsProgram(name: name)) ?? -1
+        return programs.firstIndex(of: OperationProgram(name: name)) ?? -1
     }
     
     /// All operations programs names in tool.
@@ -1101,7 +1101,7 @@ public struct ToolFileData: Codable
     public var charts_data: [WorkspaceObjectChart]?
     public var states_data: [StateItem]?
     
-    public var programs: [OperationsProgram]
+    public var programs: [OperationProgram]
     
     // MARK: Init
     public init(
@@ -1120,7 +1120,7 @@ public struct ToolFileData: Codable
         charts_data: [WorkspaceObjectChart]?,
         states_data: [StateItem]?,
         
-        programs: [OperationsProgram]
+        programs: [OperationProgram]
     )
     {
         self.object = object

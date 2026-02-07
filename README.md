@@ -79,7 +79,7 @@ For arrays of objects, a standard set of functions is used, including adding, de
 
 ### Robot <a name="robot">
 
-The `Robot` class describes an object of the production system that works with the representation of positions in space and is able to move its arm (manipulator) endpoint to them. The robot contains in its property an array of positional programs related to the `PositionsProgram` class.
+The `Robot` class describes an object of the production system that works with the representation of positions in space and is able to move its arm (manipulator) endpoint to them. The robot contains in its property an array of positional programs related to the `PositionProgram` class.
 
 The positional program contains an array of target positions of type `PositionPoint`. Position describes the location (`x`, `y`, `z`), rotation angles in it (`r`, `p`, `w`), type and speed of movement.
 
@@ -125,7 +125,7 @@ Some functions that can be used both in framework and independently by developer
 
    * `pass_robot_preferences` – pass parameters between robots, such as origin location/rotation and working space scaling;
 
-   * `pass_positions_programs` – pass positions programs, specified by names, between robots.
+   * `pass_position_programs` – pass positions programs, specified by names, between robots.
 
    * `element_from_struct` – universal function, that initializes the workspace program element by corresponding file struct data.
 

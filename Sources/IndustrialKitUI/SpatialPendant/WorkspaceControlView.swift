@@ -531,11 +531,11 @@ struct WorkspaceControl_Previews: PreviewProvider
             {
                 let robot = Robot(name: "6DOF")
                 robot.is_placed = true
-                robot.add_program(PositionsProgram(name: "Square"))
+                robot.add_program(PositionProgram(name: "Square"))
                 
                 let tool = Tool(name: "Gripper")
                 tool.is_placed = true
-                tool.add_program(OperationsProgram(name: "Close"))
+                tool.add_program(OperationProgram(name: "Close"))
                 
                 workspace.robots.append(robot)
                 workspace.tools.append(tool)

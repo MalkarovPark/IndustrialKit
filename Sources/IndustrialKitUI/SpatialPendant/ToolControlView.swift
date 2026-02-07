@@ -138,14 +138,14 @@ struct ToolControlView: View
                         .popover(isPresented: $new_program_view_presented, arrowEdge: .leading)
                         {
                             AddNewView(is_presented: $new_program_view_presented, names: tool.programs_names) { new_name in
-                                tool.add_program(OperationsProgram(name: new_name))
+                                tool.add_program(OperationProgram(name: new_name))
                             }
                         }
                         #else
                         .popover(isPresented: $new_program_view_presented, arrowEdge: .trailing)
                         {
                             AddNewView(is_presented: $new_program_view_presented, names: tool.programs_names) { new_name in
-                                tool.add_program(OperationsProgram(name: new_name))
+                                tool.add_program(OperationProgram(name: new_name))
                             }
                         }
                         #endif
@@ -181,7 +181,7 @@ struct ToolControlView: View
         }
     }
     
-    private func select_program(_ program: OperationsProgram)
+    private func select_program(_ program: OperationProgram)
     {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
@@ -207,7 +207,7 @@ struct ToolControlView: View
 
 private struct ProgramDropDelegate: DropDelegate
 {
-    let current_program: OperationsProgram
+    let current_program: OperationProgram
     let tool: Tool
     
     @Binding var dragging_program_id: UUID?
@@ -239,7 +239,7 @@ private struct OperationProgramView: View
 {
     @ObservedObject var tool: Tool
     
-    @ObservedObject var program: OperationsProgram
+    @ObservedObject var program: OperationProgram
     var dismiss_function: () -> ()
     @State private var dragging_code_id: UUID?
     
@@ -314,7 +314,7 @@ private struct OperationProgramView: View
 private struct OperationItemView: View
 {
     @ObservedObject var tool: Tool
-    @ObservedObject var program: OperationsProgram
+    @ObservedObject var program: OperationProgram
     @ObservedObject var code_item: OperationCode
     
     #if os(iOS)
@@ -400,7 +400,7 @@ private struct OperationItemView: View
 private struct OperationDropDelegate: DropDelegate
 {
     let current_code: OperationCode
-    let program: OperationsProgram
+    let program: OperationProgram
     
     @Binding var dragging_code_id: UUID?
     

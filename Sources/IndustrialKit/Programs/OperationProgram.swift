@@ -1,5 +1,5 @@
 //
-//  OperationsProgram.swift
+//  OperationProgram.swift
 //  IndustrialKit
 //
 //  Created by Artem on 28.10.2022.
@@ -12,11 +12,11 @@ import Foundation
  
  Contains an array of opcodes and a custom name used for identification.
  */
-public class OperationsProgram: Identifiable, Codable, Equatable, ObservableObject
+public class OperationProgram: Identifiable, Codable, Equatable, ObservableObject
 {
     public let id: UUID = UUID()
     
-    public static func == (lhs: OperationsProgram, rhs: OperationsProgram) -> Bool
+    public static func == (lhs: OperationProgram, rhs: OperationProgram) -> Bool
     {
         return lhs.name == rhs.name // Identity condition by names
     }

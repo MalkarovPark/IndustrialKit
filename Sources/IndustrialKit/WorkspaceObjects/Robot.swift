@@ -301,7 +301,7 @@ open class Robot: WorkspaceObject
     
     // MARK: - Program manage functions
     /// An array of robot positions programs.
-    @Published public var programs = [PositionsProgram]()
+    @Published public var programs = [PositionProgram]()
     
     /// A selected positions program index.
     public var selected_program_index = -1
@@ -319,7 +319,7 @@ open class Robot: WorkspaceObject
      - Parameters:
         - program: A new robot positions program.
      */
-    public func add_program(_ program: PositionsProgram)
+    public func add_program(_ program: PositionProgram)
     {
         program.name = mismatched_name(name: program.name, names: programs_names)
         programs.append(program)
@@ -331,7 +331,7 @@ open class Robot: WorkspaceObject
         - index: Updated program index.
         - program: A new robot positions program.
      */
-    public func update_program(index: Int, _ program: PositionsProgram) // Update program by index
+    public func update_program(index: Int, _ program: PositionProgram) // Update program by index
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
         {
@@ -345,7 +345,7 @@ open class Robot: WorkspaceObject
         - name: Updated program name.
         - program: A new robot positions program.
      */
-    public func update_program(name: String, _ program: PositionsProgram)
+    public func update_program(name: String, _ program: PositionProgram)
     {
         update_program(index: index_by_name(name: name), program)
     }
@@ -404,7 +404,7 @@ open class Robot: WorkspaceObject
     }
     
     /// A selected positions program.
-    public var selected_program: PositionsProgram?
+    public var selected_program: PositionProgram?
     {
         get // Return positions program by selected index
         {
@@ -419,7 +419,7 @@ open class Robot: WorkspaceObject
     /// Returns index by program name.
     private func index_by_name(name: String) -> Int
     {
-        return programs.firstIndex(of: PositionsProgram(name: name)) ?? -1
+        return programs.firstIndex(of: PositionProgram(name: name)) ?? -1
     }
     
     /// All positions programs names in robot.
@@ -1019,7 +1019,7 @@ open class Robot: WorkspaceObject
         position_program_entity.isEnabled.toggle()
     }
     
-    @MainActor public func update_position_program_entity(by program: PositionsProgram, edited_point: Int? = nil)
+    @MainActor public func update_position_program_entity(by program: PositionProgram, edited_point: Int? = nil)
     {
         let is_enabled = position_program_entity.isEnabled
         
@@ -1442,7 +1442,7 @@ public struct RobotFileData: Codable
     public var charts_data: [WorkspaceObjectChart]?
     public var states_data: [StateItem]?
     
-    public var programs: [PositionsProgram]
+    public var programs: [PositionProgram]
     
     // MARK: - Init
     public init(
@@ -1463,7 +1463,7 @@ public struct RobotFileData: Codable
         charts_data: [WorkspaceObjectChart]?,
         states_data: [StateItem]?,
         
-        programs: [PositionsProgram]
+        programs: [PositionProgram]
     )
     {
         self.object = object

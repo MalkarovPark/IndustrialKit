@@ -187,7 +187,7 @@ public func pass_robot_preferences(_ origin_location: Bool, _ origin_rotation: B
     - to: Robot that programs pass to.
  */
 @MainActor
-public func pass_positions_programs(names: [String], from: Robot, to: Robot)
+public func pass_position_programs(names: [String], from: Robot, to: Robot)
 {
     let programs = from.programs
     
