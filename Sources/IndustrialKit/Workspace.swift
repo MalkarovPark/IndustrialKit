@@ -1028,7 +1028,45 @@ public class Workspace: ObservableObject, @unchecked Sendable
         if element.is_single_perfrom
         {
             // Single robot perform
+            robot.performed = true
             
+            var target_point = PositionPoint(x: registers[safe_float: element.x_index],
+                                             y: registers[safe_float: element.y_index],
+                                             z: registers[safe_float: element.z_index],
+                                             r: registers[safe_float: element.r_index],
+                                             p: registers[safe_float: element.p_index],
+                                             w: registers[safe_float: element.w_index],
+                                             move_speed: registers[safe_float: element.speed_index],
+                                             move_type: MoveType(register_value: Int(registers[safe_float: element.type_index])))
+            robot.point_shift(&target_point)
+            
+            robot.move_to(point: target_point)
+            { result in
+                Task
+                { @MainActor in
+                    robot.performed = false
+                    switch result
+                    {
+                    case .success:
+                        robot.pointer_position_to_robot()
+                        completion(.success(()))
+                    case .failure(let error):
+                        robot.process_error(error)
+                        error_handler(error)
+                    }
+                }
+                
+                /*self.selected_robot.performed = false
+                switch result
+                {
+                case .success:
+                    self.selected_robot.pointer_position_to_robot()
+                    completion(.success(()))
+                case .failure(let error):
+                    self.selected_robot.process_error(error)
+                    error_handler(error)
+                }*/
+            }
         }
         else
         {
