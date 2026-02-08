@@ -657,7 +657,7 @@ open class Tool: WorkspaceObject
         last_error = error
         
         selected_operation_code.performing_state = .error
-        performing_state = .processing // State light (UI)
+        performing_state = .error // State light (UI)
         
         model_controller.reset_entities()
         

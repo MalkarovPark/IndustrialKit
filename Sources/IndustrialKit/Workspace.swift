@@ -762,7 +762,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         last_error = error
         
         selected_program_element.performing_state = .error
-        performing_state = .processing // State light (UI)
+        performing_state = .error // State light (UI)
         
         //model_controller.reset_entities()
         
@@ -861,20 +861,28 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Resets workspace performing.
     public func reset_performing()
     {
+        disable_constant_objects_update()
+        
+        switch selected_program_element
+        {
+        case let performer_element as RobotPerformerElement:
+            let robot = robot_by_name(performer_element.object_name)
+            robot.reset_moving()
+            robot.disable_update()
+        case let performer_element as ToolPerformerElement:
+            let tool = tool_by_name(performer_element.object_name)
+            tool.reset_performing()
+            tool.disable_update()
+        default:
+            break
+        }
+        
         guard let selected_program = self.selected_program else { return }
         
         program_performed = false // Control Buttons (UI)
         performing_state = .none // State light (UI)
         
-        if performed
-        {
-            //model_controller.canceled = true
-            //model_controller.reset_entities()
-            
-            performed = false
-            
-            //clear_chart_data()
-        }
+        performed = false
         
         selected_element_index = 0
         selected_program.reset_elements_states()

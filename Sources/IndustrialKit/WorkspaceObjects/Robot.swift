@@ -736,7 +736,7 @@ open class Robot: WorkspaceObject
         last_error = error
         
         selected_position_point.performing_state = .error
-        performing_state = .processing // State light (UI)
+        performing_state = .error // State light (UI)
         
         model_controller.reset_entities()
         
