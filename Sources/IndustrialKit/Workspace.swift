@@ -549,7 +549,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         canceled = false
         
-        performing_task = Task
+        if let performer_element = element as? RobotPerformerElement // Test
+        {
+            perform_robot(by: performer_element, completion: { result in DispatchQueue.main.async { completion(result) } }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
+        } // Test
+        
+        /*performing_task = Task
         {
             do
             {
@@ -573,7 +578,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             
             canceled = false
-        }
+        }*/
     }
     
     /**
@@ -584,11 +589,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     public func perform(element: WorkspaceProgramElement) throws
     {
-        print("started")
-        usleep(UInt32(2 * 1_000_000))
-        print("finished")
+        //print("started")
+        //usleep(UInt32(2 * 1_000_000))
+        //print("finished")
         
-        /*switch element
+        switch element
         {
         // Performers
         case let performer_element as RobotPerformerElement:
@@ -642,7 +647,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 update_registers_count(reference_count)
             }
-        }*/
+        }
     }
     
     /// A workspace performation toggle.
@@ -1018,13 +1023,44 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     private func perform_robot(by element: RobotPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
-        select_robot(name: element.object_name)
+        let robot = robot_by_name(element.object_name)
+        
+        if element.is_single_perfrom
+        {
+            // Single robot perform
+            
+        }
+        else
+        {
+            // Program robot perform
+            if !element.is_program_by_index
+            {
+                robot.select_program(name: element.program_name)
+            }
+            else
+            {
+                robot.select_program(index: Int(registers[safe: element.program_index] ?? 0))
+            }
+            
+            robot.finish_handler = {
+                robot.disable_update()
+                completion(.success(()))
+            }
+            robot.error_handler = { error in
+                robot.disable_update()
+                error_handler(error)
+            }
+            
+            robot.start_pause_moving()
+        }
+        
+        /*select_robot(name: element.object_name)
         //deselect_tool()
         
         if !element.is_single_perfrom
         {
             // Program tool perform
-            /*if selected_robot_index != -1
+            if selected_robot_index != -1
             {
                 if selected_robot.scope_type == .selected
                 {
@@ -1054,12 +1090,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
             else
             {
                 completion(.success(()))
-            }*/
+            }
         }
         else
         {
             // Single robot perform
-            /*selected_robot.performed = true
+            selected_robot.performed = true
             
             var target_point = PositionPoint(x: registers[safe_float: element.x_index],
                                              y: registers[safe_float: element.y_index],
@@ -1097,8 +1133,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     self.selected_robot.process_error(error)
                     error_handler(error)
                 }*/
-            }*/
-        }
+            }
+        }*/
     }
     
     /**
