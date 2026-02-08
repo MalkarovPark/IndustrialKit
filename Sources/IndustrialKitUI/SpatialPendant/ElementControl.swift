@@ -154,7 +154,10 @@ struct ElementControl: View
                 
                 Button
                 {
-                    print("Finished")
+                    /*workspace.perform(element: workspace.current_element)
+                    { result in
+                        print(result)
+                    }*/
                 }
                 label:
                 {

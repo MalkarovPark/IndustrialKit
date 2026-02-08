@@ -305,7 +305,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     @Published public var current_element: WorkspaceProgramElement // Single program element
     
-    // MARK: - Workspace program elements handling
     // MARK: Workspace progem elements checking functions
     public func elements_check(program: ProductionProgram)
     {
@@ -508,8 +507,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    // MARK: Performation functions
-    /// Program performating cycle state.
+    // MARK: - Performing functions
+    /// Program performing cycle state.
     @Published public var cycled = false
     
     /// Workspace performing state.
@@ -518,28 +517,181 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// An Index of target element in control program array.
     private var selected_element_index = 0
     
-    /// Selects program element and performs by workcell.
-    public func start_pause_performing()
+    /// A target code in operation codes array.
+    public var selected_program_element: WorkspaceProgramElement //A selected workspace program element.
     {
-        /*guard elements.count > 0
+        get
+        {
+            return selected_program?.elements[safe: selected_element_index] ?? WorkspaceProgramElement()
+        }
+        set
+        {
+            selected_program?.elements[safe: selected_program_index] = newValue
+        }
+    }
+    
+    /// Cancel perform flag.
+    public var canceled = false
+    
+    private var performing_task = Task<Void, Error> {}
+    
+    // MARK: Performation cycle
+    /**
+     Performs program element on workspace with completion handler.
+     
+     - Parameters:
+        - element: The program element performed by the workspace.
+        - completion: A completion function that is calls when the performing completes.
+     */
+    public func perform(element: WorkspaceProgramElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
+    {
+        performed = true
+        
+        canceled = false
+        
+        performing_task = Task
+        {
+            do
+            {
+                try self.perform(element: element)
+                if !canceled
+                {
+                    //completion(.success(()))
+                    Task
+                    { @MainActor in
+                        completion(.success(()))
+                    }
+                }
+            }
+            catch
+            {
+                //completion(.failure(error))
+                Task
+                { @MainActor in
+                    completion(.failure(error))
+                }
+            }
+            
+            canceled = false
+        }
+    }
+    
+    /**
+     Performs program element on workspace.
+     
+     - Parameters:
+        - element: A workspace program element.
+     */
+    public func perform(element: WorkspaceProgramElement) throws
+    {
+        print("started")
+        usleep(UInt32(2 * 1_000_000))
+        print("finished")
+        
+        /*switch element
+        {
+        // Performers
+        case let performer_element as RobotPerformerElement:
+            break//perform_robot(by: performer_element, completion: { _ in completion() }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
+        case let performer_element as ToolPerformerElement:
+            break//perform_tool(by: performer_element, completion: { _ in completion() }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
+            
+        // Modifiers
+        case let mover_element as MoverModifierElement:
+            move(by: mover_element)
+        case let write_element as WriterModifierElement:
+            write(by: write_element)
+        case let math_element as MathModifierElement:
+            math(by: math_element)
+        case let changer_element as ChangerModifierElement:
+            let registers_count = registers.count
+            do
+            {
+                try changer_element.change(&registers)
+                check_registers(registers_count)
+            }
+            catch
+            {
+                //print(error.localizedDescription)
+                check_registers(registers_count)
+                error_handler(error)
+            }
+            //changer_element.change(&registers)
+            //check_registers(registers_count)
+            //completion()
+        case let observer_element as ObserverModifierElement:
+            observe(by: observer_element)
+        case is CleanerModifierElement:
+            clear_registers()
+            
+        // Logic
+        case let jump_element as JumpLogicElement:
+            jump(by: jump_element)
+            break
+        case let comparator_element as ComparatorLogicElement:
+            compare(by: comparator_element)
+        case is MarkLogicElement:
+            break
+        default:
+            break
+        }
+        
+        func check_registers(_ reference_count: Int)
+        {
+            if registers.count != reference_count
+            {
+                update_registers_count(reference_count)
+            }
+        }*/
+    }
+    
+    /// A workspace performation toggle.
+    public func start_pause_performing() //Selects program element and performs by workcell.
+    {
+        guard let selected_program = self.selected_program, selected_program.elements_count > 0
         else
         {
+            finish_handler()
             return
         }
         
-        /*if !(object_pointer_node?.isHidden ?? false)
-        {
-            deselect_object_for_edit()
-        }*/
+        prepare_program(selected_program)
         
-        prepare_program()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) // Delayed view update
+        // Tool performing handling
+        if !performed
         {
-            self.update_view()
+            reset_error()
+            
+            // Perform next element if performing was stop
+            performed = false //???
+            
+            program_performed = true // Control Buttons (UI)
+            performing_state = .processing // State light (UI)
+            
+            perform_next_element()
+        }
+        else
+        {
+            // Remove all action if moving was perform
+            performed = false
+            
+            //program_performed = false // Control Buttons (UI)
+            
+            pause_handler()
         }
         
-        // Handling workspace performing
+        func pause_handler()
+        {
+            selected_program.elements[selected_element_index].performing_state = .current
+            
+            program_performed = false // Control Buttons (UI)
+            performing_state = .current // State light (UI)
+            
+            canceled = true
+            //model_controller.reset_entities()
+        }
+        
+        /*// Handling workspace performing
         if !performed
         {
             reset_error()
@@ -558,28 +710,152 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }*/
     }
     
-    /// A selected workspace program element.
-    /*private var selected_program_element: WorkspaceProgramElement
-    {
-        return elements[safe: selected_element_index] ?? WorkspaceProgramElement()
-    }*/
-    
     /// Selects and performs program element by workspace.
-    private func perform_next_element()
+    public func perform_next_element()
     {
-        /*selected_program_element.performing_state = .processing
-        performing_state = .processing // State light
+        selected_program_element.performing_state = .processing
         
-        //perform(selected_program_element, completion: select_new_element)
-        perform(selected_program_element)
-        { [weak self] in
+        perform(element: selected_program_element)
+        { result in
             Task
             { @MainActor in
-                self?.select_new_element()
+                switch result
+                {
+                case .success:
+                    self.selected_program_element.performing_state = .completed
+                    //self.selected_operation_code.performing_state = self.connector.performing_state.output
+                    
+                    self.select_new_element()
+                case .failure(let error):
+                    self.process_error(error)
+                    self.error_handler(error)
+                }
             }
+        }
+    }
+    
+    /**
+     Processes an error that occurred during the operation performing.
+     - Parameters:
+        - error: A tool performing error.
+     */
+    public func process_error(_ error: Error)
+    {
+        performed = false // Pause performing
+        
+        last_error = error
+        
+        selected_program_element.performing_state = .error
+        performing_state = .processing // State light (UI)
+        
+        //model_controller.reset_entities()
+        
+        /*if demo
+        {
+            //model_controller.reset_entities()
+        }
+        else
+        {
+            // Remove actions for real tool
+            connector.canceled = true
+            connector.reset_device()
         }*/
     }
     
+    /// Set the new target program element index.
+    private func select_new_element()
+    {
+        guard let selected_program = self.selected_program
+        else
+        {
+            finish_handler()
+            return
+        }
+        
+        if selected_element_index < selected_program.elements_count - 1
+        {
+            // Select and perform next code
+            selected_element_index += 1
+            perform_next_element()
+        }
+        else
+        {
+            selected_element_index = 0
+            
+            if cycled
+            {
+                self.selected_program?.reset_elements_states()
+                
+                perform_next_element()
+            }
+            else
+            {
+                // Reset target point index if all points passed
+                selected_element_index = 0
+                performed = false
+                
+                deselect_object()
+                
+                performing_state = .completed // State light (UI)
+                program_performed = false // Control Buttons (UI)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                {
+                    self.performing_state = .none // State light (UI)
+                    self.selected_program?.reset_elements_states()
+                }
+                
+                update()
+                //pointer_position_to_robot()
+                
+                finish_handler()
+            }
+        }
+    }
+    
+    /// Finish handler for operation program performation.
+    public var finish_handler: (() -> Void) = {}
+    
+    /// Clears finish handler.
+    public func clear_finish_handler()
+    {
+        finish_handler = {}
+    }
+    
+    /// Error handler for operation program performation.
+    public var error_handler: ((Error) -> Void) = { _ in }
+    
+    /// Clears error handler.
+    public func clear_error_handler()
+    {
+        error_handler = { _ in }
+    }
+    
+    /// Resets workspace performing.
+    public func reset_performing()
+    {
+        guard let selected_program = self.selected_program else { return }
+        
+        program_performed = false // Control Buttons (UI)
+        performing_state = .none // State light (UI)
+        
+        if performed
+        {
+            //model_controller.canceled = true
+            //model_controller.reset_entities()
+            
+            performed = false
+            
+            //clear_chart_data()
+        }
+        
+        selected_element_index = 0
+        selected_program.reset_elements_states()
+        
+        reset_error()
+    }
+    
+    // MARK: Update statistics handling
     private func perform_constant_objects_update()
     {
         for robot in robots
@@ -618,207 +894,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    /**
-     Performs program element on workspace.
-     
-     - Parameters:
-        - element: A workspace program element.
-     */
-    public func perform(_ element: WorkspaceProgramElement, completion: @Sendable @escaping () -> Void)
-    {
-        switch element
-        {
-        // Performers
-        case let performer_element as RobotPerformerElement:
-            perform_robot(by: performer_element, completion: { _ in completion() }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
-        case let performer_element as ToolPerformerElement:
-            perform_tool(by: performer_element, completion: { _ in completion() }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
-            
-        // Modifiers
-        case let mover_element as MoverModifierElement:
-            move(by: mover_element)
-            completion()
-        case let write_element as WriterModifierElement:
-            write(by: write_element)
-            completion()
-        case let math_element as MathModifierElement:
-            math(by: math_element)
-            completion()
-        case let changer_element as ChangerModifierElement:
-            let registers_count = registers.count
-            do
-            {
-                try changer_element.change(&registers)
-                check_registers(registers_count)
-                completion()
-            }
-            catch
-            {
-                //print(error.localizedDescription)
-                check_registers(registers_count)
-                error_handler(error)
-            }
-            //changer_element.change(&registers)
-            //check_registers(registers_count)
-            //completion()
-        case let observer_element as ObserverModifierElement:
-            observe(by: observer_element)
-            completion()
-        case is CleanerModifierElement:
-            clear_registers()
-            completion()
-            
-        // Logic
-        case let jump_element as JumpLogicElement:
-            jump(by: jump_element)
-            completion()
-        case let comparator_element as ComparatorLogicElement:
-            compare(by: comparator_element)
-            completion()
-        case is MarkLogicElement:
-            completion()
-        default:
-            completion()
-        }
-        
-        func check_registers(_ reference_count: Int)
-        {
-            if registers.count != reference_count
-            {
-                update_registers_count(reference_count)
-            }
-        }
-    }
-    
-    /// Set the new target program element index.
-    private func select_new_element()
-    {
-        /*selected_program_element.performing_state = .completed
-        performing_state = .completed // State light
-        
-        if performed
-        {
-            selected_element_index += 1
-        }
-        else
-        {
-            return
-        }
-        
-        if selected_element_index < elements.count
-        {
-            // Select and move to next point
-            perform_next_element()
-        }
-        else
-        {
-            selected_element_index = 0
-            
-            if cycled
-            {
-                self.reset_program_elements_states()
-                
-                perform_next_element()
-            }
-            else
-            {
-                performed = false
-                
-                //deselect_robot()
-                //deselect_tool()
-                
-                disable_constant_objects_update()
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                {
-                    self.performing_state = .none // State light
-                    self.reset_program_elements_states()
-                    self.update_view()
-                }
-            }
-        }*/
-    }
-    
-    /// Pauses program element performing.
-    public func pause_performing()
-    {
-        /*disable_constant_objects_update()
-        
-        selected_program_element.performing_state = .current
-        performing_state = .current // State light
-        
-        switch selected_program_element
-        {
-        case is RobotPerformerElement:
-            pause_robot()
-        case is ToolPerformerElement:
-            pause_tool()
-        default:
-            break
-        }
-        
-        func pause_robot()
-        {
-            //selected_robot.start_pause_moving()
-            //selected_robot.disable_update()
-            //deselect_robot()
-        }
-        
-        func pause_tool()
-        {
-            //selected_tool.start_pause_performing()
-            //selected_tool.disable_update()
-            //deselect_tool()
-        }*/
-    }
-    
-    /// Resets the performing state of all operation codes to the `.none` state.
-    public func reset_program_elements_states()
-    {
-        /*for element in elements
-        {
-            element.performing_state = .none
-        }*/
-    }
-    
-    private func error_handler(_ error: Error)
-    {
-        /*performed = false // Pause performing
-        
-        //last_error = error
-        //print(last_error?.localizedDescription ?? "No Errors")
-        
-        disable_constant_objects_update()
-        
-        selected_program_element.performing_state = .error
-        performing_state = .error // State light
-        last_error = error
-        
-        /*switch selected_program_element
-        {
-        case is RobotPerformerElement:
-            robot_error_handling()
-        case is ToolPerformerElement:
-            tool_error_handling()
-        default:
-            break
-        }
-        
-        func robot_error_handling()
-        {
-            //selected_robot.start_pause_moving()
-            //selected_robot.disable_update()
-            //deselect_robot()
-        }
-        
-        func tool_error_handling()
-        {
-            //selected_tool.start_pause_performing()
-            //selected_tool.disable_update()
-            //deselect_tool()
-        }*/*/
-    }
-    
+    // MARK: Registers handling
     /// A default count of data registers for workspace.
     nonisolated(unsafe) public static var default_registers_count = 256
     
@@ -1185,44 +1261,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    /// Resets workspace performing.
-    public func reset_performing()
-    {
-        /*disable_constant_objects_update()
-        
-        switch selected_program_element
-        {
-        case is RobotPerformerElement:
-            reset_robot()
-        case is ToolPerformerElement:
-            reset_tool()
-        default:
-            break
-        }
-        
-        func reset_robot()
-        {
-            //selected_robot.reset_moving()
-            //selected_robot.disable_update()
-            //deselect_robot()
-        }
-        
-        func reset_tool()
-        {
-            //selected_tool.reset_performing()
-            //selected_tool.disable_update()
-            //deselect_tool()
-        }
-        
-        performed = false // Enable workspace program edit
-        selected_element_index = 0 // Select first program element
-        
-        reset_program_elements_states()
-        
-        performing_state = .none // State light
-        reset_error()*/
-    }
-    
     /// Prepare workspace program to perform.
     private func prepare_program(_ program: ProductionProgram)
     {
@@ -1552,6 +1590,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private func select_object_by_entity_identifier(_ entity_identifier: EntityModelIdentifier)
     {
         deselect_object() // Test
+        
+        deselect_program()
         
         switch entity_identifier.type
         {

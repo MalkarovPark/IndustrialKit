@@ -402,7 +402,7 @@ private struct ElementItemView: View
                 Image(systemName: "circle.fill")
                     .foregroundColor(element.performing_state.color)
                     .font(.system(size: element_card_light_size))
-                    .padding(4)
+                    .padding(element_card_light_padding)
             }
         }
         .onTapGesture
@@ -600,9 +600,11 @@ let element_card_scale: CGFloat = 35//40
 let element_card_spacing: CGFloat = 10
 let element_card_font_size: CGFloat = 14 //16
 let element_card_light_size: CGFloat = 5 //6
+let element_card_light_padding: CGFloat = 3
 #else
 let element_card_scale: CGFloat = 40
 let element_card_spacing: CGFloat = 10
 let element_card_font_size: CGFloat = 16
 let element_card_light_size: CGFloat = 6
+let element_card_light_padding: CGFloat = 4
 #endif
