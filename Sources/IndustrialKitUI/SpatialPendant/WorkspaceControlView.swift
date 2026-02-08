@@ -50,8 +50,21 @@ struct WorkspaceControlView: View
                         }
                         label:
                         {
-                            Image(systemName:"number")
+                            Image(systemName: "number")
                                 .padding(.leading, 10)
+                        }
+                        .buttonStyle(.borderless)
+                        
+                        Button(action: { workspace.cycled.toggle() })
+                        {
+                            if workspace.cycled
+                            {
+                                Image(systemName: "repeat")
+                            }
+                            else
+                            {
+                                Image(systemName: "repeat.1")
+                            }
                         }
                         .buttonStyle(.borderless)
                     }
