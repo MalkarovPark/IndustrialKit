@@ -549,10 +549,62 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         canceled = false
         
-        if let performer_element = element as? RobotPerformerElement // Test
+        switch element
         {
+        // Performers
+        case let performer_element as RobotPerformerElement:
             perform_robot(by: performer_element, completion: { result in DispatchQueue.main.async { completion(result) } }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
-        } // Test
+        case let performer_element as ToolPerformerElement:
+            perform_tool(by: performer_element, completion: { result in DispatchQueue.main.async { completion(result) } }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
+            
+        // Modifiers
+        case let mover_element as MoverModifierElement:
+            move(by: mover_element)
+            completion(.success(()))
+        case let write_element as WriterModifierElement:
+            write(by: write_element)
+            completion(.success(()))
+        case let math_element as MathModifierElement:
+            math(by: math_element)
+            completion(.success(()))
+        case let changer_element as ChangerModifierElement:
+            let registers_count = registers.count
+            do
+            {
+                try changer_element.change(&registers)
+                check_registers(registers_count)
+                completion(.success(()))
+            }
+            catch
+            {
+                check_registers(registers_count)
+                error_handler(error)
+            }
+        case let observer_element as ObserverModifierElement:
+            observe(by: observer_element, completion: { result in DispatchQueue.main.async { completion(result) } }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
+        case is CleanerModifierElement:
+            clear_registers()
+            completion(.success(()))
+            
+        // Logic
+        case let jump_element as JumpLogicElement:
+            jump(by: jump_element)
+            break
+        case let comparator_element as ComparatorLogicElement:
+            compare(by: comparator_element)
+        case is MarkLogicElement:
+            completion(.success(()))
+        default:
+            completion(.success(())) //break
+        }
+        
+        func check_registers(_ reference_count: Int)
+        {
+            if registers.count != reference_count
+            {
+                update_registers_count(reference_count)
+            }
+        }
         
         /*performing_task = Task
         {
@@ -587,68 +639,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - element: A workspace program element.
      */
-    public func perform(element: WorkspaceProgramElement) throws
+    /*public func perform(element: WorkspaceProgramElement) throws
     {
         //print("started")
         //usleep(UInt32(2 * 1_000_000))
         //print("finished")
-        
-        switch element
-        {
-        // Performers
-        case let performer_element as RobotPerformerElement:
-            break//perform_robot(by: performer_element, completion: { _ in completion() }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
-        case let performer_element as ToolPerformerElement:
-            break//perform_tool(by: performer_element, completion: { _ in completion() }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
-            
-        // Modifiers
-        case let mover_element as MoverModifierElement:
-            move(by: mover_element)
-        case let write_element as WriterModifierElement:
-            write(by: write_element)
-        case let math_element as MathModifierElement:
-            math(by: math_element)
-        case let changer_element as ChangerModifierElement:
-            let registers_count = registers.count
-            do
-            {
-                try changer_element.change(&registers)
-                check_registers(registers_count)
-            }
-            catch
-            {
-                //print(error.localizedDescription)
-                check_registers(registers_count)
-                error_handler(error)
-            }
-            //changer_element.change(&registers)
-            //check_registers(registers_count)
-            //completion()
-        case let observer_element as ObserverModifierElement:
-            observe(by: observer_element)
-        case is CleanerModifierElement:
-            clear_registers()
-            
-        // Logic
-        case let jump_element as JumpLogicElement:
-            jump(by: jump_element)
-            break
-        case let comparator_element as ComparatorLogicElement:
-            compare(by: comparator_element)
-        case is MarkLogicElement:
-            break
-        default:
-            break
-        }
-        
-        func check_registers(_ reference_count: Int)
-        {
-            if registers.count != reference_count
-            {
-                update_registers_count(reference_count)
-            }
-        }
-    }
+    }*/
     
     /// A workspace performation toggle.
     public func start_pause_performing() //Selects program element and performs by workcell.
@@ -687,13 +683,28 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         func pause_handler()
         {
-            selected_program.elements[selected_element_index].performing_state = .current
+            disable_constant_objects_update()
+            
+            selected_program_element.performing_state = .current //selected_program.elements[selected_element_index].performing_state = .current
             
             program_performed = false // Control Buttons (UI)
             performing_state = .current // State light (UI)
             
             canceled = true
-            //model_controller.reset_entities()
+            
+            switch selected_program_element
+            {
+            case let performer_element as RobotPerformerElement:
+                let robot = robot_by_name(performer_element.object_name)
+                robot.start_pause_moving()
+                robot.disable_update()
+            case let performer_element as ToolPerformerElement:
+                let tool = tool_by_name(performer_element.object_name)
+                tool.start_pause_performing()
+                tool.disable_update()
+            default:
+                break
+            }
         }
         
         /*// Handling workspace performing
@@ -828,13 +839,24 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Error handler for operation program performation.
-    public var error_handler: ((Error) -> Void) = { _ in }
+    private func error_handler(_ error: Error)
+        {
+            performed = false // Pause performing
+            
+            disable_constant_objects_update()
+            
+            selected_program_element.performing_state = .error
+            performing_state = .error // State light
+            last_error = error
+        }
+    
+    //public var error_handler: ((Error) -> Void) = { _ in }
     
     /// Clears error handler.
-    public func clear_error_handler()
+    /*public func clear_error_handler()
     {
         error_handler = { _ in }
-    }
+    }*/
     
     /// Resets workspace performing.
     public func reset_performing()
@@ -1015,7 +1037,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }*/
     
-    // MARK: - Elements processing
+    // MARK: - Element processing
     /**
      Perform robot by element data.
      - Parameters:
@@ -1055,17 +1077,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                         error_handler(error)
                     }
                 }
-                
-                /*self.selected_robot.performed = false
-                switch result
-                {
-                case .success:
-                    self.selected_robot.pointer_position_to_robot()
-                    completion(.success(()))
-                case .failure(let error):
-                    self.selected_robot.process_error(error)
-                    error_handler(error)
-                }*/
             }
         }
         else
@@ -1091,88 +1102,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             robot.start_pause_moving()
         }
-        
-        /*select_robot(name: element.object_name)
-        //deselect_tool()
-        
-        if !element.is_single_perfrom
-        {
-            // Program tool perform
-            if selected_robot_index != -1
-            {
-                if selected_robot.scope_type == .selected
-                {
-                    selected_robot.perform_update()
-                }
-                
-                if !element.is_program_by_index
-                {
-                    selected_robot.select_program(name: element.program_name)
-                }
-                else
-                {
-                    selected_robot.select_program(index: Int(registers[safe: element.program_index] ?? 0))
-                }
-                
-                selected_robot.finish_handler = {
-                    self.selected_robot.disable_update()
-                    completion(.success(()))
-                }
-                selected_robot.error_handler = { error in
-                    self.selected_robot.disable_update()
-                    error_handler(error)
-                }
-                
-                selected_robot.start_pause_moving()
-            }
-            else
-            {
-                completion(.success(()))
-            }
-        }
-        else
-        {
-            // Single robot perform
-            selected_robot.performed = true
-            
-            var target_point = PositionPoint(x: registers[safe_float: element.x_index],
-                                             y: registers[safe_float: element.y_index],
-                                             z: registers[safe_float: element.z_index],
-                                             r: registers[safe_float: element.r_index],
-                                             p: registers[safe_float: element.p_index],
-                                             w: registers[safe_float: element.w_index],
-                                             move_speed: registers[safe_float: element.speed_index],
-                                             move_type: MoveType(register_value: Int(registers[safe_float: element.type_index])))
-            selected_robot.point_shift(&target_point)
-            
-            selected_robot.move_to(point: target_point)
-            { result in
-                Task
-                { @MainActor in
-                    self.selected_robot.performed = false
-                    switch result
-                    {
-                    case .success:
-                        self.selected_robot.pointer_position_to_robot()
-                        completion(.success(()))
-                    case .failure(let error):
-                        self.selected_robot.process_error(error)
-                        error_handler(error)
-                    }
-                }
-                
-                /*self.selected_robot.performed = false
-                switch result
-                {
-                case .success:
-                    self.selected_robot.pointer_position_to_robot()
-                    completion(.success(()))
-                case .failure(let error):
-                    self.selected_robot.process_error(error)
-                    error_handler(error)
-                }*/
-            }
-        }*/
     }
     
     /**
@@ -1182,65 +1111,48 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
-        select_tool(name: element.object_name)
-        //deselect_robot()
+        let tool = tool_by_name(element.object_name)
         
-        if !element.is_single_perfrom
+        if element.is_single_perfrom
         {
-            // Program tool perform
-            /*if selected_tool_index != -1
-            {
-                if selected_tool.scope_type == .selected
-                {
-                    selected_tool.perform_update()
+            // Single tool perform
+            tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
+            { result in
+                Task
+                { @MainActor in
+                    tool.performed = false
+                    switch result
+                    {
+                    case .success:
+                        completion(.success(()))
+                    case .failure(let error):
+                        tool.process_error(error)
+                        error_handler(error)
+                    }
                 }
-                
-                if !element.is_program_by_index
-                {
-                    selected_tool.select_program(name: element.program_name)
-                }
-                else
-                {
-                    selected_tool.select_program(index: Int(registers[safe: element.program_index] ?? 0))
-                }
-                
-                selected_tool.finish_handler = {
-                    self.selected_tool.disable_update()
-                    completion(.success(()))
-                }
-                selected_tool.error_handler = { error in
-                    self.selected_tool.disable_update()
-                    error_handler(error)
-                }
-                
-                selected_tool.start_pause_performing()
             }
-            else
-            {
-                completion(.success(()))
-            }*/
         }
         else
         {
-            // Single tool perform
-            /*do
+            if !element.is_program_by_index
             {
-                selected_tool.performed = true
-                try selected_tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
-                {
-                    Task
-                    { @MainActor in
-                        self.selected_tool.performed = false
-                    }
-                    //self.selected_tool.performed = false
-                    completion(.success(()))
-                }
+                tool.select_program(name: element.program_name)
             }
-            catch
+            else
             {
-                self.selected_tool.process_error(error)
+                tool.select_program(index: Int(registers[safe: element.program_index] ?? 0))
+            }
+            
+            tool.finish_handler = {
+                tool.disable_update()
+                completion(.success(()))
+            }
+            tool.error_handler = { error in
+                tool.disable_update()
                 error_handler(error)
-            }*/
+            }
+            
+            tool.start_pause_performing()
         }
     }
     
@@ -1278,7 +1190,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - element: An observable modifier element.
      */
-    private func observe(by element: ObserverModifierElement)
+    private func observe(by element: ObserverModifierElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
         var info_output = [Float]()
         
@@ -1297,7 +1209,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
             info_output.append(pointer_position.p)
             info_output.append(pointer_position.w)
         case .tool:
-            info_output = tool_by_name(element.object_name).info_output ?? [Float]()
+            if let output = tool_by_name(element.object_name).info_output
+            {
+                info_output = output
+            }
+            else
+            {
+                error_handler(NSError(domain: "No output", code: 0, userInfo: nil))
+            }
         }
         
         if element.outputs.count > 0
@@ -1310,6 +1229,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 }
             }
         }
+        
+        completion(.success(()))
     }
     
     /**

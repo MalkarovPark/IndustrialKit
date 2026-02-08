@@ -154,8 +154,8 @@ struct ElementControl: View
                 
                 Button
                 {
-                    /*workspace.perform(element: workspace.current_element)
-                    { result in
+                    workspace.perform(element: workspace.current_element)
+                    /*{ result in
                         print(result)
                     }*/
                 }

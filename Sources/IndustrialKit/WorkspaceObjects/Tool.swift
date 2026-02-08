@@ -596,7 +596,7 @@ open class Tool: WorkspaceObject
         
         func pause_handler()
         {
-            selected_program.codes[selected_code_index].performing_state = .current
+            selected_operation_code.performing_state = .current //selected_program.codes[selected_code_index].performing_state = .current
             
             program_performed = false // Control Buttons (UI)
             performing_state = .current // State light (UI)

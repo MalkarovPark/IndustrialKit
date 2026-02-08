@@ -675,7 +675,7 @@ open class Robot: WorkspaceObject
         
         func pause_handler()
         {
-            selected_program.points[target_point_index].performing_state = .current
+            selected_position_point.performing_state = .current //selected_program.points[target_point_index].performing_state = .current
             
             program_performed = false // Control Buttons (UI)
             performing_state = .current // State light (UI)
