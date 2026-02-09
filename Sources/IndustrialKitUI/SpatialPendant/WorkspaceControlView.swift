@@ -316,6 +316,8 @@ private struct ProductionProgramView: View
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: element_card_maximum, maximum: element_card_maximum), spacing: 0)]
     
+    @State private var view_program_as_text = false
+    
     var body: some View
     {
         VStack(spacing: 0)
@@ -345,44 +347,64 @@ private struct ProductionProgramView: View
                 .buttonStyle(.plain)
                 .padding(.leading, 8)
             }
+            .overlay(alignment: .trailing)
+            {
+                Button(action: { view_program_as_text.toggle() })
+                {
+                    Image(systemName: view_program_as_text ? "text.justify.left" : "rectangle.grid.1x2")
+                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    #if os(iOS)
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
+                    #endif
+                }
+                .buttonStyle(.plain)
+                .padding(.trailing, 8)
+            }
             
             Divider()
             
-            ScrollView
+            if !view_program_as_text
             {
-                LazyVGrid(columns: columns, spacing: element_card_spacing)
+                ScrollView
                 {
-                    ForEach($program.elements)
-                    { $element in
-                        ElementItemView(
-                            workspace: workspace,
-                            program: program,
-                            element: element,
-                            on_update: on_update
-                        )
-                        { if let index = program.elements.firstIndex(where: { $0.id == element.id })
-                            {
-                                program.elements.remove(at: index)
-                                workspace.elements_check(program: program)
-                                
-                                on_update()
+                    LazyVGrid(columns: columns, spacing: element_card_spacing)
+                    {
+                        ForEach($program.elements)
+                        { $element in
+                            ElementItemView(
+                                workspace: workspace,
+                                program: program,
+                                element: element,
+                                on_update: on_update
+                            )
+                            { if let index = program.elements.firstIndex(where: { $0.id == element.id })
+                                {
+                                    program.elements.remove(at: index)
+                                    workspace.elements_check(program: program)
+                                    
+                                    on_update()
+                                }
                             }
+                            .onDrag
+                            {
+                                dragging_element_id = element.id
+                                return NSItemProvider(object: element.id.uuidString as NSString)
+                            }
+                            .onDrop(of: [.text], delegate: ElementDropDelegate(current_element: element, program: program, dragging_element_id: $dragging_element_id, workspace: workspace, on_update: on_update))
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                         }
-                        .onDrag
-                        {
-                            dragging_element_id = element.id
-                            return NSItemProvider(object: element.id.uuidString as NSString)
-                        }
-                        .onDrop(of: [.text], delegate: ElementDropDelegate(current_element: element, program: program, dragging_element_id: $dragging_element_id, workspace: workspace, on_update: on_update))
-                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
+                    #if os(macOS)
+                    .padding(.vertical, 16)//.padding(8)
+                    #else
+                    .padding(.vertical, 16)//.padding(8)
+                    #endif
                 }
-                //.border(.gray)
-                #if os(macOS)
-                .padding(.vertical, 16)//.padding(8)
-                #else
-                .padding(.vertical, 16)//.padding(8)
-                #endif
+            }
+            else
+            {
+                ControlProgramTextView(program: program)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -24,6 +24,9 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     /// An operations program name
     public var name: String
     
+    /// Code listing with position for elements
+    @Published public var listing_text: String?
+    
     /// An array of opertaions elements.
     @Published public var elements = [WorkspaceProgramElement]()
     
@@ -105,32 +108,11 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     }
     
     // MARK: - Work with file system
-    /*private enum CodingKeys: String, CodingKey
-    {
-        case name
-        case elements
-    }
-    
-    public required init(from decoder: any Decoder) throws
-    {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        self.name = try container.decode(String.self, forKey: .name)
-        self.elements = try container.decode([WorkspaceProgramElement].self, forKey: .elements)
-    }
-    
-    public func encode(to encoder: any Encoder) throws
-    {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(name, forKey: .name)
-        try container.encode(elements, forKey: .elements)
-    }*/
-    
     private enum CodingKeys: String, CodingKey
     {
         case name
         case elements
+        case listing_text
     }
     
     public required init(from decoder: any Decoder) throws
@@ -141,6 +123,8 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         
         let wrapped = try container.decode([AnyWorkspaceProgramElement].self, forKey: .elements)
         self.elements = wrapped.map { $0.base }
+        
+        self.listing_text = try container.decodeIfPresent(String.self, forKey: .listing_text)
     }
     
     public func encode(to encoder: any Encoder) throws
@@ -151,5 +135,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         
         let wrapped = elements.map { AnyWorkspaceProgramElement($0) }
         try container.encode(wrapped, forKey: .elements)
+        
+        try container.encode(listing_text, forKey: .listing_text)
     }
 }
