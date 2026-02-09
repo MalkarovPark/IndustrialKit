@@ -168,7 +168,7 @@ public struct WriterElementView: View
                     Rectangle()
                         .foregroundStyle(.white)
                     
-                    Text("No values to input")
+                    Text("No values to write")
                 }
                 .frame(height: 160)
                 .modifier(ListBorderer())
@@ -183,6 +183,7 @@ public struct WriterElementView: View
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
         }
+        .frame(minWidth: 200, maxWidth: .infinity)
     }
     
     private func add_item()
@@ -685,8 +686,6 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
 
                         MathElementView(element: MathModifierElement(), workspace: workspace)
                             .modifier(PreviewBorder())
-                        
-                        Spacer()
                     }
                 }
             }

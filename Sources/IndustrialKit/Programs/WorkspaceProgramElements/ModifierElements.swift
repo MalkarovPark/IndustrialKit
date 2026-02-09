@@ -120,7 +120,7 @@ public class WriterModifierElement: ModifierElement
         }
         else
         {
-            return "No registers to input"
+            return "No registers to write"
         }
     }
     
