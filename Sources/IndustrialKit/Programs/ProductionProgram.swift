@@ -137,7 +137,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         return code
     }
     
-    private func code_to_elements(from: String)
+    private func code_to_elements(from code: String)
     {
         elements.removeAll()
         
@@ -146,22 +146,16 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         for line in lines
         {
             let trimmed_line = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed_line.isEmpty else { continue }
             
-            if let element = line_to_element(trimmed_line)
+            for pattern in RegexPatterns.allCases
             {
-                elements.append(element)
+                if let element = pattern.make_element(from: trimmed_line)
+                {
+                    elements.append(element)
+                    break
+                }
             }
-        }
-        
-        func line_to_element(_ input: String) -> WorkspaceProgramElement?
-        {
-            if match_regex(text: input, pattern: "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)")
-            {
-                let data = extract_data_array(from: input, pattern: "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)")
-                return nil //RobotPerformerElement(data_array: [data[0], data[1], "0", "false", "false", "0", "0", "0", "0", "0", "0", "0", "0"])
-            }
-                        
-            return nil
         }
     }
     
@@ -199,9 +193,174 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
 }
 
 // MARK: - Conversion functions
-public enum RegexPatterns
+public enum RegexPatterns: String, CaseIterable
 {
+    // Performers
+    // RobotPerformerElement
+    case RobotPerformerElement_program = #"p: r\.\((.*?)\)\.\((.*?)\)"#
+    case RobotPerformerElement_index = #"p: r\.\(([^()]*)\)\.index\.\[([^\[\]]*)\]"#
+    case RobotPerformerElement_single = #"p: r\.\(([^()]*)\)\.single\.\[(\d+), (\d+), (\d+), (\d+), (\d+), (\d+), (\d+), (\d+)\]"#
     
+    // ToolPerformerElement
+    case ToolPerformerElement_program = #"p: t\.\((.*?)\)\.\((.*?)\)"#
+    case ToolPerformerElement_index = #"p: t\.\(([^()]*)\)\.index\.\[([^\[\]]*)\]"#
+    case ToolPerformerElement_single = #"p: t\.\(([^()]*)\)\.single\.\[([^\[\]]*)\]"#
+    
+    // Modifiers
+    // MathModifierElement
+    case _MathModifierElement = #"m: \[([^\[\]]+)\] = <(.+)>"#
+    
+    // MoverModifierElement
+    case MoverModifierElement_move = #"m: \[([^\[\]]+)\] move \[([^\[\]]+)\]"#
+    case MoverModifierElement_copy = #"m: \[([^\[\]]+)\] copy \[([^\[\]]+)\]"#
+    
+    // WriterModifierElement
+    case _WriterModifierElement = #"m: write\.<(.*?)> \[(.*?)\]"#
+    
+    // ObserverModifierElement
+    case ObserverModifierElement_robot = #"m: r\.\(([^()]*)\)\.observe\.\[(.*?)\] \[(.*?)\]"#
+    case ObserverModifierElement_tool = #"m: t\.\(([^()]*)\)\.observe\.\[(.*?)\] \[(.*?)\]"#
+    
+    // ChangerModifierElement
+    case _ChangerModifierElement = #"m: change\.\(([^()]*)\)"#
+    
+    // CleanerModifierElement
+    case _CleanerModifierElement = #"m: clear"#
+    
+    // Logic
+    // ComparatorLogicElement
+    case _ComparatorLogicElement = #"l: if \[([^\[\]]+)\] (\>=|<=|=|>|<) \[([^\[\]]+)\] jump\.\(([^()]*)\)"#
+    
+    // JumpLogicElement
+    case _JumpLogicElement = #"l: jump\.\(([^()]*)\)"#
+    
+    // MarkLogicElement
+    case _MarkLogicElement = #"l: mark\.\(([^()]*)\)"#
+    
+    func make_element(from input: String) -> WorkspaceProgramElement?
+    {
+        guard match_regex(text: input, pattern: self.rawValue) else
+        {
+            return nil
+        }
+        
+        let data = extract_data_array(from: input, pattern: self.rawValue)
+        
+        switch self
+        {
+        // Robot
+        case .RobotPerformerElement_program: // p: r.(name).(program)
+            return RobotPerformerElement(
+                object_name: data[0],
+                is_program_by_index: false,
+                program_name: data[1]
+            )
+        case .RobotPerformerElement_index: // p: r.(name).index.[#]
+            return RobotPerformerElement(
+                object_name: data[0],
+                is_program_by_index: true,
+                program_index: Int(data[1]) ?? 0
+            )
+        case .RobotPerformerElement_single: // p: r.(name).single.[#, #, #, #, #, #, #, #]
+            return RobotPerformerElement(
+                object_name: data[0],
+                is_single_perfrom: true,
+                x_index: Int(data[1]) ?? 0, y_index: Int(data[2]) ?? 0, z_index: Int(data[3]) ?? 0,
+                r_index: Int(data[4]) ?? 0, p_index: Int(data[5]) ?? 0, w_index: Int(data[6]) ?? 0,
+                speed_index: Int(data[7]) ?? 0, type_index: Int(data[8]) ?? 0
+            )
+        // Tool
+        case .ToolPerformerElement_program: // p: t.(name).(program)
+            return ToolPerformerElement(
+                object_name: data[0],
+                is_program_by_index: false,
+                program_name: data[1]
+            )
+        case .ToolPerformerElement_index: // p: t.(name).index.[#]
+            return ToolPerformerElement(
+                object_name: data[0],
+                is_program_by_index: true,
+                program_index: Int(data[1]) ?? 0
+            )
+        case .ToolPerformerElement_single: // p: t.(name).single.[#]
+            return ToolPerformerElement(
+                object_name: data[0],
+                is_single_perfrom: true,
+                opcode_index: Int(data[1]) ?? 0
+            )
+        // Math
+        case ._MathModifierElement: // m: [#] = <expression>
+            return MathModifierElement(
+                expression: data[1],
+                to_index: Int(data[0]) ?? 0
+            )
+        // Movers
+        case .MoverModifierElement_move: // m: [#] move [#]
+            return MoverModifierElement(
+                move_type: .move,
+                from_index: Int(data[1]) ?? 0,
+                to_index: Int(data[0]) ?? 0
+            )
+        case .MoverModifierElement_copy: // m: [#] copy [#]
+            return MoverModifierElement(
+                move_type: .duplicate,
+                from_index: Int(data[1]) ?? 0,
+                to_index: Int(data[0]) ?? 0
+            )
+        // Observers
+        case .ObserverModifierElement_robot:
+            return ObserverModifierElement(
+                object_type: .robot,
+                object_name: data[0],
+                outputs: zip(
+                    data[1].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) },
+                    data[2].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+                ).map { ObserverOutput(from: $0, to: $1) }
+            )
+        case .ObserverModifierElement_tool:
+            return ObserverModifierElement(
+                object_type: .tool,
+                object_name: data[0],
+                outputs: zip(
+                    data[1].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) },
+                    data[2].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+                ).map { ObserverOutput(from: $0, to: $1) }
+            )
+        // Writer
+        case ._WriterModifierElement:
+            return WriterModifierElement(
+                inputs: zip(
+                    data[0].split(separator: ",").compactMap { Float($0.trimmingCharacters(in: .whitespaces)) },
+                    data[1].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+                ).map { WriterInput(value: $0, to: $1) }
+            )
+        // Changer
+        case ._ChangerModifierElement:
+            return ChangerModifierElement(module_name: data[0])
+        // Cleaner
+        case ._CleanerModifierElement:
+            return CleanerModifierElement()
+            
+        // Comparator
+        case ._ComparatorLogicElement:
+            guard let compareType = CompareType.allCases.first(where: { $0.rawValue == data[1] }) else { return nil }
+            
+            return ComparatorLogicElement(
+                compare_type: compareType,
+                value_index: Int(data[0]) ?? 0,
+                value2_index: Int(data[2]) ?? 0,
+                target_mark_name: data[3]
+            )
+            
+        // Jump
+        case ._JumpLogicElement:
+            return JumpLogicElement(target_mark_name: data[0])
+        
+        // Mark
+        case ._MarkLogicElement:
+            return MarkLogicElement(name: data[0])
+        }
+    }
 }
 
 private func match_regex(text: String, pattern: String) -> Bool

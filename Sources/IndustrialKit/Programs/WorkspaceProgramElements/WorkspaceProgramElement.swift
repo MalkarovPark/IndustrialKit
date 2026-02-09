@@ -79,11 +79,6 @@ public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject, 
         return String()
     }
     
-    /*open var code_pattern: String
-    {
-        return String()
-    }*/
-    
     // MARK: - Work with file system
     private enum CodingKeys: String, CodingKey { case id }
     

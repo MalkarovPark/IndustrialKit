@@ -116,23 +116,33 @@ public class PerformerElement: WorkspaceProgramElement
 public class RobotPerformerElement: PerformerElement
 {
     public init(
+        object_name: String = "",
+        is_single_perfrom: Bool = false,
+        is_program_by_index: Bool = false,
+        program_name: String = "",
+        program_index: Int = 0,
+        
         x_index: Int = 0, y_index: Int = 0, z_index: Int = 0,
         r_index: Int = 0, p_index: Int = 0, w_index: Int = 0,
         speed_index: Int = 0, type_index: Int = 0
     )
     {
+        super.init()
+        
+        self.object_name = object_name
+        self.is_single_perfrom = is_single_perfrom
+        self.is_program_by_index = is_program_by_index
+        self.program_name = program_name
+        self.program_index = program_index
+        
         self.x_index = x_index
         self.y_index = y_index
         self.z_index = z_index
-        
         self.r_index = r_index
         self.p_index = p_index
         self.w_index = w_index
-        
         self.speed_index = speed_index
         self.type_index = type_index
-        
-        super.init()
     }
     
     /// Index of *x* location component.
@@ -185,8 +195,6 @@ public class RobotPerformerElement: PerformerElement
         }
     }
     
-    //public override var code_pattern: String { "p: r\\.\\((.*?)\\)\\.\\((.*?)\\)" }
-    
     // File handling
     private enum CodingKeys: String, CodingKey
     {
@@ -230,11 +238,25 @@ public class RobotPerformerElement: PerformerElement
 ///Performs program or position on selected tool.
 public class ToolPerformerElement: PerformerElement
 {
-    public init(opcode_index: Int = 0)
-    {
-        self.opcode_index = opcode_index
+    public init(
+        object_name: String = "",
+        is_single_perfrom: Bool = false,
+        is_program_by_index: Bool = false,
+        program_name: String = "",
+        program_index: Int = 0,
         
+        opcode_index: Int = 0
+    )
+    {
         super.init()
+        
+        self.object_name = object_name
+        self.is_single_perfrom = is_single_perfrom
+        self.is_program_by_index = is_program_by_index
+        self.program_name = program_name
+        self.program_index = program_index
+        
+        self.opcode_index = opcode_index
     }
     
     /// Index of operation code location component.
