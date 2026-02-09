@@ -192,7 +192,7 @@ public class MathModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return "m: [\(to_index)] [\(expression)]"
+        return "m: [\(expression)] [\(to_index)]"
     }
     
     // File handling
@@ -219,50 +219,6 @@ public class MathModifierElement: ModifierElement
         try container.encode(to_index, forKey: .to_index)
         
         try super.encode(to: encoder)
-    }
-}
-
-///A math program element operation type enum.
-public enum MathType: String, Codable, Equatable, CaseIterable
-{
-    case add = "+"
-    case substract = "-"
-    case multiply = "·"
-    case divide = "÷"
-    case power = "^"
-    
-    func operation(_ value1: inout Float, _ value2: Float)
-    {
-        switch self
-        {
-        case .add:
-            value1 += value2
-        case .substract:
-            value1 -= value2
-        case .multiply:
-            value1 *= value2
-        case .divide:
-            value1 /= (value2 != 0 ? value2 : 1)
-        case .power:
-            value1 = pow(value1, value2)
-        }
-    }
-    
-    var code_string: String
-    {
-        switch self
-        {
-        case .add:
-            return "+"
-        case .substract:
-            return "-"
-        case .multiply:
-            return "*"
-        case .divide:
-            return "/"
-        case .power:
-            return "^"
-        }
     }
 }
 

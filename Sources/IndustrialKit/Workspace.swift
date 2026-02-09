@@ -1190,7 +1190,56 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func math(by element: MathModifierElement)
     {
-        //element.operation.operation(&registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
+        let tokens = tokenize(element.expression)
+        let rpn = to_rpn(tokens)
+        let result = eval_rpn(rpn)
+        
+        registers[safe: element.to_index] = result
+        
+        func eval_rpn(_ rpn: [MathToken]) -> Float
+        {
+            var stack: [Float] = []
+            
+            for token in rpn
+            {
+                switch token
+                {
+                case .number(let n):
+                    stack.append(n)
+                    
+                case .constant(let c):
+                    stack.append(c)
+                    
+                case .register(let i):
+                    stack.append(registers[safe: i] ?? 0)
+                    
+                case .function(let name):
+                    guard let value = stack.popLast(),
+                          let f = math_functions[name]
+                    else { return 0 }
+                    stack.append(f(value))
+                    
+                case .op(let op):
+                    guard stack.count >= 2 else { return 0 }
+                    let b = stack.removeLast()
+                    let a = stack.removeLast()
+                    
+                    switch op
+                    {
+                    case "+": stack.append(a + b)
+                    case "-": stack.append(a - b)
+                    case "*": stack.append(a * b)
+                    case "/": stack.append(b == 0 ? 0 : a / b)
+                    case "^": stack.append(pow(a, b))
+                    default: break
+                    }
+                    
+                default: break
+                }
+            }
+            
+            return stack.last ?? 0
+        }
     }
     
     /**
@@ -2519,23 +2568,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         self.objectWillChange.send()
     } // Old
-    
-    /// Determines whether a given program element is currently selected for performing.
-    /*public func is_current_element(element: WorkspaceProgramElement) -> Bool
-    {
-        var flag = false
-        let element_index = self.elements.firstIndex(of: element) // Index of selected code
-        
-        if performed
-        {
-            if element_index == selected_element_index
-            {
-                flag = true
-            }
-        }
-        
-        return flag
-    }*/
 }
 
 public enum WorkspaceObjectType: String, Equatable, CaseIterable
@@ -2580,3 +2612,193 @@ public struct WorkspacePreset: Codable
     }
 }
 
+// MARK: - Math element functions
+private enum MathToken // Tokens
+{
+    case number(Float)
+    case register(Int)
+    case function(String)
+    case constant(Float)
+    case op(Character)
+    case lparen
+    case rparen
+}
+
+private func precedence(_ op: Character) -> Int // Operations priority
+{
+    switch op
+    {
+    case "+", "-": return 1
+    case "*", "/": return 2
+    case "^": return 3
+    default: return 0
+    }
+}
+
+@MainActor private let math_functions: [String: (Float) -> Float] =
+[
+    "sin": { sin($0) },
+    "cos": { cos($0) },
+    "sqrt": { sqrt($0) }
+]
+
+private let math_constants: [String: Float] =
+[
+    "pi": Float.pi
+]
+
+private func is_right_associative(_ op: Character) -> Bool
+{
+    return op == "^"
+}
+
+private func tokenize(_ expr: String) -> [MathToken] // String to tokens
+{
+    var tokens: [MathToken] = []
+    var i = expr.startIndex
+    
+    func next() { i = expr.index(after: i) }
+    
+    while i < expr.endIndex
+    {
+        let c = expr[i]
+        
+        if c.isWhitespace { next(); continue }
+        
+        // Numbers
+        if c.isNumber || c == "."
+        {
+            var number = ""
+            while i < expr.endIndex && (expr[i].isNumber || expr[i] == ".")
+            {
+                number.append(expr[i])
+                next()
+            }
+            tokens.append(.number(Float(number) ?? 0))
+            continue
+        }
+        
+        // Registers — [n]
+        if c == "["
+        {
+            next()
+            var index = ""
+            while i < expr.endIndex && expr[i] != "]"
+            {
+                index.append(expr[i])
+                next()
+            }
+            next()
+            tokens.append(.register(Int(index) ?? 0))
+            continue
+        }
+        
+        // Functions and constants
+        if c.isLetter
+        {
+            var name = ""
+            while i < expr.endIndex && (expr[i].isLetter)
+            {
+                name.append(expr[i])
+                next()
+            }
+            
+            if let const = math_constants[name]
+            {
+                tokens.append(.constant(const))
+            }
+            else
+            {
+                tokens.append(.function(name))
+            }
+            continue
+        }
+        
+        if c == "(" { tokens.append(.lparen); next(); continue }
+        if c == ")" { tokens.append(.rparen); next(); continue }
+        
+        if "+-*/^".contains(c)
+        {
+            tokens.append(.op(c))
+            next()
+            continue
+        }
+        
+        next()
+    }
+    
+    return tokens
+}
+
+private func to_rpn(_ tokens: [MathToken]) -> [MathToken] // Shunting-Yard to RPN
+{
+    var output: [MathToken] = []
+    var stack: [MathToken] = []
+    
+    for token in tokens
+    {
+        switch token
+        {
+        case .number, .register, .constant:
+            output.append(token)
+            
+        case .function:
+            stack.append(token)
+            
+        case .op(let op1):
+            while let last = stack.last
+            {
+                switch last
+                {
+                case .op(let op2):
+                    if (precedence(op2) > precedence(op1)) ||
+                       (precedence(op2) == precedence(op1) && !is_right_associative(op1))
+                    {
+                        output.append(stack.removeLast())
+                        continue
+                    }
+                case .function:
+                    output.append(stack.removeLast())
+                    continue
+                default: break
+                }
+                break
+            }
+            stack.append(token)
+            
+        case .lparen:
+            stack.append(token)
+            
+        case .rparen:
+            while let last = stack.last
+            {
+                if case .lparen = last
+                {
+                    break
+                }
+                output.append(stack.removeLast())
+            }
+
+            if !stack.isEmpty // Remove "("
+            {
+                stack.removeLast()
+            }
+
+            if let last = stack.last // Push out before the bracket function
+            {
+                if case .function = last
+                {
+                    output.append(stack.removeLast())
+                }
+            }
+        }
+    }
+    
+    while let last = stack.last
+    {
+        output.append(last)
+        stack.removeLast()
+    }
+    
+    return output
+}

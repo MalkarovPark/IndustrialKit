@@ -429,6 +429,22 @@ private struct ElementItemView: View
     }
 }
 
+let element_card_maximum = element_card_scale + element_card_spacing
+
+#if os(macOS)
+let element_card_scale: CGFloat = 35//40
+let element_card_spacing: CGFloat = 10
+let element_card_font_size: CGFloat = 14 //16
+let element_card_light_size: CGFloat = 5 //6
+let element_card_light_padding: CGFloat = 3
+#else
+let element_card_scale: CGFloat = 40
+let element_card_spacing: CGFloat = 10
+let element_card_font_size: CGFloat = 16
+let element_card_light_size: CGFloat = 6
+let element_card_light_padding: CGFloat = 4
+#endif
+
 private struct ElementDropDelegate: DropDelegate
 {
     let current_element: WorkspaceProgramElement
@@ -464,7 +480,6 @@ private struct ElementDropDelegate: DropDelegate
     func performDrop(info: DropInfo) -> Bool
     {
         dragging_element_id = nil
-        //robot.update_position_program_entity(by: program)
         return true
     }
 }
@@ -534,7 +549,7 @@ struct WorkspaceControl_Previews: PreviewProvider
             {
                 FloatingView(alignment: .trailing)
                 {
-                    WorkspaceControlView(workspace: workspace, on_update: { print("Program Updated") })
+                    WorkspaceControlView(workspace: workspace /*, on_update: { print("Program Updated") } */)
                         .padding(8)
                 }
                 .padding(10)
@@ -592,19 +607,3 @@ struct WorkspaceControl_Previews: PreviewProvider
         Container()
     }
 }
-
-let element_card_maximum = element_card_scale + element_card_spacing
-
-#if os(macOS)
-let element_card_scale: CGFloat = 35//40
-let element_card_spacing: CGFloat = 10
-let element_card_font_size: CGFloat = 14 //16
-let element_card_light_size: CGFloat = 5 //6
-let element_card_light_padding: CGFloat = 3
-#else
-let element_card_scale: CGFloat = 40
-let element_card_spacing: CGFloat = 10
-let element_card_font_size: CGFloat = 16
-let element_card_light_size: CGFloat = 6
-let element_card_light_padding: CGFloat = 4
-#endif
