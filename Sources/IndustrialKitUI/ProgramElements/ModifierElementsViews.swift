@@ -578,6 +578,7 @@ public struct ObserverElementView: View
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
         }
+        .frame(minWidth: 200, maxWidth: .infinity)
     }
     
     private func add_item()

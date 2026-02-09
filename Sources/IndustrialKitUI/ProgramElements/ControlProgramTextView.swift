@@ -21,11 +21,10 @@ public struct ControlProgramTextView: View
     public var body: some View
     {
         let code_binding = Binding<String>(
-            get: { program.listing_text ?? "" },
+            get: { program.code },
             set:
                 { new_value in
-                    program.listing_text = new_value
-                    program.elements = code_to_elements(code: new_value)
+                    program.code = new_value
                 }
         )
         
@@ -105,7 +104,7 @@ struct ControlTextView_Previews: PreviewProvider
         
         var body: some View
         {
-            VStack(spacing: 0)
+            VStack
             {
                 if !view_program_as_text
                 {

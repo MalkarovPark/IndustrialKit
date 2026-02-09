@@ -62,7 +62,7 @@ public class JumpLogicElement: LogicElement
     // Code string conversion
     public override var code_string: String
     {
-        return "l: jump.(\(target_mark_name)"
+        return "l: jump.(\(target_mark_name))"
     }
     
     // File handling
