@@ -21,6 +21,8 @@ struct WorkspaceControlView: View
     
     @State private var registers_view_presented = false
     
+    @State private var registers_updated = false
+    
     let on_update: () -> ()
     
     public init(
@@ -47,6 +49,7 @@ struct WorkspaceControlView: View
                         Button
                         {
                             registers_view_presented = true
+                            registers_updated = false
                         }
                         label:
                         {
@@ -54,6 +57,30 @@ struct WorkspaceControlView: View
                                 .padding(.leading, 10)
                         }
                         .buttonStyle(.borderless)
+                        .overlay(alignment: .topTrailing)
+                        {
+                            if registers_updated
+                            {
+                                ZStack
+                                {
+                                    Image(systemName: "circle.fill")
+                                        .foregroundStyle(.white)
+                                        .font(.system(size: 6))
+                                    
+                                    Image(systemName: "circle.fill")
+                                        .foregroundStyle(.pink)
+                                        .font(.system(size: 3))
+                                }
+                                .padding(0.5)
+                            }
+                        }
+                        .onChange(of: workspace.registers)
+                        { _, _ in
+                            if !registers_view_presented
+                            {
+                                registers_updated = true
+                            }
+                        }
                         
                         Button(action: { workspace.cycled.toggle() })
                         {
@@ -387,7 +414,7 @@ private struct ElementItemView: View
                 .fill(element.color.opacity(0.25))
             
             Image(systemName: element.symbol_name)
-                .foregroundColor(element.color)
+                .foregroundStyle(element.color)
                 .font(.system(size: element_card_font_size))
                 .frame(width: 24, height: 24)
         }
@@ -400,7 +427,7 @@ private struct ElementItemView: View
             if element.performing_state != .none
             {
                 Image(systemName: "circle.fill")
-                    .foregroundColor(element.performing_state.color)
+                    .foregroundStyle(element.performing_state.color)
                     .font(.system(size: element_card_light_size))
                     .padding(element_card_light_padding)
             }

@@ -601,106 +601,7 @@ public struct GlassBoxCard<Content: View>: View
     }
 }
 
-//MARK: - Program element card view
-public struct ProgramElementCard: View
-{
-    /*@StateObject var program_element: WorkspaceProgramElement
-    
-    public init(_ program_element: WorkspaceProgramElement)
-    {
-        _program_element = StateObject(wrappedValue: program_element)
-    }*/
-    
-    @ObservedObject var program_element: WorkspaceProgramElement
-    
-    public init(_ program_element: WorkspaceProgramElement)
-    {
-        self.program_element = program_element
-    }
-    
-    public var body: some View
-    {
-        ZStack
-        {
-            VStack
-            {
-                HStack(spacing: 0)
-                {
-                    ZStack
-                    {
-                        program_element.image
-                            .foregroundColor(.white)
-                            .imageScale(.large)
-                            .animation(.easeInOut(duration: 0.2), value: program_element.image)
-                        
-                        Rectangle()
-                            .foregroundStyle(LinearGradient(
-                                gradient: Gradient(stops: [
-                                    Gradient.Stop(color: .clear, location: 0.0),
-                                    Gradient.Stop(color: .white.opacity(0.1), location: 1.0)
-                                ]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ))
-                    }
-                    .frame(width: 48, height: 48)
-                    .background(program_element.color)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .padding(16)
-                    .animation(.easeInOut(duration: 0.2), value: program_element.color)
-                    
-                    HStack(spacing: 0)
-                    {
-                        HStack(spacing: 0)
-                        {
-                            VStack(alignment: .leading)
-                            {
-                                Text(program_element.title)
-                                    .font(.title3)
-                                    .animation(.easeInOut(duration: 0.2), value: program_element.title)
-                                Text(program_element.info)
-                                    .foregroundColor(.secondary)
-                                    .animation(.easeInOut(duration: 0.2), value: program_element.info)
-                            }
-                            
-                            Spacer()
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .padding(.trailing, 16)
-                }
-                .frame(maxWidth: .infinity)
-            }
-            #if !os(visionOS)
-            .background(.white)
-            #else
-            .background(.thinMaterial)
-            #endif
-            
-            if program_element.performing_state != .none
-            {
-                VStack
-                {
-                    HStack
-                    {
-                        Spacer()
-                        
-                        Circle()
-                            .foregroundColor(program_element.performing_state.color.opacity(0.5))
-                            .frame(width: 16, height: 16)
-                            .padding()
-                            .transition(AnyTransition.scale)
-                        
-                    }
-                    Spacer()
-                }
-            }
-        }
-        .frame(height: 80)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-    }
-}
-
+//MARK: - Register card view
 public struct RegisterCard: View
 {
     @Binding var value: Float
@@ -793,10 +694,6 @@ struct Cards_Previews: PreviewProvider
 {
     struct Container: View
     {
-        @State var performer_element = RobotPerformerElement() //"Device", "Program", "", "false", "false", "", "", "", "", "", "", "", ""
-        @State var modifier_element = MoverModifierElement() //"duplicate", "2", "4"
-        @State var logic_element = JumpLogicElement() //"Mark"
-        
         @State var to_rename = [false, false]
         @State var names = ["Image", "Scene"]
         @State var values: [Float] = [2, 4, 6]
@@ -805,7 +702,7 @@ struct Cards_Previews: PreviewProvider
         {
             Group
             {
-                VStack(spacing: 0)
+                VStack(spacing: 0) //HStack(spacing: 0)
                 {
                     VStack()
                     {
@@ -873,20 +770,6 @@ struct Cards_Previews: PreviewProvider
                 }
                 .padding(8)
                 
-                VStack(spacing: 24)
-                {
-                    ProgramElementCard(performer_element)
-                        .shadow(color: .black.opacity(0.2), radius: 8)
-                    
-                    ProgramElementCard(modifier_element)
-                        .shadow(color: .black.opacity(0.2), radius: 8)
-                    
-                    ProgramElementCard(logic_element)
-                        .shadow(color: .black.opacity(0.2), radius: 8)
-                }
-                .padding(16)
-                .frame(width: 288)
-                
                 HStack(spacing: 24)
                 {
                     RegisterCard(value: $values[0], number: 40, color: .mint)
@@ -898,10 +781,6 @@ struct Cards_Previews: PreviewProvider
                 .padding(16)
             }
             .padding(8)
-            .onAppear
-            {
-                performer_element.performing_state = .completed
-            }
         }
     }
     

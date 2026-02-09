@@ -33,12 +33,12 @@ struct ElementControl: View
                             Text(workspace.current_element.title)
                                 .font(.title3.scaled(by: 0.8))
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.title)
-                                .lineLimit(2)
+                                .lineLimit(1)
                             Text(workspace.current_element.info)
                                 .font(.default.scaled(by: 0.8))
                                 .foregroundColor(.secondary)
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
-                                .lineLimit(2)
+                                .lineLimit(1)
                         }
                         .padding(10)
                     }
@@ -65,6 +65,7 @@ struct ElementControl: View
                         }
                     }
                     .transition(.opacity.combined(with: .scale(scale: 1.0)))
+                    .help(workspace.current_element.info)
                 }
                 else
                 {
