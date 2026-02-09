@@ -101,25 +101,27 @@ public class MoverModifierElement: ModifierElement
 public class WriterModifierElement: ModifierElement
 {
     public init(
-        value: Float = 0,
-        to_index: Int = 0
+        inputs: [WriterInput] = []
     )
     {
-        self.value = value
-        self.to_index = to_index
+        self.inputs = inputs
         
         super.init()
     }
     
-    /// A writable value.
-    @Published public var value: Float = 0
-    
-    /// An index of register to write.
-    @Published public var to_index = 0
+    /// Inputs bindings
+    @Published public var inputs = [WriterInput]()
     
     public override var info: String
     {
-        return "Write \(value) to \(to_index)"
+        if inputs.count > 0
+        {
+            return "Write \(inputs.map { String($0.value) }.joined(separator: ", ")) to \(inputs.map { String($0.to) }.joined(separator: ", "))"
+        }
+        else
+        {
+            return "No registers to input"
+        }
     }
     
     public override var symbol_name: String
@@ -130,21 +132,20 @@ public class WriterModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return "m: [\(to_index)] write \(value)"
+        return "m: write.[\(inputs.map { String($0.value) }.joined(separator: ", "))] [\(inputs.map { String($0.to) }.joined(separator: ", "))]"
     }
     
     // File handling
     private enum CodingKeys: String, CodingKey
     {
-        case value, to_index
+        case inputs
     }
 
     public required init(from decoder: Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.value = try container.decodeIfPresent(Float.self, forKey: .value) ?? 0
-        self.to_index = try container.decodeIfPresent(Int.self, forKey: .to_index) ?? 0
+        self.inputs = try container.decodeIfPresent([WriterInput].self, forKey: .inputs) ?? []
         
         try super.init(from: decoder)
     }
@@ -153,10 +154,43 @@ public class WriterModifierElement: ModifierElement
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(value, forKey: .value)
-        try container.encode(to_index, forKey: .to_index)
+        try container.encode(inputs, forKey: .inputs)
         
         try super.encode(to: encoder)
+    }
+}
+
+public class WriterInput: ObservableObject, Codable, Identifiable
+{
+    @Published public var value: Float
+    @Published public var to: Int
+    
+    public var id = UUID()
+    
+    public init(value: Float, to: Int)
+    {
+        self.value = value
+        self.to = to
+    }
+    
+    // Codable
+    private enum CodingKeys: String, CodingKey
+    {
+        case value, to
+    }
+    
+    public required init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.value = try container.decode(Float.self, forKey: .value)
+        self.to = try container.decode(Int.self, forKey: .to)
+    }
+    
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(value, forKey: .value)
+        try container.encode(to, forKey: .to)
     }
 }
 

@@ -99,51 +99,118 @@ public struct WriterElementView: View
     
     public var body: some View
     {
-        HStack(spacing: 0)
+        VStack(spacing: 0)
         {
-            HStack(spacing: 8)
-            {
-                let value = Binding(
-                    get: { element.value },
-                    set:
-                        { new_value in
-                            element.value = new_value
-                            
-                            on_update()
-                        }
-                )
-                
-                Text("Write")
-                #if !os(visionOS)
-                    .frame(width: 34)
-                #else
-                    .frame(width: 60)
-                #endif
-                TextField("0", value: value, format: .number)
-                    .textFieldStyle(.roundedBorder)
-                #if !os(macOS)
-                    .keyboardType(.decimalPad)
-                #endif
-                Stepper("Enter", value: value, in: (-Float.infinity)...(Float.infinity))
-                    .labelsHidden()
-            }
-            .padding(.trailing)
-            
-            let to_index = Binding(
-                get: { [element.to_index] },
+            let outputs = Binding(
+                get: { element.inputs },
                 set:
                     { new_value in
-                        //element.to_index = new_value[0]
-                        if let first = new_value.first
-                        {
-                            element.to_index = first
-                            on_update()
-                        }
+                        element.inputs = new_value
+                        
+                        on_update()
                     }
             )
             
-            RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: to_index, names: ["To"])
+            if outputs.count > 0
+            {
+                List
+                {
+                    ForEach($element.inputs) { $input in
+                        HStack {
+                            let output_to = binding_for_single($input.to)
+                            let output_from = Binding(
+                                get: { $input.value.wrappedValue },
+                                set: { $input.value.wrappedValue = $0; on_update() }
+                            )
+
+                            Text("Write")
+                            TextField("0", value: output_from, format: .number)
+                            Stepper("Enter", value: output_from, in: 0...10000)
+                                .labelsHidden()
+                            #if !os(macOS)
+                                .keyboardType(.decimalPad)
+                            #endif
+
+                            RegistersSelector(
+                                text: "to \($input.to.wrappedValue)",
+                                registers_count: workspace.registers.count,
+                                colors: registers_colors,
+                                indices: output_to,
+                                names: ["To"]
+                            )
+                        }
+                        .contextMenu
+                        {
+                            Button(role: .destructive)
+                            {
+                                delete_item($input.wrappedValue)
+                            }
+                            label:
+                            {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                    }
+                    .onDelete
+                    { offsets in
+                        element.inputs.remove(atOffsets: offsets)
+                    }
+
+                }
+                .frame(minHeight: 160)
+                .modifier(ListBorderer())
+                .padding(.bottom)
+            }
+            else
+            {
+                ZStack
+                {
+                    Rectangle()
+                        .foregroundStyle(.white)
+                    
+                    Text("No values to input")
+                }
+                .frame(height: 160)
+                .modifier(ListBorderer())
+                .padding(.bottom)
+            }
+            
+            Button(action: add_item)
+            {
+                Text("Add")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
         }
+    }
+    
+    private func add_item()
+    {
+        element.inputs.append(WriterInput(value: 0, to: 0))
+    }
+    
+    private func delete_item(_ output: WriterInput)
+    {
+        if let index = element.inputs.firstIndex(where: { $0.id == output.id })
+        {
+            element.inputs.remove(at: index)
+        }
+    }
+    
+    private func binding_for_single(_ value: Binding<Int>) -> Binding<[Int]>
+    {
+        Binding(
+            get: { [value.wrappedValue] },
+            set:
+                { new_value in
+                    if let first = new_value.first
+                    {
+                        value.wrappedValue = first
+                        on_update()
+                    }
+                }
+        )
     }
 }
 
@@ -351,7 +418,6 @@ public struct ObserverElementView: View
     
     public var body: some View
     {
-        // MARK: tool subview
         VStack(spacing: 0)
         {
             let object_type = Binding(

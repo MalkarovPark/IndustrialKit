@@ -1185,7 +1185,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     private func write(by element: WriterModifierElement)
     {
-        registers[safe: element.to_index] = element.value
+        for input in element.inputs
+        {
+            registers[safe: input.to] = input.value
+        }
     }
     
     private func math(by element: MathModifierElement)
