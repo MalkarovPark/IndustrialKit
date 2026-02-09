@@ -226,7 +226,7 @@ public class MathModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return "m: [\(to_index)] = \(expression)"
+        return "m: [\(to_index)] = <\(expression)>"
     }
     
     // File handling

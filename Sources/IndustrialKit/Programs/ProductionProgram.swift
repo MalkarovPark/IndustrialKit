@@ -351,11 +351,9 @@ public enum RegexPatterns: String, CaseIterable
                 value2_index: Int(data[2]) ?? 0,
                 target_mark_name: data[3]
             )
-            
         // Jump
         case ._JumpLogicElement:
             return JumpLogicElement(target_mark_name: data[0])
-        
         // Mark
         case ._MarkLogicElement:
             return MarkLogicElement(name: data[0])

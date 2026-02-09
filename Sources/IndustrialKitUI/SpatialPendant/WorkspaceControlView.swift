@@ -23,6 +23,8 @@ struct WorkspaceControlView: View
     
     @State private var registers_updated = false
     
+    @State private var code_editor_text = ""
+    
     let on_update: () -> ()
     
     public init(
@@ -34,6 +36,8 @@ struct WorkspaceControlView: View
         
         self.on_update = on_update
     }
+    
+    @State private var view_program_as_text = false
     
     var body: some View
     {
@@ -175,7 +179,7 @@ struct WorkspaceControlView: View
                 
                 if let program = workspace.selected_program
                 {
-                    ProductionProgramView(workspace: workspace, program: program, on_update: on_update)
+                    ProductionProgramView(view_program_as_text: $view_program_as_text, code_editor_text: $code_editor_text, workspace: workspace, program: program, on_update: on_update)
                     {
                         deselect_program()
                     }
@@ -244,7 +248,15 @@ struct WorkspaceControlView: View
         {
             if let selected_program = workspace.selected_program
             {
-                clone_element(workspace.current_element, to: selected_program)
+                if !view_program_as_text
+                {
+                    clone_element(workspace.current_element, to: selected_program)
+                }
+                else
+                {
+                    if !code_editor_text.isEmpty { code_editor_text += "\n" }
+                    code_editor_text += workspace.current_element.code_string
+                }
                 
                 on_update()
             }
@@ -304,6 +316,10 @@ private struct ProgramDropDelegate: DropDelegate
 // MARK: - Program View
 private struct ProductionProgramView: View
 {
+    @Binding var view_program_as_text: Bool
+    
+    @Binding var code_editor_text: String
+    
     @ObservedObject var workspace: Workspace
     
     @ObservedObject var program: ProductionProgram
@@ -315,8 +331,6 @@ private struct ProductionProgramView: View
     @State private var dragging_element_id: UUID?
     
     private let columns: [GridItem] = [.init(.adaptive(minimum: element_card_maximum, maximum: element_card_maximum), spacing: 0)]
-    
-    @State private var view_program_as_text = false
     
     var body: some View
     {
@@ -351,7 +365,7 @@ private struct ProductionProgramView: View
             {
                 Button(action: { view_program_as_text.toggle() })
                 {
-                    Image(systemName: view_program_as_text ? "text.justify.left" : "rectangle.grid.1x2")
+                    Image(systemName: view_program_as_text ? "text.justify.left" : "square.grid.2x2")
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                     #if os(iOS)
                         .frame(width: 40, height: 40)
@@ -361,6 +375,16 @@ private struct ProductionProgramView: View
                 .buttonStyle(.plain)
                 .padding(.trailing, 8)
             }
+            /*.background
+            {
+                if view_program_as_text
+                {
+                    Rectangle()
+                        .fill(.white)
+                        .transition(.move(edge: .trailing))
+                        .animation(.easeInOut(duration: 0.3), value: view_program_as_text)
+                }
+            }*/
             
             Divider()
             
@@ -404,9 +428,11 @@ private struct ProductionProgramView: View
             }
             else
             {
-                ControlProgramTextView(program: program)
+                ControlProgramTextView(program: program, workspace: workspace, code_editor_text: $code_editor_text)
+                    .transition(.move(edge: .trailing))
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: view_program_as_text)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(.rect(cornerRadius: 16, style: .continuous))
     }

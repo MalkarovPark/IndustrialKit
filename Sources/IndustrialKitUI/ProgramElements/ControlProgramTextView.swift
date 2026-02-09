@@ -11,28 +11,32 @@ import IndustrialKit
 public struct ControlProgramTextView: View
 {
     @ObservedObject var program: ProductionProgram
+    @ObservedObject var workspace: Workspace
+    
+    @Binding var code_editor_text: String
     //@State private var code_editor_text: String = ""
     
-    public init(program: ProductionProgram)
+    /*public init(program: ProductionProgram, workspace: Workspace)
     {
         self.program = program
-    }
+        self.workspace = workspace
+    }*/
     
     public var body: some View
     {
-        let code_binding = Binding<String>(
-            get: { program.code },
-            set:
-                { new_value in
-                    program.code = new_value
-                }
-        )
-        
-        return VStack
+        VStack
         {
-            TextEditor(text: code_binding)
+            TextEditor(text: $code_editor_text)
                 .textFieldStyle(.plain)
                 .font(.custom("Menlo", size: 12))
+        }
+        .onAppear
+        {
+            code_editor_text = program.code
+        }
+        .onDisappear
+        {
+            program.code = code_editor_text
         }
     }
 }
@@ -43,6 +47,8 @@ struct ControlTextView_Previews: PreviewProvider
     struct Container: View
     {
         @StateObject var workspace = Workspace()
+        
+        @State private var code_editor_text = ""
         
         var body: some View
         {
@@ -59,7 +65,37 @@ struct ControlTextView_Previews: PreviewProvider
                     
                     VStack
                     {
-                        ControlProgramTextView(program: selected_program)
+                        ControlProgramTextView(program: selected_program, workspace: workspace, code_editor_text: $code_editor_text)
+                            .overlay(alignment: .bottomLeading)
+                            {
+                                VStack
+                                {
+                                    Button
+                                    {
+                                        if let selected_program = workspace.selected_program
+                                        {
+                                            selected_program.code = code_editor_text
+                                        }
+                                    }
+                                    label:
+                                    {
+                                        Image(systemName: "chevron.left")
+                                    }
+                                    
+                                    Button
+                                    {
+                                        if let selected_program = workspace.selected_program
+                                        {
+                                            code_editor_text = selected_program.code
+                                        }
+                                    }
+                                    label:
+                                    {
+                                        Image(systemName: "chevron.right")
+                                    }
+                                }
+                                .padding(10)
+                            }
                     }
                     .modifier(ViewBorderer())
                 }
@@ -143,7 +179,7 @@ struct ControlTextView_Previews: PreviewProvider
                 }
                 else
                 {
-                    ControlProgramTextView(program: program)
+                    //ControlProgramTextView(program: program, workspace: workspace, code_editor_text: $code_editor_text)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -245,7 +281,10 @@ struct ControlTextView_Previews: PreviewProvider
             .popover(isPresented: $element_view_presented)
             {
                 WorkspaceProgramElementView(element: element, workspace: workspace, program: program)
-                    .padding()
+                {
+                    workspace.objectWillChange.send()
+                }
+                .padding()
             }
             .contextMenu
             {
