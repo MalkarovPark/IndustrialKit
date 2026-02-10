@@ -792,7 +792,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             return
         }
         
-        if selected_element_index < selected_program.elements_count - 1
+        if selected_element_index < selected_program.elements_count - 1 && performed
         {
             // Select and perform next code
             selected_element_index += 1
@@ -2591,15 +2591,15 @@ public class Workspace: ObservableObject, @unchecked Sendable
         registers = preset.registers ?? [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
-    // MARK: - UI Functions
+    /*// MARK: - UI Functions
     /// Determines whether the object can be selected if it is open for editing.
     public var in_visual_edit_mode = false
     
     /// Force updates SwiftUI view.
-    public func update_view() // Old
+    public func update_view()
     {
         self.objectWillChange.send()
-    } // Old
+    }*/
 }
 
 public enum WorkspaceObjectType: String, Equatable, CaseIterable

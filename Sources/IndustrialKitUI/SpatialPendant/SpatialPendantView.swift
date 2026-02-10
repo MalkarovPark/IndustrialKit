@@ -53,9 +53,6 @@ public struct SpatialPendantView: View
                     WorkspaceControlView(workspace: workspace)
                 }
             }
-            #if !os(macOS)
-            .frame(width: 240)
-            #endif
             .contentTransition(.symbolEffect(.replace.offUp.byLayer))
             .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
             .padding(8)
