@@ -1323,8 +1323,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             selected_element_index = element.target_element_index
             
-            selected_program?.reset_elements_states()
-            //reset_elements_states_to_current() // UI only
+            reset_elements_states_to_current() // UI only
         }
     }
     
