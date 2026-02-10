@@ -1331,13 +1331,18 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         guard let program = selected_program else { return }
         
-        let end = max(0, min(selected_element_index, program.elements_count))
+        for i in selected_element_index ..< program.elements_count
+        {
+            program.elements[safe: i]?.performing_state = .none
+        }
+        
+        /*let end = max(0, min(selected_element_index, program.elements_count))
         if end == 0 { return }
         
         for i in 0..<end
         {
             program.elements[safe: i]?.performing_state = .none
-        }
+        }*/
     }
     
     /// Prepare workspace program to perform.
