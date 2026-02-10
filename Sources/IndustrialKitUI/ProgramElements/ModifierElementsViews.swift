@@ -469,11 +469,6 @@ public struct ChangerElementView: View
             }
             .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
         }
-        .onChange(of: module_name)
-        { _, new_value in
-            (element as! ChangerModifierElement).module_name = new_value
-            on_update()
-        }
         #endif
     }
 }
