@@ -214,8 +214,7 @@ public enum RegexPatterns: String, CaseIterable
     case _MoverModifierElement = #"m:\s*\[([^\[\]]+)\]\s*(move|copy)\s*\[([^\[\]]+)\]"#
     
     // WriterModifierElement
-    //case _WriterModifierElement = #"m: <([^\]]+)>\s*write\s*\[([^\]]+)\]"#
-    case _WriterModifierElement = #"m:\s*\<([^\[\]]+)\>\s*write\s*\[([^\[\]]+)\]"#
+    case _WriterModifierElement = #"m:\s*\<([^\[\]]+)\>\s*write\s*\[([^\[\]]+)\]"# //#"m: <([^\]]+)>\s*write\s*\[([^\]]+)\]"#
     
     // ObserverModifierElement
     case _ObserverModifierElement = #"m: ([rt])\.\(([^()]*)\)\.observe\.\[(.*?)\] \[(.*?)\]"#
@@ -304,11 +303,11 @@ public enum RegexPatterns: String, CaseIterable
                 }()
             )
         // Observers
-        case ._ObserverModifierElement: // m: [#, ...] move [#, ...]
+        case ._ObserverModifierElement: // r.(name).observe.[#, ...] [#, ...]
             let typeChar = data[0].trimmingCharacters(in: .whitespaces)
             let objectType: ObserverObjectType = (typeChar == "r") ? .robot : .tool
             
-            return ObserverModifierElement( // r.(name).observe.[#, ...] [#, ...]
+            return ObserverModifierElement(
                 object_type: objectType,
                 object_name: data[1],
                 outputs: zip(
@@ -332,9 +331,8 @@ public enum RegexPatterns: String, CaseIterable
             return CleanerModifierElement()
             
         // Comparator
-        case ._ComparatorLogicElement:
+        case ._ComparatorLogicElement: // l: if [#] = [#] jump.(Name)
             guard let compareType = CompareType.allCases.first(where: { $0.code_string == data[1].trimmingCharacters(in: .whitespaces) }) else { return nil }
-
             return ComparatorLogicElement(
                 compare_type: compareType,
                 value_index: Int(data[0].trimmingCharacters(in: .whitespaces)) ?? 0,
