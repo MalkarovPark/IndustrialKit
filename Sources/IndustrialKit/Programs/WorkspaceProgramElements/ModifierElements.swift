@@ -26,37 +26,39 @@ public class ModifierElement: WorkspaceProgramElement
 public class MoverModifierElement: ModifierElement
 {
     public init(
-        move_type: ModifierCopyType = .duplicate,
-        from_index: Int = 0,
-        to_index: Int = 0
+        move_type: ModifierMoveType = .copy,
+        links: [MoverLink] = []
     )
     {
         self.move_type = move_type
-        self.from_index = from_index
-        self.to_index = to_index
+        self.links = links
         
         super.init()
     }
     
     /// A type of copy
-    @Published public var move_type: ModifierCopyType = .duplicate
+    @Published public var move_type: ModifierMoveType = .copy
     
-    /// An index of value to copy.
-    @Published public var from_index = 0
-    
-    /// An index of target register.
-    @Published public var to_index = 0
+    /// Inputs bindings
+    @Published public var links = [MoverLink]()
     
     public override var info: String
     {
-        return "\(move_type.rawValue) from \(from_index) to \(to_index)"
+        if links.count > 0
+        {
+            return "\(move_type.rawValue) from \(links.map { String($0.from) }.joined(separator: ", ")) to \(links.map { String($0.to) }.joined(separator: ", "))"
+        }
+        else
+        {
+            return "No registers to write"
+        }
     }
     
     public override var symbol_name: String
     {
         switch move_type
         {
-        case .duplicate:
+        case .copy:
             return "plus.square.on.square"
         case .move:
             return "square.on.square.dashed"
@@ -66,22 +68,21 @@ public class MoverModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return "m: [\(to_index)] \(move_type.code_string) [\(from_index)]"
+        return "m: [\(links.map { String($0.from) }.joined(separator: ", "))] \(move_type.code_string) [\(links.map { String($0.to) }.joined(separator: ", "))]"
     }
     
     // File handling
     private enum CodingKeys: String, CodingKey
     {
-        case move_type, from_index, to_index
+        case move_type, links
     }
 
     public required init(from decoder: Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.move_type = try container.decodeIfPresent(ModifierCopyType.self, forKey: .move_type) ?? .duplicate
-        self.from_index = try container.decodeIfPresent(Int.self, forKey: .from_index) ?? 0
-        self.to_index = try container.decodeIfPresent(Int.self, forKey: .to_index) ?? 0
+        self.move_type = try container.decodeIfPresent(ModifierMoveType.self, forKey: .move_type) ?? .copy
+        self.links = try container.decodeIfPresent([MoverLink].self, forKey: .links) ?? []
         
         try super.init(from: decoder)
     }
@@ -89,11 +90,45 @@ public class MoverModifierElement: ModifierElement
     public override func encode(to encoder: Encoder) throws
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
         try container.encode(move_type, forKey: .move_type)
-        try container.encode(from_index, forKey: .from_index)
-        try container.encode(to_index, forKey: .to_index)
+        try container.encode(links, forKey: .links)
         
         try super.encode(to: encoder)
+    }
+}
+
+public class MoverLink: ObservableObject, Codable, Identifiable
+{
+    @Published public var from: Int
+    @Published public var to: Int
+    
+    public var id = UUID()
+    
+    public init(from: Int, to: Int)
+    {
+        self.from = from
+        self.to = to
+    }
+    
+    // Codable
+    private enum CodingKeys: String, CodingKey
+    {
+        case from, to
+    }
+    
+    public required init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.from = try container.decode(Int.self, forKey: .from)
+        self.to = try container.decode(Int.self, forKey: .to)
+    }
+    
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(from, forKey: .from)
+        try container.encode(to, forKey: .to)
     }
 }
 
@@ -132,7 +167,7 @@ public class WriterModifierElement: ModifierElement
     // Code string conversion
     public override var code_string: String
     {
-        return "m: write.[\(inputs.map { String($0.value) }.joined(separator: ", "))] [\(inputs.map { String($0.to) }.joined(separator: ", "))]"
+        return "m: <\(inputs.map { String($0.value) }.joined(separator: ", "))> write [\(inputs.map { String($0.to) }.joined(separator: ", "))]"
     }
     
     // File handling

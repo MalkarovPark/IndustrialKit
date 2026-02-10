@@ -114,11 +114,24 @@ public struct RegistersSelector: View
     
     public var body: some View
     {
-        Button("\(text)", action: { is_presented = true })
+        Button
+        {
+            is_presented = true
+        }
+        label:
+        {
+            Text(text)
+                .frame(maxWidth: .infinity)
+        }
+        .popover(isPresented: $is_presented)
+        {
+            RegistersSelectorView(registers_count: registers_count, colors: colors, indices: $indices, names: names)
+        }
+        /*Button("\(text)", action: { is_presented = true })
             .popover(isPresented: $is_presented)
             {
                 RegistersSelectorView(registers_count: registers_count, colors: colors, indices: $indices, names: names)
-            }
+            }*/
     }
 }
 

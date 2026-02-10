@@ -1171,10 +1171,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     private func move(by element: MoverModifierElement)
     {
-        registers[safe: element.to_index] = registers[safe: element.from_index]
-        if element.move_type == .move
+        for link in element.links
         {
-            registers[safe: element.from_index] = 0
+            registers[safe: link.to] = registers[safe: link.from]
+            if element.move_type == .move
+            {
+                registers[safe: link.from] = 0
+            }
         }
     }
     

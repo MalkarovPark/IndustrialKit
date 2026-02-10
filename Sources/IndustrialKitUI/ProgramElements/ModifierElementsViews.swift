@@ -31,9 +31,9 @@ public struct MoverElementView: View
     
     public var body: some View
     {
-        HStack(spacing: 0)
+        VStack(spacing: 0)
         {
-            let move_type = Binding(
+            let object_type = Binding(
                 get: { element.move_type },
                 set:
                     { new_value in
@@ -43,36 +43,124 @@ public struct MoverElementView: View
                     }
             )
             
-            Picker("Type", selection: move_type)
-            {
-                ForEach(ModifierCopyType.allCases, id: \.self)
-                { type in
-                    Text(type.rawValue).tag(type)
-                }
-            }
-            .labelsHidden()
-            .frame(maxWidth: .infinity)
-            .buttonStyle(.bordered)
-            .padding(.trailing)
-            
-            let indices = Binding(
-                get: { [element.from_index, element.to_index] },
+            let links = Binding(
+                get: { element.links },
                 set:
                     { new_value in
-                        //element.from_index = new_value[0]
-                        //element.to_index = new_value[1]
-                        if let from_index = new_value[safe: 0], let to_index = new_value[safe: 1]
-                        {
-                            element.from_index = from_index
-                            element.to_index = to_index
-                            
-                            on_update()
-                        }
+                        element.links = new_value
+                        
+                        on_update()
                     }
             )
             
-            RegistersSelector(text: "From \(element.from_index) to \(element.to_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: indices, names: ["From", "To"])
+            Picker("Type", selection: object_type)
+            {
+                ForEach(ModifierMoveType.allCases, id: \.self)
+                { object_type in
+                    Text(object_type.rawValue)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .padding(.bottom)
+            
+            if links.count > 0
+            {
+                List
+                {
+                    ForEach($element.links)
+                    { $link in
+                        HStack
+                        {
+                            let link_indices = binding_for_link($link)
+
+                            RegistersSelector(
+                                text: "From: \(link.from) → \(link.to)",
+                                registers_count: workspace.registers.count,
+                                colors: registers_colors,
+                                indices: link_indices,
+                                names: ["From", "To"]
+                            )
+                        }
+                        .listRowSeparator(.hidden)
+                        .contextMenu
+                        {
+                            Button(role: .destructive)
+                            {
+                                delete_item($link.wrappedValue)
+                            }
+                            label:
+                            {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                    }
+                    .onDelete
+                    { offsets in
+                        element.links.remove(atOffsets: offsets)
+                    }
+
+                }
+                .frame(minHeight: 160)
+                .modifier(ListBorderer())
+                .padding(.bottom)
+            }
+            else
+            {
+                ZStack
+                {
+                    Rectangle()
+                        .foregroundStyle(.white)
+                    
+                    Text("No values to \(element.move_type == .move ? "move" : "copy")")
+                }
+                .frame(height: 160)
+                .modifier(ListBorderer())
+                .padding(.bottom)
+            }
+            
+            Button(action: add_item)
+            {
+                Text("Add")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
         }
+        .frame(minWidth: 200, maxWidth: .infinity)
+    }
+    
+    private func add_item()
+    {
+        element.links.append(MoverLink(from: 0, to: 0))
+    }
+    
+    private func delete_item(_ output: MoverLink)
+    {
+        if let index = element.links.firstIndex(where: { $0.id == output.id })
+        {
+            element.links.remove(at: index)
+        }
+    }
+    
+    private func binding_for_link(_ link: Binding<MoverLink>) -> Binding<[Int]>
+    {
+        Binding<[Int]>(
+            get:
+                {
+                    [link.wrappedValue.from, link.wrappedValue.to]
+                },
+            set:
+                { newValue in
+                    guard newValue.count >= 2 else { return }
+                    
+                    link.wrappedValue.from = newValue[0]
+                    link.wrappedValue.to   = newValue[1]
+                    
+                    element.objectWillChange.send()
+                    on_update()
+                }
+        )
     }
 }
 
@@ -115,17 +203,23 @@ public struct WriterElementView: View
             {
                 List
                 {
-                    ForEach($element.inputs) { $input in
-                        HStack {
+                    ForEach($element.inputs)
+                    { $input in
+                        HStack
+                        {
                             let output_to = binding_for_single($input.to)
-                            let output_from = Binding(
+                            let output_value = Binding(
                                 get: { $input.value.wrappedValue },
-                                set: { $input.value.wrappedValue = $0; on_update() }
+                                set: {
+                                    $input.value.wrappedValue = $0
+                                    
+                                    on_update()
+                                }
                             )
 
                             Text("Write")
-                            TextField("0", value: output_from, format: .number)
-                            Stepper("Enter", value: output_from, in: 0...10000)
+                            TextField("0", value: output_value, format: .number)
+                            Stepper("Enter", value: output_value, in: 0...10000)
                                 .labelsHidden()
                             #if !os(macOS)
                                 .keyboardType(.decimalPad)
@@ -139,6 +233,7 @@ public struct WriterElementView: View
                                 names: ["To"]
                             )
                         }
+                        .listRowSeparator(.hidden)
                         .contextMenu
                         {
                             Button(role: .destructive)
@@ -534,6 +629,7 @@ public struct ObserverElementView: View
                                 names: ["To"]
                             )
                         }
+                        .listRowSeparator(.hidden)
                         .contextMenu
                         {
                             Button(role: .destructive)
@@ -656,7 +752,7 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
         
         var body: some View
         {
-            VStack(alignment: .leading, spacing: 8)
+            HStack//(alignment: .leading, spacing: 8)
             {
                 /*Text("Modifiers")
                     .font(.custom("Line Seed Sans", size: 20))
@@ -680,7 +776,7 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                     ObserverElementView(element: ObserverModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                     
-                    VStack
+                    HStack
                     {
                         WriterElementView(element: WriterModifierElement(), workspace: workspace)
                             .modifier(PreviewBorder())

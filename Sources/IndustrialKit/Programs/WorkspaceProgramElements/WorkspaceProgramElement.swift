@@ -145,17 +145,17 @@ public class AnyWorkspaceProgramElement: ObservableObject, Codable, Identifiable
     }
 }
 
-public enum ModifierCopyType: String, Codable, Equatable, CaseIterable
+public enum ModifierMoveType: String, Codable, Equatable, CaseIterable
 {
-    case duplicate = "Duplicate"
+    case copy = "Copy"
     case move = "Move"
     
     var code_string: String
     {
         switch self
         {
-        case .duplicate:
-            return "duplicate"
+        case .copy:
+            return "copy"
         case .move:
             return "move"
         }

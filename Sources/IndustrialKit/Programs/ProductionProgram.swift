@@ -211,15 +211,14 @@ public enum RegexPatterns: String, CaseIterable
     case _MathModifierElement = #"m: \[([^\[\]]+)\] = <(.+)>"#
     
     // MoverModifierElement
-    case MoverModifierElement_move = #"m: \[([^\[\]]+)\] move \[([^\[\]]+)\]"#
-    case MoverModifierElement_copy = #"m: \[([^\[\]]+)\] copy \[([^\[\]]+)\]"#
+    case _MoverModifierElement = #"m:\s*\[([^\[\]]+)\]\s*(move|copy)\s*\[([^\[\]]+)\]"#
     
     // WriterModifierElement
-    case _WriterModifierElement = #"m: write\.<(.*?)> \[(.*?)\]"#
+    //case _WriterModifierElement = #"m: <([^\]]+)>\s*write\s*\[([^\]]+)\]"#
+    case _WriterModifierElement = #"m:\s*\<([^\[\]]+)\>\s*write\s*\[([^\[\]]+)\]"#
     
     // ObserverModifierElement
-    case ObserverModifierElement_robot = #"m: r\.\(([^()]*)\)\.observe\.\[(.*?)\] \[(.*?)\]"#
-    case ObserverModifierElement_tool = #"m: t\.\(([^()]*)\)\.observe\.\[(.*?)\] \[(.*?)\]"#
+    case _ObserverModifierElement = #"m: ([rt])\.\(([^()]*)\)\.observe\.\[(.*?)\] \[(.*?)\]"#
     
     // ChangerModifierElement
     case _ChangerModifierElement = #"m: change\.\(([^()]*)\)"#
@@ -229,7 +228,7 @@ public enum RegexPatterns: String, CaseIterable
     
     // Logic
     // ComparatorLogicElement
-    case _ComparatorLogicElement = #"l: if \[([^\[\]]+)\] (\>=|<=|=|>|<) \[([^\[\]]+)\] jump\.\(([^()]*)\)"#
+    case _ComparatorLogicElement = #"l: if \[([^\[\]]+)\] (!=|>=|<=|=|>|<) \[([^\[\]]+)\] jump\.\(([^()]*)\)"#
     
     // JumpLogicElement
     case _JumpLogicElement = #"l: jump\.\(([^()]*)\)"#
@@ -295,39 +294,30 @@ public enum RegexPatterns: String, CaseIterable
                 to_index: Int(data[0]) ?? 0
             )
         // Movers
-        case .MoverModifierElement_move: // m: [#] move [#]
+        case ._MoverModifierElement: // m: [#, ...] move [#, ...]
             return MoverModifierElement(
-                move_type: .move,
-                from_index: Int(data[1]) ?? 0,
-                to_index: Int(data[0]) ?? 0
-            )
-        case .MoverModifierElement_copy: // m: [#] copy [#]
-            return MoverModifierElement(
-                move_type: .duplicate,
-                from_index: Int(data[1]) ?? 0,
-                to_index: Int(data[0]) ?? 0
+                move_type: data[1] == "move" ? .move : .copy,
+                links: {
+                    let a = data[0].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+                    let b = data[2].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+                    return a.count == b.count ? zip(a, b).map { MoverLink(from: $0, to: $1) } : []
+                }()
             )
         // Observers
-        case .ObserverModifierElement_robot:
-            return ObserverModifierElement(
-                object_type: .robot,
-                object_name: data[0],
+        case ._ObserverModifierElement: // m: [#, ...] move [#, ...]
+            let typeChar = data[0].trimmingCharacters(in: .whitespaces)
+            let objectType: ObserverObjectType = (typeChar == "r") ? .robot : .tool
+            
+            return ObserverModifierElement( // r.(name).observe.[#, ...] [#, ...]
+                object_type: objectType,
+                object_name: data[1],
                 outputs: zip(
-                    data[1].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) },
-                    data[2].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
-                ).map { ObserverOutput(from: $0, to: $1) }
-            )
-        case .ObserverModifierElement_tool:
-            return ObserverModifierElement(
-                object_type: .tool,
-                object_name: data[0],
-                outputs: zip(
-                    data[1].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) },
-                    data[2].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+                    data[2].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) },
+                    data[3].split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
                 ).map { ObserverOutput(from: $0, to: $1) }
             )
         // Writer
-        case ._WriterModifierElement:
+        case ._WriterModifierElement: // m: <#, ...> write [#, ...]
             return WriterModifierElement(
                 inputs: zip(
                     data[0].split(separator: ",").compactMap { Float($0.trimmingCharacters(in: .whitespaces)) },
@@ -335,27 +325,27 @@ public enum RegexPatterns: String, CaseIterable
                 ).map { WriterInput(value: $0, to: $1) }
             )
         // Changer
-        case ._ChangerModifierElement:
+        case ._ChangerModifierElement: // m: change.(Name)
             return ChangerModifierElement(module_name: data[0])
         // Cleaner
-        case ._CleanerModifierElement:
+        case ._CleanerModifierElement: // m: clear
             return CleanerModifierElement()
             
         // Comparator
         case ._ComparatorLogicElement:
-            guard let compareType = CompareType.allCases.first(where: { $0.rawValue == data[1] }) else { return nil }
-            
+            guard let compareType = CompareType.allCases.first(where: { $0.code_string == data[1].trimmingCharacters(in: .whitespaces) }) else { return nil }
+
             return ComparatorLogicElement(
                 compare_type: compareType,
-                value_index: Int(data[0]) ?? 0,
-                value2_index: Int(data[2]) ?? 0,
-                target_mark_name: data[3]
+                value_index: Int(data[0].trimmingCharacters(in: .whitespaces)) ?? 0,
+                value2_index: Int(data[2].trimmingCharacters(in: .whitespaces)) ?? 0,
+                target_mark_name: data[3].trimmingCharacters(in: .whitespaces)
             )
         // Jump
-        case ._JumpLogicElement:
+        case ._JumpLogicElement: // l: jump.(Name)
             return JumpLogicElement(target_mark_name: data[0])
         // Mark
-        case ._MarkLogicElement:
+        case ._MarkLogicElement: // l: mark.(Name)
             return MarkLogicElement(name: data[0])
         }
     }

@@ -80,6 +80,7 @@ struct ControlTextView_Previews: PreviewProvider
                                     label:
                                     {
                                         Image(systemName: "chevron.left")
+                                            .frame(width: 2, height: 16)
                                     }
                                     
                                     Button
@@ -92,6 +93,7 @@ struct ControlTextView_Previews: PreviewProvider
                                     label:
                                     {
                                         Image(systemName: "chevron.right")
+                                            .frame(width: 2, height: 16)
                                     }
                                 }
                                 .padding(10)
