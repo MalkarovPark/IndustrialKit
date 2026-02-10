@@ -32,7 +32,7 @@ struct ToolControlView: View
         {
             // MARK: Caption
             PerformingCaptionView(name: tool.name, performing_state: tool.performing_state)
-                .frame(width: 200)
+                .frame(width: pendant_content_width)
             
             // MARK: Programs
             ZStack
@@ -113,7 +113,7 @@ struct ToolControlView: View
                         .foregroundStyle(.secondary)
                 }
             }
-            .frame(width: 200)
+            .frame(width: pendant_content_width)
             .overlay(alignment: .bottomTrailing)
             {
                 HStack(spacing: 0)
@@ -253,7 +253,7 @@ private struct OperationProgramView: View
                 #if os(macOS)
                     .font(.system(size: 14, design: .rounded))
                 #else
-                    .font(.system(size: 16, design: .rounded))
+                    .font(.system(size: 18, design: .rounded))
                 #endif
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
@@ -265,7 +265,8 @@ private struct OperationProgramView: View
                 {
                     Image(systemName: "chevron.left")
                     #if os(iOS)
-                        .frame(width: 40, height: 40)
+                        .font(.system(size: 20))
+                        .padding(4)
                         .contentShape(Rectangle())
                     #endif
                 }

@@ -45,7 +45,7 @@ struct WorkspaceControlView: View
         {
             // MARK: Caption
             PerformingCaptionView(name: "Workspace", performing_state: workspace.performing_state)
-                .frame(width: 200)
+                .frame(width: pendant_content_width)
                 .overlay(alignment: .leading)
                 {
                     HStack
@@ -187,7 +187,7 @@ struct WorkspaceControlView: View
                     .zIndex(1)
                 }
             }
-            .frame(width: 200)
+            .frame(width: pendant_content_width)
             .overlay(alignment: .bottomTrailing)
             {
                 HStack(spacing: 0)
@@ -342,7 +342,7 @@ private struct ProductionProgramView: View
                 #if os(macOS)
                     .font(.system(size: 14, design: .rounded))
                 #else
-                    .font(.system(size: 16, design: .rounded))
+                    .font(.system(size: 18, design: .rounded))
                 #endif
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
@@ -354,7 +354,8 @@ private struct ProductionProgramView: View
                 {
                     Image(systemName: "chevron.left")
                     #if os(iOS)
-                        .frame(width: 40, height: 40)
+                        .font(.system(size: 20))
+                        .padding(4)
                         .contentShape(Rectangle())
                     #endif
                 }
@@ -368,7 +369,8 @@ private struct ProductionProgramView: View
                     Image(systemName: view_program_as_text ? "text.justify.left" : "square.grid.2x2")
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                     #if os(iOS)
-                        .frame(width: 40, height: 40)
+                        .font(.system(size: 20))
+                        .padding(4)
                         .contentShape(Rectangle())
                     #endif
                 }
@@ -419,11 +421,7 @@ private struct ProductionProgramView: View
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                         }
                     }
-                    #if os(macOS)
-                    .padding(.vertical, 16)//.padding(8)
-                    #else
-                    .padding(.vertical, 16)//.padding(8)
-                    #endif
+                    .padding(.vertical, 16)
                 }
             }
             else
@@ -517,11 +515,11 @@ let element_card_font_size: CGFloat = 14 //16
 let element_card_light_size: CGFloat = 5 //6
 let element_card_light_padding: CGFloat = 3
 #else
-let element_card_scale: CGFloat = 40
-let element_card_spacing: CGFloat = 10
-let element_card_font_size: CGFloat = 16
-let element_card_light_size: CGFloat = 6
-let element_card_light_padding: CGFloat = 4
+let element_card_scale: CGFloat = 60
+let element_card_spacing: CGFloat = 16
+let element_card_font_size: CGFloat = 24
+let element_card_light_size: CGFloat = 8
+let element_card_light_padding: CGFloat = 6
 #endif
 
 private struct ElementDropDelegate: DropDelegate

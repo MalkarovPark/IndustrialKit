@@ -28,7 +28,11 @@ public struct ControlProgramTextView: View
         {
             TextEditor(text: $code_editor_text)
                 .textFieldStyle(.plain)
+            #if os(macOS)
                 .font(.custom("Menlo", size: 12))
+            #else
+                .font(.custom("Menlo", size: 16))
+            #endif
         }
         .onAppear
         {

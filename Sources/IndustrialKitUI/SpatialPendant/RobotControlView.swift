@@ -30,7 +30,7 @@ public struct RobotControlView: View
         {
             // MARK: Caption
             PerformingCaptionView(name: robot.name, performing_state: robot.performing_state)
-                .frame(width: 200)
+                .frame(width: pendant_content_width)
             
             // MARK: Program
             ZStack
@@ -100,7 +100,7 @@ public struct RobotControlView: View
                     .zIndex(1)
                 }
             }
-            .frame(width: 200)
+            .frame(width: pendant_content_width)
             .overlay(alignment: .bottomTrailing)
             {
                 HStack(spacing: 0)
@@ -243,7 +243,7 @@ private struct PositionProgramView: View
                 #if os(macOS)
                     .font(.system(size: 14, design: .rounded))
                 #else
-                    .font(.system(size: 16, design: .rounded))
+                    .font(.system(size: 18, design: .rounded))
                 #endif
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
@@ -255,7 +255,8 @@ private struct PositionProgramView: View
                 {
                     Image(systemName: "chevron.left")
                     #if os(iOS)
-                        .frame(width: 40, height: 40)
+                        .font(.system(size: 20))
+                        .padding(4)
                         .contentShape(Rectangle())
                     #endif
                 }

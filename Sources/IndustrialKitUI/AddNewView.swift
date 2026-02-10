@@ -48,9 +48,7 @@ public struct AddNewView: View
             }
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
-            #if os(iOS)
-            .frame(width: 64)
-            #endif
+            .buttonBorderShape(.roundedRectangle)
         }
         .padding()
         #if os(iOS)

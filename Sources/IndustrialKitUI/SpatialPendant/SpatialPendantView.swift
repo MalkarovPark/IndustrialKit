@@ -46,7 +46,7 @@ public struct SpatialPendantView: View
                             #endif
                             .foregroundStyle(.secondary)
                     }
-                    .frame(width: 200)
+                    .frame(width: pendant_content_width)
                 case .some(_):
                     Text("Nothing")
                 case .none:
@@ -59,6 +59,12 @@ public struct SpatialPendantView: View
         }
     }
 }
+
+#if os(macOS)
+let pendant_content_width: CGFloat = 200
+#else
+let pendant_content_width: CGFloat = 240
+#endif
 
 #if os(visionOS)
 /**

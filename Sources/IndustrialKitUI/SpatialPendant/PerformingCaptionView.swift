@@ -55,5 +55,5 @@ struct PerformingCaptionView: View
 #Preview
 {
     PerformingCaptionView(name: "Workspace", performing_state: .completed)
-        .frame(width: 200)
+        .frame(width: pendant_content_width)
 }

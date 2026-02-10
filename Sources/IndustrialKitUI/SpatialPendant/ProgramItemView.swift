@@ -108,5 +108,5 @@ public struct ProgramItemView: View
     
     ProgramItemView(name: $name, count: 4, on_delete: {})
         .padding(.horizontal, 8)
-        .frame(width: 200)
+        .frame(width: pendant_content_width)
 }
