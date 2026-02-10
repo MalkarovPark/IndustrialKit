@@ -307,7 +307,7 @@ public struct ToolPerformerElementView: View
                         }
                 )
                 
-                Picker("", selection: is_single_perfrom)
+                Picker("Is Single", selection: is_single_perfrom)
                 {
                     Text("Single").tag(true)
                     Text("Program").tag(false)
@@ -333,6 +333,7 @@ public struct ToolPerformerElementView: View
                     
                     RegistersSelector(text: "Opcode from \(element.opcode_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: opcode_index, names: ["Operation code"])
                         .padding(.top)
+                        .frame(width: 146)
                 }
                 else
                 {

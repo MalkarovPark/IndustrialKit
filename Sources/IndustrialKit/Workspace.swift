@@ -444,7 +444,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         func changer_element_check(_ element: ChangerModifierElement)
         {
-            element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
+            /*element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
             
             if !Changer.internal_modules_list.contains(element.module_name)
             {
@@ -467,7 +467,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 {
                     element.module_name = "None"
                 }
-            }
+            }*/
         }
         
         func jump_element_check(_ element: JumpLogicElement)

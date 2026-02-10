@@ -436,6 +436,7 @@ public struct ChangerElementView: View
                     Text("None")
                 }
             }
+            .frame(minWidth: 160, maxWidth: .infinity)
             .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
         }
         #else
