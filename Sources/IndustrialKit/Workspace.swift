@@ -534,7 +534,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Cancel perform flag.
-    public var canceled = false
+    //public var canceled = false
     
     private var performing_task = Task<Void, Error> {}
     
@@ -550,7 +550,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         performed = true
         
-        canceled = false
+        //canceled = false
         
         switch element
         {
@@ -592,13 +592,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // Logic
         case let jump_element as JumpLogicElement:
             jump(by: jump_element)
-            break
+            completion(.success(()))
         case let comparator_element as ComparatorLogicElement:
             compare(by: comparator_element)
+            completion(.success(()))
         case is MarkLogicElement:
             completion(.success(()))
         default:
-            completion(.success(())) //break
+            completion(.success(()))
         }
         
         func check_registers(_ reference_count: Int)
@@ -693,7 +694,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             program_performed = false // Control Buttons (UI)
             performing_state = .current // State light (UI)
             
-            canceled = true
+            //canceled = true
             
             switch selected_program_element
             {
