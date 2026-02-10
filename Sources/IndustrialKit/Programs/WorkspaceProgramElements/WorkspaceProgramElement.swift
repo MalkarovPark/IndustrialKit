@@ -97,6 +97,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject, 
 public class AnyWorkspaceProgramElement: ObservableObject, Codable, Identifiable
 {
     @Published public var base: WorkspaceProgramElement
+    
     public var id: UUID { base.id }
     
     public init(_ base: WorkspaceProgramElement)

@@ -430,6 +430,10 @@ private struct ProductionProgramView: View
             {
                 ControlProgramTextView(program: program, workspace: workspace, code_editor_text: $code_editor_text)
                     .transition(.move(edge: .trailing))
+                    .onDisappear
+                    {
+                        view_program_as_text = false
+                    }
             }
         }
         .animation(.easeInOut(duration: 0.3), value: view_program_as_text)

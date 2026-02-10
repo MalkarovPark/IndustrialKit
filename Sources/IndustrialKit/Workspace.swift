@@ -1308,6 +1308,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private func jump(by element: JumpLogicElement)
     {
         selected_element_index = element.target_element_index
+        
+        reset_elements_states_to_current() // UI only
     }
     
     /**
@@ -1320,6 +1322,19 @@ public class Workspace: ObservableObject, @unchecked Sendable
         if element.compare_type.compare(registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
         {
             selected_element_index = element.target_element_index
+            
+            reset_elements_states_to_current() // UI only
+        }
+    }
+    
+    private func reset_elements_states_to_current()
+    {
+        guard let program = selected_program else { return }
+        let end = max(0, min(selected_element_index, program.elements_count))
+        if end == 0 { return }
+        for i in 0..<end
+        {
+            program.elements[safe: i]?.performing_state = .none
         }
     }
     
