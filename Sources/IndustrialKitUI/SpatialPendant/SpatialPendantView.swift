@@ -49,7 +49,7 @@ public struct SpatialPendantView: View
                     #if os(macOS)
                     .frame(width: 200)
                     #else
-                    .frame(width: 240)
+                    .frame(width: 320)
                     #endif
                 case .some(_):
                     Text("Nothing")
