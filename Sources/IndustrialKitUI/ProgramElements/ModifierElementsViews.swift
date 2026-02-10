@@ -362,6 +362,7 @@ public struct MathElementView: View
                 .textFieldStyle(.roundedBorder)
                 .padding(.trailing)
                 .onSubmit(on_update)
+                .frame(minWidth: 160, maxWidth: .infinity)
             
             RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: to_index, names: ["To"])
         }
@@ -617,9 +618,9 @@ public struct ObserverElementView: View
                             TextField("0", value: output_from, format: .number)
                             Stepper("Enter", value: output_from, in: 0...10000)
                                 .labelsHidden()
-                    #if !os(macOS)
+                            #if !os(macOS)
                                 .keyboardType(.decimalPad)
-                    #endif
+                            #endif
 
                             RegistersSelector(
                                 text: "to \($output.to.wrappedValue)",
@@ -752,7 +753,7 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
         
         var body: some View
         {
-            HStack//(alignment: .leading, spacing: 8)
+            VStack(alignment: .leading, spacing: 8)
             {
                 /*Text("Modifiers")
                     .font(.custom("Line Seed Sans", size: 20))
@@ -764,26 +765,23 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                 
                 HStack
                 {
-                    MoverElementView(element: MoverModifierElement(), workspace: workspace)
-                        .modifier(PreviewBorder())
-
-                    ChangerElementView(element: ChangerModifierElement(), workspace: workspace)
-                        .modifier(PreviewBorder())
-                }
-
-                HStack
-                {
-                    ObserverElementView(element: ObserverModifierElement(), workspace: workspace)
+                    WriterElementView(element: WriterModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                     
-                    HStack
-                    {
-                        WriterElementView(element: WriterModifierElement(), workspace: workspace)
-                            .modifier(PreviewBorder())
-
-                        MathElementView(element: MathModifierElement(), workspace: workspace)
-                            .modifier(PreviewBorder())
-                    }
+                    MoverElementView(element: MoverModifierElement(), workspace: workspace)
+                        .modifier(PreviewBorder())
+                    
+                    ObserverElementView(element: ObserverModifierElement(), workspace: workspace)
+                        .modifier(PreviewBorder())
+                }
+                
+                HStack
+                {
+                    ChangerElementView(element: ChangerModifierElement(), workspace: workspace)
+                        .modifier(PreviewBorder())
+                    
+                    MathElementView(element: MathModifierElement(), workspace: workspace)
+                        .modifier(PreviewBorder())
                 }
             }
             .padding()
