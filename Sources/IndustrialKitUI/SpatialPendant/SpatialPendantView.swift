@@ -46,17 +46,16 @@ public struct SpatialPendantView: View
                             #endif
                             .foregroundStyle(.secondary)
                     }
-                    #if os(macOS)
                     .frame(width: 200)
-                    #else
-                    .frame(width: 480)
-                    #endif
                 case .some(_):
                     Text("Nothing")
                 case .none:
                     WorkspaceControlView(workspace: workspace)
                 }
             }
+            #if !os(macOS)
+            .frame(width: 320)
+            #endif
             .contentTransition(.symbolEffect(.replace.offUp.byLayer))
             .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
             .padding(8)
