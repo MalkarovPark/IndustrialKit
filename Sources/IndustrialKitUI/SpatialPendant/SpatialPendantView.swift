@@ -54,7 +54,7 @@ public struct SpatialPendantView: View
                 }
             }
             #if !os(macOS)
-            .frame(width: 320)
+            .frame(width: 240)
             #endif
             .contentTransition(.symbolEffect(.replace.offUp.byLayer))
             .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
