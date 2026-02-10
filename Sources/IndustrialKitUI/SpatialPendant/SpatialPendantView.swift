@@ -46,7 +46,11 @@ public struct SpatialPendantView: View
                             #endif
                             .foregroundStyle(.secondary)
                     }
+                    #if os(macOS)
                     .frame(width: 200)
+                    #else
+                    .frame(width: 240)
+                    #endif
                 case .some(_):
                     Text("Nothing")
                 case .none:
