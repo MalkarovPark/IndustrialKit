@@ -890,13 +890,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         switch selected_program_element
         {
         case let performer_element as RobotPerformerElement:
-            let robot = robot_by_name(performer_element.object_name)
-            robot.reset_moving()
-            robot.disable_update()
+            reset_handler(performer_element)
         case let performer_element as ToolPerformerElement:
-            let tool = tool_by_name(performer_element.object_name)
-            tool.reset_performing()
-            tool.disable_update()
+            reset_handler(performer_element)
         default:
             break
         }
@@ -912,6 +908,44 @@ public class Workspace: ObservableObject, @unchecked Sendable
         selected_program.reset_elements_states()
         
         reset_error()
+        
+        func reset_handler(_ element: RobotPerformerElement)
+        {
+            let robot = robot_by_name(element.object_name)
+            
+            if element.is_single_perfrom
+            {
+                robot.stop()
+            }
+            else
+            {
+                robot.reset_moving()
+            }
+            
+            robot.clear_finish_handler()
+            robot.clear_error_handler()
+            
+            robot.disable_update()
+        }
+        
+        func reset_handler(_ element: ToolPerformerElement)
+        {
+            let tool = tool_by_name(element.object_name)
+            
+            if element.is_single_perfrom
+            {
+                tool.stop()
+            }
+            else
+            {
+                tool.reset_performing()
+            }
+            
+            tool.clear_finish_handler()
+            tool.clear_error_handler()
+            
+            tool.disable_update()
+        }
     }
     
     // MARK: Update statistics handling

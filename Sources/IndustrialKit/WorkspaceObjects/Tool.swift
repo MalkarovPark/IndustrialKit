@@ -560,6 +560,7 @@ open class Tool: WorkspaceObject
     {
         if demo
         {
+            // Remove actions for virtural tool
             model_controller.canceled = true
             model_controller.reset_entities()
         }
@@ -745,16 +746,7 @@ open class Tool: WorkspaceObject
         
         if performed
         {
-            if demo
-            {
-                model_controller.canceled = true
-                model_controller.reset_entities()
-            }
-            else
-            {
-                connector.canceled = true
-                connector.reset_device()
-            }
+            stop()
             
             //pointer_position_to_robot()
             performed = false

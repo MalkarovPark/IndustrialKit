@@ -639,6 +639,7 @@ open class Robot: WorkspaceObject
     {
         if demo
         {
+            // Remove actions for virtual robot
             model_controller.canceled = true
             model_controller.reset_entities()
         }
@@ -834,16 +835,7 @@ open class Robot: WorkspaceObject
         
         if performed
         {
-            if demo
-            {
-                model_controller.canceled = true
-                model_controller.reset_entities()
-            }
-            else
-            {
-                connector.canceled = true
-                connector.reset_device()
-            }
+            stop()
             
             pointer_position_to_robot()
             performed = false
