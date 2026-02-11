@@ -151,10 +151,10 @@ public struct RobotPerformerElementView: View
                     RegistersSelector(text: "Rotation R: \(element.r_index), P: \(element.p_index), W: \(element.w_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: rotation_indices, names: ["R", "P", "W"])
                         .padding(.top)
                     
-                    HStack(spacing: 0)
+                    HStack(spacing: 16)
                     {
                         RegistersSelector(text: "Speed: \(element.speed_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: speed_index, names: ["Speed"])
-                            .padding(.trailing)
+                            //.padding(.trailing)
                         
                         RegistersSelector(text: "Type: \(element.type_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: type_index, names: ["Type"])
                     }

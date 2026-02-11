@@ -90,7 +90,7 @@ struct OperationControl: View
                             Image(systemName: "chevron.compact.down")
                             #if !os(macOS)
                                 .font(.system(size: 16))
-                                .frame(width: 32, height: 32)
+                                .frame(width: 32, height: 16)
                             #endif
                         }
                         .buttonStyle(.plain)

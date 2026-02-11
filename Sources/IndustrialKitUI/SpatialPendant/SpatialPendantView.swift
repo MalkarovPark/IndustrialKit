@@ -190,7 +190,9 @@ struct SpatialPendant_Previews: PreviewProvider
             .onAppear { workspace_preparation() }
             .overlay(alignment: .topLeading)
             {
-                Button("Test") { button_tap() }.padding()
+                Button("Switch") { button_tap() }
+                    .buttonStyle(.bordered)
+                    .padding()
             }
         }
         

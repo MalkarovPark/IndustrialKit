@@ -126,6 +126,7 @@ internal struct PickerNamer: ViewModifier
             Text(name)
                 .padding(.trailing)
             content
+                .buttonStyle(.bordered)
         }
     }
 }

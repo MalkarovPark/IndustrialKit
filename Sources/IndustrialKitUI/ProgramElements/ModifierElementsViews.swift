@@ -73,9 +73,9 @@ public struct MoverElementView: View
                         HStack
                         {
                             let link_indices = binding_for_link($link)
-
+                            
                             RegistersSelector(
-                                text: "From: \(link.from) → \(link.to)",
+                                text: "From \(link.from) to \(link.to)",
                                 registers_count: workspace.registers.count,
                                 colors: registers_colors,
                                 indices: link_indices,
@@ -94,12 +94,14 @@ public struct MoverElementView: View
                                 Label("Delete", systemImage: "trash")
                             }
                         }
+                        #if !os(macOS)
+                        .frame(height: 2)
+                        #endif
                     }
                     .onDelete
                     { offsets in
                         element.links.remove(atOffsets: offsets)
                     }
-
                 }
                 .frame(minHeight: 160)
                 .modifier(ListBorderer())
@@ -219,15 +221,17 @@ public struct WriterElementView: View
                                     on_update()
                                 }
                             )
-
+                            
                             Text("Write")
                             TextField("0", value: output_value, format: .number)
-                            Stepper("Enter", value: output_value, in: 0...10000)
-                                .labelsHidden()
                             #if !os(macOS)
                                 .keyboardType(.decimalPad)
                             #endif
-
+                            #if os(macOS)
+                            Stepper("Enter", value: output_value, in: 0...10000)
+                                .labelsHidden()
+                            #endif
+                            
                             RegistersSelector(
                                 text: "to \($input.to.wrappedValue)",
                                 registers_count: workspace.registers.count,
@@ -248,12 +252,14 @@ public struct WriterElementView: View
                                 Label("Delete", systemImage: "trash")
                             }
                         }
+                        #if !os(macOS)
+                        .frame(height: 2)
+                        #endif
                     }
                     .onDelete
                     { offsets in
                         element.inputs.remove(atOffsets: offsets)
                     }
-
                 }
                 .frame(minHeight: 160)
                 .modifier(ListBorderer())
@@ -474,6 +480,7 @@ public struct ChangerElementView: View
                 }
             }
             .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
+            .buttonStyle(.bordered)
         }
         #endif
     }
@@ -608,8 +615,10 @@ public struct ObserverElementView: View
             {
                 List
                 {
-                    ForEach($element.outputs) { $output in
-                        HStack {
+                    ForEach($element.outputs)
+                    { $output in
+                        HStack
+                        {
                             let output_to = binding_for_single($output.to)
                             let output_from = Binding(
                                 get: { $output.from.wrappedValue },
@@ -618,10 +627,12 @@ public struct ObserverElementView: View
 
                             Text("From")
                             TextField("0", value: output_from, format: .number)
-                            Stepper("Enter", value: output_from, in: 0...10000)
-                                .labelsHidden()
                             #if !os(macOS)
                                 .keyboardType(.decimalPad)
+                            #endif
+                            #if os(macOS)
+                            Stepper("Enter", value: output_from, in: 0...10000)
+                                .labelsHidden()
                             #endif
 
                             RegistersSelector(
@@ -644,6 +655,9 @@ public struct ObserverElementView: View
                                 Label("Delete", systemImage: "trash")
                             }
                         }
+                        #if !os(macOS)
+                        .frame(height: 2)
+                        #endif
                     }
                     .onDelete
                     { offsets in

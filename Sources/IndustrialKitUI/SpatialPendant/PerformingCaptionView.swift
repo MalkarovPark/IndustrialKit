@@ -25,7 +25,12 @@ struct PerformingCaptionView: View
         {
             Rectangle()
                 .fill(.clear)
-                .glassEffect(.clear, in: .capsule(style: .continuous))//.rect(cornerRadius: 16, style: .continuous))
+            #if os(macOS)
+                .frame(height: 32)
+            #else
+                .frame(height: 40)
+            #endif
+                .glassEffect(.clear, in: .capsule(style: .continuous))
             
             VStack
             {
@@ -33,7 +38,7 @@ struct PerformingCaptionView: View
                 #if os(macOS)
                     .font(.system(size: 14, design: .rounded))
                 #else
-                    .font(.system(size: 16, design: .rounded))
+                    .font(.system(size: 18, design: .rounded))
                 #endif
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
@@ -44,16 +49,24 @@ struct PerformingCaptionView: View
                 Spacer()
                 Image(systemName:"circlebadge.fill")
                     .foregroundColor(performing_state.color)
+                #if os(macOS)
                     .padding(.trailing, 10)
+                    .font(.system(size: 14))
+                #else
+                    .padding(.trailing, 10)
+                    .font(.system(size: 18))
+                #endif
             }
-            
         }
-        .frame(maxWidth: .infinity, maxHeight: 32)
+        .frame(maxWidth: .infinity)
     }
 }
 
 #Preview
 {
-    PerformingCaptionView(name: "Workspace", performing_state: .completed)
+    PerformingCaptionView(name: "Workspace", performing_state: .none)
         .frame(width: pendant_content_width)
+        .frame(width: pendant_content_width)
+        .padding()
+        .background(.secondary.opacity(0.25))
 }

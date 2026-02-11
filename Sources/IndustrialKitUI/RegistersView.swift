@@ -127,6 +127,8 @@ public struct RegistersSelector: View
         {
             RegistersSelectorView(registers_count: registers_count, colors: colors, indices: $indices, names: names)
         }
+        .buttonStyle(.bordered)
+        .buttonBorderShape(.roundedRectangle)
         /*Button("\(text)", action: { is_presented = true })
             .popover(isPresented: $is_presented)
             {
@@ -165,15 +167,17 @@ private struct RegistersSelectorView: View
     {
         VStack(spacing: 0)
         {
-            if names.count > 1
-            {
-                Picker(selection: .constant(1), label: Text("placeholder")) { }
-                .padding()
-                .hidden()
-            }
-            
             ScrollView
             {
+                if names.count > 1
+                {
+                    #if os(macOS)
+                    Spacer(minLength: 48)
+                    #else
+                    Spacer(minLength: 52)
+                    #endif
+                }
+                
                 LazyVGrid(columns: columns, spacing: 12)
                 {
                     ForEach(registers_count, id: \.self)
@@ -190,6 +194,7 @@ private struct RegistersSelectorView: View
                 }
                 .padding()
             }
+            //.background(.white)
         }
         .frame(width: 240, height: 240)
         .overlay(alignment: .top)
@@ -205,9 +210,14 @@ private struct RegistersSelectorView: View
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
+                #if os(macOS)
+                .glassEffect(in: .rect(cornerRadius: 8, style: .continuous))
+                .controlSize(.large)
+                #else
+                .glassEffect(in: .capsule(style: .continuous))
+                #endif
+                .padding(18)
                 .frame(maxWidth: .infinity)
-                .padding()
-                .background(.thinMaterial)
             }
         }
         .onAppear
@@ -616,6 +626,7 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
                 RegistersSelector(text: "Location of X: \(indices[0]), Y: \(indices[1]), Z: \(indices[2])", registers_count: 12, colors: colors_by_seed(seed: 5433), indices: $indices, names: ["X", "Y", "Z"])
                     .padding()
             }
+            .frame(width: 256)
         }
         
         private func colors_by_seed(seed: Int) -> [Color]

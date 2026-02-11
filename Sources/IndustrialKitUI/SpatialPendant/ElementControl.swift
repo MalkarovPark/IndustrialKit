@@ -81,7 +81,7 @@ struct ElementControl: View
                             Image(systemName: "chevron.compact.down")
                             #if !os(macOS)
                                 .font(.system(size: 16))
-                                .frame(width: 32, height: 32)
+                                .frame(width: 32, height: 16)
                             #endif
                         }
                         .buttonStyle(.plain)
@@ -138,6 +138,9 @@ struct ElementControl: View
                                 }
                             }
                             .pickerStyle(.menu)
+                            #if os(iOS)
+                            .padding(.vertical, 4)
+                            #endif
                         }
                         .padding(10)
                     }

@@ -631,7 +631,11 @@ struct WorkspaceControl_Previews: PreviewProvider
                 }
                 .padding(10)
             }
+            #if os(macOS)
             .frame(height: 480)
+            #else
+            .frame(height: 600)
+            #endif
             .onAppear
             {
                 let robot = Robot(name: "6DOF")
