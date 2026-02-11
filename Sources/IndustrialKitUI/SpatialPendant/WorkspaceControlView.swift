@@ -39,6 +39,8 @@ struct WorkspaceControlView: View
     
     @State private var view_program_as_text = false
     
+    @State private var is_single_perform = false
+    
     var body: some View
     {
         VStack(alignment: .center, spacing: 10)
@@ -194,7 +196,7 @@ struct WorkspaceControlView: View
                 {
                     if workspace.selected_program != nil
                     {
-                        PerformingControlView(workspace: workspace)
+                        PerformingControlView(workspace: workspace, is_single_perform: is_single_perform)
                     }
                     
                     Spacer()
@@ -233,7 +235,7 @@ struct WorkspaceControlView: View
             }
             
             // MARK: Controls
-            ElementControl(workspace: workspace)
+            ElementControl(workspace: workspace, is_single_perform: is_single_perform)
         }
     }
     
@@ -565,6 +567,8 @@ private struct PerformingControlView: View
 {
     @ObservedObject var workspace: Workspace
     
+    let is_single_perform: Bool
+    
     var body: some View
     {
         HStack(spacing: 2)
@@ -584,7 +588,8 @@ private struct PerformingControlView: View
                 .frame(height: 24)
             
             Button(action: {
-                if workspace.performing_state == .processing { workspace.reset_performing() } // Reset performing for called single action
+                if is_single_perform { workspace.reset_performing() } // Reset performing for called single action
+                
                 workspace.start_pause_performing()
             })
             {

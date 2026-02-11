@@ -8,16 +8,27 @@
 import SwiftUI
 import IndustrialKit
 
-struct ElementControl: View
+public struct ElementControl: View
 {
     @ObservedObject var workspace: Workspace
+    
+    let is_single_perform: Bool
     
     @State private var is_expanded = false
     @State private var is_central_pressed = false
     
     @Namespace private var pane_glass
     
-    var body: some View
+    public init(
+        workspace: Workspace,
+        is_single_perform: Bool = false
+    )
+    {
+        self.workspace = workspace
+        self.is_single_perform = is_single_perform
+    }
+    
+    public var body: some View
     {
         GlassEffectContainer
         {
@@ -158,7 +169,7 @@ struct ElementControl: View
                 
                 Button
                 {
-                    if workspace.performed { workspace.reset_performing() } // Reset performing for called single action
+                    if is_single_perform { workspace.reset_performing() } // Reset performing for called single action
                     
                     workspace.performing_state = .processing
                     

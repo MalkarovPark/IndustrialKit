@@ -8,16 +8,27 @@
 import SwiftUI
 import IndustrialKit
 
-struct OperationControl: View
+public struct OperationControl: View
 {
     @ObservedObject var tool: Tool
+    
+    let is_single_perform: Bool
     
     @State private var is_expanded = false
     @State private var is_central_pressed = false
     
     @Namespace private var pane_glass
     
-    var body: some View
+    public init(
+        tool: Tool,
+        is_single_perform: Bool = false
+    )
+    {
+        self.tool = tool
+        self.is_single_perform = is_single_perform
+    }
+    
+    public var body: some View
     {
         GlassEffectContainer
         {
