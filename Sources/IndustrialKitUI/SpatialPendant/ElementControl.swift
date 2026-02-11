@@ -158,12 +158,12 @@ struct ElementControl: View
                 
                 Button
                 {
+                    if workspace.performed { workspace.reset_performing() } // Reset performing for called single action
+                    
                     workspace.performing_state = .processing
                     
                     workspace.perform(element: workspace.current_element)
                     { result in
-                        //print(result)
-                        
                         Task
                         { @MainActor in
                             switch result

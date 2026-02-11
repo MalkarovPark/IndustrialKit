@@ -258,12 +258,12 @@ struct OperationControl: View
                 
                 Button
                 {
+                    if workspace.performed { workspace.reset_performing() } // Reset performing for called single action
+                    
                     tool.performing_state = .processing
                     
                     tool.perform(code: tool.current_operation.value)
                     { result in
-                        //print(result)
-                        
                         Task
                         { @MainActor in
                             switch result

@@ -653,8 +653,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// A workspace performation toggle.
     public func start_pause_performing() //Selects program element and performs by workspace.
     {
-        if performed { reset_performing() } // Reset performing for called single action
-        
         guard let selected_program = self.selected_program, selected_program.elements_count > 0
         else
         {
