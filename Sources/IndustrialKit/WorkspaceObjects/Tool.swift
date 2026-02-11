@@ -555,6 +555,22 @@ open class Tool: WorkspaceObject
         }
     }
     
+    /// Stops tool movement.
+    public func stop()
+    {
+        if demo
+        {
+            model_controller.canceled = true
+            model_controller.reset_entities()
+        }
+        else
+        {
+            // Remove actions for real tool
+            connector.canceled = true
+            connector.reset_device()
+        }
+    }
+    
     /// A tool performation toggle.
     public func start_pause_performing()
     {
@@ -601,17 +617,7 @@ open class Tool: WorkspaceObject
             program_performed = false // Control Buttons (UI)
             performing_state = .current // State light (UI)
             
-            if demo
-            {
-                model_controller.canceled = true
-                model_controller.reset_entities()
-            }
-            else
-            {
-                // Remove actions for real robot
-                connector.canceled = true
-                connector.reset_device()
-            }
+            stop()
         }
     }
     

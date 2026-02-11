@@ -634,6 +634,22 @@ open class Robot: WorkspaceObject
         }
     }
     
+    /// Stops robot movement.
+    public func stop()
+    {
+        if demo
+        {
+            model_controller.canceled = true
+            model_controller.reset_entities()
+        }
+        else
+        {
+            // Remove actions for real robot
+            connector.canceled = true
+            connector.reset_device()
+        }
+    }
+    
     /// A robot moving performation toggle.
     public func start_pause_moving()
     {

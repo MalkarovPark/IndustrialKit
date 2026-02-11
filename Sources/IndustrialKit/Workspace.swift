@@ -711,7 +711,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             let robot = robot_by_name(element.object_name)
             
-            robot.start_pause_moving()
+            if element.is_single_perfrom
+            {
+                robot.stop()
+            }
+            else
+            {
+                robot.start_pause_moving()
+            }
             
             robot.clear_finish_handler()
             robot.clear_error_handler()
@@ -723,7 +730,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             let tool = tool_by_name(element.object_name)
             
-            tool.start_pause_performing()
+            if element.is_single_perfrom
+            {
+                tool.stop()
+            }
+            else
+            {
+                tool.start_pause_performing()
+            }
             
             tool.clear_finish_handler()
             tool.clear_error_handler()
