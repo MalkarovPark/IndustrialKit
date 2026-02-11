@@ -165,7 +165,7 @@ public struct ElementControl: View
                 
                 Button
                 {
-                    workspace.single_code_perform()
+                    workspace.single_element_perform()
                 }
                 label:
                 {
