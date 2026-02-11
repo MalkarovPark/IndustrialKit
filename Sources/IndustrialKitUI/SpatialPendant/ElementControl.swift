@@ -158,6 +158,8 @@ struct ElementControl: View
                 
                 Button
                 {
+                    workspace.performing_state = .processing
+                    
                     workspace.perform(element: workspace.current_element)
                     { result in
                         //print(result)
