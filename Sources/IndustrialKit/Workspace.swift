@@ -548,7 +548,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     public func perform(element: WorkspaceProgramElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
-        performed = true
+        //performed = true
         
         //canceled = false
         
@@ -751,7 +751,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         selected_program_element.performing_state = .processing
         
-        //performed = true
+        performed = true
         
         perform(element: selected_program_element)
         { result in
