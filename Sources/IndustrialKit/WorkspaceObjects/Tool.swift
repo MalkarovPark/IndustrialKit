@@ -449,6 +449,7 @@ open class Tool: WorkspaceObject
             is_single_performed = true
             
             previous_performing_state = performing_state
+            performing_state = .processing
             
             perform(code: current_operation.value)
             { result in
