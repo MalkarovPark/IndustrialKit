@@ -265,7 +265,7 @@ public struct OperationControl: View
                 
                 Button
                 {
-                    tool.single_operation_perform()
+                    tool.start_pause_single_operation()
                 }
                 label:
                 {

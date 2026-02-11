@@ -311,7 +311,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private var previous_performing_state: PerformingState = .none
     
-    public func start_pause_single_operation()
+    public func start_pause_single_element()
     {
         if !is_single_performed
         {
