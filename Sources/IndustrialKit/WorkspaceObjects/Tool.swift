@@ -422,7 +422,9 @@ open class Tool: WorkspaceObject
         return programs.count
     }
     
-    @Published public var current_operation: OperationCode // Single pendant action
+    // MARK: Single operation handling
+    /// Single pendant operation.
+    @Published public var current_operation: OperationCode
     
     // MARK: - Info codes functions
     /// An array of avaliable operation codes values for tool.

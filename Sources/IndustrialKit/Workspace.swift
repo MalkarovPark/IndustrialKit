@@ -303,7 +303,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         return programs.count
     }
     
-    @Published public var current_element: WorkspaceProgramElement // Single program element
+    // MARK: Single element handling
+    /// Single program element.
+    @Published public var current_element: WorkspaceProgramElement
     
     // MARK: Workspace progem elements checking functions
     public func elements_check(program: ProductionProgram)

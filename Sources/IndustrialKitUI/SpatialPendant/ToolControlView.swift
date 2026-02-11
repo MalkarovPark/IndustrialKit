@@ -26,8 +26,6 @@ struct ToolControlView: View
         self.tool = tool
     }
     
-    @State private var is_single_perform = false
-    
     var body: some View
     {
         VStack(alignment: .center, spacing: 10)
@@ -122,7 +120,7 @@ struct ToolControlView: View
                 {
                     if tool.selected_program != nil
                     {
-                        PerformingControlView(tool: tool, is_single_perform: $is_single_perform)
+                        PerformingControlView(tool: tool)
                     }
                     
                     Spacer()
@@ -162,7 +160,7 @@ struct ToolControlView: View
             }
             
             // MARK: Controls
-            OperationControl(tool: tool, is_single_perform: $is_single_perform)
+            OperationControl(tool: tool)
         }
     }
     
@@ -440,8 +438,6 @@ private struct PerformingControlView: View
 {
     @ObservedObject var tool: Tool
     
-    @Binding var is_single_perform: Bool
-    
     var body: some View
     {
         HStack(spacing: 2)
@@ -461,8 +457,6 @@ private struct PerformingControlView: View
                 .frame(height: 24)
             
             Button(action: {
-                if is_single_perform { tool.reset_performing() } // Reset performing for called single action
-                
                 tool.start_pause_performing()
             })
             {

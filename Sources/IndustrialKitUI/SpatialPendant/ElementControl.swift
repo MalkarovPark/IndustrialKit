@@ -12,20 +12,16 @@ public struct ElementControl: View
 {
     @ObservedObject var workspace: Workspace
     
-    @Binding var is_single_perform: Bool
-    
     @State private var is_expanded = false
     @State private var is_central_pressed = false
     
     @Namespace private var pane_glass
     
     public init(
-        workspace: Workspace,
-        is_single_perform: Binding<Bool> = .constant(false)
+        workspace: Workspace
     )
     {
         self.workspace = workspace
-        self._is_single_perform = is_single_perform
     }
     
     public var body: some View
@@ -169,8 +165,6 @@ public struct ElementControl: View
                 
                 Button
                 {
-                    if is_single_perform { workspace.reset_performing() } // Reset performing for called single action
-                    
                     workspace.performing_state = .processing
                     
                     workspace.perform(element: workspace.current_element)
