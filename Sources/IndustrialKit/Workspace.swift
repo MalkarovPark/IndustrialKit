@@ -346,8 +346,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                     {
-                        self.performing_state = .none
+                        self.performing_state = self.previous_performing_state //.none
                     }
+                    
+                    self.is_single_performed = false
                 }
             }
         }
