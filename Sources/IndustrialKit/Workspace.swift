@@ -307,27 +307,59 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Single program element.
     @Published public var current_element: WorkspaceProgramElement
     
-    public func single_code_perform()
+    private var is_single_performed = false
+    
+    private var previous_performing_state: PerformingState = .none
+    
+    public func start_pause_single_operation()
     {
-        performing_state = .processing
-        
-        perform(element: current_element)
-        { result in
-            Task
-            { @MainActor in
-                switch result
-                {
-                case .success:
-                    self.performing_state = .completed
-                case .failure(let error):
-                    self.performing_state = .error
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                {
-                    self.performing_state = .none
+        if !is_single_performed
+        {
+            single_element_perform()
+        }
+        else
+        {
+            single_operation_reset()
+        }
+    }
+    
+    public func single_element_perform()
+    {
+        if !is_single_performed
+        {
+            is_single_performed = true
+            
+            previous_performing_state = performing_state != .completed ? performing_state : .none
+            performing_state = .processing
+            
+            perform(element: current_element)
+            { result in
+                Task
+                { @MainActor in
+                    switch result
+                    {
+                    case .success:
+                        self.performing_state = .completed
+                    case .failure(let error):
+                        self.performing_state = .error
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                    {
+                        self.performing_state = .none
+                    }
                 }
             }
+        }
+    }
+    
+    public func single_operation_reset()
+    {
+        if is_single_performed
+        {
+            is_single_performed = false
+            //stop()
+            performing_state = previous_performing_state //.none
         }
     }
     
@@ -663,22 +695,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }*/
     }
     
-    /**
-     Performs program element on workspace.
-     
-     - Parameters:
-        - element: A workspace program element.
-     */
-    /*public func perform(element: WorkspaceProgramElement) throws
-    {
-        //print("started")
-        //usleep(UInt32(2 * 1_000_000))
-        //print("finished")
-    }*/
-    
     /// A workspace performation toggle.
     public func start_pause_performing() //Selects program element and performs by workspace.
     {
+        single_operation_reset()
+        
         guard let selected_program = self.selected_program, selected_program.elements_count > 0
         else
         {
