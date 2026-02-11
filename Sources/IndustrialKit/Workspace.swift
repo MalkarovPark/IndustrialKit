@@ -548,7 +548,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     public func perform(element: WorkspaceProgramElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
-        performed = true
+        //performed = true
         
         //canceled = false
         
@@ -651,7 +651,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }*/
     
     /// A workspace performation toggle.
-    public func start_pause_performing() //Selects program element and performs by workcell.
+    public func start_pause_performing() //Selects program element and performs by workspace.
     {
         guard let selected_program = self.selected_program, selected_program.elements_count > 0
         else
@@ -699,41 +699,45 @@ public class Workspace: ObservableObject, @unchecked Sendable
             switch selected_program_element
             {
             case let performer_element as RobotPerformerElement:
-                let robot = robot_by_name(performer_element.object_name)
-                robot.start_pause_moving()
-                robot.disable_update()
+                pause_handler(performer_element)
             case let performer_element as ToolPerformerElement:
-                let tool = tool_by_name(performer_element.object_name)
-                tool.start_pause_performing()
-                tool.disable_update()
+                pause_handler(performer_element)
             default:
                 break
             }
         }
         
-        /*// Handling workspace performing
-        if !performed
+        func pause_handler(_ element: RobotPerformerElement)
         {
-            reset_error()
+            let robot = robot_by_name(element.object_name)
             
-            // Move to next element if moving was stop
-            performed = true
-            perform_constant_objects_update()
+            robot.start_pause_moving()
             
-            perform_next_element()
+            robot.clear_finish_handler()
+            robot.clear_error_handler()
+            
+            robot.disable_update()
         }
-        else
+        
+        func pause_handler(_ element: ToolPerformerElement)
         {
-            // Remove all action if moving was perform
-            performed = false
-            pause_performing()
-        }*/
+            let tool = tool_by_name(element.object_name)
+            
+            tool.start_pause_performing()
+            
+            tool.clear_finish_handler()
+            tool.clear_error_handler()
+            
+            tool.disable_update()
+        }
     }
     
     /// Selects and performs program element by workspace.
     public func perform_next_element()
     {
         selected_program_element.performing_state = .processing
+        
+        performed = true
         
         perform(element: selected_program_element)
         { result in
@@ -745,7 +749,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     self.selected_program_element.performing_state = .completed
                     //self.selected_operation_code.performing_state = self.connector.performing_state.output
                     
-                    self.select_new_element()
+                    self.select_next_element()
                 case .failure(let error):
                     self.process_error(error)
                     self.error_handler(error)
@@ -783,7 +787,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Set the new target program element index.
-    private func select_new_element()
+    private func select_next_element()
     {
         guard let selected_program = self.selected_program
         else
@@ -1106,11 +1110,19 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             
             robot.finish_handler = {
+                robot.clear_finish_handler()
+                robot.clear_finish_handler()
+                
                 robot.disable_update()
+                
                 completion(.success(()))
             }
             robot.error_handler = { error in
+                robot.clear_finish_handler()
+                robot.clear_finish_handler()
+                
                 robot.disable_update()
+                
                 error_handler(error)
             }
             
@@ -1158,11 +1170,19 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             
             tool.finish_handler = {
+                tool.clear_finish_handler()
+                tool.clear_error_handler()
+                
                 tool.disable_update()
+                
                 completion(.success(()))
             }
             tool.error_handler = { error in
+                tool.clear_finish_handler()
+                tool.clear_error_handler()
+                
                 tool.disable_update()
+                
                 error_handler(error)
             }
             
