@@ -12,7 +12,7 @@ public struct OperationControl: View
 {
     @ObservedObject var tool: Tool
     
-    let is_single_perform: Bool
+    @Binding var is_single_perform: Bool
     
     @State private var is_expanded = false
     @State private var is_central_pressed = false
@@ -21,11 +21,11 @@ public struct OperationControl: View
     
     public init(
         tool: Tool,
-        is_single_perform: Bool = false
+        is_single_perform: Binding<Bool> = .constant(false)
     )
     {
         self.tool = tool
-        self.is_single_perform = is_single_perform
+        self._is_single_perform = is_single_perform
     }
     
     public var body: some View
@@ -271,6 +271,8 @@ public struct OperationControl: View
                 {
                     if tool.performed { tool.reset_performing() } // Reset performing for called single action
                     
+                    is_single_perform = true
+                    
                     tool.performing_state = .processing
                     
                     tool.perform(code: tool.current_operation.value)
@@ -284,6 +286,8 @@ public struct OperationControl: View
                             case .failure(let error):
                                 tool.performing_state = .error
                             }
+                            
+                            is_single_perform = false
                             
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
                             {

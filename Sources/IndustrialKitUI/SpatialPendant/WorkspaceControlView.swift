@@ -196,7 +196,7 @@ struct WorkspaceControlView: View
                 {
                     if workspace.selected_program != nil
                     {
-                        PerformingControlView(workspace: workspace, is_single_perform: is_single_perform)
+                        PerformingControlView(workspace: workspace, is_single_perform: $is_single_perform)
                     }
                     
                     Spacer()
@@ -235,7 +235,7 @@ struct WorkspaceControlView: View
             }
             
             // MARK: Controls
-            ElementControl(workspace: workspace, is_single_perform: is_single_perform)
+            ElementControl(workspace: workspace, is_single_perform: $is_single_perform)
         }
     }
     
@@ -567,7 +567,7 @@ private struct PerformingControlView: View
 {
     @ObservedObject var workspace: Workspace
     
-    let is_single_perform: Bool
+    @Binding var is_single_perform: Bool
     
     var body: some View
     {

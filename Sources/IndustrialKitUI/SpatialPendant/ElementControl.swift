@@ -12,7 +12,7 @@ public struct ElementControl: View
 {
     @ObservedObject var workspace: Workspace
     
-    let is_single_perform: Bool
+    @Binding var is_single_perform: Bool
     
     @State private var is_expanded = false
     @State private var is_central_pressed = false
@@ -21,11 +21,11 @@ public struct ElementControl: View
     
     public init(
         workspace: Workspace,
-        is_single_perform: Bool = false
+        is_single_perform: Binding<Bool> = .constant(false)
     )
     {
         self.workspace = workspace
-        self.is_single_perform = is_single_perform
+        self._is_single_perform = is_single_perform
     }
     
     public var body: some View

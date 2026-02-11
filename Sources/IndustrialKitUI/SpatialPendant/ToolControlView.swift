@@ -122,7 +122,7 @@ struct ToolControlView: View
                 {
                     if tool.selected_program != nil
                     {
-                        PerformingControlView(tool: tool, is_single_perform: is_single_perform)
+                        PerformingControlView(tool: tool, is_single_perform: $is_single_perform)
                     }
                     
                     Spacer()
@@ -162,7 +162,7 @@ struct ToolControlView: View
             }
             
             // MARK: Controls
-            OperationControl(tool: tool)
+            OperationControl(tool: tool, is_single_perform: $is_single_perform)
         }
     }
     
@@ -440,7 +440,7 @@ private struct PerformingControlView: View
 {
     @ObservedObject var tool: Tool
     
-    let is_single_perform: Bool
+    @Binding var is_single_perform: Bool
     
     var body: some View
     {
