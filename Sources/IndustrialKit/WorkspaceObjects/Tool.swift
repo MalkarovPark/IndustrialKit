@@ -575,6 +575,8 @@ open class Tool: WorkspaceObject
     /// A tool performation toggle.
     public func start_pause_performing()
     {
+        if performed { reset_performing() } // Reset performing for called single action
+        
         guard let selected_program = self.selected_program, selected_program.codes_count > 0
         else
         {

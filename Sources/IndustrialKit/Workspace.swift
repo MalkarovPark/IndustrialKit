@@ -170,7 +170,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         willSet
         {
-            // Stop tool performing before program change
+            // Stop workspace performing before program change
             performed = false
             selected_element_index = 0
         }
@@ -548,7 +548,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     public func perform(element: WorkspaceProgramElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
-        //performed = true
+        performed = true
         
         //canceled = false
         
@@ -653,6 +653,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// A workspace performation toggle.
     public func start_pause_performing() //Selects program element and performs by workspace.
     {
+        if performed { reset_performing() } // Reset performing for called single action
+        
         guard let selected_program = self.selected_program, selected_program.elements_count > 0
         else
         {
@@ -751,7 +753,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         selected_program_element.performing_state = .processing
         
-        performed = true
+        //performed = true
         
         perform(element: selected_program_element)
         { result in
