@@ -746,7 +746,7 @@ open class Robot: WorkspaceObject
      - Parameters:
         - error: A robot moving error.
      */
-    /*@Sendable*/ func process_error(_ error: Error)
+    public func process_error(_ error: Error)
     {
         performed = false // Pause performing
         

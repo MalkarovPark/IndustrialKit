@@ -258,9 +258,27 @@ struct OperationControl: View
                 
                 Button
                 {
+                    tool.performing_state = .processing
+                    
                     tool.perform(code: tool.current_operation.value)
                     { result in
-                        print(result)
+                        //print(result)
+                        
+                        Task
+                        { @MainActor in
+                            switch result
+                            {
+                            case .success:
+                                tool.performing_state = .completed
+                            case .failure(let error):
+                                tool.performing_state = .error
+                            }
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                            {
+                                tool.performing_state = .none
+                            }
+                        }
                     }
                 }
                 label:

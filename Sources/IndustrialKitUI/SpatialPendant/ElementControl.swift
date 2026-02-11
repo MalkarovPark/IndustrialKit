@@ -160,7 +160,23 @@ struct ElementControl: View
                 {
                     workspace.perform(element: workspace.current_element)
                     { result in
-                        print(result)
+                        //print(result)
+                        
+                        Task
+                        { @MainActor in
+                            switch result
+                            {
+                            case .success:
+                                workspace.performing_state = .completed
+                            case .failure(let error):
+                                workspace.performing_state = .error
+                            }
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                            {
+                                workspace.performing_state = .none
+                            }
+                        }
                     }
                 }
                 label:

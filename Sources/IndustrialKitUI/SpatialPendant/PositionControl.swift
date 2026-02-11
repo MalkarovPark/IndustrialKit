@@ -309,18 +309,18 @@ public struct PositionControl: View
 public struct PositionPane: View
 {
     @ObservedObject var robot: Robot
-
+    
     @State private var is_expanded = true
     @State private var is_editor_mode = false
     @State private var is_central_pressed = false
-
+    
     @Namespace private var pane_glass
     
     public init(robot: Robot)
     {
         self.robot = robot
     }
-
+    
     public var body: some View
     {
         GlassEffectContainer
@@ -464,7 +464,7 @@ public struct PositionPane: View
         }
         .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
     }
-
+    
     // MARK: – Central press actions
     private func tap_action()
     {
@@ -473,7 +473,7 @@ public struct PositionPane: View
             is_editor_mode = true
         }
     }
-
+    
     private func long_press_action()
     {
         withAnimation(.spring(response: 0.35, dampingFraction: 0.95))
