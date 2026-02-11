@@ -99,7 +99,7 @@ struct ElementControl: View
                                     .padding(4)
                             }
                             
-                            Menu("Create Element")
+                            Menu("New Element")
                             {
                                 Section(header: Text("Performer"))
                                 {
@@ -159,9 +159,9 @@ struct ElementControl: View
                 Button
                 {
                     workspace.perform(element: workspace.current_element)
-                    /*{ result in
+                    { result in
                         print(result)
-                    }*/
+                    }
                 }
                 label:
                 {
