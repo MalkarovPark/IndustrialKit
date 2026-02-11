@@ -584,7 +584,7 @@ private struct PerformingControlView: View
                 .frame(height: 24)
             
             Button(action: {
-                if workspace.performed { workspace.reset_performing() } // Reset performing for called single action
+                //if workspace.performed { workspace.reset_performing() } // Reset performing for called single action
                 workspace.start_pause_performing()
             })
             {

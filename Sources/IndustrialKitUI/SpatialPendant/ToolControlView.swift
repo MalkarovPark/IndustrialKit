@@ -457,7 +457,7 @@ private struct PerformingControlView: View
                 .frame(height: 24)
             
             Button(action: {
-                if tool.performed { tool.reset_performing() } // Reset performing for called single action
+                //if tool.performed { tool.reset_performing() } // Reset performing for called single action
                 tool.start_pause_performing()
             })
             {
