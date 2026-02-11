@@ -258,7 +258,7 @@ struct OperationControl: View
                 
                 Button
                 {
-                    if tool.performed { workspace.reset_performing() } // Reset performing for called single action
+                    if tool.performed { tool.reset_performing() } // Reset performing for called single action
                     
                     tool.performing_state = .processing
                     
