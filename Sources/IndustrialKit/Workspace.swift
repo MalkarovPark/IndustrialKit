@@ -307,6 +307,30 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Single program element.
     @Published public var current_element: WorkspaceProgramElement
     
+    public func single_code_perform()
+    {
+        performing_state = .processing
+        
+        perform(element: current_element)
+        { result in
+            Task
+            { @MainActor in
+                switch result
+                {
+                case .success:
+                    self.performing_state = .completed
+                case .failure(let error):
+                    self.performing_state = .error
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                {
+                    self.performing_state = .none
+                }
+            }
+        }
+    }
+    
     // MARK: Workspace progem elements checking functions
     public func elements_check(program: ProductionProgram)
     {

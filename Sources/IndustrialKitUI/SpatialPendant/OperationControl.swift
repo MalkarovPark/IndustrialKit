@@ -265,28 +265,7 @@ public struct OperationControl: View
                 
                 Button
                 {
-                    if tool.performed { tool.reset_performing() } // Reset performing for called single action
-                    
-                    tool.performing_state = .processing
-                    
-                    tool.perform(code: tool.current_operation.value)
-                    { result in
-                        Task
-                        { @MainActor in
-                            switch result
-                            {
-                            case .success:
-                                tool.performing_state = .completed
-                            case .failure(let error):
-                                tool.performing_state = .error
-                            }
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                            {
-                                tool.performing_state = .none
-                            }
-                        }
-                    }
+                    tool.single_operation_perform()
                 }
                 label:
                 {

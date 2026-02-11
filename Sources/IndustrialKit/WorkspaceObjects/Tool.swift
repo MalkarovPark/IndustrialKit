@@ -426,6 +426,32 @@ open class Tool: WorkspaceObject
     /// Single pendant operation.
     @Published public var current_operation: OperationCode
     
+    public func single_operation_perform()
+    {
+        if performed { reset_performing() } // Reset performing for called single action
+        
+        performing_state = .processing
+        
+        perform(code: current_operation.value)
+        { result in
+            Task
+            { @MainActor in
+                switch result
+                {
+                case .success:
+                    self.performing_state = .completed
+                case .failure(let error):
+                    self.performing_state = .error
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                {
+                    self.performing_state = .none
+                }
+            }
+        }
+    }
+    
     // MARK: - Info codes functions
     /// An array of avaliable operation codes values for tool.
     @Published public var codes = [OperationCodeInfo]()
