@@ -426,29 +426,60 @@ open class Tool: WorkspaceObject
     /// Single pendant operation.
     @Published public var current_operation: OperationCode
     
+    private var is_single_performed = false
+    
+    private var previous_performing_state: PerformingState = .none
+    
+    public func start_pause_single_operation()
+    {
+        if !is_single_performed
+        {
+            single_operation_perform()
+        }
+        else
+        {
+            single_operation_reset()
+        }
+    }
+    
     public func single_operation_perform()
     {
-        if performed { reset_performing() } // Reset performing for called single action
-        
-        performing_state = .processing
-        
-        perform(code: current_operation.value)
-        { result in
-            Task
-            { @MainActor in
-                switch result
-                {
-                case .success:
-                    self.performing_state = .completed
-                case .failure(let error):
-                    self.performing_state = .error
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                {
-                    self.performing_state = .none
+        if !is_single_performed
+        {
+            is_single_performed = true
+            
+            previous_performing_state = performing_state
+            
+            perform(code: current_operation.value)
+            { result in
+                Task
+                { @MainActor in
+                    switch result
+                    {
+                    case .success:
+                        self.performing_state = .completed
+                    case .failure(let error):
+                        self.performing_state = .error
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                    {
+                        self.performing_state = .none
+                    }
+                    
+                    self.is_single_performed = false
                 }
             }
+        }
+    }
+    
+    public func single_operation_reset()
+    {
+        if is_single_performed
+        {
+            is_single_performed = false
+            stop()
+            performing_state = previous_performing_state //.none
         }
     }
     
@@ -603,6 +634,8 @@ open class Tool: WorkspaceObject
     /// A tool performation toggle.
     public func start_pause_performing()
     {
+        single_operation_reset()
+        
         guard let selected_program = self.selected_program, selected_program.codes_count > 0
         else
         {
@@ -774,9 +807,8 @@ open class Tool: WorkspaceObject
         
         if performed
         {
-            stop()
+            if !is_single_performed { stop() } //stop()
             
-            //pointer_position_to_robot()
             performed = false
             
             clear_chart_data()
