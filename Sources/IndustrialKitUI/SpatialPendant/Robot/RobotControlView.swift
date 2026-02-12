@@ -285,6 +285,8 @@ private struct PositionProgramView: View
                         }
                         .onDrag
                         {
+                            robot.reset_moving()
+                            
                             dragging_point_id = point.id
                             return NSItemProvider(object: point.id.uuidString as NSString)
                         }

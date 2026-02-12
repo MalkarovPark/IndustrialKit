@@ -75,6 +75,8 @@ struct ToolControlView: View
                                 }
                                 .onDrag
                                 {
+                                    tool.reset_performing()
+                                    
                                     dragging_program_id = program.id
                                     return NSItemProvider(object: program.id.uuidString as NSString)
                                 }
