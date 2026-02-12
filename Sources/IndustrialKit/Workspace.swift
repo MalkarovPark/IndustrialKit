@@ -2029,10 +2029,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
             let b = entity.visualBounds(relativeTo: entity)
             
             let center = SIMD2<Float>(item.position.x, item.position.y)
-            
             let half = SIMD2<Float>(b.extents.x, b.extents.y) * 500
             
             return (center, half)
+        }
+        
+        @inline(__always)
+        func grid(_ p: SIMD2<Float>) -> SIMD2<Float>
+        {
+            SIMD2<Float>(round(p.x), round(p.y))
+        }
+        
+        @inline(__always)
+        func dist2(_ p: SIMD2<Float>) -> Float
+        {
+            p.x*p.x + p.y*p.y
         }
         
         let object_rect = rect(of: object)
@@ -2075,13 +2086,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         if intersects(placement)
         {
-            let offset: Float = 10 // 10 mm gap
+            let gap: Float = 10 // 10 mm gap
             var best: SIMD2<Float>? = nil
+            var best_d2: Float = .greatestFiniteMagnitude
             
             for r in occupied
             {
-                let dx = r.half.x + object_rect.half.x + offset
-                let dy = r.half.y + object_rect.half.y + offset
+                let dx = r.half.x + object_rect.half.x + gap
+                let dy = r.half.y + object_rect.half.y + gap
                 
                 let candidates =
                 [
@@ -2091,17 +2103,24 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     r.center + SIMD2<Float>( 0, -dy)
                 ]
                 
-                for p in candidates where !intersects(p)
+                for p in candidates
                 {
-                    if best == nil || simd_length(p) < simd_length(best!)
+                    let g = grid(p)
+                    if intersects(g) { continue }
+                    
+                    let d2 = dist2(g)
+                    if d2 < best_d2
                     {
-                        best = p
+                        best_d2 = d2
+                        best = g
                     }
                 }
             }
             
             placement = best ?? .zero
         }
+        
+        placement = grid(placement)
         
         object.position.x = placement.x
         object.position.y = placement.y
