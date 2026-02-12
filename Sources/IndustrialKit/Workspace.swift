@@ -1780,13 +1780,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
         case .robot:
             select_robot(name: entity_identifier.name)
-            set_pointer_entity(to: selected_object?.model_entity ?? Entity())
+            //set_pointer_entity(to: selected_object?.model_entity ?? Entity())
         case .tool:
             select_tool(name: entity_identifier.name)
-            set_pointer_entity(to: selected_object?.model_entity ?? Entity())
+            //set_pointer_entity(to: selected_object?.model_entity ?? Entity())
         case .part:
             select_part(name: entity_identifier.name)
-            set_pointer_entity(to: selected_object?.model_entity ?? Entity())
+            //set_pointer_entity(to: selected_object?.model_entity ?? Entity())
         case .none:
             break
         }
@@ -1825,9 +1825,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     public func update_pointer_entity()
     {
-        if let selected_object = selected_object
+        if let selected_object = selected_object, let model_entity = selected_object.model_entity
         {
-            set_pointer_entity(to: selected_object.entity)
+            set_pointer_entity(to: model_entity)
         }
     }
     
