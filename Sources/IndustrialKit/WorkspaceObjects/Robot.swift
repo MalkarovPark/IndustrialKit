@@ -74,6 +74,8 @@ open class Robot: WorkspaceObject
     {
         self.init(name: name, entity: entity)
         
+        self.end_entity_name = end_entity_name
+        
         self.model_controller = model_controller
         self.connector = connector
         
