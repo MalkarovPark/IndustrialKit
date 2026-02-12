@@ -808,7 +808,7 @@ open class Tool: WorkspaceObject
         
         if performed
         {
-            if !is_single_performed { stop() } //stop()
+            if !is_single_performed { stop() } // If reset from program
             
             performed = false
             

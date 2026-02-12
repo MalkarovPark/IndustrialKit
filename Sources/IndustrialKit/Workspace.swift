@@ -616,19 +616,50 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
         // Performers
         case let performer_element as RobotPerformerElement:
-            perform_robot(by: performer_element, completion: { result in DispatchQueue.main.async { completion(result) } }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
+            perform_robot(
+                by: performer_element,
+                completion:
+                    { result in
+                        DispatchQueue.main.async
+                        {
+                            self.performed = false
+                            completion(result)
+                        }
+                    },
+                error_handler:
+                    { error in
+                        DispatchQueue.main.async { self.error_handler(error) }
+                    }
+            )
         case let performer_element as ToolPerformerElement:
-            perform_tool(by: performer_element, completion: { result in DispatchQueue.main.async { completion(result) } }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
+            perform_tool(
+                by: performer_element,
+                completion:
+                    { result in
+                        DispatchQueue.main.async
+                        {
+                            self.performed = false
+                            completion(result)
+                        }
+                    },
+                error_handler:
+                    { error in
+                        DispatchQueue.main.async { self.error_handler(error) }
+                    }
+            )
             
         // Modifiers
         case let mover_element as MoverModifierElement:
             move(by: mover_element)
+            self.performed = false
             completion(.success(()))
         case let write_element as WriterModifierElement:
             write(by: write_element)
+            self.performed = false
             completion(.success(()))
         case let math_element as MathModifierElement:
             math(by: math_element)
+            self.performed = false
             completion(.success(()))
         case let changer_element as ChangerModifierElement:
             let registers_count = registers.count
@@ -636,6 +667,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 try changer_element.change(&registers)
                 check_registers(registers_count)
+                
+                self.performed = false
                 completion(.success(()))
             }
             catch
@@ -644,21 +677,40 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 error_handler(error)
             }
         case let observer_element as ObserverModifierElement:
-            observe(by: observer_element, completion: { result in DispatchQueue.main.async { completion(result) } }, error_handler: { error in DispatchQueue.main.async { self.error_handler(error) } })
+            observe(
+                by: observer_element,
+                completion:
+                    { result in
+                        DispatchQueue.main.async
+                        {
+                            self.performed = false
+                            completion(result)
+                        }
+                    },
+                error_handler:
+                    { error in
+                        DispatchQueue.main.async { self.error_handler(error) }
+                    }
+            )
         case is CleanerModifierElement:
             clear_registers()
+            performed = false
             completion(.success(()))
             
         // Logic
         case let jump_element as JumpLogicElement:
             jump(by: jump_element)
+            performed = false
             completion(.success(()))
         case let comparator_element as ComparatorLogicElement:
             compare(by: comparator_element)
+            performed = false
             completion(.success(()))
         case is MarkLogicElement:
+            performed = false
             completion(.success(()))
         default:
+            performed = false
             completion(.success(()))
         }
         
@@ -913,15 +965,15 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     /// Error handler for operation program performation.
     private func error_handler(_ error: Error)
-        {
-            performed = false // Pause performing
-            
-            disable_constant_objects_update()
-            
-            selected_program_element.performing_state = .error
-            performing_state = .error // State light
-            last_error = error
-        }
+    {
+        performed = false // Pause performing
+        
+        disable_constant_objects_update()
+        
+        selected_program_element.performing_state = .error
+        performing_state = .error // State light
+        last_error = error
+    }
     
     //public var error_handler: ((Error) -> Void) = { _ in }
     
