@@ -67,7 +67,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         case let part as Part:
             break
         default:
-            break
+            deselect_program()//break
         }
         
         selected_object = nil
@@ -1026,6 +1026,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             else
             {
                 robot.reset_moving()
+                robot.deselect_program()
             }
             
             robot.clear_finish_handler()
@@ -1045,6 +1046,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             else
             {
                 tool.reset_performing()
+                tool.deselect_program()
             }
             
             tool.clear_finish_handler()
