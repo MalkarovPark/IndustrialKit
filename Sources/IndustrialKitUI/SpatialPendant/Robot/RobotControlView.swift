@@ -279,6 +279,8 @@ private struct PositionProgramView: View
                         )
                         { if let index = program.points.firstIndex(where: { $0.id == point.id })
                             {
+                                robot.reset_moving()
+                                
                                 program.points.remove(at: index)
                                 robot.update_position_program_entity(by: program)
                             }

@@ -64,6 +64,8 @@ struct ToolControlView: View
                                     {
                                         if let index = tool.programs.firstIndex(where: { $0.id == program.id })
                                         {
+                                            tool.reset_performing()
+                                            
                                             tool.programs.remove(at: index)
                                         }
                                     }

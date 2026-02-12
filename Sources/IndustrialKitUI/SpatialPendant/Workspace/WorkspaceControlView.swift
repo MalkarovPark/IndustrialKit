@@ -160,8 +160,6 @@ struct WorkspaceControlView: View
                                 }
                                 .onDrag
                                 {
-                                    workspace.reset_performing()
-                                    
                                     dragging_program_id = program.id
                                     return NSItemProvider(object: program.id.uuidString as NSString)
                                 }
@@ -408,6 +406,7 @@ private struct ProductionProgramView: View
                             )
                             { if let index = program.elements.firstIndex(where: { $0.id == element.id })
                                 {
+                                    workspace.reset_performing()
                                     program.elements.remove(at: index)
                                     workspace.elements_check(program: program)
                                     
@@ -416,6 +415,8 @@ private struct ProductionProgramView: View
                             }
                             .onDrag
                             {
+                                workspace.reset_performing()
+                                
                                 dragging_element_id = element.id
                                 return NSItemProvider(object: element.id.uuidString as NSString)
                             }
