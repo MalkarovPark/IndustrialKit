@@ -940,7 +940,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 selected_element_index = 0
                 performed = false
                 
-                deselect_object()
+                //deselect_object()
                 
                 performing_state = .completed // State light (UI)
                 program_performed = false // Control Buttons (UI)
