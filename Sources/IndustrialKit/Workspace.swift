@@ -2555,8 +2555,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         part.is_placed = true
         parts.append(part)
         
-        comfort_placement(for: part)
+        //comfort_placement(for: part)
         place_object_entity(object: part)
+        comfort_placement(for: part)
     }
     
     /**
