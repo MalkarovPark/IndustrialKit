@@ -1541,7 +1541,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // Place (connect) camera
         if camera_entity == nil
         {
-            
             let camera = PerspectiveCamera()
             camera.camera.fieldOfViewInDegrees = 60
             camera.position = [0, 1, 0]
@@ -2051,6 +2050,92 @@ public class Workspace: ObservableObject, @unchecked Sendable
         return root
     }
     
+    private func comfort_placement(for object: WorkspaceObject)
+    {
+        guard let entity = object.model_entity else { return }
+        
+        let bounds: BoundingBox = entity.visualBounds(relativeTo: entity)
+        let object_size: SIMD2<Float> = SIMD2<Float>(bounds.extents.x, bounds.extents.y)
+        
+        // Occupied rectangles (robots, tools, parts)
+        var occupied: [(center: SIMD2<Float>, size: SIMD2<Float>)] = []
+        
+        for group in [robots as [WorkspaceObject], tools, parts]
+        {
+            for item in group
+            {
+                if item === object { continue }
+                guard let item_entity = item.model_entity else { continue }
+                
+                let item_bounds: BoundingBox = item_entity.visualBounds(relativeTo: item_entity)
+                
+                let center: SIMD2<Float> = SIMD2<Float>(item.position.x, item.position.y)
+                let size: SIMD2<Float> = SIMD2<Float>(item_bounds.extents.x, item_bounds.extents.y)
+                
+                occupied.append((center, size))
+            }
+        }
+        
+        // Intersection test with already placed objects
+        func intersects(_ position: SIMD2<Float>) -> Bool
+        {
+            let half: SIMD2<Float> = object_size / 2
+            let min_a: SIMD2<Float> = position - half
+            let max_a: SIMD2<Float> = position + half
+            
+            for (center, size) in occupied
+            {
+                let half_b: SIMD2<Float> = size / 2
+                let min_b: SIMD2<Float> = center - half_b
+                let max_b: SIMD2<Float> = center + half_b
+                
+                if !(max_a.x < min_b.x ||
+                     min_a.x > max_b.x ||
+                     max_a.y < min_b.y ||
+                     min_a.y > max_b.y)
+                {
+                    return true
+                }
+            }
+            
+            return false
+        }
+        
+        var placement: SIMD2<Float> = .zero // Try placement at origin
+        
+        if intersects(placement)
+        {
+            var candidates: [SIMD2<Float>] = []
+            let half_object: SIMD2<Float> = object_size / 2
+            let offset: Float = 0.01
+            
+            for (center, size) in occupied
+            {
+                let half_other: SIMD2<Float> = size / 2
+                
+                candidates.append(SIMD2<Float>(center.x + half_other.x + half_object.x + offset, center.y)) // right
+                candidates.append(SIMD2<Float>(center.x - half_other.x - half_object.x - offset, center.y)) // left
+                candidates.append(SIMD2<Float>(center.x, center.y + half_other.y + half_object.y + offset)) // top
+                candidates.append(SIMD2<Float>(center.x, center.y - half_other.y - half_object.y - offset)) // bottom
+            }
+            
+            // Select nearest valid position
+            let free_positions: [SIMD2<Float>] = candidates.filter { !intersects($0) }
+            
+            if let nearest = free_positions.min(by: { simd_length($0) < simd_length($1) })
+            {
+                placement = nearest
+            }
+            else
+            {
+                placement = .zero // Fallback placement
+            }
+        }
+        
+        object.position.x = placement.x
+        object.position.y = placement.y
+    }
+    
     // MARK: - Robots handling functions
     // MARK: Robots manage functions
     /// Adds robot in the workspace.
@@ -2060,7 +2145,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         robot.is_placed = true
         robots.append(robot)
         
-        place_object_entity(object: robot) //!
+        comfort_placement(for: robot)
+        place_object_entity(object: robot)
     }
     
     /**
@@ -2221,7 +2307,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         tool.is_placed = true
         tools.append(tool)
         
-        place_object_entity(object: tool) //!
+        comfort_placement(for: tool)
+        place_object_entity(object: tool)
     }
     
     /**
@@ -2468,7 +2555,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         part.is_placed = true
         parts.append(part)
         
-        place_object_entity(object: part) //!
+        comfort_placement(for: part)
+        place_object_entity(object: part)
     }
     
     /**
