@@ -726,32 +726,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 update_registers_count(reference_count)
             }
         }
-        
-        /*performing_task = Task
-        {
-            do
-            {
-                try self.perform(element: element)
-                if !canceled
-                {
-                    //completion(.success(()))
-                    Task
-                    { @MainActor in
-                        completion(.success(()))
-                    }
-                }
-            }
-            catch
-            {
-                //completion(.failure(error))
-                Task
-                { @MainActor in
-                    completion(.failure(error))
-                }
-            }
-            
-            canceled = false
-        }*/
     }
     
     /// A workspace performation toggle.
@@ -786,8 +760,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             // Remove all action if moving was perform
             performed = false
             
-            //program_performed = false // Control Buttons (UI)
-            
             pause_handler()
         }
         
@@ -799,8 +771,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             program_performed = false // Control Buttons (UI)
             performing_state = .current // State light (UI)
-            
-            //canceled = true
             
             switch selected_program_element
             {
@@ -2218,13 +2188,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     public func select_robot(name: String)
     {
-        /*var robot = selected_object as? Robot
-        robot?.deselect_program()
-        
-        // Disable accessories
-        robot?.toggle_position_pointer_visibility()
-        robot?.toggle_working_area_visibility()*/
-        
         selected_object = robots[index_by_name(name, objects: robots)]
         
         // Enable accessories
@@ -2381,7 +2344,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public func select_tool(name: String) // Select tool by name
     {
         selected_object = tools[index_by_name(name, objects: tools)]
-        //select_tool(index: index_by_name(name, objects: tools))
     }
     
     /**
@@ -2646,8 +2608,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             return Part()
         }
-        
-        // return self.parts[part_index_by_name(name)]
     }
     
     /// Names of all parts in the workspace.
@@ -2788,16 +2748,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // MARK: - Registers
         registers = preset.registers ?? [Float](repeating: 0, count: Workspace.default_registers_count)
     }
-    
-    /*// MARK: - UI Functions
-    /// Determines whether the object can be selected if it is open for editing.
-    public var in_visual_edit_mode = false
-    
-    /// Force updates SwiftUI view.
-    public func update_view()
-    {
-        self.objectWillChange.send()
-    }*/
 }
 
 public enum WorkspaceObjectType: String, Equatable, CaseIterable
