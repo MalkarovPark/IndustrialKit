@@ -331,14 +331,13 @@ private struct PositionItemView: View
         {
             Image(systemName: "circle.fill")
                 .foregroundColor(point_item.performing_state.color)
-                .font(.system(size: 6))
-                .padding(.leading, 6)
+                .font(.system(size: program_item_light_size))
+                .padding(.leading, program_item_light_padding)
             
             ZStack
             {
                 Rectangle()
                     .fill(.clear)
-                    .frame(maxWidth: .infinity, maxHeight: 256)
                     .overlay
                     {
                         HStack(spacing: 0)
@@ -347,7 +346,7 @@ private struct PositionItemView: View
                             ZStack
                             {
                                 Text("X \(String(format: "%.0f", point_item.x)) Y \(String(format: "%.0f", point_item.y)) Z \(String(format: "%.0f", point_item.z))")
-                                    .font(.system(size: 8))
+                                    .font(.system(size: position_item_font_size))
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                             
@@ -356,13 +355,12 @@ private struct PositionItemView: View
                             ZStack
                             {
                                 Text("R \(String(format: "%.0f", point_item.r)) P \(String(format: "%.0f", point_item.p)) W \(String(format: "%.0f", point_item.w))")
-                                    .font(.system(size: 8))
+                                    .font(.system(size: position_item_font_size))
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                         }
                     }
             }
-            .frame(height: 24)
             .popover(isPresented: $position_item_view_presented,
                      arrowEdge: .trailing)
             {
@@ -375,6 +373,7 @@ private struct PositionItemView: View
                 #endif
             }
         }
+        .frame(height: program_item_height)
         .contentShape(Rectangle())
         .onTapGesture
         {
@@ -601,6 +600,13 @@ private struct PerformingControlView: View
         #endif
     }
 }
+
+// MARK: - Sizes
+#if os(macOS)
+let position_item_font_size: CGFloat = 8
+#else
+let position_item_font_size: CGFloat = 10
+#endif
 
 // MARK: - Previews
 struct RobotControlView_Previews: PreviewProvider

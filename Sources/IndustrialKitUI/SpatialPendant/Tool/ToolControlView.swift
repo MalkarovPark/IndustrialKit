@@ -322,10 +322,6 @@ private struct OperationItemView: View
     @ObservedObject var program: OperationProgram
     @ObservedObject var code_item: OperationCode
     
-    #if os(iOS)
-    @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
-    #endif
-    
     let on_delete: () -> ()
     
     var body: some View
@@ -334,23 +330,19 @@ private struct OperationItemView: View
         {
             Image(systemName: "circle.fill")
                 .foregroundColor(code_item.performing_state.color)
-                .font(.system(size: 6))
-                .padding(.leading, 6)
+                .font(.system(size: program_item_light_size))
+                .padding(.leading, program_item_light_padding)
             
             ZStack
             {
                 Rectangle()
                     .fill(.clear)
-                    .frame(maxWidth: .infinity, maxHeight: 256)
                     .overlay
                     {
                         HStack(spacing: 0)
                         {
                             ZStack
                             {
-                                //Text(tool.code_info(code_item.value).name)
-                                    //.font(.system(size: 10))
-                                
                                 Picker(tool.code_info(code_item.value).name, selection: $code_item.value)
                                 {
                                     if tool.codes.count > 0
@@ -366,14 +358,14 @@ private struct OperationItemView: View
                                         Text("None")
                                     }
                                 }
-                                .font(.system(size: 4))
+                                .font(.system(size: operation_item_font_size))
                                 .disabled(tool.codes.count == 0)
                                 .frame(maxWidth: .infinity)
                                 .pickerStyle(.menu)
                                 .buttonStyle(.plain)
                                 .labelsHidden()
                                 #if !os(macOS)
-                                .scaleEffect(0.8)
+                                .scaleEffect(0.95)
                                 #endif
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -383,10 +375,11 @@ private struct OperationItemView: View
             .frame(height: 24)
             
             Image(systemName: tool.code_info(code_item.value).symbol)
-                //.foregroundColor(.secondary)
-                .font(.system(size: 12))
-                .frame(width: 24, height: 24)
+                .font(.system(size: operatioin_item_image_size))
+                .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                .frame(width: 24)
         }
+        .frame(height: program_item_height)
         .contentShape(Rectangle())
         .contextMenu
         {
@@ -410,10 +403,6 @@ private struct OperationDropDelegate: DropDelegate
     @Binding var dragging_code_id: UUID?
     
     let tool: Tool
-    
-    #if os(iOS)
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
-    #endif
     
     func dropEntered(info: DropInfo)
     {
@@ -489,6 +478,15 @@ private struct PerformingControlView: View
         #endif
     }
 }
+
+// MARK: - Sizes
+#if os(macOS)
+let operation_item_font_size: CGFloat = 4
+let operatioin_item_image_size: CGFloat = 12
+#else
+let operation_item_font_size: CGFloat = 4
+let operatioin_item_image_size: CGFloat = 14
+#endif
 
 // MARK: - Previews
 struct ToolControlView_Previews: PreviewProvider

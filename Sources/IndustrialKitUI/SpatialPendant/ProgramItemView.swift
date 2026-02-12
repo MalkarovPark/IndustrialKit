@@ -37,7 +37,11 @@ public struct ProgramItemView: View
             if !to_rename
             {
                 Text(name)
+                #if os(macOS)
                     .font(.system(size: 16, design: .rounded))
+                #else
+                    .font(.system(size: 18, design: .rounded))
+                #endif
                     .foregroundStyle(.secondary)
                     .padding(.leading, 16)
             }
@@ -102,6 +106,18 @@ public struct ProgramItemView: View
     }
 }
 
+// MARK: - Sizes
+#if os(macOS)
+let program_item_height: CGFloat = 24
+let program_item_light_size: CGFloat = 8
+let program_item_light_padding: CGFloat = 6
+#else
+let program_item_height: CGFloat = 32
+let program_item_light_size: CGFloat = 8
+let program_item_light_padding: CGFloat = 6
+#endif
+
+// MARK: - Preview
 #Preview
 {
     @Previewable @State var name: String = "Test"

@@ -509,22 +509,6 @@ private struct ElementItemView: View
     }
 }
 
-let element_card_maximum = element_card_scale + element_card_spacing
-
-#if os(macOS)
-let element_card_scale: CGFloat = 35//40
-let element_card_spacing: CGFloat = 10
-let element_card_font_size: CGFloat = 14 //16
-let element_card_light_size: CGFloat = 5 //6
-let element_card_light_padding: CGFloat = 3
-#else
-let element_card_scale: CGFloat = 60
-let element_card_spacing: CGFloat = 16
-let element_card_font_size: CGFloat = 24
-let element_card_light_size: CGFloat = 8
-let element_card_light_padding: CGFloat = 6
-#endif
-
 private struct ElementDropDelegate: DropDelegate
 {
     let current_element: WorkspaceProgramElement
@@ -615,6 +599,23 @@ private struct PerformingControlView: View
         #endif
     }
 }
+
+// MARK: - Sizes
+let element_card_maximum = element_card_scale + element_card_spacing
+
+#if os(macOS)
+let element_card_scale: CGFloat = 35
+let element_card_spacing: CGFloat = 10
+let element_card_font_size: CGFloat = 14
+let element_card_light_size: CGFloat = 5
+let element_card_light_padding: CGFloat = 3
+#else
+let element_card_scale: CGFloat = 60
+let element_card_spacing: CGFloat = 16
+let element_card_font_size: CGFloat = 24
+let element_card_light_size: CGFloat = 8
+let element_card_light_padding: CGFloat = 6
+#endif
 
 // MARK: - Previews
 struct WorkspaceControl_Previews: PreviewProvider
