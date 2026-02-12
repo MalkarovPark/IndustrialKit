@@ -69,10 +69,6 @@ public struct JumpElementView: View
                         Text("None")
                     }
                 }
-                .onAppear
-                {
-                    
-                }
                 .buttonStyle(.bordered)
                 .disabled(program.mark_names.count == 0)
             }

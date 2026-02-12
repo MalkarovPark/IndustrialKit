@@ -841,8 +841,8 @@ open class Tool: WorkspaceObject
     }
     #endif
     
-    /// A flag determines if tool is attached to the robot manipulator.
-    public var is_attached = false
+    /*/// A flag determines if tool is attached to the robot manipulator.
+    public var is_attached = false*/
     
     /// A name of the robot that the tool is attached to.
     public var attached_to: String?
@@ -1048,7 +1048,7 @@ open class Tool: WorkspaceObject
         
         self.codes = file.codes
         
-        self.is_attached = file.is_attached
+        //self.is_attached = file.is_attached
         self.attached_to = file.attached_to
         
         self.demo = file.demo
@@ -1087,7 +1087,7 @@ open class Tool: WorkspaceObject
             
             codes: codes,
             
-            is_attached: is_attached,
+            //is_attached: is_attached,
             attached_to: attached_to,
             
             demo: demo,
@@ -1149,7 +1149,7 @@ public struct ToolFileData: Codable
     
     public var codes: [OperationCodeInfo]
     
-    public var is_attached: Bool
+    //public var is_attached: Bool
     public var attached_to: String?
     
     public var demo: Bool
@@ -1168,7 +1168,7 @@ public struct ToolFileData: Codable
         
         codes: [OperationCodeInfo],
         
-        is_attached: Bool,
+        //is_attached: Bool,
         attached_to: String?,
         
         demo: Bool,
@@ -1186,7 +1186,7 @@ public struct ToolFileData: Codable
         
         self.codes = codes
         
-        self.is_attached = is_attached
+        //self.is_attached = is_attached
         self.attached_to = attached_to
         
         self.demo = demo
