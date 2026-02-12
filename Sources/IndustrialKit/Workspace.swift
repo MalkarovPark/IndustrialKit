@@ -2052,31 +2052,29 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func comfort_placement(for object: WorkspaceObject)
     {
-        // Rectangle of any workspace object
+        // Convert RealityKit bounds to workspace units
         func rect(of item: WorkspaceObject) -> (center: SIMD2<Float>, half: SIMD2<Float>)
         {
             let entity = item.model_entity ?? Entity()
             let b = entity.visualBounds(relativeTo: entity)
             
             let center = SIMD2<Float>(item.position.x, item.position.y)
-            let half   = SIMD2<Float>(b.extents.x, b.extents.y) / 2
+            
+            let half = SIMD2<Float>(b.extents.x, b.extents.y) * 500
             
             return (center, half)
         }
         
         let object_rect = rect(of: object)
         
-        // Collect occupied rectangles
+        // Occupied rectangles
         var occupied: [(center: SIMD2<Float>, half: SIMD2<Float>)] = []
         
         for group in [robots as [WorkspaceObject], tools, parts]
         {
-            for item in group where item !== object
+            for item in group where item !== object && item.model_entity != nil
             {
-                if item.model_entity != nil
-                {
-                    occupied.append(rect(of: item))
-                }
+                occupied.append(rect(of: item))
             }
         }
         
@@ -2102,12 +2100,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
             return false
         }
         
-        // Try origin
+        // Start at origin
         var placement: SIMD2<Float> = .zero
         
         if intersects(placement)
         {
-            let offset: Float = 0.01
+            let offset: Float = 10 // 10 mm gap
             var best: SIMD2<Float>? = nil
             
             for r in occupied
@@ -2115,7 +2113,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 let dx = r.half.x + object_rect.half.x + offset
                 let dy = r.half.y + object_rect.half.y + offset
                 
-                let candidates: [SIMD2<Float>] =
+                let candidates =
                 [
                     r.center + SIMD2<Float>( dx,  0),
                     r.center + SIMD2<Float>(-dx,  0),
@@ -2135,8 +2133,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
             placement = best ?? .zero
         }
         
-        object.position.x = placement.x * 1000
-        object.position.y = placement.y * 1000
+        object.position.x = placement.x
+        object.position.y = placement.y
     }
     
     // MARK: - Robots handling functions
