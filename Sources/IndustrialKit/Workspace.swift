@@ -2133,8 +2133,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
         }
         
-        object.position.x = placement.x
-        object.position.y = placement.y
+        object.position.x = placement.x * 1000
+        object.position.y = placement.y * 1000
     }
     
     // MARK: - Robots handling functions
