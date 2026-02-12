@@ -398,7 +398,7 @@ open class Robot: WorkspaceObject
     public func deselect_program()
     {
         reset_moving()
-        if selected_program_index > -1 { toggle_position_program_visibility() }
+        if selected_program_index > -1 { position_program_entity.isEnabled = false }
         
         selected_program_index = -1
     }
