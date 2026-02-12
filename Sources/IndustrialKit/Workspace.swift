@@ -2052,7 +2052,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func comfort_placement(for object: WorkspaceObject)
     {
-        guard let entity = object.model_entity else { return }
+        //guard let entity = object.model_entity else { return }
+        let entity = object.model_entity ?? Entity()
         
         let bounds: BoundingBox = entity.visualBounds(relativeTo: entity)
         let object_size: SIMD2<Float> = SIMD2<Float>(bounds.extents.x, bounds.extents.y)
@@ -2555,9 +2556,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         part.is_placed = true
         parts.append(part)
         
-        //comfort_placement(for: part)
-        place_object_entity(object: part)
         comfort_placement(for: part)
+        place_object_entity(object: part)
     }
     
     /**
