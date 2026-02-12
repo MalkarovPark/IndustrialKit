@@ -732,7 +732,7 @@ open class Robot: WorkspaceObject
                         self.selected_position_point.performing_state = self.connector.performing_state.output
                     }
                     
-                    self.select_new_point()
+                    self.select_next_point()
                 case .failure(let error):
                     self.process_error(error)
                     self.error_handler(error)
@@ -770,7 +770,7 @@ open class Robot: WorkspaceObject
     }
     
     /// Set the new target point index.
-    private func select_new_point()
+    private func select_next_point()
     {
         guard let selected_program = self.selected_program
         else

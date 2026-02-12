@@ -705,7 +705,7 @@ open class Tool: WorkspaceObject
                         self.selected_operation_code.performing_state = self.connector.performing_state.output
                     }
                     
-                    self.select_new_code()
+                    self.select_next_code()
                 case .failure(let error):
                     self.process_error(error)
                     self.error_handler(error)
@@ -743,7 +743,7 @@ open class Tool: WorkspaceObject
     }
     
     /// Set the new target operation code index.
-    private func select_new_code()
+    private func select_next_code()
     {
         guard let selected_program = self.selected_program
         else
