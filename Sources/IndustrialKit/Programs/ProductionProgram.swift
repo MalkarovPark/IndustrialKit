@@ -107,6 +107,67 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         return elements.compactMap { ($0 as? MarkLogicElement)?.name }
     }
     
+    /// Define program element indexes.
+    public func defining_elements_indexes()
+    {
+        // Build map of mark name – index in one pass
+        let marks: [String: Int] = elements.enumerated().reduce(into: [:])
+        { dict, pair in
+            let (index, element) = pair
+            
+            if let mark = element as? MarkLogicElement
+            {
+                dict[mark.name] = index
+            }
+        }
+        
+        // Assign target indexes for jump/comparator elements in one pass
+        for element in elements
+        {
+            switch element
+            {
+            case let jump as JumpLogicElement:
+                if !jump.target_mark_name.isEmpty, let target = marks[jump.target_mark_name]
+                {
+                    jump.target_element_index = target
+                }
+            case let cmp as ComparatorLogicElement:
+                if !cmp.target_mark_name.isEmpty, let target = marks[cmp.target_mark_name]
+                {
+                    cmp.target_element_index = target
+                }
+            default:
+                break
+            }
+        }
+    }
+    
+    /// Define element index for logic element.
+    public func set_mark_index(for element: WorkspaceProgramElement)
+    {
+        // Build map of mark name – index
+        let marks: [String: Int] = elements.enumerated().reduce(into: [:])
+        { dict, pair in
+            let (index, elem) = pair
+            if let mark = elem as? MarkLogicElement
+            {
+                dict[mark.name] = index
+            }
+        }
+        
+        switch element
+        {
+        case let jump as JumpLogicElement:
+            guard !jump.target_mark_name.isEmpty, let index = marks[jump.target_mark_name] else { return }
+            jump.target_element_index = index
+        case let cmp as ComparatorLogicElement:
+            guard !cmp.target_mark_name.isEmpty, let index = marks[cmp.target_mark_name] else { return }
+            cmp.target_element_index = index
+        default:
+            return
+        }
+    }
+    
     // MARK: - Listing functions
     public var code: String
     {
@@ -394,3 +455,4 @@ private func extract_data_array(from text: String, pattern regex: String) -> [St
         return []
     }
 }
+

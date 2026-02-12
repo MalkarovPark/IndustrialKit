@@ -332,6 +332,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
             previous_performing_state = performing_state != .completed ? performing_state : .none
             performing_state = .processing
             
+            if let selected_program = selected_program
+            {
+                selected_program.set_mark_index(for: current_element)
+            }
+            
             perform(element: current_element)
             { result in
                 Task
@@ -1519,93 +1524,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Prepare workspace program to perform.
     private func prepare_program(_ program: ProductionProgram)
     {
-        defining_elements_indexes(for: program)
+        program.defining_elements_indexes()
     }
-    
-    /// Define program element indexes.
-    private func defining_elements_indexes(for program: ProductionProgram)
-    {
-        // Build map of mark name – index in one pass
-        let marks: [String: Int] = program.elements.enumerated().reduce(into: [:])
-        { dict, pair in
-            let (index, element) = pair
-            
-            if let mark = element as? MarkLogicElement
-            {
-                dict[mark.name] = index
-            }
-        }
-        
-        // Assign target indexes for jump/comparator elements in one pass
-        for element in program.elements
-        {
-            switch element
-            {
-            case let jump as JumpLogicElement:
-                if !jump.target_mark_name.isEmpty, let target = marks[jump.target_mark_name]
-                {
-                    jump.target_element_index = target
-                }
-            case let cmp as ComparatorLogicElement:
-                if !cmp.target_mark_name.isEmpty, let target = marks[cmp.target_mark_name]
-                {
-                    cmp.target_element_index = target
-                }
-            default:
-                break
-            }
-        }
-    }
-    /*private func defining_elements_indexes(for program: ProductionProgram)
-    {
-        // Find mark elements indexes
-        var marks_associations = [(String, Int)]()
-        var element = WorkspaceProgramElement()
-        let elements = program.elements
-        
-        for i in 0..<elements.count
-        {
-            element = elements[i]
-            if element is MarkLogicElement
-            {
-                marks_associations.append(((element as! MarkLogicElement).name, i))
-            }
-        }
-        
-        // Set target element indexes of marks to jump elements.
-        var target_mark_name = String()
-        
-        for element in elements
-        {
-            if element is JumpLogicElement
-            {
-                target_mark_name = (element as! JumpLogicElement).target_mark_name
-            }
-            if element is ComparatorLogicElement
-            {
-                target_mark_name = (element as! ComparatorLogicElement).target_mark_name
-            }
-            
-            if target_mark_name != ""
-            {
-                for marks_association in marks_associations
-                {
-                    if marks_association.0 == target_mark_name
-                    {
-                        if element is JumpLogicElement
-                        {
-                            (element as! JumpLogicElement).target_element_index = marks_association.1
-                        }
-                        if element is ComparatorLogicElement
-                        {
-                            (element as! ComparatorLogicElement).target_element_index = marks_association.1
-                        }
-                        break
-                    }
-                }
-            }
-        }
-    }*/
     
     // MARK: - Visual Functions
     #if canImport(RealityKit)
@@ -3005,3 +2925,4 @@ private func to_rpn(_ tokens: [MathToken]) -> [MathToken] // Shunting-Yard to RP
     
     return output
 }
+
