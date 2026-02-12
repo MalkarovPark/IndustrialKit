@@ -2052,43 +2052,44 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func comfort_placement(for object: WorkspaceObject)
     {
-        //guard let entity = object.model_entity else { return }
-        let entity = object.model_entity ?? Entity()
+        // Rectangle of any workspace object
+        func rect(of item: WorkspaceObject) -> (center: SIMD2<Float>, half: SIMD2<Float>)
+        {
+            let entity = item.model_entity ?? Entity()
+            let b = entity.visualBounds(relativeTo: entity)
+            
+            let center = SIMD2<Float>(item.position.x, item.position.y)
+            let half   = SIMD2<Float>(b.extents.x, b.extents.y) / 2
+            
+            return (center, half)
+        }
         
-        let bounds: BoundingBox = entity.visualBounds(relativeTo: entity)
-        let object_size: SIMD2<Float> = SIMD2<Float>(bounds.extents.x, bounds.extents.y)
+        let object_rect = rect(of: object)
         
-        // Occupied rectangles (robots, tools, parts)
-        var occupied: [(center: SIMD2<Float>, size: SIMD2<Float>)] = []
+        // Collect occupied rectangles
+        var occupied: [(center: SIMD2<Float>, half: SIMD2<Float>)] = []
         
         for group in [robots as [WorkspaceObject], tools, parts]
         {
-            for item in group
+            for item in group where item !== object
             {
-                if item === object { continue }
-                guard let item_entity = item.model_entity else { continue }
-                
-                let item_bounds: BoundingBox = item_entity.visualBounds(relativeTo: item_entity)
-                
-                let center: SIMD2<Float> = SIMD2<Float>(item.position.x, item.position.y)
-                let size: SIMD2<Float> = SIMD2<Float>(item_bounds.extents.x, item_bounds.extents.y)
-                
-                occupied.append((center, size))
+                if item.model_entity != nil
+                {
+                    occupied.append(rect(of: item))
+                }
             }
         }
         
-        // Intersection test with already placed objects
-        func intersects(_ position: SIMD2<Float>) -> Bool
+        // AABB intersection
+        func intersects(_ p: SIMD2<Float>) -> Bool
         {
-            let half: SIMD2<Float> = object_size / 2
-            let min_a: SIMD2<Float> = position - half
-            let max_a: SIMD2<Float> = position + half
+            let min_a = p - object_rect.half
+            let max_a = p + object_rect.half
             
-            for (center, size) in occupied
+            for r in occupied
             {
-                let half_b: SIMD2<Float> = size / 2
-                let min_b: SIMD2<Float> = center - half_b
-                let max_b: SIMD2<Float> = center + half_b
+                let min_b = r.center - r.half
+                let max_b = r.center + r.half
                 
                 if !(max_a.x < min_b.x ||
                      min_a.x > max_b.x ||
@@ -2098,39 +2099,40 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     return true
                 }
             }
-            
             return false
         }
         
-        var placement: SIMD2<Float> = .zero // Try placement at origin
+        // Try origin
+        var placement: SIMD2<Float> = .zero
         
         if intersects(placement)
         {
-            var candidates: [SIMD2<Float>] = []
-            let half_object: SIMD2<Float> = object_size / 2
             let offset: Float = 0.01
+            var best: SIMD2<Float>? = nil
             
-            for (center, size) in occupied
+            for r in occupied
             {
-                let half_other: SIMD2<Float> = size / 2
+                let dx = r.half.x + object_rect.half.x + offset
+                let dy = r.half.y + object_rect.half.y + offset
                 
-                candidates.append(SIMD2<Float>(center.x + half_other.x + half_object.x + offset, center.y)) // right
-                candidates.append(SIMD2<Float>(center.x - half_other.x - half_object.x - offset, center.y)) // left
-                candidates.append(SIMD2<Float>(center.x, center.y + half_other.y + half_object.y + offset)) // top
-                candidates.append(SIMD2<Float>(center.x, center.y - half_other.y - half_object.y - offset)) // bottom
+                let candidates: [SIMD2<Float>] =
+                [
+                    r.center + SIMD2<Float>( dx,  0),
+                    r.center + SIMD2<Float>(-dx,  0),
+                    r.center + SIMD2<Float>( 0,  dy),
+                    r.center + SIMD2<Float>( 0, -dy)
+                ]
+                
+                for p in candidates where !intersects(p)
+                {
+                    if best == nil || simd_length(p) < simd_length(best!)
+                    {
+                        best = p
+                    }
+                }
             }
             
-            // Select nearest valid position
-            let free_positions: [SIMD2<Float>] = candidates.filter { !intersects($0) }
-            
-            if let nearest = free_positions.min(by: { simd_length($0) < simd_length($1) })
-            {
-                placement = nearest
-            }
-            else
-            {
-                placement = .zero // Fallback placement
-            }
+            placement = best ?? .zero
         }
         
         object.position.x = placement.x * 1000
