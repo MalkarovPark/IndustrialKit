@@ -1556,6 +1556,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
             self.update_grid(camera_position: camera.position)
         }
         
+        // Dynamic pointer update
+        _ = content.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self else { return }
+            
+            if self.selected_object != nil { self.update_pointer_entity() }
+        }
+        
         // Place objects
         place_objects() //(to: workspace_entity)
     }
@@ -1810,9 +1818,17 @@ public class Workspace: ObservableObject, @unchecked Sendable
         pointer_entity.removeFromParent()
     }
     
-    @MainActor public func toggle_pointer_visibility()
+    public func toggle_pointer_visibility()
     {
         pointer_entity.isEnabled.toggle()
+    }
+    
+    public func update_pointer_entity()
+    {
+        if let selected_object = selected_object
+        {
+            set_pointer_entity(to: selected_object.entity)
+        }
     }
     
     private func make_object_pointer(bounds: BoundingBox) -> Entity
