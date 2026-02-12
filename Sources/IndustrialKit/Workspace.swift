@@ -911,7 +911,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             return
         }
         
-        if !performed { return }
+        //if !performed { return }
         
         if selected_element_index < selected_program.elements_count - 1
         {
