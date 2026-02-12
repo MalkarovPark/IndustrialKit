@@ -33,15 +33,28 @@ open class Robot: WorkspaceObject
     }
     
     /// Inits robot by name and entity name.
-    public override init(name: String, entity_name: String)
+    public override init(
+        name: String,
+        entity_name: String
+    )
     {
         super.init(name: name, entity_name: entity_name)
     }
     
     /// Inits robot by name, entity name, controller and connector.
-    public init(name: String, entity_name: String, model_controller: RobotModelController = RobotModelController(), connector: RobotConnector = RobotConnector())
+    public init(
+        name: String,
+        entity_name: String,
+        
+        end_entity_name: String = String(),
+        
+        model_controller: RobotModelController = RobotModelController(),
+        connector: RobotConnector = RobotConnector()
+    )
     {
         super.init(name: name, entity_name: entity_name)
+        
+        self.end_entity_name = end_entity_name
         
         self.model_controller = model_controller
         self.connector = connector
@@ -49,7 +62,15 @@ open class Robot: WorkspaceObject
         apply_statistics_flags()
     }
     
-    public convenience init(name: String, entity: Entity, model_controller: RobotModelController = RobotModelController(), connector: RobotConnector = RobotConnector())
+    public convenience init(
+        name: String,
+        entity: Entity,
+        
+        end_entity_name: String = String(),
+        
+        model_controller: RobotModelController = RobotModelController(),
+        connector: RobotConnector = RobotConnector()
+    )
     {
         self.init(name: name, entity: entity)
         
@@ -60,7 +81,11 @@ open class Robot: WorkspaceObject
     }
     
     /// Inits robot by name and part module.
-    public init(name: String, module: RobotModule, is_internal: Bool = true)
+    public init(
+        name: String,
+        module: RobotModule,
+        is_internal: Bool = true
+    )
     {
         super.init(name: name)
         
@@ -68,7 +93,11 @@ open class Robot: WorkspaceObject
         module_import(module)
     }
     
-    public override init(name: String, module_name: String, is_internal: Bool)
+    public override init(
+        name: String,
+        module_name: String,
+        is_internal: Bool
+    )
     {
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
@@ -102,6 +131,10 @@ open class Robot: WorkspaceObject
         // Connect robot parts
         model_controller.disconnect_entities()
         model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
+        
+        // Connect end point
+        if let end_entity = entity.childEntity(withName: end_entity_name, recursively: true) { end_point_entity = end_entity }
+        
         update_position()
     }
     
@@ -203,6 +236,10 @@ open class Robot: WorkspaceObject
         apply_statistics_flags()
         
         origin_shift = module.origin_shift
+        
+        origin_position = module.default_origin_position
+        
+        end_entity_name = module.end_entity_name
     }
     
     override open var has_avaliable_module: Bool
@@ -890,6 +927,7 @@ open class Robot: WorkspaceObject
         return EntityModelIdentifier(type: .robot, name: name)
     }
     
+    // MARK: Origin Entity
     private var origin_entity = Entity()
     
     @MainActor public func update_origin_position()
@@ -1038,6 +1076,10 @@ open class Robot: WorkspaceObject
         origin_entity.addChild(position_program_entity)
     }
     
+    // MARK: End Point Entity
+    private var end_point_entity = Entity()
+    
+    public var end_entity_name = String()
     #endif
     
     /// Sets robot pointer node position.

@@ -59,29 +59,43 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
      
      Used for object mismatch.
      */
-    public init(name: String)
+    public init(
+        name: String
+    )
     {
         self.name = name
     }
     
-    public init(name: String, entity_name: String)
+    public init(
+        name: String,
+        entity_name: String
+    )
     {
         self.name = name
         perform_load_entity(named: entity_name)
     }
     
-    public convenience init(name: String, entity: Entity)
+    public convenience init(
+        name: String,
+        entity: Entity
+    )
     {
         self.init(name: name)
         self.model_entity = entity
+        
         perform_load_entity(model_entity)
     }
     
     /// Inits object by name and module name of installed module.
-    public init(name: String, module_name: String, is_internal: Bool = true)
+    public init(
+        name: String,
+        module_name: String,
+        is_internal: Bool = true
+    )
     {
         self.name = name
         self.is_internal_module = is_internal
+        
         module_import_by_name(module_name, is_internal: is_internal)
     }
     

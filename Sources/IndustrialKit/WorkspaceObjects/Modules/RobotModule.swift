@@ -11,7 +11,10 @@ import SceneKit
 open class RobotModule: IndustrialModule
 {
     // MARK: - Init functions
-    public override init(new_name: String = String(), description: String = String())
+    public override init(
+        new_name: String = String(),
+        description: String = String()
+    )
     {
         super.init(new_name: new_name, description: description)
     }
@@ -23,6 +26,9 @@ open class RobotModule: IndustrialModule
         description: String = String(),
         
         origin_shift: (x: Float, y: Float, z: Float),
+        default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0),
+        
+        end_entity_name: String = String(),
         
         model_controller: RobotModelController,        
         connector: RobotConnector
@@ -33,12 +39,17 @@ open class RobotModule: IndustrialModule
         self.model_controller = model_controller
         
         self.origin_shift = origin_shift
+        self.default_origin_position = default_origin_position
+        
+        self.end_entity_name = end_entity_name
         
         self.connector = connector
     }
     
     /// External init
-    public override init(external_name: String)
+    public override init(
+        external_name: String
+    )
     {
         super.init(external_name: external_name)
         
@@ -80,6 +91,12 @@ open class RobotModule: IndustrialModule
     
     /// A robot cell box default shift.
     public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
+    
+    /// A robot cell box default position.
+    public var default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0)
+    
+    /// A robot model entity name for end-effector mounting.
+    public var end_entity_name: String = String()
     
     // MARK: - Import functions
     open override var package_url: URL
@@ -225,6 +242,9 @@ open class RobotModule: IndustrialModule
         case connection_parameters
         
         case origin_shift
+        case default_origin_position
+        
+        case end_entity_name
         
         // Linked
         case linked_model_module_name
@@ -246,6 +266,13 @@ open class RobotModule: IndustrialModule
             self.origin_shift = (origin_shift[0], origin_shift[1], origin_shift[2])
         }
         
+        if let default_origin_position = try container.decodeIfPresent([Float].self, forKey: .default_origin_position)
+        {
+            self.default_origin_position = (default_origin_position[0], default_origin_position[1], default_origin_position[2], default_origin_position[3], default_origin_position[4], default_origin_position[5])
+        }
+        
+        self.end_entity_name = try container.decode(String.self, forKey: .end_entity_name)
+        
         try super.init(from: decoder)
     }
     
@@ -257,6 +284,9 @@ open class RobotModule: IndustrialModule
         try container.encode(connection_parameters, forKey: .connection_parameters)
         
         try container.encode([origin_shift.x, origin_shift.y, origin_shift.z], forKey: .origin_shift)
+        try container.encode([default_origin_position.x, default_origin_position.y, default_origin_position.z, default_origin_position.r, default_origin_position.p, default_origin_position.w], forKey: .default_origin_position)
+        
+        try container.encode(end_entity_name, forKey: .end_entity_name)
         
         try super.encode(to: encoder)
     }

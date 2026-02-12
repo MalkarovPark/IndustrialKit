@@ -47,7 +47,10 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
      
      For new designed modules.
      */
-    public init(new_name: String = String(), description: String = String())
+    public init(
+        new_name: String = String(),
+        description: String = String()
+    )
     {
         self.name = new_name
         self.description = description
@@ -59,14 +62,19 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     
     // MARK: Module init for in-app mounting
     /// Internal module init.
-    public init(name: String = String(), description: String = String())
+    public init(
+        name: String = String(),
+        description: String = String()
+    )
     {
         self.name = name
         self.description = description
     }
     
     /// External module init.
-    public init(external_name: String = String())
+    public init(
+        external_name: String = String()
+    )
     {
         self.name = external_name
         self.description = String()
