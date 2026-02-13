@@ -1529,12 +1529,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         
         // Dynamic pointer update
-        _ = content.subscribe(to: SceneEvents.Update.self)
+        /*_ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self else { return }
             
             if self.selected_object != nil { self.update_pointer_entity() }
-        }
+        }*/
         
         // Place objects
         place_objects() //(to: workspace_entity)
