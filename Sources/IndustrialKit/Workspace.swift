@@ -1518,10 +1518,33 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             workspace_entity.addChild(camera)
             camera_entity = camera
+            
+            let cx = Int(round(camera.position.x / cell_size))
+            let cz = Int(round(camera.position.z / cell_size))
+            create_grid_async(center_x: cx, center_z: cz)
         }
         
         // Place grid
-        /*_ = content.subscribe(to: SceneEvents.Update.self)
+        _ = content.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self, let camera = self.camera_entity else { return }
+            self.update_grid(camera_position: camera.position)
+        }
+        
+        /*// Place (connect) camera
+        if camera_entity == nil
+        {
+            let camera = PerspectiveCamera()
+            camera.camera.fieldOfViewInDegrees = 60
+            camera.position = [0, 1, 0]
+            camera.rotate_x(by: -.pi / 6)
+            
+            workspace_entity.addChild(camera)
+            camera_entity = camera
+        }
+        
+        // Place grid
+        _ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self, let camera = self.camera_entity else { return }
             
@@ -1557,6 +1580,143 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     // MARK: Grid
     private var grid_visible = true
+    private var grid_lines: [String: ModelEntity] = [:]
+
+    private let cell_size: Float = 0.1 // 100 mm
+    private let render_radius: Int = 200
+
+    private let minor_width: Float = 0.002 //0.001
+    private let major_width: Float = 0.0025
+
+    private let major_step = 10
+
+    private let minor_line_mesh = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.002)
+    private let major_line_mesh = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.0025)
+    private let axis_line_mesh  = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.00375)
+
+    public var is_grid_visible: Bool { grid_visible } // UI Only
+
+    public func toggle_grid_visiblity()
+    {
+        grid_visible.toggle()
+        grid_lines.values.forEach { $0.isEnabled = grid_visible }
+        
+        self.objectWillChange.send() // UI Only
+    }
+
+    private func update_grid(camera_position: SIMD3<Float>)
+    {
+        if !grid_visible { return }
+        
+        let cx = Int(round(camera_position.x / cell_size))
+        let cz = Int(round(camera_position.z / cell_size))
+        
+        for i in -render_radius...render_radius
+        {
+            add_line(index: cx + i, axis: .x)
+            add_line(index: cz + i, axis: .z)
+        }
+        
+        cleanup_lines(center_x: cx, center_z: cz)
+    }
+
+    private enum Axis { case x, z }
+
+    private func create_grid_async(center_x: Int, center_z: Int)
+    {
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            
+            let indices = (-self.render_radius...self.render_radius).map { $0 }
+            
+            for batchStart in stride(from: 0, to: indices.count, by: 20)
+            {
+                let batchEnd = min(batchStart + 20, indices.count)
+                
+                await MainActor.run {
+                    for i in batchStart..<batchEnd
+                    {
+                        let idx = indices[i]
+                        self.add_line(index: center_x + idx, axis: .x)
+                        self.add_line(index: center_z + idx, axis: .z)
+                    }
+                }
+                
+                try? await Task.sleep(nanoseconds: 1_000_000_0) // 1ms пауза между батчами
+            }
+        }
+    }
+
+    private func add_line(index: Int, axis: Axis)
+    {
+        let key = "\(axis)_\(index)"
+        if grid_lines[key] != nil { return }
+        
+        let is_major = index % major_step == 0
+        let is_axis  = index == 0
+        
+        let width = is_axis ? major_width * 1.5
+        : is_major ? major_width
+        : minor_width
+        
+        let color = is_axis
+        ? UIColor.gray.withAlphaComponent(0.5)
+        : is_major
+        ? UIColor.gray.withAlphaComponent(0.4)
+        : UIColor.gray.withAlphaComponent(0.3)
+        
+        let length = Float(render_radius * 2) * cell_size
+        
+        let mesh: MeshResource
+        switch axis
+        {
+        case .x:
+            mesh = is_axis ? axis_line_mesh : is_major ? major_line_mesh : minor_line_mesh
+        case .z:
+            mesh = is_axis ? axis_line_mesh : is_major ? major_line_mesh : minor_line_mesh
+        }
+        
+        var material = SimpleMaterial(color: color, roughness: 1, isMetallic: false)
+        material.faceCulling = .none
+        
+        let line = ModelEntity(mesh: mesh, materials: [material])
+        line.orientation = simd_quatf(angle: .pi, axis: [1, 0, 0])
+        
+        switch axis
+        {
+        case .x:
+            line.position = [0, Float(-0.001), Float(index) * cell_size]
+        case .z:
+            line.position = [Float(index) * cell_size, Float(-0.002), 0]
+        }
+        
+        workspace_entity.addChild(line)
+        grid_lines[key] = line
+    }
+
+    private func cleanup_lines(center_x: Int, center_z: Int)
+    {
+        for (key, line) in grid_lines
+        {
+            if key.hasPrefix("x_"),
+               let idx = Int(key.dropFirst(2)),
+               abs(idx - center_x) > render_radius
+            {
+                line.removeFromParent()
+                grid_lines.removeValue(forKey: key)
+            }
+            
+            if key.hasPrefix("z_"),
+               let idx = Int(key.dropFirst(2)),
+               abs(idx - center_z) > render_radius
+            {
+                line.removeFromParent()
+                grid_lines.removeValue(forKey: key)
+            }
+        }
+    }
+    
+    /*private var grid_visible = true
     private var grid_lines: [String: ModelEntity] = [:]
     
     private let cell_size: Float = 0.1 // 100 mm
@@ -1662,7 +1822,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 grid_lines.removeValue(forKey: key)
             }
         }
-    }
+    }*/
     #endif
     
     // MARK: Workspace Objects Placement
