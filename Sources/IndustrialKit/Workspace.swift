@@ -2414,34 +2414,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public var placed_tools_names: [String] { tools.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: Tool attachment functions
-    /*private func update_tool_attachments()
-    {
-        if !(tools.count > 0) { return }
-        
-        for tool in tools
-        {
-            //guard let entity = tool.model_entity else { continue }
-            
-            if let attached_to = tool.attached_to
-            {
-                // World position to robot end point
-                let end_point_entity = robot_by_name(attached_to).end_point_entity
-                //let world_transform = tool.entity.transformMatrix(relativeTo: nil)
-                
-                tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
-                //tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
-            }
-            else
-            {
-                // World position to workspace origin
-                let end_point_entity = workspace_entity
-                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
-                
-                tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
-                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
-            }
-        }
-    }*/
     private func update_tool_attachments()
     {
         if !(tools.count > 0) { return }
@@ -2454,10 +2426,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
                 tool.entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
+                tool.entity.orientation = end_point_entity.orientation
             }
             else
             {
                 tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
+                tool.entity.orientation = workspace_entity.orientation
             }
         }
     }
