@@ -1508,10 +1508,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
     #if canImport(RealityKit)
     private var workspace_entity = Entity()
     private var camera_entity: PerspectiveCamera?
+    private var scene_content: RealityViewCameraContent?
     
     public func place_entity(to content: RealityViewCameraContent)
     {
-        content.add(workspace_entity)
+        scene_content = content
+        scene_content?.add(workspace_entity)
         
         // Place (connect) camera
         if camera_entity == nil
@@ -1921,11 +1923,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         pointer_entity.removeFromParent()
         
         // Camera pivot reposition
-        /*if let camera_entity = camera_entity, let selected_object = selected_object
-        {
-            //camera_entity.removeFromParent()
-            workspace_entity.addChild(camera_entity)
-        }*/
+        scene_content?.cameraTarget = workspace_entity
         
         self.objectWillChange.send() // UI only
     }
@@ -1952,11 +1950,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         
         // Camera pivot reposition
-        /*if let camera_entity = camera_entity, let selected_object = selected_object
+        if let selected_object = selected_object
         {
-            //camera_entity.removeFromParent()
-            selected_object.entity.addChild(camera_entity)
-        }*/
+            scene_content?.cameraTarget = selected_object.entity
+        }
         
         self.objectWillChange.send() // UI only
     }
