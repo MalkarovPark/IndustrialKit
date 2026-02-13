@@ -2426,9 +2426,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 
                 if let model_entity = tool.model_entity
                 {
-                    model_entity.eulerAngles.x = end_point_entity.eulerAngles.x
-                    model_entity.eulerAngles.y = end_point_entity.eulerAngles.y
-                    model_entity.eulerAngles.y = end_point_entity.eulerAngles.y
+                    model_entity.eulerAngles.x = robot_by_name(attached_to).position.r.to_rad
+                    model_entity.eulerAngles.y = robot_by_name(attached_to).position.p.to_rad
+                    model_entity.eulerAngles.z = robot_by_name(attached_to).position.w.to_rad
                 }
             }
             else
