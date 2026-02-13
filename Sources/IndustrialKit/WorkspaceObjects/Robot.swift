@@ -957,11 +957,11 @@ open class Robot: WorkspaceObject
     {
         let is_enabled = working_area_entity.isEnabled
         
-        working_area_entity.removeFromParent()
+        //working_area_entity.removeFromParent()
         working_area_entity = build_working_area_entity(scale: space_scale)
         working_area_entity.isEnabled = is_enabled
         
-        origin_entity.addChild(working_area_entity)
+        //origin_entity.addChild(working_area_entity)
     }
     
     @MainActor func build_working_area_entity(scale: (x: Float, y: Float, z: Float)) -> Entity
