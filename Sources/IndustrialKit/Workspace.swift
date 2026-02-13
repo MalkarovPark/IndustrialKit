@@ -2416,22 +2416,20 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Tool attachment functions
     private func update_tool_attachments()
     {
-        let attached_tools = tools.compactMap { ($0.is_placed && $0.attached_to != nil) ? $0 : nil }
-        if !(attached_tools.count > 0) { return }
+        if !(tools.count > 0) { return }
         
-        for tool in attached_tools
+        for tool in tools
         {
-            if let entity = tool.model_entity
+            guard let entity = tool.model_entity else { continue }
+            
+            if let attached_to = tool.attached_to
             {
-                if let attached_to = tool.attached_to
-                {
-                    let end_point_entity = robot_by_name(attached_to).end_point_entity
-                    entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
-                }
-                else
-                {
-                    entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
-                }
+                let end_point_entity = robot_by_name(attached_to).end_point_entity
+                entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
+            }
+            else
+            {
+                entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
             }
         }
     }
