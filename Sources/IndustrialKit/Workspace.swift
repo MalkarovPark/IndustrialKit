@@ -2204,6 +2204,28 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func comfort_placement(for object: WorkspaceObject)
     {
+        let object_rect = rect(of: object)
+
+        // Occupied rectangles
+        var occupied: [(center: SIMD2<Float>, half: SIMD2<Float>)] = []
+        
+        for group in [robots as [WorkspaceObject], tools, parts]
+        {
+            /*for item in group where item !== object && item.model_entity != nil
+            {
+                occupied.append(rect(of: item))
+            }*/
+            
+            for item in group
+            {
+                guard item !== object, item.model_entity != nil else { continue }
+                
+                if let tool = item as? Tool, tool.attached_to != nil { continue }
+                
+                occupied.append(rect(of: item))
+            }
+        }
+        
         // Convert RealityKit bounds to workspace units
         func rect(of item: WorkspaceObject) -> (center: SIMD2<Float>, half: SIMD2<Float>)
         {
@@ -2225,20 +2247,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         @inline(__always)
         func dist2(_ p: SIMD2<Float>) -> Float
         {
-            p.x*p.x + p.y*p.y
-        }
-        
-        let object_rect = rect(of: object)
-        
-        // Occupied rectangles
-        var occupied: [(center: SIMD2<Float>, half: SIMD2<Float>)] = []
-        
-        for group in [robots as [WorkspaceObject], tools, parts]
-        {
-            for item in group where item !== object && item.model_entity != nil
-            {
-                occupied.append(rect(of: item))
-            }
+            p.x * p.x + p.y * p.y
         }
         
         // AABB intersection
