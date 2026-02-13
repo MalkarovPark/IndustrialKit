@@ -2424,6 +2424,34 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             if let attached_to = tool.attached_to
             {
+                // World position to robot end point
+                let end_point_entity = robot_by_name(attached_to).end_point_entity
+                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
+                
+                tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
+                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
+            }
+            else
+            {
+                // World position to workspace origin
+                let end_point_entity = workspace_entity
+                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
+                
+                tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
+                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
+            }
+        }
+    }
+    /*private func update_tool_attachments()
+    {
+        if !(tools.count > 0) { return }
+        
+        for tool in tools
+        {
+            //guard let entity = tool.model_entity else { continue }
+            
+            if let attached_to = tool.attached_to
+            {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
                 tool.entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
             }
@@ -2432,7 +2460,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
             }
         }
-    }
+    }*/
     
     /// Attaches tool to robot by reparenting it under robot's tool node.
     public func attach_tool_to(robot_name: String)
