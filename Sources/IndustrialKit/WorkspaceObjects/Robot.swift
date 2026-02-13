@@ -1079,7 +1079,7 @@ open class Robot: WorkspaceObject
     }
     
     // MARK: End Point Entity
-    private var end_point_entity = Entity()
+    /*private*/ var end_point_entity = Entity()
     
     public var end_entity_name = String()
     #endif

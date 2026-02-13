@@ -58,7 +58,7 @@ public struct AddNewView: View
     
     private func name_process()
     {
-        if new_item_name == ""
+        if new_item_name.isEmpty
         {
             new_item_name = "Name"
         }

@@ -88,9 +88,11 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
         x = try container.decode(Float.self, forKey: .x)
         y = try container.decode(Float.self, forKey: .y)
         z = try container.decode(Float.self, forKey: .z)
+        
         r = try container.decode(Float.self, forKey: .r)
         p = try container.decode(Float.self, forKey: .p)
         w = try container.decode(Float.self, forKey: .w)
+        
         move_type = try container.decode(MoveType.self, forKey: .move_type)
         move_speed = try container.decode(Float.self, forKey: .move_speed)
     }
@@ -102,9 +104,11 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
         try container.encode(x, forKey: .x)
         try container.encode(y, forKey: .y)
         try container.encode(z, forKey: .z)
+        
         try container.encode(r, forKey: .r)
         try container.encode(p, forKey: .p)
         try container.encode(w, forKey: .w)
+        
         try container.encode(move_type, forKey: .move_type)
         try container.encode(move_speed, forKey: .move_speed)
     }

@@ -1524,6 +1524,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         _ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self, let camera = self.camera_entity else { return }
+            
             self.update_grid(camera_position: camera.position)
         }
         
@@ -1537,6 +1538,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         // Place objects
         place_objects() //(to: workspace_entity)
+        
+        // Perform tool attachments update
+        _ = content.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self else { return }
+            
+            self.update_tool_attachments()
+        }
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
@@ -2266,20 +2275,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Names of robots placed in the workspace.
-    public var placed_robots_names: [String] // Array of robots names added to workspace
-    {
-        var names = [String]()
-        
-        for robot in robots
-        {
-            if robot.is_placed
-            {
-                names.append(robot.name)
-            }
-        }
-        
-        return names
-    }
+    public var placed_robots_names: [String] { robots.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: - Tools handling functions
     // MARK: Tools manage funcions
@@ -2415,20 +2411,31 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Names of tools placed in the workspace.
-    public var placed_tools_names: [String] // Array of robots names added to workspace
-    {
-        var names = [String]()
-        for tool in tools
-        {
-            if tool.is_placed
-            {
-                names.append(tool.name)
-            }
-        }
-        return names
-    }
+    public var placed_tools_names: [String] { tools.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: Tool attachment functions
+    private func update_tool_attachments()
+    {
+        let attached_tools = tools.compactMap { ($0.is_placed && $0.attached_to != nil) ? $0 : nil }
+        if attached_tools.count > 0 { return }
+        
+        for tool in attached_tools
+        {
+            if let entity = tool.model_entity
+            {
+                if let attached_to = tool.attached_to
+                {
+                    let end_point_entity = robot_by_name(attached_to).end_point_entity
+                    entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
+                }
+                else
+                {
+                    entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
+                }
+            }
+        }
+    }
+    
     /// Attaches tool to robot by reparenting it under robot's tool node.
     public func attach_tool_to(robot_name: String)
     {
@@ -2658,18 +2665,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Names of parts placed in the workspace.
-    public var placed_parts_names: [String] // Array of robots names added to workspace
-    {
-        var names = [String]()
-        for part in parts
-        {
-            if part.is_placed
-            {
-                names.append(part.name)
-            }
-        }
-        return names
-    }
+    public var placed_parts_names: [String] { parts.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: - Work with file system
     /**
