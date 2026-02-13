@@ -2586,13 +2586,50 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
                 
+                Task
+                {
+                    await wait_loading(entity: end_point_entity)
+                    end_point_entity.addChild(tool.entity)
+                }
+            }
+            else
+            {
+                Task
+                {
+                    await wait_loading(entity: workspace_entity)
+                    workspace_entity.addChild(tool.entity)
+                }
+            }
+        }
+        
+        func wait_loading(entity: Entity) async
+        {
+            while !is_loaded(entity)
+            {
+                try? await Task.sleep(nanoseconds: 50_000_000)
+            }
+        }
+        
+        func is_loaded(_ entity: Entity) -> Bool
+        {
+            return !entity.children.isEmpty || entity.components[ModelComponent.self] != nil
+        }
+        
+        /*if !(tools.count > 0) { return }
+        
+        for tool in tools
+        {
+            if let attached_to = tool.attached_to
+            {
+                let end_point_entity = robot_by_name(attached_to).end_point_entity
+                
                 end_point_entity.addChild(tool.entity)
             }
             else
             {
                 workspace_entity.addChild(tool.entity)
             }
-        }
+        }*/
         
         /*for tool in tools
         {
