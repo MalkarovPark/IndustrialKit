@@ -1540,12 +1540,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         place_objects() //(to: workspace_entity)
         
         // Perform tool attachments update
-        /*_ = content.subscribe(to: SceneEvents.Update.self)
+        _ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self else { return }
             
             self.update_tool_attachments()
-        }*/
+        }
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
@@ -1678,21 +1678,17 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func place_objects()//(to entity: Entity)
     {
-        // Placing robots
         for robot in robots
         {
             place_object_entity(object: robot)
             robot.update_origin_position()
         }
         
-        // Placing tools
         for tool in tools
         {
             place_object_entity(object: tool)
         }
-        update_tool_attachments()
         
-        // Placing parts
         for part in parts
         {
             place_object_entity(object: part)
@@ -2417,7 +2413,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public var placed_tools_names: [String] { tools.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: Tool attachment functions
-    /*private*/ public func update_tool_attachments()
+    private func update_tool_attachments()
     {
         if !(tools.count > 0) { return }
         
@@ -2426,31 +2422,23 @@ public class Workspace: ObservableObject, @unchecked Sendable
             if let attached_to = tool.attached_to
             {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
-                
-                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
-                tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
-                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
-            }
-            else
-            {
-                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
-                tool.entity.setParent(workspace_entity, preservingWorldTransform: false)
-                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
-            }
-        }
-        
-        /*for tool in tools
-        {
-            if let attached_to = tool.attached_to
-            {
-                let end_point_entity = robot_by_name(attached_to).end_point_entity
                 tool.entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
+                
+                if let model_entity = tool.model_entity
+                {
+                    model_entity.eulerAngles = end_point_entity.eulerAngles
+                }
             }
             else
             {
                 tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
+                
+                if let model_entity = tool.model_entity
+                {
+                    model_entity.eulerAngles = .zero
+                }
             }
-        }*/
+        }
         
         /*func sum_rotations(_ entity: Entity, _ entity2: Entity)
         {
