@@ -2425,18 +2425,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             if let attached_to = tool.attached_to
             {
-                let end_point_entity = robot_by_name(attached_to).end_point_entity
-                
-                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
-                
-                tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
-                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
+                let endPointEntity = robot_by_name(attached_to).end_point_entity
+                tool.entity.setParent(endPointEntity, preservingWorldTransform: false)
             }
             else
             {
-                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
                 tool.entity.setParent(workspace_entity, preservingWorldTransform: false)
-                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
             }
         }
         
