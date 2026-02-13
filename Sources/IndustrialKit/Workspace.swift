@@ -2414,7 +2414,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public var placed_tools_names: [String] { tools.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: Tool attachment functions
-    private func update_tool_attachments()
+    /*private*/ public func update_tool_attachments()
     {
         if !(tools.count > 0) { return }
         
