@@ -2417,7 +2417,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private func update_tool_attachments()
     {
         let attached_tools = tools.compactMap { ($0.is_placed && $0.attached_to != nil) ? $0 : nil }
-        if attached_tools.count > 0 { return }
+        if !(attached_tools.count > 0) { return }
         
         for tool in attached_tools
         {
