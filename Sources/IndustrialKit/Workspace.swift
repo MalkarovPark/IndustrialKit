@@ -2426,14 +2426,22 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
                 tool.entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
-                tool.entity.eulerAngles = sum_angles(tool.entity.eulerAngles, end_point_entity.eulerAngles)
+                sum_rotations(tool.entity, end_point_entity)
+                //tool.entity.eulerAngles = sum_angles(tool.entity.eulerAngles, end_point_entity.eulerAngles)
             }
             else
             {
                 tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
-                tool.entity.orientation = workspace_entity.orientation
-                tool.entity.eulerAngles = sum_angles(tool.entity.eulerAngles, workspace_entity.eulerAngles)
+                sum_rotations(tool.entity, workspace_entity)
+                //tool.entity.eulerAngles = sum_angles(tool.entity.eulerAngles, workspace_entity.eulerAngles)
             }
+        }
+        
+        func sum_rotations(_ entity: Entity, _ entity2: Entity)
+        {
+            entity.eulerAngles.x += entity2.eulerAngles.x
+            entity.eulerAngles.y += entity2.eulerAngles.y
+            entity.eulerAngles.z += entity2.eulerAngles.z
         }
         
         func sum_angles(_ a: SIMD3<Float>, _ b: SIMD3<Float>) -> SIMD3<Float>
