@@ -1561,7 +1561,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         // Place objects
         place_objects() //(to: workspace_entity)
-        update_tool_attachments()
+        //update_tool_attachments()
         
         // Perform tool attachments update
         /*_ = content.subscribe(to: SceneEvents.Update.self)
@@ -1570,6 +1570,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             self.update_tool_attachments()
         }*/
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5)
+        {
+            self.update_tool_attachments()
+        }
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
@@ -1581,25 +1586,25 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Grid
     private var grid_visible = true
     private var grid_lines: [String: ModelEntity] = [:]
-
+    
     private let cell_size: Float = 0.1 // 100 mm
     private let render_radius: Int = 200
-
+    
     private let minor_width: Float = 0.002 //0.001
     private let major_width: Float = 0.0025
-
+    
     private let major_step = 10
-
+    
     private let minor_line_mesh_x = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.002)
     private let major_line_mesh_x = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.0025)
     private let axis_line_mesh_x  = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.00375)
-
+    
     private let minor_line_mesh_z = MeshResource.generatePlane(width: 0.002, depth: Float(200*2) * 0.1)
     private let major_line_mesh_z = MeshResource.generatePlane(width: 0.0025, depth: Float(200*2) * 0.1)
     private let axis_line_mesh_z  = MeshResource.generatePlane(width: 0.00375, depth: Float(200*2) * 0.1)
-
+    
     public var is_grid_visible: Bool { grid_visible } // UI Only
-
+    
     public func toggle_grid_visiblity()
     {
         grid_visible.toggle()
@@ -1607,7 +1612,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         self.objectWillChange.send() // UI Only
     }
-
+    
     private func update_grid(camera_position: SIMD3<Float>)
     {
         if !grid_visible { return }
@@ -1623,9 +1628,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         cleanup_lines(center_x: cx, center_z: cz)
     }
-
+    
     private enum Axis { case x, z }
-
+    
     private func create_grid_async(center_x: Int, center_z: Int)
     {
         Task.detached(priority: .userInitiated) { [weak self] in
@@ -1696,7 +1701,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         workspace_entity.addChild(line)
         grid_lines[key] = line
     }
-
+    
     private func cleanup_lines(center_x: Int, center_z: Int)
     {
         for (key, line) in grid_lines
