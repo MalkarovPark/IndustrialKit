@@ -1510,8 +1510,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var camera_entity: PerspectiveCamera?
     private var scene_content: RealityViewCameraContent?
     
-    private var default_camera_target: Entity?
-    
     public func place_entity(to content: RealityViewCameraContent)
     {
         scene_content = content
@@ -1527,8 +1525,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             workspace_entity.addChild(camera)
             camera_entity = camera
-            
-            default_camera_target = scene_content?.cameraTarget
             
             let cx = Int(round(camera.position.x / cell_size))
             let cz = Int(round(camera.position.z / cell_size))
@@ -1927,9 +1923,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         pointer_entity.removeFromParent()
         
         // Camera pivot reposition
-        scene_content?.cameraTarget = default_camera_target //nil
-        //camera_entity = PerspectiveCamera()
-        //camera_entity?.camera.fieldOfViewInDegrees = 60
+        scene_content?.cameraTarget = nil
         //camera_entity?.position = [0, 1, 0]
         //camera_entity?.rotate_x(by: -.pi / 6)
         
