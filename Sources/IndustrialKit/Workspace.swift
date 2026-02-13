@@ -2425,7 +2425,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             if let attached_to = tool.attached_to
             {
-                let endPointEntity = robot_by_name(attached_to).end_point_entity
+                let endPointEntity = robot_by_name(attached_to).position_pointer_entity
                 tool.entity.setParent(endPointEntity, preservingWorldTransform: true)
             }
             else
