@@ -29,26 +29,6 @@ public struct PositionView: View
         self.with_steppers = with_steppers
     }
     
-    private func binding(for component: PositionComponents) -> Binding<Float>
-    {
-        switch component
-        {
-        case .x:
-            return Binding(get: { position.x }, set: { position.x = $0 })
-        case .y:
-            return Binding(get: { position.y }, set: { position.y = $0 })
-        case .z:
-            return Binding(get: { position.z }, set: { position.z = $0 })
-            
-        case .r:
-            return Binding(get: { position.r }, set: { position.r = $0 })
-        case .p:
-            return Binding(get: { position.p }, set: { position.p = $0 })
-        case .w:
-            return Binding(get: { position.w }, set: { position.w = $0 })
-        }
-    }
-    
     public var body: some View
     {
         VStack(spacing: 10)
@@ -121,66 +101,86 @@ public struct PositionView: View
             }
         }
     }
-}
-
-///Sendable struct for onChange handling.
-public struct PositionSnapshot: Equatable
-{
-    let x: Float, y: Float, z: Float, r: Float, p: Float, w: Float
     
-    public init(_ tuple: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    private func binding(for component: PositionComponents) -> Binding<Float>
     {
-        self.x = tuple.x
-        self.y = tuple.y
-        self.z = tuple.z
-        
-        self.r = tuple.r
-        self.p = tuple.p
-        self.w = tuple.w
-    }
-}
-
-public enum PositionComponents: Equatable, CaseIterable
-{
-    case x
-    case y
-    case z
-    
-    case r
-    case p
-    case w
-    
-    public enum Group: String, CaseIterable
-    {
-        case location = "Location"
-        case rotation = "Rotation"
-    }
-    
-    public var info: (text: String, group: Group, order: Int)
-    {
-        switch self
+        switch component
         {
         case .x:
-            return ("X ", .location, 0)
+            return Binding(get: { position.x }, set: { position.x = $0 })
         case .y:
-            return ("Y ", .location, 1)
+            return Binding(get: { position.y }, set: { position.y = $0 })
         case .z:
-            return ("Z ", .location, 2)
+            return Binding(get: { position.z }, set: { position.z = $0 })
             
         case .r:
-            return ("R ", .rotation, 0)
+            return Binding(get: { position.r }, set: { position.r = $0 })
         case .p:
-            return ("P ", .rotation, 1)
+            return Binding(get: { position.p }, set: { position.p = $0 })
         case .w:
-            return ("W ", .rotation, 2)
+            return Binding(get: { position.w }, set: { position.w = $0 })
         }
     }
     
-    public static func components(for group: Group) -> [PositionComponents]
+    // Sendable struct for onChange handling.
+    private struct PositionSnapshot: Equatable
     {
-        Self.allCases
-            .filter { $0.info.group == group }
-            .sorted { $0.info.order < $1.info.order }
+        let x: Float, y: Float, z: Float, r: Float, p: Float, w: Float
+        
+        public init(_ tuple: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+        {
+            self.x = tuple.x
+            self.y = tuple.y
+            self.z = tuple.z
+            
+            self.r = tuple.r
+            self.p = tuple.p
+            self.w = tuple.w
+        }
+    }
+
+    private enum PositionComponents: Equatable, CaseIterable
+    {
+        case x
+        case y
+        case z
+        
+        case r
+        case p
+        case w
+        
+        public enum Group: String, CaseIterable
+        {
+            case location = "Location"
+            case rotation = "Rotation"
+        }
+        
+        public var info: (text: String, group: Group, order: Int)
+        {
+            switch self
+            {
+            case .x:
+                return ("X ", .location, 0)
+            case .y:
+                return ("Y ", .location, 1)
+            case .z:
+                return ("Z ", .location, 2)
+                
+            case .r:
+                return ("R ", .rotation, 0)
+            case .p:
+                return ("P ", .rotation, 1)
+            case .w:
+                return ("W ", .rotation, 2)
+            }
+        }
+        
+        public static func components(for group: Group) -> [PositionComponents]
+        {
+            Self.allCases
+                .filter { $0.info.group == group }
+                .sorted { $0.info.order < $1.info.order }
+        }
     }
 }
 
