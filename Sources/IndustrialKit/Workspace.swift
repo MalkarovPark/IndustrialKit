@@ -1507,8 +1507,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: - Visual Functions
     #if canImport(RealityKit)
     private var workspace_entity = Entity()
-    private var camera_entity: PerspectiveCamera?
     private var scene_content: RealityViewCameraContent?
+    
+    private var camera_entity: PerspectiveCamera?
+    private var camera_target = Entity()
     
     public func place_entity(to content: RealityViewCameraContent)
     {
@@ -1525,6 +1527,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             workspace_entity.addChild(camera)
             camera_entity = camera
+            workspace_entity.addChild(camera_target)
+            scene_content?.cameraTarget = camera_target
             
             let cx = Int(round(camera.position.x / cell_size))
             let cz = Int(round(camera.position.z / cell_size))
@@ -1582,6 +1586,22 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             self.update_tool_attachments()
         }
+    }
+    
+    private func focus(on entity: Entity)
+    {
+        let bounds = entity.visualBounds(relativeTo: nil)
+        let center = bounds.center
+        
+        var transform = camera_target.transform
+        transform.translation = center
+        
+        camera_target.move(
+            to: transform,
+            relativeTo: nil,
+            duration: 0.4,
+            timingFunction: .easeInOut
+        )
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
@@ -1923,9 +1943,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         pointer_entity.removeFromParent()
         
         // Camera pivot reposition
-        scene_content?.cameraTarget = nil
-        //camera_entity?.position = [0, 1, 0]
-        //camera_entity?.rotate_x(by: -.pi / 6)
+        //scene_content?.cameraTarget = nil
         
         self.objectWillChange.send() // UI only
     }
@@ -1954,7 +1972,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // Camera pivot reposition
         if let selected_object = selected_object
         {
-            scene_content?.cameraTarget = selected_object.entity
+            //scene_content?.cameraTarget = selected_object.entity
+            focus(on: selected_object.entity)
         }
         
         self.objectWillChange.send() // UI only
