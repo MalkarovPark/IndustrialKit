@@ -2420,16 +2420,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         for tool in tools
         {
-            guard let entity = tool.model_entity else { continue }
+            //guard let entity = tool.model_entity else { continue }
             
             if let attached_to = tool.attached_to
             {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
-                entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
+                tool.entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
             }
             else
             {
-                entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
+                tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
             }
         }
     }
