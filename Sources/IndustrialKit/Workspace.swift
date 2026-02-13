@@ -2039,21 +2039,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private func make_wire_bounding_box(bounds: BoundingBox, color: UIColor, line_width: Float = 0.001) -> Entity
     {
         let root = Entity()
-
+        
         let size = bounds.extents
         let center = bounds.center
-
+        
         let hx = size.x / 2
         let hy = size.y / 2
         let hz = size.z / 2
-
+        
         var material = SimpleMaterial(
             color: color.withAlphaComponent(0.5),
             roughness: 1.0,
             isMetallic: false
         )
         material.faceCulling = .none
-
+        
         func line(length: Float, position: SIMD3<Float>, rotation: simd_quatf) -> ModelEntity
         {
             let mesh = MeshResource.generatePlane(width: length, depth: line_width)
@@ -2071,7 +2071,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             entity.orientation = rotation
             return entity
         }
-
+        
         // XY Planes
         for z in [-hz, hz]
         {
@@ -2111,7 +2111,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 )
             )
         }
-
+        
         // YZ Planes
         for x in [-hx, hx]
         {
@@ -2151,7 +2151,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 )
             )
         }
-
+        
         // XZ Planes
         for y in [-hy, hy]
         {
