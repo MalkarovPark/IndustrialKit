@@ -2426,19 +2426,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
                 tool.entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
-                
-                tool.entity.eulerAngles.y += tool.entity.eulerAngles.y + tool.position.p.to_rad
-                //tool.entity.rotate_x(by: tool.entity.eulerAngles.y + tool.position.p.to_rad)
-                //sum_rotations(tool.entity, end_point_entity) //sum_rotations(tool.entity, robot_by_name(attached_to).position_pointer_entity)
-                //tool.entity.eulerAngles = sum_angles(tool.entity.eulerAngles, end_point_entity.eulerAngles)
             }
             else
             {
                 tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
-                
-                //tool.entity.rotate_x(by: tool.entity.eulerAngles.y + workspace_entity.eulerAngles.y)
-                //sum_rotations(tool.entity, workspace_entity)
-                //tool.entity.eulerAngles = sum_angles(tool.entity.eulerAngles, workspace_entity.eulerAngles)
             }
         }
         
