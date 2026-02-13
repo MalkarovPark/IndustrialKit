@@ -1538,7 +1538,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         // Place objects
         place_objects() //(to: workspace_entity)
-        update_tool_attachments()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2)
+        {
+            self.update_tool_attachments()
+        }
         
         // Perform tool attachments update
         /*_ = content.subscribe(to: SceneEvents.Update.self)
@@ -2422,9 +2425,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             if let attached_to = tool.attached_to
             {
-                //let end_point_entity = robot_by_name(attached_to).end_point_entity
+                let end_point_entity = robot_by_name(attached_to).end_point_entity
                 
-                /*end_point_entity*/robot_by_name(attached_to).position_pointer_entity.addChild(tool.entity)
+                end_point_entity.addChild(tool.entity)
             }
             else
             {
