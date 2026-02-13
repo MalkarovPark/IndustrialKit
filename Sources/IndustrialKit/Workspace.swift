@@ -1518,25 +1518,15 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             workspace_entity.addChild(camera)
             camera_entity = camera
-            
-            // Build grid on start
-            let cx = Int(round(camera.position.x / cell_size))
-            let cz = Int(round(camera.position.z / cell_size))
-            
-            for i in -render_radius...render_radius
-            {
-                add_line(index: cx + i, axis: .x)
-                add_line(index: cz + i, axis: .z)
-            }
         }
         
         // Place grid
-        _ = content.subscribe(to: SceneEvents.Update.self)
+        /*_ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self, let camera = self.camera_entity else { return }
             
             self.update_grid(camera_position: camera.position)
-        }
+        }*/
         
         // Dynamic pointer update
         _ = content.subscribe(to: SceneEvents.Update.self)
