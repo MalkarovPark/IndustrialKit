@@ -180,11 +180,11 @@ struct WorkspaceControlView: View
                 if let program = workspace.selected_program
                 {
                     ProductionProgramView(view_program_as_text: $view_program_as_text, code_editor_text: $code_editor_text, workspace: workspace, program: program, on_update: on_update)
-                    {
-                        deselect_program()
-                    }
-                    .matchedGeometryEffect(id: program.id, in: animation_namespace)
-                    .zIndex(1)
+                        {
+                            deselect_program()
+                        }
+                        .matchedGeometryEffect(id: program.id, in: animation_namespace)
+                        .zIndex(1)
                 }
             }
             .frame(width: pendant_content_width)

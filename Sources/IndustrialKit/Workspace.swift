@@ -67,7 +67,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         case let part as Part:
             break
         default:
-            deselect_program()//break
+            deselect_program()
         }
         
         selected_object = nil
@@ -1193,7 +1193,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         if element.is_single_perfrom
         {
-            // Single robot perform
+            // Single movement perform
             robot.performed = true
             
             var target_point = PositionPoint(x: registers[safe_float: element.x_index],
@@ -1225,7 +1225,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         else
         {
-            // Program robot perform
+            // Robot program perform
             if !element.is_program_by_index
             {
                 robot.select_program(name: element.program_name)
@@ -1237,7 +1237,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             robot.finish_handler = {
                 robot.clear_finish_handler()
-                robot.clear_finish_handler()
+                robot.clear_error_handler()
+                
+                robot.deselect_program()
                 
                 robot.disable_update()
                 
@@ -1245,7 +1247,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
             robot.error_handler = { error in
                 robot.clear_finish_handler()
-                robot.clear_finish_handler()
+                robot.clear_error_handler()
                 
                 robot.disable_update()
                 
@@ -1267,7 +1269,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         if element.is_single_perfrom
         {
-            // Single tool perform
+            // Single operation perform
             tool.perform(code: Int(registers[safe: element.opcode_index] ?? 0))
             { result in
                 Task
@@ -1286,6 +1288,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         else
         {
+            // Tool program perform
             if !element.is_program_by_index
             {
                 tool.select_program(name: element.program_name)
@@ -1306,6 +1309,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
             tool.error_handler = { error in
                 tool.clear_finish_handler()
                 tool.clear_error_handler()
+                
+                tool.deselect_program()
                 
                 tool.disable_update()
                 
