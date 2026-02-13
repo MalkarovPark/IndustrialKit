@@ -1571,7 +1571,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             self.update_tool_attachments()
         }*/
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1)
         {
             self.update_tool_attachments()
         }
@@ -2637,105 +2637,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 normalize(s.z)
             )
         }*/
-    }
-    
-    /// Attaches tool to robot by reparenting it under robot's tool node.
-    public func attach_tool_to(robot_name: String)
-    {
-        //update_pointer()
-        
-        /*if let edited_node = edited_object_node,
-           let robot_tool_node = robot_by_name(robot_name).tool_node
-        {
-            attach(node: edited_node, to: robot_tool_node)
-            selected_tool.attached_to = robot_name
-        }*/
-    }
-
-    /// Moves the node to be child of the end_point_node, preserving its world transform.
-    /*private func attach(node: SCNNode, to new_parent: SCNNode)
-    {
-        let local_transform = node.transform
-        
-        new_parent.addChildNode(node)
-        
-        node.transform = local_transform
-    }*/
-    
-    /*/// Removes the node from its parent and re-adds to scene root, preserving world transform.
-    public func remove_attachment()
-    {
-        guard let node = edited_object_node, let scene_root_node = tools_node else { return }
-        
-        let local_transform = node.transform
-        scene_root_node.addChildNode(node)
-        node.transform = local_transform
-        
-        node.simdTransform = node.simdTransform
-        
-        selected_tool.attached_to = nil
-    }*/
-
-    /**
-     Detaches the given node from its current parent and re-adds it to the specified root node,
-     preserving its local transform and ensuring correct visual update.
-     
-     - Parameters:
-        - node: The node to be detached and moved.
-        - root_node: The node that will become the new parent (typically the scene root).
-     */
-    /*public func remove_attachment(from node: SCNNode, to root_node: SCNNode)
-    {
-        let local_transform = node.transform
-        root_node.addChildNode(node)
-        node.transform = local_transform
-        
-        node.simdTransform = node.simdTransform
-    }*/
-    
-    /**
-     Detaches the specified tool from its current parent node and restores it to the scene root,
-     preserving its local transform and resetting its attachment state.
-     
-     - Parameters:
-        - tool: The tool to be detached and reinserted into the scene root.
-        - node_only: If `true`, only the tool's node is detached without modifying its attachment state.
-     */
-    public func remove_attachment(tool: Tool, node_only: Bool = false)
-    {
-        if tool.attached_to != nil
-        {
-            /*guard let tool_node = tool.node, let scene_root_node = tools_node else { return }
-            
-            remove_attachment(from: tool_node, to: scene_root_node)
-            
-            if !node_only
-            {
-                tool.attached_to = nil
-            }*/
-        }
-    }
-    
-    /// Detaches the currently edited node and restores it to the tools root node.
-    public func remove_edited_node_attachment()
-    {
-        //guard let edited_object_node = edited_object_node, let tools_node = tools_node else { return }
-        //remove_attachment(from: edited_object_node, to: tools_node)
-    }
-    
-    /**
-     Detaches all tool nodes from their current parents and re-adds them to the scene root.
-     Optionally preserves the tools' attachment state.
-     
-     - Parameters:
-        -  nodes_only: If `true`, only the nodes are moved without resetting the attachment information.
-     */
-    public func remove_all_tools_attachments(nodes_only: Bool = false)
-    {
-        for tool in tools
-        {
-            remove_attachment(tool: tool, node_only: nodes_only)
-        }
     }
     
     // MARK: - Parts handling functions
