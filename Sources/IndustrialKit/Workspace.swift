@@ -1540,12 +1540,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         place_objects() //(to: workspace_entity)
         
         // Perform tool attachments update
-        _ = content.subscribe(to: SceneEvents.Update.self)
+        /*_ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self else { return }
             
             self.update_tool_attachments()
-        }
+        }*/
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
@@ -2420,8 +2420,24 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         for tool in tools
         {
-            //guard let entity = tool.model_entity else { continue }
-            
+            if let attached_to = tool.attached_to
+            {
+                let end_point_entity = robot_by_name(attached_to).end_point_entity
+                
+                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
+                tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
+                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
+            }
+            else
+            {
+                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
+                tool.entity.setParent(workspace_entity, preservingWorldTransform: false)
+                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
+            }
+        }
+        
+        /*for tool in tools
+        {
             if let attached_to = tool.attached_to
             {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
@@ -2431,9 +2447,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
             }
-        }
+        }*/
         
-        func sum_rotations(_ entity: Entity, _ entity2: Entity)
+        /*func sum_rotations(_ entity: Entity, _ entity2: Entity)
         {
             entity.eulerAngles.x += entity2.eulerAngles.x
             entity.eulerAngles.y += entity2.eulerAngles.y
@@ -2456,7 +2472,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 normalize(s.y),
                 normalize(s.z)
             )
-        }
+        }*/
     }
     
     /// Attaches tool to robot by reparenting it under robot's tool node.
