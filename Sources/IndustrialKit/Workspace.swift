@@ -1521,14 +1521,18 @@ public class Workspace: ObservableObject, @unchecked Sendable
         if camera_entity == nil
         {
             let camera = PerspectiveCamera()
-            camera.camera.fieldOfViewInDegrees = 60
+            /*camera.camera.fieldOfViewInDegrees = 60
             camera.position = [0, 1, 0]
-            camera.rotate_x(by: -.pi / 6)
+            camera.rotate_x(by: -.pi / 6)*/
             
             workspace_entity.addChild(camera)
             camera_entity = camera
             workspace_entity.addChild(camera_target)
             scene_content?.cameraTarget = camera_target
+            
+            camera.camera.fieldOfViewInDegrees = 60
+            camera.position = [0, 1, 0]
+            camera.rotate_x(by: -.pi / 6)
             
             let cx = Int(round(camera.position.x / cell_size))
             let cz = Int(round(camera.position.z / cell_size))
