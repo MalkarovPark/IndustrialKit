@@ -2423,27 +2423,20 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         for tool in tools
         {
-            let tool_entity = tool.entity
-            
-            let world_transform = tool_entity.transformMatrix(relativeTo: nil)
-            
             if let attached_to = tool.attached_to
             {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
                 
-                let parent_world = end_point_entity.transformMatrix(relativeTo: nil)
-                let local_transform = parent_world.inverse * world_transform
+                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
                 
-                tool_entity.setParent(end_point_entity, preservingWorldTransform: false)
-                tool_entity.setTransformMatrix(local_transform, relativeTo: end_point_entity)
+                tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
+                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
             }
             else
             {
-                let parent_world = workspace_entity.transformMatrix(relativeTo: nil)
-                let local_transform = parent_world.inverse * world_transform
-                
-                tool_entity.setParent(workspace_entity, preservingWorldTransform: false)
-                tool_entity.setTransformMatrix(local_transform, relativeTo: workspace_entity)
+                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
+                tool.entity.setParent(workspace_entity, preservingWorldTransform: false)
+                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
             }
         }
         
