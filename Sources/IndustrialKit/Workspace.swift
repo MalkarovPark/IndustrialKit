@@ -2428,7 +2428,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
                 
                 let world_transform = tool.entity.transformMatrix(relativeTo: nil)
-                
                 tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
                 tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
             }
