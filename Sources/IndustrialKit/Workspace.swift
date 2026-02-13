@@ -1538,10 +1538,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         // Place objects
         place_objects() //(to: workspace_entity)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2)
+        update_tool_attachments()
+        /*DispatchQueue.main.asyncAfter(deadline: .now() + 2)
         {
             self.update_tool_attachments()
-        }
+        }*/
         
         // Perform tool attachments update
         /*_ = content.subscribe(to: SceneEvents.Update.self)
