@@ -1923,10 +1923,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
         pointer_entity.removeFromParent()
         
         // Camera pivot reposition
-        scene_content?.cameraTarget = workspace_entity
+        scene_content?.cameraTarget = nil
         //camera_entity = PerspectiveCamera()
         //camera_entity?.camera.fieldOfViewInDegrees = 60
-        camera_entity?.position = [0, 1, 0]
+        //camera_entity?.position = [0, 1, 0]
         //camera_entity?.rotate_x(by: -.pi / 6)
         
         self.objectWillChange.send() // UI only
