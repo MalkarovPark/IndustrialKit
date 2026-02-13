@@ -1685,11 +1685,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
             robot.update_origin_position()
         }
         
+        // Placing tools
         for tool in tools
         {
             place_object_entity(object: tool)
         }
+        update_tool_attachments()
         
+        // Placing parts
         for part in parts
         {
             place_object_entity(object: part)
