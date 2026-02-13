@@ -2414,7 +2414,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public var placed_tools_names: [String] { tools.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: Tool attachment functions
-    private func update_tool_attachments()
+    /*private func update_tool_attachments()
     {
         if !(tools.count > 0) { return }
         
@@ -2426,10 +2426,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 // World position to robot end point
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
-                let world_transform = tool.entity.transformMatrix(relativeTo: nil)
+                //let world_transform = tool.entity.transformMatrix(relativeTo: nil)
                 
                 tool.entity.setParent(end_point_entity, preservingWorldTransform: false)
-                tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
+                //tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
             }
             else
             {
@@ -2441,8 +2441,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 tool.entity.setTransformMatrix(world_transform, relativeTo: nil)
             }
         }
-    }
-    /*private func update_tool_attachments()
+    }*/
+    private func update_tool_attachments()
     {
         if !(tools.count > 0) { return }
         
@@ -2460,7 +2460,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
             }
         }
-    }*/
+    }
     
     /// Attaches tool to robot by reparenting it under robot's tool node.
     public func attach_tool_to(robot_name: String)
