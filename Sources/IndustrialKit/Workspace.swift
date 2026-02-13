@@ -2422,9 +2422,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             if let attached_to = tool.attached_to
             {
-                let end_point_entity = robot_by_name(attached_to).end_point_entity
+                //let end_point_entity = robot_by_name(attached_to).end_point_entity
                 
-                end_point_entity.addChild(tool.entity)
+                /*end_point_entity*/robot_by_name(attached_to).position_pointer_entity.addChild(tool.entity)
             }
             else
             {
