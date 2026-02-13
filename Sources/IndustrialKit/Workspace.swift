@@ -1538,14 +1538,15 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         // Place objects
         place_objects() //(to: workspace_entity)
+        update_tool_attachments()
         
         // Perform tool attachments update
-        _ = content.subscribe(to: SceneEvents.Update.self)
+        /*_ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self else { return }
             
             self.update_tool_attachments()
-        }
+        }*/
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
@@ -2422,25 +2423,27 @@ public class Workspace: ObservableObject, @unchecked Sendable
             if let attached_to = tool.attached_to
             {
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
-                tool.entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
                 
-                if let model_entity = tool.model_entity
-                {
-                    model_entity.eulerAngles.x = robot_by_name(attached_to).position.r.to_rad
-                    model_entity.eulerAngles.y = robot_by_name(attached_to).position.p.to_rad
-                    model_entity.eulerAngles.z = robot_by_name(attached_to).position.w.to_rad
-                }
+                end_point_entity.addChild(tool.entity)
+            }
+            else
+            {
+                workspace_entity.addChild(tool.entity)
+            }
+        }
+        
+        /*for tool in tools
+        {
+            if let attached_to = tool.attached_to
+            {
+                let end_point_entity = robot_by_name(attached_to).end_point_entity
+                tool.entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
             }
             else
             {
                 tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
-                
-                if let model_entity = tool.model_entity
-                {
-                    model_entity.eulerAngles = .zero
-                }
             }
-        }
+        }*/
         
         /*func sum_rotations(_ entity: Entity, _ entity2: Entity)
         {
