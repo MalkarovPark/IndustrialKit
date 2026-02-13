@@ -1538,15 +1538,15 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         // Place objects
         place_objects() //(to: workspace_entity)
-        //update_tool_attachments()
+        update_tool_attachments()
         
         // Perform tool attachments update
-        _ = content.subscribe(to: SceneEvents.Update.self)
+        /*_ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self else { return }
             
             self.update_tool_attachments()
-        }
+        }*/
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
