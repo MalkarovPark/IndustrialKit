@@ -1590,9 +1590,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
 
     private let major_step = 10
 
-    private let minor_line_mesh = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.002)
-    private let major_line_mesh = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.0025)
-    private let axis_line_mesh  = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.00375)
+    private let minor_line_mesh_x = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.002)
+    private let major_line_mesh_x = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.0025)
+    private let axis_line_mesh_x  = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.00375)
+
+    private let minor_line_mesh_z = MeshResource.generatePlane(width: 0.002, depth: Float(200*2) * 0.1)
+    private let major_line_mesh_z = MeshResource.generatePlane(width: 0.0025, depth: Float(200*2) * 0.1)
+    private let axis_line_mesh_z  = MeshResource.generatePlane(width: 0.00375, depth: Float(200*2) * 0.1)
 
     public var is_grid_visible: Bool { grid_visible } // UI Only
 
@@ -1646,7 +1650,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
         }
     }
-
+    
     private func add_line(index: Int, axis: Axis)
     {
         let key = "\(axis)_\(index)"
@@ -1665,15 +1669,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
         ? UIColor.gray.withAlphaComponent(0.4)
         : UIColor.gray.withAlphaComponent(0.3)
         
-        let length = Float(render_radius * 2) * cell_size
-        
         let mesh: MeshResource
         switch axis
         {
         case .x:
-            mesh = is_axis ? axis_line_mesh : is_major ? major_line_mesh : minor_line_mesh
+            mesh = is_axis ? axis_line_mesh_x : is_major ? major_line_mesh_x : minor_line_mesh_x
         case .z:
-            mesh = is_axis ? axis_line_mesh : is_major ? major_line_mesh : minor_line_mesh
+            mesh = is_axis ? axis_line_mesh_z : is_major ? major_line_mesh_z : minor_line_mesh_z
         }
         
         var material = SimpleMaterial(color: color, roughness: 1, isMetallic: false)
