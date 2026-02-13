@@ -1920,7 +1920,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
         deselect_object()
         pointer_entity.removeFromParent()
         
-        self.objectWillChange.send()
+        // Camera pivot reposition
+        if let camera_entity = camera_entity, let selected_object = selected_object
+        {
+            //camera_entity.removeFromParent()
+            workspace_entity.addChild(camera_entity)
+        }
+        
+        self.objectWillChange.send() // UI only
     }
     
     private func select_object_by_entity_identifier(_ entity_identifier: EntityModelIdentifier)
@@ -1944,7 +1951,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
             break
         }
         
-        self.objectWillChange.send()
+        // Camera pivot reposition
+        if let camera_entity = camera_entity, let selected_object = selected_object
+        {
+            //camera_entity.removeFromParent()
+            selected_object.entity.addChild(camera_entity)
+        }
+        
+        self.objectWillChange.send() // UI only
     }
     
     // MARK: Pointer Entity
