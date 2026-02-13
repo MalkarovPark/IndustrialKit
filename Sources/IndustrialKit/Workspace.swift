@@ -1521,15 +1521,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         
         // Place grid
-        DispatchQueue.main.async
-        {
-            _ = content.subscribe(to: SceneEvents.Update.self)
-            { [weak self] _ in
-                guard let self, let camera = self.camera_entity else { return }
-                
-                self.update_grid(camera_position: camera.position)
-            }
-        }
+        /*_ = content.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self, let camera = self.camera_entity else { return }
+            
+            self.update_grid(camera_position: camera.position)
+        }*/
         
         // Dynamic pointer update
         _ = content.subscribe(to: SceneEvents.Update.self)
@@ -1550,6 +1547,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             self.update_tool_attachments()
         }*/
+        
+        _ = content.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self, let camera = self.camera_entity else { return }
+            
+            self.update_grid(camera_position: camera.position)
+        }
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
