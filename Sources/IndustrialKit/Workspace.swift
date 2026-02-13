@@ -1571,7 +1571,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             self.update_tool_attachments()
         }*/
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2)
         {
             self.update_tool_attachments()
         }
