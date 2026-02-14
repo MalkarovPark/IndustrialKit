@@ -75,6 +75,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     public func delete_object(_ object: WorkspaceObject)
     {
+        //focus(on: nil)
+        
         object.entity.removeFromParent()
         
         switch selected_object
@@ -1516,9 +1518,52 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var camera_target_initialized = false
     
     private var base_camera_distance: Float?
-    private weak var target_tile: ModelEntity?
-    private let default_tile_size: Float = 0.5
     private var is_focusing = false
+    
+    private var target_tile_default_size: Float // = 0.5
+    {
+        let placed = (robots + tools + parts).filter { $0.is_placed }
+        
+        guard !placed.isEmpty else { return 0.5 }
+        
+        var min_x = placed[0].position.x
+        var max_x = min_x
+        var min_y = placed[0].position.y
+        var max_y = min_y
+        //var min_z = placed[0].position.z
+        //var max_z = min_z
+        
+        for obj in placed
+        {
+            let p = obj.position
+            
+            if p.x < min_x { min_x = p.x }
+            if p.x > max_x { max_x = p.x }
+            
+            if p.y < min_y { min_y = p.y }
+            if p.y > max_y { max_y = p.y }
+            
+            //if p.z < min_z { min_z = p.z }
+            //if p.z > max_z { max_z = p.z }
+        }
+        
+        let dx = max_x - min_x
+        let dy = max_y - min_y
+        
+        let average = (dx + dy) * 0.5 * 0.001
+        
+        return max(average /** 1.2*/, 0.5)
+        
+        /*let dx = max_x - min_x
+        let dy = max_y - min_y
+        let dz = max_z - min_z
+        
+        let diagonal = sqrt(dx*dx + dy*dy + dz*dz)
+        
+        return max(diagonal * 1.2, 0.5)*/
+    }
+    
+    private weak var target_tile: ModelEntity?
     
     public func place_entity(to content: RealityViewCameraContent)
     {
@@ -1537,7 +1582,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             workspace_entity.addChild(camera)
             workspace_camera = camera
             workspace_entity.addChild(workspace_camera_target)
-            //scene_content?.cameraTarget = camera_target
             
             // Target entity setup
             let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.5, depth: 0.5))
@@ -1569,6 +1613,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             // Prebuild grid
             let cx = Int(round(camera.position.x / cell_size))
             let cz = Int(round(camera.position.z / cell_size))
+            
             create_grid_async(center_x: cx, center_z: cz)
         }
         
@@ -1587,10 +1632,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
             if self.selected_object != nil { self.update_pointer_entity() }
         }
         
-        // Place objects
-        place_objects()
+        place_objects() // Place objects
+        place_physical_floor() // Place floor
     }
     
+    // MARK: Camera
     /// Focus camera to pivot
     private func focus(on entity: Entity?)
     {
@@ -1600,7 +1646,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         is_focusing = true
         
         var center: SIMD3<Float> = .zero
-        var tile_size = SIMD2<Float>(repeating: default_tile_size)
+        var tile_size = SIMD2<Float>(repeating: target_tile_default_size)
         
         // Center
         if let entity
@@ -1637,7 +1683,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             let start_scale = tile.scale
             let target_scale = SIMD3<Float>(tile_size.x / base_width, tile.scale.y, tile_size.y / base_depth)
             
-            let steps = 160 //40
+            let steps = 400 //160 //40
             let dt = animation_duration / Float(steps)
             
             for i in 1...steps
@@ -1775,13 +1821,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             let indices = (-self.render_radius...self.render_radius).map { $0 }
             
-            for batchStart in stride(from: 0, to: indices.count, by: 20)
+            for batch_start in stride(from: 0, to: indices.count, by: 20)
             {
-                let batchEnd = min(batchStart + 20, indices.count)
+                let batch_end = min(batch_start + 20, indices.count)
                 
                 await MainActor.run
                 {
-                    for i in batchStart..<batchEnd
+                    for i in batch_start..<batch_end
                     {
                         let idx = indices[i]
                         self.add_line(index: center_x + idx, axis: .x)
@@ -1903,6 +1949,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
+    private func place_physical_floor()
+    {
+        let floor = ModelEntity(mesh: MeshResource.generatePlane(width: 2000, depth: 2000))
+        floor.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
+        workspace_entity.addChild(floor)
+        floor.isEnabled = false
+        
+        
+    }
+    
     // MARK: Pointer Handling
     public func process_tap(value: EntityTargetValue<TapGesture.Value>)
     {
@@ -1955,8 +2011,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         pointer_entity.removeFromParent()
         
         // Camera pivot reposition
-        //scene_content?.cameraTarget = nil
-        focus(on: nil)//workspace_entity)
+        focus(on: nil)
         
         self.objectWillChange.send() // UI only
     }
