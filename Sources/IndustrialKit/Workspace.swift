@@ -1509,8 +1509,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var workspace_entity = Entity()
     private var scene_content: RealityViewCameraContent?
     
-    private var camera_entity: PerspectiveCamera?
-    private var camera_target = Entity()
+    private var workspace_camera: PerspectiveCamera?
+    private var workspace_camera_target = Entity()
     
     public func place_entity(to content: RealityViewCameraContent)
     {
@@ -1518,25 +1518,44 @@ public class Workspace: ObservableObject, @unchecked Sendable
         scene_content?.add(workspace_entity)
         
         // Place (connect) camera
-        if camera_entity == nil
+        if workspace_camera == nil
         {
+            // Camera setup
             let camera = PerspectiveCamera()
             camera.camera.fieldOfViewInDegrees = 60
             camera.position = [0, 1, 0]
             camera.rotate_x(by: -.pi / 6)
             
             workspace_entity.addChild(camera)
-            camera_entity = camera
-            workspace_entity.addChild(camera_target)
+            workspace_camera = camera
+            workspace_entity.addChild(workspace_camera_target)
             //scene_content?.cameraTarget = camera_target
             
+            // Target entity setup
             let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.5, depth: 0.5))
             wall.position = SIMD3<Float>(0, 0, 0)
             wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
             wall.isEnabled = false
-            camera_target.addChild(wall)
-            scene_content?.cameraTarget = camera_target
             
+            workspace_camera_target.addChild(wall)
+            scene_content?.cameraTarget = workspace_camera_target
+            
+            // Dynamic camera
+            _ = content.subscribe(to: SceneEvents.Update.self)
+            { [weak self] _ in
+                guard let self else { return }
+                
+                if self.is_focusing
+                {
+                    self.scene_content?.cameraTarget = self.workspace_camera_target
+                }
+                else
+                {
+                    self.move_camera_target()
+                }
+            }
+            
+            // Prebuild grid
             let cx = Int(round(camera.position.x / cell_size))
             let cz = Int(round(camera.position.z / cell_size))
             create_grid_async(center_x: cx, center_z: cz)
@@ -1545,40 +1564,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // Place grid
         _ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
-            guard let self, let camera = self.camera_entity else { return }
+            guard let self, let camera = self.workspace_camera else { return }
             self.update_grid(camera_position: camera.position)
         }
-        
-        // Dynamic camera
-        _ = content.subscribe(to: SceneEvents.Update.self)
-        { [weak self] _ in
-            guard let self else { return }
-            
-            if self.is_focusing
-            {
-                self.scene_content?.cameraTarget = self.camera_target
-            }
-        }
-        
-        /*// Place (connect) camera
-        if camera_entity == nil
-        {
-            let camera = PerspectiveCamera()
-            camera.camera.fieldOfViewInDegrees = 60
-            camera.position = [0, 1, 0]
-            camera.rotate_x(by: -.pi / 6)
-            
-            workspace_entity.addChild(camera)
-            camera_entity = camera
-        }
-        
-        // Place grid
-        _ = content.subscribe(to: SceneEvents.Update.self)
-        { [weak self] _ in
-            guard let self, let camera = self.camera_entity else { return }
-            
-            self.update_grid(camera_position: camera.position)
-        }*/
         
         // Dynamic pointer update
         _ = content.subscribe(to: SceneEvents.Update.self)
@@ -1589,27 +1577,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         
         // Place objects
-        place_objects() //(to: workspace_entity)
-        //update_tool_attachments()
-        
-        // Perform tool attachments update
-        /*_ = content.subscribe(to: SceneEvents.Update.self)
-        { [weak self] _ in
-            guard let self else { return }
-            
-            self.update_tool_attachments()
-        }*/
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2)
-        {
-            self.update_tool_attachments()
-        }
+        place_objects()
     }
     
     private var is_focusing = false
     
+    /// Focus camera to pivot
     private func focus(on entity: Entity?)
     {
+        //scene_content?.cameraTarget = entity?
+        
         if is_focusing { return }
         is_focusing = true
         
@@ -1621,10 +1598,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
             center = bounds.center
         }
         
-        var transform = camera_target.transform
+        var transform = workspace_camera_target.transform
         transform.translation = center
         
-        camera_target.move(
+        workspace_camera_target.move(
             to: transform,
             relativeTo: nil,
             duration: 0.4,
@@ -1635,6 +1612,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             self.is_focusing = false
         }
+    }
+    
+    private func move_camera_target()
+    {
+        
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
@@ -1783,114 +1765,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
         }
     }
-    
-    /*private var grid_visible = true
-    private var grid_lines: [String: ModelEntity] = [:]
-    
-    private let cell_size: Float = 0.1 // 100 mm
-    private let render_radius: Int = 200
-    
-    private let minor_width: Float = 0.002 //0.001
-    private let major_width: Float = 0.0025
-    
-    private let major_step = 10
-    
-    public var is_grid_visible: Bool { grid_visible } // UI Only
-    
-    public func toggle_grid_visiblity()
-    {
-        grid_visible.toggle()
-        grid_lines.values.forEach { $0.isEnabled = grid_visible }
-        
-        self.objectWillChange.send() // UI Only
-    }
-    
-    private func update_grid(camera_position: SIMD3<Float>)
-    {
-        if !grid_visible { return }
-        
-        let cx = Int(round(camera_position.x / cell_size))
-        let cz = Int(round(camera_position.z / cell_size))
-        
-        for i in -render_radius...render_radius
-        {
-            add_line(index: cx + i, axis: .x)
-            add_line(index: cz + i, axis: .z)
-        }
-        
-        cleanup_lines(center_x: cx, center_z: cz)
-    }
-    
-    private enum Axis { case x, z }
-    
-    private func add_line(index: Int, axis: Axis)
-    {
-        let key = "\(axis)_\(index)"
-        if grid_lines[key] != nil { return }
-        
-        let is_major = index % major_step == 0
-        let is_axis  = index == 0
-        
-        let width = is_axis ? major_width * 1.5
-        : is_major ? major_width
-        : minor_width
-        
-        let color = is_axis
-        ? UIColor.gray.withAlphaComponent(0.5)
-        : is_major
-        ? UIColor.gray.withAlphaComponent(0.4)
-        : UIColor.gray.withAlphaComponent(0.3)
-        
-        let length = Float(render_radius * 2) * cell_size
-        
-        let mesh: MeshResource
-        switch axis
-        {
-        case .x:
-            mesh = MeshResource.generatePlane(width: length, depth: width)
-        case .z:
-            mesh = MeshResource.generatePlane(width: width, depth: length)
-        }
-        
-        var material = SimpleMaterial(color: color, roughness: 1, isMetallic: false)
-        material.faceCulling = .none
-        
-        let line = ModelEntity(mesh: mesh, materials: [material])
-        line.orientation = simd_quatf(angle: .pi, axis: [1, 0, 0])
-        
-        switch axis
-        {
-        case .x:
-            line.position = [0, Float(-0.001), Float(index) * cell_size]
-        case .z:
-            line.position = [Float(index) * cell_size, Float(-0.002), 0]
-        }
-        
-        workspace_entity.addChild(line)
-        grid_lines[key] = line
-    }
-    
-    private func cleanup_lines(center_x: Int, center_z: Int)
-    {
-        for (key, line) in grid_lines
-        {
-            if key.hasPrefix("x_"),
-               let idx = Int(key.dropFirst(2)),
-               abs(idx - center_x) > render_radius
-            {
-                line.removeFromParent()
-                grid_lines.removeValue(forKey: key)
-            }
-            
-            if key.hasPrefix("z_"),
-               let idx = Int(key.dropFirst(2)),
-               abs(idx - center_z) > render_radius
-            {
-                line.removeFromParent()
-                grid_lines.removeValue(forKey: key)
-            }
-        }
-    }*/
     #endif
     
     // MARK: Workspace Objects Placement
@@ -1905,7 +1779,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         object.entity.removeFromParent()
     }
     
-    private func place_objects()//(to entity: Entity)
+    private func place_objects()
     {
         for robot in robots
         {
@@ -1916,6 +1790,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
         for tool in tools
         {
             place_object_entity(object: tool)
+        }
+        /*_ = content.subscribe(to: SceneEvents.Update.self)
+         { [weak self] _ in
+         guard let self else { return }
+         
+         self.update_tool_attachments()
+         }*/
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2)
+        {
+            self.update_tool_attachments()
         }
         
         for part in parts
@@ -2006,7 +1890,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // Camera pivot reposition
         if let selected_object = selected_object
         {
-            //scene_content?.cameraTarget = selected_object.entity
             focus(on: selected_object.entity)
         }
         
