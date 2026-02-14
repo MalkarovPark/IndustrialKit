@@ -1521,18 +1521,20 @@ public class Workspace: ObservableObject, @unchecked Sendable
         if camera_entity == nil
         {
             let camera = PerspectiveCamera()
-            /*camera.camera.fieldOfViewInDegrees = 60
+            camera.camera.fieldOfViewInDegrees = 60
             camera.position = [0, 1, 0]
-            camera.rotate_x(by: -.pi / 6)*/
+            camera.rotate_x(by: -.pi / 6)
             
             workspace_entity.addChild(camera)
             camera_entity = camera
             workspace_entity.addChild(camera_target)
-            scene_content?.cameraTarget = camera_target
+            //scene_content?.cameraTarget = camera_target
             
-            camera.camera.fieldOfViewInDegrees = 60
-            camera.position = [0, 1, 0]
-            camera.rotate_x(by: -.pi / 6)
+            let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 100, depth: 100))//, materials: [SimpleMaterial(color: color, roughness: 1.0, isMetallic: false)])
+            wall.position = SIMD3<Float>(0, 0, 0)
+            wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
+            camera_target = wall
+            scene_content?.cameraTarget = camera_target
             
             let cx = Int(round(camera.position.x / cell_size))
             let cz = Int(round(camera.position.z / cell_size))
