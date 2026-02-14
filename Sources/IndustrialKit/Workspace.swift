@@ -1517,6 +1517,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private var base_camera_distance: Float?
     private weak var target_tile: ModelEntity?
+    private let default_tile_size: Float = 0.5
+    private var is_focusing = false
     
     public func place_entity(to content: RealityViewCameraContent)
     {
@@ -1589,8 +1591,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         place_objects()
     }
     
-    private var is_focusing = false
-    
     /// Focus camera to pivot
     private func focus(on entity: Entity?)
     {
@@ -1600,32 +1600,66 @@ public class Workspace: ObservableObject, @unchecked Sendable
         is_focusing = true
         
         var center: SIMD3<Float> = .zero
+        var tileSize = SIMD2<Float>(repeating: default_tile_size)
         
-        if let entity = entity
+        // Center and scale
+        if let entity
         {
             let bounds = entity.visualBounds(relativeTo: nil)
             center = bounds.center
+            
+            let width = max(bounds.extents.x, 0.05)
+            let depth = max(bounds.extents.z, 0.05)
+            
+            let margin: Float = 1.25
+            tileSize = SIMD2<Float>(width * margin, depth * margin)
         }
         
+        // Pivot movement
         var transform = workspace_camera_target.transform
         transform.translation = center
         
+        let animation_duration: Float = 0.4
         workspace_camera_target.move(
             to: transform,
             relativeTo: nil,
-            duration: 0.4,
+            duration: TimeInterval(animation_duration),
             timingFunction: .easeInOut
         )
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4)
+        // Perform movement
+        if let tile = target_tile
         {
-            self.is_focusing = false
+            let baseWidth: Float = 0.5
+            let baseDepth: Float = 0.5
+            let targetScale = SIMD3<Float>(tileSize.x / baseWidth, tile.scale.y, tileSize.y / baseDepth)
+            
+            let startScale = tile.scale
+            let steps = 40
+            let dt = animation_duration / Float(steps)
+            
+            for i in 1...steps
+            {
+                let t = Float(i) / Float(steps)
+                let k = t * t * (3 - 2 * t) // smoothstep easing
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
+                    guard let tile else { return }
+                    tile.scale = simd_mix(startScale, targetScale, SIMD3<Float>(repeating: k))
+                }
+            }
+        }
+        
+        // Delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration))
+        { [weak self] in
+            self?.is_focusing = false
         }
     }
     
     private func capture_initial_camera_target_offset()
     {
-        guard let camera = workspace_camera, let parent = workspace_entity.scene else { return }
+        guard let camera = workspace_camera else { return }
 
         let camera_pos = camera.position(relativeTo: nil)
         let target_pos = workspace_camera_target.position(relativeTo: nil)
