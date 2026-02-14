@@ -1634,10 +1634,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
             let base_width: Float = 0.5
             let base_depth: Float = 0.5
             
-            let startScale = tile.scale
-            let targetScale = SIMD3<Float>(tile_size.x / base_width, tile.scale.y, tile_size.y / base_depth)
+            let start_scale = tile.scale
+            let target_scale = SIMD3<Float>(tile_size.x / base_width, tile.scale.y, tile_size.y / base_depth)
             
-            let steps = 40
+            let steps = 160 //40
             let dt = animation_duration / Float(steps)
             
             for i in 1...steps
@@ -1647,7 +1647,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
                     guard let tile else { return }
-                    tile.scale = simd_mix(startScale, targetScale, SIMD3<Float>(repeating: k))
+                    tile.scale = simd_mix(start_scale, target_scale, SIMD3<Float>(repeating: k))
                 }
             }
         }
