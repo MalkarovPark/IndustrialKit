@@ -1530,7 +1530,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             workspace_entity.addChild(camera_target)
             //scene_content?.cameraTarget = camera_target
             
-            let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.1, depth: 0.1), materials: [SimpleMaterial(color: .green, roughness: 1.0, isMetallic: false)])
+            let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 1, depth: 1), materials: [SimpleMaterial(color: .green, roughness: 1.0, isMetallic: false)])
             wall.position = SIMD3<Float>(0, 0, 0)
             wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
             camera_target.addChild(wall)
@@ -1546,6 +1546,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
         { [weak self] _ in
             guard let self, let camera = self.camera_entity else { return }
             self.update_grid(camera_position: camera.position)
+        }
+        
+        _ = content.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self, let camera = self.camera_entity else { return }
+            
+            self.scene_content?.cameraTarget = self.camera_target
         }
         
         /*// Place (connect) camera
