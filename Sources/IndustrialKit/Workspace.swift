@@ -1964,7 +1964,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         // Camera pivot reposition
         //scene_content?.cameraTarget = nil
-        focus(on: workspace_entity)
+        focus(on: nil)//workspace_entity)
         
         self.objectWillChange.send() // UI only
     }
