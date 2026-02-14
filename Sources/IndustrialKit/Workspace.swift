@@ -1552,9 +1552,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // Dynamic camera
         _ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
-            guard let self, let camera = self.camera_entity else { return }
+            guard let self else { return }
             
-            self.scene_content?.cameraTarget = self.camera_target
+            if self.is_focusing
+            {
+                self.scene_content?.cameraTarget = self.camera_target
+            }
         }
         
         /*// Place (connect) camera
@@ -1603,8 +1606,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
+    private var is_focusing = false
+    
     private func focus(on entity: Entity?)
     {
+        if !is_focusing { return }
+        is_focusing = true
+        
         var center: SIMD3<Float> = .zero
         
         if let entity = entity
@@ -1622,6 +1630,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
             duration: 0.4,
             timingFunction: .easeInOut
         )
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4)
+        {
+            self.is_focusing = false
+        }
     }
     
     public func remove_entity(from content: RealityViewCameraContent)
