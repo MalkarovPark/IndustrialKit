@@ -1512,6 +1512,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var workspace_camera: PerspectiveCamera?
     private var workspace_camera_target = Entity()
     
+    private var camera_target_offset: SIMD3<Float> = .zero
+    private var camera_target_initialized = false
+    
+    private var base_camera_distance: Float?
+    private weak var target_tile: ModelEntity?
+    
     public func place_entity(to content: RealityViewCameraContent)
     {
         scene_content = content
@@ -1533,12 +1539,15 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             // Target entity setup
             let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.5, depth: 0.5))
-            wall.position = SIMD3<Float>(0, 0, 0)
             wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
+            workspace_camera_target.addChild(wall)
+            target_tile = wall
             wall.isEnabled = false
             
             workspace_camera_target.addChild(wall)
             scene_content?.cameraTarget = workspace_camera_target
+            
+            capture_initial_camera_target_offset()
             
             // Dynamic camera
             _ = content.subscribe(to: SceneEvents.Update.self)
@@ -1614,9 +1623,59 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    private func move_camera_target()
+    private func capture_initial_camera_target_offset()
     {
+        guard let camera = workspace_camera, let parent = workspace_entity.scene else { return }
+
+        let camera_pos = camera.position(relativeTo: nil)
+        let target_pos = workspace_camera_target.position(relativeTo: nil)
+
+        camera_target_offset = target_pos - camera_pos
+        camera_target_initialized = true
+    }
+    
+    func move_camera_target()
+    {
+        guard let camera = workspace_camera else { return }
         
+        let camera_pos = camera.position(relativeTo: nil)
+        let m = camera.transformMatrix(relativeTo: nil)
+        
+        var forward = SIMD3<Float>(-m.columns.2.x, -m.columns.2.y, -m.columns.2.z)
+        forward = normalize(forward)
+        
+        if abs(forward.y) < 0.0001 { return }
+        
+        let t = -camera_pos.y / forward.y
+        
+        if t <= 0 { return }
+        
+        let intersection = camera_pos + forward * t
+        
+        workspace_camera_target.setPosition(intersection, relativeTo: nil)
+        
+        update_target_tile_scale(camera_pos, intersection)
+        
+        func update_target_tile_scale(_ camera_position: SIMD3<Float>, _ target_position: SIMD3<Float>)
+        {
+            guard let tile = target_tile else { return }
+            
+            let distance = simd_distance(camera_position, target_position)
+            
+            if base_camera_distance == nil
+            {
+                base_camera_distance = distance
+                tile.scale = .one
+                return
+            }
+            
+            guard let base = base_camera_distance else { return }
+            
+            let relative_scale = distance / base
+            let clamped = min(max(relative_scale, 0.15), 40.0)
+            
+            tile.scale = SIMD3<Float>(repeating: clamped)
+        }
     }
     
     public func remove_entity(from content: RealityViewCameraContent)

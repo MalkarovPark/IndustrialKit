@@ -8,6 +8,8 @@
 import SwiftUI
 import IndustrialKit
 
+import RealityKit
+
 public struct SpatialPendantView: View
 {
     @ObservedObject var controller: PendantController
@@ -179,7 +181,64 @@ struct SpatialPendant_Previews: PreviewProvider
         @StateObject var workspace = Workspace()
         @StateObject var pendant_controller = PendantController()
         
+        @State private var is_pan = false
+        @State private var scene_content: RealityViewCameraContent?
+        
         var body: some View
+        {
+            ZStack
+            {
+                RealityView
+                { content in
+                    scene_content = content
+                    #if os(macOS)
+                    scene_content?.camera = .virtual
+                    #else
+                    scene_content?.camera = is_spatial ? .spatialTracking : .virtual
+                    #endif
+                    
+                    workspace.place_entity(to: content)
+                }
+                .realityViewCameraControls(is_pan ? .pan : .orbit)
+                .highPriorityGesture(
+                    TapGesture()
+                        .targetedToAnyEntity()
+                        .onEnded
+                        { value in
+                            workspace.process_tap(value: value)
+                        }
+                )
+                .gesture(
+                    TapGesture()
+                        .onEnded
+                        {
+                            workspace.process_empty_tap()
+                        }
+                )
+                .overlay(alignment: .topLeading)
+                {
+                    Button("Switch") { button_tap() }
+                        .buttonStyle(.bordered)
+                        .padding()
+                }
+                .overlay(alignment: .bottomLeading)
+                {
+                    Button(action: { is_pan.toggle() })
+                    {
+                        Image(systemName: is_pan ? "move.3d" : "rotate.3d")
+                    }
+                    .buttonStyle(.bordered)
+                    .padding()
+                }
+                
+                SpatialPendantView(controller: pendant_controller, workspace: workspace)
+                    .padding(10)
+            }
+            .frame(height: 480)
+            .onAppear { workspace_preparation() }
+        }
+        
+        /*var body: some View
         {
             ZStack
             {
@@ -194,7 +253,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     .buttonStyle(.bordered)
                     .padding()
             }
-        }
+        }*/
         
         @State var inc = 1
         
