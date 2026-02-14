@@ -1530,7 +1530,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             workspace_entity.addChild(camera_target)
             //scene_content?.cameraTarget = camera_target
             
-            let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.5, depth: 0.5))//, materials: [SimpleMaterial(color: .green, roughness: 1.0, isMetallic: false)])
+            let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.5, depth: 0.5), materials: [SimpleMaterial(color: .green.withAlphaComponent(0), roughness: 1.0, isMetallic: false)])
             wall.position = SIMD3<Float>(0, 0, 0)
             wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
             camera_target.addChild(wall)
