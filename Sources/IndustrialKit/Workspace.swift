@@ -1610,7 +1610,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func focus(on entity: Entity?)
     {
-        if !is_focusing { return }
+        if is_focusing { return }
         is_focusing = true
         
         var center: SIMD3<Float> = .zero
