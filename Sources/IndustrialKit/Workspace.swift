@@ -1658,7 +1658,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             let depth = max(bounds.extents.z, 0.05)
             
             let margin: Float = 1.25
-            tile_size = max(SIMD2<Float>(width * margin, depth * margin), 0.5)
+            tile_size = max(SIMD2<Float>(width * margin, depth * margin), 0.25)//0.5)
         }
         
         let animation_duration: Float = 0.4
