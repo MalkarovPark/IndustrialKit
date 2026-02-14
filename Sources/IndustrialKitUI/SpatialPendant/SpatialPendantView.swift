@@ -191,11 +191,7 @@ struct SpatialPendant_Previews: PreviewProvider
                 RealityView
                 { content in
                     scene_content = content
-                    #if os(macOS)
                     scene_content?.camera = .virtual
-                    #else
-                    scene_content?.camera = is_spatial ? .spatialTracking : .virtual
-                    #endif
                     
                     workspace.place_entity(to: content)
                 }
