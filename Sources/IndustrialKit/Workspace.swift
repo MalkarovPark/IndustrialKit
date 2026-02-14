@@ -1600,9 +1600,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         is_focusing = true
         
         var center: SIMD3<Float> = .zero
-        var tileSize = SIMD2<Float>(repeating: default_tile_size)
+        var tile_size = SIMD2<Float>(repeating: default_tile_size)
         
-        // Center and scale
+        // Center
         if let entity
         {
             let bounds = entity.visualBounds(relativeTo: nil)
@@ -1612,14 +1612,15 @@ public class Workspace: ObservableObject, @unchecked Sendable
             let depth = max(bounds.extents.z, 0.05)
             
             let margin: Float = 1.25
-            tileSize = SIMD2<Float>(width * margin, depth * margin)
+            tile_size = SIMD2<Float>(width * margin, depth * margin)
         }
+        
+        let animation_duration: Float = 0.4
         
         // Pivot movement
         var transform = workspace_camera_target.transform
         transform.translation = center
         
-        let animation_duration: Float = 0.4
         workspace_camera_target.move(
             to: transform,
             relativeTo: nil,
@@ -1627,21 +1628,22 @@ public class Workspace: ObservableObject, @unchecked Sendable
             timingFunction: .easeInOut
         )
         
-        // Perform movement
+        // Animate tile scale smoothly
         if let tile = target_tile
         {
-            let baseWidth: Float = 0.5
-            let baseDepth: Float = 0.5
-            let targetScale = SIMD3<Float>(tileSize.x / baseWidth, tile.scale.y, tileSize.y / baseDepth)
+            let base_width: Float = 0.5
+            let base_depth: Float = 0.5
             
             let startScale = tile.scale
+            let targetScale = SIMD3<Float>(tile_size.x / base_width, tile.scale.y, tile_size.y / base_depth)
+            
             let steps = 40
             let dt = animation_duration / Float(steps)
             
             for i in 1...steps
             {
                 let t = Float(i) / Float(steps)
-                let k = t * t * (3 - 2 * t) // smoothstep easing
+                let k = t * t * (3 - 2 * t) // Smoothstep easing
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
                     guard let tile else { return }
