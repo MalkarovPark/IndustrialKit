@@ -1923,9 +1923,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
         object.model_entity?.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
         object.model_entity?.components.set(PhysicsMotionComponent())
         
-        object.entity.update_position(object.position)
+        //object.entity.update_position(object.position)
         
-        workspace_anchor.addChild(object.entity) // Physics
+        object.model_entity?.position = [object.position.x, object.position.z, object.position.y]
+        
+        workspace_anchor.addChild(object.model_entity ?? Entity()) // Physics
         
         //Test
         /*let cube_size: Float = 0.1
