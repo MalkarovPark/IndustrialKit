@@ -1511,6 +1511,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var workspace_entity = Entity()
     private var scene_content: RealityViewCameraContent?
     
+    private var workspace_anchor = AnchorEntity(world: .zero)
+    
     private var workspace_camera: PerspectiveCamera?
     private var workspace_camera_target = Entity()
     
@@ -1568,10 +1570,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public func place_entity(to content: RealityViewCameraContent)
     {
         scene_content = content
-        
-        workspace_entity = AnchorEntity(world: .zero) // Physics
-        
         scene_content?.add(workspace_entity)
+        
+        scene_content?.add(workspace_anchor) // Physics
         
         // Place (connect) camera
         if workspace_camera == nil
@@ -1918,40 +1919,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         workspace_entity.addChild(object.entity)
         object.entity.update_position(object.position)
         
-        apply_compound_physics(to: object.entity)
-        
-        func apply_compound_physics(to entity: Entity)
-        {
-            var body = PhysicsBodyComponent()
-            
-            body.mode = .dynamic
-            body.massProperties = .default
-            
-            body.material = .generate(
-                friction: 0.8,
-                restitution: 0.05
-            )
-            
-            entity.components.set(body)
-            
-            entity.components.set(PhysicsMotionComponent())
-        }
-        
-        func activate_physics(_ entity: Entity)
-        {
-            entity.components.set(SynchronizationComponent())
-            
-            var body = PhysicsBodyComponent()
-            body.mode = .dynamic
-            body.massProperties = .default
-            body.material = .default
-            
-            entity.components.set(body)
-            
-            var motion = PhysicsMotionComponent()
-            motion.linearVelocity = [0, -0.001, 0] // kick
-            entity.components.set(motion)
-        }
+        workspace_anchor.addChild(object.entity) // Physics
     }
     
     public func remove_object_entity(object: WorkspaceObject)
@@ -2015,6 +1983,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         floor.position = [0, -thickness/2, 0]
         
         workspace_entity.addChild(floor)
+        workspace_anchor.addChild(floor)
     }
     
     // MARK: Pointer Handling
