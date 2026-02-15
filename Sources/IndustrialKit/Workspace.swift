@@ -1951,12 +1951,35 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func place_physical_floor()
     {
-        let floor = ModelEntity(mesh: MeshResource.generatePlane(width: 2000, depth: 2000))
+        let size: Float = 2000
+        
+        // Entity
+        let floor = ModelEntity(mesh: MeshResource.generatePlane(width: size, depth: size))
         floor.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
         workspace_entity.addChild(floor)
         floor.isEnabled = false
         
+        // Collision
+        let thickness: Float = 0.02
         
+        let collision_shape = ShapeResource.generateBox(size: [size, thickness, size])
+        
+        floor.components.set(
+            CollisionComponent(
+                shapes: [collision_shape],
+                mode: .default
+            )
+        )
+        
+        floor.components.set(
+            PhysicsBodyComponent(
+                massProperties: .default,
+                material: .default,
+                mode: .static
+            )
+        )
+        
+        floor.position.y = -thickness / 2
     }
     
     // MARK: Pointer Handling

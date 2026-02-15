@@ -85,15 +85,7 @@ open class Part: WorkspaceObject
     public init(name: String, scene_name: String)
     {
         super.init(name: name)
-        //self.node = (SCNScene(named: scene_name) ?? SCNScene()).rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
     }
-    
-    /// Inits part by name and scene.
-    /*public init(name: String, scene: SCNScene)
-    {
-        super.init(name: name)
-        self.node = scene.rootNode.childNode(withName: self.scene_node_name, recursively: false)?.clone()
-    }*/
     
     /// Inits part by name and part module.
     public init(name: String, module: PartModule, is_internal: Bool = true)
@@ -107,6 +99,55 @@ open class Part: WorkspaceObject
     public override init(name: String, module_name: String, is_internal: Bool)
     {
         super.init(name: name, module_name: module_name, is_internal: is_internal)
+    }
+    
+    override open func extend_entity_preparation(_ entity: Entity)
+    {
+        generate_collisions_recursively(entity)
+        
+        remove_child_physics(entity)
+        
+        apply_compound_physics(to: entity)
+    }
+    
+    private func generate_collisions_recursively(_ entity: Entity)
+    {
+        if let model = entity as? ModelEntity
+        {
+            model.generateCollisionShapes(recursive: false)
+        }
+        
+        for child in entity.children
+        {
+            generate_collisions_recursively(child)
+        }
+    }
+    
+    private func remove_child_physics(_ entity: Entity)
+    {
+        for child in entity.children
+        {
+            child.components.remove(PhysicsBodyComponent.self)
+            child.components.remove(PhysicsMotionComponent.self)
+            remove_child_physics(child)
+        }
+    }
+    
+    private func apply_compound_physics(to entity: Entity)
+    {
+        var body = PhysicsBodyComponent()
+        
+        body.mode = .dynamic
+        body.massProperties = .default
+        
+        body.material = .generate(
+            friction: 0.8,
+            restitution: 0.05
+        )
+        
+        entity.components.set(body)
+        
+        entity.components.set(PhysicsMotionComponent())
     }
     
     // MARK: - Module handling
@@ -341,6 +382,17 @@ public enum PhysicsType: String, Codable, Equatable, CaseIterable
     case ph_dynamic = "Dynamic"
     case ph_kinematic = "Kinematic"
     case ph_none = "None"
+    
+    public var mode: PhysicsBodyMode?
+    {
+        switch self
+        {
+        case .ph_static: .static
+        case .ph_dynamic: .dynamic
+        case .ph_kinematic: .kinematic
+        default: .none
+        }
+    }
 }
 
 // MARK: - File Data
