@@ -1925,7 +1925,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         //object.entity.update_position(object.position)
         
-        object.model_entity?.position = [object.position.x, object.position.z, object.position.y]
+        object.model_entity?.position = [object.position.x / 1000, object.position.z / 1000, object.position.y / 1000]
         
         workspace_anchor.addChild(object.model_entity ?? Entity()) // Physics
         
