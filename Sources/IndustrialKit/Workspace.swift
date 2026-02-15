@@ -1916,10 +1916,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Workspace Objects Placement
     public func place_object_entity(object: WorkspaceObject)
     {
-        workspace_entity.addChild(object.entity)
-        object.entity.update_position(object.position)
-        
         workspace_anchor.addChild(object.entity) // Physics
+        //workspace_entity.addChild(object.entity)
+        object.entity.update_position(object.position)
     }
     
     public func remove_object_entity(object: WorkspaceObject)
