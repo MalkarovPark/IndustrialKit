@@ -1916,11 +1916,18 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Workspace Objects Placement
     public func place_object_entity(object: WorkspaceObject)
     {
+        workspace_anchor.addChild(object.entity)
+        
+        object.entity.generateCollisionShapes(recursive: true)
+        
+        object.entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
+        object.entity.components.set(PhysicsMotionComponent())
+        
         //workspace_anchor.addChild(object.entity) // Physics
         //workspace_entity.addChild(object.entity)
         //object.entity.update_position(object.position)
         
-        let cube_size: Float = 0.1
+        /*let cube_size: Float = 0.1
         let cube_mesh = MeshResource.generateBox(size: cube_size)
         let cube_material = SimpleMaterial(color: .purple, isMetallic: true)
         let cube = ModelEntity(mesh: cube_mesh, materials: [cube_material])
@@ -1932,7 +1939,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         object.entity.components.set(PhysicsMotionComponent())
         
         workspace_anchor.addChild(object.entity) // Physics
-        object.entity.update_position(object.position)
+        object.entity.update_position(object.position)*/
         
         //Test
         /*let cube_size: Float = 0.1
