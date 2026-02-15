@@ -1568,6 +1568,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public func place_entity(to content: RealityViewCameraContent)
     {
         scene_content = content
+        
+        workspace_entity = AnchorEntity(world: .zero) // Physics
+        
         scene_content?.add(workspace_entity)
         
         // Place (connect) camera
@@ -1816,7 +1819,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     private func create_grid_async(center_x: Int, center_z: Int)
     {
-        Task.detached(priority: .userInitiated) { [weak self] in
+        Task.detached(priority: .userInitiated)
+        { [weak self] in
             guard let self else { return }
             
             let indices = (-self.render_radius...self.render_radius).map { $0 }
