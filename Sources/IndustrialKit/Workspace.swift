@@ -1918,16 +1918,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         //workspace_anchor.addChild(object.entity) // Physics
         //workspace_entity.addChild(object.entity)
-        
-        object.model_entity?.generateCollisionShapes(recursive: true)
-        object.model_entity?.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
-        object.model_entity?.components.set(PhysicsMotionComponent())
-        
         //object.entity.update_position(object.position)
         
-        object.model_entity?.position = [object.position.x / 1000, object.position.z / 1000, object.position.y / 1000]
+        let cube_size: Float = 0.1
+        let cube_mesh = MeshResource.generateBox(size: cube_size)
+        let cube_material = SimpleMaterial(color: .purple, isMetallic: true)
+        let cube = ModelEntity(mesh: cube_mesh, materials: [cube_material])
         
-        workspace_anchor.addChild(object.model_entity ?? Entity()) // Physics
+        object.entity.addChild(cube)
+        
+        object.entity.generateCollisionShapes(recursive: true)
+        object.entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
+        object.entity.components.set(PhysicsMotionComponent())
+        
+        workspace_anchor.addChild(object.entity) // Physics
+        object.entity.update_position(object.position)
         
         //Test
         /*let cube_size: Float = 0.1
