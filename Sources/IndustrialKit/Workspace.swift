@@ -1923,6 +1923,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         object.entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
         object.entity.components.set(PhysicsMotionComponent())
         
+        object.entity.position = [0, 0.5, 0]
         workspace_anchor.addChild(object.entity) // Physics
         
         //Test
