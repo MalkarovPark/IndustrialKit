@@ -107,7 +107,7 @@ open class Part: WorkspaceObject
         
         remove_child_physics(entity)
         
-        apply_compound_physics(to: entity)
+        //apply_compound_physics(to: entity)
     }
     
     private func generate_collisions_recursively(_ entity: Entity)

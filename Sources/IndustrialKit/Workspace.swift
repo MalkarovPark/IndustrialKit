@@ -1917,6 +1917,41 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         workspace_entity.addChild(object.entity)
         object.entity.update_position(object.position)
+        
+        apply_compound_physics(to: object.entity)
+        
+        func apply_compound_physics(to entity: Entity)
+        {
+            var body = PhysicsBodyComponent()
+            
+            body.mode = .dynamic
+            body.massProperties = .default
+            
+            body.material = .generate(
+                friction: 0.8,
+                restitution: 0.05
+            )
+            
+            entity.components.set(body)
+            
+            entity.components.set(PhysicsMotionComponent())
+        }
+        
+        func activate_physics(_ entity: Entity)
+        {
+            entity.components.set(SynchronizationComponent())
+            
+            var body = PhysicsBodyComponent()
+            body.mode = .dynamic
+            body.massProperties = .default
+            body.material = .default
+            
+            entity.components.set(body)
+            
+            var motion = PhysicsMotionComponent()
+            motion.linearVelocity = [0, -0.001, 0] // kick
+            entity.components.set(motion)
+        }
     }
     
     public func remove_object_entity(object: WorkspaceObject)
