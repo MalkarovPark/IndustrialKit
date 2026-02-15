@@ -1919,8 +1919,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         workspace_anchor.addChild(object.entity) // Physics
         //workspace_entity.addChild(object.entity)
         object.entity.update_position(object.position)
+        
+        object.entity.generateCollisionShapes(recursive: true)
+        object.entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
+        object.entity.components.set(PhysicsMotionComponent())
         //Test
-        let cube_size: Float = 0.1
+        /*let cube_size: Float = 0.1
         let cube_mesh = MeshResource.generateBox(size: cube_size)
         let cube_material = SimpleMaterial(color: .purple, isMetallic: true)
         let cube = ModelEntity(mesh: cube_mesh, materials: [cube_material])
@@ -1928,7 +1932,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         cube.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
         cube.components.set(PhysicsMotionComponent())
         cube.position = [0, 0.5, 0]
-        workspace_anchor.addChild(cube)
+        workspace_anchor.addChild(cube)*/
     }
     
     public func remove_object_entity(object: WorkspaceObject)
