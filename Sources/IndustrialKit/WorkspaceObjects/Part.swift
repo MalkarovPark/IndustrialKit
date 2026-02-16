@@ -103,106 +103,77 @@ open class Part: WorkspaceObject
     
     override open func extend_entity_preparation(_ entity: Entity)
     {
-        apply_physics3(to: entity)
+        apply_physics(to: entity)
     }
     
     func apply_physics(to entity: Entity)
     {
-        /*entity.visit
-        { child in
-            child.components.remove(PhysicsBodyComponent.self)
-            child.components.remove(PhysicsMotionComponent.self)
-            child.components.remove(CollisionComponent.self)
-        }*/
+        let physicsRoot = Entity()
+        entity.addChild(physicsRoot)
         
-        var shapes: [ShapeResource] = []
-        
-        entity.visit
-        { child in
-            guard let model = child as? ModelEntity,
-                  let mesh = model.model?.mesh
-            else { return }
-            
-            let relativeTransform = child.transformMatrix(relativeTo: entity)
-            
-            let position = SIMD3<Float>(
-                relativeTransform.columns.3.x,
-                relativeTransform.columns.3.y,
-                relativeTransform.columns.3.z
-            )
-            
-            let rotation = simd_quatf(relativeTransform)
-            
-            let shape = ShapeResource.generateConvex(from: mesh)
-            
-            let offsetShape = shape.offsetBy(
-                rotation: rotation, translation: position
-            )
-            
-            shapes.append(offsetShape)
+        let children = entity.children
+        for child in children where child !== physicsRoot
+        {
+            physicsRoot.addChild(child)
         }
         
-        guard !shapes.isEmpty else { return }
+        var globalMin = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
+        var globalMax = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
+        var models: [ModelEntity] = []
         
-        entity.components.set(CollisionComponent(shapes: shapes))
-        
-        entity.components.set(
-            PhysicsBodyComponent(
-                massProperties: .default,
-                material: .default,
-                mode: .dynamic
-            )
-        )
-    }
-    
-    func apply_physics2(to entity: Entity)
-    {
-        /*entity.visit
-        { child in
-            child.components.remove(PhysicsBodyComponent.self)
-            child.components.remove(CollisionComponent.self)
-            child.components.remove(PhysicsMotionComponent.self)
-        }*/
-        
-        var shapes: [ShapeResource] = []
-        
-        entity.visit
-        { child in
+        physicsRoot.visit { child in
             guard let model = child as? ModelEntity else { return }
             
-            let bounds = model.visualBounds(relativeTo: entity)
+            let b = model.visualBounds(relativeTo: physicsRoot)
             
-            let size = bounds.extents
-            let center = bounds.center
+            globalMin = min(globalMin, b.min)
+            globalMax = max(globalMax, b.max)
             
-            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001
-            {
-                return
-            }
-            
-            let shape = ShapeResource.generateBox(size: size)
-            
-            let positionedShape = shape.offsetBy(
-                rotation: simd_quatf(), translation: center
-            )
-            
-            shapes.append(positionedShape)
+            models.append(model)
         }
         
-        guard !shapes.isEmpty else { return }
+        guard !models.isEmpty else { return }
         
-        entity.components.set(CollisionComponent(shapes: shapes))
+        let center = (globalMin + globalMax) * 0.5
         
-        entity.components.set(
+        physicsRoot.position = center
+        
+        var shapes: [ShapeResource] = []
+        
+        for model in models
+        {
+            let bounds = model.visualBounds(relativeTo: physicsRoot)
+            let size = bounds.extents
+            
+            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
+            
+            let localCenter = bounds.center - center
+            
+            let shape = ShapeResource.generateBox(size: size)
+                .offsetBy(rotation: simd_quatf(angle: 0, axis: SIMD3(0,1,0)), translation: localCenter)
+            
+            shapes.append(shape)
+        }
+        
+        physicsRoot.components.set(CollisionComponent(shapes: shapes))
+        
+        physicsRoot.components.set(
             PhysicsBodyComponent(
                 massProperties: .default,
                 material: .default,
                 mode: .dynamic
             )
         )
+        
+        physicsRoot.components.set(PhysicsMotionComponent())
+        
+        if var motion = physicsRoot.components[PhysicsMotionComponent.self] {
+            motion.linearVelocity = [0.0001, 0, 0]
+            physicsRoot.components.set(motion)
+        }
     }
     
-    func apply_physics3(to entity: Entity)
+    /*func apply_physics(to entity: Entity)
     {
         /*entity.visit
         { child in
@@ -264,7 +235,7 @@ open class Part: WorkspaceObject
             motion.linearVelocity = [0.0001, 0, 0] // триггер broad-phase
             entity.components.set(motion)
         }
-    }
+    }*/
     
     private func generate_collisions_recursively(_ entity: Entity)
     {
