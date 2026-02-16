@@ -75,7 +75,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     public func delete_object(_ object: WorkspaceObject)
     {
-        //focus(on: nil)
+        focus(on: nil) // Focus on workspace
         
         object.entity.removeFromParent()
         
@@ -1554,7 +1554,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         let average = (dx + dy) * 0.5 * 0.001
         
-        return max(average /** 1.2*/, 0.5)
+        return max(average * 1.2, 0.5)
         
         /*let dx = max_x - min_x
         let dy = max_y - min_y
@@ -1638,6 +1638,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         place_objects() // Place objects
         place_physical_floor() // Place floor
+        
+        focus(on: nil) // Focus on workspace
     }
     
     // MARK: Camera
@@ -1916,16 +1918,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Workspace Objects Placement
     public func place_object_entity(object: WorkspaceObject)
     {
-        /*let cube_size: Float = 0.1
-        let cube_mesh = MeshResource.generateBox(size: cube_size)
-        let cube_material = SimpleMaterial(color: .purple, isMetallic: true)
-        let cube = ModelEntity(mesh: cube_mesh, materials: [cube_material])
-        cube.generateCollisionShapes(recursive: true)
-        cube.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
-        cube.components.set(PhysicsMotionComponent())*/
-        
         object.entity.update_position(object.position)
-        workspace_anchor.addChild(object.entity)//(cube)
+        workspace_anchor.addChild(object.entity)
     }
     
     public func remove_object_entity(object: WorkspaceObject)
@@ -1986,9 +1980,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
             )
         )
         
-        floor.position = [0, -thickness/2, 0]
+        floor.position = [0, -thickness / 2, 0]
         
-        workspace_entity.addChild(floor)
+        //workspace_entity.addChild(floor)
         workspace_anchor.addChild(floor)
     }
     

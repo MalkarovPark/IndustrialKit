@@ -108,6 +108,13 @@ open class Part: WorkspaceObject
     
     func apply_physics(to entity: Entity)
     {
+        /*entity.visit
+        { child in
+            child.components.remove(CollisionComponent.self)
+            child.components.remove(PhysicsBodyComponent.self)
+            child.components.remove(PhysicsMotionComponent.self)
+        }*/
+        
         var models: [ModelEntity] = []
         
         entity.visit
@@ -118,8 +125,6 @@ open class Part: WorkspaceObject
         }
         
         guard !models.isEmpty else { return }
-        
-        //let center = (globalMin + globalMax) * 0.5
         
         var shapes: [ShapeResource] = []
         
@@ -132,7 +137,7 @@ open class Part: WorkspaceObject
             
             let shape = ShapeResource.generateBox(size: size)
                 .offsetBy(
-                    rotation: simd_quatf(angle: 0, axis: SIMD3(0,1,0)),
+                    rotation: simd_quatf(angle: 0, axis: SIMD3(0, 1, 0)),
                     translation: bounds.center
                 )
             
