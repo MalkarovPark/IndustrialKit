@@ -108,37 +108,60 @@ open class Part: WorkspaceObject
     
     func apply_physics(to entity: Entity)
     {
-        var shapes: [ShapeResource] = []
+        var minV = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
+        var maxV = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
+        
+        struct ShapeInfo
+        {
+            var center: SIMD3<Float>
+            var size: SIMD3<Float>
+            var rotation: simd_quatf
+        }
+        
+        var infos: [ShapeInfo] = []
         
         entity.visit
         { child in
             guard let model = child as? ModelEntity,
-                  let meshBounds = model.model?.mesh.bounds
+                  let bounds = model.model?.mesh.bounds
             else { return }
             
-            let localCenter = meshBounds.center
-            let extents = meshBounds.extents
+            let t = model.transformMatrix(relativeTo: entity)
             
-            if extents.x < 0.0001 || extents.y < 0.0001 || extents.z < 0.0001 {
-                return
-            }
+            let c4 = t * SIMD4<Float>(bounds.center, 1)
+            let center = SIMD3<Float>(c4.x, c4.y, c4.z)
             
-            let transform = model.transformMatrix(relativeTo: entity)
+            let ext = bounds.extents
             
-            let worldCenter4 = transform * SIMD4<Float>(localCenter, 1)
-            let worldCenter = SIMD3<Float>(worldCenter4.x, worldCenter4.y, worldCenter4.z)
+            minV = min(minV, center - ext * 0.5)
+            maxV = max(maxV, center + ext * 0.5)
             
-            let rotation = simd_quatf(transform)
+            infos.append(
+                ShapeInfo(
+                    center: center,
+                    size: ext,
+                    rotation: simd_quatf(t)
+                )
+            )
+        }
+        
+        guard !infos.isEmpty else { return }
+        
+        let compoundCenter = (minV + maxV) * 0.5
+        
+        var shapes: [ShapeResource] = []
+        
+        for info in infos
+        {
+            let localCenter = info.center - compoundCenter
             
-            let shape = ShapeResource.generateBox(size: extents)
+            let shape = ShapeResource.generateBox(size: info.size)
                 .offsetBy(
-                    rotation: rotation, translation: worldCenter
+                    rotation: info.rotation, translation: localCenter
                 )
             
             shapes.append(shape)
         }
-        
-        guard !shapes.isEmpty else { return }
         
         entity.components.set(CollisionComponent(shapes: shapes))
         
@@ -153,7 +176,7 @@ open class Part: WorkspaceObject
         entity.components.set(PhysicsMotionComponent())
         if var motion = entity.components[PhysicsMotionComponent.self]
         {
-            motion.linearVelocity = [0.0001, 0, 0]
+            motion.linearVelocity = [0.001, 0, 0]
             entity.components.set(motion)
         }
     }
