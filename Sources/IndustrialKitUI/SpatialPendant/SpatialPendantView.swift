@@ -219,7 +219,7 @@ struct SpatialPendant_Previews: PreviewProvider
                 }
                 .overlay(alignment: .bottomLeading)
                 {
-                    Button(action: { is_pan.toggle()/*; test()*/ })
+                    Button(action: { is_pan.toggle(); test() })
                     {
                         Image(systemName: is_pan ? "move.3d" : "rotate.3d")
                     }
@@ -244,12 +244,6 @@ struct SpatialPendant_Previews: PreviewProvider
             let cube_mesh = MeshResource.generateBox(size: cube_size)
             let cube_material = SimpleMaterial(color: .purple, isMetallic: true)
             let cube = ModelEntity(mesh: cube_mesh, materials: [cube_material])
-            
-            cube.generateCollisionShapes(recursive: true)
-            cube.components.set(PhysicsBodyComponent(
-                massProperties: .default, material: .default, mode: .dynamic
-            ))
-            cube.components.set(PhysicsMotionComponent())
             
             let part = Part(name: "Test", entity: cube)
             part.position.z = 100
