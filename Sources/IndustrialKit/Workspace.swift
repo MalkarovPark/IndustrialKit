@@ -1965,7 +1965,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private func place_physical_floor()
     {
         let size: Float = 2000
-        let thickness: Float = 0.05
+        let thickness: Float = 20
         
         let floor = Entity()
         

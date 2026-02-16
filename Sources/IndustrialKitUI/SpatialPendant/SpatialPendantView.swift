@@ -213,13 +213,13 @@ struct SpatialPendant_Previews: PreviewProvider
                 )
                 .overlay(alignment: .topLeading)
                 {
-                    Button("Switch") { button_tap() }
+                    Button("Switch") { button_tap(); test() }
                         .buttonStyle(.bordered)
                         .padding()
                 }
                 .overlay(alignment: .bottomLeading)
                 {
-                    Button(action: { is_pan.toggle(); test() })
+                    Button(action: { is_pan.toggle() })
                     {
                         Image(systemName: is_pan ? "move.3d" : "rotate.3d")
                     }
@@ -240,13 +240,30 @@ struct SpatialPendant_Previews: PreviewProvider
         
         func test()
         {
-            let cube_size: Float = 0.1
-            let cube_mesh = MeshResource.generateBox(size: cube_size)
-            let cube_material = SimpleMaterial(color: .purple, isMetallic: true)
-            let cube = ModelEntity(mesh: cube_mesh, materials: [cube_material])
+            let main = ModelEntity()
+            let sphere = ModelEntity(
+                mesh: MeshResource.generateSphere(radius: 0.05),
+                materials: [SimpleMaterial(color: .systemTeal, isMetallic: true)]
+            )
             
-            let part = Part(name: "Test", entity: cube)
-            part.position.z = 100
+            sphere.update_position((x: 0, y: 0, z: -50, r: 0, p: 0, w: 0))
+            
+            //let sphere_part = Part(name: "Sphere", entity: sphere)
+            //sphere_part.position.z = 50
+            
+            //workspace.add_part(sphere_part)
+            
+            let cube = ModelEntity(
+                mesh: MeshResource.generateBox(size: 0.1),
+                materials: [SimpleMaterial(color: .purple, isMetallic: true)]
+            )
+            
+            main.addChild(cube)
+            main.addChild(sphere)
+            
+            let part = Part(name: "Test", entity: main)
+            part.position.z = 400
+            part.position.p = .pi / 4
             
             workspace.add_part(part)
         }

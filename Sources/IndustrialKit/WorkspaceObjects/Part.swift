@@ -103,7 +103,9 @@ open class Part: WorkspaceObject
     
     override open func extend_entity_preparation(_ entity: Entity)
     {
-        entity.visit
+        apply_physics(to: entity)
+        
+        /*entity.visit
         { node in
             if node.components[ModelComponent.self] != nil
             {
@@ -116,7 +118,7 @@ open class Part: WorkspaceObject
                 )
                 node.components.set(PhysicsMotionComponent())
             }
-        }
+        }*/
         //model_entity?.generateCollisionShapes(recursive: true)
         /*entity.visit
         { entity in
@@ -129,6 +131,40 @@ open class Part: WorkspaceObject
         remove_child_physics(entity)
         
         apply_compound_physics(to: entity)*/
+    }
+    
+    func apply_physics(to entity: Entity)
+    {
+        entity.visit
+        { child in
+            child.components.remove(PhysicsBodyComponent.self)
+            child.components.remove(PhysicsMotionComponent.self)
+        }
+        
+        var shapes: [ShapeResource] = []
+        
+        entity.visit
+        { child in
+            if let model = child as? ModelEntity,
+               let mesh = model.model?.mesh
+            {
+                let shape = ShapeResource.generateConvex(from: mesh)
+                shapes.append(shape)
+            }
+        }
+        
+        guard !shapes.isEmpty else { return }
+        
+        let collision = CollisionComponent(shapes: shapes)
+        entity.components.set(collision)
+        
+        entity.components.set(
+            PhysicsBodyComponent(
+                massProperties: .default,
+                material: .default,
+                mode: .dynamic
+            )
+        )
     }
     
     private func generate_collisions_recursively(_ entity: Entity)
