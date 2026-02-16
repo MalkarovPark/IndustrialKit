@@ -103,7 +103,7 @@ open class Part: WorkspaceObject
     
     override open func extend_entity_preparation(_ entity: Entity)
     {
-        apply_physics(to: entity)
+        apply_physics2(to: entity)
     }
     
     func apply_physics(to entity: Entity)
@@ -140,6 +140,53 @@ open class Part: WorkspaceObject
             )
             
             shapes.append(offsetShape)
+        }
+        
+        guard !shapes.isEmpty else { return }
+        
+        entity.components.set(CollisionComponent(shapes: shapes))
+        
+        entity.components.set(
+            PhysicsBodyComponent(
+                massProperties: .default,
+                material: .default,
+                mode: .dynamic
+            )
+        )
+    }
+    
+    func apply_physics2(to entity: Entity)
+    {
+        entity.visit
+        { child in
+            child.components.remove(PhysicsBodyComponent.self)
+            child.components.remove(CollisionComponent.self)
+            child.components.remove(PhysicsMotionComponent.self)
+        }
+        
+        var shapes: [ShapeResource] = []
+        
+        entity.visit
+        { child in
+            guard let model = child as? ModelEntity else { return }
+            
+            let bounds = model.visualBounds(relativeTo: entity)
+            
+            let size = bounds.extents
+            let center = bounds.center
+            
+            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001
+            {
+                return
+            }
+            
+            let shape = ShapeResource.generateBox(size: size)
+            
+            let positionedShape = shape.offsetBy(
+                rotation: simd_quatf(), translation: center
+            )
+            
+            shapes.append(positionedShape)
         }
         
         guard !shapes.isEmpty else { return }
