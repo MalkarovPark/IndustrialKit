@@ -157,12 +157,12 @@ open class Part: WorkspaceObject
     
     func apply_physics2(to entity: Entity)
     {
-        entity.visit
+        /*entity.visit
         { child in
             child.components.remove(PhysicsBodyComponent.self)
             child.components.remove(CollisionComponent.self)
             child.components.remove(PhysicsMotionComponent.self)
-        }
+        }*/
         
         var shapes: [ShapeResource] = []
         
