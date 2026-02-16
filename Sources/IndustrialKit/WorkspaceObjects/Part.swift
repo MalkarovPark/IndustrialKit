@@ -19,52 +19,6 @@ import SwiftUI
  */
 open class Part: WorkspaceObject
 {
-    private var figure: String? // Part figure name
-    private var lengths: [Float]? // lengths for part without scene figure
-    private var figure_color: String? // Color hex for part without scene figure
-    private var material_name: String? // Material for part without scene figure
-    
-    /// Physics body for part model node by physics type.
-    /*public var physics: SCNPhysicsBody?
-    {
-        switch physics_type
-        {
-        case .ph_static:
-            return .static()
-        case .ph_dynamic:
-            return .dynamic()
-        case .ph_kinematic:
-            let shape = SCNPhysicsShape(node: self.node ?? SCNNode(), options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.concavePolyhedron])
-            return SCNPhysicsBody(type: .kinematic, shape: shape)
-            // return .kinematic()
-        default:
-            return .none
-        }
-    }*/
-    
-    /**
-     Physics type of part.
-     
-     > This variable is codable.
-     */
-    public var physics_type: PhysicsType = PhysicsType.ph_none // Physic body type
-    
-    /// The state of physics calculation for part node.
-    public var enable_physics = false
-    {
-        didSet
-        {
-            /*if enable_physics
-            {
-                node?.physicsBody = physics // Return original physics
-            }
-            else
-            {
-                node?.physicsBody = nil // Remove physic body
-            }*/
-        }
-    }
-    
     // MARK: - Init functions
     public override init()
     {
@@ -104,63 +58,6 @@ open class Part: WorkspaceObject
     override open func extend_entity_preparation(_ entity: Entity)
     {
         apply_physics(to: entity)
-    }
-    
-    func apply_physics(to entity: Entity)
-    {
-        /*entity.visit
-        { child in
-            child.components.remove(CollisionComponent.self)
-            child.components.remove(PhysicsBodyComponent.self)
-            child.components.remove(PhysicsMotionComponent.self)
-        }*/
-        
-        var models: [ModelEntity] = []
-        
-        entity.visit
-        { child in
-            guard let model = child as? ModelEntity else { return }
-            
-            models.append(model)
-        }
-        
-        guard !models.isEmpty else { return }
-        
-        var shapes: [ShapeResource] = []
-        
-        for model in models
-        {
-            let bounds = model.visualBounds(relativeTo: entity)
-            let size = bounds.extents
-            
-            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
-            
-            let shape = ShapeResource.generateBox(size: size)
-                .offsetBy(
-                    rotation: simd_quatf(angle: 0, axis: SIMD3(0, 1, 0)),
-                    translation: bounds.center
-                )
-            
-            shapes.append(shape)
-        }
-        
-        entity.components.set(CollisionComponent(shapes: shapes))
-        
-        entity.components.set(
-            PhysicsBodyComponent(
-                massProperties: .default,
-                material: .default,
-                mode: .dynamic
-            )
-        )
-        
-        entity.components.set(PhysicsMotionComponent())
-        
-        if var motion = entity.components[PhysicsMotionComponent.self]
-        {
-            motion.linearVelocity = [0.0001, 0, 0]
-            entity.components.set(motion)
-        }
     }
     
     // MARK: - Module handling
@@ -255,11 +152,94 @@ open class Part: WorkspaceObject
         }
     }
     
+    // MARK: - Modeling functions
+    /**
+     Physics type of part.
+     
+     > This variable is codable.
+     */
+    public var physics_type: PhysicsType = PhysicsType.ph_none // Physic body type
+    
+    /// The state of physics calculation for part node.
+    public var enable_physics = false
+    {
+        didSet
+        {
+            /*if enable_physics
+            {
+                node?.physicsBody = physics // Return original physics
+            }
+            else
+            {
+                node?.physicsBody = nil // Remove physic body
+            }*/
+        }
+    }
+    
+    private var color_code: String? // Color hex for part without scene figure
+    
+    func apply_physics(to entity: Entity)
+    {
+        /*entity.visit
+        { child in
+            child.components.remove(CollisionComponent.self)
+            child.components.remove(PhysicsBodyComponent.self)
+            child.components.remove(PhysicsMotionComponent.self)
+        }*/
+        
+        var models: [ModelEntity] = []
+        
+        entity.visit
+        { child in
+            guard let model = child as? ModelEntity else { return }
+            
+            models.append(model)
+        }
+        
+        guard !models.isEmpty else { return }
+        
+        var shapes: [ShapeResource] = []
+        
+        for model in models
+        {
+            let bounds = model.visualBounds(relativeTo: entity)
+            let size = bounds.extents
+            
+            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
+            
+            let shape = ShapeResource.generateBox(size: size)
+                .offsetBy(
+                    rotation: simd_quatf(angle: 0, axis: SIMD3(0, 1, 0)),
+                    translation: bounds.center
+                )
+            
+            shapes.append(shape)
+        }
+        
+        entity.components.set(CollisionComponent(shapes: shapes))
+        
+        entity.components.set(
+            PhysicsBodyComponent(
+                massProperties: .default,
+                material: .default,
+                mode: .dynamic
+            )
+        )
+        
+        entity.components.set(PhysicsMotionComponent())
+        
+        if var motion = entity.components[PhysicsMotionComponent.self]
+        {
+            motion.linearVelocity = [0.0001, 0, 0]
+            entity.components.set(motion)
+        }
+    }
+    
     private func color_import()
     {
         /*if node != nil
         {
-            if figure_color != nil
+            if color_code != nil
             {
                 color_to_model()
             }
@@ -276,7 +256,7 @@ open class Part: WorkspaceObject
         {
             let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? UIColor
             
-            figure_color = node_color?.to_hex()
+            color_code = node_color?.to_hex()
         }*/
     }
     
@@ -286,7 +266,7 @@ open class Part: WorkspaceObject
         /*if node != nil
         {
             /*var viewed_nodes = node?.childNodes ?? []
-            let color = UIColor(hex: figure_color ?? "#453CCC")
+            let color = UIColor(hex: color_code ?? "#453CCC")
             
             while !viewed_nodes.isEmpty
             {
@@ -302,7 +282,7 @@ open class Part: WorkspaceObject
                     viewed_nodes.append(contentsOf: current_node.childNodes)
                 }
             }*/
-            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: figure_color ?? "#453CCC")
+            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: color_code ?? "#453CCC")
         }*/
     }
     
@@ -315,7 +295,6 @@ open class Part: WorkspaceObject
     #endif
     
     /// Old
-    // MARK: Part in workspace handling
     /// Resets model postion.
     public func model_position_reset()
     {
@@ -328,26 +307,23 @@ open class Part: WorkspaceObject
     
     // MARK: - UI functions
     /// Part model color.
-    public var color: Color
+    public var color: Color?
     {
         get
         {
-            return Color(hex: figure_color ?? "#453CCC")
+            return Color(hex: color_code ?? "#453CCC")
         }
         set
         {
-            figure_color = UIColor(newValue).to_hex()
+            if let new_value = newValue
+            {
+                color_code = UIColor(new_value).to_hex()
+            }
             
             // Update color by components
-            color_to_model()
+            //color_to_model()
         }
     }
-    
-    /// Returns info for part card view.
-    /*public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
-    {
-        return("\(self.name)", "Subtitle", self.color, UIImage(), self.node ?? SCNNode())
-    }*/
     
     // MARK: - Work with file system
     public convenience init(file: PartFileData)
@@ -355,7 +331,7 @@ open class Part: WorkspaceObject
         self.init(file: file.object) //self.init()
         
         self.physics_type = file.physics_type
-        self.figure_color = file.figure_color
+        self.color_code = file.color_code
         
         color_import()
     }
@@ -378,7 +354,7 @@ open class Part: WorkspaceObject
             ),
             
             physics_type: physics_type,
-            figure_color: figure_color
+            color_code: color_code
         )
     }
     
@@ -414,19 +390,19 @@ public struct PartFileData: Codable
     public var object: WorkspaceObjectFileData
     
     public var physics_type: PhysicsType
-    public var figure_color: String?
+    public var color_code: String?
     
     // MARK: - Init
     public init(
         object: WorkspaceObjectFileData,
         
         physics_type: PhysicsType,
-        figure_color: String?
+        color_code: String?
     )
     {
         self.object = object
         
         self.physics_type = physics_type
-        self.figure_color = figure_color
+        self.color_code = color_code
     }
 }
