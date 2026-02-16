@@ -260,7 +260,14 @@ open class Part: WorkspaceObject
     {
         get
         {
-            return Color(hex: color_code ?? "#453CCC")
+            if let color_code = color_code
+            {
+                return Color(hex: color_code)
+            }
+            else
+            {
+                return nil
+            }
         }
         set
         {
