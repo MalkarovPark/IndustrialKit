@@ -1511,7 +1511,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var workspace_entity = Entity()
     private var scene_content: RealityViewCameraContent?
     
-    private var workspace_anchor = AnchorEntity(world: .zero)
+    /*private*/public var workspace_anchor = AnchorEntity(world: .zero)
     
     private var workspace_camera: PerspectiveCamera?
     private var workspace_camera_target = Entity()
@@ -1916,41 +1916,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Workspace Objects Placement
     public func place_object_entity(object: WorkspaceObject)
     {
-        workspace_anchor.addChild(object.entity)
-        
-        object.entity.generateCollisionShapes(recursive: true)
-        
-        object.entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
-        object.entity.components.set(PhysicsMotionComponent())
-        
-        //workspace_anchor.addChild(object.entity) // Physics
-        //workspace_entity.addChild(object.entity)
-        //object.entity.update_position(object.position)
-        
-        /*let cube_size: Float = 0.1
-        let cube_mesh = MeshResource.generateBox(size: cube_size)
-        let cube_material = SimpleMaterial(color: .purple, isMetallic: true)
-        let cube = ModelEntity(mesh: cube_mesh, materials: [cube_material])
-        
-        object.entity.addChild(cube)
-        
-        object.entity.generateCollisionShapes(recursive: true)
-        object.entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
-        object.entity.components.set(PhysicsMotionComponent())
-        
-        workspace_anchor.addChild(object.entity) // Physics
-        object.entity.update_position(object.position)*/
-        
-        //Test
         /*let cube_size: Float = 0.1
         let cube_mesh = MeshResource.generateBox(size: cube_size)
         let cube_material = SimpleMaterial(color: .purple, isMetallic: true)
         let cube = ModelEntity(mesh: cube_mesh, materials: [cube_material])
         cube.generateCollisionShapes(recursive: true)
         cube.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
-        cube.components.set(PhysicsMotionComponent())
-        cube.position = [0, 0.5, 0]
-        workspace_anchor.addChild(cube)*/
+        cube.components.set(PhysicsMotionComponent())*/
+        
+        object.entity.update_position(object.position)
+        workspace_anchor.addChild(object.entity)//(cube)
     }
     
     public func remove_object_entity(object: WorkspaceObject)
