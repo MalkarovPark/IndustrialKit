@@ -235,57 +235,6 @@ open class Part: WorkspaceObject
         }
     }
     
-    private func color_import()
-    {
-        /*if node != nil
-        {
-            if color_code != nil
-            {
-                color_to_model()
-            }
-            else
-            {
-                color_from_model()
-            }
-        }*/
-    }
-    
-    private func color_from_model()
-    {
-        /*if node != nil
-        {
-            let node_color = node?.geometry?.firstMaterial?.diffuse.contents as? UIColor
-            
-            color_code = node_color?.to_hex()
-        }*/
-    }
-    
-    /// Applies color to part node by components.
-    public func color_to_model()
-    {
-        /*if node != nil
-        {
-            /*var viewed_nodes = node?.childNodes ?? []
-            let color = UIColor(hex: color_code ?? "#453CCC")
-            
-            while !viewed_nodes.isEmpty
-            {
-                let current_node = viewed_nodes.removeFirst()
-                
-                if let geometry = current_node.geometry
-                {
-                    geometry.firstMaterial?.diffuse.contents = color
-                    // break
-                }
-                else
-                {
-                    viewed_nodes.append(contentsOf: current_node.childNodes)
-                }
-            }*/
-            node?.geometry?.firstMaterial?.diffuse.contents = UIColor(hex: color_code ?? "#453CCC")
-        }*/
-    }
-    
     // MARK: - Visual Functions
     #if canImport(RealityKit)
     override public var entity_tag: EntityModelIdentifier
@@ -319,6 +268,10 @@ open class Part: WorkspaceObject
             {
                 color_code = UIColor(new_value).to_hex()
             }
+            else
+            {
+                color_code = nil
+            }
             
             // Update color by components
             //color_to_model()
@@ -332,8 +285,6 @@ open class Part: WorkspaceObject
         
         self.physics_type = file.physics_type
         self.color_code = file.color_code
-        
-        color_import()
     }
     
     public func file_data() -> PartFileData
