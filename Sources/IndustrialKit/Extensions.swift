@@ -416,13 +416,38 @@ public extension Entity
 {
     func visit(_ action: (Entity) -> Void)
     {
+        var visited: Set<ObjectIdentifier> = []
+        _visit(action, &visited)
+    }
+
+    private func _visit(_ action: (Entity) -> Void, _ visited: inout Set<ObjectIdentifier>)
+    {
+        let id = ObjectIdentifier(self)
+
+        // уже были здесь → цикл
+        if visited.contains(id) { return }
+        visited.insert(id)
+
+        action(self)
+
+        for child in children
+        {
+            child._visit(action, &visited)
+        }
+    }
+}
+
+/*public extension Entity
+{
+    func visit(_ action: (Entity) -> Void)
+    {
         action(self)
         for child in children
         {
             child.visit(action)
         }
     }
-}
+}*/
 
 public extension Entity
 {

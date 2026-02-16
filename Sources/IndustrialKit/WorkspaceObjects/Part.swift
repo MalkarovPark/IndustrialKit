@@ -104,59 +104,47 @@ open class Part: WorkspaceObject
     override open func extend_entity_preparation(_ entity: Entity)
     {
         apply_physics(to: entity)
-        
-        /*entity.visit
-        { node in
-            if node.components[ModelComponent.self] != nil
-            {
-                node.components.set(
-                    PhysicsBodyComponent(
-                        massProperties: .default,
-                        material: .default,
-                        mode: .dynamic
-                    )
-                )
-                node.components.set(PhysicsMotionComponent())
-            }
-        }*/
-        //model_entity?.generateCollisionShapes(recursive: true)
-        /*entity.visit
-        { entity in
-            entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic)) //??
-            entity.components.set(PhysicsMotionComponent()) //??
-        }*/
-        
-        /*generate_collisions_recursively(entity)
-        
-        remove_child_physics(entity)
-        
-        apply_compound_physics(to: entity)*/
     }
     
     func apply_physics(to entity: Entity)
     {
-        entity.visit
+        /*entity.visit
         { child in
             child.components.remove(PhysicsBodyComponent.self)
             child.components.remove(PhysicsMotionComponent.self)
-        }
+            child.components.remove(CollisionComponent.self)
+        }*/
         
         var shapes: [ShapeResource] = []
         
         entity.visit
         { child in
-            if let model = child as? ModelEntity,
-               let mesh = model.model?.mesh
-            {
-                let shape = ShapeResource.generateConvex(from: mesh)
-                shapes.append(shape)
-            }
+            guard let model = child as? ModelEntity,
+                  let mesh = model.model?.mesh
+            else { return }
+            
+            let relativeTransform = child.transformMatrix(relativeTo: entity)
+            
+            let position = SIMD3<Float>(
+                relativeTransform.columns.3.x,
+                relativeTransform.columns.3.y,
+                relativeTransform.columns.3.z
+            )
+            
+            let rotation = simd_quatf(relativeTransform)
+            
+            let shape = ShapeResource.generateConvex(from: mesh)
+            
+            let offsetShape = shape.offsetBy(
+                rotation: rotation, translation: position
+            )
+            
+            shapes.append(offsetShape)
         }
         
         guard !shapes.isEmpty else { return }
         
-        let collision = CollisionComponent(shapes: shapes)
-        entity.components.set(collision)
+        entity.components.set(CollisionComponent(shapes: shapes))
         
         entity.components.set(
             PhysicsBodyComponent(
