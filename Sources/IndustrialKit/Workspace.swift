@@ -1554,7 +1554,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         let average = (dx + dy) * 0.5 * 0.001
         
-        return max(average * 1.2, 0.5)
+        return max(average /* 1.2*/, 0.5)
         
         /*let dx = max_x - min_x
         let dy = max_y - min_y
