@@ -108,25 +108,18 @@ open class Part: WorkspaceObject
     
     func apply_physics(to entity: Entity)
     {
-        var globalMin = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
-        var globalMax = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
         var models: [ModelEntity] = []
         
         entity.visit
         { child in
             guard let model = child as? ModelEntity else { return }
             
-            let b = model.visualBounds(relativeTo: entity)
-            
-            globalMin = min(globalMin, b.min)
-            globalMax = max(globalMax, b.max)
-            
             models.append(model)
         }
         
         guard !models.isEmpty else { return }
         
-        let center = (globalMin + globalMax) * 0.5
+        //let center = (globalMin + globalMax) * 0.5
         
         var shapes: [ShapeResource] = []
         
@@ -158,114 +151,11 @@ open class Part: WorkspaceObject
         
         entity.components.set(PhysicsMotionComponent())
         
-        if var motion = entity.components[PhysicsMotionComponent.self] {
-            motion.linearVelocity = [0.0001, 0, 0] // триггер broad-phase
+        if var motion = entity.components[PhysicsMotionComponent.self]
+        {
+            motion.linearVelocity = [0.0001, 0, 0]
             entity.components.set(motion)
         }
-    }
-    
-    /*func apply_physics(to entity: Entity)
-    {
-        /*entity.visit
-        { child in
-            child.components.remove(PhysicsBodyComponent.self)
-            child.components.remove(CollisionComponent.self)
-            child.components.remove(PhysicsMotionComponent.self)
-        }*/
-        
-        var globalMin = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
-        var globalMax = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
-        var models: [ModelEntity] = []
-        
-        entity.visit
-        { child in
-            guard let model = child as? ModelEntity else { return }
-            
-            let b = model.visualBounds(relativeTo: entity)
-            
-            globalMin = min(globalMin, b.min)
-            globalMax = max(globalMax, b.max)
-            
-            models.append(model)
-        }
-        
-        guard !models.isEmpty else { return }
-        
-        let center = (globalMin + globalMax) * 0.5
-        
-        var shapes: [ShapeResource] = []
-        
-        for model in models
-        {
-            let bounds = model.visualBounds(relativeTo: entity)
-            let size = bounds.extents
-            
-            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
-            
-            let localCenter = bounds.center - center
-            
-            let shape = ShapeResource.generateBox(size: size)
-                .offsetBy(rotation: simd_quatf(angle: 0, axis: SIMD3(0,1,0)), translation: localCenter)
-            
-            shapes.append(shape)
-        }
-        
-        entity.components.set(CollisionComponent(shapes: shapes))
-        
-        entity.components.set(
-            PhysicsBodyComponent(
-                massProperties: .default,
-                material: .default,
-                mode: .dynamic
-            )
-        )
-        
-        entity.components.set(PhysicsMotionComponent())
-        
-        if var motion = entity.components[PhysicsMotionComponent.self] {
-            motion.linearVelocity = [0.0001, 0, 0] // триггер broad-phase
-            entity.components.set(motion)
-        }
-    }*/
-    
-    private func generate_collisions_recursively(_ entity: Entity)
-    {
-        if let model = entity as? ModelEntity
-        {
-            model.generateCollisionShapes(recursive: false)
-        }
-        
-        for child in entity.children
-        {
-            generate_collisions_recursively(child)
-        }
-    }
-    
-    private func remove_child_physics(_ entity: Entity)
-    {
-        for child in entity.children
-        {
-            child.components.remove(PhysicsBodyComponent.self)
-            child.components.remove(PhysicsMotionComponent.self)
-            remove_child_physics(child)
-        }
-    }
-    
-    private func apply_compound_physics(to entity: Entity)
-    {
-        var body = PhysicsBodyComponent()
-        
-        body.mode = .dynamic
-        body.massProperties = .default
-        
-        body.material = .generate(
-            friction: 0.8,
-            restitution: 0.05
-        )
-        
-        entity.components.set(body)
-        
-        entity.components.set(PhysicsMotionComponent())
     }
     
     // MARK: - Module handling

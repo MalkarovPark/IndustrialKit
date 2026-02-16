@@ -237,57 +237,6 @@ struct SpatialPendant_Previews: PreviewProvider
             }
         }
         
-        /*func test() {
-            let main = ModelEntity()
-
-            let sphere = ModelEntity(
-                mesh: MeshResource.generateSphere(radius: 0.05),
-                materials: [SimpleMaterial(color: .systemTeal, isMetallic: true)]
-            )
-            sphere.position = SIMD3(x: 0, y: 0, z: 0)
-
-            let cube = ModelEntity(
-                mesh: MeshResource.generateBox(size: 0.1),
-                materials: [SimpleMaterial(color: .purple, isMetallic: true)]
-            )
-            cube.position = SIMD3(x: 0, y: 0.05, z: 0)
-
-            main.addChild(cube)
-            main.addChild(sphere)
-
-            // Создаём объединённые коллизии для всех детей
-            apply_joint_physics(to: main)
-
-            let part = Part(name: "Test", entity: main)
-            part.position.z = 0.4
-            workspace.add_part(part)
-        }
-
-        func apply_joint_physics(to entity: Entity) {
-            var shapes: [ShapeResource] = []
-
-            entity.visit { child in
-                if let model = child as? ModelEntity,
-                   let mesh = model.model?.mesh {
-                    shapes.append(ShapeResource.generateConvex(from: mesh))
-                }
-            }
-
-            guard !shapes.isEmpty else { return }
-
-            entity.components.remove(PhysicsBodyComponent.self)
-            entity.components.remove(CollisionComponent.self)
-
-            entity.components.set(CollisionComponent(shapes: shapes))
-            entity.components.set(
-                PhysicsBodyComponent(
-                    massProperties: .default,
-                    material: .default,
-                    mode: .dynamic
-                )
-            )
-        }*/
-        
         func test()
         {
             let main = ModelEntity()
@@ -297,11 +246,6 @@ struct SpatialPendant_Previews: PreviewProvider
             )
             
             sphere.update_position((x: 0, y: 0, z: -100, r: 0, p: 0, w: 0))
-            
-            //let sphere_part = Part(name: "Sphere", entity: sphere)
-            //sphere_part.position.z = 50
-            
-            //workspace.add_part(sphere_part)
             
             let cube = ModelEntity(
                 mesh: MeshResource.generateBox(size: 0.1),
@@ -314,7 +258,6 @@ struct SpatialPendant_Previews: PreviewProvider
             
             let part = Part(name: "Test", entity: main)
             part.position.z = 400
-            //part.position.p = .pi / 4
             
             workspace.add_part(part)
         }
