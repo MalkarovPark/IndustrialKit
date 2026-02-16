@@ -75,7 +75,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     public func delete_object(_ object: WorkspaceObject)
     {
-        focus(on: nil) // Focus on workspace
+        //focus(on: nil)
         
         object.entity.removeFromParent()
         
@@ -1554,7 +1554,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         let average = (dx + dy) * 0.5 * 0.001
         
-        return max(average /* 1.2*/, 0.5)
+        return max(average /** 1.2*/, 0.5)
         
         /*let dx = max_x - min_x
         let dy = max_y - min_y
@@ -1638,8 +1638,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         place_objects() // Place objects
         place_physical_floor() // Place floor
-        
-        focus(on: nil) // Focus on workspace
     }
     
     // MARK: Camera
