@@ -101,14 +101,21 @@ open class Part: WorkspaceObject
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
     
-    /*override open func extend_entity_preparation(_ entity: Entity)
+    override open func extend_entity_preparation(_ entity: Entity)
     {
-        generate_collisions_recursively(entity)
+        model_entity?.generateCollisionShapes(recursive: true)
+        model_entity?.visit
+        { entity in
+            entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic)) //??
+            entity.components.set(PhysicsMotionComponent()) //??
+        }
+        
+        /*generate_collisions_recursively(entity)
         
         remove_child_physics(entity)
         
-        apply_compound_physics(to: entity)
-    }*/
+        apply_compound_physics(to: entity)*/
+    }
     
     private func generate_collisions_recursively(_ entity: Entity)
     {
