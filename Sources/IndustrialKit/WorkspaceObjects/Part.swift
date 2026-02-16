@@ -108,56 +108,39 @@ open class Part: WorkspaceObject
     
     func apply_physics(to entity: Entity)
     {
-        var minV = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
-        var maxV = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
-        
-        struct ShapeInfo
-        {
-            var center: SIMD3<Float>
-            var size: SIMD3<Float>
-            var rotation: simd_quatf
-        }
-        
-        var infos: [ShapeInfo] = []
+        var globalMin = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
+        var globalMax = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
+        var models: [ModelEntity] = []
         
         entity.visit
         { child in
-            guard let model = child as? ModelEntity,
-                  let bounds = model.model?.mesh.bounds
-            else { return }
+            guard let model = child as? ModelEntity else { return }
             
-            let t = model.transformMatrix(relativeTo: entity)
+            let b = model.visualBounds(relativeTo: entity)
             
-            let c4 = t * SIMD4<Float>(bounds.center, 1)
-            let center = SIMD3<Float>(c4.x, c4.y, c4.z)
+            globalMin = min(globalMin, b.min)
+            globalMax = max(globalMax, b.max)
             
-            let ext = bounds.extents
-            
-            minV = min(minV, center - ext * 0.5)
-            maxV = max(maxV, center + ext * 0.5)
-            
-            infos.append(
-                ShapeInfo(
-                    center: center,
-                    size: ext,
-                    rotation: simd_quatf(t)
-                )
-            )
+            models.append(model)
         }
         
-        guard !infos.isEmpty else { return }
+        guard !models.isEmpty else { return }
         
-        let compoundCenter = (minV + maxV) * 0.5
+        let center = (globalMin + globalMax) * 0.5
         
         var shapes: [ShapeResource] = []
         
-        for info in infos
+        for model in models
         {
-            let localCenter = info.center - compoundCenter
+            let bounds = model.visualBounds(relativeTo: entity)
+            let size = bounds.extents
             
-            let shape = ShapeResource.generateBox(size: info.size)
+            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
+            
+            let shape = ShapeResource.generateBox(size: size)
                 .offsetBy(
-                    rotation: info.rotation, translation: localCenter
+                    rotation: simd_quatf(angle: 0, axis: SIMD3(0,1,0)),
+                    translation: bounds.center
                 )
             
             shapes.append(shape)
@@ -174,9 +157,9 @@ open class Part: WorkspaceObject
         )
         
         entity.components.set(PhysicsMotionComponent())
-        if var motion = entity.components[PhysicsMotionComponent.self]
-        {
-            motion.linearVelocity = [0.001, 0, 0]
+        
+        if var motion = entity.components[PhysicsMotionComponent.self] {
+            motion.linearVelocity = [0.0001, 0, 0] // триггер broad-phase
             entity.components.set(motion)
         }
     }
