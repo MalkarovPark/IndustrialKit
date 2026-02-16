@@ -247,11 +247,16 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     {
         guard let model_entity = model_entity else { return }
         
-        model_entity.generateCollisionShapes(recursive: true)
+        /*model_entity.generateCollisionShapes(recursive: true)
         model_entity.visit
         { entity in
             entity.components.set(entity_tag)
-        }
+        }*/
+        
+        model_entity.generateCollisionShapes(recursive: true)
+        model_entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic))
+        model_entity.components.set(PhysicsMotionComponent())
+        model_entity.components.set(entity_tag)
         
         model_entity.components.set(InputTargetComponent())
         
