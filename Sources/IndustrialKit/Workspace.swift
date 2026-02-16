@@ -75,7 +75,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     public func delete_object(_ object: WorkspaceObject)
     {
-        //focus(on: nil)
+        focus(on: nil)
         
         object.entity.removeFromParent()
         
