@@ -103,12 +103,26 @@ open class Part: WorkspaceObject
     
     override open func extend_entity_preparation(_ entity: Entity)
     {
+        entity.visit
+        { node in
+            if node.components[ModelComponent.self] != nil
+            {
+                node.components.set(
+                    PhysicsBodyComponent(
+                        massProperties: .default,
+                        material: .default,
+                        mode: .dynamic
+                    )
+                )
+                node.components.set(PhysicsMotionComponent())
+            }
+        }
         //model_entity?.generateCollisionShapes(recursive: true)
-        model_entity?.visit
+        /*entity.visit
         { entity in
             entity.components.set(PhysicsBodyComponent(massProperties: .default, material: .default, mode: .dynamic)) //??
             entity.components.set(PhysicsMotionComponent()) //??
-        }
+        }*/
         
         /*generate_collisions_recursively(entity)
         
