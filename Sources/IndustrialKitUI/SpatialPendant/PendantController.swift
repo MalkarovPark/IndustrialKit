@@ -19,41 +19,21 @@ import IndustrialKit
     }
     
     // MARK: - Windows management
-    private var is_opened = false
-    
-    /// Opens s-pendant window.
-    public func open_pendant()
+    @Published public var is_opened = false
     {
-        if !is_opened
+        didSet
         {
-            open()
-            is_opened = true
+            if is_opened
+            {
+                // Open s-pendant window
+                open()
+            }
+            else
+            {
+                // Dismisses s-pendant window
+                dismiss()
+            }
         }
-    }
-    
-    /// Dismisses s-pendant window.
-    public func dismiss_pendant()
-    {
-        if is_opened
-        {
-            dismiss()
-            is_opened = false
-        }
-    }
-    
-    /// Toggles s-pendant window.
-    public func toggle_pendant()
-    {
-        if !is_opened
-        {
-            open()
-        }
-        else
-        {
-            dismiss()
-        }
-        
-        is_opened.toggle()
     }
     
     /**
@@ -98,50 +78,6 @@ import IndustrialKit
     private var open = {}
     private var dismiss = {}
     
-    // MARK: - Event functions
-    @Published public var view_type: pendant_selection_type? // pendant_view_type
-    
-    @Published public var workspace = Workspace()
-    
-    public func view_workspace()
-    {
-        view_type = .workspace
-    }
-    
-    public func view_robot()
-    {
-        view_type = .robot
-    }
-    
-    public func view_robot(name: String)
-    {
-        workspace.select_robot(name: name)
-        view_type = .robot
-    }
-    
-    public func view_tool()
-    {
-        view_type = .tool
-    }
-    
-    public func view_tool(name: String)
-    {
-        workspace.select_tool(name: name)
-        view_type = .tool
-    }
-    
-    public func view_dismiss()
-    {
-        /*if workspace.any_object_selected
-        {
-            workspace.deselect_object()
-        }*/
-        
-        view_type = nil
-    }
-    
-    @Published public var code_editor_text = String()
-    
     // MARK: - New data
     @Published var new_operation_code = OperationCodeInfo()
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
@@ -156,11 +92,4 @@ import IndustrialKit
     @Published var update_workspace_in_document = false
     @Published var update_robot_in_document = false
     @Published var update_tool_in_document = false
-}
-
-public enum pendant_selection_type: Equatable, CaseIterable
-{
-    case workspace
-    case robot
-    case tool
 }

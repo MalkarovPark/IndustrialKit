@@ -25,40 +25,49 @@ public struct SpatialPendantView: View
     {
         FloatingView(alignment: .trailing)
         {
-            ZStack
+            if controller.is_opened
             {
-                switch workspace.selected_object
+                ZStack
                 {
-                case let robot as Robot:
-                    RobotControlView(robot: robot)
-                case let tool as Tool:
-                    ToolControlView(tool: tool)
-                case is Part:
-                    ZStack
+                    switch workspace.selected_object
                     {
-                        Rectangle()
-                            .fill(.clear)
-                            .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
-                        
-                        Text("Part")
+                    case let robot as Robot:
+                        RobotControlView(robot: robot)
+                    case let tool as Tool:
+                        ToolControlView(tool: tool)
+                    case is Part:
+                        ZStack
+                        {
+                            Rectangle()
+                                .fill(.clear)
+                                .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                            
+                            Text("Part")
                             #if os(macOS)
-                            .font(.system(size: 12))
+                                .font(.system(size: 14, design: .rounded))
                             #else
-                            .font(.system(size: 14))
+                                .font(.system(size: 18, design: .rounded))
                             #endif
-                            .foregroundStyle(.secondary)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(width: pendant_content_width)
+                    case .some(_):
+                        Text("Nothing")
+                    case .none:
+                        WorkspaceControlView(workspace: workspace)
                     }
-                    .frame(width: pendant_content_width)
-                case .some(_):
-                    Text("Nothing")
-                case .none:
-                    WorkspaceControlView(workspace: workspace)
                 }
+                .padding(8)
+                .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
             }
-            .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-            .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
-            .padding(8)
         }
+        .scaleEffect(controller.is_opened ? 1.0 : 0.82, anchor: .center)
+        .opacity(controller.is_opened ? 1 : 0)
+        .offset(x: controller.is_opened ? 0 : 40)
+        .allowsHitTesting(controller.is_opened)
+        .animation(.spring(response: 0.42, dampingFraction: 0.78), value: controller.is_opened)
+        .animation(.easeInOut(duration: 0.25), value: workspace.selected_object)
     }
 }
 
@@ -184,7 +193,7 @@ struct SpatialPendant_Previews: PreviewProvider
         @State private var is_pan = false
         @State private var scene_content: RealityViewCameraContent?
         
-        var body: some View
+        /*var body: some View
         {
             ZStack
             {
@@ -260,15 +269,15 @@ struct SpatialPendant_Previews: PreviewProvider
             part.position.z = 400
             
             workspace.add_part(part)
-        }
+        }*/
         
-        /*var body: some View
+        var body: some View
         {
             ZStack
             {
                 SpatialPendantView(controller: pendant_controller, workspace: workspace)
             }
-            .frame(height: 480)
+            .frame(minWidth: 480, minHeight: 480)
             .padding(10)
             .onAppear { workspace_preparation() }
             .overlay(alignment: .topLeading)
@@ -277,28 +286,34 @@ struct SpatialPendant_Previews: PreviewProvider
                     .buttonStyle(.bordered)
                     .padding()
             }
-        }*/
+        }
         
-        @State var inc = 1
+        @State var inc = 0
         
         private func button_tap()
         {
             switch inc
             {
             case 0:
-                workspace.select_robot(name: "6DOF Robot")
+                pendant_controller.is_opened = true
+                workspace.deselect_object()
             case 1:
-                workspace.select_tool(name: "Gripper")
+                //pendant_controller.is_opened = true
+                workspace.select_robot(name: "6DOF Robot")
             case 2:
+                //pendant_controller.is_opened = true
+                workspace.select_tool(name: "Gripper")
+            case 3:
+                //pendant_controller.is_opened = true
                 workspace.select_part(name: "Cup")
             default:
-                workspace.deselect_object()
+                pendant_controller.is_opened = false
             }
             
             print(workspace.selected_object?.name ?? "Nothing")
             
             inc += 1
-            if inc > 3 { inc = 0 }
+            if inc > 4 { inc = 0 }
         }
         
         private func workspace_preparation()
@@ -318,6 +333,8 @@ struct SpatialPendant_Previews: PreviewProvider
             workspace.parts.append(Part(name: "Book"))
             
             print("Added")
+            
+            button_tap()
         }
     }
     
