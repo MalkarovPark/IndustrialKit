@@ -204,12 +204,12 @@ open class Part: WorkspaceObject
     
     func apply_physics3(to entity: Entity)
     {
-        entity.visit
+        /*entity.visit
         { child in
             child.components.remove(PhysicsBodyComponent.self)
             child.components.remove(CollisionComponent.self)
             child.components.remove(PhysicsMotionComponent.self)
-        }
+        }*/
         
         var globalMin = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
         var globalMax = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
