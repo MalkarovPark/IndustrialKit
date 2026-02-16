@@ -108,56 +108,41 @@ open class Part: WorkspaceObject
     
     func apply_physics(to entity: Entity)
     {
-        let physicsRoot = Entity()
-        entity.addChild(physicsRoot)
-        
-        let children = entity.children
-        for child in children where child !== physicsRoot
-        {
-            physicsRoot.addChild(child)
-        }
-        
-        var globalMin = SIMD3<Float>(repeating: .greatestFiniteMagnitude)
-        var globalMax = SIMD3<Float>(repeating: -.greatestFiniteMagnitude)
-        var models: [ModelEntity] = []
-        
-        physicsRoot.visit { child in
-            guard let model = child as? ModelEntity else { return }
-            
-            let b = model.visualBounds(relativeTo: physicsRoot)
-            
-            globalMin = min(globalMin, b.min)
-            globalMax = max(globalMax, b.max)
-            
-            models.append(model)
-        }
-        
-        guard !models.isEmpty else { return }
-        
-        let center = (globalMin + globalMax) * 0.5
-        
-        physicsRoot.position = center
-        
         var shapes: [ShapeResource] = []
         
-        for model in models
-        {
-            let bounds = model.visualBounds(relativeTo: physicsRoot)
-            let size = bounds.extents
+        entity.visit
+        { child in
+            guard let model = child as? ModelEntity,
+                  let meshBounds = model.model?.mesh.bounds
+            else { return }
             
-            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
+            let localCenter = meshBounds.center
+            let extents = meshBounds.extents
             
-            let localCenter = bounds.center - center
+            if extents.x < 0.0001 || extents.y < 0.0001 || extents.z < 0.0001 {
+                return
+            }
             
-            let shape = ShapeResource.generateBox(size: size)
-                .offsetBy(rotation: simd_quatf(angle: 0, axis: SIMD3(0,1,0)), translation: localCenter)
+            let transform = model.transformMatrix(relativeTo: entity)
+            
+            let worldCenter4 = transform * SIMD4<Float>(localCenter, 1)
+            let worldCenter = SIMD3<Float>(worldCenter4.x, worldCenter4.y, worldCenter4.z)
+            
+            let rotation = simd_quatf(transform)
+            
+            let shape = ShapeResource.generateBox(size: extents)
+                .offsetBy(
+                    rotation: rotation, translation: worldCenter
+                )
             
             shapes.append(shape)
         }
         
-        physicsRoot.components.set(CollisionComponent(shapes: shapes))
+        guard !shapes.isEmpty else { return }
         
-        physicsRoot.components.set(
+        entity.components.set(CollisionComponent(shapes: shapes))
+        
+        entity.components.set(
             PhysicsBodyComponent(
                 massProperties: .default,
                 material: .default,
@@ -165,11 +150,11 @@ open class Part: WorkspaceObject
             )
         )
         
-        physicsRoot.components.set(PhysicsMotionComponent())
-        
-        if var motion = physicsRoot.components[PhysicsMotionComponent.self] {
+        entity.components.set(PhysicsMotionComponent())
+        if var motion = entity.components[PhysicsMotionComponent.self]
+        {
             motion.linearVelocity = [0.0001, 0, 0]
-            physicsRoot.components.set(motion)
+            entity.components.set(motion)
         }
     }
     
