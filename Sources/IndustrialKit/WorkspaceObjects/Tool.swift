@@ -82,7 +82,15 @@ open class Tool: WorkspaceObject
         // Connect tool parts
         model_controller.disconnect_entities()
         model_controller.connect_entities(of: entity)
-        //update_position()
+        
+        // Apply physics
+        entity.apply_physics(
+            by: PhysicsBodyComponent(
+                massProperties: .default,
+                material: .default,
+                mode: .kinematic
+            )
+        )
     }
     
     //MARK: Model Controller and Connector

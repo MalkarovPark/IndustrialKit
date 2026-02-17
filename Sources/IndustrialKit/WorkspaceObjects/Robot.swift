@@ -137,6 +137,15 @@ open class Robot: WorkspaceObject
         // Connect end point
         if let end_entity = entity.childEntity(withName: end_entity_name, recursively: true) { end_point_entity = end_entity }
         
+        // Apply physics
+        entity.apply_physics(
+            by: PhysicsBodyComponent(
+                massProperties: .default,
+                material: .default,
+                mode: .kinematic
+            )
+        )
+        
         update_position()
     }
     
