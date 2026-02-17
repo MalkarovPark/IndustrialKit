@@ -202,12 +202,12 @@ open class Part: WorkspaceObject
     
     func apply_physics(to entity: Entity)
     {
-        /*entity.visit
+        entity.visit
         { child in
-            child.components.remove(CollisionComponent.self)
+            //child.components.remove(CollisionComponent.self)
             child.components.remove(PhysicsBodyComponent.self)
             child.components.remove(PhysicsMotionComponent.self)
-        }*/
+        }
         
         var models: [ModelEntity] = []
         
@@ -273,8 +273,67 @@ open class Part: WorkspaceObject
         {
             color_code = UIColor(newValue).to_hex() ?? "#05A89D"
             
-            // Update color by components
-            //color_to_model()
+            update_model_color()
+        }
+    }
+    
+    private var original_materials: [ObjectIdentifier: [RealityKit.Material]] = [:]
+    
+    private func update_model_color()
+    {
+        guard let model_entity = model_entity else { return }
+        
+        if is_custom_color
+        {
+            apply_color(UIColor(hex: color_code) ?? .systemIndigo, to: model_entity)
+        }
+        else
+        {
+            remove_color(from: model_entity)
+        }
+        
+        func apply_color(_ color: UIColor, to root: Entity)
+        {
+            root.visit
+            { entity in
+                
+                guard let model = entity as? ModelEntity else { return }
+                
+                let id = ObjectIdentifier(model)
+                
+                if original_materials[id] == nil
+                {
+                    original_materials[id] = model.model?.materials
+                }
+                
+                guard var materials = model.model?.materials else { return }
+                
+                for i in materials.indices
+                {
+                    if var pbr = materials[i] as? PhysicallyBasedMaterial
+                    {
+                        pbr.baseColor.tint = color
+                        materials[i] = pbr
+                    }
+                }
+                
+                model.model?.materials = materials
+            }
+        }
+        
+        func remove_color(from root: Entity)
+        {
+            root.visit
+            { entity in
+                
+                guard let model = entity as? ModelEntity else { return }
+                
+                let id = ObjectIdentifier(model)
+                
+                guard let saved = original_materials[id] else { return }
+                
+                model.model?.materials = saved
+            }
         }
     }
     
