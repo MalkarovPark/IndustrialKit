@@ -198,7 +198,7 @@ struct SpatialPendant_Previews: PreviewProvider
         @State private var is_pan = false
         @State private var scene_content: RealityViewCameraContent?
         
-        var body: some View
+        /*var body: some View
         {
             ZStack
             {
@@ -272,11 +272,12 @@ struct SpatialPendant_Previews: PreviewProvider
             
             let part = Part(name: "Test", entity: main)
             part.position.z = 400
+            part.physics_enabled = true
             
             workspace.add_part(part)
-        }
+        }*/
         
-        /*var body: some View
+        var body: some View
         {
             ZStack
             {
@@ -291,7 +292,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     .buttonStyle(.bordered)
                     .padding()
             }
-        }*/
+        }
         
         @State var inc = 0
         

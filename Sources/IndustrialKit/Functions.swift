@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SceneKit
 import SwiftUI
+import RealityKit
 
 /**
  Finds and updates mismatched name.
@@ -65,23 +65,6 @@ public func origin_transform(pointer_position: (x: Float, y: Float, z: Float, r:
     }
     
     return new_position
-}
-
-/**
- Applies certain category bit mask int value for inputed node and all nested.
- 
- - Parameters:
-    - node: The node to which the bit mask number applies.
-    - value: A new category bit mask value.
- */
-public func apply_bit_mask(node: SCNNode, _ value: Int)
-{
-    node.categoryBitMask = value
-    
-    node.enumerateChildNodes
-    { (_node, stop) in
-        _node.categoryBitMask = value
-    }
 }
 
 ///Deep copy for codable objects.
@@ -202,46 +185,6 @@ public func pass_position_programs(names: [String], from: Robot, to: Robot)
         }
     }
 }
-
-///
-/**
- Converts sturct to appropriate program element.
- 
- - Parameters:
-    - element_struct: A workspace program element struct.
- 
- - Returns: Inherited from the workspace program element class instance.
- */
-/*public func element_from_struct(_ element_struct: WorkspaceProgramElementStruct) -> WorkspaceProgramElement
-{
-    switch element_struct.identifier
-    {
-    case .robot_performer:
-        return RobotPerformerElement(element_struct: element_struct)
-    case .tool_performer:
-        return ToolPerformerElement(element_struct: element_struct)
-    case .mover_modifier:
-        return MoverModifierElement(element_struct: element_struct)
-    case .writer_modifier:
-        return WriterModifierElement(element_struct: element_struct)
-    case .math_modifier:
-        return MathModifierElement(element_struct: element_struct)
-    case .changer_modifier:
-        return ChangerModifierElement(element_struct: element_struct)
-    case .observer_modifier:
-        return ObserverModifierElement(element_struct: element_struct)
-    case .cleaner_modifier:
-        return CleanerModifierElement(element_struct: element_struct)
-    case .jump_logic:
-        return JumpLogicElement(element_struct: element_struct)
-    case .comparator_logic:
-        return ComparatorLogicElement(element_struct: element_struct)
-    case .mark_logic:
-        return MarkLogicElement(element_struct: element_struct)
-    case .none:
-        return WorkspaceProgramElement()
-    }
-}*/
 
 ///Deep copy for codable objects.
 func clone_codable<T: Codable>(_ object: T) -> T?
@@ -745,7 +688,7 @@ public func string_to_codable<T: Codable>(from string: String) -> T?
  
  - Returns: A `SCNAction` if the string can be successfully parsed, otherwise `nil`.
  */
-public func string_to_action(from string: String) -> SCNAction?
+/*public func string_to_action(from string: String) -> SCNAction?
 {
     let components = string.split(separator: "(")
     
@@ -844,7 +787,7 @@ public func string_to_action(from string: String) -> SCNAction?
     
     print("Invalid parameters for action: \(actionName)")
     return nil
-}
+}*/
 
 /**
  Sets the position or rotation of a node based on the provided string.
@@ -855,7 +798,7 @@ public func string_to_action(from string: String) -> SCNAction?
  
  > Rotation is specified in degrees.
  */
-public func set_position(for node: SCNNode, from string: String)
+/*public func set_position(for node: SCNNode, from string: String)
 {
     let components = string.split(separator: "(")
     
@@ -988,7 +931,7 @@ public func set_position(for node: SCNNode, from string: String)
     default:
         print("Action \(action_name) not supported")
     }
-}
+}*/
 #endif
 
 #if os(macOS)
@@ -1028,3 +971,122 @@ public func safe_input_split(_ input: String) -> [String]
     return r
 }
 #endif
+
+// MARK: - RealityKit
+/*func apply_physics(
+    component: PhysicsBodyComponent? = nil,
+    to entity: Entity
+)
+{
+    let component = component ?? PhysicsBodyComponent(
+        massProperties: .default,
+        material: .default,
+        mode: .dynamic
+    )
+    
+    entity.visit
+    { child in
+        //child.components.remove(CollisionComponent.self)
+        child.components.remove(PhysicsBodyComponent.self)
+        child.components.remove(PhysicsMotionComponent.self)
+    }
+    
+    var models: [ModelEntity] = []
+    
+    entity.visit
+    { child in
+        guard let model = child as? ModelEntity else { return }
+        
+        models.append(model)
+    }
+    
+    guard !models.isEmpty else { return }
+    
+    var shapes: [ShapeResource] = []
+    
+    for model in models
+    {
+        let bounds = model.visualBounds(relativeTo: entity)
+        let size = bounds.extents
+        
+        if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
+        
+        let shape = ShapeResource.generateBox(size: size)
+            .offsetBy(
+                rotation: simd_quatf(angle: 0, axis: SIMD3(0, 1, 0)),
+                translation: bounds.center
+            )
+        
+        shapes.append(shape)
+    }
+    
+    entity.components.set(CollisionComponent(shapes: shapes))
+    
+    entity.components.set(component)
+    
+    entity.components.set(PhysicsMotionComponent())
+    
+    if var motion = entity.components[PhysicsMotionComponent.self]
+    {
+        motion.linearVelocity = [0.0001, 0, 0]
+        entity.components.set(motion)
+    }
+}*/
+
+/*func apply_physics(
+ component: PhysicsBodyComponent = PhysicsBodyComponent(
+     massProperties: .default,
+     material: .default,
+     mode: .dynamic
+ ),
+ to entity: Entity
+)
+{
+ entity.visit
+ { child in
+     //child.components.remove(CollisionComponent.self)
+     child.components.remove(PhysicsBodyComponent.self)
+     child.components.remove(PhysicsMotionComponent.self)
+ }
+ 
+ var models: [ModelEntity] = []
+ 
+ entity.visit
+ { child in
+     guard let model = child as? ModelEntity else { return }
+     
+     models.append(model)
+ }
+ 
+ guard !models.isEmpty else { return }
+ 
+ var shapes: [ShapeResource] = []
+ 
+ for model in models
+ {
+     let bounds = model.visualBounds(relativeTo: entity)
+     let size = bounds.extents
+     
+     if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
+     
+     let shape = ShapeResource.generateBox(size: size)
+         .offsetBy(
+             rotation: simd_quatf(angle: 0, axis: SIMD3(0, 1, 0)),
+             translation: bounds.center
+         )
+     
+     shapes.append(shape)
+ }
+ 
+ entity.components.set(CollisionComponent(shapes: shapes))
+ 
+ entity.components.set(component)
+ 
+ entity.components.set(PhysicsMotionComponent())
+ 
+ if var motion = entity.components[PhysicsMotionComponent.self]
+ {
+     motion.linearVelocity = [0.0001, 0, 0]
+     entity.components.set(motion)
+ }
+}*/

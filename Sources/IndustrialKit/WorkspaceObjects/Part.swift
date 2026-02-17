@@ -172,7 +172,8 @@ open class Part: WorkspaceObject
     {
         if physics_enabled
         {
-            apply_physics(component: physics_body_data.component, to: entity)
+            entity.apply_physics(by: physics_body_data.component)
+            //apply_physics(component: physics_body_data.component, to: entity)
         }
         else
         {
@@ -181,64 +182,6 @@ open class Part: WorkspaceObject
                 child.components.remove(PhysicsBodyComponent.self)
                 child.components.remove(PhysicsMotionComponent.self)
             }
-        }
-    }
-    
-    func apply_physics(
-        component: PhysicsBodyComponent = PhysicsBodyComponent(
-            massProperties: .default,
-            material: .default,
-            mode: .dynamic
-        ),
-        to entity: Entity
-    )
-    {
-        entity.visit
-        { child in
-            //child.components.remove(CollisionComponent.self)
-            child.components.remove(PhysicsBodyComponent.self)
-            child.components.remove(PhysicsMotionComponent.self)
-        }
-        
-        var models: [ModelEntity] = []
-        
-        entity.visit
-        { child in
-            guard let model = child as? ModelEntity else { return }
-            
-            models.append(model)
-        }
-        
-        guard !models.isEmpty else { return }
-        
-        var shapes: [ShapeResource] = []
-        
-        for model in models
-        {
-            let bounds = model.visualBounds(relativeTo: entity)
-            let size = bounds.extents
-            
-            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
-            
-            let shape = ShapeResource.generateBox(size: size)
-                .offsetBy(
-                    rotation: simd_quatf(angle: 0, axis: SIMD3(0, 1, 0)),
-                    translation: bounds.center
-                )
-            
-            shapes.append(shape)
-        }
-        
-        entity.components.set(CollisionComponent(shapes: shapes))
-        
-        entity.components.set(component)
-        
-        entity.components.set(PhysicsMotionComponent())
-        
-        if var motion = entity.components[PhysicsMotionComponent.self]
-        {
-            motion.linearVelocity = [0.0001, 0, 0]
-            entity.components.set(motion)
         }
     }
     

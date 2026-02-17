@@ -30,36 +30,6 @@ public extension Float
     }
 }
 
-// MARK: - SCNNode edit extensions
-/*public extension SCNNode
-{
-    /// Removes all constraints and refreshes node
-    func remove_all_constraints()
-    {
-        guard self.constraints != nil
-        else
-        {
-            return
-        }
-        
-        if self.constraints?.count ?? 0 > 0
-        {
-            self.constraints?.removeAll()
-            
-            self.position.x += 1
-            self.position.x -= 1
-            self.rotation.x += 1
-            self.rotation.x -= 1
-        }
-    }
-    
-    /// Removes all child nodes
-    func remove_all_child_nodes()
-    {
-        self.childNodes.forEach { $0.removeFromParentNode() }
-    }
-}*/
-
 // MARK: - NSImage to UIImage
 #if os(macOS)
 public typealias UIImage = NSImage
@@ -598,5 +568,65 @@ public extension Entity
             timingFunction: timing_function
         )
     }*/
+}
+
+public extension Entity
+{
+    func apply_physics(
+        by component: PhysicsBodyComponent = PhysicsBodyComponent(
+            massProperties: .default,
+            material: .default,
+            mode: .dynamic
+        )
+    )
+    {
+        self.visit
+        { child in
+            //child.components.remove(CollisionComponent.self)
+            child.components.remove(PhysicsBodyComponent.self)
+            child.components.remove(PhysicsMotionComponent.self)
+        }
+        
+        var models: [ModelEntity] = []
+        
+        self.visit
+        { child in
+            guard let model = child as? ModelEntity else { return }
+            
+            models.append(model)
+        }
+        
+        guard !models.isEmpty else { return }
+        
+        var shapes: [ShapeResource] = []
+        
+        for model in models
+        {
+            let bounds = model.visualBounds(relativeTo: self)
+            let size = bounds.extents
+            
+            if size.x < 0.0001 || size.y < 0.0001 || size.z < 0.0001 { continue }
+            
+            let shape = ShapeResource.generateBox(size: size)
+                .offsetBy(
+                    rotation: simd_quatf(angle: 0, axis: SIMD3(0, 1, 0)),
+                    translation: bounds.center
+                )
+            
+            shapes.append(shape)
+        }
+        
+        self.components.set(CollisionComponent(shapes: shapes))
+        
+        self.components.set(component)
+        
+        self.components.set(PhysicsMotionComponent())
+        
+        if var motion = self.components[PhysicsMotionComponent.self]
+        {
+            motion.linearVelocity = [0.0001, 0, 0]
+            self.components.set(motion)
+        }
+    }
 }
 #endif
