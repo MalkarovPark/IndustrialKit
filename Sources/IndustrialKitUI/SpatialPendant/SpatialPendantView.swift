@@ -25,7 +25,7 @@ public struct SpatialPendantView: View
     {
         FloatingView(alignment: .trailing)
         {
-            if controller.is_opened
+            if is_opened
             {
                 ZStack
                 {
@@ -62,12 +62,17 @@ public struct SpatialPendantView: View
                 .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
             }
         }
-        .scaleEffect(controller.is_opened ? 1.0 : 0.82, anchor: .center)
-        .opacity(controller.is_opened ? 1 : 0)
-        .offset(x: controller.is_opened ? 0 : 40)
-        .allowsHitTesting(controller.is_opened)
-        .animation(.spring(response: 0.42, dampingFraction: 0.78), value: controller.is_opened)
-        .animation(.easeInOut(duration: 0.25), value: workspace.selected_object)
+        .scaleEffect(is_opened ? 1.0 : 0.82, anchor: .center)
+        .opacity(is_opened ? 1 : 0)
+        .offset(x: is_opened ? 0 : 40)
+        .allowsHitTesting(is_opened)
+        .animation(.spring(response: 0.42, dampingFraction: 0.78), value: is_opened)
+        .animation(.easeInOut(duration: 0.25), value: is_opened)
+    }
+    
+    private var is_opened: Bool
+    {
+        return controller.is_opened && !(workspace.selected_object is Part)
     }
 }
 

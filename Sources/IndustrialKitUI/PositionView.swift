@@ -92,7 +92,6 @@ public struct PositionView: View
                                 
                                 Text(component.info.text)
                                     .fontWeight(.light)
-                                    //.font(.system(size: 13, weight: .light))
                                     .foregroundStyle(.secondary)
                             }
                         }
