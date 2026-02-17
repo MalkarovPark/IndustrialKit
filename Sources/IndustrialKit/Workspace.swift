@@ -2112,9 +2112,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         let size = bounds.extents
         
-        let shift: Float = 0.04
+        let shift: Float = 0.03
         
-        let cone_height: Float = 0.016
+        let cone_height: Float = 0.012
         let cone_radius: Float = 0.008
         
         let hx = size.x / 2 + shift
@@ -2126,6 +2126,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             UIColor.systemPink,
             UIColor.systemTeal
         ]
+        
         let rotations: [SIMD3<Float>] = [[.pi/2, 0, 0], [0, 0,-.pi/2], [0, 0, 0]]
         let positions: [SIMD3<Float>] = [[0, 0, hz], [hx, 0, 0], [0, hy, 0]]
         
