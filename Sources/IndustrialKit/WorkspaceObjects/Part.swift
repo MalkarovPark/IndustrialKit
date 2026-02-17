@@ -91,8 +91,6 @@ open class Part: WorkspaceObject
         {
             perform_load_entity(module_entity.clone(recursive: true))
         }*/
-        
-        //color_from_model()
     }
     
     /// Imported internal part modules.
@@ -158,7 +156,7 @@ open class Part: WorkspaceObject
      
      > This variable is codable.
      */
-    public var physics_type: PhysicsType = PhysicsType.ph_none // Physic body type
+    public var physics_body: PhysicsBodyComponentFileData? // Physic body type
     
     /// The state of physics calculation for part node.
     public var enable_physics = false
@@ -290,7 +288,7 @@ open class Part: WorkspaceObject
     {
         self.init(file: file.object) //self.init()
         
-        self.physics_type = file.physics_type
+        self.physics_body = file.physics
         self.color_code = file.color_code
     }
     
@@ -311,7 +309,7 @@ open class Part: WorkspaceObject
                 scope_type: scope_type
             ),
             
-            physics_type: physics_type,
+            physics: physics_body,
             color_code: color_code
         )
     }
@@ -323,44 +321,125 @@ open class Part: WorkspaceObject
     }
 }
 
-public enum PhysicsType: String, Codable, Equatable, CaseIterable
-{
-    case ph_static = "Static"
-    case ph_dynamic = "Dynamic"
-    case ph_kinematic = "Kinematic"
-    case ph_none = "None"
-    
-    public var mode: PhysicsBodyMode?
-    {
-        switch self
-        {
-        case .ph_static: .static
-        case .ph_dynamic: .dynamic
-        case .ph_kinematic: .kinematic
-        default: .none
-        }
-    }
-}
-
 // MARK: - File Data
 public struct PartFileData: Codable
 {
     public var object: WorkspaceObjectFileData
     
-    public var physics_type: PhysicsType
+    public var physics: PhysicsBodyComponentFileData?
     public var color_code: String?
     
-    // MARK: - Init
+    // MARK: Init
     public init(
         object: WorkspaceObjectFileData,
         
-        physics_type: PhysicsType,
+        physics: PhysicsBodyComponentFileData?,
         color_code: String?
     )
     {
         self.object = object
         
-        self.physics_type = physics_type
+        self.physics = physics
         self.color_code = color_code
+    }
+}
+
+public struct PhysicsBodyComponentFileData: Codable
+{
+    public var mass: Float
+    
+    public var static_friction: Float
+    public var dynamic_friction: Float
+    public var restitution: Float
+    
+    public var mode: PhysicsBodyModeFileData
+    
+    public var affected_by_gravity: Bool = true
+    
+    public var lock_location: [Bool] // [x, y, z]
+    public var lock_rotation: [Bool] // [r, p, w]
+    
+    public var ccd: Bool = false
+    
+    // MARK: Init
+    public init(
+        mass: Float,
+        
+        static_friction: Float = 0.5,
+        dynamic_friction: Float = 0.5,
+        restitution: Float = 0.0,
+        
+        mode: PhysicsBodyModeFileData,
+        
+        affected_by_gravity: Bool,
+        
+        lock_location: [Bool],
+        lock_rotation: [Bool],
+        
+        ccd: Bool
+    )
+    {
+        self.mass = mass
+        
+        self.static_friction = static_friction
+        self.dynamic_friction = dynamic_friction
+        self.restitution = restitution
+        
+        self.mode = mode
+        
+        self.affected_by_gravity = affected_by_gravity
+        
+        self.lock_location = lock_location
+        self.lock_rotation = lock_rotation
+        
+        self.ccd = ccd
+    }
+    
+    @MainActor public var component: PhysicsBodyComponent
+    {
+        var body = PhysicsBodyComponent(
+            massProperties: .init(mass: mass),
+            material: PhysicsMaterialResource.generate(
+                staticFriction: static_friction,
+                dynamicFriction: dynamic_friction,
+                restitution: restitution
+            ),
+            mode: mode.mode
+        )
+        
+        body.isAffectedByGravity = affected_by_gravity
+        
+        body.isTranslationLocked = (
+            x: lock_location[0],
+            y: lock_location[2],
+            z: lock_location[1]
+        )
+        
+        body.isRotationLocked = (
+            x: lock_rotation[0],
+            y: lock_rotation[2],
+            z: lock_rotation[1]
+        )
+        
+        body.isContinuousCollisionDetectionEnabled = ccd
+        
+        return body
+    }
+}
+
+public enum PhysicsBodyModeFileData: String, Codable, Equatable, CaseIterable
+{
+    case _dynamic = "Static"
+    case _kinematic = "Kinematic"
+    case _static = "Dynamic"
+    
+    public var mode: PhysicsBodyMode
+    {
+        switch self
+        {
+        case ._dynamic: .dynamic
+        case ._kinematic: .kinematic
+        case ._static: .static
+        }
     }
 }

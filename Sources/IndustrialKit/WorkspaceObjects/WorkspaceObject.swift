@@ -419,8 +419,8 @@ public struct WorkspaceObjectFileData: Codable
     public var module_name: String
     public var is_internal_module: Bool
     
-    public var location: [Float]      // [x, y, z]
-    public var rotation: [Float]      // [r, p, w]
+    public var location: [Float] // [x, y, z]
+    public var rotation: [Float] // [r, p, w]
     
     public var is_placed: Bool
     
