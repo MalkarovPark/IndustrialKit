@@ -150,8 +150,8 @@ public struct PositionView: View
         
         public enum Group: String, CaseIterable
         {
-            case location = "Location"
-            case rotation = "Rotation"
+            case location = "Location (mm)"
+            case rotation = "Rotation (º)"
         }
         
         public var info: (text: String, group: Group, order: Int)
