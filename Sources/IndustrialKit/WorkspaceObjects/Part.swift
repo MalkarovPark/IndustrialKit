@@ -58,7 +58,10 @@ open class Part: WorkspaceObject
     override open func extend_entity_preparation(_ entity: Entity)
     {
         update_model_color()
-        update_model_physics()
+        //apply_physics(to: entity)
+        physics_enabled = true
+        
+        //update_model_physics()
     }
     
     // MARK: - Module handling
@@ -172,7 +175,7 @@ open class Part: WorkspaceObject
     {
         if physics_enabled
         {
-            apply_physics(component: physics_body_data.component, to: entity)
+            apply_physics(/*component: physics_body_data.component,*/ to: entity)
         }
         else
         {
