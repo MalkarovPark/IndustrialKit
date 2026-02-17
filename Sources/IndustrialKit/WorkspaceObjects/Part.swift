@@ -156,7 +156,7 @@ open class Part: WorkspaceObject
      
      > This variable is codable.
      */
-    public var physics_body: PhysicsBodyComponentFileData? // Physic body type
+    @Published public var physics_body: PhysicsBodyComponentFileData? // Physic body type
     
     /// The state of physics calculation for part node.
     public var enable_physics = false
@@ -344,26 +344,26 @@ public struct PartFileData: Codable
     }
 }
 
-public struct PhysicsBodyComponentFileData: Codable
+public class PhysicsBodyComponentFileData: Codable
 {
-    public var mass: Float
+    @Published public var mass: Float
     
-    public var static_friction: Float
-    public var dynamic_friction: Float
-    public var restitution: Float
+    @Published public var static_friction: Float
+    @Published public var dynamic_friction: Float
+    @Published public var restitution: Float
     
-    public var mode: PhysicsBodyModeFileData
+    @Published public var mode: PhysicsBodyModeFileData
     
-    public var affected_by_gravity: Bool = true
+    @Published public var affected_by_gravity: Bool = true
     
-    public var lock_location: [Bool] // [x, y, z]
-    public var lock_rotation: [Bool] // [r, p, w]
+    @Published public var lock_location: (x: Bool, y: Bool, z: Bool) // [x, y, z]
+    @Published public var lock_rotation: (r: Bool, p: Bool, w: Bool) // [r, p, w]
     
-    public var ccd: Bool = false
+    @Published public var ccd: Bool = false
     
     // MARK: Init
     public init(
-        mass: Float,
+        mass: Float = 1,
         
         static_friction: Float = 0.5,
         dynamic_friction: Float = 0.5,
@@ -373,8 +373,8 @@ public struct PhysicsBodyComponentFileData: Codable
         
         affected_by_gravity: Bool,
         
-        lock_location: [Bool],
-        lock_rotation: [Bool],
+        lock_location: (x: Bool, y: Bool, z: Bool) = (false, false, false),
+        lock_rotation: (r: Bool, p: Bool, w: Bool) = (false, false, false),
         
         ccd: Bool
     )
@@ -395,6 +395,7 @@ public struct PhysicsBodyComponentFileData: Codable
         self.ccd = ccd
     }
     
+    // MARK: Body
     @MainActor public var component: PhysicsBodyComponent
     {
         var body = PhysicsBodyComponent(
@@ -410,20 +411,103 @@ public struct PhysicsBodyComponentFileData: Codable
         body.isAffectedByGravity = affected_by_gravity
         
         body.isTranslationLocked = (
-            x: lock_location[0],
-            y: lock_location[2],
-            z: lock_location[1]
+            x: lock_location.x,
+            y: lock_location.z,
+            z: lock_location.y
         )
         
         body.isRotationLocked = (
-            x: lock_rotation[0],
-            y: lock_rotation[2],
-            z: lock_rotation[1]
+            x: lock_rotation.r,
+            y: lock_rotation.w,
+            z: lock_rotation.p
         )
         
         body.isContinuousCollisionDetectionEnabled = ccd
         
         return body
+    }
+    
+    // MARK: File handling
+    private enum CodingKeys: String, CodingKey
+    {
+        case mass
+        
+        case static_friction
+        case dynamic_friction
+        case restitution
+        
+        case mode
+        
+        case affected_by_gravity
+        
+        case lock_location
+        case lock_rotation
+        
+        case ccd
+    }
+    
+    public required init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        mass = try container.decode(Float.self, forKey: .mass)
+        
+        static_friction = try container.decode(Float.self, forKey: .static_friction)
+        dynamic_friction = try container.decode(Float.self, forKey: .dynamic_friction)
+        restitution = try container.decode(Float.self, forKey: .restitution)
+        
+        mode = try container.decode(PhysicsBodyModeFileData.self, forKey: .mode)
+        
+        affected_by_gravity = try container.decode(Bool.self, forKey: .affected_by_gravity)
+        
+        let locationArray = try container.decode([Bool].self, forKey: .lock_location)
+        if locationArray.count == 3
+        {
+            lock_location = (locationArray[0], locationArray[1], locationArray[2])
+        }
+        else
+        {
+            lock_location = (false, false, false)
+        }
+        
+        let rotationArray = try container.decode([Bool].self, forKey: .lock_rotation)
+        if rotationArray.count == 3
+        {
+            lock_rotation = (rotationArray[0], rotationArray[1], rotationArray[2])
+        }
+        else
+        {
+            lock_rotation = (false, false, false)
+        }
+        
+        ccd = try container.decode(Bool.self, forKey: .ccd)
+    }
+    
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(mass, forKey: .mass)
+        
+        try container.encode(static_friction, forKey: .static_friction)
+        try container.encode(dynamic_friction, forKey: .dynamic_friction)
+        try container.encode(restitution, forKey: .restitution)
+        
+        try container.encode(mode, forKey: .mode)
+        
+        try container.encode(affected_by_gravity, forKey: .affected_by_gravity)
+        
+        try container.encode(
+            [lock_location.x, lock_location.y, lock_location.z],
+            forKey: .lock_location
+        )
+        
+        try container.encode(
+            [lock_rotation.r, lock_rotation.p, lock_rotation.w],
+            forKey: .lock_rotation
+        )
+        
+        try container.encode(ccd, forKey: .ccd)
     }
 }
 
