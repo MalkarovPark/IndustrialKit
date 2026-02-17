@@ -2112,7 +2112,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         let size = bounds.extents
         
-        let shift: Float = 0.02
+        let shift: Float = 0.04
         
         let cone_height: Float = 0.012
         let cone_radius: Float = 0.008
@@ -2130,7 +2130,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         let rotations: [SIMD3<Float>] = [[.pi/2, 0, 0], [0, 0,-.pi/2], [0, 0, 0]]
         let positions: [SIMD3<Float>] = [[0, 0, hz], [hx, 0, 0], [0, hy, 0]]
         
-        let cylinder_shift: Float = 0.003
+        let cylinder_shift: Float = 0.002
         let positions2: [SIMD3<Float>] = [[0, 0, Float(hz) - (cylinder_shift / 2 + cone_height / 2)], [Float(hx) - (cylinder_shift / 2 + cone_height / 2), 0, 0], [0, Float(hy) - (cylinder_shift / 2 + cone_height / 2), 0]]
         
         let parent = Entity()
