@@ -514,7 +514,8 @@ private struct RegistersCountView: View
             
             TextField("\(Workspace.default_registers_count)", value: $registers_count, format: .number)
                 .textFieldStyle(.roundedBorder)
-                .onSubmit {
+                .onSubmit
+                {
                     update_count()
                     // additive_func()
                 }

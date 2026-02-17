@@ -185,11 +185,11 @@ open class Part: WorkspaceObject
     }*/
     
     /// The state of physics calculation for part node.
-    public var is_physics_enabled = false
+    public var physics_enabled = false
     {
         didSet
         {
-            /*if is_physics_enabled
+            /*if physics_enabled
             {
                 node?.physicsBody = physics // Return original physics
             }
@@ -291,7 +291,7 @@ open class Part: WorkspaceObject
     {
         self.init(file: file.object) //self.init()
         
-        self.is_physics_enabled = file.is_physics_enabled
+        self.physics_enabled = file.physics_enabled
         self.physics_body_data = file.physics_body_data
         
         self.is_custom_color = file.is_custom_color
@@ -315,7 +315,7 @@ open class Part: WorkspaceObject
                 scope_type: scope_type
             ),
             
-            is_physics_enabled: is_physics_enabled,
+            physics_enabled: physics_enabled,
             physics_body_data: physics_body_data,
             
             is_custom_color: is_custom_color,
@@ -335,7 +335,7 @@ public struct PartFileData: Codable
 {
     public var object: WorkspaceObjectFileData
     
-    public var is_physics_enabled: Bool = true
+    public var physics_enabled: Bool = true
     public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
     
     public var is_custom_color: Bool = false
@@ -345,7 +345,7 @@ public struct PartFileData: Codable
     public init(
         object: WorkspaceObjectFileData,
         
-        is_physics_enabled: Bool,
+        physics_enabled: Bool,
         physics_body_data: PhysicsBodyComponentFileData,
         
         is_custom_color: Bool,
@@ -354,7 +354,7 @@ public struct PartFileData: Codable
     {
         self.object = object
         
-        self.is_physics_enabled = is_physics_enabled
+        self.physics_enabled = physics_enabled
         self.physics_body_data = physics_body_data
         
         self.is_custom_color = is_custom_color
