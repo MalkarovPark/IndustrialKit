@@ -256,7 +256,7 @@ public struct ToolPerformerElementView: View
         
         if self.element.object_name == ""
         {
-            self.element.object_name = self.workspace.placed_tools_names.first ?? ""
+            self.element.object_name = self.workspace.placed_tools_names.first ?? "???"
             
             if workspace.tool_by_name(element.object_name).programs_names.count > 0
             {
