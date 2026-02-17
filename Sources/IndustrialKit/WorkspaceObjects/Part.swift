@@ -58,7 +58,7 @@ open class Part: WorkspaceObject
     override open func extend_entity_preparation(_ entity: Entity)
     {
         update_model_color()
-        apply_physics(to: entity)
+        update_model_physics()
     }
     
     // MARK: - Module handling
@@ -159,49 +159,39 @@ open class Part: WorkspaceObject
      */
     @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
     
-    /*public var physical_body: PhysicsBodyComponent?
-    {
-        get
-        {
-            if let physics_body_data = physics_body_data
-            {
-                return physics_body_data.component
-            }
-            else
-            {
-                return nil
-            }
-        }
-        set
-        {
-            if let new_value = newValue
-            {
-                
-            }
-            else
-            {
-                physics_body_data = nil
-            }
-        }
-    }*/
-    
     /// The state of physics calculation for part node.
     public var physics_enabled = false
     {
         didSet
         {
-            /*if physics_enabled
-            {
-                node?.physicsBody = physics // Return original physics
-            }
-            else
-            {
-                node?.physicsBody = nil // Remove physic body
-            }*/
+            update_model_physics()
         }
     }
     
-    func apply_physics(to entity: Entity)
+    private func update_model_physics()
+    {
+        if physics_enabled
+        {
+            apply_physics(component: physics_body_data.component, to: entity)
+        }
+        else
+        {
+            entity.visit
+            { child in
+                child.components.remove(PhysicsBodyComponent.self)
+                child.components.remove(PhysicsMotionComponent.self)
+            }
+        }
+    }
+    
+    func apply_physics(
+        component: PhysicsBodyComponent = PhysicsBodyComponent(
+            massProperties: .default,
+            material: .default,
+            mode: .dynamic
+        ),
+        to entity: Entity
+    )
     {
         entity.visit
         { child in
@@ -241,13 +231,7 @@ open class Part: WorkspaceObject
         
         entity.components.set(CollisionComponent(shapes: shapes))
         
-        entity.components.set(
-            PhysicsBodyComponent(
-                massProperties: .default,
-                material: .default,
-                mode: .dynamic
-            )
-        )
+        entity.components.set(component)
         
         entity.components.set(PhysicsMotionComponent())
         
