@@ -259,6 +259,12 @@ open class Part: WorkspaceObject
     
     // MARK: - Color
     public var is_custom_color: Bool = false
+    {
+        didSet
+        {
+            update_model_color()
+        }
+    }
     
     private var color_code: String = "#05A89D" // Color hex for part without scene figure
     
@@ -277,7 +283,6 @@ open class Part: WorkspaceObject
         }
     }
     
-    //private var original_materials: [ObjectIdentifier: [RealityKit.Material]] = [:]
     private var saved_basecolor_textures: [ObjectIdentifier: [MaterialParameters.Texture?]] = [:]
     
     private func update_model_color()
