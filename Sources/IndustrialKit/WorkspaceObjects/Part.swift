@@ -346,13 +346,13 @@ public struct PartFileData: Codable
 
 public class PhysicsBodyComponentFileData: Codable
 {
+    @Published public var mode: PhysicsBodyModeFileData
+    
     @Published public var mass: Float
     
     @Published public var static_friction: Float
     @Published public var dynamic_friction: Float
     @Published public var restitution: Float
-    
-    @Published public var mode: PhysicsBodyModeFileData
     
     @Published public var affected_by_gravity: Bool = true
     
@@ -363,13 +363,13 @@ public class PhysicsBodyComponentFileData: Codable
     
     // MARK: Init
     public init(
+        mode: PhysicsBodyModeFileData,
+        
         mass: Float = 1,
         
         static_friction: Float = 0.5,
         dynamic_friction: Float = 0.5,
         restitution: Float = 0.0,
-        
-        mode: PhysicsBodyModeFileData,
         
         affected_by_gravity: Bool,
         
@@ -379,13 +379,13 @@ public class PhysicsBodyComponentFileData: Codable
         ccd: Bool
     )
     {
+        self.mode = mode
+        
         self.mass = mass
         
         self.static_friction = static_friction
         self.dynamic_friction = dynamic_friction
         self.restitution = restitution
-        
-        self.mode = mode
         
         self.affected_by_gravity = affected_by_gravity
         
@@ -430,13 +430,13 @@ public class PhysicsBodyComponentFileData: Codable
     // MARK: File handling
     private enum CodingKeys: String, CodingKey
     {
+        case mode
+        
         case mass
         
         case static_friction
         case dynamic_friction
         case restitution
-        
-        case mode
         
         case affected_by_gravity
         
@@ -450,13 +450,13 @@ public class PhysicsBodyComponentFileData: Codable
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
+        mode = try container.decode(PhysicsBodyModeFileData.self, forKey: .mode)
+        
         mass = try container.decode(Float.self, forKey: .mass)
         
         static_friction = try container.decode(Float.self, forKey: .static_friction)
         dynamic_friction = try container.decode(Float.self, forKey: .dynamic_friction)
         restitution = try container.decode(Float.self, forKey: .restitution)
-        
-        mode = try container.decode(PhysicsBodyModeFileData.self, forKey: .mode)
         
         affected_by_gravity = try container.decode(Bool.self, forKey: .affected_by_gravity)
         
@@ -487,13 +487,13 @@ public class PhysicsBodyComponentFileData: Codable
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(mode, forKey: .mode)
+        
         try container.encode(mass, forKey: .mass)
         
         try container.encode(static_friction, forKey: .static_friction)
         try container.encode(dynamic_friction, forKey: .dynamic_friction)
         try container.encode(restitution, forKey: .restitution)
-        
-        try container.encode(mode, forKey: .mode)
         
         try container.encode(affected_by_gravity, forKey: .affected_by_gravity)
         
