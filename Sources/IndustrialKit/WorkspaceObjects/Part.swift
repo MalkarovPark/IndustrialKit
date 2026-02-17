@@ -57,6 +57,7 @@ open class Part: WorkspaceObject
     
     override open func extend_entity_preparation(_ entity: Entity)
     {
+        update_model_color()
         apply_physics(to: entity)
     }
     
