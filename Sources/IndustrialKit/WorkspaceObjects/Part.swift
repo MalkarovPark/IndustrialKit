@@ -152,11 +152,11 @@ open class Part: WorkspaceObject
     
     // MARK: - Modeling functions
     /**
-     Physics type of part.
+     Physics body data of part.
      
      > This variable is codable.
      */
-    @Published public var physics_body: PhysicsBodyComponentFileData? // Physic body type
+    @Published public var physics_body_data: PhysicsBodyComponentFileData?
     
     /// The state of physics calculation for part node.
     public var enable_physics = false
@@ -288,7 +288,7 @@ open class Part: WorkspaceObject
     {
         self.init(file: file.object) //self.init()
         
-        self.physics_body = file.physics
+        self.physics_body_data = file.physics_body_data
         self.color_code = file.color_code
     }
     
@@ -309,7 +309,7 @@ open class Part: WorkspaceObject
                 scope_type: scope_type
             ),
             
-            physics: physics_body,
+            physics_body_data: physics_body_data,
             color_code: color_code
         )
     }
@@ -326,20 +326,20 @@ public struct PartFileData: Codable
 {
     public var object: WorkspaceObjectFileData
     
-    public var physics: PhysicsBodyComponentFileData?
+    public var physics_body_data: PhysicsBodyComponentFileData?
     public var color_code: String?
     
     // MARK: Init
     public init(
         object: WorkspaceObjectFileData,
         
-        physics: PhysicsBodyComponentFileData?,
+        physics_body_data: PhysicsBodyComponentFileData?,
         color_code: String?
     )
     {
         self.object = object
         
-        self.physics = physics
+        self.physics_body_data = physics_body_data
         self.color_code = color_code
     }
 }
