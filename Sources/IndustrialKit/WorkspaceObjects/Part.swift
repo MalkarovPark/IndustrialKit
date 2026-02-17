@@ -378,7 +378,7 @@ public class PhysicsBodyComponentFileData: Codable
     
     // MARK: Init
     public init(
-        mode: PhysicsBodyModeFileData,
+        mode: PhysicsBodyModeFileData = ._static,
         
         mass: Float = 1,
         
@@ -391,7 +391,7 @@ public class PhysicsBodyComponentFileData: Codable
         lock_location: (x: Bool, y: Bool, z: Bool) = (false, false, false),
         lock_rotation: (r: Bool, p: Bool, w: Bool) = (false, false, false),
         
-        ccd: Bool
+        ccd: Bool = false
     )
     {
         self.mode = mode
