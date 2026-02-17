@@ -602,17 +602,17 @@ public class PhysicsBodyComponentFileData: Codable
 
 public enum PhysicsBodyModeFileData: String, Codable, Equatable, CaseIterable
 {
-    case _dynamic = "Static"
+    case _static = "Static"
+    case _dynamic = "Dynamic"
     case _kinematic = "Kinematic"
-    case _static = "Dynamic"
     
     public var mode: PhysicsBodyMode
     {
         switch self
         {
+        case ._static: .static
         case ._dynamic: .dynamic
         case ._kinematic: .kinematic
-        case ._static: .static
         }
     }
 }
