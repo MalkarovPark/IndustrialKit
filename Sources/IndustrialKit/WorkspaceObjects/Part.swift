@@ -156,7 +156,7 @@ open class Part: WorkspaceObject
      
      > This variable is codable.
      */
-    @Published public var physics_body_data: PhysicsBodyComponentFileData?
+    @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
     
     /*public var physical_body: PhysicsBodyComponent?
     {
@@ -185,11 +185,11 @@ open class Part: WorkspaceObject
     }*/
     
     /// The state of physics calculation for part node.
-    public var enable_physics = false
+    public var is_physics_enabled = false
     {
         didSet
         {
-            /*if enable_physics
+            /*if is_physics_enabled
             {
                 node?.physicsBody = physics // Return original physics
             }
@@ -258,32 +258,20 @@ open class Part: WorkspaceObject
     }
     
     // MARK: - Color
-    private var color_code: String? // Color hex for part without scene figure
+    public var is_custom_color: Bool = false
+    
+    private var color_code: String = "#05A89D" // Color hex for part without scene figure
     
     /// Part model color.
-    public var color: Color?
+    public var color: Color
     {
         get
         {
-            if let color_code = color_code
-            {
-                return Color(hex: color_code)
-            }
-            else
-            {
-                return nil
-            }
+            return Color(hex: color_code)
         }
         set
         {
-            if let new_value = newValue
-            {
-                color_code = UIColor(new_value).to_hex()
-            }
-            else
-            {
-                color_code = nil
-            }
+            color_code = UIColor(newValue).to_hex() ?? "#05A89D"
             
             // Update color by components
             //color_to_model()
@@ -303,7 +291,10 @@ open class Part: WorkspaceObject
     {
         self.init(file: file.object) //self.init()
         
+        self.is_physics_enabled = file.is_physics_enabled
         self.physics_body_data = file.physics_body_data
+        
+        self.is_custom_color = file.is_custom_color
         self.color_code = file.color_code
     }
     
@@ -324,7 +315,10 @@ open class Part: WorkspaceObject
                 scope_type: scope_type
             ),
             
+            is_physics_enabled: is_physics_enabled,
             physics_body_data: physics_body_data,
+            
+            is_custom_color: is_custom_color,
             color_code: color_code
         )
     }
@@ -341,20 +335,29 @@ public struct PartFileData: Codable
 {
     public var object: WorkspaceObjectFileData
     
-    public var physics_body_data: PhysicsBodyComponentFileData?
-    public var color_code: String?
+    public var is_physics_enabled: Bool = true
+    public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
+    
+    public var is_custom_color: Bool = false
+    public var color_code: String
     
     // MARK: Init
     public init(
         object: WorkspaceObjectFileData,
         
-        physics_body_data: PhysicsBodyComponentFileData?,
-        color_code: String?
+        is_physics_enabled: Bool,
+        physics_body_data: PhysicsBodyComponentFileData,
+        
+        is_custom_color: Bool,
+        color_code: String
     )
     {
         self.object = object
         
+        self.is_physics_enabled = is_physics_enabled
         self.physics_body_data = physics_body_data
+        
+        self.is_custom_color = is_custom_color
         self.color_code = color_code
     }
 }
