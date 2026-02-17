@@ -150,13 +150,39 @@ open class Part: WorkspaceObject
         }
     }
     
-    // MARK: - Modeling functions
+    // MARK: - Physics
     /**
      Physics body data of part.
      
      > This variable is codable.
      */
     @Published public var physics_body_data: PhysicsBodyComponentFileData?
+    
+    /*public var physical_body: PhysicsBodyComponent?
+    {
+        get
+        {
+            if let physics_body_data = physics_body_data
+            {
+                return physics_body_data.component
+            }
+            else
+            {
+                return nil
+            }
+        }
+        set
+        {
+            if let new_value = newValue
+            {
+                
+            }
+            else
+            {
+                physics_body_data = nil
+            }
+        }
+    }*/
     
     /// The state of physics calculation for part node.
     public var enable_physics = false
@@ -173,8 +199,6 @@ open class Part: WorkspaceObject
             }*/
         }
     }
-    
-    private var color_code: String? // Color hex for part without scene figure
     
     func apply_physics(to entity: Entity)
     {
@@ -233,26 +257,9 @@ open class Part: WorkspaceObject
         }
     }
     
-    // MARK: - Visual Functions
-    #if canImport(RealityKit)
-    override public var entity_tag: EntityModelIdentifier
-    {
-        return EntityModelIdentifier(type: .part, name: name)
-    }
-    #endif
+    // MARK: - Color
+    private var color_code: String? // Color hex for part without scene figure
     
-    /// Old
-    /// Resets model postion.
-    public func model_position_reset()
-    {
-        /*node?.position = SCNVector3(0, 0, 0)
-        node?.rotation.x = 0
-        node?.rotation.y = 0
-        node?.rotation.z = 0*/
-    }
-    /// Old
-    
-    // MARK: - UI functions
     /// Part model color.
     public var color: Color?
     {
@@ -282,6 +289,14 @@ open class Part: WorkspaceObject
             //color_to_model()
         }
     }
+    
+    // MARK: - Visual Functions
+    #if canImport(RealityKit)
+    override public var entity_tag: EntityModelIdentifier
+    {
+        return EntityModelIdentifier(type: .part, name: name)
+    }
+    #endif
     
     // MARK: - Work with file system
     public convenience init(file: PartFileData)
