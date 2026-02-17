@@ -2112,7 +2112,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         let size = bounds.extents
         
-        let shift: Float = 0.03
+        let shift: Float = 0.02
         
         let cone_height: Float = 0.012
         let cone_radius: Float = 0.008
