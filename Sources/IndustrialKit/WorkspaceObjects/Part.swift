@@ -386,7 +386,7 @@ public class PhysicsBodyComponentFileData: Codable
         dynamic_friction: Float = 0.5,
         restitution: Float = 0.0,
         
-        affected_by_gravity: Bool,
+        affected_by_gravity: Bool = true,
         
         lock_location: (x: Bool, y: Bool, z: Bool) = (false, false, false),
         lock_rotation: (r: Bool, p: Bool, w: Bool) = (false, false, false),
