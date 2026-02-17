@@ -277,7 +277,8 @@ open class Part: WorkspaceObject
         }
     }
     
-    private var original_materials: [ObjectIdentifier: [RealityKit.Material]] = [:]
+    //private var original_materials: [ObjectIdentifier: [RealityKit.Material]] = [:]
+    private var saved_basecolor_textures: [ObjectIdentifier: [MaterialParameters.Texture?]] = [:]
     
     private func update_model_color()
     {
@@ -298,25 +299,36 @@ open class Part: WorkspaceObject
             { entity in
                 
                 guard let model = entity as? ModelEntity else { return }
+                guard var materials = model.model?.materials else { return }
                 
                 let id = ObjectIdentifier(model)
                 
-                if original_materials[id] == nil
+                if saved_basecolor_textures[id] == nil
                 {
-                    original_materials[id] = model.model?.materials
+                    saved_basecolor_textures[id] = []
                 }
                 
-                guard var materials = model.model?.materials else { return }
+                var stored: [MaterialParameters.Texture?] = []
                 
                 for i in materials.indices
                 {
-                    if var pbr = materials[i] as? PhysicallyBasedMaterial
+                    guard var pbr = materials[i] as? PhysicallyBasedMaterial
+                    else
                     {
-                        pbr.baseColor.tint = color
-                        materials[i] = pbr
+                        stored.append(nil)
+                        continue
                     }
+                    
+                    stored.append(pbr.baseColor.texture)
+                    
+                    pbr.baseColor.texture = nil
+                    
+                    pbr.baseColor.tint = color
+                    
+                    materials[i] = pbr
                 }
                 
+                saved_basecolor_textures[id] = stored
                 model.model?.materials = materials
             }
         }
@@ -325,14 +337,24 @@ open class Part: WorkspaceObject
         {
             root.visit
             { entity in
-                
                 guard let model = entity as? ModelEntity else { return }
+                guard var materials = model.model?.materials else { return }
                 
                 let id = ObjectIdentifier(model)
+                guard let stored = saved_basecolor_textures[id] else { return }
                 
-                guard let saved = original_materials[id] else { return }
+                for i in materials.indices
+                {
+                    guard var pbr = materials[i] as? PhysicallyBasedMaterial
+                    else { continue }
+                    
+                    pbr.baseColor.texture = stored[i]
+                    pbr.baseColor.tint = .white
+                    
+                    materials[i] = pbr
+                }
                 
-                model.model?.materials = saved
+                model.model?.materials = materials
             }
         }
     }
