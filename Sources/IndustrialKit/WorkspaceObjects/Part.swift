@@ -59,9 +59,9 @@ open class Part: WorkspaceObject
     {
         update_model_color()
         //apply_physics(to: entity)
-        physics_enabled = true
+        //physics_enabled = true
         
-        //update_model_physics()
+        update_model_physics()
     }
     
     // MARK: - Module handling
