@@ -83,7 +83,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         self.init(name: name)
         self.model_entity = entity
         
-        perform_load_entity(model_entity)
+        import_entity(model_entity)
     }
     
     /// Inits object by name and module name of installed module.
@@ -233,17 +233,18 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                 
                 print("🥂 Loaded! (\(name))")
                 
-                perform_load_entity(model_entity)
+                import_entity(model_entity)
             }
             catch
             {
                 //entity_loaded = false
+                
                 print(error.localizedDescription)
             }
         }
     }
     
-    public func perform_load_entity(_ model_entity: Entity?)
+    public func import_entity(_ model_entity: Entity?)
     {
         guard let model_entity = model_entity else { return }
         

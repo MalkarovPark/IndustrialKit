@@ -85,7 +85,7 @@ open class Part: WorkspaceObject
             
             await MainActor.run
             {
-                perform_load_entity(entity.clone(recursive: true))
+                import_entity(entity.clone(recursive: true))
             }
         }
         /*if let module_entity = module.entity

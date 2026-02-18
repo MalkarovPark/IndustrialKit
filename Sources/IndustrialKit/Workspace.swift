@@ -1636,8 +1636,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
             if self.selected_object != nil { self.update_pointer_entity() }
         }
         
-        place_objects() // Place objects
         place_physical_floor() // Place floor
+        place_objects() // Place objects
     }
     
     // MARK: Camera
