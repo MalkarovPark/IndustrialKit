@@ -1947,7 +1947,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             self.update_tool_attachments()
         }*/
-        update_tool_attachments()
+        
+        for i in 0...50
+        {
+            update_tool_attachments()
+        }
         
         for part in parts
         {
