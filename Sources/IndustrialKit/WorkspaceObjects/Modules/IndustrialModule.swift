@@ -158,6 +158,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
                 print(error.localizedDescription)
             }
         }
+        
+        wait_until_entity_loaded()
     }
     
     @MainActor public func wait_until_entity_loaded()
