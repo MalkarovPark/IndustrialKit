@@ -136,38 +136,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         return URL(filePath: "")
     }
     
-    @MainActor public func perform_load_entity(timeout: TimeInterval = 1.0)
-    {
-        let semaphore = DispatchSemaphore(value: 0)
-        
-        Task {
-            do
-            {
-                if is_internal_entity
-                {
-                    self.entity = try await Entity(named: internal_entity_name)
-                    print("🥂 Internal Loaded! (\(internal_entity_name))")
-                }
-                else
-                {
-                    self.entity = try await load_external_entity()
-                    print("🥂 External Loaded! (\(name))")
-                }
-            }
-            catch
-            {
-                print(error.localizedDescription)
-            }
-            semaphore.signal()
-        }
-        
-        if semaphore.wait(timeout: .now() + timeout) == .timedOut
-        {
-            print("Loading timed out (\(name))")
-        }
-    }
-    
-    /*@MainActor public func perform_load_entity()
+    @MainActor public func perform_load_entity()
     {
         Task
         {
@@ -190,6 +159,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             }
         }
         
+        #if os(macOS)
         let timeout: TimeInterval = 1.0
         
         var waited: TimeInterval = 0
@@ -201,6 +171,9 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             //RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: step))
             waited += step
         }
+        #else
+        while entity == nil { RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01)) }
+        #endif
         
         if entity == nil
         {
@@ -211,7 +184,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         {
             RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
         }*/
-    }*/
+    }
     
     private func load_external_entity() async throws -> Entity
     {
