@@ -2724,33 +2724,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Tool attachment functions
     public func update_tool_attachments()
     {
-        guard tools.count > 0 else { return }
-        
-        for tool in tools
-        {
-            /*while tool.model_entity == nil
-            {
-                RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
-            }*/
-            
-            if let attached_to = tool.attached_to
-            {
-                let robot_entity = robot_by_name(attached_to)
-                
-                while robot_entity.model_entity == nil
-                {
-                    RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
-                }
-                
-                robot_entity.end_point_entity.addChild(tool.entity)
-            }
-            else
-            {
-                workspace_entity.addChild(tool.entity)
-            }
-        }
-        
-        /*if !(tools.count > 0) { return }
+        if !(tools.count > 0) { return }
         
         for tool in tools
         {
@@ -2764,7 +2738,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 workspace_entity.addChild(tool.entity)
             }
-        }*/
+        }
         
         /*for tool in tools
         {
