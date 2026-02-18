@@ -159,16 +159,35 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             }
         }
         
-        wait_until_entity_loaded()
+        let timeout: TimeInterval = 1.0
+        
+        var waited: TimeInterval = 0
+        let step: TimeInterval = 0.01
+        
+        while entity == nil && waited < timeout
+        {
+            RunLoop.current.run(mode: .default, before: .distantFuture) // No block RunLoop
+            waited += step
+        }
+        
+        if entity == nil
+        {
+            print("Loading timed out – \(name)")
+        }
+        
+        /*while entity == nil
+        {
+            RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
+        }*/
     }
     
-    @MainActor public func wait_until_entity_loaded()
+    /*@MainActor public func wait_until_entity_loaded()
     {
         while entity == nil
         {
             RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
         }
-    }
+    }*/
     
     private func load_external_entity() async throws -> Entity
     {
