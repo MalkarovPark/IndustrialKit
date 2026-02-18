@@ -136,7 +136,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         return URL(filePath: "")
     }
     
-    @MainActor public func perform_load_entity_sync(timeout: TimeInterval = 5.0)
+    @MainActor public func perform_load_entity(timeout: TimeInterval = 5.0)
     {
         Task
         { @MainActor in
