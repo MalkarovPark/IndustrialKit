@@ -171,8 +171,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             //RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: step))
             waited += step
         }
-        #else
-        while entity == nil { }
         #endif
         
         if entity == nil
