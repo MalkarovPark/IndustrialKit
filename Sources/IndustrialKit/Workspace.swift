@@ -1853,9 +1853,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         let is_major = index % major_step == 0
         let is_axis  = index == 0
         
-        let width = is_axis ? major_width * 1.5
+        /*let width = is_axis ? major_width * 1.5
         : is_major ? major_width
-        : minor_width
+        : minor_width*/
         
         let color = is_axis
         ? UIColor.gray.withAlphaComponent(0.5)

@@ -136,7 +136,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         return URL(filePath: "")
     }
     
-    @MainActor public func perform_load_entity()
+    /*@MainActor public func perform_load_entity()
     {
         Task
         {
@@ -171,6 +171,39 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         let entity = try await Entity(contentsOf: scene_url)
         return entity
+    }*/
+    
+    @MainActor public func perform_load_entity() async
+    {
+        do
+        {
+            if is_internal_entity
+            {
+                self.entity = try await Entity(named: internal_entity_name)
+                print("🥂 Internal Loaded! (\(internal_entity_name))")
+            }
+            else
+            {
+                self.entity = try await load_external_entity()
+                print("🥂 External Loaded! (\(name))")
+            }
+        }
+        catch
+        {
+            print(error.localizedDescription)
+        }
+    }
+    
+    @MainActor private func load_external_entity() async throws -> Entity
+    {
+        let scene_url = package_url.appendingPathComponent(scene_file_name + ".usdz")
+        
+        guard FileManager.default.fileExists(atPath: scene_url.path) else
+        {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        
+        return try await Entity(contentsOf: scene_url)
     }
     
     // MARK: - External Program Components
