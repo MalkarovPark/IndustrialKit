@@ -2728,10 +2728,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         for tool in tools
         {
-            while tool.model_entity == nil
+            /*while tool.model_entity == nil
             {
                 RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
-            }
+            }*/
             
             if let attached_to = tool.attached_to
             {
