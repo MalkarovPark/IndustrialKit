@@ -166,7 +166,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         while entity == nil && waited < timeout
         {
-            RunLoop.current.run(mode: .default, before: .distantFuture) // No block RunLoop
+            //RunLoop.current.run(mode: .default, before: .distantFuture) // No block RunLoop Thread 1: signal SIGABRT
+            RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: step))
             waited += step
         }
         
