@@ -181,14 +181,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         }*/
     }
     
-    /*@MainActor public func wait_until_entity_loaded()
-    {
-        while entity == nil
-        {
-            RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
-        }
-    }*/
-    
     private func load_external_entity() async throws -> Entity
     {
         let scene_url = package_url.appendingPathComponent(scene_file_name + ".usdz")
