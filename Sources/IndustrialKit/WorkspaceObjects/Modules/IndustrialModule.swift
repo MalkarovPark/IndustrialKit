@@ -136,7 +136,42 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         return URL(filePath: "")
     }
     
-    @MainActor public func perform_load_entity()
+    @MainActor public func perform_load_entity_sync(timeout: TimeInterval = 5.0)
+    {
+        Task
+        { @MainActor in
+            do
+            {
+                if is_internal_entity
+                {
+                    self.entity = try await Entity(named: internal_entity_name)
+                    print("🥂 Internal Loaded! (\(internal_entity_name))")
+                }
+                else
+                {
+                    self.entity = try await load_external_entity()
+                    print("🥂 External Loaded! (\(name))")
+                }
+            }
+            catch { print(error) }
+        }
+        
+        let step: TimeInterval = 0.01
+        var waited: TimeInterval = 0
+        
+        while entity == nil && waited < timeout
+        {
+            RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: step))
+            waited += step
+        }
+        
+        if entity == nil
+        {
+            print("Loading timed out (\(name))")
+        }
+    }
+    
+    /*@MainActor public func perform_load_entity()
     {
         Task
         {
@@ -159,7 +194,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             }
         }
         
-        #if os(macOS)
         let timeout: TimeInterval = 1.0
         
         var waited: TimeInterval = 0
@@ -171,9 +205,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             //RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: step))
             waited += step
         }
-        #else
-        while entity == nil { RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01)) }
-        #endif
         
         if entity == nil
         {
@@ -184,7 +215,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         {
             RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
         }*/
-    }
+    }*/
     
     private func load_external_entity() async throws -> Entity
     {
