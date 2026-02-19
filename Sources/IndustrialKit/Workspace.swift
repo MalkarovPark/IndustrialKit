@@ -1946,14 +1946,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
         {
             self.update_tool_attachments()
-            
+        }
+        //update_tool_attachments()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0)
+        {
             for part in self.parts
             {
                 self.place_object_entity(object: part)
             }
         }
-        //update_tool_attachments()
-        
         /*for part in parts
         {
             place_object_entity(object: part)
