@@ -164,23 +164,17 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
                 completion()
             }
         }
-        
-        /*let timeout: TimeInterval = 1.0
-        
-        var waited: TimeInterval = 0
-        let step: TimeInterval = 0.01
-        
-        while entity == nil && waited < timeout
-        {
-            RunLoop.current.run(mode: .default, before: .distantFuture) // No block RunLoop
-            //RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: step))
-            waited += step
+    }
+    
+    @MainActor func perform_load_entity_async() async
+    {
+        await withCheckedContinuation
+        { continuation in
+            perform_load_entity
+            {
+                continuation.resume()
+            }
         }
-        
-        if entity == nil
-        {
-            print("Loading timed out – \(name)")
-        }*/
     }
     
     private func load_external_entity() async throws -> Entity

@@ -278,20 +278,28 @@ open class Robot: WorkspaceObject
     }
     
     /// Performs loading to all entities from internal modules.
-    public static func load_all_internal_modules_entities()
+    public static func load_all_internal_modules_entities(_ completion: @escaping () -> Void = {})
     {
-        for module in Robot.internal_modules
+        Task
         {
-            module.perform_load_entity()
+            for module in Robot.internal_modules
+            {
+                await module.perform_load_entity_async()
+            }
+            completion()
         }
     }
     
     /// Performs loading to all entities from external modules.
-    public static func load_all_external_modules_entities()
+    public static func load_all_external_modules_entities(_ completion: @escaping () -> Void = {})
     {
-        for module in Robot.external_modules
+        Task
         {
-            module.perform_load_entity()
+            for module in Robot.external_modules
+            {
+                await module.perform_load_entity_async()
+            }
+            completion()
         }
     }
     
