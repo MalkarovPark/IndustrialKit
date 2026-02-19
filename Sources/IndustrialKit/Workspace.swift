@@ -2082,9 +2082,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Pointer Entity
     private var pointer_entity = Entity()
     
-    private var pointer_initialized = false
-    private var last_bounds: BoundingBox?
     private weak var last_entity: Entity?
+    private var last_bounds: BoundingBox?
     
     public func set_pointer_entity(to entity: Entity)
     {
@@ -2095,28 +2094,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         last_entity = entity
         
-        pointer_entity.removeFromParent()
-        
         let bounds = entity.visualBounds(relativeTo: entity)
         last_bounds = bounds
         
-        if !pointer_initialized
+        pointer_entity.removeFromParent()
+        
+        for child in pointer_entity.children
         {
-            pointer_entity.addChild(
-                make_wire_bounding_box(bounds: bounds, color: .gray)
-            )
-            
-            pointer_entity.addChild(
-                make_object_pointer(bounds: bounds)
-            )
-            
-            pointer_initialized = true
+            child.removeFromParent()
         }
         
-        pointer_entity.position = bounds.center
+        let box = make_wire_bounding_box(bounds: bounds, color: .gray)
+        let pointer = make_object_pointer(bounds: bounds)
         
-        let extents = bounds.extents
-        pointer_entity.scale = SIMD3<Float>(extents.x, extents.y, extents.z)
+        pointer_entity.addChild(box)
+        pointer_entity.addChild(pointer)
         
         entity.addChild(pointer_entity)
     }
