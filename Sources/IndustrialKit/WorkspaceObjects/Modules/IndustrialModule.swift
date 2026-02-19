@@ -161,7 +161,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         //while entity == nil { }
         
-        /*let timeout: TimeInterval = 1.0
+        let timeout: TimeInterval = 1.0
         
         var waited: TimeInterval = 0
         let step: TimeInterval = 0.01
@@ -178,7 +178,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         if entity == nil
         {
             print("Loading timed out – \(name)")
-        }*/
+        }
         
         /*while entity == nil
         {
