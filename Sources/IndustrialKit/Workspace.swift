@@ -1532,8 +1532,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         var max_x = min_x
         var min_y = placed[0].position.y
         var max_y = min_y
-        //var min_z = placed[0].position.z
-        //var max_z = min_z
+        var min_z = placed[0].position.z
+        var max_z = min_z
         
         for obj in placed
         {
@@ -1545,24 +1545,24 @@ public class Workspace: ObservableObject, @unchecked Sendable
             if p.y < min_y { min_y = p.y }
             if p.y > max_y { max_y = p.y }
             
-            //if p.z < min_z { min_z = p.z }
-            //if p.z > max_z { max_z = p.z }
+            if p.z < min_z { min_z = p.z }
+            if p.z > max_z { max_z = p.z }
         }
         
-        let dx = max_x - min_x
+        /*let dx = max_x - min_x
         let dy = max_y - min_y
         
         let average = (dx + dy) * 0.5 * 0.001
         
-        return max(average /** 1.2*/, 0.5)
+        return max(average /** 1.2*/, 0.5)*/
         
-        /*let dx = max_x - min_x
-        let dy = max_y - min_y
-        let dz = max_z - min_z
+        let dx = (max_x - min_x) * 0.001
+        let dy = (max_y - min_y) * 0.001
+        let dz = (max_z - min_z) * 0.001
         
         let diagonal = sqrt(dx*dx + dy*dy + dz*dz)
         
-        return max(diagonal * 1.2, 0.5)*/
+        return max(diagonal * 1.2, 0.5)
     }
     
     private weak var target_tile: ModelEntity?
@@ -1575,7 +1575,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         scene_content?.add(workspace_anchor) // Physics
         
         // Place (connect) camera
-        if workspace_camera == nil
+        /*if workspace_camera == nil
         {
             // Camera setup
             let camera = PerspectiveCamera()
@@ -1626,7 +1626,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         { [weak self] _ in
             guard let self, let camera = self.workspace_camera else { return }
             self.update_grid(camera_position: camera.position)
-        }
+        }*/
         
         // Dynamic pointer update
         _ = content.subscribe(to: SceneEvents.Update.self)
@@ -1638,7 +1638,112 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         place_physical_floor() // Place floor
         place_objects() // Place objects
+        place_camera() // Place camera
+        
+        /*load_all_modules_entities
+        {
+            self.place_physical_floor() // Place floor
+            self.place_objects() // Place objects
+        }*/
     }
+    
+    public func place_camera()
+    {
+        if workspace_camera == nil
+        {
+            // Camera setup
+            let camera = PerspectiveCamera()
+            camera.camera.fieldOfViewInDegrees = 60
+            camera.position = [0, 1, 0]
+            camera.rotate_x(by: -.pi / 6)
+            
+            workspace_entity.addChild(camera)
+            workspace_camera = camera
+            workspace_entity.addChild(workspace_camera_target)
+            
+            // Target entity setup
+            let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.5, depth: 0.5))
+            wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
+            workspace_camera_target.addChild(wall)
+            target_tile = wall
+            wall.isEnabled = false
+            
+            workspace_camera_target.addChild(wall)
+            scene_content?.cameraTarget = workspace_camera_target
+            
+            capture_initial_camera_target_offset()
+            
+            // Dynamic camera
+            _ = scene_content?.subscribe(to: SceneEvents.Update.self)
+            { [weak self] _ in
+                guard let self else { return }
+                
+                if self.is_focusing
+                {
+                    self.scene_content?.cameraTarget = self.workspace_camera_target
+                }
+                else
+                {
+                    self.move_camera_target()
+                }
+            }
+            
+            // Prebuild grid
+            let cx = Int(round(camera.position.x / cell_size))
+            let cz = Int(round(camera.position.z / cell_size))
+            
+            create_grid_async(center_x: cx, center_z: cz)
+        }
+        
+        // Place grid
+        _ = scene_content?.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self, let camera = self.workspace_camera else { return }
+            self.update_grid(camera_position: camera.position)
+        }
+    }
+    
+    // MARK: Entities from modules
+    /*private func load_all_modules_entities(_ completion: @escaping () -> Void = {})
+    {
+        load_all_internal_modules_entities
+        {
+            load_all_external_modules_entities
+            {
+                completion()
+            }
+        }
+        
+        func load_all_internal_modules_entities(_ completion: @escaping () -> Void = {})
+        {
+            Robot.load_all_internal_modules_entities
+            {
+                Tool.load_all_internal_modules_entities
+                {
+                    Part.load_all_internal_modules_entities
+                    {
+                        print("Internal loaded")
+                        completion()
+                    }
+                }
+            }
+        }
+        
+        func load_all_external_modules_entities(_ completion: @escaping () -> Void = {})
+        {
+            Robot.load_all_external_modules_entities
+            {
+                Tool.load_all_external_modules_entities
+                {
+                    Part.load_all_external_modules_entities
+                    {
+                        print("External loaded")
+                        completion()
+                    }
+                }
+            }
+        }
+    }*/
     
     // MARK: Camera
     /// Focus camera to pivot
