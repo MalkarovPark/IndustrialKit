@@ -140,8 +140,6 @@ open class Part: WorkspaceObject
         {
             module.perform_load_entity()
         }
-        
-        while !Part.internal_modules.allSatisfy({ $0.entity_lodaed }) { }
     }
     
     /// Performs loading to all entities from external modules.
@@ -151,8 +149,6 @@ open class Part: WorkspaceObject
         {
             module.perform_load_entity()
         }
-        
-        while !Part.external_modules.allSatisfy({ $0.entity_lodaed }) { }
     }
     
     // MARK: - Physics
