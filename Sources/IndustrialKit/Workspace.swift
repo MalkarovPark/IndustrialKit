@@ -2082,7 +2082,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Pointer Entity
     private var pointer_entity = Entity()
     
-    public func set_pointer_entity(to entity: Entity)
+    @MainActor public func set_pointer_entity(to entity: Entity)
     {
         pointer_entity.removeFromParent()
         
