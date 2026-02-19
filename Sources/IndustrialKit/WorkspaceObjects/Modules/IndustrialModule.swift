@@ -136,7 +136,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         return URL(filePath: "")
     }
     
-    @MainActor public func perform_load_entity()
+    @MainActor public func perform_load_entity(_ completion: @escaping () -> Void = {}) //@escaping @Sendable (Result<Void, Error>) -> Void)
     {
         Task
         {
@@ -146,16 +146,22 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
                 {
                     self.entity = try await Entity(named: internal_entity_name)
                     print("🥂 Internal Loaded! (\(internal_entity_name))")
+                    
+                    completion()
                 }
                 else
                 {
                     self.entity = try await load_external_entity()
                     print("🥂 External Loaded! (\(name))")
+                    
+                    completion()
                 }
             }
             catch
             {
                 print(error.localizedDescription)
+                
+                completion()
             }
         }
         
