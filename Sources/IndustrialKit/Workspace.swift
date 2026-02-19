@@ -1575,7 +1575,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         scene_content?.add(workspace_anchor) // Physics
         
         // Place (connect) camera
-        /*if workspace_camera == nil
+        if workspace_camera == nil
         {
             // Camera setup
             let camera = PerspectiveCamera()
@@ -1626,7 +1626,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         { [weak self] _ in
             guard let self, let camera = self.workspace_camera else { return }
             self.update_grid(camera_position: camera.position)
-        }*/
+        }
         
         // Dynamic pointer update
         _ = content.subscribe(to: SceneEvents.Update.self)
@@ -1644,7 +1644,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
-            self.place_camera() // Place camera
+            //self.place_camera() // Place camera
         }
     }
     
