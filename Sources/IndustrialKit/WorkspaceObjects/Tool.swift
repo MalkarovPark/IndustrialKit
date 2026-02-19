@@ -91,14 +91,6 @@ open class Tool: WorkspaceObject
                 mode: .kinematic
             )
         )
-        
-        // Test?
-        model_entity?.generateCollisionShapes(recursive: true)
-        model_entity?.visit
-        { entity in
-            entity.components.remove(EntityModelIdentifier.self)
-            entity.components.set(entity_tag)
-        }
     }
     
     //MARK: Model Controller and Connector
