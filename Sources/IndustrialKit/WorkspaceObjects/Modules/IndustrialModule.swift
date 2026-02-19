@@ -159,7 +159,9 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             }
         }
         
-        let timeout: TimeInterval = 1.0
+        while entity == nil { }
+        
+        /*let timeout: TimeInterval = 1.0
         
         var waited: TimeInterval = 0
         let step: TimeInterval = 0.01
@@ -171,7 +173,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             //RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: step))
             waited += step
         }
-        #endif
+        #endif*/
         
         if entity == nil
         {
