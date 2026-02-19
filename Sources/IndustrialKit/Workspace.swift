@@ -2107,17 +2107,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     public func update_pointer_entity()
     {
-        Task
-        {
-            if let selected_object = selected_object, let model_entity = selected_object.model_entity
-            {
-                set_pointer_entity(to: model_entity)
-            }
-        }
-        /*if let selected_object = selected_object, let model_entity = selected_object.model_entity
+        if let selected_object = selected_object, let model_entity = selected_object.model_entity
         {
             set_pointer_entity(to: model_entity)
-        }*/
+        }
     }
     
     private func make_object_pointer(bounds: BoundingBox) -> Entity
