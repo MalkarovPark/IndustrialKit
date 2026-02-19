@@ -88,7 +88,7 @@ open class Tool: WorkspaceObject
             by: PhysicsBodyComponent(
                 massProperties: .default,
                 material: .default,
-                mode: .static//.kinematic
+                mode: .dynamic //.kinematic
             )
         )
     }
