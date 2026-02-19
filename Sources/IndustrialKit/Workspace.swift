@@ -1636,6 +1636,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
             if self.selected_object != nil { self.update_pointer_entity() }
         }
         
+        Robot.load_all_internal_modules_entities()
+        Tool.load_all_internal_modules_entities()
+        Part.load_all_internal_modules_entities()
+        
+        Robot.load_all_external_modules_entities()
+        Tool.load_all_external_modules_entities()
+        Part.load_all_external_modules_entities()
+        
         place_physical_floor() // Place floor
         place_objects() // Place objects
     }
