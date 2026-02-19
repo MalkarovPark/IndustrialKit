@@ -84,13 +84,24 @@ open class Tool: WorkspaceObject
         model_controller.connect_entities(of: entity)
         
         // Apply physics
-        /*entity.apply_physics(
+        entity.apply_physics(
             by: PhysicsBodyComponent(
                 massProperties: .default,
                 material: .default,
                 mode: .kinematic
             )
-        )*/
+        )
+        
+        // Test?
+        model_entity?.visit
+        { child in
+            child.components.remove(CollisionComponent.self)
+        }
+        model_entity?.generateCollisionShapes(recursive: true)
+        model_entity?.visit
+        { entity in
+            entity.components.set(entity_tag)
+        }
     }
     
     //MARK: Model Controller and Connector
