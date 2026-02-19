@@ -159,21 +159,17 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             }
         }
         
-        //while entity == nil { }
-        
         let timeout: TimeInterval = 1.0
         
         var waited: TimeInterval = 0
         let step: TimeInterval = 0.01
         
-        //#if os(macOS)
         while entity == nil && waited < timeout
         {
             RunLoop.current.run(mode: .default, before: .distantFuture) // No block RunLoop
             //RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: step))
             waited += step
         }
-        //#endif
         
         if entity == nil
         {
