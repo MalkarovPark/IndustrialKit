@@ -2082,52 +2082,18 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Pointer Entity
     private var pointer_entity = Entity()
     
-    private weak var last_entity: Entity?
-    private var last_bounds: BoundingBox?
-    
     public func set_pointer_entity(to entity: Entity)
     {
-        if last_entity === entity
-        {
-            return
-        }
-        
-        last_entity = entity
-        
-        let bounds = entity.visualBounds(relativeTo: entity)
-        last_bounds = bounds
-        
-        pointer_entity.removeFromParent()
-        
-        for child in pointer_entity.children
-        {
-            child.removeFromParent()
-        }
-        
-        let box = make_wire_bounding_box(bounds: bounds, color: .gray)
-        let pointer = make_object_pointer(bounds: bounds)
-        
-        pointer_entity.addChild(box)
-        pointer_entity.addChild(pointer)
-        
-        entity.addChild(pointer_entity)
-    }
-    
-    /*public func set_pointer_entity(to entity: Entity)
-    {
         pointer_entity.removeFromParent()
         
         let bounds = entity.visualBounds(relativeTo: entity)
-        
-        //pointer_entity = make_object_pointer(bounds: bounds)
-        //pointer_entity.addChild(make_wire_bounding_box(bounds: bounds, color: .gray))
         
         // For center reposition
         pointer_entity = make_wire_bounding_box(bounds: bounds, color: .gray)
         pointer_entity.addChild(make_object_pointer(bounds: bounds))
         
         entity.addChild(pointer_entity)
-    }*/
+    }
     
     public func disable_pointer_entity()
     {
@@ -2141,10 +2107,17 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     public func update_pointer_entity()
     {
-        if let selected_object = selected_object, let model_entity = selected_object.model_entity
+        Task
+        {
+            if let selected_object = selected_object, let model_entity = selected_object.model_entity
+            {
+                set_pointer_entity(to: model_entity)
+            }
+        }
+        /*if let selected_object = selected_object, let model_entity = selected_object.model_entity
         {
             set_pointer_entity(to: model_entity)
-        }
+        }*/
     }
     
     private func make_object_pointer(bounds: BoundingBox) -> Entity
