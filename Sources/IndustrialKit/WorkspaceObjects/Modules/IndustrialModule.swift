@@ -136,6 +136,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         return URL(filePath: "")
     }
     
+    public var entity_lodaed = false
+    
     @MainActor public func perform_load_entity()
     {
         Task
@@ -146,11 +148,15 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
                 {
                     self.entity = try await Entity(named: internal_entity_name)
                     print("🥂 Internal Loaded! (\(internal_entity_name))")
+                    
+                    entity_lodaed = true
                 }
                 else
                 {
                     self.entity = try await load_external_entity()
                     print("🥂 External Loaded! (\(name))")
+                    
+                    entity_lodaed = true
                 }
             }
             catch

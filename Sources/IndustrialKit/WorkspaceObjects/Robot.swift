@@ -284,6 +284,8 @@ open class Robot: WorkspaceObject
         {
             module.perform_load_entity()
         }
+        
+        while !Robot.internal_modules.allSatisfy({ $0.entity_lodaed }) { }
     }
     
     /// Performs loading to all entities from external modules.
@@ -293,6 +295,8 @@ open class Robot: WorkspaceObject
         {
             module.perform_load_entity()
         }
+        
+        while !Robot.external_modules.allSatisfy({ $0.entity_lodaed }) { }
     }
     
     /**

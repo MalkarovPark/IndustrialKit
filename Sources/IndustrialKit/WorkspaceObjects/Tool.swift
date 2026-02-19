@@ -244,6 +244,8 @@ open class Tool: WorkspaceObject
         {
             module.perform_load_entity()
         }
+        
+        while !Tool.internal_modules.allSatisfy({ $0.entity_lodaed }) { }
     }
     
     /// Performs loading to all entities from external modules.
@@ -253,6 +255,8 @@ open class Tool: WorkspaceObject
         {
             module.perform_load_entity()
         }
+        
+        while !Tool.external_modules.allSatisfy({ $0.entity_lodaed }) { }
     }
     
     #if os(macOS)

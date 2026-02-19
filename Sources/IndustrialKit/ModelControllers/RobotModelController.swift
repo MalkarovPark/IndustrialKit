@@ -27,9 +27,12 @@ open class RobotModelController: ModelController, @unchecked Sendable
     {
         do
         {
-            try update_entities_positions(pointer_position: origin_transform(pointer_position: pointer_position,
-                                                                             origin_position: origin_position),
-                                          origin_position: origin_position)
+            try update_entities_positions(
+                pointer_position: origin_transform(
+                    pointer_position: pointer_position,
+                    origin_position: origin_position
+                ),
+                origin_position: origin_position)
         }
         catch
         {
