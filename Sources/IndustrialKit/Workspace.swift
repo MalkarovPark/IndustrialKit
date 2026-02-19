@@ -1943,15 +1943,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
          
          self.update_tool_attachments()
          }*/
-        /*DispatchQueue.main.asyncAfter(deadline: .now() + 2)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
         {
             self.update_tool_attachments()
-        }*/
-        
-        for i in 0...50
-        {
-            update_tool_attachments()
         }
+        //update_tool_attachments()
         
         for part in parts
         {
