@@ -42,15 +42,14 @@ public struct SpatialPendantView: View
                                 .fill(.clear)
                                 .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
                             
-                            Text("Part")
+                            /*Text("Part")
                             #if os(macOS)
                                 .font(.system(size: 14, design: .rounded))
                             #else
                                 .font(.system(size: 18, design: .rounded))
                             #endif
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.secondary)*/
                         }
-                        .frame(width: pendant_content_width)
                     case .some(_):
                         Text("Nothing")
                     case .none:
@@ -60,6 +59,17 @@ public struct SpatialPendantView: View
                 .padding(8)
                 .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                 .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
+            }
+            else
+            {
+                ZStack
+                {
+                    Rectangle()
+                        .fill(.clear)
+                        .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                }
+                .frame(width: pendant_content_width)
+                .hidden()
             }
         }
         .scaleEffect(is_opened ? 1.0 : 0.82, anchor: .center)
