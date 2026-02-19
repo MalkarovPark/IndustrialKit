@@ -93,13 +93,10 @@ open class Tool: WorkspaceObject
         )
         
         // Test?
-        model_entity?.visit
-        { child in
-            child.components.remove(CollisionComponent.self)
-        }
         model_entity?.generateCollisionShapes(recursive: true)
         model_entity?.visit
         { entity in
+            entity.components.remove(EntityModelIdentifier.self)
             entity.components.set(entity_tag)
         }
     }
