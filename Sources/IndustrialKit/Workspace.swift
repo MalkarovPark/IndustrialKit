@@ -1946,13 +1946,18 @@ public class Workspace: ObservableObject, @unchecked Sendable
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
         {
             self.update_tool_attachments()
+            
+            for part in self.parts
+            {
+                self.place_object_entity(object: part)
+            }
         }
         //update_tool_attachments()
         
-        for part in parts
+        /*for part in parts
         {
             place_object_entity(object: part)
-        }
+        }*/
     }
     
     private func place_physical_floor()
