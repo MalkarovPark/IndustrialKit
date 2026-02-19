@@ -1636,15 +1636,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
             if self.selected_object != nil { self.update_pointer_entity() }
         }
         
-        place_physical_floor() // Place floor
+        /*place_physical_floor() // Place floor
         place_objects() // Place objects
-        place_camera() // Place camera
+        place_camera() // Place camera*/
         
-        /*load_all_modules_entities
+        load_all_modules_entities
         {
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
-        }*/
+            self.place_camera() // Place camera
+        }
     }
     
     public func place_camera()
@@ -1704,7 +1705,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     // MARK: Entities from modules
-    /*private func load_all_modules_entities(_ completion: @escaping () -> Void = {})
+    private func load_all_modules_entities(_ completion: @escaping () -> Void = {})
     {
         load_all_internal_modules_entities
         {
@@ -1743,7 +1744,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 }
             }
         }
-    }*/
+    }
     
     // MARK: Camera
     /// Focus camera to pivot
