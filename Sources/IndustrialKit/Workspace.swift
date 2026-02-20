@@ -2127,7 +2127,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
             xy0: Entity,
             xy1: Entity,
             xy2: Entity,
-            xy3: Entity
+            xy3: Entity,
+            
+            yz0: Entity,
+            yz1: Entity,
+            yz2: Entity,
+            yz3: Entity
         )
     ) = (
         cones: (
@@ -2144,7 +2149,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
             xy0: Entity(),
             xy1: Entity(),
             xy2: Entity(),
-            xy3: Entity()
+            xy3: Entity(),
+            
+            yz0: Entity(),
+            yz1: Entity(),
+            yz2: Entity(),
+            yz3: Entity()
         )
     )
     
@@ -2380,7 +2390,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    private func update_wire_bounding_box(by size: SIMD3<Float>, color: UIColor = .gray)
+    private func update_wire_bounding_box(by size: SIMD3<Float>, color: UIColor = .gray, line_width: Float = 0.001)
     {
         let hx = size.x / 2
         let hy = size.y / 2
@@ -2400,6 +2410,19 @@ public class Workspace: ObservableObject, @unchecked Sendable
         pointer_entity_group.faces.xz3.position = [-hx, -hy, -hz]
         
         // XY Lines
+        let mul: Float = 1 - line_width * 20 //980 / 0.998
+        
+        pointer_entity_group.faces.xy0.scale.x = size.x * mul * 1000
+        pointer_entity_group.faces.xy0.position = [-hx * mul, -hy, -hz]
+        
+        pointer_entity_group.faces.xy1.scale.x = size.x * mul * 1000
+        pointer_entity_group.faces.xy1.position = [-hx * mul, -hy, hz]
+        
+        pointer_entity_group.faces.xy2.scale.x = size.x * mul * 1000
+        pointer_entity_group.faces.xy2.position = [-hx * mul, hy, hz]
+        
+        pointer_entity_group.faces.xy3.scale.x = size.x * mul * 1000
+        pointer_entity_group.faces.xy3.position = [-hx * mul, hy, -hz]
     }
     
     // MARK: - Placements
