@@ -2118,7 +2118,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             y: Entity,
             z: Entity
         ),
-        sides: (
+        faces: (
             xz0: Entity,
             xz1: Entity,
             xz2: Entity,
@@ -2135,7 +2135,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             y: Entity(),
             z: Entity()
         ),
-        sides: (
+        faces: (
             xz0: Entity(),
             xz1: Entity(),
             xz2: Entity(),
@@ -2154,6 +2154,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             selected_object.entity.addChild(pointer_entity)
             update_object_pointer_entity(by: model_entity.visualBounds(relativeTo: model_entity).extents)
+            update_wire_bounding_box(by: model_entity.visualBounds(relativeTo: model_entity).extents)
+            pointer_entity.position = model_entity.visualBounds(relativeTo: model_entity).center
             
             /*pointer_entity.removeFromParent()
             
@@ -2241,130 +2243,130 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    /*private*/ public func make_wire_bounding_box(line_width: Float = 0.001) -> Entity
+    public func make_wire_bounding_box(line_width: Float = 0.001) -> Entity
     {
         let parent = Entity()
         
         var material = SimpleMaterial(
-            color: .green.withAlphaComponent(0.5), //color.withAlphaComponent(0.5),
+            color: .gray.withAlphaComponent(0.5), //color.withAlphaComponent(0.5),
             roughness: 1.0,
             isMetallic: false
         )
         material.faceCulling = .none
         
         // XZ
-        pointer_entity_group.sides.xz0.addChild(
+        pointer_entity_group.faces.xz0.addChild(
             line(
                 position: [line_width / 2,  line_width / 2, 0],
                 rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
             )
         )
-        pointer_entity_group.sides.xz0.addChild(
+        pointer_entity_group.faces.xz0.addChild(
             line(
                 position: [0,  line_width / 2, -line_width / 2],
                 rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
             )
         )
-        parent.addChild(pointer_entity_group.sides.xz0)
+        parent.addChild(pointer_entity_group.faces.xz0)
         
-        pointer_entity_group.sides.xz1.addChild(
+        pointer_entity_group.faces.xz1.addChild(
             line(
                 position: [-line_width / 2,  line_width / 2, 0],
                 rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
             )
         )
-        pointer_entity_group.sides.xz1.addChild(
+        pointer_entity_group.faces.xz1.addChild(
             line(
                 position: [0,  line_width / 2, -line_width / 2],
                 rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
             )
         )
-        parent.addChild(pointer_entity_group.sides.xz1)
+        parent.addChild(pointer_entity_group.faces.xz1)
         
-        pointer_entity_group.sides.xz2.addChild(
+        pointer_entity_group.faces.xz2.addChild(
             line(
                 position: [-line_width / 2,  line_width / 2, 0],
                 rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
             )
         )
-        pointer_entity_group.sides.xz2.addChild(
+        pointer_entity_group.faces.xz2.addChild(
             line(
                 position: [0,  line_width / 2, line_width / 2],
                 rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
             )
         )
-        parent.addChild(pointer_entity_group.sides.xz2)
+        parent.addChild(pointer_entity_group.faces.xz2)
         
-        pointer_entity_group.sides.xz3.addChild(
+        pointer_entity_group.faces.xz3.addChild(
             line(
                 position: [line_width / 2,  line_width / 2, 0],
                 rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
             )
         )
-        pointer_entity_group.sides.xz3.addChild(
+        pointer_entity_group.faces.xz3.addChild(
             line(
                 position: [0,  line_width / 2, line_width / 2],
                 rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
             )
         )
-        parent.addChild(pointer_entity_group.sides.xz3)
+        parent.addChild(pointer_entity_group.faces.xz3)
         
         // XY
-        pointer_entity_group.sides.xy0.addChild(
+        pointer_entity_group.faces.xy0.addChild(
             line(
                 position: [line_width / 2,  line_width / 2, 0],
                 rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
             )
         )
-        pointer_entity_group.sides.xy0.addChild(
+        pointer_entity_group.faces.xy0.addChild(
             line(
                 position: [line_width / 2,  0, line_width / 2],
                 rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
             )
         )
-        parent.addChild(pointer_entity_group.sides.xy0)
+        parent.addChild(pointer_entity_group.faces.xy0)
         
-        pointer_entity_group.sides.xy1.addChild(
+        pointer_entity_group.faces.xy1.addChild(
             line(
                 position: [line_width / 2,  line_width / 2, 0],
                 rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
             )
         )
-        pointer_entity_group.sides.xy1.addChild(
+        pointer_entity_group.faces.xy1.addChild(
             line(
                 position: [line_width / 2,  0, -line_width / 2],
                 rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
             )
         )
-        parent.addChild(pointer_entity_group.sides.xy1)
+        parent.addChild(pointer_entity_group.faces.xy1)
         
-        pointer_entity_group.sides.xy2.addChild(
+        pointer_entity_group.faces.xy2.addChild(
             line(
                 position: [line_width / 2,  -line_width / 2, 0],
                 rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
             )
         )
-        pointer_entity_group.sides.xy2.addChild(
+        pointer_entity_group.faces.xy2.addChild(
             line(
                 position: [line_width / 2,  0, -line_width / 2],
                 rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
             )
         )
-        parent.addChild(pointer_entity_group.sides.xy2)
+        parent.addChild(pointer_entity_group.faces.xy2)
         
-        pointer_entity_group.sides.xy3.addChild(
+        pointer_entity_group.faces.xy3.addChild(
             line(
                 position: [line_width / 2,  -line_width / 2, 0],
                 rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
             )
         )
-        pointer_entity_group.sides.xy3.addChild(
+        pointer_entity_group.faces.xy3.addChild(
             line(
                 position: [line_width / 2,  0, line_width / 2],
                 rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
             )
         )
-        parent.addChild(pointer_entity_group.sides.xy3)
+        parent.addChild(pointer_entity_group.faces.xy3)
         
         return parent
         
@@ -2378,18 +2380,26 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    private func update_wire_bounding_box(bounds: BoundingBox, color: UIColor)
+    private func update_wire_bounding_box(by size: SIMD3<Float>, color: UIColor = .gray)
     {
-        let root = Entity()
-        
-        let size = bounds.extents
-        let center = bounds.center
-        
-        let hx = size.x / (2 * 1000)
-        let hy = size.y / (2 * 1000)
-        let hz = size.z / (2 * 1000)
+        let hx = size.x / 2
+        let hy = size.y / 2
+        let hz = size.z / 2
         
         // XZ Lines
+        pointer_entity_group.faces.xz0.scale.y = size.y * 1000
+        pointer_entity_group.faces.xz0.position = [-hx, -hy, hz]
+        
+        pointer_entity_group.faces.xz1.scale.y = size.y * 1000
+        pointer_entity_group.faces.xz1.position = [hx, -hy, hz]
+        
+        pointer_entity_group.faces.xz2.scale.y = size.y * 1000
+        pointer_entity_group.faces.xz2.position = [hx, -hy, -hz]
+        
+        pointer_entity_group.faces.xz3.scale.y = size.y * 1000
+        pointer_entity_group.faces.xz3.position = [-hx, -hy, -hz]
+        
+        // XY Lines
     }
     
     // MARK: - Placements
