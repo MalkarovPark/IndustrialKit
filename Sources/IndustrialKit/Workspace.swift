@@ -2152,7 +2152,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         let hy = size.y / 2 + shift
         let hz = size.z / 2 + shift
         
-        let positions: [SIMD3<Float>] = [[0, 0, hz], [hx, 0, 0], [0, hy, 0]]
+        let positions: [SIMD3<Float>] = [[0, hy, hz], [hx, hy, 0], [0, hy * 2, 0]] //[[0, 0, hz], [hx, 0, 0], [0, hy, 0]]
         
         let cones = [pointer_entity_group.cones.x, pointer_entity_group.cones.y, pointer_entity_group.cones.z]
         
