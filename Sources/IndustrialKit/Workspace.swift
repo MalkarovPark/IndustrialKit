@@ -2447,56 +2447,58 @@ public class Workspace: ObservableObject, @unchecked Sendable
         let hy = size.y / 2
         let hz = size.z / 2
         
-        let smul: Float = 1 / line_width
+        let size_multiplier: Float = 1 / line_width
         
         // XZ Lines
-        pointer_entity_group.faces.xz0.scale.y = size.y * smul
+        pointer_entity_group.faces.xz0.scale.y = size.y * size_multiplier
         pointer_entity_group.faces.xz0.position = [-hx, -hy, hz]
         
-        pointer_entity_group.faces.xz1.scale.y = size.y * smul
+        pointer_entity_group.faces.xz1.scale.y = size.y * size_multiplier
         pointer_entity_group.faces.xz1.position = [hx, -hy, hz]
         
-        pointer_entity_group.faces.xz2.scale.y = size.y * smul
+        pointer_entity_group.faces.xz2.scale.y = size.y * size_multiplier
         pointer_entity_group.faces.xz2.position = [hx, -hy, -hz]
         
-        pointer_entity_group.faces.xz3.scale.y = size.y * smul
+        pointer_entity_group.faces.xz3.scale.y = size.y * size_multiplier
         pointer_entity_group.faces.xz3.position = [-hx, -hy, -hz]
         
         // XY Lines
-        let mul: Float = 1 - line_width * 20 //980 / 0.998
+        var gapped_size = size_multiplier * (size.x - line_width * 2)
         
-        pointer_entity_group.faces.xy0.scale.x = size.x * smul * mul
-        pointer_entity_group.faces.xy0.position = [-hx * mul, -hy, -hz]
+        pointer_entity_group.faces.xy0.scale.x = gapped_size
+        pointer_entity_group.faces.xy0.position = [-hx + line_width, -hy, -hz]
         
-        pointer_entity_group.faces.xy1.scale.x = size.x * smul * mul
-        pointer_entity_group.faces.xy1.position = [-hx * mul, -hy, hz]
+        pointer_entity_group.faces.xy1.scale.x = gapped_size
+        pointer_entity_group.faces.xy1.position = [-hx + line_width, -hy, hz]
         
-        pointer_entity_group.faces.xy2.scale.x = size.x * smul * mul
-        pointer_entity_group.faces.xy2.position = [-hx * mul, hy, hz]
+        pointer_entity_group.faces.xy2.scale.x = gapped_size
+        pointer_entity_group.faces.xy2.position = [-hx + line_width, hy, hz]
         
-        pointer_entity_group.faces.xy3.scale.x = size.x * smul * mul
-        pointer_entity_group.faces.xy3.position = [-hx * mul, hy, -hz]
+        pointer_entity_group.faces.xy3.scale.x = gapped_size
+        pointer_entity_group.faces.xy3.position = [-hx + line_width, hy, -hz]
         
         // YZ Lines
-        pointer_entity_group.faces.yz0.a.scale.z = size.z * smul
+        gapped_size = size_multiplier * (size.z - line_width * 2)
+        
+        pointer_entity_group.faces.yz0.a.scale.z = size.z * size_multiplier
         pointer_entity_group.faces.yz0.a.position = [-hx, -hy, hz]
-        pointer_entity_group.faces.yz0.b.scale.z = size.z * smul * mul
-        pointer_entity_group.faces.yz0.b.position = [-hx, -hy, hz * mul]
+        pointer_entity_group.faces.yz0.b.scale.z = gapped_size
+        pointer_entity_group.faces.yz0.b.position = [-hx, -hy, hz - line_width]
         
-        pointer_entity_group.faces.yz1.a.scale.z = size.z * smul
+        pointer_entity_group.faces.yz1.a.scale.z = size.z * size_multiplier
         pointer_entity_group.faces.yz1.a.position = [hx, -hy, hz]
-        pointer_entity_group.faces.yz1.b.scale.z = size.z * smul * mul
-        pointer_entity_group.faces.yz1.b.position = [hx, -hy, hz * mul]
+        pointer_entity_group.faces.yz1.b.scale.z = gapped_size
+        pointer_entity_group.faces.yz1.b.position = [hx, -hy, hz - line_width]
         
-        pointer_entity_group.faces.yz2.a.scale.z = size.z * smul
+        pointer_entity_group.faces.yz2.a.scale.z = size.z * size_multiplier
         pointer_entity_group.faces.yz2.a.position = [hx, hy, hz]
-        pointer_entity_group.faces.yz2.b.scale.z = size.z * smul * mul
-        pointer_entity_group.faces.yz2.b.position = [hx, hy, hz * mul]
+        pointer_entity_group.faces.yz2.b.scale.z = gapped_size
+        pointer_entity_group.faces.yz2.b.position = [hx, hy, hz - line_width]
         
-        pointer_entity_group.faces.yz3.a.scale.z = size.z * smul
+        pointer_entity_group.faces.yz3.a.scale.z = size.z * size_multiplier
         pointer_entity_group.faces.yz3.a.position = [-hx, hy, hz]
-        pointer_entity_group.faces.yz3.b.scale.z = size.z * smul * mul
-        pointer_entity_group.faces.yz3.b.position = [-hx, hy, hz * mul]
+        pointer_entity_group.faces.yz3.b.scale.z = gapped_size
+        pointer_entity_group.faces.yz3.b.position = [-hx, hy, hz - line_width]
     }
     
     // MARK: - Placements
