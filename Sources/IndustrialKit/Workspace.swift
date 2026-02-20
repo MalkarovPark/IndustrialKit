@@ -1511,62 +1511,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var workspace_entity = Entity()
     private var scene_content: RealityViewCameraContent?
     
-    /*private*/public var workspace_anchor = AnchorEntity(world: .zero)
-    
-    private var workspace_camera: PerspectiveCamera?
-    private var workspace_camera_target = Entity()
-    
-    private var camera_target_offset: SIMD3<Float> = .zero
-    private var camera_target_initialized = false
-    
-    private var base_camera_distance: Float?
-    private var is_focusing = false
-    
-    private var target_tile_default_size: Float // = 0.5
-    {
-        let placed = (robots + tools + parts).filter { $0.is_placed }
-        
-        guard !placed.isEmpty else { return 0.5 }
-        
-        var min_x = placed[0].position.x
-        var max_x = min_x
-        var min_y = placed[0].position.y
-        var max_y = min_y
-        var min_z = placed[0].position.z
-        var max_z = min_z
-        
-        for obj in placed
-        {
-            let p = obj.position
-            
-            if p.x < min_x { min_x = p.x }
-            if p.x > max_x { max_x = p.x }
-            
-            if p.y < min_y { min_y = p.y }
-            if p.y > max_y { max_y = p.y }
-            
-            if p.z < min_z { min_z = p.z }
-            if p.z > max_z { max_z = p.z }
-        }
-        
-        /*let dx = max_x - min_x
-        let dy = max_y - min_y
-        
-        let average = (dx + dy) * 0.5 * 0.001
-        
-        return max(average /** 1.2*/, 0.5)*/
-        
-        let dx = (max_x - min_x) * 0.001
-        let dy = (max_y - min_y) * 0.001
-        let dz = (max_z - min_z) * 0.001
-        
-        let diagonal = sqrt(dx*dx + dy*dy + dz*dz)
-        
-        return max(diagonal * 1.2, 0.5)
-    }
-    
-    private weak var target_tile: ModelEntity?
-    
     public func place_entity(to content: RealityViewCameraContent)
     {
         scene_content = content
@@ -1628,79 +1572,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
             self.update_grid(camera_position: camera.position)
         }
         
-        // Dynamic pointer update
+        // Place pointer
+        workspace_entity.addChild(pointer_entity)
+        pointer_entity.isEnabled = false
+        pointer_entity.addChild(make_object_pointer_entity())
         _ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self else { return }
             
-            if self.selected_object != nil { self.update_pointer_entity() }
+            if self.selected_object != nil { self.update_pointer_entity() } // Dynamic pointer update
         }
-        
-        /*place_physical_floor() // Place floor
-        place_objects() // Place objects
-        place_camera() // Place camera*/
         
         load_all_modules_entities
         {
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
-            //self.place_camera() // Place camera
-        }
-    }
-    
-    public func place_camera()
-    {
-        if workspace_camera == nil
-        {
-            // Camera setup
-            let camera = PerspectiveCamera()
-            camera.camera.fieldOfViewInDegrees = 60
-            camera.position = [0, 1, 0]
-            camera.rotate_x(by: -.pi / 6)
-            
-            workspace_entity.addChild(camera)
-            workspace_camera = camera
-            workspace_entity.addChild(workspace_camera_target)
-            
-            // Target entity setup
-            let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.5, depth: 0.5))
-            wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
-            workspace_camera_target.addChild(wall)
-            target_tile = wall
-            wall.isEnabled = false
-            
-            workspace_camera_target.addChild(wall)
-            scene_content?.cameraTarget = workspace_camera_target
-            
-            capture_initial_camera_target_offset()
-            
-            // Dynamic camera
-            _ = scene_content?.subscribe(to: SceneEvents.Update.self)
-            { [weak self] _ in
-                guard let self else { return }
-                
-                if self.is_focusing
-                {
-                    self.scene_content?.cameraTarget = self.workspace_camera_target
-                }
-                else
-                {
-                    self.move_camera_target()
-                }
-            }
-            
-            // Prebuild grid
-            let cx = Int(round(camera.position.x / cell_size))
-            let cz = Int(round(camera.position.z / cell_size))
-            
-            create_grid_async(center_x: cx, center_z: cz)
-        }
-        
-        // Place grid
-        _ = scene_content?.subscribe(to: SceneEvents.Update.self)
-        { [weak self] _ in
-            guard let self, let camera = self.workspace_camera else { return }
-            self.update_grid(camera_position: camera.position)
         }
     }
     
@@ -1747,6 +1633,62 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     // MARK: Camera
+    private var workspace_anchor = AnchorEntity(world: .zero)
+    
+    private var workspace_camera: PerspectiveCamera?
+    private var workspace_camera_target = Entity()
+    
+    private var camera_target_offset: SIMD3<Float> = .zero
+    private var camera_target_initialized = false
+    
+    private var base_camera_distance: Float?
+    private var is_focusing = false
+    
+    private var target_tile_default_size: Float // = 0.5
+    {
+        let placed = (robots + tools + parts).filter { $0.is_placed }
+        
+        guard !placed.isEmpty else { return 0.5 }
+        
+        var min_x = placed[0].position.x
+        var max_x = min_x
+        var min_y = placed[0].position.y
+        var max_y = min_y
+        var min_z = placed[0].position.z
+        var max_z = min_z
+        
+        for obj in placed
+        {
+            let p = obj.position
+            
+            if p.x < min_x { min_x = p.x }
+            if p.x > max_x { max_x = p.x }
+            
+            if p.y < min_y { min_y = p.y }
+            if p.y > max_y { max_y = p.y }
+            
+            if p.z < min_z { min_z = p.z }
+            if p.z > max_z { max_z = p.z }
+        }
+        
+        /*let dx = max_x - min_x
+        let dy = max_y - min_y
+        
+        let average = (dx + dy) * 0.5 * 0.001
+        
+        return max(average /** 1.2*/, 0.5)*/
+        
+        let dx = (max_x - min_x) * 0.001
+        let dy = (max_y - min_y) * 0.001
+        let dz = (max_z - min_z) * 0.001
+        
+        let diagonal = sqrt(dx*dx + dy*dy + dz*dz)
+        
+        return max(diagonal * 1.2, 0.5)
+    }
+    
+    private weak var target_tile: ModelEntity?
+    
     /// Focus camera to pivot
     private func focus(on entity: Entity?)
     {
@@ -1959,10 +1901,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         let is_major = index % major_step == 0
         let is_axis  = index == 0
         
-        /*let width = is_axis ? major_width * 1.5
-        : is_major ? major_width
-        : minor_width*/
-        
         let color = is_axis
         ? UIColor.gray.withAlphaComponent(0.5)
         : is_major
@@ -2138,9 +2076,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         self.objectWillChange.send() // UI only
     }
     
+    private var pointer_entity = Entity()
+    
     private func select_object_by_entity_identifier(_ entity_identifier: EntityModelIdentifier)
     {
         deselect_object() // Test
+        pointer_entity.isEnabled = false
         
         deselect_program()
         
@@ -2148,13 +2089,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
         case .robot:
             select_robot(name: entity_identifier.name)
-            //set_pointer_entity(to: selected_object?.model_entity ?? Entity())
+            pointer_entity.isEnabled = true
         case .tool:
             select_tool(name: entity_identifier.name)
-            //set_pointer_entity(to: selected_object?.model_entity ?? Entity())
+            pointer_entity.isEnabled = true
         case .part:
             select_part(name: entity_identifier.name)
-            //set_pointer_entity(to: selected_object?.model_entity ?? Entity())
+            pointer_entity.isEnabled = true
         case .none:
             break
         }
@@ -2169,11 +2110,125 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     // MARK: Pointer Entity
-    private var pointer_entity = Entity()
+    private var pointer_entity_group: (
+        cones: (
+            x: Entity,
+            y: Entity,
+            z: Entity
+        ),
+        sides: (
+            xz0: Entity,
+            xz1: Entity,
+            xz2: Entity,
+            xz3: Entity,
+            
+            xy0: Entity,
+            xy1: Entity,
+            xy2: Entity,
+            xy3: Entity
+        )
+    ) = (
+        cones: (
+            x: Entity(),
+            y: Entity(),
+            z: Entity()
+        ),
+        sides: (
+            xz0: Entity(),
+            xz1: Entity(),
+            xz2: Entity(),
+            xz3: Entity(),
+            
+            xy0: Entity(),
+            xy1: Entity(),
+            xy2: Entity(),
+            xy3: Entity()
+        )
+    )
+    
+    private func update_object_pointer_entity(by size: SIMD3<Float>, shift: Float = 0.04)
+    {
+        let hx = size.x / 2 + shift
+        let hy = size.y / 2 + shift
+        let hz = size.z / 2 + shift
+        
+        let rotations: [SIMD3<Float>] = [[.pi/2, 0, 0], [0, 0,-.pi/2], [0, 0, 0]]
+        let positions: [SIMD3<Float>] = [[0, 0, hz], [hx, 0, 0], [0, hy, 0]]
+        
+        let cones = [pointer_entity_group.cones.x, pointer_entity_group.cones.y, pointer_entity_group.cones.z]
+        
+        for i in 0..<3
+        {
+            // Cone
+            cones[i].position = positions[i]
+            cones[i].eulerAngles = rotations[i]
+        }
+    }
+    
+    private func make_object_pointer_entity() -> Entity
+    {
+        let hx: Float = 0
+        let hy: Float = 0
+        let hz: Float = 0
+        
+        let cone_height: Float = 0.010
+        let cone_radius: Float = 0.008
+        
+        let colors: [UIColor] = [
+            UIColor.systemIndigo,
+            UIColor.systemPink,
+            UIColor.systemTeal
+        ]
+        
+        let rotations: [SIMD3<Float>] = [[.pi/2, 0, 0], [0, 0,-.pi/2], [0, 0, 0]]
+        let positions: [SIMD3<Float>] = [[0, 0, hz], [hx, 0, 0], [0, hy, 0]]
+        
+        let cylinder_shift: Float = 0.0025
+        
+        let parent = Entity()
+        
+        var cones = [Entity]()
+        
+        for i in 0..<3
+        {
+            // Cone
+            let cone = ModelEntity(mesh: .generateCone(height: cone_height, radius: cone_radius), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
+            cone.components.set(
+                CollisionComponent(
+                    shapes: [.generateConvex(from: cone.model!.mesh)]
+                )
+            )
+            
+            cone.position = positions[i]
+            cone.eulerAngles = rotations[i]
+            
+            // Cylinder
+            let cylinder = ModelEntity(mesh: .generateCylinder(height: cylinder_shift, radius: cone_radius), materials: [SimpleMaterial(color: .white, roughness: 1.0, isMetallic: false)])
+            cylinder.components.set(
+                CollisionComponent(
+                    shapes: [.generateConvex(from: cone.model!.mesh)]
+                )
+            )
+            cylinder.position = [0, Float(hy) - (cylinder_shift / 2 + cone_height / 2), 0]
+            
+            cone.addChild(cylinder)
+            
+            // All
+            cones.append(cone)
+            parent.addChild(cone)
+        }
+        
+        pointer_entity_group.cones = (x: cones[0], y: cones[1], z: cones[2])
+        
+        return parent
+    }
     
     @MainActor public func set_pointer_entity(to entity: Entity)
     {
-        pointer_entity.removeFromParent()
+        update_object_pointer_entity(by: entity.visualBounds(relativeTo: entity).extents)
+        entity.addChild(pointer_entity)
+        
+        /*pointer_entity.removeFromParent()
         
         let bounds = entity.visualBounds(relativeTo: entity)
         
@@ -2181,7 +2236,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         pointer_entity = make_wire_bounding_box(bounds: bounds, color: .gray)
         pointer_entity.addChild(make_object_pointer(bounds: bounds))
         
-        entity.addChild(pointer_entity)
+        entity.addChild(pointer_entity)*/
     }
     
     public func disable_pointer_entity()
