@@ -2251,7 +2251,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if let selected_object = selected_object, let model_entity = selected_object.model_entity
         {
-            set_pointer_entity(to: model_entity)
+            selected_object.entity.addChild(pointer_entity)
+            update_object_pointer_entity(by: model_entity.visualBounds(relativeTo: model_entity).extents)
+            
+            //set_pointer_entity(to: model_entity)
         }
     }
     
