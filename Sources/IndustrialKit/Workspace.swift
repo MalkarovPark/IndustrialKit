@@ -1575,7 +1575,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         // Place pointer
         workspace_entity.addChild(pointer_entity)
         pointer_entity.isEnabled = false
-        pointer_entity.addChild(make_object_pointer_entity())
+        let bounding_box = make_wire_bounding_box()
+        bounding_box.addChild(make_object_pointer_entity())
+        pointer_entity.addChild(bounding_box)
         _ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self else { return }
@@ -2146,20 +2148,22 @@ public class Workspace: ObservableObject, @unchecked Sendable
         )
     )
     
-    private func update_object_pointer_entity(by size: SIMD3<Float>, shift: Float = 0.04)
+    public func update_pointer_entity()
     {
-        let hx = size.x / 2 + shift
-        let hy = size.y / 2 + shift
-        let hz = size.z / 2 + shift
-        
-        let positions: [SIMD3<Float>] = [[0, 0, hz], [hx, 0, 0], [0, hy, 0]]
-        
-        let cones = [pointer_entity_group.cones.x, pointer_entity_group.cones.y, pointer_entity_group.cones.z]
-        
-        for i in 0..<3
+        if let selected_object = selected_object, let model_entity = selected_object.model_entity
         {
-            // Cone
-            cones[i].position = positions[i]
+            selected_object.entity.addChild(pointer_entity)
+            update_object_pointer_entity(by: model_entity.visualBounds(relativeTo: model_entity).extents)
+            
+            /*pointer_entity.removeFromParent()
+            
+            let bounds = entity.visualBounds(relativeTo: entity)
+            
+            // For center reposition
+            pointer_entity = make_wire_bounding_box(bounds: bounds, color: .gray)
+            pointer_entity.addChild(make_object_pointer(bounds: bounds))
+            
+            entity.addChild(pointer_entity)*/
         }
     }
     
@@ -2221,262 +2225,174 @@ public class Workspace: ObservableObject, @unchecked Sendable
         return parent
     }
     
-    @MainActor public func set_pointer_entity(to entity: Entity)
+    private func update_object_pointer_entity(by size: SIMD3<Float>, shift: Float = 0.04)
     {
-        update_object_pointer_entity(by: entity.visualBounds(relativeTo: entity).extents)
-        entity.addChild(pointer_entity)
-        
-        /*pointer_entity.removeFromParent()
-        
-        let bounds = entity.visualBounds(relativeTo: entity)
-        
-        // For center reposition
-        pointer_entity = make_wire_bounding_box(bounds: bounds, color: .gray)
-        pointer_entity.addChild(make_object_pointer(bounds: bounds))
-        
-        entity.addChild(pointer_entity)*/
-    }
-    
-    public func disable_pointer_entity()
-    {
-        pointer_entity.removeFromParent()
-    }
-    
-    public func toggle_pointer_visibility()
-    {
-        pointer_entity.isEnabled.toggle()
-    }
-    
-    public func update_pointer_entity()
-    {
-        if let selected_object = selected_object, let model_entity = selected_object.model_entity
-        {
-            selected_object.entity.addChild(pointer_entity)
-            update_object_pointer_entity(by: model_entity.visualBounds(relativeTo: model_entity).extents)
-            
-            //set_pointer_entity(to: model_entity)
-        }
-    }
-    
-    private func make_object_pointer(bounds: BoundingBox) -> Entity
-    {
-        let size = bounds.extents
-        
-        let shift: Float = 0.04
-        
-        let cone_height: Float = 0.010
-        let cone_radius: Float = 0.008
-        
         let hx = size.x / 2 + shift
         let hy = size.y / 2 + shift
         let hz = size.z / 2 + shift
         
-        let colors: [UIColor] = [
-            UIColor.systemIndigo,
-            UIColor.systemPink,
-            UIColor.systemTeal
-        ]
-        
-        let rotations: [SIMD3<Float>] = [[.pi/2, 0, 0], [0, 0,-.pi/2], [0, 0, 0]]
         let positions: [SIMD3<Float>] = [[0, 0, hz], [hx, 0, 0], [0, hy, 0]]
         
-        let cylinder_shift: Float = 0.0025
-        let positions2: [SIMD3<Float>] = [[0, 0, Float(hz) - (cylinder_shift / 2 + cone_height / 2)], [Float(hx) - (cylinder_shift / 2 + cone_height / 2), 0, 0], [0, Float(hy) - (cylinder_shift / 2 + cone_height / 2), 0]]
-        
-        let parent = Entity()
+        let cones = [pointer_entity_group.cones.x, pointer_entity_group.cones.y, pointer_entity_group.cones.z]
         
         for i in 0..<3
         {
-            // Cone
-            let cone = ModelEntity(mesh: .generateCone(height: cone_height, radius: cone_radius), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
-            cone.components.set(
-                CollisionComponent(
-                    shapes: [.generateConvex(from: cone.model!.mesh)]
-                )
-            )
-            
-            cone.position = positions[i]
-            cone.eulerAngles = rotations[i]
-            
-            parent.addChild(cone)
-            
-            // Cylinder
-            let cylinder = ModelEntity(mesh: .generateCylinder(height: cylinder_shift, radius: cone_radius), materials: [SimpleMaterial(color: .white, roughness: 1.0, isMetallic: false)])
-            cylinder.components.set(
-                CollisionComponent(
-                    shapes: [.generateConvex(from: cone.model!.mesh)]
-                )
-            )
-            cylinder.position = positions2[i]
-            cylinder.eulerAngles = rotations[i]
-            
-            parent.addChild(cylinder)
+            cones[i].position = positions[i]
         }
+    }
+    
+    /*private*/ public func make_wire_bounding_box(line_width: Float = 0.001) -> Entity
+    {
+        let parent = Entity()
+        
+        var material = SimpleMaterial(
+            color: .green.withAlphaComponent(0.5), //color.withAlphaComponent(0.5),
+            roughness: 1.0,
+            isMetallic: false
+        )
+        material.faceCulling = .none
+        
+        // XZ
+        pointer_entity_group.sides.xz0.addChild(
+            line(
+                position: [line_width / 2,  line_width / 2, 0],
+                rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
+            )
+        )
+        pointer_entity_group.sides.xz0.addChild(
+            line(
+                position: [0,  line_width / 2, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
+            )
+        )
+        parent.addChild(pointer_entity_group.sides.xz0)
+        
+        pointer_entity_group.sides.xz1.addChild(
+            line(
+                position: [-line_width / 2,  line_width / 2, 0],
+                rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
+            )
+        )
+        pointer_entity_group.sides.xz1.addChild(
+            line(
+                position: [0,  line_width / 2, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
+            )
+        )
+        parent.addChild(pointer_entity_group.sides.xz1)
+        
+        pointer_entity_group.sides.xz2.addChild(
+            line(
+                position: [-line_width / 2,  line_width / 2, 0],
+                rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
+            )
+        )
+        pointer_entity_group.sides.xz2.addChild(
+            line(
+                position: [0,  line_width / 2, line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
+            )
+        )
+        parent.addChild(pointer_entity_group.sides.xz2)
+        
+        pointer_entity_group.sides.xz3.addChild(
+            line(
+                position: [line_width / 2,  line_width / 2, 0],
+                rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
+            )
+        )
+        pointer_entity_group.sides.xz3.addChild(
+            line(
+                position: [0,  line_width / 2, line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
+            )
+        )
+        parent.addChild(pointer_entity_group.sides.xz3)
+        
+        // XY
+        pointer_entity_group.sides.xy0.addChild(
+            line(
+                position: [line_width / 2,  line_width / 2, 0],
+                rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
+            )
+        )
+        pointer_entity_group.sides.xy0.addChild(
+            line(
+                position: [line_width / 2,  0, line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
+            )
+        )
+        parent.addChild(pointer_entity_group.sides.xy0)
+        
+        pointer_entity_group.sides.xy1.addChild(
+            line(
+                position: [line_width / 2,  line_width / 2, 0],
+                rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
+            )
+        )
+        pointer_entity_group.sides.xy1.addChild(
+            line(
+                position: [line_width / 2,  0, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
+            )
+        )
+        parent.addChild(pointer_entity_group.sides.xy1)
+        
+        pointer_entity_group.sides.xy2.addChild(
+            line(
+                position: [line_width / 2,  -line_width / 2, 0],
+                rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
+            )
+        )
+        pointer_entity_group.sides.xy2.addChild(
+            line(
+                position: [line_width / 2,  0, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
+            )
+        )
+        parent.addChild(pointer_entity_group.sides.xy2)
+        
+        pointer_entity_group.sides.xy3.addChild(
+            line(
+                position: [line_width / 2,  -line_width / 2, 0],
+                rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0])
+            )
+        )
+        pointer_entity_group.sides.xy3.addChild(
+            line(
+                position: [line_width / 2,  0, line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
+            )
+        )
+        parent.addChild(pointer_entity_group.sides.xy3)
         
         return parent
+        
+        func line(position: SIMD3<Float>, rotation: simd_quatf) -> ModelEntity
+        {
+            let mesh = MeshResource.generatePlane(width: line_width, depth: line_width)
+            let entity = ModelEntity(mesh: mesh, materials: [material])
+            entity.position = position
+            entity.orientation = rotation
+            return entity
+        }
     }
-
-    private func make_wire_bounding_box(bounds: BoundingBox, color: UIColor, line_width: Float = 0.001) -> Entity
+    
+    private func update_wire_bounding_box(bounds: BoundingBox, color: UIColor)
     {
         let root = Entity()
         
         let size = bounds.extents
         let center = bounds.center
         
-        let hx = size.x / 2
-        let hy = size.y / 2
-        let hz = size.z / 2
+        let hx = size.x / (2 * 1000)
+        let hy = size.y / (2 * 1000)
+        let hz = size.z / (2 * 1000)
         
-        var material = SimpleMaterial(
-            color: color.withAlphaComponent(0.5),
-            roughness: 1.0,
-            isMetallic: false
-        )
-        material.faceCulling = .none
-        
-        func line(length: Float, position: SIMD3<Float>, rotation: simd_quatf) -> ModelEntity
-        {
-            let mesh = MeshResource.generatePlane(width: length, depth: line_width)
-            let entity = ModelEntity(mesh: mesh, materials: [material])
-            entity.position = position
-            entity.orientation = rotation
-            return entity
-        }
-        
-        func line(width: Float, depth: Float, position: SIMD3<Float>, rotation: simd_quatf) -> ModelEntity
-        {
-            let mesh = MeshResource.generatePlane(width: width, depth: depth)
-            let entity = ModelEntity(mesh: mesh, materials: [material])
-            entity.position = position
-            entity.orientation = rotation
-            return entity
-        }
-        
-        // XY Planes
-        for z in [-hz, hz]
-        {
-            root.addChild(
-                line(
-                    width: size.x - line_width * 2,
-                    depth: line_width,
-                    position: [0,  hy - line_width / 2, z],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [1,0,0])
-                )
-            )
-            
-            root.addChild(
-                line(
-                    width: size.x - line_width * 2,
-                    depth: line_width,
-                    position: [0,  -hy + line_width / 2, z],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [1,0,0])
-                )
-            )
-            
-            root.addChild(
-                line(
-                    width: line_width,
-                    depth: size.y,
-                    position: [-hx + line_width / 2, 0, z],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [1,0,0])
-                )
-            )
-            
-            root.addChild(
-                line(
-                    width: line_width,
-                    depth: size.y,
-                    position: [hx - line_width / 2, 0, z],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [1,0,0])
-                )
-            )
-        }
-        
-        // YZ Planes
-        for x in [-hx, hx]
-        {
-            root.addChild(
-                line(
-                    width: line_width,
-                    depth: size.z - line_width * 2,
-                    position: [x, hy - line_width / 2, 0],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
-                )
-            )
-            
-            root.addChild(
-                line(
-                    width: line_width,
-                    depth: size.z - line_width * 2,
-                    position: [x, -hy + line_width / 2, 0],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
-                )
-            )
-            
-            root.addChild(
-                line(
-                    width: size.y,
-                    depth: line_width,
-                    position: [x, 0, -hz + line_width / 2],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
-                )
-            )
-            
-            root.addChild(
-                line(
-                    width: size.y,
-                    depth: line_width,
-                    position: [x, 0,  hz - line_width / 2],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
-                )
-            )
-        }
-        
-        // XZ Planes
-        for y in [-hy, hy]
-        {
-            root.addChild(
-                line(
-                    width: size.z - line_width * 2,
-                    depth: line_width,
-                    position: [-hx + line_width / 2, y, 0],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
-                )
-            )
-            
-            root.addChild(
-                line(
-                    width: size.z - line_width * 2,
-                    depth: line_width,
-                    position: [hx - line_width / 2, y, 0],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
-                )
-            )
-            
-            root.addChild(
-                line(
-                    width: line_width,
-                    depth: size.x,
-                    position: [0, y, -hz + line_width / 2],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
-                )
-            )
-            
-            root.addChild(
-                line(
-                    width: line_width,
-                    depth: size.x,
-                    position: [0, y, hz - line_width / 2],
-                    rotation: simd_quatf(angle: .pi / 2, axis: [0, 1, 0])
-                )
-            )
-        }
-        
-        root.position = center
-        
-        return root
+        // XZ Lines
     }
     
+    // MARK: - Placements
     private func comfort_placement(for object: WorkspaceObject)
     {
         let object_rect = rect(of: object)
