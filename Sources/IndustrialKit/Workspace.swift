@@ -2112,7 +2112,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     // MARK: Pointer Entity
-    private var pointer_entity_group: (
+    public var pointer_entity_group: (
         cones: (
             x: Entity,
             y: Entity,
@@ -2129,10 +2129,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
             xy2: Entity,
             xy3: Entity,
             
-            yz0: Entity,
-            yz1: Entity,
-            yz2: Entity,
-            yz3: Entity
+            yz0: (a: Entity, b: Entity),
+            yz1: (a: Entity, b: Entity),
+            yz2: (a: Entity, b: Entity),
+            yz3: (a: Entity, b: Entity)
         )
     ) = (
         cones: (
@@ -2151,10 +2151,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
             xy2: Entity(),
             xy3: Entity(),
             
-            yz0: Entity(),
-            yz1: Entity(),
-            yz2: Entity(),
-            yz3: Entity()
+            yz0: (a: Entity(), b: Entity()),
+            yz1: (a: Entity(), b: Entity()),
+            yz2: (a: Entity(), b: Entity()),
+            yz3: (a: Entity(), b: Entity())
         )
     )
     
@@ -2166,16 +2166,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             update_object_pointer_entity(by: model_entity.visualBounds(relativeTo: model_entity).extents)
             update_wire_bounding_box(by: model_entity.visualBounds(relativeTo: model_entity).extents)
             pointer_entity.position = model_entity.visualBounds(relativeTo: model_entity).center
-            
-            /*pointer_entity.removeFromParent()
-            
-            let bounds = entity.visualBounds(relativeTo: entity)
-            
-            // For center reposition
-            pointer_entity = make_wire_bounding_box(bounds: bounds, color: .gray)
-            pointer_entity.addChild(make_object_pointer(bounds: bounds))
-            
-            entity.addChild(pointer_entity)*/
         }
     }
     
@@ -2378,6 +2368,67 @@ public class Workspace: ObservableObject, @unchecked Sendable
         )
         parent.addChild(pointer_entity_group.faces.xy3)
         
+        // YZ
+        pointer_entity_group.faces.yz0.a.addChild(
+            line(
+                position: [line_width / 2,  0, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 0])
+            )
+        )
+        parent.addChild(pointer_entity_group.faces.yz0.a)
+        pointer_entity_group.faces.yz0.b.addChild(
+            line(
+                position: [0,  line_width / 2, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
+            )
+        )
+        parent.addChild(pointer_entity_group.faces.yz0.b)
+        
+        pointer_entity_group.faces.yz1.a.addChild(
+            line(
+                position: [-line_width / 2,  0, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 0])
+            )
+        )
+        parent.addChild(pointer_entity_group.faces.yz1.a)
+        pointer_entity_group.faces.yz1.b.addChild(
+            line(
+                position: [0,  line_width / 2, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
+            )
+        )
+        parent.addChild(pointer_entity_group.faces.yz1.b)
+        
+        pointer_entity_group.faces.yz2.a.addChild(
+            line(
+                position: [-line_width / 2,  0, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 0])
+            )
+        )
+        parent.addChild(pointer_entity_group.faces.yz2.a)
+        pointer_entity_group.faces.yz2.b.addChild(
+            line(
+                position: [0,  -line_width / 2, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
+            )
+        )
+        parent.addChild(pointer_entity_group.faces.yz2.b)
+        
+        pointer_entity_group.faces.yz3.a.addChild(
+            line(
+                position: [line_width / 2,  0, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 0])
+            )
+        )
+        parent.addChild(pointer_entity_group.faces.yz3.a)
+        pointer_entity_group.faces.yz3.b.addChild(
+            line(
+                position: [0,  -line_width / 2, -line_width / 2],
+                rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1])
+            )
+        )
+        parent.addChild(pointer_entity_group.faces.yz3.b)
+        
         return parent
         
         func line(position: SIMD3<Float>, rotation: simd_quatf) -> ModelEntity
@@ -2396,33 +2447,56 @@ public class Workspace: ObservableObject, @unchecked Sendable
         let hy = size.y / 2
         let hz = size.z / 2
         
+        let smul: Float = 1 / line_width
+        
         // XZ Lines
-        pointer_entity_group.faces.xz0.scale.y = size.y * 1000
+        pointer_entity_group.faces.xz0.scale.y = size.y * smul
         pointer_entity_group.faces.xz0.position = [-hx, -hy, hz]
         
-        pointer_entity_group.faces.xz1.scale.y = size.y * 1000
+        pointer_entity_group.faces.xz1.scale.y = size.y * smul
         pointer_entity_group.faces.xz1.position = [hx, -hy, hz]
         
-        pointer_entity_group.faces.xz2.scale.y = size.y * 1000
+        pointer_entity_group.faces.xz2.scale.y = size.y * smul
         pointer_entity_group.faces.xz2.position = [hx, -hy, -hz]
         
-        pointer_entity_group.faces.xz3.scale.y = size.y * 1000
+        pointer_entity_group.faces.xz3.scale.y = size.y * smul
         pointer_entity_group.faces.xz3.position = [-hx, -hy, -hz]
         
         // XY Lines
         let mul: Float = 1 - line_width * 20 //980 / 0.998
         
-        pointer_entity_group.faces.xy0.scale.x = size.x * mul * 1000
+        pointer_entity_group.faces.xy0.scale.x = size.x * smul * mul
         pointer_entity_group.faces.xy0.position = [-hx * mul, -hy, -hz]
         
-        pointer_entity_group.faces.xy1.scale.x = size.x * mul * 1000
+        pointer_entity_group.faces.xy1.scale.x = size.x * smul * mul
         pointer_entity_group.faces.xy1.position = [-hx * mul, -hy, hz]
         
-        pointer_entity_group.faces.xy2.scale.x = size.x * mul * 1000
+        pointer_entity_group.faces.xy2.scale.x = size.x * smul * mul
         pointer_entity_group.faces.xy2.position = [-hx * mul, hy, hz]
         
-        pointer_entity_group.faces.xy3.scale.x = size.x * mul * 1000
+        pointer_entity_group.faces.xy3.scale.x = size.x * smul * mul
         pointer_entity_group.faces.xy3.position = [-hx * mul, hy, -hz]
+        
+        // YZ Lines
+        pointer_entity_group.faces.yz0.a.scale.z = size.z * smul
+        pointer_entity_group.faces.yz0.a.position = [-hx, -hy, hz]
+        pointer_entity_group.faces.yz0.b.scale.z = size.z * smul * mul
+        pointer_entity_group.faces.yz0.b.position = [-hx, -hy, hz * mul]
+        
+        pointer_entity_group.faces.yz1.a.scale.z = size.z * smul
+        pointer_entity_group.faces.yz1.a.position = [hx, -hy, hz]
+        pointer_entity_group.faces.yz1.b.scale.z = size.z * smul * mul
+        pointer_entity_group.faces.yz1.b.position = [hx, -hy, hz * mul]
+        
+        pointer_entity_group.faces.yz2.a.scale.z = size.z * smul
+        pointer_entity_group.faces.yz2.a.position = [hx, hy, hz]
+        pointer_entity_group.faces.yz2.b.scale.z = size.z * smul * mul
+        pointer_entity_group.faces.yz2.b.position = [hx, hy, hz * mul]
+        
+        pointer_entity_group.faces.yz3.a.scale.z = size.z * smul
+        pointer_entity_group.faces.yz3.a.position = [-hx, hy, hz]
+        pointer_entity_group.faces.yz3.b.scale.z = size.z * smul * mul
+        pointer_entity_group.faces.yz3.b.position = [-hx, hy, hz * mul]
     }
     
     // MARK: - Placements
