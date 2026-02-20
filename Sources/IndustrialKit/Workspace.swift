@@ -2152,7 +2152,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         let hy = size.y / 2 + shift
         let hz = size.z / 2 + shift
         
-        let rotations: [SIMD3<Float>] = [[.pi/2, 0, 0], [0, 0,-.pi/2], [0, 0, 0]]
         let positions: [SIMD3<Float>] = [[0, 0, hx], [hz, 0, 0], [0, hy, 0]]
         
         let cones = [pointer_entity_group.cones.x, pointer_entity_group.cones.y, pointer_entity_group.cones.z]
@@ -2161,7 +2160,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             // Cone
             cones[i].position = positions[i]
-            cones[i].eulerAngles = rotations[i]
         }
     }
     
