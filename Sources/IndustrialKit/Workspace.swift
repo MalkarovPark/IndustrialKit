@@ -2043,29 +2043,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             place_object_entity(object: tool)
         }
-        /*_ = content.subscribe(to: SceneEvents.Update.self)
-         { [weak self] _ in
-         guard let self else { return }
-         
-         self.update_tool_attachments()
-         }*/
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-        {
-            self.update_tool_attachments()
-        }
-        //update_tool_attachments()
+        update_tool_attachments()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0)
-        {
-            for part in self.parts
-            {
-                self.place_object_entity(object: part)
-            }
-        }
-        /*for part in parts
+        for part in self.parts
         {
             place_object_entity(object: part)
-        }*/
+        }
     }
     
     private func place_physical_floor()
