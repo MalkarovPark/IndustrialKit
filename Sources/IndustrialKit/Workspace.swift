@@ -2513,11 +2513,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         for group in [robots as [WorkspaceObject], tools, parts]
         {
-            /*for item in group where item !== object && item.model_entity != nil
-            {
-                occupied.append(rect(of: item))
-            }*/
-            
             for item in group
             {
                 guard item !== object, item.model_entity != nil else { continue }
@@ -2915,44 +2910,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 workspace_entity.addChild(tool.entity)
             }
         }
-        
-        /*for tool in tools
-        {
-            if let attached_to = tool.attached_to
-            {
-                let end_point_entity = robot_by_name(attached_to).end_point_entity
-                tool.entity.position = end_point_entity.position(relativeTo: nil) // World position of robot end point
-            }
-            else
-            {
-                tool.entity.position = workspace_entity.position(relativeTo: nil) // World position of workspace origin
-            }
-        }*/
-        
-        /*func sum_rotations(_ entity: Entity, _ entity2: Entity)
-        {
-            entity.eulerAngles.x += entity2.eulerAngles.x
-            entity.eulerAngles.y += entity2.eulerAngles.y
-            entity.eulerAngles.z += entity2.eulerAngles.z
-        }
-        
-        func sum_angles(_ a: SIMD3<Float>, _ b: SIMD3<Float>) -> SIMD3<Float>
-        {
-            @inline(__always)
-            func normalize(_ angle: Float) -> Float
-            {
-                var x = fmodf(angle + Float.pi, 2 * Float.pi)
-                if x < 0 { x += 2 * Float.pi }
-                return x - Float.pi
-            }
-
-            let s = a + b
-            return SIMD3<Float>(
-                normalize(s.x),
-                normalize(s.y),
-                normalize(s.z)
-            )
-        }*/
     }
     
     // MARK: - Parts handling functions
@@ -3120,12 +3077,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             $0.file_data()
         }
-        
-        // Workspace production programs
-        /*let programs_file_info: [ProductionProgram] = programs.map
-        {
-            $0.file_data()
-        }*/
         
         return (
             robots: robots_file_info,

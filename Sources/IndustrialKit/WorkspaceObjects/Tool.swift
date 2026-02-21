@@ -857,9 +857,6 @@ open class Tool: WorkspaceObject
     }
     #endif
     
-    /*/// A flag determines if tool is attached to the robot manipulator.
-    public var is_attached = false*/
-    
     /// A name of the robot that the tool is attached to.
     public var attached_to: String?
     
@@ -971,17 +968,6 @@ open class Tool: WorkspaceObject
     }
     
     // MARK: - UI functions
-    /**
-     Returns info for tool card view.
-     
-     Output avaliable codes count. If their number is zero, the instrument is listed as *static*.
-     */
-    /*public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, node: SCNNode) // Get info for robot card view
-    {
-        return("\(self.name)", "\(self.module_name)", .teal, UIImage(), SCNNode())
-        //return("\(self.name)", self.codes.count > 0 ? "\(self.codes.count) code tool" : "Static tool", .teal, UIImage(), node: SCNNode()) // Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
-    }*/
-    
     /// Apply corresponded label and SF Symbol to operation code.
     public func code_info(_ value: Int) -> OperationCodeInfo
     {

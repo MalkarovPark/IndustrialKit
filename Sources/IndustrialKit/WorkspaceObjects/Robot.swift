@@ -1041,7 +1041,7 @@ open class Robot: WorkspaceObject
     }
     
     // MARK: Position Pointer Entity
-    /*private*/ var position_pointer_entity = Entity()
+    private var position_pointer_entity = Entity()
     
     @MainActor public func toggle_position_pointer_visibility()
     {
@@ -1320,16 +1320,6 @@ open class Robot: WorkspaceObject
     }
     
     // MARK: - UI functions
-    /**
-     Returns info for robot card view.
-     
-     Color sets by the manufacturer name.
-     */
-    /*public override var card_info: (title: String, subtitle: String, color: Color, image: UIImage, SCNNode: SCNNode) // Get info for robot card view
-    {
-        return("\(self.name)", "\(self.module_name)", .green, UIImage(), SCNNode())
-    }*/
-    
     /// Connects robot charts to UI.
     public func charts_binding() -> Binding<[WorkspaceObjectChart]?>
     {

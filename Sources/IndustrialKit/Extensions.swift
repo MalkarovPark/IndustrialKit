@@ -96,14 +96,6 @@ extension Array where Element == Float
     }
 }
 
-/*public extension Dictionary where Key == String
-{
-    subscript<T>(safe key: String, default defaultValue: T) -> T
-    {
-        return self[key] as? T ?? defaultValue
-    }
-}*/
-
 public extension Dictionary where Key == String
 {
     /// Safe entity get by key with default
@@ -180,29 +172,6 @@ public extension Color
         )
     }
 }
-
-/*extension Color
-{
-    init(hex: String)
-    {
-        let hex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        let scanner = Scanner(string: hex)
-        
-        if hex.hasPrefix("#")
-        {
-            scanner.currentIndex = hex.index(after: hex.startIndex)
-        }
-        
-        var rgb: UInt64 = 0
-        scanner.scanHexInt64(&rgb)
-        
-        let r = Double((rgb >> 16) & 0xFF) / 255.0
-        let g = Double((rgb >> 8) & 0xFF) / 255.0
-        let b = Double(rgb & 0xFF) / 255.0
-        
-        self.init(red: r, green: g, blue: b)
-    }
-}*/
 
 extension UIColor
 {
@@ -394,7 +363,6 @@ public extension Entity
     {
         let id = ObjectIdentifier(self)
 
-        // уже были здесь → цикл
         if visited.contains(id) { return }
         visited.insert(id)
 
@@ -550,24 +518,6 @@ public extension Entity
         
         return controller
     }
-    
-    /*func move_to(
-        position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0),
-        scale: (x: Float, y: Float, z: Float) = (x: 1, y: 1, z: 1),
-        duration: Double = 1, timing_function: AnimationTimingFunction = .linear
-    )
-    {
-        self.move(
-            to: Transform(
-                scale: SIMD3<Float>(x: scale.y, y: scale.z, z: scale.x),
-                rotation: simd_quatf(angle: position.w.to_rad, axis: [0, 1, 0]) * simd_quatf(angle: position.p.to_rad, axis: [1, 0, 0]) * simd_quatf(angle: position.r.to_rad, axis: [0, 0, 1]),
-                translation: SIMD3<Float>(position.y / 1000, position.z / 1000, position.x / 1000)
-            ),
-            relativeTo: self.parent,
-            duration: TimeInterval(duration),
-            timingFunction: timing_function
-        )
-    }*/
 }
 
 public extension Entity

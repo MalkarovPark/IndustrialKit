@@ -129,11 +129,6 @@ public struct RegistersSelector: View
         }
         .buttonStyle(.bordered)
         .buttonBorderShape(.roundedRectangle)
-        /*Button("\(text)", action: { is_presented = true })
-            .popover(isPresented: $is_presented)
-            {
-                RegistersSelectorView(registers_count: registers_count, colors: colors, indices: $indices, names: names)
-            }*/
     }
 }
 
@@ -517,7 +512,6 @@ private struct RegistersCountView: View
                 .onSubmit
                 {
                     update_count()
-                    // additive_func()
                 }
             #if os(macOS)
                 .frame(width: 64)
@@ -531,11 +525,6 @@ private struct RegistersCountView: View
                 .padding(.trailing, 8)
             #endif
         }
-        /*.onChange(of: registers_count)
-        { _, _ in
-            update_count()
-            additive_func()
-        }*/
         .padding(10)
         .controlSize(.regular)
     }

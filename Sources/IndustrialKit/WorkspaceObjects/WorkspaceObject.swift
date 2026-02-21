@@ -279,17 +279,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         }
     }
     
-    /*public func update_entity_model_identifier(for model_entity: Entity?, entity_tag: EntityModelIdentifier)
-    {
-        guard let model_entity = model_entity else { return }
-        
-        model_entity.visit
-        { entity in
-            entity.components.remove(EntityModelIdentifier.self)
-            entity.components.set(entity_tag)
-        }
-    }*/
-    
     open func extend_entity_preparation(_ entity: Entity)
     {
         
@@ -319,12 +308,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         
         Task
         {
-            // Wait until bot.entity becomes available, then place it once
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
-            /*while model_entity == nil
-            {
-                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
-            }*/
             
             update_model_position() //entity.update_position(position)
         }
@@ -349,15 +333,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         self.name = file.name
         self.module_name = file.module_name
         self.is_internal_module = file.is_internal_module
-        
-        /*self.position = (
-         file.location[0],
-         file.location[1],
-         file.location[2],
-         file.rotation[0],
-         file.rotation[1],
-         file.rotation[2]
-         )*/
         
         self.position = (
             file.location[safe: 0] ?? 0,

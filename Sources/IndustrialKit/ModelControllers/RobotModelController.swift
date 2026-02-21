@@ -363,16 +363,6 @@ open class RobotModelController: ModelController, @unchecked Sendable
             let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
             return components.count == 2 ? (components[0], components[1]) : nil
         }
-        
-        /*DispatchQueue.main.async
-        {
-            for (node_name, action_string) in updates
-            {
-                set_position(for: self.entities[safe: node_name, default: Entity()], from: action_string)
-            }
-            
-            self.is_entities_updating = false
-        }*/
         #endif
     }
     

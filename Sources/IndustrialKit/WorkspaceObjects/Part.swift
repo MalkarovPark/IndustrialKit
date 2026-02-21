@@ -176,7 +176,7 @@ open class Part: WorkspaceObject
         }
     }
     
-    /*private*/ public func update_model_physics()
+    private func update_model_physics()
     {
         if physics_enabled
         {

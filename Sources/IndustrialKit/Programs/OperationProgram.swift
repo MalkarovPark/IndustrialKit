@@ -92,22 +92,6 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
         return codes.count
     }
     
-    /*/**
-     Resets code values to zero if their values are negative.
-     - Parameters:
-        - index: Checkable number index.
-     */
-    private func new_code_check(index: Int)
-    {
-        if codes.count > 0 && index < codes_count
-        {
-            if codes.last?.value ?? 0 < 0
-            {
-                codes[codes.count].value = 0
-            }
-        }
-    }*/
-    
     /// Resets the performing state of all operation codes to the `.none` state.
     public func reset_codes_states()
     {

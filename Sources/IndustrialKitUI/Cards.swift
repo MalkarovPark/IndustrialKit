@@ -426,18 +426,6 @@ public struct GlassBoxCard<Content: View>: View
                 // Internals
                 if image != nil
                 {
-                    /*#if os(macOS)
-                    Image(nsImage: image!)
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    #else
-                    Image(uiImage: image!)
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    #endif*/
-                    
                     Rectangle()
                         .foregroundStyle(.clear)
                         .overlay

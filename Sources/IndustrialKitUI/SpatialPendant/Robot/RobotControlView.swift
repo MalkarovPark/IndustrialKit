@@ -537,13 +537,6 @@ private struct PositionPointView: View
                 point.w = new_point.w
                 
                 robot.update_position_program_entity(by: program)
-                
-                /*point.x = new_value.x
-                point.y = new_value.y
-                point.z = new_value.z
-                point.r = new_value.r
-                point.p = new_value.p
-                point.w = new_value.w*/
             }
         )
     }

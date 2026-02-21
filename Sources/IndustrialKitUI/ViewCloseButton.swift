@@ -48,19 +48,6 @@ public struct ViewCloseFuncButton: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        /*ZStack(alignment: .topLeading)
-        {
-            content
-            
-            Button(action: close_action)
-            {
-                Image(systemName: "xmark")
-                    .modifier(CircleButtonImageFramer())
-            }
-            .keyboardShortcut(.cancelAction)
-            .modifier(CircleButtonGlassBorderer())
-            .padding(10)
-        }*/
         content
             .overlay(alignment: .topLeading)
             {
