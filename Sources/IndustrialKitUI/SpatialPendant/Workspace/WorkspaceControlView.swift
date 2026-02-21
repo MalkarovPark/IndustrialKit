@@ -63,7 +63,7 @@ struct WorkspaceControlView: View
                         .buttonStyle(.plain)
                         .overlay(alignment: .topTrailing)
                         {
-                            if !registers_updated
+                            if registers_updated
                             {
                                 ZStack
                                 {
