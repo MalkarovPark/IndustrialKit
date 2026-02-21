@@ -149,7 +149,7 @@ public struct OperationControl: View
                                     #if os(macOS)
                                     .frame(width: 80, height: 80)
                                     #else
-                                    .frame(width: 80, height: 96)
+                                    .frame(width: 96, height: 96)
                                     #endif
                                     .background(.quinary)
                                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
