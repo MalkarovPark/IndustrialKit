@@ -95,8 +95,9 @@ public struct NewElementButton: View
                                 .modifier(CircleButtonImageFramer())
                         }
                         .buttonStyle(.plain)
-                        .keyboardShortcut(.defaultAction)
                         .buttonBorderShape(.circle)
+                        .contentShape(Circle())
+                        .keyboardShortcut(.defaultAction)
                         
                         Button(action: {
                             withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
@@ -110,6 +111,7 @@ public struct NewElementButton: View
                         }
                         .buttonStyle(.plain)
                         .buttonBorderShape(.circle)
+                        .contentShape(Circle())
                         .padding(.trailing, 6)
                     }
                     #if os(macOS)
