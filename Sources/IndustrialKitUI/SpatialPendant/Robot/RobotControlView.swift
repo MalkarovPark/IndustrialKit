@@ -369,7 +369,7 @@ private struct PositionItemView: View
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                 #else
                 PositionPointView(robot: robot, program: program, point: point_item, position_item_view_presented: $position_item_view_presented, is_compact: horizontal_size_class == .compact)
-                    .presentationDetents([.height(576)])
+                    .presentationDetents([.height(496)])
                 #endif
             }
         }
@@ -402,10 +402,6 @@ private struct PositionDropDelegate: DropDelegate
     
     let robot: Robot
     
-    #if os(iOS)
-    @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
-    #endif
-    
     func dropEntered(info: DropInfo)
     {
         guard let dragging_id = dragging_point_id else { return }
@@ -436,42 +432,42 @@ private struct PositionPointView: View
     
     @ObservedObject var point: PositionPoint
     @Binding var position_item_view_presented: Bool
-
+    
     #if os(iOS)
     let is_compact: Bool
     #endif
 
     var body: some View
     {
-        VStack(spacing: 0)
+        VStack(spacing: 16)
         {
-            #if os(macOS)
-            HStack
-            {
-                PositionView(position: positionBinding())
-            }
-            .padding([.horizontal, .top])
-            #else
-            if !is_compact
+            #if os(iOS)
+            if is_compact
             {
                 HStack
                 {
-                    PositionView(position: positionBinding())
+                    Text("Position")
+                        .font(.title2)
+                    
+                    Spacer()
+                    
+                    Button
+                    {
+                        position_item_view_presented = false
+                    }
+                    label:
+                    {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 24))
+                    }
+                    .buttonStyle(.plain)
                 }
-                .padding([.horizontal, .top])
-            }
-            else
-            {
-                VStack
-                {
-                    PositionView(position: positionBinding())
-                }
-                .padding([.horizontal, .top])
-                
-                Spacer()
             }
             #endif
             
+            PositionView(position: positionBinding())
+            
+            #if os(macOS)
             HStack
             {
                 Picker("Type", selection: $point.move_type)
@@ -482,32 +478,61 @@ private struct PositionPointView: View
                     }
                 }
                 .pickerStyle(.menu)
-                #if os(macOS)
                 .frame(maxWidth: .infinity)
-                #else
-                .frame(width: 96)
-                .buttonStyle(.borderedProminent)
-                #endif
                 
                 Text("Speed")
-                #if os(macOS)
                     .frame(width: 40)
-                #else
-                    .frame(width: 60)
-                #endif
                 TextField("0", value: $point.move_speed, format: .number)
                     .textFieldStyle(.roundedBorder)
-                #if os(macOS)
                     .frame(width: 48)
-                #else
-                    .frame(maxWidth: .infinity)
+                Stepper("Enter", value: $point.move_speed, in: 0...100)
+                    .labelsHidden()
+            }
+            #else
+            
+            Divider()
+            
+            HStack
+            {
+                Text("Type")
+                    .fontWeight(.light)
+                
+                Spacer()
+                
+                Picker("Type", selection: $point.move_type)
+                {
+                    ForEach(MoveType.allCases, id: \.self)
+                    { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.menu)
+                .buttonStyle(.plain)
+            }
+            
+            Divider()
+            
+            HStack
+            {
+                Text("Speed")
+                    .fontWeight(.light)
+                
+                Spacer()
+                
+                TextField("0", value: $point.move_speed, format: .number)
+                    .textFieldStyle(.roundedBorder)
                     .keyboardType(.decimalPad)
+                #if !os(visionOS)
+                    .frame(width: 60)
+                #else
+                    .frame(width: 80)
                 #endif
                 Stepper("Enter", value: $point.move_speed, in: 0...100)
                     .labelsHidden()
             }
-            .padding()
+            #endif
         }
+        .padding()
     }
 
     private func positionBinding() -> Binding<(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)>

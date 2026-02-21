@@ -81,7 +81,11 @@ public struct ProgramItemView: View
             AdaptiveDotGrid(count: count, square_size: 24)
                 .frame(width: 48, height: 48)
         }
-        .background(.quinary)
+        .background
+        {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(.quinary)
+        }
         .frame(maxWidth: .infinity, maxHeight: 64)
         .clipShape(.rect(cornerRadius: 8, style: .continuous))
         .contextMenu

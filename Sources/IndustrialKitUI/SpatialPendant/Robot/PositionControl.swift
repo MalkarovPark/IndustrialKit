@@ -449,12 +449,16 @@ public struct PositionPane: View
                             PositionView(position: $robot.pointer_position)
                                 .opacity(is_editor_mode ? 1 : 0)
                         }
+                        #if os(macOS)
                         .padding(10)
+                        #else
+                        .padding(16)
+                        #endif
                     }
                     #if os(macOS)
                     .frame(width: is_editor_mode ? 280 : 120)
                     #else
-                    .frame(width: is_editor_mode ? 320 : 120)
+                    .frame(width: is_editor_mode ? 332 : 120)
                     #endif
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)

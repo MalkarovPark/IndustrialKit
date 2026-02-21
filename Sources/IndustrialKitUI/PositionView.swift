@@ -41,7 +41,6 @@ public struct PositionView: View
                     {
                         Text(group.rawValue)
                             .fontWeight(.light)
-                            //.font(.system(size: 14, weight: .light))
                         Spacer()
                     }
                     

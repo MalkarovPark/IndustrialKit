@@ -26,9 +26,9 @@ public struct ElementControl: View
     
     public var body: some View
     {
-        GlassEffectContainer
+        HStack(spacing: 0)
         {
-            HStack(spacing: 0)
+            GlassEffectContainer
             {
                 if !is_expanded
                 {
@@ -158,45 +158,43 @@ public struct ElementControl: View
                     #endif
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
-                    //.animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
                     .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
-                    //.transition(.opacity.combined(with: .scale(scale: 1.0)))
                 }
-                
-                Button
-                {
-                    workspace.start_pause_single_element()
-                }
-                label:
-                {
-                    ZStack
-                    {
-                        workspace.current_element.image
-                            .foregroundColor(.white)
-                            .imageScale(.large)
-                            .animation(.easeInOut(duration: 0.2), value: workspace.current_element.image)
-                            .animation(.easeInOut(duration: 0.2), value: workspace.current_element.color)
-                            .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                            .frame(width: 48, height: 48)
-                    }
-                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                #if !os(visionOS)
-                .glassEffect(.regular.interactive().tint(workspace.current_element.color), in: .rect(cornerRadius: 16, style: .continuous))
-                #else
-                .controlSize(.large)
-                .buttonStyle(.borderless)
-                .glassBackgroundEffect()
-                .frame(depth: 24)
-                #endif
-                #if os(macOS) || os(iOS)
-                .padding(10)
-                #else
-                .padding(16)
-                #endif
-                .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
             }
+            
+            Button
+            {
+                workspace.start_pause_single_element()
+            }
+            label:
+            {
+                ZStack
+                {
+                    workspace.current_element.image
+                        .foregroundColor(.white)
+                        .imageScale(.large)
+                        .animation(.easeInOut(duration: 0.2), value: workspace.current_element.image)
+                        .animation(.easeInOut(duration: 0.2), value: workspace.current_element.color)
+                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                        .frame(width: 48, height: 48)
+                }
+                .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            #if !os(visionOS)
+            .glassEffect(.regular.interactive().tint(workspace.current_element.color), in: .rect(cornerRadius: 16, style: .continuous))
+            #else
+            .controlSize(.large)
+            .buttonStyle(.borderless)
+            .glassBackgroundEffect()
+            .frame(depth: 24)
+            #endif
+            #if os(macOS) || os(iOS)
+            .padding(10)
+            #else
+            .padding(16)
+            #endif
+            .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
         }
     }
 }
@@ -306,7 +304,6 @@ public struct WorkspaceProgramElementView: View
                 ObserverElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as CleanerModifierElement:
                 Text("Clean all registers")
-                    .padding()
                 
             case let element as JumpLogicElement:
                 JumpElementView(element: element, program: program, on_update: on_update)
@@ -318,9 +315,8 @@ public struct WorkspaceProgramElementView: View
             default:
                 EmptyView()
             }
-            
-            EmptyView()
         }
+        .frame(maxWidth: .infinity)
     }
 }
 

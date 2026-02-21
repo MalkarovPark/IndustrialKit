@@ -127,7 +127,7 @@ public struct OperationControl: View
                             #if os(macOS)
                             .frame(width: 80, height: 80)
                             #else
-                            .frame(width: 80, height: 96)
+                            .frame(width: 96, height: 96)
                             #endif
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay
@@ -215,9 +215,9 @@ public struct OperationControl: View
                             .background(.quinary)
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             #if os(macOS)
-                            .frame(maxWidth: 120, maxHeight: 80)
+                            .frame(maxWidth: .infinity, maxHeight: 80)
                             #else
-                            .frame(height: 96)
+                            .frame(maxWidth: .infinity, maxHeight: 96)
                             #endif
                             
                             ZStack
@@ -244,9 +244,9 @@ public struct OperationControl: View
                                     .textFieldStyle(.plain)
                             }
                             #if os(macOS)
-                            .frame(height: 80)
+                            .frame(width: 80, height: 80)
                             #else
-                            .frame(width: 80, height: 96)
+                            .frame(width: 96, height: 96)
                             #endif
                             .background(.quinary)
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -254,9 +254,9 @@ public struct OperationControl: View
                         .padding(10)
                     }
                     #if os(macOS)
-                    .frame(width: is_expanded ? 280 : 120)
+                    .frame(width: is_expanded ? 300 : 120)
                     #else
-                    .frame(width: is_expanded ? 320 : 120)
+                    .frame(width: is_expanded ? 360 : 120)
                     #endif
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
