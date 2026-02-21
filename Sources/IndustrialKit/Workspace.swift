@@ -1511,7 +1511,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private var workspace_entity = Entity()
     private var scene_content: RealityViewCameraContent?
     
-    public func place_entity(to content: RealityViewCameraContent)
+    public func place_entity(to content: RealityViewCameraContent, completion: @escaping () -> () = {})
     {
         scene_content = content
         scene_content?.add(workspace_entity)
@@ -1589,6 +1589,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
+            
+            completion()
         }
     }
     
