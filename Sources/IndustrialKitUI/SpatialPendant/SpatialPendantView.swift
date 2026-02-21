@@ -314,13 +314,10 @@ struct SpatialPendant_Previews: PreviewProvider
                 pendant_controller.is_opened = true
                 workspace.deselect_object()
             case 1:
-                //pendant_controller.is_opened = true
                 workspace.select_robot(name: "6DOF Robot")
             case 2:
-                //pendant_controller.is_opened = true
                 workspace.select_tool(name: "Gripper")
             case 3:
-                //pendant_controller.is_opened = true
                 workspace.select_part(name: "Cup")
             default:
                 pendant_controller.is_opened = false
