@@ -17,12 +17,19 @@ public struct RobotControlView: View
     @State private var dragging_program_id: UUID?
     @State private var new_program_view_presented = false
     
-    @Namespace private var animation_namespace
+    let on_update: () -> ()
     
-    public init(robot: Robot)
+    public init(
+        robot: Robot,
+        on_update: @escaping () -> Void = { }
+    )
     {
         self.robot = robot
+        
+        self.on_update = on_update
     }
+    
+    @Namespace private var animation_namespace
     
     public var body: some View
     {
@@ -108,38 +115,25 @@ public struct RobotControlView: View
                     if robot.selected_program != nil
                     {
                         PerformingControlView(robot: robot)
+                        
+                        Spacer()
                     }
                     
-                    Spacer()
-                    
-                    Button(action: add_item)
-                    {
-                        Image(systemName: "plus")
-                            //.contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                            .modifier(CircleButtonImageFramer())
-                    }
+                    NewElementButton(
+                        with_name: robot.selected_program == nil,
+                        names: robot.programs_names,
+                        add_name_action:
+                            { new_name in
+                                robot.add_program(PositionProgram(name: new_name))
+                                
+                                on_update()
+                            },
+                        add_action:
+                            {
+                                add_item()
+                            }
+                    )
                     .disabled(robot.program_performed)
-                    #if os(macOS)
-                    .popover(isPresented: $new_program_view_presented, arrowEdge: .leading)
-                    {
-                        AddNewView(is_presented: $new_program_view_presented, names: robot.programs_names) { new_name in
-                            robot.add_program(PositionProgram(name: new_name))
-                        }
-                    }
-                    #else
-                    .popover(isPresented: $new_program_view_presented, arrowEdge: .trailing)
-                    {
-                        AddNewView(is_presented: $new_program_view_presented, names: robot.programs_names) { new_name in
-                            robot.add_program(PositionProgram(name: new_name))
-                        }
-                    }
-                    #endif
-                    .modifier(CircleButtonGlassBorderer())
-                    #if os(macOS) || os(iOS)
-                    .padding(10)
-                    #else
-                    .padding(16)
-                    #endif
                 }
             }
             
@@ -157,17 +151,12 @@ public struct RobotControlView: View
     // MARK: Functions
     private func add_item()
     {
-        if robot.selected_program == nil
+        if let program = robot.selected_program
         {
-            new_program_view_presented = true
-        }
-        else
-        {
-            if let program = robot.selected_program
-            {
-                program.add_point(PositionPoint(x: robot.pointer_position.x, y: robot.pointer_position.y, z: robot.pointer_position.z, r: robot.pointer_position.r, p: robot.pointer_position.p, w: robot.pointer_position.w))
-                robot.update_position_program_entity(by: program)
-            }
+            program.add_point(PositionPoint(x: robot.pointer_position.x, y: robot.pointer_position.y, z: robot.pointer_position.z, r: robot.pointer_position.r, p: robot.pointer_position.p, w: robot.pointer_position.w))
+            robot.update_position_program_entity(by: program)
+            
+            on_update()
         }
     }
     

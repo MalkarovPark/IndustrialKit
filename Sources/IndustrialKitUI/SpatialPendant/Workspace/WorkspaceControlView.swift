@@ -219,6 +219,7 @@ struct WorkspaceControlView: View
                         add_name_action:
                             { new_name in
                                 workspace.add_program(ProductionProgram(name: new_name))
+                                
                                 on_update()
                             },
                         add_action:

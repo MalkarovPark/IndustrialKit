@@ -139,6 +139,7 @@ public struct NewElementButton: View
         }
         
         add_name_action(new_item_name)
+        new_item_name = ""
     }
 }
 
@@ -147,8 +148,8 @@ public struct NewElementButton: View
     ZStack
     {
         NewElementButton(with_name: true)
-            .border(.gray)
-            .padding()
+            //.border(.gray)
+            //.padding()
     }
     .frame(width: 256)
 }

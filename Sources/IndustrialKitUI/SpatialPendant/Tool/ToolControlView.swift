@@ -21,9 +21,16 @@ struct ToolControlView: View
     
     @State private var code_value = 0
     
-    public init(tool: Tool)
+    let on_update: () -> ()
+    
+    public init(
+        tool: Tool,
+        on_update: @escaping () -> Void = { }
+    )
     {
         self.tool = tool
+        
+        self.on_update = on_update
     }
     
     var body: some View
@@ -125,40 +132,27 @@ struct ToolControlView: View
                     if tool.selected_program != nil
                     {
                         PerformingControlView(tool: tool)
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
                     
                     if tool.codes.count > 0
                     {
-                        Button(action: add_item)
-                        {
-                            Image(systemName: "plus")
-                                //.contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                                .modifier(CircleButtonImageFramer())
-                        }
+                        NewElementButton(
+                            with_name: tool.selected_program == nil,
+                            names: tool.programs_names,
+                            add_name_action:
+                                { new_name in
+                                    tool.add_program(OperationProgram(name: new_name))
+                                    
+                                    on_update()
+                                },
+                            add_action:
+                                {
+                                    add_item()
+                                }
+                        )
                         .disabled(tool.program_performed)
-                        #if os(macOS)
-                        .popover(isPresented: $new_program_view_presented, arrowEdge: .leading)
-                        {
-                            AddNewView(is_presented: $new_program_view_presented, names: tool.programs_names) { new_name in
-                                tool.add_program(OperationProgram(name: new_name))
-                            }
-                        }
-                        #else
-                        .popover(isPresented: $new_program_view_presented, arrowEdge: .trailing)
-                        {
-                            AddNewView(is_presented: $new_program_view_presented, names: tool.programs_names) { new_name in
-                                tool.add_program(OperationProgram(name: new_name))
-                            }
-                        }
-                        #endif
-                        .modifier(CircleButtonGlassBorderer())
-                        #if os(macOS) || os(iOS)
-                        .padding(10)
-                        #else
-                        .padding(16)
-                        #endif
                     }
                 }
             }
@@ -171,17 +165,11 @@ struct ToolControlView: View
     // MARK: Functions
     private func add_item()
     {
-        if tool.selected_program == nil
+        if let program = tool.selected_program
         {
-            new_program_view_presented = true
-        }
-        else
-        {
-            if let program = tool.selected_program
-            {
-                program.add_code(tool.current_operation)
-                //tool.update_position_program_entity(by: program)
-            }
+            program.add_code(tool.current_operation)
+            
+            on_update()
         }
     }
     
