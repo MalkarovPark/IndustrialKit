@@ -467,29 +467,6 @@ private struct PositionPointView: View
             
             PositionView(position: positionBinding())
             
-            #if os(macOS)
-            HStack
-            {
-                Picker("Type", selection: $point.move_type)
-                {
-                    ForEach(MoveType.allCases, id: \.self)
-                    { type in
-                        Text(type.rawValue).tag(type)
-                    }
-                }
-                .pickerStyle(.menu)
-                .frame(maxWidth: .infinity)
-                
-                Text("Speed")
-                    .frame(width: 40)
-                TextField("0", value: $point.move_speed, format: .number)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 48)
-                Stepper("Enter", value: $point.move_speed, in: 0...100)
-                    .labelsHidden()
-            }
-            #else
-            
             Divider()
             
             HStack
@@ -506,31 +483,34 @@ private struct PositionPointView: View
                         Text(type.rawValue).tag(type)
                     }
                 }
+                .labelsHidden()
                 .pickerStyle(.menu)
+                #if !os(macOS)
                 .buttonStyle(.plain)
+                #endif
             }
             
             Divider()
             
             HStack
             {
-                Text("Speed")
+                Text("Speed (mm/s)")
                     .fontWeight(.light)
                 
                 Spacer()
                 
                 TextField("0", value: $point.move_speed, format: .number)
                     .textFieldStyle(.roundedBorder)
-                    .keyboardType(.decimalPad)
-                #if !os(visionOS)
+                #if os(macOS)
                     .frame(width: 60)
                 #else
                     .frame(width: 80)
+                    .keyboardType(.decimalPad)
                 #endif
                 Stepper("Enter", value: $point.move_speed, in: 0...100)
                     .labelsHidden()
             }
-            #endif
+            //#endif
         }
         .padding()
     }

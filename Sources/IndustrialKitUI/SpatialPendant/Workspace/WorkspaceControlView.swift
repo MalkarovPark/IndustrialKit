@@ -60,22 +60,36 @@ struct WorkspaceControlView: View
                             Image(systemName: "number")
                                 .padding(.leading, 10)
                         }
-                        .buttonStyle(.borderless)
+                        .buttonStyle(.plain)
                         .overlay(alignment: .topTrailing)
                         {
-                            if registers_updated
+                            if !registers_updated
                             {
                                 ZStack
                                 {
+                                    #if os(macOS) || os(iOS)
                                     Image(systemName: "circle.fill")
                                         .foregroundStyle(.white)
+                                    #if os(macOS)
                                         .font(.system(size: 6))
+                                    #else
+                                        .font(.system(size: 8))
+                                    #endif
+                                    #endif
                                     
                                     Image(systemName: "circle.fill")
                                         .foregroundStyle(.pink)
+                                    #if os(macOS)
                                         .font(.system(size: 3))
+                                    #else
+                                        .font(.system(size: 4.5))
+                                    #endif
                                 }
+                                #if os(macOS)
                                 .padding(0.5)
+                                #else
+                                .padding(0.3)
+                                #endif
                             }
                         }
                         .onChange(of: workspace.registers)
@@ -97,7 +111,7 @@ struct WorkspaceControlView: View
                                 Image(systemName: "repeat.1")
                             }
                         }
-                        .buttonStyle(.borderless)
+                        .buttonStyle(.plain)
                     }
                 }
                 .sheet(isPresented: $registers_view_presented)
@@ -195,40 +209,24 @@ struct WorkspaceControlView: View
                     if workspace.selected_program != nil
                     {
                         PerformingControlView(workspace: workspace)
+                        
+                        Spacer()
                     }
                     
-                    Spacer()
-                    
-                    Button(action: add_item)
-                    {
-                        Image(systemName: "plus")
-                            //.contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                            .modifier(CircleButtonImageFramer())
-                    }
+                    NewElementButton(
+                        with_name: workspace.selected_program == nil,
+                        names: workspace.programs_names,
+                        add_name_action:
+                            { new_name in
+                                workspace.add_program(ProductionProgram(name: new_name))
+                                on_update()
+                            },
+                        add_action:
+                            {
+                                add_item()
+                            }
+                    )
                     .disabled(workspace.program_performed)
-                    #if os(macOS)
-                    .popover(isPresented: $new_program_view_presented, arrowEdge: .leading)
-                    {
-                        AddNewView(is_presented: $new_program_view_presented, names: workspace.programs_names) { new_name in
-                            workspace.add_program(ProductionProgram(name: new_name))
-                            
-                            on_update()
-                        }
-                    }
-                    #else
-                    .popover(isPresented: $new_program_view_presented, arrowEdge: .trailing)
-                    {
-                        AddNewView(is_presented: $new_program_view_presented, names: workspace.programs_names) { new_name in
-                            workspace.add_program(ProductionProgram(name: new_name))
-                        }
-                    }
-                    #endif
-                    .modifier(CircleButtonGlassBorderer())
-                    #if os(macOS) || os(iOS)
-                    .padding(10)
-                    #else
-                    .padding(16)
-                    #endif
                 }
             }
             
@@ -240,26 +238,19 @@ struct WorkspaceControlView: View
     // MARK: Functions
     private func add_item()
     {
-        if workspace.selected_program == nil
+        if let selected_program = workspace.selected_program
         {
-            new_program_view_presented = true
-        }
-        else
-        {
-            if let selected_program = workspace.selected_program
+            if !view_program_as_text
             {
-                if !view_program_as_text
-                {
-                    clone_element(workspace.current_element, to: selected_program)
-                }
-                else
-                {
-                    if !code_editor_text.isEmpty { code_editor_text += "\n" }
-                    code_editor_text += workspace.current_element.code_string
-                }
-                
-                on_update()
+                clone_element(workspace.current_element, to: selected_program)
             }
+            else
+            {
+                if !code_editor_text.isEmpty { code_editor_text += "\n" }
+                code_editor_text += workspace.current_element.code_string
+            }
+            
+            on_update()
         }
     }
     
@@ -599,6 +590,8 @@ private struct PerformingControlView: View
         #endif
     }
 }
+
+
 
 // MARK: - Sizes
 let element_card_maximum = element_card_scale + element_card_spacing

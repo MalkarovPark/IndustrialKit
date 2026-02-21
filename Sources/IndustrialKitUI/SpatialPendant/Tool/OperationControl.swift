@@ -89,7 +89,8 @@ public struct OperationControl: View
                     VStack(spacing: 0)
                     {
                         Button(action: {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
+                            {
                                 is_expanded = false
                             }
                         })
