@@ -166,12 +166,6 @@ open class Part: WorkspaceObject
      > This variable is codable.
      */
     @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
-    {
-        didSet
-        {
-            update_model_physics()
-        }
-    }
     
     /// The state of physics calculation for part node.
     public var physics_enabled = false
@@ -182,7 +176,7 @@ open class Part: WorkspaceObject
         }
     }
     
-    private func update_model_physics()
+    public func update_model_physics()
     {
         if physics_enabled
         {
