@@ -166,6 +166,12 @@ open class Part: WorkspaceObject
      > This variable is codable.
      */
     @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
+    {
+        didSet
+        {
+            update_model_physics()
+        }
+    }
     
     /// The state of physics calculation for part node.
     public var physics_enabled = false
@@ -181,7 +187,6 @@ open class Part: WorkspaceObject
         if physics_enabled
         {
             entity.apply_physics(by: physics_body_data.component)
-            //apply_physics(component: physics_body_data.component, to: entity)
         }
         else
         {
