@@ -50,7 +50,7 @@ public struct NewElementButton: View
                     Spacer()
                     
                     // Button
-                    Button(action: { withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                    Button(action: { withAnimation(/*.spring(response: 0.35, dampingFraction: 0.85)*/)
                         {
                             if with_name
                             {
@@ -84,7 +84,7 @@ public struct NewElementButton: View
                             .padding(.leading, 14)
                         
                         Button(action: {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
+                            withAnimation(/*.spring(response: 0.35, dampingFraction: 0.75)*/)
                             {
                                 is_expanded = false
                                 name_process()
@@ -112,7 +112,11 @@ public struct NewElementButton: View
                         .buttonBorderShape(.circle)
                         .padding(.trailing, 6)
                     }
+                    #if os(macOS)
                     .frame(height: 36)
+                    #else
+                    .frame(height: 44)
+                    #endif
                     .imageScale(.large)
                     .glassEffect(.regular.interactive(), in: .capsule(style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
