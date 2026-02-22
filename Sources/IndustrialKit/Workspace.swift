@@ -1984,6 +1984,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             place_object_entity(object: robot)
             robot.update_origin_position()
+            robot.update_position()
         }
         
         for tool in tools

@@ -1102,7 +1102,7 @@ open class Robot: WorkspaceObject
     #endif
     
     /// Sets robot pointer node position.
-    private func update_position()
+    public func update_position()
     {
         if !performed
         {
