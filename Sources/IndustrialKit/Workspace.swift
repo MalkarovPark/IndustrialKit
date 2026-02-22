@@ -1590,7 +1590,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
             
-            self.focus(on: nil) // Focus on a whole workspace
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+            {
+                self.focus(on: nil) // Focus on a whole workspace
+            }
             
             completion()
         }
