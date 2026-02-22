@@ -12,9 +12,9 @@ import IndustrialKit
 public struct ChartsView: View
 {
     @State private var chart_selection = 0
-    @Binding public var charts_data: [WorkspaceObjectChart]?
+    @Binding public var charts_data: [StateChart]?
     
-    public init(charts_data: Binding<[WorkspaceObjectChart]?>)
+    public init(charts_data: Binding<[StateChart]?>)
     {
         self._charts_data = charts_data
     }
@@ -162,7 +162,7 @@ struct ChartsView_PreviewsContainer: PreviewProvider
     
     struct ChartsView_Previews: View
     {
-        @State var chart_data: [WorkspaceObjectChart]? = [WorkspaceObjectChart]()
+        @State var chart_data: [StateChart]? = [StateChart]()
         
         var body: some View
         {
@@ -170,8 +170,8 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                 .frame(width: 640, height: 480)
                 .onAppear
                 {
-                    chart_data?.append(WorkspaceObjectChart(name: "Location", style: .line))
-                    chart_data?.append(WorkspaceObjectChart(name: "Rotation", style: .line))
+                    chart_data?.append(StateChart(name: "Location", style: .line))
+                    chart_data?.append(StateChart(name: "Rotation", style: .line))
                     
                     for d in 0..<16
                     {

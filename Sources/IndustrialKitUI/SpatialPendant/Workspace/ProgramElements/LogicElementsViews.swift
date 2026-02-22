@@ -288,7 +288,7 @@ struct IMALogicPreviewsContainer: PreviewProvider
     {
         LogicContainer()
     }
-
+    
     struct LogicContainer: View
     {
         @StateObject var workspace = Workspace()
@@ -309,7 +309,7 @@ struct IMALogicPreviewsContainer: PreviewProvider
                 }
         }
     }
-
+    
     struct LogicView: View
     {
         @ObservedObject var workspace: Workspace

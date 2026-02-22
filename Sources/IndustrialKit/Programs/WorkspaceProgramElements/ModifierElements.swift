@@ -504,7 +504,7 @@ public class ObserverModifierElement: ModifierElement
     {
         case object_type, object_name, outputs
     }
-
+    
     public required init(from decoder: Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -515,7 +515,7 @@ public class ObserverModifierElement: ModifierElement
         
         try super.init(from: decoder)
     }
-
+    
     public override func encode(to encoder: Encoder) throws
     {
         var container = encoder.container(keyedBy: CodingKeys.self)

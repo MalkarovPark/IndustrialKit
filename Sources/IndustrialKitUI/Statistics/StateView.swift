@@ -10,24 +10,31 @@ import IndustrialKit
 
 public struct StateView: View
 {
-    @Binding public var states_data: [StateItem]?
+    @ObservedObject var device_state: DeviceState
     
-    public init(states_data: Binding<[StateItem]?>)
+    @State private var expandedItems: [UUID: Bool] = [:]
+    
+    public init(
+        device_state: DeviceState
+    )
     {
-        self._states_data = states_data
+        self.device_state = device_state
     }
     
     public var body: some View
     {
         VStack(spacing: 0)
         {
-            if states_data != nil
+            if device_state.items.count > 0
             {
                 List
                 {
-                    ForEach(is_expanded_binding($states_data, default: []).wrappedValue.indices, id: \.self)
+                    ForEach(device_state.items.indices, id: \.self)
                     { index in
-                        StateItemListView(item: is_expanded_binding($states_data, default: [])[index])
+                        StateItemListView(
+                            item: device_state.items[index],
+                            expandedItems: $expandedItems
+                        )
                     }
                 }
                 .listStyle(.plain)
@@ -42,37 +49,42 @@ public struct StateView: View
         .background(.white)
         #endif
     }
-    
-    private func is_expanded_binding(_ binding: Binding<[StateItem]?>, default defaultValue: [StateItem]) -> Binding<[StateItem]>
-    {
-        Binding<[StateItem]>(
-            get: { binding.wrappedValue ?? defaultValue },
-            set: { binding.wrappedValue = $0 }
-        )
-    }
 }
 
 struct StateItemListView: View
 {
-    @Binding var item: StateItem
+    @ObservedObject var item: StateItem
+    @Binding var expandedItems: [UUID: Bool]
     
-    @State private var is_expanded = true
+    private var isExpandedBinding: Binding<Bool>
+    
+    init(item: StateItem, expandedItems: Binding<[UUID: Bool]>)
+    {
+        self.item = item
+        self._expandedItems = expandedItems
+        
+        self.isExpandedBinding = Binding(
+            get: { expandedItems.wrappedValue[item.id] ?? true },
+            set: { expandedItems.wrappedValue[item.id] = $0 }
+        )
+    }
     
     var body: some View
     {
         if let children = item.children, !children.isEmpty
         {
-            DisclosureGroup(isExpanded: $is_expanded)
+            DisclosureGroup(isExpanded: isExpandedBinding)
             {
                 ForEach(children.indices, id: \.self)
                 { index in
-                    StateItemListView(item: Binding(
-                        get: { item.children![index] },
-                        set: { item.children![index] = $0 }
-                    ))
+                    StateItemListView(
+                        item: children[index],
+                        expandedItems: $expandedItems
+                    )
+                    .padding(.leading, 20)
                 }
             }
-            label:
+        label:
             {
                 item_label
             }
@@ -87,9 +99,9 @@ struct StateItemListView: View
     {
         HStack
         {
-            if let imageName = item.image
+            if let symbol_name = item.symbol_name, is_valid_symbol(symbol_name)
             {
-                Image(systemName: imageName)
+                Image(systemName: symbol_name)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 25, height: 25)
@@ -103,30 +115,14 @@ struct StateItemListView: View
             Text(item.value ?? "")
         }
     }
-}
-
-struct StateItemView: View
-{
-    var item: StateItem
     
-    var body: some View
+    private func is_valid_symbol(_ symbol: String) -> Bool
     {
-        HStack
-        {
-            if item.image != nil
-            {
-                Image(systemName: item.image ?? "questionmark")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 25, height: 25)
-                    .foregroundColor(.accentColor)
-            }
-            Text(item.name)
-            
-            Spacer()
-            
-            Text(item.value ?? "")
-        }
+        #if os(macOS)
+        return NSImage(systemSymbolName: symbol, accessibilityDescription: nil) != nil
+        #else
+        return UIImage(systemName: symbol) != nil
+        #endif
     }
 }
 
@@ -148,19 +144,19 @@ struct StateView_PreviewsContainer: PreviewProvider
     
     struct StateView_Previews: View
     {
-        @State var states_data: [StateItem]? = [StateItem]()
+        @ObservedObject var device_state = DeviceState(
+            items: [
+                //StateItem(name: "Temperature", value: "+10º", symbol_name: "thermometer"),
+                //StateItem(name: "Еngine", value: "+50º", symbol_name: "thermometer.transmission"), StateItem(name: "Fridge", value: "-40º", symbol_name: "thermometer.snowflake.circle"),
+                
+                StateItem(name: "Speed", value: "70 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent")
+            ]
+        )
         
         var body: some View
         {
-            StateView(states_data: $states_data)
+            StateView(device_state: device_state)
                 .frame(width: 320, height: 240)
-                .onAppear
-                {
-                    //states_data?.append(StateItem(name: "Temperature", value: "+10º", image: "thermometer"))
-                    //states_data?[0].children = [StateItem(name: "Еngine", value: "+50º", image: "thermometer.transmission"), StateItem(name: "Fridge", value: "-40º", image: "thermometer.snowflake.circle")]
-                    
-                    states_data?.append(StateItem(name: "Speed", value: "70 mm/sec", image: "windshield.front.and.wiper.intermittent"))
-                }
         }
     }
 }

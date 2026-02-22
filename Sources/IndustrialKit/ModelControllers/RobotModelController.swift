@@ -444,7 +444,7 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     }
     
     // MARK: Statistics
-    open override func updated_charts_data() -> [WorkspaceObjectChart]?
+    open override func updated_charts_data() -> [StateChart]?
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["updated_charts_data"])
@@ -453,7 +453,7 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
             return nil
         }
         
-        if let charts: [WorkspaceObjectChart] = string_to_codable(from: output)
+        if let charts: [StateChart] = string_to_codable(from: output)
         {
             return charts
         }
@@ -480,7 +480,7 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
         return nil
     }
     
-    open override func initial_charts_data() -> [WorkspaceObjectChart]?
+    open override func initial_charts_data() -> [StateChart]?
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["initial_charts_data"])
@@ -489,7 +489,7 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
             return nil
         }
         
-        if let charts: [WorkspaceObjectChart] = string_to_codable(from: output)
+        if let charts: [StateChart] = string_to_codable(from: output)
         {
             return charts
         }

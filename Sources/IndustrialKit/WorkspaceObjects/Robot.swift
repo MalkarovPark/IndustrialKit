@@ -1231,7 +1231,7 @@ open class Robot: WorkspaceObject
     
     // MARK: - Chart functions
     /// A robot charts data.
-    @Published public var charts_data: [WorkspaceObjectChart]?
+    @Published public var charts_data: [StateChart]?
     
     /// A robot state data.
     @Published public var states_data: [StateItem]?
@@ -1260,7 +1260,7 @@ open class Robot: WorkspaceObject
     {
         if charts_data == nil
         {
-            charts_data = [WorkspaceObjectChart]()
+            charts_data = [StateChart]()
         }
         
         if self.demo // Get statistic from model controller
@@ -1321,9 +1321,9 @@ open class Robot: WorkspaceObject
     
     // MARK: - UI functions
     /// Connects robot charts to UI.
-    public func charts_binding() -> Binding<[WorkspaceObjectChart]?>
+    public func charts_binding() -> Binding<[StateChart]?>
     {
-        Binding<[WorkspaceObjectChart]?>(
+        Binding<[StateChart]?>(
             get:
             {
                 if self.demo
@@ -1498,7 +1498,7 @@ public struct RobotFileData: Codable
     public var update_model_by_connector: Bool
     
     public var get_statistics: Bool
-    public var charts_data: [WorkspaceObjectChart]?
+    public var charts_data: [StateChart]?
     public var states_data: [StateItem]?
     
     public var programs: [PositionProgram]
@@ -1519,7 +1519,7 @@ public struct RobotFileData: Codable
         update_model_by_connector: Bool,
         
         get_statistics: Bool,
-        charts_data: [WorkspaceObjectChart]?,
+        charts_data: [StateChart]?,
         states_data: [StateItem]?,
         
         programs: [PositionProgram]

@@ -867,7 +867,7 @@ open class Tool: WorkspaceObject
     
     // MARK: - Chart functions
     /// A tool charts data.
-    @Published public var charts_data: [WorkspaceObjectChart]?
+    @Published public var charts_data: [StateChart]?
     
     /// A tool state data.
     @Published public var states_data: [StateItem]?
@@ -896,7 +896,7 @@ open class Tool: WorkspaceObject
     {
         if charts_data == nil
         {
-            charts_data = [WorkspaceObjectChart]()
+            charts_data = [StateChart]()
         }
         
         if self.demo // Get statistic from model controller
@@ -983,9 +983,9 @@ open class Tool: WorkspaceObject
     }
     
     /// Connects tool charts to UI.
-    public func charts_binding() -> Binding<[WorkspaceObjectChart]?>
+    public func charts_binding() -> Binding<[StateChart]?>
     {
-        Binding<[WorkspaceObjectChart]?>(
+        Binding<[StateChart]?>(
             get:
             {
                 if self.demo
@@ -1159,7 +1159,7 @@ public struct ToolFileData: Codable
     public var update_model_by_connector: Bool
     
     public var get_statistics: Bool
-    public var charts_data: [WorkspaceObjectChart]?
+    public var charts_data: [StateChart]?
     public var states_data: [StateItem]?
     
     public var programs: [OperationProgram]
@@ -1178,7 +1178,7 @@ public struct ToolFileData: Codable
         update_model_by_connector: Bool,
         
         get_statistics: Bool,
-        charts_data: [WorkspaceObjectChart]?,
+        charts_data: [StateChart]?,
         states_data: [StateItem]?,
         
         programs: [OperationProgram]

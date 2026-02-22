@@ -247,15 +247,15 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     }*/
     
     /// Charts data.
-    @Published public var charts_data: [WorkspaceObjectChart]?
+    @Published public var charts_data: [StateChart]?
     
     /// States data.
     @Published public var states_data: [StateItem]?
     
     /// Updates charts data.
-    open func updated_charts_data() -> [WorkspaceObjectChart]?
+    open func updated_charts_data() -> [StateChart]?
     {
-        return [WorkspaceObjectChart]()
+        return [StateChart]()
     }
     
     /// Updates states.
@@ -272,9 +272,9 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     }
     
     /// Initial charts data.
-    open func initial_charts_data() -> [WorkspaceObjectChart]?
+    open func initial_charts_data() -> [StateChart]?
     {
-        return [WorkspaceObjectChart]()
+        return [StateChart]()
     }
     
     /// Initial states data.

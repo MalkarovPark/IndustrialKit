@@ -17,7 +17,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject, 
 {
     public static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
     {
-        return lhs.id == rhs.id // Identity condition by id plus element type
+        return lhs.id == rhs.id // Identity condition by id with element type
     }
     
     public func hash(into hasher: inout Hasher)
