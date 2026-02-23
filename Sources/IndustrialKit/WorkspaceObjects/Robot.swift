@@ -17,7 +17,7 @@ import RealityKit
  
  Permorms reposition operation by target points order in selected positions program.
  */
-open class Robot: WorkspaceObject
+open class Robot: WorkspaceObject, StateOutputCapable
 {
     // MARK: - Init functions
     /// Inits robot with default parameters.
@@ -901,13 +901,13 @@ open class Robot: WorkspaceObject
     @Published public var device_state: DeviceState?
     
     /// Flag indicating whether the update loop is active.
-    private var is_state_updating = false
+    public var is_state_updating = false
     
     /// The task responsible for executing the update loop.
-    private var state_update_task: Task<Void, Never>?
+    public var state_update_task: Task<Void, Never>?
     
     /// The interval between updates in nanoseconds.
-    public var state_update_interval: Float = 0.01
+    public var state_update_interval: Double = 0.01
     
     /// Defines the update timing scope.
     public var update_scope_type: ScopeType = ScopeType.selected
@@ -1445,7 +1445,7 @@ public struct RobotFileData: Codable
     public var default_pointer_rotation: [Float]?
     
     public var is_state_updating: Bool
-    public var state_update_interval: Float
+    public var state_update_interval: Double
     public var update_scope_type: ScopeType
     public var device_state: DeviceState?
     
@@ -1467,7 +1467,7 @@ public struct RobotFileData: Codable
         default_pointer_rotation: [Float]?,
         
         is_state_updating: Bool,
-        state_update_interval: Float,
+        state_update_interval: Double,
         update_scope_type: ScopeType,
         device_state: DeviceState?,
         

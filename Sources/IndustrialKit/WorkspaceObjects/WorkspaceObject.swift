@@ -409,7 +409,35 @@ public protocol RoboticDevice
     
 }
 
-public protocol StateOutputCapable: RoboticDevice
+public protocol StateOutputCapable: RoboticDevice, WorkspaceObject, ObservableObject
 {
-    var device_state: DeviceState { get set }
+    /// A device state data.
+    var device_state: DeviceState? { get set }
+    
+    /// Flag indicating whether the update loop is active.
+    var is_state_updating: Bool { get set }
+    
+    /// The task responsible for executing the update loop.
+    var state_update_task: Task<Void, Never>? { get set }
+    
+    /// The interval between updates in nanoseconds.
+    var state_update_interval: Double { get set }
+    
+    /// Defines the update timing scope.
+    var update_scope_type: ScopeType { get set }
+    
+    /// Starts the update loop.
+    func start_update_state()
+    
+    /// Stops the update loop.
+    func reset_update_state()
+    
+    /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
+    func update_statistics_data()
+    
+    /// Clears device state data.
+    func reset_device_state()
+    
+    /// An information output code.
+    var info_output: [Float]? { get }
 }

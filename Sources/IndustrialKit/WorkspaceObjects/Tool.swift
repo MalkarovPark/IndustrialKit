@@ -17,7 +17,7 @@ import RealityKit
  
  Permorms operation by codes order in selected operations program.
  */
-open class Tool: WorkspaceObject
+open class Tool: WorkspaceObject, StateOutputCapable
 {
     // MARK: - Init functions
     public override init()
@@ -825,13 +825,13 @@ open class Tool: WorkspaceObject
     @Published public var device_state: DeviceState?
     
     /// Flag indicating whether the update loop is active.
-    private var is_state_updating = false
+    public var is_state_updating = false
     
     /// The task responsible for executing the update loop.
-    private var state_update_task: Task<Void, Never>?
+    public var state_update_task: Task<Void, Never>?
     
     /// The interval between updates in nanoseconds.
-    public var state_update_interval: Float = 0.01
+    public var state_update_interval: Double = 0.01
     
     /// Defines the update timing scope.
     public var update_scope_type: ScopeType = ScopeType.selected
@@ -1073,7 +1073,7 @@ public struct ToolFileData: Codable
     public var attached_to: String?
     
     public var is_state_updating: Bool
-    public var state_update_interval: Float
+    public var state_update_interval: Double
     public var update_scope_type: ScopeType
     public var device_state: DeviceState?
     
@@ -1092,7 +1092,7 @@ public struct ToolFileData: Codable
         attached_to: String?,
         
         is_state_updating: Bool,
-        state_update_interval: Float,
+        state_update_interval: Double,
         update_scope_type: ScopeType,
         device_state: DeviceState?,
         
