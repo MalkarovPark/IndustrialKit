@@ -59,6 +59,7 @@ public struct DeviceStateView: View
                             set:
                                 { new_value in
                                     state_output_device.is_state_updating = new_value
+                                    state_output_device.objectWillChange.send()
                                     
                                     on_update()
                                 }
@@ -69,6 +70,7 @@ public struct DeviceStateView: View
                             set:
                                 { new_value in
                                     state_output_device.update_scope_type = new_value
+                                    state_output_device.objectWillChange.send()
                                     
                                     on_update()
                                 }
@@ -79,6 +81,7 @@ public struct DeviceStateView: View
                             set:
                                 { new_value in
                                     state_output_device.state_update_interval = new_value
+                                    state_output_device.objectWillChange.send()
                                     
                                     on_update()
                                 }
@@ -290,53 +293,73 @@ struct DeviceStateView_Previews: PreviewProvider
             DeviceStateView(is_presented: .constant(true), device: robot)
                 .onAppear
                 {
-                    let device_state = DeviceState()
-                    device_state.charts.append(StateChart(name: "Location", style: .line))
-                    
-                    for d in 0..<16
-                    {
-                        let position_point = PositionPoint(x: Float.random(in: 0...100), y: Float.random(in: 0...100), z: Float.random(in: 0...100), r: Float.random(in: -180...180), p: Float.random(in: -180...180), w: Float.random(in: -180...180))
-                        var axis_names = ["X", "Y", "Z"]
-                        var components = [position_point.x, position_point.z, position_point.y]
-                        for i in 0...axis_names.count - 1
-                        {
-                            device_state.charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
-                        }
-                    }
-                    
-                    device_state.charts.append(
-                        StateChart(
-                            name: "Bar",
-                            style: .bar,
-                            data: [
-                                ChartDataItem(name: "Piece 3", domain: ["Column 1" : 80], codomain: 10),
-                                ChartDataItem(name: "Piece 1", domain: ["Column 2" : 80], codomain: 20),
-                                ChartDataItem(name: "Piece 2", domain: ["Column 3" : 80], codomain: 10),
-                                ChartDataItem(name: "Piece 4", domain: ["Column 3" : 80], codomain: 20)
-                            ]
-                        )
-                    )
-                    
-                    device_state.charts.append(
-                        StateChart(
-                            name: "Circle",
-                            style: .sector,
-                            data: [
-                                ChartDataItem(name: "Piece 1", domain: ["" : 80], codomain: 10),
-                                ChartDataItem(name: "Piece 2", domain: ["" : 80], codomain: 15),
-                                ChartDataItem(name: "Piece 3", domain: ["" : 80], codomain: 20),
-                                ChartDataItem(name: "Piece 4", domain: ["" : 80], codomain: 25),
-                                ChartDataItem(name: "Piece 5", domain: ["" : 80], codomain: 30)
-                            ]
-                        )
-                    )
-                    
-                    device_state.items = [
-                        StateItem(name: "Speed", value: "70 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent")
-                    ]
-                    
-                    robot.device_state = device_state
+                    prepare_state()
                 }
+        }
+        
+        private func prepare_state()
+        {
+            let device_state = DeviceState()
+            device_state.charts.append(StateChart(name: "Line", style: .line))
+            
+            for d in 0..<16
+            {
+                let position_point = PositionPoint(x: Float.random(in: 0...100), y: Float.random(in: 0...100), z: Float.random(in: 0...100), r: Float.random(in: -180...180), p: Float.random(in: -180...180), w: Float.random(in: -180...180))
+                let axis_names = ["X", "Y", "Z"]
+                let components = [position_point.x, position_point.z, position_point.y]
+                for i in 0...axis_names.count - 1
+                {
+                    device_state.charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
+                }
+            }
+            
+            device_state.charts.append(
+                StateChart(
+                    name: "Circle",
+                    style: .sector,
+                    data: [
+                        ChartDataItem(name: "Piece 1", domain: ["" : 80], codomain: 2),
+                        ChartDataItem(name: "Piece 2", domain: ["" : 80], codomain: 2),
+                        ChartDataItem(name: "Piece 3", domain: ["" : 80], codomain: 2)
+                    ]
+                )
+            )
+            
+            device_state.charts.append(
+                StateChart(
+                    name: "Bar",
+                    style: .bar,
+                    data: [
+                        ChartDataItem(name: "Piece 3", domain: ["Column 1" : 80], codomain: 10),
+                        ChartDataItem(name: "Piece 1", domain: ["Column 2" : 80], codomain: 20),
+                        ChartDataItem(name: "Piece 2", domain: ["Column 3" : 80], codomain: 10),
+                        ChartDataItem(name: "Piece 4", domain: ["Column 3" : 80], codomain: 20)
+                    ]
+                )
+            )
+            
+            //device_state.items.removeAll()
+            device_state.items.append(StateItem(name: "Speed", value: "70 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
+            device_state.items.append(
+                StateItem(
+                    name: "Temperature",
+                    value: "+10º",
+                    symbol_name: "thermometer",
+                    children: [
+                        StateItem(
+                            name: "Еngine",
+                            value: "+50º",
+                            symbol_name: "thermometer.transmission"),
+                        StateItem(
+                            name: "Fridge",
+                            value: "-40º",
+                            symbol_name: "thermometer.snowflake.circle"
+                        )
+                    ]
+                )
+            )
+            
+            robot.device_state = device_state
         }
     }
     
