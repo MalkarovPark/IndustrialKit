@@ -308,7 +308,19 @@ public class ExternalRobotConnector: RobotConnector
     }
     
     // MARK: Statistics
-    open override func updated_charts_data() -> [StateChart]?
+    open override var current_device_state: DeviceState
+    {
+        // Prepare controller output
+        return DeviceState()
+    }
+    
+    open override var initial_device_state: DeviceState?
+    {
+        // Reset contolleroutput
+        return nil //DeviceState()
+    }
+    
+    /*open override func updated_charts_data() -> [StateChart]?
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["updated_charts_data"])
@@ -394,7 +406,7 @@ public class ExternalRobotConnector: RobotConnector
         connection_failure = true
         connected = false
         return nil
-    }
+    }*/
     
     // MARK: Modeling
     /*open override func sync_model()

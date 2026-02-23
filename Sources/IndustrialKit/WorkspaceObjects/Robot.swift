@@ -58,8 +58,6 @@ open class Robot: WorkspaceObject
         
         self.model_controller = model_controller
         self.connector = connector
-        
-        apply_statistics_flags()
     }
     
     public convenience init(
@@ -78,8 +76,6 @@ open class Robot: WorkspaceObject
         
         self.model_controller = model_controller
         self.connector = connector
-        
-        apply_statistics_flags()
     }
     
     /// Inits robot by name and part module.
@@ -244,8 +240,6 @@ open class Robot: WorkspaceObject
         model_controller = module.model_controller.copy() as! RobotModelController
         connector = module.connector.copy() as! RobotConnector
         
-        apply_statistics_flags()
-        
         origin_shift = module.origin_shift
         
         origin_position = module.default_origin_position
@@ -348,12 +342,6 @@ open class Robot: WorkspaceObject
         }
     }
     #endif
-    
-    private func apply_statistics_flags()
-    {
-        model_controller.get_statistics = get_statistics
-        connector.get_statistics = get_statistics
-    }
     
     // MARK: - Program manage functions
     /// An array of robot positions programs.
@@ -587,7 +575,7 @@ open class Robot: WorkspaceObject
         
         pointer_position = position
         
-        update()
+        //update()
     }
     
     /// Returns information about default pointer position avalibility of robot.
@@ -617,19 +605,6 @@ open class Robot: WorkspaceObject
             }
             
             model_controller.toggle_alt_pointer(demo)
-        }
-    }
-    
-    // MARK: Update functions
-    /// Updates robot statistics and model by current pointer position.
-    public override func update()
-    {
-        if get_statistics && (performed || scope_type == .constant)
-        {
-            if demo || (connector.connected && update_model_by_connector)
-            {
-                update_statistics_data()
-            }
         }
     }
     
@@ -856,7 +831,7 @@ open class Robot: WorkspaceObject
                 self.selected_program?.reset_points_states()
             }
             
-            update()
+            //update()
             pointer_position_to_robot()
             
             finish_handler()
@@ -896,7 +871,7 @@ open class Robot: WorkspaceObject
             pointer_position_to_robot()
             performed = false
             
-            clear_chart_data()
+            reset_device_state()
         }
         
         target_point_index = 0
@@ -919,6 +894,118 @@ open class Robot: WorkspaceObject
                 pointer_position = controller.pointer_position
             }
         }
+    }
+    
+    // MARK: - Device state data handling
+    /// A device state data.
+    @Published public var device_state: DeviceState?
+    
+    /// Flag indicating whether the update loop is active.
+    private var is_state_updating = false
+    
+    /// The task responsible for executing the update loop.
+    private var state_update_task: Task<Void, Never>?
+    
+    /// The interval between updates in nanoseconds.
+    public var state_update_interval: Float = 0.01
+    
+    /// Defines the update timing scope.
+    public var update_scope_type: ScopeType = ScopeType.selected
+    
+    /**
+     Starts the update loop.
+     
+     This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
+     */
+    public func start_update_state()
+    {
+        is_state_updating = true
+        
+        state_update_task = Task
+        {
+            while is_state_updating
+            {
+                try? await Task.sleep(nanoseconds: UInt64(state_update_interval * 1_000_000_000))
+                await MainActor.run
+                {
+                    self.update_device_state()
+                }
+                
+                if state_update_task == nil
+                {
+                    return
+                }
+            }
+        }
+    }
+    
+    /**
+     Stops the update loop.
+     
+     This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
+     */
+    public func reset_update_state()
+    {
+        is_state_updating = false
+        state_update_task?.cancel()
+        state_update_task = nil
+    }
+    
+    /**
+     Called repeatedly within the update loop to perform updates.
+     
+     This function is called on the main thread by the `perform_update()` function as long as the `updated` flag is `true`. Subclasses should override this method to implement their specific update logic.
+     
+     > This function is called frequently, so it's crucial to keep its performing time as short as possible to avoid performance issues.
+     */
+    private func update_device_state()
+    {
+        if is_state_updating && (performed || update_scope_type == .constant)
+        {
+            if demo || (connector.connected && update_model_by_connector)
+            {
+                update_statistics_data()
+            }
+        }
+    }
+    
+    /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
+    public func update_statistics_data()
+    {
+        if device_state == nil
+        {
+            device_state = DeviceState()
+        }
+        
+        if demo // Get statistic from model controller
+        {
+            device_state = model_controller.current_device_state
+        }
+        else // Get statistic from real device
+        {
+            device_state = connector.current_device_state
+        }
+    }
+    
+    /// Clears device state data.
+    public func reset_device_state()
+    {
+        device_state = nil
+        
+        if demo // Get statistic from model controller
+        {
+            device_state = model_controller.initial_device_state
+        }
+        else // Get statistic from real device
+        {
+            device_state = connector.initial_device_state
+        }
+    }
+    
+    /// An information output code.
+    public var info_output: [Float]?
+    {
+        return nil
     }
     
     // MARK: - Connection functions
@@ -1229,141 +1316,6 @@ open class Robot: WorkspaceObject
         }
     }
     
-    // MARK: - Chart functions
-    /// A robot charts data.
-    @Published public var charts_data: [StateChart]?
-    
-    /// A robot state data.
-    @Published public var states_data: [StateItem]?
-    
-    /// A statistics getting toggle.
-    public var get_statistics = false
-    {
-        didSet
-        {
-            if demo
-            {
-                model_controller.get_statistics = get_statistics
-            }
-            else
-            {
-                connector.get_statistics = get_statistics
-            }
-        }
-    }
-    
-    /// Index of chart element.
-    private var chart_element_index = 0
-    
-    /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
-    public func update_statistics_data()
-    {
-        if charts_data == nil
-        {
-            charts_data = [StateChart]()
-        }
-        
-        if self.demo // Get statistic from model controller
-        {
-            self.model_controller.update_statistics_data()
-            self.states_data = model_controller.states_data
-            self.charts_data = model_controller.charts_data
-        }
-        else // Get statistic from real tool
-        {
-            self.connector.update_statistics_data()
-            self.states_data = connector.states_data
-            self.charts_data = connector.charts_data
-        }
-    }
-    
-    /// Clears robot chart data.
-    public func clear_chart_data()
-    {
-        charts_data = nil
-        
-        if demo
-        {
-            model_controller.reset_charts_data()
-        }
-        else
-        {
-            connector.reset_charts_data()
-        }
-    }
-    
-    /// Clears robot state data.
-    public func clear_states_data()
-    {
-        states_data = nil
-        
-        if demo
-        {
-            model_controller.reset_states_data()
-        }
-        else
-        {
-            connector.reset_states_data()
-        }
-        
-        /*if get_statistics
-        {
-            if demo
-            {
-                model_controller.reset_states_data()
-            }
-            else
-            {
-                connector.reset_states_data()
-            }
-        }*/
-    }
-    
-    // MARK: - UI functions
-    /// Connects robot charts to UI.
-    public func charts_binding() -> Binding<[StateChart]?>
-    {
-        Binding<[StateChart]?>(
-            get:
-            {
-                if self.demo
-                {
-                    self.model_controller.charts_data
-                }
-                else
-                {
-                    self.connector.charts_data
-                }
-            },
-            set:
-            { value in
-                self.charts_data = value
-            }
-        )
-    }
-    
-    /// Connects robot charts to UI.
-    public func states_binding() -> Binding<[StateItem]?>
-    {
-        Binding<[StateItem]?>(
-            get:
-            {
-                if self.demo
-                {
-                    self.model_controller.states_data
-                }
-                else
-                {
-                    self.connector.states_data
-                }
-            },
-            set:
-            { value in
-                self.states_data = value
-            }
-        )
-    }
-    
     // MARK: - Performing State
     /// Last performing error.
     public var last_error: Error?
@@ -1385,6 +1337,8 @@ open class Robot: WorkspaceObject
     public convenience init(file: RobotFileData)
     {
         self.init(file: file.object) //self.init()
+        
+        self.programs = file.programs
         
         self.origin_position = (
             file.origin_location[safe: 0] ?? 0,
@@ -1414,16 +1368,13 @@ open class Robot: WorkspaceObject
             )
         }
         
+        self.is_state_updating = file.is_state_updating
+        self.state_update_interval = file.state_update_interval
+        self.update_scope_type = file.update_scope_type
+        self.device_state = file.device_state
+        
         self.demo = file.demo
         self.update_model_by_connector = file.update_model_by_connector
-        
-        self.get_statistics = file.get_statistics
-        self.charts_data = file.charts_data
-        self.states_data = file.states_data
-        
-        self.programs = file.programs
-        
-        // runtime / side effects
         self.connector.import_connection_parameters_values(file.connection_parameters)
         
         if self.update_model_by_connector
@@ -1445,11 +1396,10 @@ open class Robot: WorkspaceObject
                 
                 location: [position.x, position.y, position.z],
                 rotation: [position.r, position.p, position.w],
-                is_placed: is_placed,
-                
-                update_interval: update_interval,
-                scope_type: scope_type
+                is_placed: is_placed
             ),
+            
+            programs: programs,
             
             origin_location: [origin_position.x, origin_position.y, origin_position.z],
             origin_rotation: [origin_position.r, origin_position.p, origin_position.w],
@@ -1461,16 +1411,15 @@ open class Robot: WorkspaceObject
                 [$0.r, $0.p, $0.w]
             },
             
+            is_state_updating: is_state_updating,
+            state_update_interval: state_update_interval,
+            update_scope_type: update_scope_type,
+            device_state: device_state,
+            
             demo: demo,
             
             connection_parameters: connector.connection_parameters_values,
-            update_model_by_connector: update_model_by_connector,
-            
-            get_statistics: get_statistics,
-            charts_data: charts_data,
-            states_data: states_data,
-            
-            programs: programs
+            update_model_by_connector: update_model_by_connector
         )
     }
 
@@ -1486,6 +1435,8 @@ public struct RobotFileData: Codable
 {
     public var object: WorkspaceObjectFileData
     
+    public var programs: [PositionProgram]
+    
     public var origin_location: [Float]
     public var origin_rotation: [Float]
     public var space_scale: [Float]
@@ -1493,19 +1444,20 @@ public struct RobotFileData: Codable
     public var default_pointer_location: [Float]?
     public var default_pointer_rotation: [Float]?
     
+    public var is_state_updating: Bool
+    public var state_update_interval: Float
+    public var update_scope_type: ScopeType
+    public var device_state: DeviceState?
+    
     public var demo: Bool
     public var connection_parameters: [String]?
     public var update_model_by_connector: Bool
     
-    public var get_statistics: Bool
-    public var charts_data: [StateChart]?
-    public var states_data: [StateItem]?
-    
-    public var programs: [PositionProgram]
-    
     // MARK: - Init
     public init(
         object: WorkspaceObjectFileData,
+        
+        programs: [PositionProgram],
         
         origin_location: [Float],
         origin_rotation: [Float],
@@ -1514,15 +1466,14 @@ public struct RobotFileData: Codable
         default_pointer_location: [Float]?,
         default_pointer_rotation: [Float]?,
         
+        is_state_updating: Bool,
+        state_update_interval: Float,
+        update_scope_type: ScopeType,
+        device_state: DeviceState?,
+        
         demo: Bool,
         connection_parameters: [String]?,
-        update_model_by_connector: Bool,
-        
-        get_statistics: Bool,
-        charts_data: [StateChart]?,
-        states_data: [StateItem]?,
-        
-        programs: [PositionProgram]
+        update_model_by_connector: Bool
     )
     {
         self.object = object
@@ -1538,9 +1489,10 @@ public struct RobotFileData: Codable
         self.connection_parameters = connection_parameters
         self.update_model_by_connector = update_model_by_connector
         
-        self.get_statistics = get_statistics
-        self.charts_data = charts_data
-        self.states_data = states_data
+        self.is_state_updating = is_state_updating
+        self.state_update_interval = state_update_interval
+        self.update_scope_type = update_scope_type
+        self.device_state = device_state
         
         self.programs = programs
     }

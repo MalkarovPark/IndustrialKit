@@ -92,77 +92,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
     }
     
-    // MARK: - Update functions
-    ///  Flag indicating whether the update loop is active.
-    private var updated = false
-    
-    ///  The task responsible for executing the update loop.
-    private var update_task: Task<Void, Never>?
-    
-    /// The interval between updates in nanoseconds.
-    nonisolated(unsafe) public static var update_interval: Double = 0.01
-    
-    /**
-     Starts the update loop.
-     
-     This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
-     */
-    public func perform_update()
-    {
-        updated = true
-        
-        update_task = Task
-        {
-            while updated
-            {
-                try? await Task.sleep(nanoseconds: UInt64(Workspace.update_interval * 1_000_000_000))
-                await MainActor.run
-                {
-                    self.update()
-                }
-                
-                if(update_task == nil)
-                {
-                    return
-                }
-            }
-        }
-    }
-    
-    /**
-     Stops the update loop.
-     
-     This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
-     */
-    public func disable_update()
-    {
-        updated = false
-        update_task?.cancel()
-        update_task = nil
-    }
-    
-    /**
-     Called repeatedly within the update loop to perform updates.
-     
-     This function is called on the main thread by the `perform_update()` function as long as the `updated` flag is `true`. Subclasses should override this method to implement their specific update logic.
-     
-     > This function is called frequently, so it's crucial to keep its execution time as short as possible to avoid performance issues.
-     */
-    public func update()
-    {
-        /*switch selected_object_type
-        {
-        case .robot:
-            selected_robot.update()
-        case .tool:
-            selected_tool.update()
-        case .part:
-            break
-        case .none:
-            break
-        }*/
-    }
-    
     // MARK: - Program manage functions
     /// An array of tool operations programs.
     @Published public var programs = [ProductionProgram]()
@@ -767,9 +696,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         func pause_handler()
         {
-            disable_constant_objects_update()
+            //disable_constant_objects_update()
             
-            selected_program_element.performing_state = .current //selected_program.elements[selected_element_index].performing_state = .current
+            selected_program_element.performing_state = .current
             
             program_performed = false // Control Buttons (UI)
             performing_state = .current // State light (UI)
@@ -801,7 +730,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             robot.clear_finish_handler()
             robot.clear_error_handler()
             
-            robot.disable_update()
+            robot.reset_update_state()
         }
         
         func pause_handler(_ element: ToolPerformerElement)
@@ -819,8 +748,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             tool.clear_finish_handler()
             tool.clear_error_handler()
-            
-            tool.disable_update()
         }
     }
     
@@ -828,8 +755,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     public func perform_next_element()
     {
         selected_program_element.performing_state = .processing
-        
-        //performed = true
         
         perform(element: selected_program_element)
         { result in
@@ -888,8 +813,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             return
         }
         
-        //if !performed { return }
-        
         if selected_element_index < selected_program.elements_count - 1
         {
             // Select and perform next code
@@ -912,8 +835,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 selected_element_index = 0
                 performed = false
                 
-                //deselect_object()
-                
                 performing_state = .completed // State light (UI)
                 program_performed = false // Control Buttons (UI)
                 
@@ -923,8 +844,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     self.selected_program?.reset_elements_states()
                 }
                 
-                update()
-                //pointer_position_to_robot()
+                //update()
                 
                 finish_handler()
             }
@@ -945,7 +865,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         performed = false // Pause performing
         
-        disable_constant_objects_update()
+        //disable_constant_objects_update()
         
         selected_program_element.performing_state = .error
         performing_state = .error // State light
@@ -963,7 +883,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Resets workspace performing.
     public func reset_performing()
     {
-        disable_constant_objects_update()
+        //disable_constant_objects_update()
         
         switch selected_program_element
         {
@@ -1004,7 +924,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             robot.clear_finish_handler()
             robot.clear_error_handler()
             
-            robot.disable_update()
+            robot.reset_update_state()
         }
         
         func reset_handler(_ element: ToolPerformerElement)
@@ -1023,47 +943,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             tool.clear_finish_handler()
             tool.clear_error_handler()
-            
-            tool.disable_update()
-        }
-    }
-    
-    // MARK: Update statistics handling
-    private func perform_constant_objects_update()
-    {
-        for robot in robots
-        {
-            if robot.scope_type == .constant
-            {
-                robot.perform_update()
-            }
-        }
-        
-        for tool in tools
-        {
-            if tool.scope_type == .constant
-            {
-                tool.perform_update()
-            }
-        }
-    }
-    
-    private func disable_constant_objects_update()
-    {
-        for robot in robots
-        {
-            if robot.scope_type == .constant
-            {
-                robot.disable_update()
-            }
-        }
-        
-        for tool in tools
-        {
-            if tool.scope_type == .constant
-            {
-                tool.disable_update()
-            }
         }
     }
     
@@ -1243,7 +1122,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 
                 robot.deselect_program()
                 
-                robot.disable_update()
+                robot.reset_update_state()
                 
                 completion(.success(()))
             }
@@ -1251,7 +1130,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 robot.clear_finish_handler()
                 robot.clear_error_handler()
                 
-                robot.disable_update()
+                robot.reset_update_state()
                 
                 error_handler(error)
             }
@@ -1304,8 +1183,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 tool.clear_finish_handler()
                 tool.clear_error_handler()
                 
-                tool.disable_update()
-                
                 completion(.success(()))
             }
             tool.error_handler = { error in
@@ -1313,8 +1190,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 tool.clear_error_handler()
                 
                 tool.deselect_program()
-                
-                tool.disable_update()
                 
                 error_handler(error)
             }
@@ -1419,7 +1294,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         switch element.object_type
         {
         case .robot:
-            robot_by_name(element.object_name).pointer_position_to_robot()
+            robot_by_name(element.object_name).pointer_position_to_robot() // !!!
             
             let pointer_position = robot_by_name(element.object_name).pointer_position
             
@@ -1431,7 +1306,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             info_output.append(pointer_position.p)
             info_output.append(pointer_position.w)
         case .tool:
-            if let output = tool_by_name(element.object_name).info_output
+            if let output = tool_by_name(element.object_name).info_output // !!!
             {
                 info_output = output
             }

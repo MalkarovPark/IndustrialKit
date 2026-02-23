@@ -330,10 +330,7 @@ open class Part: WorkspaceObject
                 
                 location: [position.x, position.y, position.z],
                 rotation: [position.r, position.p, position.w],
-                is_placed: is_placed,
-                
-                update_interval: update_interval,
-                scope_type: scope_type
+                is_placed: is_placed
             ),
             
             physics_enabled: physics_enabled,

@@ -278,7 +278,19 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     }
     
     // MARK: Info
-    open override var info_output: [Float]?
+    open override var current_device_state: DeviceState
+    {
+        // Prepare controller output
+        return DeviceState()
+    }
+    
+    open override var initial_device_state: DeviceState?
+    {
+        // Reset contolleroutput
+        return nil //DeviceState()
+    }
+    
+    /*open override var info_output: [Float]?
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["info_output"])
@@ -368,7 +380,7 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
         #endif
         
         return nil
-    }
+    }*/
 }
 
 // MARK: - Animation Storage

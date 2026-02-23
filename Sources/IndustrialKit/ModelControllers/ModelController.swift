@@ -69,56 +69,18 @@ open class ModelController: NSCopying
         
     }
     
-    // MARK: - Statistics handling
-    /// A get statistics flag.
-    public var get_statistics = false
-    
-    /// Charts data.
-    @Published public var charts_data: [StateChart]?
-    
-    /// States data.
-    @Published public var states_data: [StateItem]?
-    
-    /// Updates charts data.
-    open func updated_charts_data() -> [StateChart]?
+    // MARK: - Device state data
+    /// Updates device state data.
+    open var current_device_state: DeviceState
     {
-        return [StateChart]()
-    }
-    
-    /// Updates states.
-    open func updated_states_data() -> [StateItem]?
-    {
-        return [StateItem]()
-    }
-    
-    /// Performs statistics data update.
-    public func update_statistics_data()
-    {
-        charts_data = updated_charts_data()
-        states_data = updated_states_data()
+        // Prepare controller output
+        return DeviceState()
     }
     
     /// Initial charts data.
-    open func initial_charts_data() -> [StateChart]?
+    open var initial_device_state: DeviceState?
     {
-        return [StateChart]()
-    }
-    
-    /// Initial states data.
-    open func initial_states_data() -> [StateItem]?
-    {
-        return [StateItem]()
-    }
-    
-    /// Resets charts data to inital state.
-    public func reset_charts_data()
-    {
-        charts_data = initial_charts_data()
-    }
-    
-    /// Resets states data to inital state.
-    public func reset_states_data()
-    {
-        states_data = initial_states_data()
+        // Reset contolleroutput
+        return nil //DeviceState()
     }
 }

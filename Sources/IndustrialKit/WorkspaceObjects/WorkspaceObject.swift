@@ -148,70 +148,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         }
     }
     
-    // MARK: - Update functions
-    /// Flag indicating whether the update loop is active.
-    private var updated = false
-    
-    /// The task responsible for executing the update loop.
-    private var update_task: Task<Void, Never>?
-    
-    /// The interval between updates in nanoseconds.
-    public var update_interval: Double = 0.01
-    
-    /// Defines the update timing scope.
-    public var scope_type: ScopeType = ScopeType.selected
-    
-    /**
-     Starts the update loop.
-     
-     This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
-     */
-    public func perform_update()
-    {
-        updated = true
-        
-        update_task = Task
-        {
-            while updated
-            {
-                try? await Task.sleep(nanoseconds: UInt64(update_interval * 1_000_000_000))
-                await MainActor.run
-                {
-                    self.update()
-                }
-                
-                if update_task == nil
-                {
-                    return
-                }
-            }
-        }
-    }
-    
-    /**
-     Stops the update loop.
-     
-     This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
-     */
-    public func disable_update()
-    {
-        updated = false
-        update_task?.cancel()
-        update_task = nil
-    }
-    
-    /**
-     Called repeatedly within the update loop to perform updates.
-     
-     This function is called on the main thread by the `perform_update()` function as long as the `updated` flag is `true`. Subclasses should override this method to implement their specific update logic.
-     
-     > This function is called frequently, so it's crucial to keep its performing time as short as possible to avoid performance issues.
-     */
-    open func update()
-    {
-        
-    }
-    
     // MARK: - Visual functions
     #if canImport(RealityKit)
     /// A complex workspace object entity.
@@ -344,8 +280,6 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         )
         
         self.is_placed = file.is_placed
-        self.update_interval = file.update_interval
-        self.scope_type = file.scope_type
         
         module_import_by_name(module_name, is_internal: is_internal_module)
     }
@@ -361,10 +295,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
             location: [position.x, position.y, position.z],
             rotation: [position.r, position.p, position.w],
             
-            is_placed: is_placed,
-            
-            update_interval: update_interval,
-            scope_type: scope_type
+            is_placed: is_placed
         )
     }
     
@@ -380,10 +311,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                 location: [object.position.x, object.position.y, object.position.z],
                 rotation: [object.position.r, object.position.p, object.position.w],
                 
-                is_placed: object.is_placed,
-                
-                update_interval: object.update_interval,
-                scope_type: object.scope_type
+                is_placed: object.is_placed
             )
         )
     }
@@ -402,9 +330,6 @@ public struct WorkspaceObjectFileData: Codable
     
     public var is_placed: Bool
     
-    public var update_interval: Double
-    public var scope_type: ScopeType
-    
     // MARK: - Init
     public init(
         name: String,
@@ -415,10 +340,7 @@ public struct WorkspaceObjectFileData: Codable
         location: [Float],
         rotation: [Float],
         
-        is_placed: Bool,
-        
-        update_interval: Double,
-        scope_type: ScopeType
+        is_placed: Bool
     )
     {
         self.name = name
@@ -430,9 +352,6 @@ public struct WorkspaceObjectFileData: Codable
         self.rotation = rotation
         
         self.is_placed = is_placed
-        
-        self.update_interval = update_interval
-        self.scope_type = scope_type
     }
 }
 
@@ -483,4 +402,14 @@ public enum PerformingState: String, Codable, Equatable, CaseIterable
             .red
         }
     }
+}
+
+public protocol RoboticDevice
+{
+    
+}
+
+public protocol StateOutputCapable: RoboticDevice
+{
+    var device_state: DeviceState { get set }
 }

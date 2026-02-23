@@ -52,8 +52,6 @@ open class Tool: WorkspaceObject
         self.model_controller = model_controller
         self.connector = connector
         
-        apply_statistics_flags()
-        
         self.codes = codes
         
         current_operation = OperationCode(codes.first?.value ?? 0)
@@ -183,8 +181,6 @@ open class Tool: WorkspaceObject
         model_controller = module.model_controller.copy() as! ToolModelController
         connector = module.connector.copy() as! ToolConnector
         
-        apply_statistics_flags()
-        
         codes = module.codes
         
         current_operation = OperationCode(codes.first?.value ?? 0)
@@ -289,12 +285,6 @@ open class Tool: WorkspaceObject
         }
     }
     #endif
-    
-    private func apply_statistics_flags()
-    {
-        model_controller.get_statistics = get_statistics
-        connector.get_statistics = get_statistics
-    }
     
     // MARK: - Program manage functions
     /// An array of tool operations programs.
@@ -439,6 +429,9 @@ open class Tool: WorkspaceObject
     }
     
     // MARK: Single operation handling
+    /// An array of avaliable operation codes values for tool.
+    @Published public var codes = [OperationCodeInfo]()
+    
     /// Single pendant operation.
     @Published public var current_operation: OperationCode
     
@@ -500,30 +493,6 @@ open class Tool: WorkspaceObject
         }
     }
     
-    // MARK: - Info codes functions
-    /// An array of avaliable operation codes values for tool.
-    @Published public var codes = [OperationCodeInfo]()
-    
-    /// An information output code.
-    public var info_output: [Float]?
-    {
-        if demo
-        {
-            return model_controller.info_output
-        }
-        else
-        {
-            if connector.connected
-            {
-                return connector.info_output
-            }
-            else
-            {
-                return nil
-            }
-        }
-    }
-    
     // MARK: - Performing functions
     /// A moving state of tool.
     public var performed = false
@@ -562,19 +531,6 @@ open class Tool: WorkspaceObject
             else if !demo && update_model_by_connector
             {
                 connector.model_controller = model_controller
-            }
-        }
-    }
-    
-    // MARK: Update functions
-    /// Updates tool statistics and sync model by real device state.
-    public override func update()
-    {
-        if get_statistics && (performed || scope_type == .constant)
-        {
-            if demo || (connector.connected && update_model_by_connector)
-            {
-                update_statistics_data()
             }
         }
     }
@@ -789,8 +745,7 @@ open class Tool: WorkspaceObject
                 self.selected_program?.reset_codes_states()
             }
             
-            update()
-            //pointer_position_to_robot()
+            //update()
             
             finish_handler()
         }
@@ -828,7 +783,7 @@ open class Tool: WorkspaceObject
             
             performed = false
             
-            clear_chart_data()
+            //clear_chart_data()
         }
         
         selected_code_index = 0
@@ -865,106 +820,116 @@ open class Tool: WorkspaceObject
         attached_to = nil
     }
     
-    // MARK: - Chart functions
-    /// A tool charts data.
-    @Published public var charts_data: [StateChart]?
+    // MARK: - Device state data handling
+    /// A device state data.
+    @Published public var device_state: DeviceState?
     
-    /// A tool state data.
-    @Published public var states_data: [StateItem]?
+    /// Flag indicating whether the update loop is active.
+    private var is_state_updating = false
     
-    /// A statistics getting toggle.
-    public var get_statistics = false
+    /// The task responsible for executing the update loop.
+    private var state_update_task: Task<Void, Never>?
+    
+    /// The interval between updates in nanoseconds.
+    public var state_update_interval: Float = 0.01
+    
+    /// Defines the update timing scope.
+    public var update_scope_type: ScopeType = ScopeType.selected
+    
+    /**
+     Starts the update loop.
+     
+     This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
+     */
+    public func start_update_state()
     {
-        didSet
+        is_state_updating = true
+        
+        state_update_task = Task
         {
-            if demo
+            while is_state_updating
             {
-                model_controller.get_statistics = get_statistics
-            }
-            else
-            {
-                connector.get_statistics = get_statistics
+                try? await Task.sleep(nanoseconds: UInt64(state_update_interval * 1_000_000_000))
+                await MainActor.run
+                {
+                    self.update_device_state()
+                }
+                
+                if state_update_task == nil
+                {
+                    return
+                }
             }
         }
     }
     
-    /// Index of chart element.
-    private var chart_element_index = 0
+    /**
+     Stops the update loop.
+     
+     This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
+     */
+    public func reset_update_state()
+    {
+        is_state_updating = false
+        state_update_task?.cancel()
+        state_update_task = nil
+    }
     
-    /// Update statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
+    /**
+     Called repeatedly within the update loop to perform updates.
+     
+     This function is called on the main thread by the `perform_update()` function as long as the `updated` flag is `true`. Subclasses should override this method to implement their specific update logic.
+     
+     > This function is called frequently, so it's crucial to keep its performing time as short as possible to avoid performance issues.
+     */
+    private func update_device_state()
+    {
+        if is_state_updating && (performed || update_scope_type == .constant)
+        {
+            if demo || (connector.connected && update_model_by_connector)
+            {
+                update_statistics_data()
+            }
+        }
+    }
+    
+    /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     public func update_statistics_data()
     {
-        if charts_data == nil
+        if device_state == nil
         {
-            charts_data = [StateChart]()
+            device_state = DeviceState()
         }
         
-        if self.demo // Get statistic from model controller
+        if demo // Get statistic from model controller
         {
-            self.model_controller.update_statistics_data()
-            self.states_data = model_controller.states_data
-            self.charts_data = model_controller.charts_data
+            device_state = model_controller.current_device_state
         }
-        else // Get statistic from real tool
+        else // Get statistic from real device
         {
-            self.connector.update_statistics_data()
-            self.states_data = connector.states_data
-            self.charts_data = connector.charts_data
+            device_state = connector.current_device_state
         }
     }
     
-    /// Clears tool chart data.
-    public func clear_chart_data()
+    /// Clears device state data.
+    public func reset_device_state()
     {
-        charts_data = nil
+        device_state = nil
         
-        if demo
+        if demo // Get statistic from model controller
         {
-            model_controller.reset_charts_data()
+            device_state = model_controller.initial_device_state
         }
-        else
+        else // Get statistic from real device
         {
-            connector.reset_charts_data()
+            device_state = connector.initial_device_state
         }
-        
-        /*if get_statistics
-        {
-            if demo
-            {
-                model_controller.reset_charts_data()
-            }
-            else
-            {
-                connector.reset_charts_data()
-            }
-        }*/
     }
     
-    /// Clears tool state data.
-    public func clear_states_data()
+    /// An information output code.
+    public var info_output: [Float]?
     {
-        states_data = nil
-        
-        if demo
-        {
-            model_controller.reset_states_data()
-        }
-        else
-        {
-            connector.reset_states_data()
-        }
-        
-        /*if get_statistics
-        {
-            if demo
-            {
-                model_controller.reset_states_data()
-            }
-            else
-            {
-                connector.reset_states_data()
-            }
-        }*/
+        return nil
     }
     
     // MARK: - UI functions
@@ -980,50 +945,6 @@ open class Tool: WorkspaceObject
         {
             return OperationCodeInfo()
         }
-    }
-    
-    /// Connects tool charts to UI.
-    public func charts_binding() -> Binding<[StateChart]?>
-    {
-        Binding<[StateChart]?>(
-            get:
-            {
-                if self.demo
-                {
-                    self.model_controller.charts_data
-                }
-                else
-                {
-                    self.connector.charts_data
-                }
-            },
-            set:
-            { value in
-                self.charts_data = value
-            }
-        )
-    }
-    
-    /// Connects tool charts to UI.
-    public func states_binding() -> Binding<[StateItem]?>
-    {
-        Binding<[StateItem]?>(
-            get:
-            {
-                if self.demo
-                {
-                    self.model_controller.states_data
-                }
-                else
-                {
-                    self.connector.states_data
-                }
-            },
-            set:
-            { value in
-                self.states_data = value
-            }
-        )
     }
     
     // MARK: - Performing State
@@ -1048,20 +969,19 @@ open class Tool: WorkspaceObject
     {
         self.init(file: file.object) //self.init()
         
+        self.programs = file.programs
+        
         self.codes = file.codes
         
-        //self.is_attached = file.is_attached
         self.attached_to = file.attached_to
+        
+        self.is_state_updating = file.is_state_updating
+        self.state_update_interval = file.state_update_interval
+        self.update_scope_type = file.update_scope_type
+        self.device_state = file.device_state
         
         self.demo = file.demo
         self.update_model_by_connector = file.update_model_by_connector
-        
-        self.get_statistics = file.get_statistics
-        self.charts_data = file.charts_data
-        self.states_data = file.states_data
-        
-        self.programs = file.programs
-        
         self.connector.import_connection_parameters_values(file.connection_parameters)
         
         if self.update_model_by_connector
@@ -1081,26 +1001,23 @@ open class Tool: WorkspaceObject
                 
                 location: [position.x, position.y, position.z],
                 rotation: [position.r, position.p, position.w],
-                is_placed: is_placed,
-                
-                update_interval: update_interval,
-                scope_type: scope_type
+                is_placed: is_placed
             ),
+            
+            programs: programs,
             
             codes: codes,
             
-            //is_attached: is_attached,
             attached_to: attached_to,
+            
+            is_state_updating: is_state_updating,
+            state_update_interval: state_update_interval,
+            update_scope_type: update_scope_type,
+            device_state: device_state,
             
             demo: demo,
             connection_parameters: connector.connection_parameters_values,
-            update_model_by_connector: update_model_by_connector,
-            
-            get_statistics: get_statistics,
-            charts_data: charts_data,
-            states_data: states_data,
-            
-            programs: programs
+            update_model_by_connector: update_model_by_connector
         )
     }
     
@@ -1149,56 +1066,56 @@ public struct ToolFileData: Codable
 {
     public var object: WorkspaceObjectFileData
     
+    public var programs: [OperationProgram]
+    
     public var codes: [OperationCodeInfo]
     
-    //public var is_attached: Bool
     public var attached_to: String?
+    
+    public var is_state_updating: Bool
+    public var state_update_interval: Float
+    public var update_scope_type: ScopeType
+    public var device_state: DeviceState?
     
     public var demo: Bool
     public var connection_parameters: [String]?
     public var update_model_by_connector: Bool
     
-    public var get_statistics: Bool
-    public var charts_data: [StateChart]?
-    public var states_data: [StateItem]?
-    
-    public var programs: [OperationProgram]
-    
     // MARK: Init
     public init(
         object: WorkspaceObjectFileData,
         
+        programs: [OperationProgram],
+        
         codes: [OperationCodeInfo],
         
-        //is_attached: Bool,
         attached_to: String?,
+        
+        is_state_updating: Bool,
+        state_update_interval: Float,
+        update_scope_type: ScopeType,
+        device_state: DeviceState?,
         
         demo: Bool,
         connection_parameters: [String]?,
-        update_model_by_connector: Bool,
-        
-        get_statistics: Bool,
-        charts_data: [StateChart]?,
-        states_data: [StateItem]?,
-        
-        programs: [OperationProgram]
+        update_model_by_connector: Bool
     )
     {
         self.object = object
         
+        self.programs = programs
+        
         self.codes = codes
         
-        //self.is_attached = is_attached
         self.attached_to = attached_to
+        
+        self.is_state_updating = is_state_updating
+        self.state_update_interval = state_update_interval
+        self.update_scope_type = update_scope_type
+        self.device_state = device_state
         
         self.demo = demo
         self.connection_parameters = connection_parameters
         self.update_model_by_connector = update_model_by_connector
-        
-        self.get_statistics = get_statistics
-        self.charts_data = charts_data
-        self.states_data = states_data
-        
-        self.programs = programs
     }
 }
