@@ -42,7 +42,11 @@ public struct StateView: View
             }
             else
             {
-                EmptyView()
+                ContentUnavailableView
+                {
+                    Text("No Items")
+                    //Label("No Charts", systemImage: "chart.bar")
+                }
             }
         }
         #if !os(visionOS)
@@ -84,7 +88,7 @@ struct StateItemListView: View
                     .padding(.leading, 20)
                 }
             }
-        label:
+            label:
             {
                 item_label
             }

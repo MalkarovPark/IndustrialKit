@@ -49,9 +49,11 @@ public struct ChartView: View
             }
             else
             {
-                Text(charts.first?.name ?? "Statistics")
-                    .font(.title2)
-                    .padding([.top, .leading, .trailing])
+                ContentUnavailableView
+                {
+                    Text("No Charts")
+                    //Label("No Charts", systemImage: "chart.bar")
+                }
             }
         }
         #if !os(visionOS)
@@ -159,7 +161,7 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                 .frame(width: 640, height: 480)
                 .onAppear
                 {
-                    device_state.charts.append(StateChart(name: "Location", style: .line))
+                    /*device_state.charts.append(StateChart(name: "Location", style: .line))
                     device_state.charts.append(StateChart(name: "Rotation", style: .line))
                     
                     for d in 0..<16
@@ -205,7 +207,7 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                                 ChartDataItem(name: "Piece 5", domain: ["" : 80], codomain: 30)
                             ]
                         )
-                    )
+                    )*/
                 }
                 .padding(.top)
         }

@@ -59,12 +59,6 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
         }
     }
     
-    /// Inforamation code updated by connector.
-    open var info_output: [Float]?
-    {
-        return nil
-    }
-    
     // MARK: - Model handling
     /// A tool model controller.
     public var model_controller: ToolModelController?
@@ -288,7 +282,7 @@ public class ExternalToolConnector: ToolConnector
     }
     
     // MARK: Info
-    open override var info_output: [Float]?
+    /*open override var info_output: [Float]?
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["info_output"])
@@ -307,7 +301,7 @@ public class ExternalToolConnector: ToolConnector
         #else
         return nil
         #endif
-    }
+    }*/
     
     // MARK: Statistics
     open override var current_device_state: DeviceState

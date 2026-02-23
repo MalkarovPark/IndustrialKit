@@ -1289,30 +1289,27 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     private func observe(by element: ObserverModifierElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
-        var info_output = [Float]()
+        var info_output = [String]()
         
         switch element.object_type
         {
         case .robot:
-            robot_by_name(element.object_name).pointer_position_to_robot() // !!!
-            
-            let pointer_position = robot_by_name(element.object_name).pointer_position
-            
-            info_output.append(pointer_position.x)
-            info_output.append(pointer_position.y)
-            info_output.append(pointer_position.z)
-            
-            info_output.append(pointer_position.r)
-            info_output.append(pointer_position.p)
-            info_output.append(pointer_position.w)
-        case .tool:
-            if let output = tool_by_name(element.object_name).info_output // !!!
+            if let device_state = robot_by_name(element.object_name).device_state
             {
-                info_output = output
+                info_output = items_to_array(from: device_state.items)
             }
             else
             {
-                error_handler(NSError(domain: "No output", code: 0, userInfo: nil))
+                error_handler(NSError(domain: "No output items", code: 0, userInfo: nil))
+            }
+        case .tool:
+            if let device_state = tool_by_name(element.object_name).device_state
+            {
+                info_output = items_to_array(from: device_state.items)
+            }
+            else
+            {
+                error_handler(NSError(domain: "No output items", code: 0, userInfo: nil))
             }
         }
         
@@ -1320,14 +1317,45 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             for i in 0..<element.outputs.count
             {
-                if element.outputs[i].to <= 255 && element.outputs[i].to >= 0 && (element.outputs[i].from < info_output.count)
+                if element.outputs[i].to <= 255 && element.outputs[i].to >= 0 && (element.outputs[i].from < info_output.count),
+                   let value = Float(info_output[element.outputs[i].from])
                 {
-                    registers[safe: element.outputs[i].to] = info_output[element.outputs[i].from]
+                    registers[safe: element.outputs[i].to] = value
                 }
             }
         }
         
         completion(.success(()))
+        
+        func items_to_array(from items: [StateItem]) -> [String]
+        {
+            var info_output = [String]()
+            
+            func traverse(_ item: StateItem)
+            {
+                info_output.append(item.name)
+                
+                if let value = item.value
+                {
+                    info_output.append(value)
+                }
+                
+                if let children = item.children
+                {
+                    for child in children
+                    {
+                        traverse(child)
+                    }
+                }
+            }
+            
+            for item in items
+            {
+                traverse(item)
+            }
+            
+            return info_output
+        }
     }
     
     /**

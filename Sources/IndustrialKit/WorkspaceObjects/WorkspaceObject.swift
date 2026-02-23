@@ -437,7 +437,4 @@ public protocol StateOutputCapable: RoboticDevice, WorkspaceObject, ObservableOb
     
     /// Clears device state data.
     func reset_device_state()
-    
-    /// An information output code.
-    var info_output: [Float]? { get }
 }

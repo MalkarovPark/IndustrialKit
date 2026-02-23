@@ -140,12 +140,6 @@ open class ToolModelController: ModelController, @unchecked Sendable
         }*/
     }
     
-    /// Inforamation code updated by model controller.
-    open var info_output: [Float]?
-    {
-        return nil
-    }
-    
     /**
      Applies a sequence of actions to scene entities based on string commands and calls a completion handler when all actions are finished.
      

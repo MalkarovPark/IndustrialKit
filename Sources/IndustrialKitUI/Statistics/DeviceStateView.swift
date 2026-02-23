@@ -105,7 +105,7 @@ public struct DeviceStateView: View
                                 Picker(selection: $stats_selection, label: Label("View", systemImage: "eye"))
                                 {
                                     Text("Charts").tag(0)
-                                    Text("State").tag(1)
+                                    Text("Items").tag(1)
                                 }
                                 #else
                                 Menu
@@ -113,7 +113,7 @@ public struct DeviceStateView: View
                                     Picker(selection: $stats_selection, label: Label("View", systemImage: "eye"))
                                     {
                                         Text("Charts").tag(0)
-                                        Text("State").tag(1)
+                                        Text("Items").tag(1)
                                     }
                                 }
                                 label:
@@ -266,21 +266,6 @@ struct UpdateIntervalView: View
         #if os(iOS)
         .presentationDetents([.height(96)])
         #endif
-    }
-}
-
-struct EmptyStatisticsView: View
-{
-    var body: some View
-    {
-        VStack(spacing: 0)
-        {
-            Spacer()
-            Text("No Data")
-                .font(.largeTitle)
-                .foregroundColor(.secondary)
-            Spacer()
-        }
     }
 }
 

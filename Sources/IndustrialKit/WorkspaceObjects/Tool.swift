@@ -926,12 +926,6 @@ open class Tool: WorkspaceObject, StateOutputCapable
         }
     }
     
-    /// An information output code.
-    public var info_output: [Float]?
-    {
-        return nil
-    }
-    
     // MARK: - UI functions
     /// Apply corresponded label and SF Symbol to operation code.
     public func code_info(_ value: Int) -> OperationCodeInfo

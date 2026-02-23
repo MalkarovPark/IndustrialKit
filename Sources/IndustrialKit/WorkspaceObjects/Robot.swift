@@ -1002,12 +1002,6 @@ open class Robot: WorkspaceObject, StateOutputCapable
         }
     }
     
-    /// An information output code.
-    public var info_output: [Float]?
-    {
-        return nil
-    }
-    
     // MARK: - Connection functions
     /// A robot connector.
     public var connector = RobotConnector()
