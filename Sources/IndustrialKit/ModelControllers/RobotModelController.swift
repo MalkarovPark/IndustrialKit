@@ -452,7 +452,7 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     
     open override var initial_device_state: DeviceState?
     {
-        // Reset contolleroutput
+        // Reset contoller output
         return nil //DeviceState()
     }
     

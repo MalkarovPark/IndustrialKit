@@ -286,7 +286,7 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     
     open override var initial_device_state: DeviceState?
     {
-        // Reset contolleroutput
+        // Reset contoller output
         return nil //DeviceState()
     }
     

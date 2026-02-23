@@ -36,17 +36,20 @@ public struct DeviceStateView: View
     {
         ZStack
         {
-            if let state_output_device = device as? any StateOutputCapable, let device_state = state_output_device.device_state
+            if let state_output_device = device as? any StateOutputCapable
             {
                 VStack(spacing: 0)
                 {
-                    if stats_selection == 0
+                    if let device_state = state_output_device.device_state
                     {
-                        ChartView(device_state: device_state)
-                    }
-                    else
-                    {
-                        StateView(device_state: device_state)
+                        if stats_selection == 0
+                        {
+                            ChartView(device_state: device_state)
+                        }
+                        else
+                        {
+                            StateView(device_state: device_state)
+                        }
                     }
                 }
                 .modifier(SheetCaption(is_presented: $is_presented, label: "Device State"))

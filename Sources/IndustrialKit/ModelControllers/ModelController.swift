@@ -80,7 +80,7 @@ open class ModelController: NSCopying
     /// Initial charts data.
     open var initial_device_state: DeviceState?
     {
-        // Reset contolleroutput
+        // Reset contoller output
         return nil //DeviceState()
     }
 }
