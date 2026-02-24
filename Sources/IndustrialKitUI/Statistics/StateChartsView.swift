@@ -40,8 +40,11 @@ public struct StateChartsView: View
                 }
                 .disabled(charts.count == 1)
                 .controlSize(.regular)
-                .pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(.segmented)
                 .labelsHidden()
+                #if !os(macOS)
+                .padding()
+                #endif
                 
                 ChartContent(chart: charts[chart_selection])
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -52,7 +55,6 @@ public struct StateChartsView: View
                 ContentUnavailableView
                 {
                     Text("No Charts")
-                    //Label("No Charts", systemImage: "chart.bar")
                 }
             }
         }

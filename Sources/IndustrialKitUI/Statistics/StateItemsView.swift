@@ -45,7 +45,6 @@ public struct StateItemsView: View
                 ContentUnavailableView
                 {
                     Text("No Items")
-                    //Label("No Charts", systemImage: "chart.bar")
                 }
             }
         }

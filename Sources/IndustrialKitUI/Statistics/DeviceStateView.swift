@@ -220,11 +220,12 @@ public struct DeviceStateView: View
                 }
             }
         }
-        #if os(macOS)
+        #if os(macOS) || os(visionOS)
         .controlSize(.large)
         .frame(minWidth: 448, idealWidth: 480, maxWidth: 512, minHeight: 448, idealHeight: 480, maxHeight: 512)
         #else
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.white)
         #endif
     }
 }
