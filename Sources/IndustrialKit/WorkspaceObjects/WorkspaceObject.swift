@@ -374,8 +374,8 @@ public struct EntityModelIdentifier: Component
 // MARK: - Enums
 public enum ScopeType: String, Codable, Equatable, CaseIterable
 {
-    case selected = "Selected"
-    case constant = "Constant"
+    case operational = "Operational"
+    case continious = "Continuous"
 }
 
 public enum PerformingState: String, Codable, Equatable, CaseIterable
