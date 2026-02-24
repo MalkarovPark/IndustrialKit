@@ -99,7 +99,7 @@ public struct DeviceStateView: View
                             
                             Divider()
                             
-                            if true //!state_output_device.is_state_updating
+                            if !state_output_device.is_state_updating
                             {
                                 #if os(macOS)
                                 Picker(selection: $stats_selection, label: Label("View", systemImage: "eye"))
@@ -133,7 +133,7 @@ public struct DeviceStateView: View
                                 Label("Set Interval...", systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
                             }
                             
-                            if true //!state_output_device.is_state_updating
+                            if !state_output_device.is_state_updating
                             {
                                 #if os(macOS)
                                 Picker(selection: update_scope_type, label: Label("Scope", systemImage: "selection.pin.in.out"))

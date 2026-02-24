@@ -906,6 +906,15 @@ open class Robot: WorkspaceObject, StateOutputCapable
     
     /// Flag indicating whether the update loop is active.
     public var is_state_updating = false
+    {
+        didSet
+        {
+            if update_scope_type == .constant
+            {
+                start_update_state()
+            }
+        }
+    }
     
     /// The task responsible for executing the update loop.
     public var state_update_task: Task<Void, Never>?
