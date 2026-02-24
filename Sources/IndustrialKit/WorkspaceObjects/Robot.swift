@@ -953,6 +953,8 @@ open class Robot: WorkspaceObject, StateOutputCapable
      */
     public func start_update_state()
     {
+        guard state_update_enabled else { return }
+        
         is_state_updating = true
         
         state_update_task = Task
