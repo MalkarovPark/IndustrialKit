@@ -927,11 +927,11 @@ open class Tool: WorkspaceObject, StateOutputCapable
      */
     public func stop_update_state()
     {
-        //state_update_enabled = false
+        state_update_enabled = false
         //state_update_task?.cancel()
+        //state_update_task = nil
         state_update_timer?.invalidate()
         state_update_timer = nil
-        state_update_task = nil
     }
     
     /**
