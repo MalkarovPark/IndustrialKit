@@ -31,6 +31,8 @@ public struct RobotControlView: View
     
     @Namespace private var animation_namespace
     
+    @State private var new_view_is_expanded = false
+    
     public var body: some View
     {
         VStack(alignment: .center, spacing: 10)
@@ -121,6 +123,7 @@ public struct RobotControlView: View
                     
                     NewElementButton(
                         with_name: robot.selected_program == nil,
+                        is_expanded: $new_view_is_expanded,
                         names: robot.programs_names,
                         add_name_action:
                             { new_name in
@@ -164,6 +167,9 @@ public struct RobotControlView: View
     {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
+            // Dismiss new program view
+            if new_view_is_expanded { new_view_is_expanded = false }
+            
             // Editor handling
             robot.selected_program = program
             robot.update_position_program_entity(by: program)

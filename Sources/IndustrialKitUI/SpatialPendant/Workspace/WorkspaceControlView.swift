@@ -19,6 +19,8 @@ struct WorkspaceControlView: View
     
     @Namespace private var animation_namespace
     
+    @State private var new_view_is_expanded = false
+    
     @State private var registers_view_presented = false
     
     @State private var registers_updated = false
@@ -215,6 +217,7 @@ struct WorkspaceControlView: View
                     
                     NewElementButton(
                         with_name: workspace.selected_program == nil,
+                        is_expanded: $new_view_is_expanded,
                         names: workspace.programs_names,
                         add_name_action:
                             { new_name in
@@ -259,6 +262,9 @@ struct WorkspaceControlView: View
     {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
+            // Dismiss new program view
+            if new_view_is_expanded { new_view_is_expanded = false }
+            
             // Editor handling
             workspace.selected_program = program
             

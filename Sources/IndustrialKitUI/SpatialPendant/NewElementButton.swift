@@ -12,7 +12,8 @@ public struct NewElementButton: View
 {
     private var with_name: Bool = true
     
-    @State private var is_expanded = false
+    @Binding var is_expanded: Bool
+    //@State private var is_expanded = false
     @State private var new_item_name = ""
     
     private var add_name_action: (String) -> Void
@@ -23,6 +24,8 @@ public struct NewElementButton: View
     public init(
         with_name: Bool = false,
         
+        is_expanded: Binding<Bool>,
+        
         names: [String]? = nil,
         
         add_name_action: @escaping (String) -> Void = { _ in },
@@ -30,6 +33,8 @@ public struct NewElementButton: View
     )
     {
         self.with_name = with_name
+        
+        self._is_expanded = is_expanded
         
         self.names = names
         
@@ -151,9 +156,11 @@ public struct NewElementButton: View
 
 #Preview
 {
+    @Previewable @State var is_expanded = false
+    
     ZStack
     {
-        NewElementButton(with_name: true)
+        NewElementButton(with_name: true, is_expanded: $is_expanded)
             //.border(.gray)
             //.padding()
     }

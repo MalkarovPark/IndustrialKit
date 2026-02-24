@@ -19,6 +19,8 @@ struct ToolControlView: View
     
     @Namespace private var animation_namespace
     
+    @State private var new_view_is_expanded = false
+    
     @State private var code_value = 0
     
     let on_update: () -> ()
@@ -140,6 +142,7 @@ struct ToolControlView: View
                     {
                         NewElementButton(
                             with_name: tool.selected_program == nil,
+                            is_expanded: $new_view_is_expanded,
                             names: tool.programs_names,
                             add_name_action:
                                 { new_name in
@@ -177,11 +180,11 @@ struct ToolControlView: View
     {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
+            // Dismiss new program view
+            if new_view_is_expanded { new_view_is_expanded = false }
+            
             // Editor handling
             tool.selected_program = program
-            //tool.update_position_program_entity(by: program)
-            
-            //tool.toggle_position_program_visibility()
             
             // Performing Handling
             tool.select_program(name: program.name)
