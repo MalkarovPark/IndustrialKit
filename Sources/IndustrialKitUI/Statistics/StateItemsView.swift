@@ -1,5 +1,5 @@
 //
-//  StateView.swift
+//  StateItemsView.swift
 //  IndustrialKit
 //
 //  Created by Artem on 22.12.2022.
@@ -8,7 +8,7 @@
 import SwiftUI
 import IndustrialKit
 
-public struct StateView: View
+public struct StateItemsView: View
 {
     @ObservedObject var device_state: DeviceState
     
@@ -159,7 +159,7 @@ struct StateView_PreviewsContainer: PreviewProvider
         
         var body: some View
         {
-            StateView(device_state: device_state)
+            StateItemsView(device_state: device_state)
                 .frame(width: 320, height: 240)
         }
     }

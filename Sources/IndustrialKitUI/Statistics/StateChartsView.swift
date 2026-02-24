@@ -1,5 +1,5 @@
 //
-//  ChartView.swift
+//  StateChartsVie.swift
 //  IndustrialKit
 //
 //  Created by Artem on 22.12.2022.
@@ -10,7 +10,7 @@ import Charts
 
 import IndustrialKit
 
-public struct ChartView: View
+public struct StateChartsView: View
 {
     @ObservedObject var device_state: DeviceState
     
@@ -157,7 +157,7 @@ struct ChartsView_PreviewsContainer: PreviewProvider
         
         var body: some View
         {
-            ChartView(device_state: device_state)
+            StateChartsView(device_state: device_state)
                 .frame(width: 640, height: 480)
                 .onAppear
                 {
