@@ -545,7 +545,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
      */
     public func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
-        //if update_scope_type == .selected { start_update_state() } // Device State
+        if update_scope_type == .selected { start_update_state() } // Device State
         
         performed = true
         
@@ -556,7 +556,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
-                    //if self.update_scope_type == .selected { self.stop_update_state() } // Device State
+                    if self.update_scope_type == .selected { self.stop_update_state() } // Device State
                     
                     self.performed = false
                     
@@ -577,7 +577,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
-                    //if self.update_scope_type == .selected { self.stop_update_state() } // Device State
+                    if self.update_scope_type == .selected { self.stop_update_state() } // Device State
                     
                     self.performed = false
                     
@@ -596,7 +596,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
     /// Stops tool movement.
     public func stop()
     {
-        if update_scope_type == .selected { stop_update_state() } // Device State
+        if state_update_enabled && update_scope_type == .selected { stop_update_state() } // Device State
         
         if demo
         {
@@ -922,7 +922,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
      */
     private func update_device_state()
     {
-        if state_update_enabled && (performed || update_scope_type == .constant)
+        if is_state_updating && (performed || update_scope_type == .constant)
         {
             if demo || (connector.connected && update_model_by_connector)
             {

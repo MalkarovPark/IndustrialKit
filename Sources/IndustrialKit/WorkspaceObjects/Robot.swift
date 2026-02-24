@@ -671,7 +671,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
     /// Stops robot movement.
     public func stop()
     {
-        if update_scope_type == .selected { stop_update_state() } // Device State
+        if state_update_enabled && update_scope_type == .selected { stop_update_state() } // Device State
         
         if demo
         {
