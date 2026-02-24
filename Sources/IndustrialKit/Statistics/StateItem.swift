@@ -63,7 +63,7 @@ public class StateItem: Hashable, Identifiable, ObservableObject, Codable
         self.value = try container.decode(String.self, forKey: .value)
         self.symbol_name = try container.decode(String.self, forKey: .symbol_name)
         
-        self.children = try container.decode([StateItem].self, forKey: .children)
+        self.children = try container.decodeIfPresent([StateItem].self, forKey: .children)
     }
     
     public func encode(to encoder: any Encoder) throws
