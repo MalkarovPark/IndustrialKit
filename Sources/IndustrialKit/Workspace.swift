@@ -1317,11 +1317,22 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             for i in 0..<element.outputs.count
             {
-                if element.outputs[i].to <= 255 && element.outputs[i].to >= 0 && (element.outputs[i].from < info_output.count),
+                if element.outputs[i].to <= 255 && element.outputs[i].to >= 0 && (element.outputs[i].from < info_output.count)
+                {
+                    if let value = Float(info_output[element.outputs[i].from])
+                    {
+                        registers[safe: element.outputs[i].to] = value
+                    }
+                    else if let value = Bool(info_output[element.outputs[i].from])
+                    {
+                        registers[safe: element.outputs[i].to] = value ? 1 : 0
+                    }
+                }
+                /*if element.outputs[i].to <= 255 && element.outputs[i].to >= 0 && (element.outputs[i].from < info_output.count),
                    let value = Float(info_output[element.outputs[i].from])
                 {
                     registers[safe: element.outputs[i].to] = value
-                }
+                }*/
             }
         }
         
