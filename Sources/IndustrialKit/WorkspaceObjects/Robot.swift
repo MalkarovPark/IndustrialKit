@@ -1389,7 +1389,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
             )
         }
         
-        self.state_update_enabled = file.is_state_updating
+        self.state_update_enabled = file.state_update_enabled
         self.state_update_interval = file.state_update_interval
         self.update_scope_type = file.update_scope_type
         self.device_state = file.device_state
@@ -1432,7 +1432,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
                 [$0.r, $0.p, $0.w]
             },
             
-            is_state_updating: state_update_enabled,
+            state_update_enabled: state_update_enabled,
             state_update_interval: state_update_interval,
             update_scope_type: update_scope_type,
             device_state: device_state,
@@ -1465,7 +1465,7 @@ public struct RobotFileData: Codable
     public var default_pointer_location: [Float]?
     public var default_pointer_rotation: [Float]?
     
-    public var is_state_updating: Bool
+    public var state_update_enabled: Bool
     public var state_update_interval: Double
     public var update_scope_type: ScopeType
     public var device_state: DeviceState?
@@ -1487,7 +1487,7 @@ public struct RobotFileData: Codable
         default_pointer_location: [Float]?,
         default_pointer_rotation: [Float]?,
         
-        is_state_updating: Bool,
+        state_update_enabled: Bool,
         state_update_interval: Double,
         update_scope_type: ScopeType,
         device_state: DeviceState?,
@@ -1510,7 +1510,7 @@ public struct RobotFileData: Codable
         self.connection_parameters = connection_parameters
         self.update_model_by_connector = update_model_by_connector
         
-        self.is_state_updating = is_state_updating
+        self.state_update_enabled = state_update_enabled
         self.state_update_interval = state_update_interval
         self.update_scope_type = update_scope_type
         self.device_state = device_state
