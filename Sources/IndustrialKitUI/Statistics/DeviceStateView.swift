@@ -58,10 +58,10 @@ public struct DeviceStateView: View
                     HStack(spacing: 0)
                     {
                         let is_state_updating = Binding(
-                            get: { state_output_device.is_state_updating },
+                            get: { state_output_device.state_update_enabled },
                             set:
                                 { new_value in
-                                    state_output_device.is_state_updating = new_value
+                                    state_output_device.state_update_enabled = new_value
                                     state_output_device.objectWillChange.send()
                                     
                                     on_update()

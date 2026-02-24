@@ -417,6 +417,9 @@ public protocol StateOutputCapable: RoboticDevice, WorkspaceObject, ObservableOb
     /// Flag indicating whether the update loop is active.
     var is_state_updating: Bool { get set }
     
+    /// Device state updating enable.
+    var state_update_enabled: Bool { get set }
+    
     /// The task responsible for executing the update loop.
     var state_update_task: Task<Void, Never>? { get set }
     

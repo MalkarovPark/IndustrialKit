@@ -832,6 +832,9 @@ open class Tool: WorkspaceObject, StateOutputCapable
     
     /// Flag indicating whether the update loop is active.
     public var is_state_updating = false
+    
+    /// Device state updating enable.
+    public var state_update_enabled = false
     {
         didSet
         {
@@ -896,7 +899,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
      */
     public func stop_update_state()
     {
-        is_state_updating = false
+        state_update_enabled = false
         state_update_task?.cancel()
         state_update_task = nil
     }
@@ -910,7 +913,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
      */
     private func update_device_state()
     {
-        if is_state_updating && (performed || update_scope_type == .constant)
+        if state_update_enabled && (performed || update_scope_type == .constant)
         {
             if demo || (connector.connected && update_model_by_connector)
             {
@@ -995,7 +998,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
         
         self.attached_to = file.attached_to
         
-        self.is_state_updating = file.is_state_updating
+        self.state_update_enabled = file.is_state_updating
         self.state_update_interval = file.state_update_interval
         self.update_scope_type = file.update_scope_type
         self.device_state = file.device_state
@@ -1030,7 +1033,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
             
             attached_to: attached_to,
             
-            is_state_updating: is_state_updating,
+            is_state_updating: state_update_enabled,
             state_update_interval: state_update_interval,
             update_scope_type: update_scope_type,
             device_state: device_state,
