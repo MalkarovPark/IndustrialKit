@@ -55,7 +55,7 @@ public class DeviceState: Hashable, Identifiable, ObservableObject, Codable
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.items = try container.decode([StateItem].self, forKey: .items)
-        self.charts = try container.decode([StateChart].self, forKey: .items)
+        self.charts = try container.decode([StateChart].self, forKey: .charts)
     }
     
     public func encode(to encoder: any Encoder) throws
