@@ -900,7 +900,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
             }
         }*/
         
-        state_update_timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true)
+        state_update_timer = Timer.scheduledTimer(withTimeInterval: state_update_interval, repeats: true)
         { [weak self] _ in
             guard let self = self else { return }
             if self.is_state_updating
