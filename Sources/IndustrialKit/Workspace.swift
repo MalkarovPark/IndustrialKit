@@ -730,7 +730,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             robot.clear_finish_handler()
             robot.clear_error_handler()
             
-            robot.reset_update_state()
+            robot.stop_update_state()
         }
         
         func pause_handler(_ element: ToolPerformerElement)
@@ -924,7 +924,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             robot.clear_finish_handler()
             robot.clear_error_handler()
             
-            robot.reset_update_state()
+            robot.stop_update_state()
         }
         
         func reset_handler(_ element: ToolPerformerElement)
@@ -1122,7 +1122,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 
                 robot.deselect_program()
                 
-                robot.reset_update_state()
+                robot.stop_update_state()
                 
                 completion(.success(()))
             }
@@ -1130,7 +1130,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 robot.clear_finish_handler()
                 robot.clear_error_handler()
                 
-                robot.reset_update_state()
+                robot.stop_update_state()
                 
                 error_handler(error)
             }

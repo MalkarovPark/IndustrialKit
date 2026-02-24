@@ -574,8 +574,6 @@ open class Robot: WorkspaceObject, StateOutputCapable
         guard let position = default_pointer_position else { return }
         
         pointer_position = position
-        
-        //update()
     }
     
     /// Returns information about default pointer position avalibility of robot.
@@ -618,7 +616,8 @@ open class Robot: WorkspaceObject, StateOutputCapable
      */
     public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
-        // pointer_position_to_robot()
+        if update_scope_type == .selected { start_update_state() } // Device State
+        
         performed = true
         
         if demo
@@ -630,6 +629,8 @@ open class Robot: WorkspaceObject, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
+                    if self.update_scope_type == .selected { self.stop_update_state() } // Device State
+                    
                     self.performed = false
                     
                     switch result
@@ -651,6 +652,8 @@ open class Robot: WorkspaceObject, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
+                    if self.update_scope_type == .selected { self.stop_update_state() } // Device State
+                    
                     self.performed = false
                     
                     switch result
@@ -668,6 +671,8 @@ open class Robot: WorkspaceObject, StateOutputCapable
     /// Stops robot movement.
     public func stop()
     {
+        if update_scope_type == .selected { stop_update_state() } // Device State
+        
         if demo
         {
             // Remove actions for virtual robot
@@ -831,7 +836,6 @@ open class Robot: WorkspaceObject, StateOutputCapable
                 self.selected_program?.reset_points_states()
             }
             
-            //update()
             pointer_position_to_robot()
             
             finish_handler()
@@ -911,6 +915,17 @@ open class Robot: WorkspaceObject, StateOutputCapable
     
     /// Defines the update timing scope.
     public var update_scope_type: ScopeType = ScopeType.selected
+    {
+        didSet
+        {
+            stop_update_state()
+            
+            if update_scope_type == .constant
+            {
+                start_update_state()
+            }
+        }
+    }
     
     /**
      Starts the update loop.
@@ -944,7 +959,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
      
      This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
      */
-    public func reset_update_state()
+    public func stop_update_state()
     {
         is_state_updating = false
         state_update_task?.cancel()

@@ -430,7 +430,7 @@ public protocol StateOutputCapable: RoboticDevice, WorkspaceObject, ObservableOb
     func start_update_state()
     
     /// Stops the update loop.
-    func reset_update_state()
+    func stop_update_state()
     
     /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     func update_statistics_data()

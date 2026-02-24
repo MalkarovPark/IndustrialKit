@@ -545,6 +545,8 @@ open class Tool: WorkspaceObject, StateOutputCapable
      */
     public func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
+        if update_scope_type == .selected { start_update_state() } // Device State
+        
         performed = true
         
         if demo
@@ -554,6 +556,8 @@ open class Tool: WorkspaceObject, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
+                    if self.update_scope_type == .selected { self.stop_update_state() } // Device State
+                    
                     self.performed = false
                     
                     switch result
@@ -573,6 +577,8 @@ open class Tool: WorkspaceObject, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
+                    if self.update_scope_type == .selected { self.stop_update_state() } // Device State
+                    
                     self.performed = false
                     
                     switch result
@@ -590,6 +596,8 @@ open class Tool: WorkspaceObject, StateOutputCapable
     /// Stops tool movement.
     public func stop()
     {
+        if update_scope_type == .selected { stop_update_state() } // Device State
+        
         if demo
         {
             // Remove actions for virtural tool
@@ -745,8 +753,6 @@ open class Tool: WorkspaceObject, StateOutputCapable
                 self.selected_program?.reset_codes_states()
             }
             
-            //update()
-            
             finish_handler()
         }
     }
@@ -835,6 +841,17 @@ open class Tool: WorkspaceObject, StateOutputCapable
     
     /// Defines the update timing scope.
     public var update_scope_type: ScopeType = ScopeType.selected
+    {
+        didSet
+        {
+            stop_update_state()
+            
+            if update_scope_type == .constant
+            {
+                start_update_state()
+            }
+        }
+    }
     
     /**
      Starts the update loop.
@@ -868,7 +885,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
      
      This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
      */
-    public func reset_update_state()
+    public func stop_update_state()
     {
         is_state_updating = false
         state_update_task?.cancel()
