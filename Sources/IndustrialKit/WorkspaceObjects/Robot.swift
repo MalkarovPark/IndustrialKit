@@ -912,9 +912,16 @@ open class Robot: WorkspaceObject, StateOutputCapable
     {
         didSet
         {
-            if update_scope_type == .constant
+            if state_update_enabled
             {
-                start_update_state()
+                if update_scope_type == .constant
+                {
+                    start_update_state()
+                }
+            }
+            else
+            {
+                stop_update_state()
             }
         }
     }
