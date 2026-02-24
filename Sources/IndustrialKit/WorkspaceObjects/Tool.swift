@@ -883,7 +883,7 @@ open class Tool: WorkspaceObject, StateOutputCapable
         
         is_state_updating = true
         
-        state_update_task = Task
+        /*state_update_task = Task
         {
             while is_state_updating
             {
@@ -898,8 +898,27 @@ open class Tool: WorkspaceObject, StateOutputCapable
                     return
                 }
             }
+        }*/
+        
+        state_update_timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true)
+        { [weak self] _ in
+            guard let self = self else { return }
+            if self.is_state_updating
+            {
+                DispatchQueue.main.async
+                {
+                    self.update_device_state()
+                }
+
+                if self.state_update_task == nil
+                {
+                    return
+                }
+            }
         }
     }
+    
+    private var state_update_timer: Timer?
     
     /**
      Stops the update loop.
@@ -908,8 +927,10 @@ open class Tool: WorkspaceObject, StateOutputCapable
      */
     public func stop_update_state()
     {
-        state_update_enabled = false
-        state_update_task?.cancel()
+        //state_update_enabled = false
+        //state_update_task?.cancel()
+        state_update_timer?.invalidate()
+        state_update_timer = nil
         state_update_task = nil
     }
     
@@ -1151,3 +1172,4 @@ public struct ToolFileData: Codable
         self.update_model_by_connector = update_model_by_connector
     }
 }
+
