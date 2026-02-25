@@ -419,11 +419,14 @@ public protocol DeviceTwin: WorkspaceObject, ObservableObject
 {
     var device_mode: DeviceMode { get set }
     
+    var model_controller: ModelControllerType { get set }
+    associatedtype ModelControllerType: ModelController
+    
     var connector: ConnectorType { get set }
     associatedtype ConnectorType: WorkspaceObjectConnector
     
-    var model_controller: ModelControllerType { get set }
-    associatedtype ModelControllerType: ModelController
+    func connect_device()
+    func disconnect_device()
     
     var is_twin_sync: Bool { get set }
 }

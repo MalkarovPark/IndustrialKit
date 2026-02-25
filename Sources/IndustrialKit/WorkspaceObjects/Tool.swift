@@ -259,14 +259,14 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
      If did set *Simulation* – class instance try to connects a real tool by connector.
      If did set *Real* – class instance disconnects from a real tool.
      */
-    public var device_mode: DeviceMode = .simulation
+    @Published public var device_mode: DeviceMode = .simulation
     {
         didSet
         {
             if device_mode == .simulation && connector.connected
             {
                 reset_performing()
-                disconnect()
+                disconnect_device()
             }
             else if device_mode == .real && is_twin_sync
             {
@@ -276,7 +276,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     /// Updates tool visual model by model controller in connector.
-    public var is_twin_sync = false
+    @Published public var is_twin_sync = false
     {
         didSet
         {
@@ -309,11 +309,17 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     public var connector: ToolConnector = ToolConnector()
     public typealias ConnectorType = ToolConnector
     
-    /// Disconnects from real tool.
-    private func disconnect()
+    /// Connects to real tool.
+    public func connect_device()
     {
-        // connector.update_model = false
-        connector.model_controller = nil
+        guard device_mode == .real else { return }
+        
+        connector.connect()
+    }
+    
+    /// Disconnects from real tool.
+    public func disconnect_device()
+    {
         connector.disconnect()
     }
     

@@ -301,7 +301,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
 }
 
 //MARK: - Connector parameter
-public struct ConnectionParameter: Identifiable, Equatable, Codable
+public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableObject
 {
     public static func == (lhs: ConnectionParameter, rhs: ConnectionParameter) -> Bool
     {
@@ -330,7 +330,7 @@ public struct ConnectionParameter: Identifiable, Equatable, Codable
         case value_bool
     }
     
-    public init(from decoder: Decoder) throws
+    required public init(from decoder: Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(UUID.self, forKey: .id)

@@ -12,7 +12,7 @@ public struct DeviceStateView: View
 {
     @Binding var is_presented: Bool
     
-    @ObservedObject var device: WorkspaceObject
+    @ObservedObject var object: WorkspaceObject
     
     let on_update: () -> ()
     
@@ -22,13 +22,13 @@ public struct DeviceStateView: View
     public init(
         is_presented: Binding<Bool>,
         
-        device: WorkspaceObject,
+        object: WorkspaceObject,
         on_update: @escaping () -> Void = {}
     )
     {
         self._is_presented = is_presented
         
-        self.device = device
+        self.object = object
         self.on_update = on_update
     }
     
@@ -36,7 +36,7 @@ public struct DeviceStateView: View
     {
         ZStack
         {
-            if let state_output_device = device as? any StateOutputCapable
+            if let state_output_device = object as? any StateOutputCapable
             {
                 VStack(spacing: 0)
                 {
@@ -279,7 +279,7 @@ struct DeviceStateView_Previews: PreviewProvider
         
         var body: some View
         {
-            DeviceStateView(is_presented: .constant(true), device: robot)
+            DeviceStateView(is_presented: .constant(true), object: robot)
                 .onAppear
                 {
                     prepare_state()
