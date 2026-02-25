@@ -404,12 +404,31 @@ public enum PerformingState: String, Codable, Equatable, CaseIterable
     }
 }
 
-public protocol RoboticDevice
+/*public protocol RoboticDevice
 {
     
+}*/
+
+public enum DeviceMode: String, CaseIterable, Codable
+{
+    case simulation = "Simulation"
+    case real = "Real"
 }
 
-public protocol StateOutputCapable: RoboticDevice, WorkspaceObject, ObservableObject
+public protocol DeviceTwin: WorkspaceObject, ObservableObject
+{
+    var device_mode: DeviceMode { get set }
+    
+    var connector: ConnectorType { get set }
+    associatedtype ConnectorType: WorkspaceObjectConnector
+    
+    var model_controller: ModelControllerType { get set }
+    associatedtype ModelControllerType: ModelController
+    
+    var is_twin_sync: Bool { get set }
+}
+
+public protocol StateOutputCapable: WorkspaceObject, ObservableObject
 {
     /// A device state data.
     var device_state: DeviceState? { get set }

@@ -10,22 +10,30 @@ import IndustrialKit
 
 public struct ConnectorView: View
 {
+    @ObservedObject var connector: WorkspaceObjectConnector
+    
     @Binding var demo: Bool
     @Binding var update_model: Bool
     
-    @StateObject var connector: WorkspaceObjectConnector
+    let on_update: () -> Void
     
-    var update_file_data: () -> Void
+    @State private var connection_toggle: Bool = false
     
-    @State private var connected = false
-    @State private var toggle_enabled = true
-    
-    public init(demo: Binding<Bool>, update_model: Binding<Bool>, connector: @autoclosure @escaping () -> WorkspaceObjectConnector, update_file_data: @escaping () -> Void)
+    public init(
+        connector: WorkspaceObjectConnector,
+        
+        demo: Binding<Bool>,
+        update_model: Binding<Bool>,
+        
+        on_update: @escaping () -> Void = {}
+    )
     {
-        _demo = demo
-        _update_model = update_model
-        _connector = StateObject(wrappedValue: connector())
-        self.update_file_data = update_file_data
+        self.connector = connector
+        
+        self._demo = demo
+        self._update_model = update_model
+        
+        self.on_update = on_update
     }
     
     public var body: some View
@@ -41,13 +49,13 @@ public struct ConnectorView: View
                 
                 List
                 {
-                    if connector.parameters.count > 0
+                    /*if connector.parameters.count > 0
                     {
                         ForEach($connector.current_parameters.indices, id: \.self)
                         { index in
-                            ConnectionParameterView(parameter: $connector.current_parameters[index], update_file_data: update_file_data)
+                            ConnectionParameterView(parameter: $connector.current_parameters[index], on_update: on_update)
                         }
-                    }
+                    }*/
                 }
                 .listStyle(.plain)
             }
@@ -68,6 +76,7 @@ public struct ConnectorView: View
             HStack(spacing: 0)
             {
                 TextEditor(text: $connector.output)
+                    .scrollIndicators(.hidden)
                 
                 VStack
                 {
@@ -79,7 +88,7 @@ public struct ConnectorView: View
                     #endif
                 }
                 #if !os(visionOS)
-                .frame(width: 48)
+                .frame(width: 32)
                 #else
                 .frame(width: 68)
                 #endif
@@ -95,10 +104,11 @@ public struct ConnectorView: View
                     Toggle(isOn: $connector.get_output)
                     {
                         Image(systemName: "text.append")
+                            .frame(width: 16, height: 16)
                     }
                     .buttonStyle(.bordered)
-                    .buttonBorderShape(.circle)
                     .toggleStyle(.button)
+                    .buttonBorderShape(.circle)
                     .padding(8)
                     
                     Button(action: {
@@ -106,6 +116,7 @@ public struct ConnectorView: View
                     })
                     {
                         Image(systemName: "eraser")
+                            .frame(width: 16, height: 16)
                     }
                     .buttonStyle(.bordered)
                     .buttonBorderShape(.circle)
@@ -138,16 +149,6 @@ public struct ConnectorView: View
                 .tint(.accentColor)
                 .labelsHidden()
                 #endif
-                .onChange(of: demo)
-                { _, new_value in
-                    if new_value && connected
-                    {
-                        connected = false
-                        // connector.disconnect()
-                    }
-                    
-                    update_file_data()
-                }
                 
                 Spacer()
                 
@@ -155,79 +156,43 @@ public struct ConnectorView: View
                 {
                     Image(systemName: "arrow.triangle.2.circlepath")
                 }
-                .onChange(of: update_model)
-                { _, _ in
-                    update_file_data()
-                }
+                .help("Sync Model")
                 .disabled(demo)
                 #if os(macOS)
                 .controlSize(.large)
-                #else
-                .buttonStyle(.bordered)
-                #endif
-                #if os(visionOS)
-                .buttonBorderShape(.circle)
                 #endif
                 .toggleStyle(.button)
+                .buttonStyle(.glass)
                 .buttonBorderShape(.circle)
                 .padding(.trailing)
                 
-                Toggle(isOn: $connected)
+                Button
+                {
+                    
+                }
+                label:
                 {
                     HStack
                     {
                         Text(connector.connection_button.label)
-                        Image(systemName: "circle.fill")
-                            .foregroundColor(connector.connection_button.color)
+                        /*Image(systemName: "circle.fill")
+                            .foregroundColor(connector.connection_button.color)*/
+                        
+                        Circle()
+                            .foregroundColor(.clear)
+                            .glassEffect(.regular.tint(connector.connection_button.color).interactive())
+                            .frame(width: 10, height: 10)
                     }
                 }
                 .disabled(demo)
-                .toggleStyle(.button)
                 #if os(macOS)
                 .controlSize(.large)
-                #else
-                .buttonStyle(.bordered)
                 #endif
-                .onChange(of: connected)
-                { _, new_value in
-                    if !toggle_enabled
-                    {
-                        if new_value
-                        {
-                            connector.connect()
-                        }
-                        else
-                        {
-                            connector.disconnect()
-                        }
-                    }
-                }
-                .onChange(of: connector.connection_failure)
-                { _, new_value in
-                    if new_value
-                    {
-                        toggle_enabled = true
-                        connected = false
-                        toggle_enabled = false
-                    }
-                }
+                .buttonStyle(.glass)
             }
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear
-        {
-            connected = connector.connected
-            toggle_enabled = false
-            
-            if connector.connection_failure
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-                {
-                    connector.connection_failure = false
-                }
-            }
-        }
         .controlSize(.regular)
     }
 }
@@ -236,12 +201,15 @@ public struct ConnectionParameterView: View
 {
     @Binding var parameter: ConnectionParameter
     
-    var update_file_data: () -> Void
+    var on_update: () -> Void
     
-    public init(parameter: Binding<ConnectionParameter>, update_file_data: @escaping () -> Void)
+    public init(
+        parameter: Binding<ConnectionParameter>,
+        on_update: @escaping () -> Void
+    )
     {
         self._parameter = parameter
-        self.update_file_data = update_file_data
+        self.on_update = on_update
     }
     
     public var body: some View
@@ -259,7 +227,7 @@ public struct ConnectionParameterView: View
                     get: { stringValue },
                     set: { new_value in
                         parameter.value = new_value
-                        update_file_data()
+                        on_update()
                     }
                 ))
                 #if os(macOS)
@@ -274,7 +242,7 @@ public struct ConnectionParameterView: View
                         get: { intValue },
                         set: { new_value in
                             parameter.value = new_value
-                            update_file_data()
+                            on_update()
                         }
                     ), format: .number.grouping(.never)) //, format: .number)
                     #if os(macOS)
@@ -284,7 +252,7 @@ public struct ConnectionParameterView: View
                         get: { intValue },
                         set: { new_value in
                             parameter.value = new_value
-                            update_file_data()
+                            on_update()
                         }
                     ), in: -1_000_000_000...1_000_000_000)
                     .labelsHidden()
@@ -298,7 +266,7 @@ public struct ConnectionParameterView: View
                         get: { floatValue },
                         set: { new_value in
                             parameter.value = new_value
-                            update_file_data()
+                            on_update()
                         }
                     ), format: .number.grouping(.never)) //, format: .number)
                     #if os(macOS)
@@ -308,7 +276,7 @@ public struct ConnectionParameterView: View
                         get: { floatValue },
                         set: { new_value in
                             parameter.value = new_value
-                            update_file_data()
+                            on_update()
                         }
                     ), in: (-Float.infinity)...(Float.infinity))
                     .labelsHidden()
@@ -320,7 +288,7 @@ public struct ConnectionParameterView: View
                     get: { boolValue },
                     set: { new_value in
                         parameter.value = new_value
-                        update_file_data()
+                        on_update()
                     }
                 ))
                 {
@@ -341,16 +309,25 @@ public struct ConnectionParameterView: View
 // MARK: - Previews
 struct ConnectorView_Previews: PreviewProvider
 {
+    struct Container: View
+    {
+        @State private var demo = false
+        @State private var update_model = false
+        
+        var body: some View
+        {
+            ConnectorView(
+                connector: Test_Connector(),
+                demo: $demo,
+                update_model: $update_model
+            )
+            .frame(width: 320)
+        }
+    }
+    
     static var previews: some View
     {
-        ConnectorView(
-            demo: .constant(true),
-            update_model: .constant(true),
-            connector: Test_Connector(),
-            update_file_data: {}
-        )
-        .environmentObject(Workspace())
-        .frame(width: 320)
+        Container()
     }
     
     class Test_Connector: ToolConnector, @unchecked Sendable

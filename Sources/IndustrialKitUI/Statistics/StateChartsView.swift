@@ -132,7 +132,7 @@ public struct StateChartsView: View
                 }
             }
         default:
-            Spacer()
+            EmptyView() //Spacer()
         }
     }
 }

@@ -17,7 +17,7 @@ import RealityKit
  
  Permorms reposition operation by target points order in selected positions program.
  */
-open class Robot: WorkspaceObject, StateOutputCapable
+open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
 {
     // MARK: - Init functions
     /// Inits robot with default parameters.
@@ -143,46 +143,6 @@ open class Robot: WorkspaceObject, StateOutputCapable
         )
         
         update_position()
-    }
-    
-    //MARK: Model Controller and Connector
-    /// A robot visual model controller.
-    public var model_controller = RobotModelController()
-    {
-        didSet // Entities reconnection if model contoller changed
-        {
-            if let entity = model_entity
-            {
-                model_controller.connect_entities(of: entity)
-            }
-        }
-    }
-    
-    private func sync_model_controller_parameters()
-    {
-        model_controller.origin_position = origin_position
-        model_controller.space_scale = space_scale
-    }
-    
-    /**
-     Updates robot visual model by model controller in connector.
-     
-     Called on the SCNScene *rendrer* function.
-     */
-    public var update_model_by_connector = false
-    {
-        didSet
-        {
-            if update_model_by_connector
-            {
-                connector.model_controller = model_controller
-            }
-            else
-            {
-                connector.model_controller?.reset_entities()
-                connector.model_controller = nil
-            }
-        }
     }
     
     // MARK: - Module handling
@@ -342,6 +302,85 @@ open class Robot: WorkspaceObject, StateOutputCapable
         }
     }
     #endif
+    
+    // MARK: - Digital Twin
+    /**
+     Device state of robot.
+     
+     If did set *Simulation* – class instance try to connects a real tool by connector.
+     If did set *Real* – class instance disconnects from a real tool.
+     */
+    public var device_mode: DeviceMode = .simulation
+    {
+        didSet
+        {
+            if device_mode == .simulation && connector.connected
+            {
+                reset_moving()
+                disconnect()
+            }
+            else if device_mode == .real && is_twin_sync
+            {
+                connector.model_controller = model_controller
+            }
+            
+            //model_controller.toggle_alt_pointer(device_mode == .simulation)
+        }
+    }
+    
+    /// Updates tool visual model by model controller in connector.
+    public var is_twin_sync = false
+    {
+        didSet
+        {
+            if is_twin_sync
+            {
+                connector.model_controller = model_controller
+            }
+            else
+            {
+                connector.model_controller?.reset_entities()
+                connector.model_controller = nil
+            }
+        }
+    }
+    
+    /// A robot visual model controller.
+    public var model_controller = RobotModelController()
+    {
+        didSet // Entities reconnection if model contoller changed
+        {
+            if let entity = model_entity
+            {
+                model_controller.connect_entities(of: entity)
+            }
+        }
+    }
+    public typealias ModelControllerType = RobotModelController
+    
+    /// A tool connector.
+    public var connector: RobotConnector = RobotConnector()
+    public typealias ConnectorType = RobotConnector
+    
+    /// Disconnects from real robot.
+    private func disconnect()
+    {
+        // connector.update_model = false
+        connector.model_controller = nil
+        connector.disconnect()
+    }
+    
+    private func sync_model_controller_parameters()
+    {
+        model_controller.origin_position = origin_position
+        model_controller.space_scale = space_scale
+    }
+    
+    private func sync_connector_parameters()
+    {
+        connector.origin_position = origin_position
+        connector.space_scale = space_scale
+    }
     
     // MARK: - Program manage functions
     /// An array of robot positions programs.
@@ -582,30 +621,6 @@ open class Robot: WorkspaceObject, StateOutputCapable
         return default_pointer_position != nil
     }
     
-    /**
-     Demo state of robot.
-     
-     If did set *true* – class instance try to connects a real robot by connector.
-     If did set *false* – class instance disconnects from a real robot.
-     */
-    public var demo = true
-    {
-        didSet
-        {
-            if demo && connector.connected
-            {
-                reset_moving()
-                disconnect()
-            }
-            else if !demo && update_model_by_connector
-            {
-                connector.model_controller = model_controller
-            }
-            
-            model_controller.toggle_alt_pointer(demo)
-        }
-    }
-    
     // MARK: Performation cycle
     /**
      Performs movement on robot by target position with completion handler.
@@ -620,7 +635,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
         
         performed = true
         
-        if demo
+        if device_mode == .simulation
         {
             // Move to target on virtual robot
             pointer_position_to_robot()
@@ -673,7 +688,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
     {
         if state_update_enabled && update_scope_type == .operational { stop_update_state() } // Device State
         
-        if demo
+        if device_mode == .simulation
         {
             // Remove actions for virtual robot
             model_controller.canceled = true
@@ -702,7 +717,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
         {
             reset_error()
             
-            if !demo // Pass workcell parameters to model controller
+            if device_mode == .real // Pass workcell parameters to model controller
             {
                 sync_connector_parameters()
             }
@@ -733,7 +748,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
             program_performed = false // Control Buttons (UI)
             performing_state = .current // State light (UI)
             
-            if demo
+            if device_mode == .simulation
             {
                 model_controller.canceled = true
                 model_controller.reset_entities()
@@ -759,7 +774,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
                 switch result
                 {
                 case .success:
-                    if self.demo
+                    if self.device_mode == .simulation
                     {
                         self.selected_position_point.performing_state = .completed
                     }
@@ -793,7 +808,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
         
         model_controller.reset_entities()
         
-        if demo
+        if device_mode == .simulation
         {
             //model_controller.reset_entities()
         }
@@ -887,7 +902,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
     /// Pass pointer position from model controller or connector to robot.
     internal func pointer_position_to_robot()
     {
-        if demo
+        if device_mode == .simulation
         {
             pointer_position = model_controller.pointer_position
         }
@@ -998,7 +1013,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
     {
         if is_state_updating && (performed || update_scope_type == .continious)
         {
-            if demo || (connector.connected && update_model_by_connector)
+            if device_mode == .simulation || (connector.connected && is_twin_sync)
             {
                 update_statistics_data()
             }
@@ -1013,7 +1028,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
             device_state = DeviceState()
         }
         
-        if demo // Get statistic from model controller
+        if device_mode == .simulation // Get statistic from model controller
         {
             device_state = model_controller.current_device_state
         }
@@ -1028,7 +1043,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
     {
         device_state = nil
         
-        if demo // Get statistic from model controller
+        if device_mode == .simulation // Get statistic from model controller
         {
             device_state = model_controller.initial_device_state
         }
@@ -1036,24 +1051,6 @@ open class Robot: WorkspaceObject, StateOutputCapable
         {
             device_state = connector.initial_device_state
         }
-    }
-    
-    // MARK: - Connection functions
-    /// A robot connector.
-    public var connector = RobotConnector()
-    
-    private func sync_connector_parameters()
-    {
-        connector.origin_position = origin_position
-        connector.space_scale = space_scale
-    }
-    
-    /// Disconnects from real robot.
-    private func disconnect()
-    {
-        // connector.update_model = false
-        connector.model_controller = nil
-        connector.disconnect()
     }
     
     // MARK: - Visual Functions
@@ -1223,7 +1220,7 @@ open class Robot: WorkspaceObject, StateOutputCapable
     {
         if !performed
         {
-            if demo
+            if device_mode == .simulation
             {
                 model_controller.pointer_position = pointer_position
                 
@@ -1403,11 +1400,11 @@ open class Robot: WorkspaceObject, StateOutputCapable
         self.update_scope_type = file.update_scope_type
         self.device_state = file.device_state
         
-        self.demo = file.demo
-        self.update_model_by_connector = file.update_model_by_connector
+        self.device_mode = file.device_mode
+        self.is_twin_sync = file.is_twin_sync
         self.connector.import_connection_parameters_values(file.connection_parameters)
         
-        if self.update_model_by_connector
+        if self.is_twin_sync
         {
             self.connector.model_controller = self.model_controller
         }
@@ -1446,10 +1443,10 @@ open class Robot: WorkspaceObject, StateOutputCapable
             update_scope_type: update_scope_type,
             device_state: device_state,
             
-            demo: demo,
+            device_mode: device_mode,
             
             connection_parameters: connector.connection_parameters_values,
-            update_model_by_connector: update_model_by_connector
+            is_twin_sync: is_twin_sync
         )
     }
 
@@ -1479,9 +1476,9 @@ public struct RobotFileData: Codable
     public var update_scope_type: ScopeType
     public var device_state: DeviceState?
     
-    public var demo: Bool
+    public var device_mode: DeviceMode
     public var connection_parameters: [String]?
-    public var update_model_by_connector: Bool
+    public var is_twin_sync: Bool
     
     // MARK: - Init
     public init(
@@ -1501,9 +1498,9 @@ public struct RobotFileData: Codable
         update_scope_type: ScopeType,
         device_state: DeviceState?,
         
-        demo: Bool,
+        device_mode: DeviceMode,
         connection_parameters: [String]?,
-        update_model_by_connector: Bool
+        is_twin_sync: Bool
     )
     {
         self.object = object
@@ -1515,9 +1512,9 @@ public struct RobotFileData: Codable
         self.default_pointer_location = default_pointer_location
         self.default_pointer_rotation = default_pointer_rotation
         
-        self.demo = demo
+        self.device_mode = device_mode
         self.connection_parameters = connection_parameters
-        self.update_model_by_connector = update_model_by_connector
+        self.is_twin_sync = is_twin_sync
         
         self.state_update_enabled = state_update_enabled
         self.state_update_interval = state_update_interval
