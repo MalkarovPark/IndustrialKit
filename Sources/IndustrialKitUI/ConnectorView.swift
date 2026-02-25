@@ -345,6 +345,7 @@ public struct ConnectionParameterView: View
                 {
                     Text("Bool")
                 }
+                .toggleStyle(.switch)
                 #if os(iOS) || os(visionOS)
                 .tint(.accentColor)
                 #endif
@@ -353,6 +354,7 @@ public struct ConnectionParameterView: View
                 Text("Unknown Parameter")
             }
         }
+        .frame(height: 64)
     }
 }
 
