@@ -107,7 +107,7 @@ public class ExternalRobotConnector: RobotConnector
     }
     
     // MARK: Parameters import
-    override open var parameters: [ConnectionParameter]
+    override open var default_parameters: [ConnectionParameter]
     {
         return external_parameters
     }

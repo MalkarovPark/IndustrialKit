@@ -40,11 +40,11 @@ public struct ConnectorView: View
                     
                     List
                     {
-                        if device.connector.parameters.count > 0
+                        if device.connector.default_parameters.count > 0
                         {
-                            ForEach(device.connector.current_parameters.indices, id: \.self)
+                            ForEach(device.connector.parameters.indices, id: \.self)
                             { index in
-                                ConnectionParameterView(parameter: device.connector.current_parameters[index], on_update: on_update)
+                                ConnectionParameterView(parameter: device.connector.parameters[index], on_update: on_update)
                             }
                         }
                     }
@@ -54,7 +54,7 @@ public struct ConnectorView: View
                 .modifier(ViewBorderer())
                 .overlay(alignment: .center)
                 {
-                    if !(device.connector.parameters.count > 0)
+                    if !(device.connector.default_parameters.count > 0)
                     {
                         Text("No connection parameters")
                             .foregroundColor(.gray)
@@ -380,7 +380,7 @@ struct ConnectorView_Previews: PreviewProvider
     
     class Test_Connector: ToolConnector, @unchecked Sendable
     {
-        override var parameters: [ConnectionParameter]
+        override var default_parameters: [ConnectionParameter]
         {
             [
                 .init(name: "String", value: "Text"),

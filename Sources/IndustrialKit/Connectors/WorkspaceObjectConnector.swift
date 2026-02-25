@@ -22,7 +22,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     // MARK: - Init functions
     required public init()
     {
-        current_parameters = parameters
+        parameters = default_parameters
     }
     
     deinit
@@ -39,22 +39,22 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     // MARK: - Connection parameters handling
     public func import_connection_parameters_values(_ list: [String]?)
     {
-        if list != nil && current_parameters.count > 0
+        if list != nil && parameters.count > 0
         {
-            if list?.count == current_parameters.count
+            if list?.count == parameters.count
             {
-                for i in 0 ..< current_parameters.count
+                for i in 0 ..< parameters.count
                 {
-                    switch current_parameters[i].value
+                    switch parameters[i].value
                     {
                     case is String:
-                        current_parameters[i].value = list?[i] ?? ""
+                        parameters[i].value = list?[i] ?? ""
                     case is Int:
-                        current_parameters[i].value = Int(list![i]) ?? 0
+                        parameters[i].value = Int(list![i]) ?? 0
                     case is Float:
-                        current_parameters[i].value = Float(list![i]) ?? 0
+                        parameters[i].value = Float(list![i]) ?? 0
                     case is Bool:
-                        current_parameters[i].value = list![i] == "true"
+                        parameters[i].value = list![i] == "true"
                     default:
                         break
                     }
@@ -65,11 +65,11 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     
     public var connection_parameters_values: [String]?
     {
-        if current_parameters.count > 0
+        if parameters.count > 0
         {
             var parameters_list = [String]()
             
-            for parameter in current_parameters
+            for parameter in parameters
             {
                 switch parameter.value
                 {
@@ -102,13 +102,13 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     @Published public var connection_updating: Bool = false
     
     /// An array of default connection parameters.
-    open var parameters: [ConnectionParameter]
+    open var default_parameters: [ConnectionParameter]
     {
         return [ConnectionParameter]()
     }
     
     /// An array of connection parameters.
-    @Published public var current_parameters = [ConnectionParameter]()
+    @Published public var parameters = [ConnectionParameter]()
     
     /**
      A pause flag of performation.
