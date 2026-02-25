@@ -42,10 +42,10 @@ public struct ConnectorView: View
                     {
                         if device.connector.default_parameters.count > 0
                         {
-                            ForEach(device.connector.parameters.indices, id: \.self)
+                            /*ForEach(device.connector.parameters.indices, id: \.self)
                             { index in
                                 ConnectionParameterView(parameter: device.connector.parameters[index], on_update: on_update)
-                            }
+                            }*/
                         }
                     }
                     .listStyle(.plain)
@@ -388,6 +388,12 @@ struct ConnectorView_Previews: PreviewProvider
                 .init(name: "Float", value: Float(6)),
                 .init(name: "Bool", value: true)
             ]
+        }
+        
+        override func connection_process() async -> Bool
+        {
+            sleep(2)
+            return true
         }
     }
 }

@@ -124,30 +124,44 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     public func connect()
     {
         disconnection_task.cancel()
-        connection_failure = false
         
-        if !connected
-        {
+        Task { @MainActor in
+            connection_failure = false
+        }
+        
+        guard !connected else { return }
+        
+        Task
+        { @MainActor in
             connection_updating = true
+        }
+        
+        connection_task.cancel()
+        connection_task = Task
+        {
+            let success = await connection_process()
             
-            connection_task = Task
+            await MainActor.run
             {
-                connected = await connection_process()
+                connected = success
                 connection_updating = false
-                
-                connection_failure = !connected
-                
-                if connection_failure
+                connection_failure = !success
+            }
+            
+            if success
+            {
+                await MainActor.run
                 {
-                    // try? await Task.sleep(nanoseconds: UInt64(200_000_000))
-                    usleep(500000)
-                    // sleep(1)
-                    
-                    connection_failure = false
+                    sync_model()
                 }
-                else
+            }
+            else
+            {
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                
+                await MainActor.run
                 {
-                    sync_model() // Turn model into a state similar to the current state of the real device
+                    connection_failure = false
                 }
             }
         }
