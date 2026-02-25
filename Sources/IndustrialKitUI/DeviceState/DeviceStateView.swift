@@ -29,7 +29,7 @@ public struct DeviceStateView: View
     
     public var body: some View
     {
-        ZStack
+        ZStack(alignment: .top)
         {
             if let state_output_device = object as? any StateOutputCapable
             {
