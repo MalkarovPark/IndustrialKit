@@ -13,12 +13,14 @@ public struct SheetCaption: ViewModifier
     
     let label: String
     let plain: Bool
+    let clear_background: Bool
     
-    public init(is_presented: Binding<Bool>, label: String = String(), plain: Bool = true)
+    public init(is_presented: Binding<Bool>, label: String = String(), plain: Bool = true, clear_background: Bool = false)
     {
         self._is_presented = is_presented
         self.label = label
         self.plain = plain
+        self.clear_background = clear_background
     }
     
     public func body(content: Content) -> some View
@@ -84,7 +86,7 @@ public struct SheetCaption: ViewModifier
             }
             .background
             {
-                if !plain
+                if !plain && !clear_background
                 {
                     HStack
                     {

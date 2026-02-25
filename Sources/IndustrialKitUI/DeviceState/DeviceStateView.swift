@@ -10,8 +10,6 @@ import IndustrialKit
 
 public struct DeviceStateView: View
 {
-    @Binding var is_presented: Bool
-    
     @ObservedObject var object: WorkspaceObject
     
     let on_update: () -> ()
@@ -20,15 +18,12 @@ public struct DeviceStateView: View
     @State private var update_interval_view_presented = false
     
     public init(
-        is_presented: Binding<Bool>,
-        
         object: WorkspaceObject,
         on_update: @escaping () -> Void = {}
     )
     {
-        self._is_presented = is_presented
-        
         self.object = object
+        
         self.on_update = on_update
     }
     
@@ -40,6 +35,14 @@ public struct DeviceStateView: View
             {
                 VStack(spacing: 0)
                 {
+                    #if os(macOS)
+                    Spacer(minLength: 56)
+                    #elseif os(iOS)
+                    Spacer(minLength: 64)
+                    #else
+                    Spacer(minLength: 82)
+                    #endif
+                    
                     if let device_state = state_output_device.device_state
                     {
                         if stats_selection == 0
@@ -52,7 +55,6 @@ public struct DeviceStateView: View
                         }
                     }
                 }
-                .modifier(SheetCaption(is_presented: $is_presented, label: "Device State"))
                 .overlay(alignment: .topTrailing)
                 {
                     HStack(spacing: 0)
@@ -279,7 +281,8 @@ struct DeviceStateView_Previews: PreviewProvider
         
         var body: some View
         {
-            DeviceStateView(is_presented: .constant(true), object: robot)
+            DeviceStateView(object: robot)
+                .modifier(SheetCaption(is_presented: .constant(true), label: "Device State", plain: false, clear_background: true))
                 .onAppear
                 {
                     prepare_state()
