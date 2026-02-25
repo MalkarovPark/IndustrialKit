@@ -42,10 +42,10 @@ public struct ConnectorView: View
                     {
                         if device.connector.default_parameters.count > 0
                         {
-                            /*ForEach(device.connector.parameters.indices, id: \.self)
+                            ForEach(device.connector.parameters.indices, id: \.self)
                             { index in
                                 ConnectionParameterView(parameter: device.connector.parameters[index], on_update: on_update)
-                            }*/
+                            }
                         }
                     }
                     .listStyle(.plain)
