@@ -58,9 +58,9 @@ public struct StateChartsView: View
                 }
             }
         }
-        #if !os(visionOS)
-        .background(.white)
-        #endif
+        //#if !os(visionOS)
+        //.background(.white)
+        //#endif
     }
     
     @ViewBuilder

@@ -48,9 +48,9 @@ public struct StateItemsView: View
                 }
             }
         }
-        #if !os(visionOS)
-        .background(.white)
-        #endif
+        //#if !os(visionOS)
+        //.background(.white)
+        //#endif
     }
 }
 

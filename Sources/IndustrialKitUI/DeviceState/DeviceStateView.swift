@@ -35,30 +35,10 @@ public struct DeviceStateView: View
             {
                 VStack(spacing: 0)
                 {
-                    #if os(macOS)
-                    Spacer(minLength: 56)
-                    #elseif os(iOS)
-                    Spacer(minLength: 64)
-                    #else
-                    Spacer(minLength: 82)
-                    #endif
-                    
-                    if let device_state = state_output_device.device_state
-                    {
-                        if stats_selection == 0
-                        {
-                            StateChartsView(device_state: device_state)
-                        }
-                        else
-                        {
-                            StateItemsView(device_state: device_state)
-                        }
-                    }
-                }
-                .overlay(alignment: .topTrailing)
-                {
                     HStack(spacing: 0)
                     {
+                        Spacer()
+                        
                         let is_state_updating = Binding(
                             get: { state_output_device.state_update_enabled },
                             set:
@@ -219,6 +199,20 @@ public struct DeviceStateView: View
                         #endif
                     }
                     .padding(10)
+                    
+                    if let device_state = state_output_device.device_state
+                    {
+                        if stats_selection == 0
+                        {
+                            StateChartsView(device_state: device_state)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        }
+                        else
+                        {
+                            StateItemsView(device_state: device_state)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        }
+                    }
                 }
             }
         }
