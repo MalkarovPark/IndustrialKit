@@ -29,7 +29,7 @@ public struct DeviceStateView: View
     
     public var body: some View
     {
-        ZStack(alignment: .top)
+        ZStack
         {
             if let state_output_device = object as? any StateOutputCapable
             {
@@ -177,7 +177,7 @@ public struct DeviceStateView: View
                         }
                         #if os(macOS)
                         .menuStyle(.borderlessButton)
-                        .padding(10)
+                        .padding(11)
                         #else
                         .buttonBorderShape(.circle)
                         #if !os(visionOS)
@@ -212,6 +212,10 @@ public struct DeviceStateView: View
                             StateItemsView(device_state: device_state)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
+                    }
+                    else
+                    {
+                        Spacer()
                     }
                 }
             }
