@@ -40,13 +40,13 @@ public struct ConnectorView: View
                     
                     List
                     {
-                        /*if device.connector.parameters.count > 0
+                        if device.connector.parameters.count > 0
                         {
                             ForEach(device.connector.current_parameters.indices, id: \.self)
                             { index in
                                 ConnectionParameterView(parameter: device.connector.current_parameters[index], on_update: on_update)
                             }
-                        }*/
+                        }
                     }
                     .listStyle(.plain)
                 }
