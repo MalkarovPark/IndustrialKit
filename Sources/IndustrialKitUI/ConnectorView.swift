@@ -354,7 +354,7 @@ public struct ConnectionParameterView: View
                 Text("Unknown Parameter")
             }
         }
-        .frame(height: 64)
+        .frame(height: 32)
     }
 }
 
