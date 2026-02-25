@@ -365,13 +365,14 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// Connects to real robot.
     public func connect_device()
     {
+        guard device_mode == .real else { return }
         
+        connector.connect()
     }
     
     /// Disconnects from real robot.
     public func disconnect_device()
     {
-        // connector.update_model = false
         connector.model_controller = nil
         connector.disconnect()
     }
