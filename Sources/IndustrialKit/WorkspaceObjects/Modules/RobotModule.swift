@@ -12,7 +12,7 @@ open class RobotModule: IndustrialModule
 {
     // MARK: - Init functions
     public override init(
-        new_name: String = String(),
+        new_name: String,
         description: String = String()
     )
     {

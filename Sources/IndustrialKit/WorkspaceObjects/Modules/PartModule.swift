@@ -11,7 +11,10 @@ import SceneKit
 open class PartModule: IndustrialModule
 {
     // MARK: - Init functions
-    public override init(new_name: String = String(), description: String = String())
+    public override init(
+        new_name: String,
+        description: String = String()
+    )
     {
         super.init(new_name: new_name, description: description)
     }
