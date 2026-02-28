@@ -35,12 +35,6 @@ open class Part: WorkspaceObject
         super.init(name: name, entity_name: entity_name)
     }
     
-    /// Inits part by name and scene name.
-    public init(name: String, scene_name: String)
-    {
-        super.init(name: name)
-    }
-    
     /// Inits part by name and part module.
     public init(name: String, module: PartModule, is_internal: Bool = true)
     {

@@ -77,7 +77,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         focus(on: nil)
         
-        object.entity.removeFromParent()
+        object.entity.removeFromParent() //Change to separate removes for objects?
         
         switch selected_object
         {
@@ -1613,7 +1613,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private weak var target_tile: ModelEntity?
     
     /// Focus camera to pivot
-    private func focus(on entity: Entity?)
+    public func focus(on entity: Entity?)
     {
         //scene_content?.cameraTarget = entity?
         
