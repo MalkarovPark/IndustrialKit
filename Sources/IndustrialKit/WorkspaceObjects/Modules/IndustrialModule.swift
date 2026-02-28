@@ -28,12 +28,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     /// An optional module description.
     @Published public var description = String()
     
-    /// Code lisitngs of module.
-    @Published public var code_items = [String: String]()
-    
-    /// Linked components from internal modules.
-    @Published public var linked_components = [String: String]()
-    
     // MARK: - File handling
     /// A folder bookmark to resources access.
     nonisolated(unsafe) public static var work_folder_bookmark: Data?
@@ -41,7 +35,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     /// An object package extension name.
     open var extension_name: String { "module" }
     
-    // MARK: - Init functions
+    // MARK: - Module init functions for design
     /**
      New module init.
      
@@ -54,13 +48,9 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     {
         self.name = new_name
         self.description = description
-        
-        self.code_items = default_code_items
-        
-        self.linked_components = default_linked_components
     }
     
-    // MARK: Module init for in-app mounting
+    // MARK: Module init functions for in-app mounting
     /// Internal module init.
     public init(
         name: String = String(),
@@ -105,17 +95,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }
     
     // MARK: - Module design functions
-    /// Default code items for module design process.
-    open var default_code_items: [String: String]
-    {
-        return [String: String]()
-    }
-    
-    /// Default linked modules of components.
-    open var default_linked_components: [String: String]
-    {
-        return [String: String]()
-    }
+    // ...
     
     // MARK: - Entities handling
     private var is_internal_entity = true
@@ -247,9 +227,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         self.name = try container.decode(String.self, forKey: .name)
         self.description = try container.decode(String.self, forKey: .description)
-        
-        self.code_items = try container.decode([String: String].self, forKey: .code_items)
-        self.linked_components = try container.decode([String: String].self, forKey: .linked_components)
     }
     
     public func encode(to encoder: any Encoder) throws
@@ -258,9 +235,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         
         try container.encode(name, forKey: .name)
         try container.encode(description, forKey: .description)
-        
-        try container.encode(code_items, forKey: .code_items)
-        try container.encode(linked_components, forKey: .linked_components)
     }
 }
 

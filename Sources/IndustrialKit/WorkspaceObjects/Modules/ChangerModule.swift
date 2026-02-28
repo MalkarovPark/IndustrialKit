@@ -9,13 +9,13 @@ import Foundation
 
 open class ChangerModule: IndustrialModule
 {
-    // MARK: - Init functions
+    // MARK: - Module init functions for design
     public override init(new_name: String = String(), description: String = String())
     {
         super.init(new_name: new_name, description: description)
     }
     
-    // MARK: Module init for in-app mounting
+    // MARK: Module init functions for in-app mounting
     /// Internal module init.
     public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) throws -> Void) //public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) -> Void)
     {
@@ -34,6 +34,10 @@ open class ChangerModule: IndustrialModule
     }
     
     open override var extension_name: String { "changer" }
+    
+    // MARK: - Components
+    ///
+    @Published public var changer_function_code = String() //JS
     
     // MARK: - Import functions
     open override var package_url: URL
@@ -61,10 +65,7 @@ open class ChangerModule: IndustrialModule
     }
     
     // MARK: - Designer functions
-    open override var default_code_items: [String: String]
-    {
-        return ["Change": String()]
-    }
+    // ...
     
     // MARK: - Components
     /// A main external code file name
@@ -109,8 +110,26 @@ open class ChangerModule: IndustrialModule
     #endif
     
     // MARK: - Codable handling
-    required public init(from decoder: any Decoder) throws
+    enum CodingKeys: String, CodingKey
     {
+        case changer_function_code
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.changer_function_code = try container.decode(String.self, forKey: .changer_function_code)
+        
         try super.init(from: decoder)
+    }
+    
+    public override func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(changer_function_code, forKey: .changer_function_code)
+        
+        try super.encode(to: encoder)
     }
 }

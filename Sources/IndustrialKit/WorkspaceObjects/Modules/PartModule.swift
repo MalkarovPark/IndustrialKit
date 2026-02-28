@@ -10,7 +10,7 @@ import SceneKit
 
 open class PartModule: IndustrialModule
 {
-    // MARK: - Init functions
+    // MARK: - Module init functions for design
     public override init(
         new_name: String,
         description: String = String()
@@ -19,7 +19,7 @@ open class PartModule: IndustrialModule
         super.init(new_name: new_name, description: description)
     }
     
-    // MARK: Module init for in-app mounting
+    // MARK: Module init functions for in-app mounting
     /// Internal init.
     public override init(
         name: String = String(),
@@ -35,6 +35,10 @@ open class PartModule: IndustrialModule
     }
     
     open override var extension_name: String { "part" }
+    
+    // MARK: - Components
+    /// USDZ file name for for module build (designer).
+    @Published public var entity_file_name: String?
     
     // MARK: - Import functions
     open override var package_url: URL
@@ -80,39 +84,27 @@ open class PartModule: IndustrialModule
         return nil
     }
     
-    /*open override var external_node: SCNNode
-    {
-        if let main_scene_name = external_module_info?.main_scene_name
-        {
-            do
-            {
-                let scene_url = package_url.appendingPathComponent("/Resources.scnassets/\(main_scene_name)")
-                
-                if FileManager.default.fileExists(atPath: scene_url.path)
-                {
-                    let scene_data = try Data(contentsOf: scene_url)
-                    
-                    if let scene_source = SCNSceneSource(data: scene_data, options: nil)
-                    {
-                        if let external_scene = scene_source.scene(options: nil)
-                        {
-                            return external_scene.rootNode.clone()
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                print(error.localizedDescription)
-            }
-        }
-        
-        return SCNNode()
-    }*/
-    
     // MARK: - Codable handling
+    enum CodingKeys: String, CodingKey
+    {
+        case entity_file_name
+    }
+    
     public required init(from decoder: any Decoder) throws
     {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.entity_file_name = try container.decodeIfPresent(String.self, forKey: .entity_file_name)
+        
         try super.init(from: decoder)
+    }
+    
+    public override func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(entity_file_name, forKey: .entity_file_name)
+        
+        try super.encode(to: encoder)
     }
 }

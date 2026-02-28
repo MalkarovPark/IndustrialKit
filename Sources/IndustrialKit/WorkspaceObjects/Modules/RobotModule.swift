@@ -10,7 +10,7 @@ import SceneKit
 
 open class RobotModule: IndustrialModule
 {
-    // MARK: - Init functions
+    // MARK: - Module init functions for design
     public override init(
         new_name: String,
         description: String = String()
@@ -19,7 +19,7 @@ open class RobotModule: IndustrialModule
         super.init(new_name: new_name, description: description)
     }
     
-    // MARK: Module init for in-app mounting
+    // MARK: Module init functions for in-app mounting
     /// Internal init.
     public init(
         name: String = String(),
@@ -61,11 +61,6 @@ open class RobotModule: IndustrialModule
         }
     }
     
-    open override var default_code_items: [String: String]
-    {
-        return ["Controller": String(), "Connector": String()]
-    }
-    
     open override var extension_name: String { "robot" }
     
     // MARK: - Components
@@ -80,7 +75,7 @@ open class RobotModule: IndustrialModule
         
      > Used by model controller for nested nodes access.
      */
-    @Published public var nodes_names = [String]()
+    @Published public var entities_names = [String]()
     
     /**
      A sequence of connection parameters.
@@ -90,13 +85,25 @@ open class RobotModule: IndustrialModule
     @Published public var connection_parameters = [ConnectionParameter]()
     
     /// A robot cell box default shift.
-    public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
+    @Published public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
     
     /// A robot cell box default position.
-    public var default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0)
+    @Published public var default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0)
     
     /// A robot model entity name for end-effector mounting.
-    public var end_entity_name: String = String()
+    @Published public var end_entity_name: String = String()
+    
+    /// USDZ file name for for module build (designer).
+    @Published public var entity_file_name: String?
+    
+    ///
+    @Published public var kinematic_function_code = String() //JS
+    
+    ///
+    @Published public var device_state_code = String() //JS
+    
+    ///
+    @Published public var connector_code = String() //Swift (Internal and External module)
     
     // MARK: - Import functions
     open override var package_url: URL
@@ -149,74 +156,16 @@ open class RobotModule: IndustrialModule
         return external_module_info?.origin_shift ?? (x: 0, y: 0, z: 0)
     }
     
-    // MARK: - Linked components init
-    open override var default_linked_components: [String: String]
-    {
-        return [
-            "Model": String(),
-            "Controller": String(),
-            "Connector": String()
-        ]
-    }
-    
     /// Imports components from external or from other modules.
     private func components_import()
     {
-        // Set Entity
-        /*if let linked_name = linked_components["Model"]
-        {
-            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
-            {
-                node = Robot.internal_modules[index].node
-            }
-        }
-        else
-        {
-            node = external_node
-        }*/
-        
-        // Set origin shift from internal module
-        if let linked_name = linked_components["Shift"]
-        {
-            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
-            {
-                origin_shift = Robot.internal_modules[index].origin_shift
-            }
-        }
-        else
-        {
-            origin_shift = external_origin_shift
-        }
-        
-        // Set Model Contoller
-        if let linked_name = linked_components["Controller"], linked_name.isEmpty
-        {
-            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
-            {
-                model_controller = Robot.internal_modules[index].model_controller
-            }
-        }
-        else
-        {
-            #if os(macOS)
-            model_controller = ExternalRobotModelController(name.code_correct_format, package_url: package_url, entities_names: external_module_info?.nodes_names ?? [String]())
-            #endif
-        }
-        
-        // Set Connector
-        if let linked_name = linked_components["Connector"], linked_name.isEmpty
-        {
-            if let index = Robot.internal_modules.firstIndex(where: { $0.name == linked_name })
-            {
-                connector = Robot.internal_modules[index].connector
-            }
-        }
-        else
-        {
-            #if os(macOS)
-            connector = ExternalRobotConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
-            #endif
-        }
+        origin_shift = external_origin_shift
+        //#if os(macOS)
+        //model_controller = ExternalRobotModelController(name.code_correct_format, package_url: package_url, entities_names: external_module_info?.entities_names ?? [String]())
+        //#endif
+        //#if os(macOS)
+        //connector = ExternalRobotConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
+        //#endif
     }
     
     #if os(macOS)
@@ -238,40 +187,40 @@ open class RobotModule: IndustrialModule
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
-        case nodes_names
-        case connection_parameters
-        
+        case entities_names
         case origin_shift
         case default_origin_position
-        
         case end_entity_name
+        case kinematic_function_code
+        case entity_file_name
         
-        // Linked
-        case linked_model_module_name
-        case linked_connector_module_name
-        case linked_controller_module_name
+        case device_state_code
+        
+        case connection_parameters
+        case connector_code
     }
     
     public required init(from decoder: any Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
-        self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
-        
-        //let location = try container.decode([Float].self, forKey: .origin_shift)
-        
+        self.entities_names = try container.decode([String].self, forKey: .entities_names)
         if let origin_shift = try container.decodeIfPresent([Float].self, forKey: .origin_shift)
         {
             self.origin_shift = (origin_shift[0], origin_shift[1], origin_shift[2])
         }
-        
         if let default_origin_position = try container.decodeIfPresent([Float].self, forKey: .default_origin_position)
         {
             self.default_origin_position = (default_origin_position[0], default_origin_position[1], default_origin_position[2], default_origin_position[3], default_origin_position[4], default_origin_position[5])
         }
-        
         self.end_entity_name = try container.decode(String.self, forKey: .end_entity_name)
+        self.kinematic_function_code = try container.decode(String.self, forKey: .kinematic_function_code)
+        self.entity_file_name = try container.decodeIfPresent(String.self, forKey: .entity_file_name)
+        
+        self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
+        
+        self.device_state_code = try container.decode(String.self, forKey: .device_state_code)
+        self.connector_code = try container.decode(String.self, forKey: .connector_code)
         
         try super.init(from: decoder)
     }
@@ -280,13 +229,17 @@ open class RobotModule: IndustrialModule
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(nodes_names, forKey: .nodes_names)
-        try container.encode(connection_parameters, forKey: .connection_parameters)
-        
+        try container.encode(entities_names, forKey: .entities_names)
         try container.encode([origin_shift.x, origin_shift.y, origin_shift.z], forKey: .origin_shift)
         try container.encode([default_origin_position.x, default_origin_position.y, default_origin_position.z, default_origin_position.r, default_origin_position.p, default_origin_position.w], forKey: .default_origin_position)
-        
         try container.encode(end_entity_name, forKey: .end_entity_name)
+        try container.encode(kinematic_function_code, forKey: .kinematic_function_code)
+        try container.encode(entity_file_name, forKey: .entity_file_name)
+        
+        try container.encode(device_state_code, forKey: .device_state_code)
+        
+        try container.encode(connection_parameters, forKey: .connection_parameters)
+        try container.encode(connector_code, forKey: .connector_code)
         
         try super.encode(to: encoder)
     }

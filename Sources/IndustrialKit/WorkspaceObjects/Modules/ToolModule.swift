@@ -10,7 +10,7 @@ import SceneKit
 
 open class ToolModule: IndustrialModule
 {
-    // MARK: - Init functions
+    // MARK: - Module init functions for design
     public override init(
         new_name: String,
         description: String = String()
@@ -19,7 +19,7 @@ open class ToolModule: IndustrialModule
         super.init(new_name: new_name, description: description)
     }
     
-    // MARK: Module init for in-app mounting
+    // MARK: Module init functions for in-app mounting
     /// Internal init.
     public init(
         name: String = String(),
@@ -34,9 +34,7 @@ open class ToolModule: IndustrialModule
         super.init(name: name, description: description)
         
         self.model_controller = model_controller
-        
         self.codes = operation_codes
-        
         self.connector = connector
     }
     
@@ -55,12 +53,6 @@ open class ToolModule: IndustrialModule
     
     open override var extension_name: String { "tool" }
     
-    // MARK: - Designer functions
-    open override var default_code_items: [String: String]
-    {
-        return ["Controller": String(), "Connector": String()]
-    }
-    
     // MARK: - Components
     /// A model controller of the tool model.
     public var model_controller = ToolModelController()
@@ -68,12 +60,27 @@ open class ToolModule: IndustrialModule
     /// A connector of the tool model.
     public var connector = ToolConnector()
     
+    /// Operation codes of the tool model.
+    public var codes = [OperationCodeInfo]()
+    
     /**
      A sequence of nodes names nested within the main node.
         
      > Used by model controller for nested nodes access.
      */
-    @Published public var nodes_names = [String]()
+    @Published public var entities_names = [String]()
+    
+    /// USDZ file name for for module build (designer).
+    @Published public var entity_file_name: String?
+    
+    ///
+    //@Published public var kinematic_function_code = String() //JS
+    
+    ///
+    @Published public var device_state_code = String() //JS
+    
+    ///
+    @Published public var connector_code = String() //Swift (Internal and External module)
     
     /**
      A sequence of connection parameters.
@@ -81,9 +88,6 @@ open class ToolModule: IndustrialModule
      > Used by connector.
      */
     @Published public var connection_parameters = [ConnectionParameter]()
-    
-    /// Operation codes of the tool model.
-    public var codes = [OperationCodeInfo]()
     
     // MARK: - Import functions
     open override var package_url: URL
@@ -166,75 +170,16 @@ open class ToolModule: IndustrialModule
         return external_module_info?.codes ?? [OperationCodeInfo]()
     }
     
-    // MARK: - Linked components init
-    open override var default_linked_components: [String: String]
-    {
-        return [
-            "Model": String(),
-            "Codes": String(),
-            "Controller": String(),
-            "Connector": String()
-        ]
-    }
-    
     /// Imports components from external or from other modules.
     private func components_import()
     {
-        /*// Set visual model
-        if let linked_name = linked_components["Model"]
-        {
-            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
-            {
-                node = Tool.internal_modules[index].node
-            }
-        }
-        else
-        {
-            node = external_node
-        }*/
-        
-        // Set codes from internal module
-        if let linked_name = linked_components["Codes"]
-        {
-            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
-            {
-                codes = Tool.internal_modules[index].codes
-            }
-        }
-        else
-        {
-            codes = external_codes
-        }
-        
-        // Set contoller from internal module
-        if let linked_name = linked_components["Controller"]
-        {
-            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
-            {
-                model_controller = Tool.internal_modules[index].model_controller
-            }
-        }
-        else
-        {
-            #if os(macOS)
-            model_controller = ExternalToolModelController(name.code_correct_format, package_url: package_url, entities_names: external_module_info?.nodes_names ?? [String]())
-            #endif
-        }
-        
-        // Set connector from internal module
-        if let linked_name = linked_components["Connector"]
-        {
-            if let index = Tool.internal_modules.firstIndex(where: { $0.name == linked_name })
-            {
-                connector = Tool.internal_modules[index].connector
-            }
-        }
-        else
-        {
-            #if os(macOS)
-            connector = ExternalToolConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
-            #endif
-        }
+        codes = external_codes
+        //#if os(macOS)
+        //model_controller = ExternalToolModelController(name.code_correct_format, package_url: package_url, entities_names: external_module_info?.entities_names ?? [String]())
+        //#endif
+        //#if os(macOS)
+        //connector = ExternalToolConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
+        //#endif
     }
     
     #if os(macOS)
@@ -256,25 +201,32 @@ open class ToolModule: IndustrialModule
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
-        case nodes_names
-        case connection_parameters
-        
         case operation_codes
         
-        // Linked
-        case linked_model_module_name
-        case linked_connector_module_name
-        case linked_controller_module_name
+        case entities_names
+        //case kinematic_function_code
+        case entity_file_name
+        
+        case device_state_code
+        
+        case connection_parameters
+        case connector_code
     }
     
     public required init(from decoder: any Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.nodes_names = try container.decode([String].self, forKey: .nodes_names)
+        self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
+        
+        self.entities_names = try container.decode([String].self, forKey: .entities_names)
+        //self.kinematic_function_code = try container.decode(String.self, forKey: .kinematic_function_code)
+        self.entity_file_name = try container.decodeIfPresent(String.self, forKey: .entity_file_name)
+        
         self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
         
-        self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
+        self.device_state_code = try container.decode(String.self, forKey: .device_state_code)
+        self.connector_code = try container.decode(String.self, forKey: .connector_code)
         
         try super.init(from: decoder)
     }
@@ -285,21 +237,15 @@ open class ToolModule: IndustrialModule
         
         try container.encode(codes, forKey: .operation_codes)
         
-        try container.encode(nodes_names, forKey: .nodes_names)
+        try container.encode(entities_names, forKey: .entities_names)
+        //try container.encode(kinematic_function_code, forKey: .kinematic_function_code)
+        try container.encode(entity_file_name, forKey: .entity_file_name)
+        
+        try container.encode(device_state_code, forKey: .device_state_code)
+        
         try container.encode(connection_parameters, forKey: .connection_parameters)
+        try container.encode(connector_code, forKey: .connector_code)
         
         try super.encode(to: encoder)
     }
 }
-
-//MARK: - File
-/*public struct FileHolder: Equatable
-{
-    public static func == (lhs: FileHolder, rhs: FileHolder) -> Bool
-    {
-        lhs.name == rhs.name
-    }
-    
-    var name = String()
-    var data = (Any).self
-}*/
