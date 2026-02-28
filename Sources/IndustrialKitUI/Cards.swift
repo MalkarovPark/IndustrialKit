@@ -254,8 +254,8 @@ public struct GlassBoxCard<Content: View>: View
     
     // Symbol
     let symbol_name: String?
-    let symbol_size: CGFloat = 96
-    let symbol_weight: Font.Weight = .semibold
+    let symbol_size: CGFloat
+    let symbol_weight: Font.Weight
     
     // Entity
     let entity: Entity?
@@ -305,6 +305,8 @@ public struct GlassBoxCard<Content: View>: View
         self.image = image
         
         self.symbol_name = nil
+        self.symbol_size = 96
+        self.symbol_weight = .semibold
         self.entity = nil
         
         self._to_rename = to_rename
@@ -347,6 +349,8 @@ public struct GlassBoxCard<Content: View>: View
         )
         
         self.symbol_name = symbol_name
+        self.symbol_size = symbol_size
+        self.symbol_weight = symbol_weight
         
         self.image = nil
         self.entity = nil
@@ -393,6 +397,8 @@ public struct GlassBoxCard<Content: View>: View
         
         self.image = nil
         self.symbol_name = nil
+        self.symbol_size = 96
+        self.symbol_weight = .semibold
         
         self._to_rename = to_rename
         self._edited_name = edited_name
