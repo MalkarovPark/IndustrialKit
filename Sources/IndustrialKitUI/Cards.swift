@@ -12,15 +12,19 @@ import IndustrialKit
 //MARK: - Box card view
 public struct BoxCard<Content: View>: View
 {
-    // View parameters
+    // Titles
     @State public var title: String
     @State public var subtitle: String?
-    let color: Color
-    let image_name: String
-    let image_size: CGFloat
-    let image_weight: Font.Weight
     
-    // Rename parameters
+    // Color
+    let color: Color
+    
+    // Symbol
+    let symbol_name: String
+    let symbol_size: CGFloat
+    let symbol_weight: Font.Weight
+    
+    // Rename
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
     @State private var new_name: String
@@ -36,16 +40,23 @@ public struct BoxCard<Content: View>: View
     public init(
         title: String,
         subtitle: String? = nil,
+        
         color: Color? = nil,
-        image_name: String = String(),
-        image_size: CGFloat = 96,
-        image_weight: Font.Weight = .semibold,
+        
+        symbol_name: String = String(),
+        symbol_size: CGFloat = 96,
+        symbol_weight: Font.Weight = .semibold,
+        
+        to_rename: Binding<Bool> = .constant(false),
+        edited_name: Binding<String> = .constant(""),
+        on_rename: @escaping () -> () = {},
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
         self.title = title
         self.subtitle = subtitle
+        
         self.color = color ?? default_color
         self.gradient = LinearGradient(
             gradient: Gradient(stops: [
@@ -55,14 +66,15 @@ public struct BoxCard<Content: View>: View
             startPoint: .leading,
             endPoint: .trailing
         )
-        self.image_name = image_name
-        self.image_size = image_size
-        self.image_weight = image_weight
         
-        self._to_rename = .constant(false)
-        self._edited_name = .constant("")
-        self.new_name = ""
-        self.on_rename = { }
+        self.symbol_name = symbol_name
+        self.symbol_size = symbol_size
+        self.symbol_weight = symbol_weight
+        
+        self._to_rename = to_rename
+        self._edited_name = edited_name
+        _new_name = State(initialValue: _edited_name.wrappedValue)
+        self.on_rename = on_rename
         
         self.overlay_view = overlay()
     }
@@ -106,9 +118,9 @@ public struct BoxCard<Content: View>: View
                             .foregroundStyle(gradient)
                             .overlay
                             {
-                                Image(systemName: image_name)
-                                    .font(.system(size: image_size))
-                                    .fontWeight(image_weight)
+                                Image(systemName: symbol_name)
+                                    .font(.system(size: symbol_size))
+                                    .fontWeight(symbol_weight)
                                     .foregroundStyle(.black)
                                     .opacity(0.1)
                                     .padding()
@@ -162,6 +174,7 @@ public struct BoxCard<Content: View>: View
                                                 #if os(macOS)
                                                 TextField("Name", text: $new_name)
                                                     .font(.system(size: 28, design: .rounded))
+                                                    .foregroundColor(.white)
                                                     .textFieldStyle(.plain)
                                                     .focused($is_focused)
                                                     .labelsHidden()
@@ -189,6 +202,7 @@ public struct BoxCard<Content: View>: View
                                                     to_rename = false
                                                 })
                                                 .font(.system(size: 28, design: .rounded))
+                                                .foregroundColor(.white)
                                                 .textFieldStyle(.plain)
                                                 .focused($is_focused)
                                                 .labelsHidden()
@@ -228,16 +242,26 @@ public struct BoxCard<Content: View>: View
 //MARK: - Glass box card view
 public struct GlassBoxCard<Content: View>: View
 {
-    // View parameters
+    // Titles
     @State public var title: String
     @State public var subtitle: String?
-    let color: Color
-    let image: UIImage?
-    let entity: Entity?
     
+    // Color
+    let color: Color
+    
+    // Image
+    let image: UIImage?
+    
+    // Symbol
+    let symbol_name: String?
+    let symbol_size: CGFloat = 96
+    let symbol_weight: Font.Weight = .semibold
+    
+    // Entity
+    let entity: Entity?
     private var vertical_entity_reposition = false
     
-    // Rename parameters
+    // Rename
     @Binding public var to_rename: Bool
     @Binding public var edited_name: String
     @State private var new_name: String
@@ -250,18 +274,24 @@ public struct GlassBoxCard<Content: View>: View
     private let default_color = Color(red: 192/255, green: 192/255, blue: 192/255)
     private let gradient: LinearGradient
     
+    // Init with Image
     public init(
         title: String,
         subtitle: String? = nil,
+        
         color: Color? = nil,
         image: UIImage?,
+        
+        to_rename: Binding<Bool> = .constant(false),
+        edited_name: Binding<String> = .constant(""),
+        on_rename: @escaping () -> () = {},
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
-        self.entity = nil
         self.title = title
         self.subtitle = subtitle
+        
         self.color = color ?? default_color
         self.gradient = LinearGradient(
             gradient: Gradient(stops: [
@@ -271,42 +301,11 @@ public struct GlassBoxCard<Content: View>: View
             startPoint: .leading,
             endPoint: .trailing
         )
+        
         self.image = image
         
-        self._to_rename = .constant(false)
-        self._edited_name = .constant("")
-        self.new_name = ""
-        self.on_rename = { }
-        
-        self.overlay_view = overlay()
-    }
-    
-    public init(
-        title: String,
-        subtitle: String? = nil,
-        color: Color? = nil,
-        image: UIImage?,
-        
-        to_rename: Binding<Bool>,
-        edited_name: Binding<String>,
-        on_rename: @escaping () -> (),
-        
-        @ViewBuilder overlay: () -> Content? = { EmptyView() }
-    )
-    {
+        self.symbol_name = nil
         self.entity = nil
-        self.title = title
-        self.subtitle = subtitle
-        self.color = color ?? default_color
-        self.gradient = LinearGradient(
-            gradient: Gradient(stops: [
-                Gradient.Stop(color: self.color.opacity(0.4), location: 0.0),
-                Gradient.Stop(color: self.color.opacity(0.2), location: 1.0)
-            ]),
-            startPoint: .leading,
-            endPoint: .trailing
-        )
-        self.image = image
         
         self._to_rename = to_rename
         self._edited_name = edited_name
@@ -316,18 +315,27 @@ public struct GlassBoxCard<Content: View>: View
         self.overlay_view = overlay()
     }
     
+    // Init with Symbol
     public init(
         title: String,
         subtitle: String? = nil,
+        
         color: Color? = nil,
-        entity: Entity?,
-        vertical_repostion: Bool = false,
+        
+        symbol_name: String = String(),
+        symbol_size: CGFloat = 96,
+        symbol_weight: Font.Weight = .semibold,
+        
+        to_rename: Binding<Bool> = .constant(false),
+        edited_name: Binding<String> = .constant(""),
+        on_rename: @escaping () -> () = {},
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
         self.title = title
         self.subtitle = subtitle
+        
         self.color = color ?? default_color
         self.gradient = LinearGradient(
             gradient: Gradient(stops: [
@@ -337,34 +345,39 @@ public struct GlassBoxCard<Content: View>: View
             startPoint: .leading,
             endPoint: .trailing
         )
-        self.image = nil
-        self.entity = entity
-        self.vertical_entity_reposition = vertical_repostion
         
-        self._to_rename = .constant(false)
-        self._edited_name = .constant("")
-        self.new_name = ""
-        self.on_rename = { }
+        self.symbol_name = symbol_name
+        
+        self.image = nil
+        self.entity = nil
+        
+        self._to_rename = to_rename
+        self._edited_name = edited_name
+        _new_name = State(initialValue: _edited_name.wrappedValue)
+        self.on_rename = on_rename
         
         self.overlay_view = overlay()
     }
     
+    // Init with Entity
     public init(
         title: String,
         subtitle: String? = nil,
         color: Color? = nil,
+        
         entity: Entity?,
         vertical_repostion: Bool = false,
         
-        to_rename: Binding<Bool>,
-        edited_name: Binding<String>,
-        on_rename: @escaping () -> (),
+        to_rename: Binding<Bool> = .constant(false),
+        edited_name: Binding<String> = .constant(""),
+        on_rename: @escaping () -> () = {},
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
         self.title = title
         self.subtitle = subtitle
+        
         self.color = color ?? default_color
         self.gradient = LinearGradient(
             gradient: Gradient(stops: [
@@ -374,9 +387,12 @@ public struct GlassBoxCard<Content: View>: View
             startPoint: .leading,
             endPoint: .trailing
         )
-        self.image = nil
+        
         self.entity = entity
         self.vertical_entity_reposition = vertical_repostion
+        
+        self.image = nil
+        self.symbol_name = nil
         
         self._to_rename = to_rename
         self._edited_name = edited_name
@@ -424,31 +440,39 @@ public struct GlassBoxCard<Content: View>: View
                     .opacity(0.5)
                 
                 // Internals
-                if image != nil
+                if let image = image
                 {
                     Rectangle()
                         .foregroundStyle(.clear)
                         .overlay
                         {
                             #if os(macOS)
-                            Image(nsImage: image!)
+                            Image(nsImage: image)
                             #else
-                            Image(uiImage: image!)
+                            Image(uiImage: image)
                             #endif
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
-                
-                if entity != nil
+                else if let symbol_name = symbol_name
+                {
+                    Image(systemName: symbol_name)
+                        .font(.system(size: symbol_size))
+                        .fontWeight(symbol_weight)
+                        .foregroundStyle(.black)
+                        .opacity(0.1)
+                        .padding()
+                }
+                else if let entity = entity
                 {
                     RealityView
                     { content in
-                        content.add(entity ?? Entity())
+                        content.add(entity)
                         
                         // Camera reposition
                         let camera = PerspectiveCamera()
                         //camera.camera.fieldOfViewInDegrees = 60
-                        camera.position = [0, vertical_entity_reposition ? (entity?.visualBounds(relativeTo: nil).extents.y ?? 0) / 2 : 0, (entity?.visualBounds(relativeTo: nil).extents.z ?? 0) * 2]
+                        camera.position = [0, vertical_entity_reposition ? (entity.visualBounds(relativeTo: nil).extents.y) / 2 : 0, (entity.visualBounds(relativeTo: nil).extents.z) * 2]
                         
                         content.add(camera)
                         
@@ -682,8 +706,8 @@ struct Cards_Previews: PreviewProvider
 {
     struct Container: View
     {
-        @State var to_rename = [false, false]
-        @State var names = ["Image", "Scene"]
+        @State var to_rename = [false, false, false]
+        @State var names = ["Robotic", "Image", "Scene"]
         @State var values: [Float] = [2, 4, 6]
         
         var body: some View
@@ -694,27 +718,26 @@ struct Cards_Previews: PreviewProvider
                 {
                     VStack()
                     {
-                        BoxCard(title: "Robotic", subtitle: "Workspace", color: .teal, image_name: "cube")
-                            .padding()
-                    }
-                    .padding(4)
-                    .frame(width: 320, height: 192)
-                    
-                    VStack()
-                    {
-                        GlassBoxCard(title: names[0], subtitle: "Color Wheel", color: .green, image: UIImage(named: "NSTouchBarColorPickerFill"), to_rename: $to_rename[0], edited_name: $names[0], on_rename: {})
-                            .contextMenu
+                        BoxCard(
+                            title: names[0],
+                            subtitle: "Workspace",
+                            color: .teal,
+                            symbol_name: "cube",
+                            to_rename: $to_rename[0],
+                            edited_name: $names[0]
+                        )
+                        .contextMenu
+                        {
+                            RenameButton()
+                                .renameAction
                             {
-                                RenameButton()
-                                    .renameAction
+                                withAnimation
                                 {
-                                    withAnimation
-                                    {
-                                        to_rename[0].toggle()
-                                    }
+                                    to_rename[0].toggle()
                                 }
                             }
-                            .padding()
+                        }
+                        .padding()
                     }
                     .padding(4)
                     .frame(width: 320, height: 192)
@@ -723,22 +746,11 @@ struct Cards_Previews: PreviewProvider
                     {
                         GlassBoxCard(
                             title: names[1],
-                            entity: ModelEntity(
-                                mesh: .generateBox(size: 1.0, cornerRadius: 0.1),
-                                materials: [SimpleMaterial(color: .white, isMetallic: false)]
-                            ),
-                            /*entity: ModelEntity(
-                                mesh: .generateBox(
-                                    size: SIMD3<Float>(1.0, 1.0, 0.5), // X, Y, Z
-                                    cornerRadius: 0.1
-                                ),
-                                materials: [
-                                    SimpleMaterial(color: .white, isMetallic: false)
-                                ]
-                            ),*/
+                            subtitle: "Color Wheel",
+                            color: .green,
+                            image: UIImage(named: "NSTouchBarColorPickerFill"),
                             to_rename: $to_rename[1],
-                            edited_name: $names[1],
-                            on_rename: {}
+                            edited_name: $names[1]
                         )
                         .contextMenu
                         {
@@ -748,6 +760,33 @@ struct Cards_Previews: PreviewProvider
                                 withAnimation
                                 {
                                     to_rename[1].toggle()
+                                }
+                            }
+                        }
+                        .padding()
+                    }
+                    .padding(4)
+                    .frame(width: 320, height: 192)
+                    
+                    VStack()
+                    {
+                        GlassBoxCard(
+                            title: names[2],
+                            entity: ModelEntity(
+                                mesh: .generateBox(size: 1.0, cornerRadius: 0.1),
+                                materials: [SimpleMaterial(color: .white, isMetallic: false)]
+                            ),
+                            to_rename: $to_rename[2],
+                            edited_name: $names[2]
+                        )
+                        .contextMenu
+                        {
+                            RenameButton()
+                                .renameAction
+                            {
+                                withAnimation
+                                {
+                                    to_rename[2].toggle()
                                 }
                             }
                         }
