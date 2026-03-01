@@ -381,48 +381,13 @@ public class ChangerModifierElement: ModifierElement
      */
     public static func external_modules_import(by names: [String])
     {
-        /*#if os(macOS)
-        external_modules_servers_stop()
-        #endif*/
-        
         Changer.external_modules.removeAll()
         
         for name in names
         {
             Changer.external_modules.append(ChangerModule(external_name: name))
         }
-        
-        /*#if os(macOS)
-        external_modules_servers_start()
-        #endif*/
     }
-    
-    #if os(macOS)
-    /// Start all program components in module.
-    public static func external_modules_servers_start()
-    {
-        Task
-        { @MainActor in
-            for module in external_modules
-            {
-                await module.start_program_components()
-            }
-        }
-        /*for module in external_modules
-        {
-            module.start_program_components()
-        }*/
-    }
-    
-    /// Stop all program components in module.
-    public static func external_modules_servers_stop()
-    {
-        for module in external_modules
-        {
-            module.stop_program_components()
-        }
-    }
-    #endif
     
     // File handling
     private enum CodingKeys: String, CodingKey

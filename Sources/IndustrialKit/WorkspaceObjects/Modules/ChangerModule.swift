@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import JavaScriptCore
 
 open class ChangerModule: IndustrialModule
 {
@@ -17,27 +18,93 @@ open class ChangerModule: IndustrialModule
     
     // MARK: Module init functions for in-app mounting
     /// Internal module init.
-    public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) throws -> Void) //public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) -> Void)
+    public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) throws -> Void)
     {
         super.init(name: name, description: description)
         
-        self.change = change_func
+        //self.change = change_func
     }
     
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
         
-        #if os(macOS)
-        self.change = external_change_func
-        #endif
+        //self.change = external_change_func
     }
     
     open override var extension_name: String { "changer" }
     
     // MARK: - Components
-    ///
-    @Published public var changer_function_code = String() //JS
+    /**
+     JavaScript code used to transform register values inside the Changer component.
+     
+     The script must operate on the `registers` array (Float[]) and return the modified array as the last expression.
+     */
+    @Published public var changer_function_code = String() // JS
+    
+    /**
+     Performs register conversion within a class instance.
+     
+     - Parameters:
+     - registers: A mutable registers data array.
+     
+     - Throws:
+     NSError(domain: "Performing Error", code: 1)
+     if JavaScript execution fails or returns invalid data.
+     */
+    public func change(_ registers: inout [Float]) throws
+    {
+        let context = JSContext()!
+        
+        var jsErrorMessage: String?
+        
+        context.exceptionHandler =
+        { _, exception in
+            jsErrorMessage = exception?.toString()
+        }
+        
+        // Convert Swift [Float] -> JS Array
+        let jsRegisters = JSValue(object: registers.map { Double($0) }, in: context)
+        context.setObject(jsRegisters, forKeyedSubscript: "registers" as NSString)
+        
+        guard let result = context.evaluateScript(changer_function_code)
+        else
+        {
+            throw NSError(
+                domain: "Performing Error",
+                code: 1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: jsErrorMessage ?? "Unknown JavaScript error"
+                ]
+            )
+        }
+        
+        if let error = jsErrorMessage
+        {
+            throw NSError(
+                domain: "Performing Error",
+                code: 1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: error
+                ]
+            )
+        }
+        
+        guard result.isArray,
+              let newValues = result.toArray() as? [Double]
+        else
+        {
+            throw NSError(
+                domain: "Performing Error",
+                code: 1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "JavaScript must return an array of numbers."
+                ]
+            )
+        }
+        
+        registers = newValues.map { Float($0) }
+    }
     
     // MARK: - Import functions
     open override var package_url: URL
@@ -63,51 +130,6 @@ open class ChangerModule: IndustrialModule
         
         return URL(filePath: "")
     }
-    
-    // MARK: - Designer functions
-    // ...
-    
-    // MARK: - Components
-    /// A main external code file name
-    //public var code_file_name: String { "Count" }
-    
-    /**
-     Performs register conversion within a class instance.
-     - Parameters:
-        - registers: A changeable registers data.
-     */
-    public var change: (inout [Float]) throws -> Void = { _ in }
-    //public var change: (inout [Float]) -> Void = { _ in }
-    
-    #if os(macOS)
-    override open var program_components_paths: [(file: String, socket: String)]
-    {
-        return [
-            (
-                file: "/Code/Change",
-                socket: "/tmp/\(name.code_correct_format)_change_socket"
-            )
-        ]
-    }
-    
-    /**
-     Performs register data change within an external script.
-     - Parameters:
-        - registers: A changeable registers data.
-     
-     The conversion occurs by executing code in an external swift file.
-     */
-    private func external_change_func(registers: inout [Float]) -> Void
-    {
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(name)_change_socket", with: ["change"] + registers.map { String($0) })
-        else
-        {
-            return
-        }
-        
-        registers = output.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: " ").compactMap { Float($0) }
-    }
-    #endif
     
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
