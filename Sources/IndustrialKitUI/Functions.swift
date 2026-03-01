@@ -30,4 +30,4 @@ private func colors_by_seed(seed: Int) -> [Color]
     return colors
 }
 
-let registers_colors = colors_by_seed(seed: 5433)
+public let default_register_colors = colors_by_seed(seed: 5433)

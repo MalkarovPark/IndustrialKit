@@ -77,7 +77,7 @@ public struct MoverElementView: View
                             RegistersSelector(
                                 text: "From \(link.from) to \(link.to)",
                                 registers_count: workspace.registers.count,
-                                colors: registers_colors,
+                                colors: default_register_colors,
                                 indices: link_indices,
                                 names: ["From", "To"]
                             )
@@ -235,7 +235,7 @@ public struct WriterElementView: View
                             RegistersSelector(
                                 text: "to \($input.to.wrappedValue)",
                                 registers_count: workspace.registers.count,
-                                colors: registers_colors,
+                                colors: default_register_colors,
                                 indices: output_to,
                                 names: ["To"]
                             )
@@ -376,7 +376,7 @@ public struct MathElementView: View
                 .onSubmit(on_update)
                 .frame(minWidth: 160, maxWidth: .infinity)
             
-            RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: to_index, names: ["To"])
+            RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: to_index, names: ["To"])
         }
     }
 }
@@ -638,7 +638,7 @@ public struct ObserverElementView: View
                             RegistersSelector(
                                 text: "to \($output.to.wrappedValue)",
                                 registers_count: workspace.registers.count,
-                                colors: registers_colors,
+                                colors: default_register_colors,
                                 indices: output_to,
                                 names: ["To"]
                             )

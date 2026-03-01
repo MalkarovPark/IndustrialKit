@@ -24,7 +24,7 @@ public struct RegistersView: View
     public init(registers: Binding<[Float]>, colors: [Color], top_spacing: CGFloat = 0, bottom_spacing: CGFloat = 0)
     {
         self._registers = registers
-        self.numbers = (0...registers.count - 1).map { $0 }
+        self.numbers = (0..<registers.count).map { $0 }
         
         self.colors = colors
         
@@ -35,7 +35,7 @@ public struct RegistersView: View
     public init(registers: Binding<[Float]>)
     {
         self._registers = registers
-        self.numbers = (0...registers.count - 1).map { $0 }
+        self.numbers = (0..<registers.count).map { $0 }
         
         self.colors = [Color](repeating: .accentColor, count: numbers.count)
         
@@ -357,7 +357,7 @@ public struct RegistersDataView: View
 {
     @Binding var is_presented: Bool
     
-    @State private var is_registers_count_presented = false
+    @State private var registers_count_presented = false
     
     @ObservedObject var workspace: Workspace
     
@@ -374,7 +374,7 @@ public struct RegistersDataView: View
     {
         VStack(spacing: 0)
         {
-            RegistersView(registers: $workspace.registers, colors: registers_colors, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
+            RegistersView(registers: $workspace.registers, colors: default_register_colors, top_spacing: top_spacing, bottom_spacing: bottom_spacing)
                 .overlay(alignment: .bottom)
                 {
                     #if !os(visionOS)
@@ -396,15 +396,15 @@ public struct RegistersDataView: View
                             }
                             .modifier(CircleButtonGlassBorderer())
                             
-                            Button(action: { is_registers_count_presented = true })
+                            Button(action: { registers_count_presented = true })
                             {
                                 Image(systemName: "square.grid.2x2")
                                     .modifier(CircleButtonImageFramer())
                             }
                             .modifier(CircleButtonGlassBorderer())
-                            .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
+                            .popover(isPresented: $registers_count_presented, arrowEdge: default_popover_edge)
                             {
-                                RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)
+                                RegistersCountView(is_presented: $registers_count_presented, workspace: workspace)
                                 {
                                     save_registers()
                                 }
@@ -434,15 +434,15 @@ public struct RegistersDataView: View
                         .modifier(CircleButtonGlassBorderer())
                         .padding(.trailing, 16)
                         
-                        Button(action: { is_registers_count_presented = true })
+                        Button(action: { registers_count_presented = true })
                         {
                             Image(systemName: "square.grid.2x2")
                                 .modifier(CircleButtonImageFramer())
                         }
                         .modifier(CircleButtonGlassBorderer())
-                        .popover(isPresented: $is_registers_count_presented, arrowEdge: default_popover_edge)
+                        .popover(isPresented: $registers_count_presented, arrowEdge: default_popover_edge)
                         {
-                            RegistersCountView(is_presented: $is_registers_count_presented, registers_count: workspace.registers.count)
+                            RegistersCountView(is_presented: $registers_count_presented, registers_count: workspace.registers.count)
                             {
                                 save_registers()
                             }
@@ -479,23 +479,26 @@ public struct RegistersDataView: View
 private struct RegistersCountView: View
 {
     @Binding var is_presented: Bool
-    @State var registers_count: Int
     
-    @EnvironmentObject var workspace: Workspace
+    @ObservedObject var workspace: Workspace
     
-    let save_registers: () -> ()
+    let on_update: () -> ()
     
     var body: some View
     {
+        let registers_count = Binding(
+            get: { workspace.registers_count },
+            set:
+                { new_value in
+                    workspace.registers_count = new_value
+                    
+                    on_update()
+                }
+        )
+        
         HStack(spacing: 8)
         {
-            Button(action: {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                {
-                    registers_count = Workspace.default_registers_count
-                    update_count()
-                }
-            })
+            Button(action: { workspace.registers_count = Workspace.default_registers_count })
             {
                 Image(systemName: "arrow.counterclockwise")
             }
@@ -507,19 +510,15 @@ private struct RegistersCountView: View
             .padding(.leading, 4)
             #endif
             
-            TextField("\(Workspace.default_registers_count)", value: $registers_count, format: .number)
+            TextField("\(Workspace.default_registers_count)", value: registers_count, format: .number)
                 .textFieldStyle(.roundedBorder)
-                .onSubmit
-                {
-                    update_count()
-                }
             #if os(macOS)
                 .frame(width: 64)
             #else
                 .frame(width: 128)
             #endif
             
-            Stepper("Enter", value: $registers_count, in: 1...1000)
+            Stepper("Count", value: registers_count, in: 1...1000000)
                 .labelsHidden()
             #if os(iOS) || os(visionOS)
                 .padding(.trailing, 8)
@@ -527,15 +526,6 @@ private struct RegistersCountView: View
         }
         .padding(10)
         .controlSize(.regular)
-    }
-    
-    private func update_count()
-    {
-        if registers_count > 0
-        {
-            workspace.update_registers_count(registers_count)
-            save_registers()
-        }
     }
 }
 

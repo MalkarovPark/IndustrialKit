@@ -151,7 +151,7 @@ public struct ComparatorElementView: View
                 Text("If value of")
                     .frame(minWidth: 60)
                 
-                RegistersSelector(text: "\(element.value_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: value_index, names: ["Value 1"])
+                RegistersSelector(text: "\(element.value_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: value_index, names: ["Value 1"])
                 
                 Button(element.compare_type.rawValue)
                 {
@@ -168,7 +168,7 @@ public struct ComparatorElementView: View
                 Text("value of")
                     .frame(minWidth: 48)
                 
-                RegistersSelector(text: "\(element.value2_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: value2_index, names: ["Value 2"])
+                RegistersSelector(text: "\(element.value2_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: value2_index, names: ["Value 2"])
             }
             .padding(.bottom)
             

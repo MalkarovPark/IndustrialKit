@@ -145,18 +145,18 @@ public struct RobotPerformerElementView: View
                             }
                     )
                     
-                    RegistersSelector(text: "Location X: \(element.x_index), Y: \(element.y_index), Z: \(element.z_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: location_indices, names: ["X", "Y", "Z"])
+                    RegistersSelector(text: "Location X: \(element.x_index), Y: \(element.y_index), Z: \(element.z_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: location_indices, names: ["X", "Y", "Z"])
                         .padding(.top)
                     
-                    RegistersSelector(text: "Rotation R: \(element.r_index), P: \(element.p_index), W: \(element.w_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: rotation_indices, names: ["R", "P", "W"])
+                    RegistersSelector(text: "Rotation R: \(element.r_index), P: \(element.p_index), W: \(element.w_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: rotation_indices, names: ["R", "P", "W"])
                         .padding(.top)
                     
                     HStack(spacing: 16)
                     {
-                        RegistersSelector(text: "Speed: \(element.speed_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: speed_index, names: ["Speed"])
+                        RegistersSelector(text: "Speed: \(element.speed_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: speed_index, names: ["Speed"])
                             //.padding(.trailing)
                         
-                        RegistersSelector(text: "Type: \(element.type_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: type_index, names: ["Type"])
+                        RegistersSelector(text: "Type: \(element.type_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: type_index, names: ["Type"])
                     }
                     .padding(.top)
                 }
@@ -198,7 +198,7 @@ public struct RobotPerformerElementView: View
                                     }
                             )
                             
-                            RegistersSelector(text: "From: \(element.program_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: program_index, names: ["Program"])
+                            RegistersSelector(text: "From: \(element.program_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: program_index, names: ["Program"])
                         }
                         else
                         {
@@ -331,7 +331,7 @@ public struct ToolPerformerElementView: View
                             }
                     )
                     
-                    RegistersSelector(text: "Opcode from \(element.opcode_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: opcode_index, names: ["Operation code"])
+                    RegistersSelector(text: "Opcode from \(element.opcode_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: opcode_index, names: ["Operation code"])
                         .padding(.top)
                         .frame(width: 146)
                 }
@@ -373,7 +373,7 @@ public struct ToolPerformerElementView: View
                                     }
                             )
                             
-                            RegistersSelector(text: "From: \(element.program_index)", registers_count: workspace.registers.count, colors: registers_colors, indices: program_index, names: ["Program"])
+                            RegistersSelector(text: "From: \(element.program_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: program_index, names: ["Program"])
                         }
                         else
                         {

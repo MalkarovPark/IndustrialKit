@@ -654,7 +654,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             if registers.count != reference_count
             {
-                update_registers_count(reference_count)
+                registers = updated_registers(registers, reference_count)
             }
         }
     }
@@ -951,35 +951,42 @@ public class Workspace: ObservableObject, @unchecked Sendable
     nonisolated(unsafe) public static var default_registers_count = 256
     
     /// An array of data registers of workspace.
-    @Published public var registers: [Float]// = [Float](repeating: 0, count: Workspace.default_registers_count)
+    @Published public var registers: [Float]
     
-    private func input_registers(_ registers: [Float])
+    /// Registers count control.
+    public var registers_count: Int
     {
-        for (index, value) in registers.enumerated()
+        get { registers.count }
+        set
         {
-            if index < self.registers.count
-            {
-                self.registers[safe: index] = Float(value)
-            }
-            else
-            {
-                break
-            }
+            registers = updated_registers(registers, newValue > 1 ? newValue : 1)
         }
     }
     
-    /**
-     Updates count of data registers.
-     
-     - Parameters:
-        - new_count: A new count of registers.
-     */
-    public func update_registers_count(_ new_count: Int)
+    private func updated_registers(_ registers: [Float], _ new_count: Int) -> [Float]
     {
-        let old_registers = registers
-        registers = [Float](repeating: 0, count: new_count)
-        
-        input_registers(old_registers)
+        if registers.count > 0
+        {
+            var updated_registers = [Float](repeating: 0, count: new_count)
+            
+            for (index, value) in registers.enumerated()
+            {
+                if index < updated_registers.count
+                {
+                    updated_registers[safe: index] = Float(value)
+                }
+                else
+                {
+                    break
+                }
+            }
+            
+            return updated_registers
+        }
+        else
+        {
+            return registers
+        }
     }
     
     /// Clears all data registers.
