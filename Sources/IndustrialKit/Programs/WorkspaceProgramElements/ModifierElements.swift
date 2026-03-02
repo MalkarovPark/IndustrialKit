@@ -294,11 +294,20 @@ public class MathModifierElement: ModifierElement
 ///Changes registers by changer module.
 public class ChangerModifierElement: ModifierElement
 {
+    /// Inits changer by module name.
     public init(module_name: String = "")
     {
         self.module_name = module_name
         
         super.init()
+    }
+    
+    /// Inits changer by module.
+    public init(module: ChangerModule)
+    {
+        super.init()
+        
+        module_import(module)
     }
     
     /// A name of modifier module.
