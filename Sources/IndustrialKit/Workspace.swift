@@ -2564,6 +2564,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if robots.indices.contains(index)
         {
+            robots[index].entity.removeFromParent()
+            
             robots.remove(at: index)
             
             if let selected_program = selected_program { elements_check(program: selected_program) }
@@ -2706,6 +2708,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if tools.indices.contains(index)
         {
+            tools[index].entity.removeFromParent()
+            
             tools.remove(at: index)
             
             if let selected_program = selected_program { elements_check(program: selected_program) }
@@ -2862,6 +2866,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if parts.indices.contains(index)
         {
+            parts[index].entity.removeFromParent()
+            
             parts.remove(at: index)
         }
     }
