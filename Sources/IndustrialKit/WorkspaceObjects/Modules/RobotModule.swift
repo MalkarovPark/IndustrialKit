@@ -30,8 +30,8 @@ open class RobotModule: IndustrialModule
         
         end_entity_name: String = String(),
         
-        model_controller: RobotModelController,        
-        connector: RobotConnector
+        model_controller: RobotModelController = RobotModelController(),
+        connector: RobotConnector = RobotConnector()
     )
     {
         super.init(name: name, description: description)
