@@ -10,7 +10,7 @@ import IndustrialKit
 import UniformTypeIdentifiers
 
 // MARK: - Control View
-struct ToolControlView: View
+public struct ToolControlView: View
 {
     @ObservedObject var tool: Tool
     
@@ -35,7 +35,7 @@ struct ToolControlView: View
         self.on_update = on_update
     }
     
-    var body: some View
+    public var body: some View
     {
         VStack(alignment: .center, spacing: 10)
         {
