@@ -68,7 +68,7 @@ open class ToolModule: IndustrialModule
         
      > Used by model controller for nested nodes access.
      */
-    @Published public var entities_names = [String]()
+    @Published public var entity_names = [String]()
     
     /// USDZ file name for for module build (designer).
     @Published public var entity_file_name: String?
@@ -145,7 +145,7 @@ open class ToolModule: IndustrialModule
     {
         codes = external_codes
         //#if os(macOS)
-        //model_controller = ExternalToolModelController(name.code_correct_format, package_url: package_url, entities_names: external_module_info?.entities_names ?? [String]())
+        //model_controller = ExternalToolModelController(name.code_correct_format, package_url: package_url, entity_names: external_module_info?.entity_names ?? [String]())
         //#endif
         //#if os(macOS)
         //connector = ExternalToolConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
@@ -173,7 +173,7 @@ open class ToolModule: IndustrialModule
     {
         case operation_codes
         
-        case entities_names
+        case entity_names
         //case kinematic_function_code
         case entity_file_name
         
@@ -189,7 +189,7 @@ open class ToolModule: IndustrialModule
         
         self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
         
-        self.entities_names = try container.decode([String].self, forKey: .entities_names)
+        self.entity_names = try container.decode([String].self, forKey: .entity_names)
         //self.kinematic_function_code = try container.decode(String.self, forKey: .kinematic_function_code)
         self.entity_file_name = try container.decodeIfPresent(String.self, forKey: .entity_file_name)
         
@@ -207,7 +207,7 @@ open class ToolModule: IndustrialModule
         
         try container.encode(codes, forKey: .operation_codes)
         
-        try container.encode(entities_names, forKey: .entities_names)
+        try container.encode(entity_names, forKey: .entity_names)
         //try container.encode(kinematic_function_code, forKey: .kinematic_function_code)
         try container.encode(entity_file_name, forKey: .entity_file_name)
         

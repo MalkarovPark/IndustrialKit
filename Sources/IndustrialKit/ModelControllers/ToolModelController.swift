@@ -134,7 +134,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
             entity.stopAllAnimations()
         }
         
-        /*for entity_name in entities_names
+        /*for entity_name in entity_names
         {
             entities[entity_name]?.stopAllAnimations()
         }*/
@@ -218,12 +218,12 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     /// For access to code.
     public var package_url: URL
     
-    public init(_ module_name: String, package_url: URL, entities_names: [String])
+    public init(_ module_name: String, package_url: URL, entity_names: [String])
     {
         self.module_name = module_name
         self.package_url = package_url
         
-        self.external_entities_names = entities_names
+        self.external_entity_names = entity_names
     }
     
     required init()
@@ -233,12 +233,12 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     }
     
     // MARK: Parameters import
-    override open var entities_names: [String]
+    override open var entity_names: [String]
     {
-        return external_entities_names
+        return external_entity_names
     }
     
-    public var external_entities_names = [String]()
+    public var external_entity_names = [String]()
     
     // MARK: Modeling
     /*open override func entities_perform(code: Int, completion: @escaping @Sendable () -> Void)

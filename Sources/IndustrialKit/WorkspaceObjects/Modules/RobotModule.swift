@@ -75,7 +75,7 @@ open class RobotModule: IndustrialModule
         
      > Used by model controller for nested nodes access.
      */
-    @Published public var entities_names = [String]()
+    @Published public var entity_names = [String]()
     
     /**
      A sequence of connection parameters.
@@ -161,7 +161,7 @@ open class RobotModule: IndustrialModule
     {
         origin_shift = external_origin_shift
         //#if os(macOS)
-        //model_controller = ExternalRobotModelController(name.code_correct_format, package_url: package_url, entities_names: external_module_info?.entities_names ?? [String]())
+        //model_controller = ExternalRobotModelController(name.code_correct_format, package_url: package_url, entity_names: external_module_info?.entity_names ?? [String]())
         //#endif
         //#if os(macOS)
         //connector = ExternalRobotConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
@@ -187,7 +187,7 @@ open class RobotModule: IndustrialModule
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
-        case entities_names
+        case entity_names
         case origin_shift
         case default_origin_position
         case end_entity_name
@@ -204,7 +204,7 @@ open class RobotModule: IndustrialModule
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.entities_names = try container.decode([String].self, forKey: .entities_names)
+        self.entity_names = try container.decode([String].self, forKey: .entity_names)
         if let origin_shift = try container.decodeIfPresent([Float].self, forKey: .origin_shift)
         {
             self.origin_shift = (origin_shift[0], origin_shift[1], origin_shift[2])
@@ -229,7 +229,7 @@ open class RobotModule: IndustrialModule
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(entities_names, forKey: .entities_names)
+        try container.encode(entity_names, forKey: .entity_names)
         try container.encode([origin_shift.x, origin_shift.y, origin_shift.z], forKey: .origin_shift)
         try container.encode([default_origin_position.x, default_origin_position.y, default_origin_position.z, default_origin_position.r, default_origin_position.p, default_origin_position.w], forKey: .default_origin_position)
         try container.encode(end_entity_name, forKey: .end_entity_name)

@@ -381,12 +381,12 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     /// For access to code.
     public var package_url: URL
     
-    public init(_ module_name: String, package_url: URL, entities_names: [String])
+    public init(_ module_name: String, package_url: URL, entity_names: [String])
     {
         self.module_name = module_name
         self.package_url = package_url
         
-        self.external_entities_names = entities_names
+        self.external_entity_names = entity_names
     }
     
     required init()
@@ -396,12 +396,12 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     }
     
     // MARK: Parameters import
-    override open var entities_names: [String]
+    override open var entity_names: [String]
     {
-        return external_entities_names
+        return external_entity_names
     }
     
-    public var external_entities_names = [String]()
+    public var external_entity_names = [String]()
     
     // MARK: Modeling
     override open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),

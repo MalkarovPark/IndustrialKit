@@ -33,7 +33,7 @@ open class ModelController: NSCopying
     public var entities = [String: Entity]()
 
     /// A sequence of node names nested within the main node used for model connection.
-    open var entities_names: [String]
+    open var entity_names: [String]
     {
         return [String]()
     }
@@ -48,7 +48,7 @@ open class ModelController: NSCopying
     {
         entities.removeAll()
         
-        for entity_name in entities_names
+        for entity_name in entity_names
         {
             if let found_entity = entity.childEntity(withName: entity_name, recursively: true)
             {
