@@ -56,16 +56,16 @@ open class ChangerModule: IndustrialModule
     {
         let context = JSContext()!
         
-        var jsErrorMessage: String?
+        var js_error_message: String?
         
         context.exceptionHandler =
         { _, exception in
-            jsErrorMessage = exception?.toString()
+            js_error_message = exception?.toString()
         }
         
-        // Convert Swift [Float] -> JS Array
-        let jsRegisters = JSValue(object: registers.map { Double($0) }, in: context)
-        context.setObject(jsRegisters, forKeyedSubscript: "registers" as NSString)
+        // Convert Swift [Float] to JS Array
+        let js_registers = JSValue(object: registers.map { Double($0) }, in: context)
+        context.setObject(js_registers, forKeyedSubscript: "registers" as NSString)
         
         guard let result = context.evaluateScript(changer_function_code)
         else
@@ -74,12 +74,12 @@ open class ChangerModule: IndustrialModule
                 domain: "Performing Error",
                 code: 1,
                 userInfo: [
-                    NSLocalizedDescriptionKey: jsErrorMessage ?? "Unknown JavaScript error"
+                    NSLocalizedDescriptionKey: js_error_message ?? "Unknown JavaScript error"
                 ]
             )
         }
         
-        if let error = jsErrorMessage
+        if let error = js_error_message
         {
             throw NSError(
                 domain: "Performing Error",
@@ -91,7 +91,7 @@ open class ChangerModule: IndustrialModule
         }
         
         guard result.isArray,
-              let newValues = result.toArray() as? [Double]
+              let new_values = result.toArray() as? [Double]
         else
         {
             throw NSError(
@@ -103,7 +103,7 @@ open class ChangerModule: IndustrialModule
             )
         }
         
-        registers = newValues.map { Float($0) }
+        registers = new_values.map { Float($0) }
     }
     
     // MARK: - Import functions
