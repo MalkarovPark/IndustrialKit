@@ -22,21 +22,80 @@ open class RobotModelController: ModelController, @unchecked Sendable
      
      > Pre-transforms the position in space depending on the rotation of the tool coordinate system.
      */
-    public func update_entities(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
-                                origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
+    public func update_robot_model(
+        pointer_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        ),
+        origin_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    ) throws
     {
         do
         {
-            try update_entity_positions(
-                pointer_position: origin_transform(
-                    pointer_position: pointer_position,
-                    origin_position: origin_position
-                ),
-                origin_position: origin_position)
+            let entity_positions = try entity_positions(
+                pointer_position:
+                    origin_transform(
+                        pointer_position: pointer_position,
+                        origin_position: origin_position
+                    ),
+                origin_position: origin_position
+            )
+            
+            Task
+            { @MainActor in
+                for entity_position in entity_positions
+                {
+                    apply_entity_position(by: entity_position)
+                }
+            }
         }
         catch
         {
             throw error
+        }
+        
+        @MainActor func apply_entity_position(
+            by data: (
+                name: String,
+                position: (
+                    x: Float,
+                    y: Float,
+                    z: Float,
+                    
+                    r: Float,
+                    p: Float,
+                    w: Float
+                )
+            )
+        )
+        {
+            guard let entity = entities[data.name] else { return }
+            
+            entity.transform = Transform(
+                scale: entity.transform.scale,
+                rotation:
+                    simd_quatf(angle: data.position.r.to_rad, axis: SIMD3(1,0,0)) *
+                simd_quatf(angle: data.position.p.to_rad, axis: SIMD3(0,0,1)) *
+                simd_quatf(angle: data.position.w.to_rad, axis: SIMD3(0,1,0)),
+                translation: SIMD3(
+                    data.position.x,
+                    data.position.z,
+                    data.position.y
+                )
+            )
         }
     }
     
@@ -49,10 +108,39 @@ open class RobotModelController: ModelController, @unchecked Sendable
         - origin_location: The workcell origin location components – *x*, *y*, *z*.
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      */
-    open func update_entity_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
-                                        origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
+    open func entity_positions(
+        pointer_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        ),
+        origin_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    ) throws -> [(
+        name: String,
+        position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    )]
     {
-        
+        return []
     }
     
     // MARK: Pointer
@@ -61,7 +149,15 @@ open class RobotModelController: ModelController, @unchecked Sendable
      
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
-    public var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    public var pointer_position: (
+        x: Float,
+        y: Float,
+        z: Float,
+        
+        r: Float,
+        p: Float,
+        w: Float
+    ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     /**
      Updates the pointer’s position and orientation in the scene.
@@ -74,7 +170,17 @@ open class RobotModelController: ModelController, @unchecked Sendable
      - rot_y: Rotation about the Y-axis, in radians.
      - rot_z: Rotation about the Z-axis, in radians.
      */
-    public func update_pointer_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    public func update_pointer_position(
+        _ position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    )
     {
         pointer_entity?.update_position(position)
     }
@@ -91,7 +197,15 @@ open class RobotModelController: ModelController, @unchecked Sendable
      
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
-    public var alt_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    public var alt_pointer_position: (
+        x: Float,
+        y: Float,
+        z: Float,
+        
+        r: Float,
+        p: Float,
+        w: Float
+    ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     {
         didSet
         {
@@ -116,7 +230,17 @@ open class RobotModelController: ModelController, @unchecked Sendable
      - rot_y: Rotation about the Y-axis, in radians.
      - rot_z: Rotation about the Z-axis, in radians.
      */
-    private func update_alt_pointer_position(_ position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    private func update_alt_pointer_position(
+        _ position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    )
     {
         alt_pointer_entity?.update_position(position)
     }
@@ -155,33 +279,32 @@ open class RobotModelController: ModelController, @unchecked Sendable
      
      Tuple with coordinates – *x*, *y*, *z* and angles – *r*, *p*, *w*.
      */
-    public var origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    public var origin_position: (
+        x: Float,
+        y: Float,
+        z: Float,
+        
+        r: Float,
+        p: Float,
+        w: Float
+    ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     /// A robot cell box scale.
-    public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
+    public var space_scale: (
+        x: Float,
+        y: Float,
+        z: Float
+    ) = (x: 200, y: 200, z: 200)
     
     // MARK: Device
-    /// Update robot manipulator parts positions by target point.
+    /// Update robot part entities position by target point.
     public func update_model() throws
     {
-        update_pointer_position(pointer_position)
+        update_pointer_position(pointer_position) // Target pointer
         
         do
         {
-            try update_entities_by_pointer_position()
-        }
-        catch
-        {
-            throw error
-        }
-    }
-    
-    /// Updates robot entities by current pointer and origin parameters.
-    public func update_entities_by_pointer_position() throws
-    {
-        do
-        {
-            try update_entities(pointer_position: pointer_position, origin_position: origin_position)
+            try update_robot_model(pointer_position: pointer_position, origin_position: origin_position) // Robot parts
         }
         catch
         {
@@ -344,6 +467,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
         
     }
     
+    // MARK: OLD
+    
     /**
      Applies position updates to scene entities based on a list of string commands.
      
@@ -369,6 +494,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
     #if os(macOS)
     internal var is_entities_updating = false
     #endif
+    // MARK: OLD
 }
 
 //MARK: - External Controller
@@ -404,11 +530,41 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     public var external_entity_names = [String]()
     
     // MARK: Modeling
-    override open func update_entity_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
-                                              origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    override open func entity_positions(
+        pointer_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        ),
+        origin_position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    ) throws -> [(
+        name: String,
+        position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        )
+    )]
     {
+        return []
         #if os(macOS)
-        guard !is_entities_updating else { return }
+        /*guard !is_entities_updating else { return }
         is_entities_updating = true
         
         DispatchQueue.global(qos: .utility).async
@@ -429,7 +585,7 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
             { output in
                 self.apply_entities_positions(by: output.split(separator: "\n").map { String($0) })
             }
-        }
+        }*/
         #endif
     }
     
@@ -455,76 +611,4 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
         // Reset contoller output
         return nil //DeviceState()
     }
-    
-    /*open override func updated_charts_data() -> [StateChart]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["updated_charts_data"])
-        else
-        {
-            return nil
-        }
-        
-        if let charts: [StateChart] = string_to_codable(from: output)
-        {
-            return charts
-        }
-        #endif
-        
-        return nil
-    }
-    
-    open override func updated_states_data() -> [StateItem]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["updated_states_data"])
-        else
-        {
-            return nil
-        }
-        
-        if let states: [StateItem] = string_to_codable(from: output)
-        {
-            return states
-        }
-        #endif
-        
-        return nil
-    }
-    
-    open override func initial_charts_data() -> [StateChart]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["initial_charts_data"])
-        else
-        {
-            return nil
-        }
-        
-        if let charts: [StateChart] = string_to_codable(from: output)
-        {
-            return charts
-        }
-        #endif
-        
-        return nil
-    }
-    
-    open override func initial_states_data() -> [StateItem]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["initial_states_data"])
-        else
-        {
-            return nil
-        }
-        
-        if let states: [StateItem] = string_to_codable(from: output)
-        {
-            return states
-        }
-        #endif
-        
-        return nil
-    }*/
 }

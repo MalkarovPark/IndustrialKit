@@ -284,7 +284,7 @@ public class ExternalRobotConnector: RobotConnector
             {
                 do
                 {
-                    try model_controller?.update_entities(pointer_position: position, origin_position: origin_position)
+                    try model_controller?.update_robot_model(pointer_position: position, origin_position: origin_position)
                 }
                 catch
                 {
