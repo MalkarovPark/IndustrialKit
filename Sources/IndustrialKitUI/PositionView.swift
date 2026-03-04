@@ -62,10 +62,13 @@ public struct PositionView: View
                                         .frame(minWidth: 80)
                                         .keyboardType(.decimalPad)
                                     #endif
-                                    Stepper("Position",
-                                            value: binding(for: component),
-                                            in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
-                                    .labelsHidden()
+                                    if with_steppers
+                                    {
+                                        Stepper("Position",
+                                                value: binding(for: component),
+                                                in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                        .labelsHidden()
+                                    }
                                 }
                                 #else
                                 VStack(spacing: 8)
