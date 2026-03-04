@@ -460,7 +460,7 @@ private struct PositionPointView: View
             }
             #endif
             
-            PositionView(position: positionBinding())
+            PositionView(position: position_binding(), with_steppers: true)
             
             Divider()
             
@@ -510,7 +510,7 @@ private struct PositionPointView: View
         .padding()
     }
 
-    private func positionBinding() -> Binding<(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)>
+    private func position_binding() -> Binding<(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)>
     {
         Binding(
             get:

@@ -446,7 +446,7 @@ public struct PositionPane: View
                         
                         HStack
                         {
-                            PositionView(position: $robot.pointer_position)
+                            PositionView(position: $robot.pointer_position, with_steppers: true)
                                 .opacity(is_editor_mode ? 1 : 0)
                         }
                         #if os(macOS)

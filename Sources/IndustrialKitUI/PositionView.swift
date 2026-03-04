@@ -13,7 +13,7 @@ public struct PositionView: View
     @Binding public var position: (x: Float, y: Float, z: Float,
                                    r: Float, p: Float, w: Float)
     
-    private var with_steppers: Bool = true
+    private var with_steppers: Bool = false
     
     public init(position: Binding<(x: Float, y: Float, z: Float,
                                    r: Float, p: Float, w: Float)>)
@@ -195,7 +195,7 @@ struct PositionView_Previews: PreviewProvider
             {
                 HStack(spacing: 16)
                 {
-                    PositionView(position: $position)
+                    PositionView(position: $position, with_steppers: true)
                 }
                 .frame(width: 256)
                 .modifier(PreviewBorder())
