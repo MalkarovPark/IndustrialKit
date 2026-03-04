@@ -27,7 +27,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
     {
         do
         {
-            try update_entities_positions(
+            try update_entity_positions(
                 pointer_position: origin_transform(
                     pointer_position: pointer_position,
                     origin_position: origin_position
@@ -49,7 +49,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         - origin_location: The workcell origin location components – *x*, *y*, *z*.
         - origin_rotation: The workcell origin rotation components – *r*, *p*, *w*.
      */
-    open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
+    open func update_entity_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
                                         origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)) throws
     {
         
@@ -404,7 +404,7 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     public var external_entity_names = [String]()
     
     // MARK: Modeling
-    override open func update_entities_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
+    override open func update_entity_positions(pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float),
                                               origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
         #if os(macOS)
@@ -425,7 +425,7 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
                 "\(origin_position.r)",  "\(origin_position.p)",  "\(origin_position.w)"
             ]
 
-            send_via_unix_socket(at:   "/tmp/\(self.module_name)_robot_controller_socket", with: ["update_entities_positions"] + (pointer_position + origin_position).map { "\($0)" })
+            send_via_unix_socket(at:   "/tmp/\(self.module_name)_robot_controller_socket", with: ["update_entity_positions"] + (pointer_position + origin_position).map { "\($0)" })
             { output in
                 self.apply_entities_positions(by: output.split(separator: "\n").map { String($0) })
             }
