@@ -129,85 +129,13 @@ open class ToolModelController: ModelController, @unchecked Sendable
         return []
     }
     
-    open override func reset_entities()
+    public func reset_entities()
     {
         for (_, entity) in entities // Remove all node actions
         {
             entity.stopAllAnimations()
         }
-        
-        /*for entity_name in entity_names
-        {
-            entities[entity_name]?.stopAllAnimations()
-        }*/
     }
-    
-    /**
-     Applies a sequence of actions to scene entities based on string commands and calls a completion handler when all actions are finished.
-     
-     Each string in `lines` must follow the format `"nodeName action"`, where `nodeName` is the identifier of the node to apply the action to, and `action` is a string representing the action to perform.
-     
-     - Parameters:
-     - lines: An array of command strings, each specifying a node name and an action.
-     - completion: A closure called once all actions have been completed.
-     */
-    public func apply_entities_actions(by lines: [String], completion: @escaping () -> Void = {})
-    {
-        /*#if os(macOS)
-        if entities_actions_performing_count > 0
-        {
-            completion()
-            return
-        }
-        
-        entities_actions_performing_count = lines.count
-        
-        for i in 0..<lines.count // line in lines
-        {
-            let line = lines[i]
-            if let range = line.range(of: " ")
-            {
-                // Split output into components
-                let name = String(line[..<range.lowerBound])
-                let command = String(line[range.upperBound...])
-                
-                if let action = string_to_action(from: command)
-                {
-                    self.entities[safe: name, default: Entity()].runAction(action, completionHandler: {
-                        self.local_completion(index: i, completion: completion)
-                    })
-                }
-                else
-                {
-                    completion()
-                }
-            }
-            else
-            {
-                completion()
-            }
-        }
-        #else
-        completion()
-        #endif*/
-    }
-    
-    #if os(macOS)
-    private var entities_actions_performing_count = 0
-    
-    private func local_completion(index: Int, completion: @escaping () -> Void = {})
-    {
-        if entities_actions_performing_count > 0
-        {
-            entities_actions_performing_count -= 1
-            
-            if entities_actions_performing_count == 0
-            {
-                completion()
-            }
-        }
-    }
-    #endif
 }
 
 // MARK: - External Model Controller
@@ -215,23 +143,30 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
 {
     // MARK: Init functions
     /// An external module name.
-    public var module_name: String
+    //public var module_name: String
     
     /// For access to code.
-    public var package_url: URL
+    //public var package_url: URL
     
-    public init(_ module_name: String, package_url: URL, entity_names: [String])
-    {
-        self.module_name = module_name
-        self.package_url = package_url
+    public init(
+        //_ module_name: String,
+        //package_url: URL,
+        entity_names: [String],
         
+        code: String
+    )
+    {
+        //self.module_name = module_name
+        //self.package_url = package_url
         self.external_entity_names = entity_names
+        
+        self.js_environment.js_code = code
     }
     
     required init()
     {
-        self.module_name = ""
-        self.package_url = URL(fileURLWithPath: "")
+        //self.module_name = ""
+        //self.package_url = URL(fileURLWithPath: "")
     }
     
     // MARK: Parameters import
@@ -242,38 +177,36 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     
     public var external_entity_names = [String]()
     
-    // MARK: Modeling
-    /*open override func entities_perform(code: Int, completion: @escaping @Sendable () -> Void)
+    // MARK: JS Code Handling
+    private struct Pose: Codable { let x, y, z, r, p, w: Float }
+    private struct EntityPose: Codable { let name: String; let position: Pose }
+    
+    private var js_environment = JSEnvironment()
+    
+    public func reset_js_context()
     {
-        #if os(macOS)
-        DispatchQueue.global(qos: .utility).async
+        js_environment.reset_context()
+    }
+    
+    public var code: String
+    {
+        get
         {
-            send_via_unix_socket(at: "/tmp/\(self.module_name)_tool_controller_socket", with: ["entities_perform", "\(code)"])
-            { output in
-                // Split the output into lines
-                let lines = output.split(separator: "\n").map { String($0) }
-                
-                self.apply_entities_actions(by: lines, completion: completion)
-            }
+            js_environment.js_code
         }
-        
-        #else
-        completion()
-        #endif
-    }*/
+        set
+        {
+            js_environment.js_code = newValue
+        }
+    }
+    
+    // MARK: Modeling
     override open func entity_animations(code: Int) -> [EntityAnimationData]
     {
         return [EntityAnimationData]()
     }
     
-    open override func reset_entities()
-    {
-        #if os(macOS)
-        send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["reset_entities"])
-        #endif
-    }
-    
-    // MARK: Info
+    // MARK: Statistics
     open override var current_device_state: DeviceState
     {
         // Prepare controller output
@@ -285,98 +218,6 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
         // Reset contoller output
         return nil //DeviceState()
     }
-    
-    /*open override var info_output: [Float]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["info_output"])
-        else
-        {
-            return nil
-        }
-        
-        let components = output.split(separator: " ")
-        
-        let floats: [Float] = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
-        
-        return floats.isEmpty ? nil : floats
-        #else
-        return nil
-        #endif
-    }
-    
-    // MARK: Statistics
-    open override func updated_charts_data() -> [StateChart]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["updated_charts_data"])
-        else
-        {
-            return nil
-        }
-        
-        if let charts: [StateChart] = string_to_codable(from: output)
-        {
-            return charts
-        }
-        #endif
-        
-        return nil
-    }
-
-    open override func updated_states_data() -> [StateItem]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["updated_states_data"])
-        else
-        {
-            return nil
-        }
-        
-        if let states: [StateItem] = string_to_codable(from: output)
-        {
-            return states
-        }
-        #endif
-        
-        return nil
-    }
-    
-    open override func initial_charts_data() -> [StateChart]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["initial_charts_data"])
-        else
-        {
-            return nil
-        }
-        
-        if let charts: [StateChart] = string_to_codable(from: output)
-        {
-            return charts
-        }
-        #endif
-        
-        return nil
-    }
-    
-    open override func initial_states_data() -> [StateItem]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_controller_socket", with: ["initial_states_data"])
-        else
-        {
-            return nil
-        }
-        
-        if let states: [StateItem] = string_to_codable(from: output)
-        {
-            return states
-        }
-        #endif
-        
-        return nil
-    }*/
 }
 
 // MARK: - Animation Storage

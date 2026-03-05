@@ -152,7 +152,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         - module: A robot module.
      
      Set the following components:
-     - Scene Node
+     - Robot Model Entity
      - Robot Model Controller
      - Robot Connector
      */
@@ -201,7 +201,6 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         connector = module.connector.copy() as! RobotConnector
         
         origin_shift = module.origin_shift
-        
         origin_position = module.default_origin_position
         
         end_entity_name = module.end_entity_name
@@ -339,7 +338,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             }
             else
             {
-                connector.model_controller?.reset_entities()
+                //connector.model_controller?.reset_entities()
                 connector.model_controller = nil
             }
         }
@@ -350,9 +349,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     {
         didSet // Entities reconnection if model contoller changed
         {
-            if let entity = model_entity
+            if let model_entity = model_entity
             {
-                model_controller.connect_entities(of: entity)
+                model_controller.connect_entities(of: model_entity)
             }
         }
     }
@@ -699,7 +698,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         {
             // Remove actions for virtual robot
             model_controller.canceled = true
-            model_controller.reset_entities()
+            //model_controller.reset_entities()
         }
         else
         {
@@ -758,7 +757,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             if device_mode == .simulation
             {
                 model_controller.canceled = true
-                model_controller.reset_entities()
+                //model_controller.reset_entities()
             }
             else
             {
@@ -813,7 +812,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         selected_position_point.performing_state = .error
         performing_state = .error // State light (UI)
         
-        model_controller.reset_entities()
+        //model_controller.reset_entities()
         
         if device_mode == .simulation
         {

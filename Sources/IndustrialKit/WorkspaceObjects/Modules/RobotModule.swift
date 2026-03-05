@@ -20,7 +20,11 @@ open class RobotModule: IndustrialModule
     }
     
     // MARK: Module init functions for in-app mounting
-    /// Internal init.
+    /**
+     Internal init.
+     
+     For in-code declaration.
+     */
     public init(
         name: String = String(),
         description: String = String(),
@@ -46,18 +50,22 @@ open class RobotModule: IndustrialModule
         self.connector = connector
     }
     
-    /// External init
+    /**
+     External init.
+     
+     Import data from external info file.
+     */
     public override init(
         external_name: String
     )
     {
         super.init(external_name: external_name)
         
-        if let info = get_module_info()
+        if let module_info = get_external_module_info()
         {
-            external_module_info = info
+            external_module_info = module_info // Reserved
             
-            components_import()
+            components_import(from: module_info)
         }
     }
     
@@ -97,10 +105,7 @@ open class RobotModule: IndustrialModule
     @Published public var entity_file_name: String?
     
     ///
-    @Published public var kinematic_function_code = String() //JS
-    
-    ///
-    @Published public var device_state_code = String() //JS
+    @Published public var model_controller_code = String() //JS
     
     ///
     @Published public var connector_code = String() //Swift (Internal and External module)
@@ -132,7 +137,7 @@ open class RobotModule: IndustrialModule
     
     public var external_module_info: RobotModule?
     
-    private func get_module_info() -> RobotModule?
+    private func get_external_module_info() -> RobotModule?
     {
         do
         {
@@ -151,18 +156,15 @@ open class RobotModule: IndustrialModule
         return nil
     }
     
-    public var external_origin_shift: (x: Float, y: Float, z: Float)
+    /// Imports components from external info.
+    private func components_import(from module_info: RobotModule)
     {
-        return external_module_info?.origin_shift ?? (x: 0, y: 0, z: 0)
-    }
-    
-    /// Imports components from external or from other modules.
-    private func components_import()
-    {
-        origin_shift = external_origin_shift
-        //#if os(macOS)
-        //model_controller = ExternalRobotModelController(name.code_correct_format, package_url: package_url, entity_names: external_module_info?.entity_names ?? [String]())
-        //#endif
+        origin_shift = module_info.origin_shift
+        model_controller = ExternalRobotModelController(
+            entity_names: module_info.entity_names,
+            code: module_info.model_controller_code
+        )
+        
         //#if os(macOS)
         //connector = ExternalRobotConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
         //#endif
@@ -187,14 +189,13 @@ open class RobotModule: IndustrialModule
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {
-        case entity_names
-        case origin_shift
         case default_origin_position
-        case end_entity_name
-        case kinematic_function_code
-        case entity_file_name
         
-        case device_state_code
+        case entity_file_name
+        case entity_names
+        case end_entity_name
+        case origin_shift
+        case model_controller_code
         
         case connection_parameters
         case connector_code
@@ -204,7 +205,9 @@ open class RobotModule: IndustrialModule
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
+        self.entity_file_name = try container.decodeIfPresent(String.self, forKey: .entity_file_name)
         self.entity_names = try container.decode([String].self, forKey: .entity_names)
+        self.end_entity_name = try container.decode(String.self, forKey: .end_entity_name)
         if let origin_shift = try container.decodeIfPresent([Float].self, forKey: .origin_shift)
         {
             self.origin_shift = (origin_shift[0], origin_shift[1], origin_shift[2])
@@ -213,13 +216,10 @@ open class RobotModule: IndustrialModule
         {
             self.default_origin_position = (default_origin_position[0], default_origin_position[1], default_origin_position[2], default_origin_position[3], default_origin_position[4], default_origin_position[5])
         }
-        self.end_entity_name = try container.decode(String.self, forKey: .end_entity_name)
-        self.kinematic_function_code = try container.decode(String.self, forKey: .kinematic_function_code)
-        self.entity_file_name = try container.decodeIfPresent(String.self, forKey: .entity_file_name)
+        self.model_controller_code = try container.decode(String.self, forKey: .model_controller_code)
+        
         
         self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
-        
-        self.device_state_code = try container.decode(String.self, forKey: .device_state_code)
         self.connector_code = try container.decode(String.self, forKey: .connector_code)
         
         try super.init(from: decoder)
@@ -229,14 +229,13 @@ open class RobotModule: IndustrialModule
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(entity_file_name, forKey: .entity_file_name)
         try container.encode(entity_names, forKey: .entity_names)
+        try container.encode(end_entity_name, forKey: .end_entity_name)
         try container.encode([origin_shift.x, origin_shift.y, origin_shift.z], forKey: .origin_shift)
         try container.encode([default_origin_position.x, default_origin_position.y, default_origin_position.z, default_origin_position.r, default_origin_position.p, default_origin_position.w], forKey: .default_origin_position)
-        try container.encode(end_entity_name, forKey: .end_entity_name)
-        try container.encode(kinematic_function_code, forKey: .kinematic_function_code)
-        try container.encode(entity_file_name, forKey: .entity_file_name)
+        try container.encode(model_controller_code, forKey: .model_controller_code)
         
-        try container.encode(device_state_code, forKey: .device_state_code)
         
         try container.encode(connection_parameters, forKey: .connection_parameters)
         try container.encode(connector_code, forKey: .connector_code)

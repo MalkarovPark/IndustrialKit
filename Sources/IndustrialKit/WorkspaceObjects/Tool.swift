@@ -297,9 +297,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     {
         didSet // Entities reconnection if model contoller changed
         {
-            if let entity = model_entity
+            if let model_entity = model_entity
             {
-                model_controller.connect_entities(of: entity)
+                model_controller.connect_entities(of: model_entity)
             }
         }
     }

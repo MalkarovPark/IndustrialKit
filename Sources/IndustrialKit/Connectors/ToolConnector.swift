@@ -264,7 +264,7 @@ public class ExternalToolConnector: ToolConnector
     {
         if let actions = entities_actions // Apply entities actions by connector
         {
-            model_controller?.apply_entities_actions(by: actions)
+            //model_controller?.apply_entities_actions(by: actions)
         }
     }
     

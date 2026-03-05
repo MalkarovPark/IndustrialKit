@@ -404,40 +404,6 @@ open class RobotModelController: ModelController, @unchecked Sendable
             }
         }
     }
-    
-    open override func reset_entities()
-    {
-        
-    }
-    
-    // MARK: OLD
-    
-    /**
-     Applies position updates to scene entities based on a list of string commands.
-     
-     Each string in `lines` must be in the format `"nodeName position"`, where:
-     - `nodeName` is the identifier of the node to update.
-     - `position` is a string describing the new position (e.g., coordinates).
-     
-     The updates are applied asynchronously on the main thread.
-     
-     - Parameter lines: An array of strings, each containing a node name and its target position separated by a space.
-     */
-    public func apply_entities_positions(by lines: [String])
-    {
-        #if os(macOS)
-        let updates: [(String, String)] = lines.compactMap
-        {
-            let components = $0.split(separator: " ", maxSplits: 1).map { String($0) }
-            return components.count == 2 ? (components[0], components[1]) : nil
-        }
-        #endif
-    }
-    
-    #if os(macOS)
-    internal var is_entities_updating = false
-    #endif
-    // MARK: OLD
 }
 
 //MARK: - External Controller
@@ -445,23 +411,30 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
 {
     // MARK: Init functions
     /// An external module name.
-    public var module_name: String
+    //public var module_name: String
     
     /// For access to code.
-    public var package_url: URL
+    //public var package_url: URL
     
-    public init(_ module_name: String, package_url: URL, entity_names: [String])
-    {
-        self.module_name = module_name
-        self.package_url = package_url
+    public init(
+        //_ module_name: String,
+        //package_url: URL,
+        entity_names: [String],
         
+        code: String
+    )
+    {
+        //self.module_name = module_name
+        //self.package_url = package_url
         self.external_entity_names = entity_names
+        
+        self.js_environment.js_code = code
     }
     
     required init()
     {
-        self.module_name = ""
-        self.package_url = URL(fileURLWithPath: "")
+        //self.module_name = ""
+        //self.package_url = URL(fileURLWithPath: "")
     }
     
     // MARK: Parameters import
@@ -472,74 +445,65 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     
     public var external_entity_names = [String]()
     
+    // MARK: JS Code Handling
+    private struct Pose: Codable { let x, y, z, r, p, w: Float }
+    private struct EntityPose: Codable { let name: String; let position: Pose }
+    
+    private var js_environment = JSEnvironment()
+    
+    public func reset_js_context()
+    {
+        js_environment.reset_context()
+    }
+    
+    public var code: String
+    {
+        get
+        {
+            js_environment.js_code
+        }
+        set
+        {
+            js_environment.js_code = newValue
+        }
+    }
+    
     // MARK: Modeling
     override open func entity_positions(
         pointer_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         ),
         origin_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
     ) throws -> [(
         name: String,
         position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
     )]
     {
-        return []
-        #if os(macOS)
-        /*guard !is_entities_updating else { return }
-        is_entities_updating = true
+        // Wrap 12 numbers in a single array for JS
+        let args: [Any] = [[
+            pointer_position.x, pointer_position.y, pointer_position.z,
+            pointer_position.r, pointer_position.p, pointer_position.w,
+            origin_position.x, origin_position.y, origin_position.z,
+            origin_position.r, origin_position.p, origin_position.w
+        ]]
         
-        DispatchQueue.global(qos: .utility).async
-        {
-            let pointer_position: [String] =
-            [
-                "\(pointer_position.x)", "\(pointer_position.y)", "\(pointer_position.z)",
-                "\(pointer_position.r)", "\(pointer_position.p)", "\(pointer_position.w)"
-            ]
-
-            let origin_position: [String] =
-            [
-                "\(origin_position.x)",  "\(origin_position.y)",  "\(origin_position.z)",
-                "\(origin_position.r)",  "\(origin_position.p)",  "\(origin_position.w)"
-            ]
-
-            send_via_unix_socket(at:   "/tmp/\(self.module_name)_robot_controller_socket", with: ["update_entity_positions"] + (pointer_position + origin_position).map { "\($0)" })
-            { output in
-                self.apply_entities_positions(by: output.split(separator: "\n").map { String($0) })
-            }
-        }*/
-        #endif
-    }
-    
-    open override func reset_entities()
-    {
-        #if os(macOS)
-        send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_controller_socket", with: ["reset_entities"])
-        { output in
-            self.apply_entities_positions(by: output.split(separator: "\n").map { String($0) })
-        }
-        #endif
+        // Call JS function
+        let resultString = try js_environment.call_js_func(name: "entity_positions", args: args)
+        
+        // Decode JSON returned from JS
+        guard let data = resultString.data(using: .utf8),
+              let decoded = try? JSONDecoder().decode([EntityPose].self, from: data)
+        else { return [] }
+        
+        // Map decoded objects to tuple array
+        return decoded.map { ($0.name, ($0.position.x, $0.position.y, $0.position.z, $0.position.r, $0.position.p, $0.position.w)) }
     }
     
     // MARK: Statistics

@@ -63,10 +63,10 @@ open class ModelController: NSCopying
         entities.removeAll()
     }
     
-    /// Resets nodes position of connected visual model.
-    open func reset_entities()
+    /// Initial entities transform visual model.
+    open var inital_entities_transform: [EntityAnimationData]
     {
-        
+        return []
     }
     
     // MARK: - Device state data

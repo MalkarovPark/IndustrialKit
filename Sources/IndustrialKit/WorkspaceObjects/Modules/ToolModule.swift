@@ -43,11 +43,11 @@ open class ToolModule: IndustrialModule
     {
         super.init(external_name: external_name)
         
-        if let info = get_module_info()
+        if let module_info = get_external_module_info()
         {
-            external_module_info = info
+            external_module_info = module_info // Reserved
             
-            components_import()
+            components_import(from: module_info)
         }
     }
     
@@ -74,10 +74,7 @@ open class ToolModule: IndustrialModule
     @Published public var entity_file_name: String?
     
     ///
-    //@Published public var kinematic_function_code = String() //JS
-    
-    ///
-    @Published public var device_state_code = String() //JS
+    @Published public var model_controller_code = String() //JS
     
     ///
     @Published public var connector_code = String() //Swift (Internal and External module)
@@ -116,7 +113,7 @@ open class ToolModule: IndustrialModule
     
     public var external_module_info: ToolModule?
     
-    private func get_module_info() -> ToolModule?
+    private func get_external_module_info() -> ToolModule?
     {
         do
         {
@@ -135,18 +132,15 @@ open class ToolModule: IndustrialModule
         return nil
     }
     
-    public var external_codes: [OperationCodeInfo]
-    {
-        return external_module_info?.codes ?? [OperationCodeInfo]()
-    }
-    
     /// Imports components from external or from other modules.
-    private func components_import()
+    private func components_import(from module_info: ToolModule)
     {
-        codes = external_codes
-        //#if os(macOS)
-        //model_controller = ExternalToolModelController(name.code_correct_format, package_url: package_url, entity_names: external_module_info?.entity_names ?? [String]())
-        //#endif
+        codes = module_info.codes
+        model_controller = ExternalToolModelController(
+            entity_names: module_info.entity_names,
+            code: module_info.model_controller_code
+        )
+        
         //#if os(macOS)
         //connector = ExternalToolConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
         //#endif
@@ -173,11 +167,9 @@ open class ToolModule: IndustrialModule
     {
         case operation_codes
         
-        case entity_names
-        //case kinematic_function_code
         case entity_file_name
-        
-        case device_state_code
+        case entity_names
+        case model_controller_code
         
         case connection_parameters
         case connector_code
@@ -189,13 +181,11 @@ open class ToolModule: IndustrialModule
         
         self.codes = try container.decode([OperationCodeInfo].self, forKey: .operation_codes)
         
-        self.entity_names = try container.decode([String].self, forKey: .entity_names)
-        //self.kinematic_function_code = try container.decode(String.self, forKey: .kinematic_function_code)
         self.entity_file_name = try container.decodeIfPresent(String.self, forKey: .entity_file_name)
+        self.entity_names = try container.decode([String].self, forKey: .entity_names)
+        self.model_controller_code = try container.decode(String.self, forKey: .model_controller_code)
         
         self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
-        
-        self.device_state_code = try container.decode(String.self, forKey: .device_state_code)
         self.connector_code = try container.decode(String.self, forKey: .connector_code)
         
         try super.init(from: decoder)
@@ -207,11 +197,9 @@ open class ToolModule: IndustrialModule
         
         try container.encode(codes, forKey: .operation_codes)
         
-        try container.encode(entity_names, forKey: .entity_names)
-        //try container.encode(kinematic_function_code, forKey: .kinematic_function_code)
         try container.encode(entity_file_name, forKey: .entity_file_name)
-        
-        try container.encode(device_state_code, forKey: .device_state_code)
+        try container.encode(entity_names, forKey: .entity_names)
+        try container.encode(model_controller_code, forKey: .model_controller_code)
         
         try container.encode(connection_parameters, forKey: .connection_parameters)
         try container.encode(connector_code, forKey: .connector_code)
