@@ -11,7 +11,7 @@ import JavaScriptCore
 public class JSEnvironment
 {
     // MARK: - Init
-    init(js_code: String)
+    public init(js_code: String = String())
     {
         self.js_code = js_code
         build_context()
