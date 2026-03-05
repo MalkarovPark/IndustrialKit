@@ -17,6 +17,7 @@ public class JSEnvironment
         build_context()
     }
     
+    /// JavaScript code to be executed in this environment.
     public var js_code: String
     {
         didSet
@@ -25,15 +26,19 @@ public class JSEnvironment
         }
     }
     
-    // MARK: - Context
+    /// Underlying JS virtual machine.
     private let vm = JSVirtualMachine()
+    
+    /// JSContext storing the runtime state.
     private var context: JSContext?
     
+    /// Last JS error message.
     private var js_error_message: String?
     
-    // function cache
+    /// Cache of JS functions for faster repeated calls.
     private var functions: [String: JSValue] = [:]
     
+    /// Build or rebuild JS context and function cache.
     private func build_context()
     {
         js_error_message = nil
@@ -43,44 +48,42 @@ public class JSEnvironment
         
         context?.exceptionHandler =
         { [weak self] _, exception in
-            
             self?.js_error_message = exception?.toString()
         }
         
         context?.evaluateScript(js_code)
     }
     
-    private func js_function(named name: String) -> JSValue? // Function lookup
+    /// Retrieve a JS function by name, using cache.
+    private func js_function(named name: String) -> JSValue?
     {
-        if let cached = functions[name]
-        {
+        if let cached = functions[name] {
             return cached
         }
         
-        guard let context else
-        {
-            return nil
-        }
+        guard let context,
+              let function_name = context.objectForKeyedSubscript(name),
+              !function_name.isUndefined
+        else { return nil }
         
-        guard let fn = context.objectForKeyedSubscript(name),
-              !fn.isUndefined
-        else
-        {
-            return nil
-        }
+        functions[name] = function_name
         
-        functions[name] = fn
-        
-        return fn
+        return function_name
     }
     
     // MARK: - Call JS Function
+    /// Call a JS function with no arguments.
     public func call_js_func(name: String) throws -> String
+    {
+        return try call_js_func(name: name, args: [])
+    }
+    
+    /// Call a JS function with arguments.
+    public func call_js_func(name: String, args: [Any]) throws -> String
     {
         js_error_message = nil
         
-        guard let fn = js_function(named: name)
-        else
+        guard let fn = js_function(named: name) else
         {
             throw NSError(
                 domain: "Performing Error",
@@ -91,8 +94,7 @@ public class JSEnvironment
             )
         }
         
-        guard let result = fn.call(withArguments: [])
-        else
+        guard let result = fn.call(withArguments: args) else
         {
             throw NSError(
                 domain: "Performing Error",
@@ -117,6 +119,7 @@ public class JSEnvironment
         return result.toString()
     }
     
+    /// Reset JS context, clearing all variables and function cache.
     public func reset_context()
     {
         build_context()
