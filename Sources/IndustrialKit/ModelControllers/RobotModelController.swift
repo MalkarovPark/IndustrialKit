@@ -24,22 +24,12 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     public func update_robot_model(
         pointer_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         ),
         origin_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
     ) throws
     {
@@ -110,33 +100,18 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     open func entity_positions(
         pointer_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         ),
         origin_position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
     ) throws -> [(
         name: String,
         position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
     )]
     {
@@ -150,13 +125,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
     public var pointer_position: (
-        x: Float,
-        y: Float,
-        z: Float,
-        
-        r: Float,
-        p: Float,
-        w: Float
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
     ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     /**
@@ -172,13 +142,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     public func update_pointer_position(
         _ position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
     )
     {
@@ -198,13 +163,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
     public var alt_pointer_position: (
-        x: Float,
-        y: Float,
-        z: Float,
-        
-        r: Float,
-        p: Float,
-        w: Float
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
     ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     {
         didSet
@@ -232,13 +192,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     private func update_alt_pointer_position(
         _ position: (
-            x: Float,
-            y: Float,
-            z: Float,
-            
-            r: Float,
-            p: Float,
-            w: Float
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
         )
     )
     {
@@ -280,20 +235,13 @@ open class RobotModelController: ModelController, @unchecked Sendable
      Tuple with coordinates – *x*, *y*, *z* and angles – *r*, *p*, *w*.
      */
     public var origin_position: (
-        x: Float,
-        y: Float,
-        z: Float,
-        
-        r: Float,
-        p: Float,
-        w: Float
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
     ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     /// A robot cell box scale.
     public var space_scale: (
-        x: Float,
-        y: Float,
-        z: Float
+        x: Float, y: Float, z: Float
     ) = (x: 200, y: 200, z: 200)
     
     // MARK: Device
