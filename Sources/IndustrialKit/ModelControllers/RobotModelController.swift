@@ -61,13 +61,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
             by data: (
                 name: String,
                 position: (
-                    x: Float,
-                    y: Float,
-                    z: Float,
-                    
-                    r: Float,
-                    p: Float,
-                    w: Float
+                    x: Float, y: Float, z: Float,
+                    r: Float, p: Float, w: Float
                 )
             )
         )
