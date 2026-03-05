@@ -54,9 +54,11 @@ open class ToolModelController: ModelController, @unchecked Sendable
      */
     public func perform(code: Int) throws
     {
+        let entity_animations = try entity_animations(code: code)
+        
         var animation_time: TimeInterval = 0
         
-        for entity_animation in entity_animations(code: code)
+        for entity_animation in entity_animations
         {
             process_animation(by: entity_animation)
         }
@@ -122,7 +124,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
         }
     }
     
-    open func entity_animations(code: Int) -> [EntityAnimationData]
+    open func entity_animations(code: Int) throws -> [EntityAnimationData]
     {
         return []
     }
