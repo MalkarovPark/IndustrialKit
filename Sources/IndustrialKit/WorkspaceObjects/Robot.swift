@@ -1091,6 +1091,16 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         working_area_entity.isEnabled.toggle()
     }
     
+    @MainActor public func show_working_area()
+    {
+        working_area_entity.isEnabled = true
+    }
+    
+    @MainActor public func hide_working_area()
+    {
+        working_area_entity.isEnabled = false
+    }
+    
     @MainActor public func update_working_area_scale()
     {
         let is_enabled = working_area_entity.isEnabled
@@ -1169,6 +1179,16 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         position_pointer_entity.isEnabled.toggle()
     }
     
+    @MainActor public func show_position_pointer()
+    {
+        position_pointer_entity.isEnabled = true
+    }
+    
+    @MainActor public func hide_position_pointer()
+    {
+        position_pointer_entity.isEnabled = false
+    }
+    
     @MainActor func build_position_pointer_entity() -> Entity
     {
         let colors: [UIColor] = [
@@ -1203,6 +1223,16 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     @MainActor public func toggle_position_program_visibility()
     {
         position_program_entity.isEnabled.toggle()
+    }
+    
+    @MainActor public func show_position_program()
+    {
+        position_program_entity.isEnabled = true
+    }
+    
+    @MainActor public func hide_position_program()
+    {
+        position_program_entity.isEnabled = false
     }
     
     @MainActor public func update_position_program_entity(by program: PositionProgram, edited_point: Int? = nil)
