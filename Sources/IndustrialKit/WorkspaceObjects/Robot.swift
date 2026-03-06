@@ -351,7 +351,8 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         {
             if let model_entity = model_entity
             {
-                model_controller.connect_entities(of: model_entity)
+                model_controller.connect_entities(model_entity, pointer_entity: position_pointer_entity)
+                //model_controller.connect_entities(of: model_entity)
             }
         }
     }
