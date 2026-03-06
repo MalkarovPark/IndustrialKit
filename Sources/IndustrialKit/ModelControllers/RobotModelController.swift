@@ -44,20 +44,20 @@ open class RobotModelController: ModelController, @unchecked Sendable
                 origin_position: origin_position
             )
             
-            Task
-            { @MainActor in
+            //Task
+            //{ @MainActor in
                 for entity_position in entity_positions
                 {
                     apply_entity_position(by: entity_position)
                 }
-            }
+            //}
         }
         catch
         {
             throw error
         }
         
-        @MainActor func apply_entity_position(
+        /*@MainActor*/ func apply_entity_position(
             by data: (
                 name: String,
                 position: (
