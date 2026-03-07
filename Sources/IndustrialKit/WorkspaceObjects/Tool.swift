@@ -1082,12 +1082,17 @@ public struct OperationCodeInfo: Equatable, Codable, Hashable
     /// Operation code description.
     public var description: String
     
-    public init(value: Int = 0, name: String = "", symbol: String = "", info: String = "")
+    public init(
+        value: Int = 0,
+        name: String = "",
+        symbol_name: String = "",
+        description: String = ""
+    )
     {
         self.value = value
         self.name = name
-        self.symbol_name = symbol
-        self.description = info
+        self.symbol_name = symbol_name
+        self.description = description
     }
     
     public var image: Image
