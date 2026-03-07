@@ -495,10 +495,10 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
         ]]
         
         // Call JS function
-        let resultString = try js_environment.call_js_func(name: "entity_positions", args: args)
+        let result_string = try js_environment.call_js_func(name: "entity_positions", args: args)
         
         // Decode JSON returned from JS
-        guard let data = resultString.data(using: .utf8),
+        guard let data = result_string.data(using: .utf8),
               let decoded = try? JSONDecoder().decode([EntityPose].self, from: data)
         else { return [] }
         

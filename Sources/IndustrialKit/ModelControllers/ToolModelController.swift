@@ -178,9 +178,6 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     public var external_entity_names = [String]()
     
     // MARK: JS Code Handling
-    private struct Pose: Codable { let x, y, z, r, p, w: Float }
-    private struct EntityPose: Codable { let name: String; let position: Pose }
-    
     private var js_environment = JSEnvironment()
     
     public func reset_js_context()

@@ -79,6 +79,7 @@ public struct FloatingView<Content: View>: View
                     default:
                         position = CGPoint(x: container.size.width / 2, y: container.size.height / 2)
                     }
+                    
                     stuck_alignment = alignment
                 }
         }
