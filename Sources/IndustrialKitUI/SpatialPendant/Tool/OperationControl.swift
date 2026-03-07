@@ -111,9 +111,9 @@ public struct OperationControl: View
                         {
                             ScrollView
                             {
-                                if !current_code_info.info.isEmpty
+                                if !current_code_info.description.isEmpty
                                 {
-                                    Text(current_code_info.info)
+                                    Text(current_code_info.description)
                                         .multilineTextAlignment(.leading)
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                     #if os(macOS)
@@ -133,7 +133,7 @@ public struct OperationControl: View
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay
                             {
-                                if current_code_info.info.isEmpty
+                                if current_code_info.description.isEmpty
                                 {
                                     ZStack
                                     {
@@ -273,8 +273,8 @@ public struct OperationControl: View
                     if tool.codes.count > 0
                     {
                         Image(systemName:
-                                is_valid_symbol(current_code_info.symbol) ?
-                                current_code_info.symbol :
+                                is_valid_symbol(current_code_info.symbol_name) ?
+                                current_code_info.symbol_name :
                                 ""
                         )
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))

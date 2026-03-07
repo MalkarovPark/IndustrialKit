@@ -505,7 +505,6 @@ private struct PositionPointView: View
                 Stepper("Enter", value: $point.move_speed, in: 0...100)
                     .labelsHidden()
             }
-            //#endif
         }
         .padding()
     }

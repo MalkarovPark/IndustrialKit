@@ -365,7 +365,7 @@ private struct OperationItemView: View
             }
             .frame(height: 24)
             
-            Image(systemName: tool.code_info(code_item.value).symbol)
+            Image(systemName: tool.code_info(code_item.value).symbol_name)
                 .font(.system(size: operatioin_item_image_size))
                 .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                 .frame(width: 24)
