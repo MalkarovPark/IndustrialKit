@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /**
  A type that contains the numerical value of the operation code performed by the tool in production.
@@ -62,5 +63,84 @@ public class OperationCode: Identifiable, Codable, Hashable, ObservableObject, @
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(value, forKey: .value)
+    }
+}
+
+/**
+ Provides information about the operation code.
+ 
+ An array of them determines the opcode values ​​available for a given device.
+ */
+public class OperationCodeInfo: Identifiable/*, Equatable*/, Codable, Hashable, ObservableObject
+{
+    public let id: UUID = UUID()
+    
+    public static func == (lhs: OperationCodeInfo, rhs: OperationCodeInfo) -> Bool
+    {
+        lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher)
+    {
+        hasher.combine(id)
+    }
+    
+    /// Operation code value.
+    public var value: Int
+    
+    /// Operation code name.
+    public var name: String
+    
+    /// Operation code symbol.
+    public var symbol_name: String
+    
+    /// Operation code description.
+    public var description: String
+    
+    public init(
+        value: Int = 0,
+        name: String = "",
+        symbol_name: String = "",
+        description: String = ""
+    )
+    {
+        self.value = value
+        self.name = name
+        self.symbol_name = symbol_name
+        self.description = description
+    }
+    
+    public var image: Image
+    {
+        return Image(systemName: symbol_name)
+    }
+    
+    // MARK: - Work with file system
+    enum CodingKeys: String, CodingKey
+    {
+        case value
+        case name
+        case symbol_name
+        case description
+    }
+    
+    public required init(from decoder: any Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        value = try container.decode(Int.self, forKey: .value)
+        name = try container.decode(String.self, forKey: .value)
+        symbol_name = try container.decode(String.self, forKey: .value)
+        description = try container.decode(String.self, forKey: .value)
+    }
+    
+    public func encode(to encoder: any Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(value, forKey: .value)
+        try container.encode(name, forKey: .name)
+        try container.encode(symbol_name, forKey: .symbol_name)
+        try container.encode(description, forKey: .description)
     }
 }

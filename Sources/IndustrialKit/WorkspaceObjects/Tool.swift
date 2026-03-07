@@ -7,7 +7,7 @@
 
 import Foundation
 
-import SwiftUI
+//import SwiftUI
 #if canImport(RealityKit)
 import RealityKit
 #endif
@@ -1060,44 +1060,6 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     {
         let file: ToolFileData = object.file_data()
         self.init(file: file)
-    }
-}
-
-/**
- Provides information about the operation code.
- 
- An array of them determines the opcode values ​​available for a given device.
- */
-public struct OperationCodeInfo: Equatable, Codable, Hashable
-{
-    /// Operation code value.
-    public var value: Int
-    
-    /// Operation code name.
-    public var name: String
-    
-    /// Operation code symbol.
-    public var symbol_name: String
-    
-    /// Operation code description.
-    public var description: String
-    
-    public init(
-        value: Int = 0,
-        name: String = "",
-        symbol_name: String = "",
-        description: String = ""
-    )
-    {
-        self.value = value
-        self.name = name
-        self.symbol_name = symbol_name
-        self.description = description
-    }
-    
-    public var image: Image
-    {
-        return Image(systemName: symbol_name)
     }
 }
 
