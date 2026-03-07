@@ -129,9 +129,9 @@ public class OperationCodeInfo: Identifiable/*, Equatable*/, Codable, Hashable, 
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         value = try container.decode(Int.self, forKey: .value)
-        name = try container.decode(String.self, forKey: .value)
-        symbol_name = try container.decode(String.self, forKey: .value)
-        description = try container.decode(String.self, forKey: .value)
+        name = try container.decode(String.self, forKey: .name)
+        symbol_name = try container.decode(String.self, forKey: .symbol_name)
+        description = try container.decode(String.self, forKey: .description)
     }
     
     public func encode(to encoder: any Encoder) throws
