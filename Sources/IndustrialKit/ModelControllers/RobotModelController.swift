@@ -407,31 +407,21 @@ open class RobotModelController: ModelController, @unchecked Sendable
 }
 
 //MARK: - External Controller
-public class ExternalRobotModelController: RobotModelController, @unchecked Sendable
+open class ExternalRobotModelController: RobotModelController, @unchecked Sendable
 {
     // MARK: Init functions
-    /// An external module name.
-    //public var module_name: String
-    
-    /// For access to code.
-    //public var package_url: URL
-    
     public init(
-        //_ module_name: String,
-        //package_url: URL,
         entity_names: [String],
         
         code: String
     )
     {
-        //self.module_name = module_name
-        //self.package_url = package_url
         self.external_entity_names = entity_names
         
         self.js_environment.js_code = code
     }
     
-    required init()
+    required public init()
     {
         //self.module_name = ""
         //self.package_url = URL(fileURLWithPath: "")
