@@ -187,20 +187,30 @@ public class ExternalToolModelController: ToolModelController, @unchecked Sendab
     
     public var code: String
     {
-        get
-        {
-            js_environment.js_code
-        }
-        set
-        {
-            js_environment.js_code = newValue
-        }
+        get { js_environment.js_code }
+        set { js_environment.js_code = newValue }
     }
     
     // MARK: Modeling
     override open func entity_animations(code: Int) -> [EntityAnimationData]
     {
-        return [EntityAnimationData]()
+        do
+        {
+            let json_string = try js_environment.call_js_func(
+                name: "entity_animations",
+                args: [code]
+            )
+            
+            guard let json_data = json_string.data(using: .utf8) else { return [] }
+            
+            let animations = try JSONDecoder().decode([EntityAnimationData].self, from: json_data)
+            return animations
+        }
+        catch
+        {
+            print(error.localizedDescription)
+            return []
+        }
     }
     
     // MARK: Statistics

@@ -458,14 +458,8 @@ public class ExternalRobotModelController: RobotModelController, @unchecked Send
     
     public var code: String
     {
-        get
-        {
-            js_environment.js_code
-        }
-        set
-        {
-            js_environment.js_code = newValue
-        }
+        get { js_environment.js_code }
+        set { js_environment.js_code = newValue }
     }
     
     // MARK: Modeling
