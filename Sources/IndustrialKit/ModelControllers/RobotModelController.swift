@@ -493,13 +493,51 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
     // MARK: Statistics
     open override var current_device_state: DeviceState?
     {
-        // Prepare controller output
-        return DeviceState()
+        do
+        {
+            let json_string = try js_environment.call_js_func(
+                name: "current_device_state"
+            )
+            
+            guard let json_data = json_string.data(using: .utf8)
+            else
+            {
+                print("Failed to convert JS output to Data: \(json_string)")
+                return nil
+            }
+            
+            let state = try JSONDecoder().decode(DeviceState.self, from: json_data)
+            return state
+        }
+        catch
+        {
+            print("JS current_device_state error: \(error.localizedDescription)")
+            return nil
+        }
     }
-    
+
     open override var initial_device_state: DeviceState?
     {
-        // Reset contoller output
-        return nil //DeviceState()
+        do
+        {
+            let json_string = try js_environment.call_js_func(
+                name: "initial_device_state"
+            )
+            
+            guard let json_data = json_string.data(using: .utf8)
+            else
+            {
+                print("Failed to convert JS output to Data: \(json_string)")
+                return nil
+            }
+            
+            let state = try JSONDecoder().decode(DeviceState.self, from: json_data)
+            return state
+        }
+        catch
+        {
+            print("JS initial_device_state error: \(error.localizedDescription)")
+            return nil
+        }
     }
 }
