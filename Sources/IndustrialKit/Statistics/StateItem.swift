@@ -60,8 +60,8 @@ public class StateItem: Hashable, Identifiable, ObservableObject, Codable
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.name = try container.decode(String.self, forKey: .name)
-        self.value = try container.decode(String.self, forKey: .value)
-        self.symbol_name = try container.decode(String.self, forKey: .symbol_name)
+        self.value = try container.decodeIfPresent(String.self, forKey: .value)
+        self.symbol_name = try container.decodeIfPresent(String.self, forKey: .symbol_name)
         
         self.children = try container.decodeIfPresent([StateItem].self, forKey: .children)
     }

@@ -12,7 +12,7 @@ public struct StateItemsView: View
 {
     @ObservedObject var device_state: DeviceState
     
-    @State private var expandedItems: [UUID: Bool] = [:]
+    @State private var expanded_items: [UUID: Bool] = [:]
     
     public init(
         device_state: DeviceState
@@ -33,7 +33,7 @@ public struct StateItemsView: View
                     { index in
                         StateItemListView(
                             item: device_state.items[index],
-                            expandedItems: $expandedItems
+                            expanded_items: $expanded_items
                         )
                     }
                 }
@@ -57,18 +57,18 @@ public struct StateItemsView: View
 struct StateItemListView: View
 {
     @ObservedObject var item: StateItem
-    @Binding var expandedItems: [UUID: Bool]
+    @Binding var expanded_items: [UUID: Bool]
     
-    private var isExpandedBinding: Binding<Bool>
+    private var is_expanded_binding: Binding<Bool>
     
-    init(item: StateItem, expandedItems: Binding<[UUID: Bool]>)
+    init(item: StateItem, expanded_items: Binding<[UUID: Bool]>)
     {
         self.item = item
-        self._expandedItems = expandedItems
+        self._expanded_items = expanded_items
         
-        self.isExpandedBinding = Binding(
-            get: { expandedItems.wrappedValue[item.id] ?? true },
-            set: { expandedItems.wrappedValue[item.id] = $0 }
+        self.is_expanded_binding = Binding(
+            get: { expanded_items.wrappedValue[item.id] ?? true },
+            set: { expanded_items.wrappedValue[item.id] = $0 }
         )
     }
     
@@ -76,13 +76,13 @@ struct StateItemListView: View
     {
         if let children = item.children, !children.isEmpty
         {
-            DisclosureGroup(isExpanded: isExpandedBinding)
+            DisclosureGroup(isExpanded: is_expanded_binding)
             {
                 ForEach(children.indices, id: \.self)
                 { index in
                     StateItemListView(
                         item: children[index],
-                        expandedItems: $expandedItems
+                        expanded_items: $expanded_items
                     )
                     .padding(.leading, 20)
                 }
