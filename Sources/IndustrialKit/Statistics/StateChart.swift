@@ -149,7 +149,7 @@ public class ChartDataItem: Hashable, Identifiable, ObservableObject, Codable
     }
 }
 
-public enum ChartStyle: Codable, Equatable, CaseIterable
+public enum ChartStyle: String, Codable, Equatable, CaseIterable
 {
     case bar
     case point
