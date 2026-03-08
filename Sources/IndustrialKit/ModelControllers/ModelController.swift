@@ -71,7 +71,7 @@ open class ModelController: NSCopying
     
     // MARK: - Device state data
     /// Updates device state data.
-    open var current_device_state: DeviceState
+    open var current_device_state: DeviceState?
     {
         // Prepare controller output
         return DeviceState()

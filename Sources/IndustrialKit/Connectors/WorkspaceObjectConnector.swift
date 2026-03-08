@@ -249,7 +249,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     
     // MARK: - Device state data
     /// Updates device state data.
-    open var current_device_state: DeviceState
+    open var current_device_state: DeviceState?
     {
         // Prepare controller output
         return DeviceState()

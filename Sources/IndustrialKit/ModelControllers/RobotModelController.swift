@@ -491,7 +491,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
     }
     
     // MARK: Statistics
-    open override var current_device_state: DeviceState
+    open override var current_device_state: DeviceState?
     {
         // Prepare controller output
         return DeviceState()
