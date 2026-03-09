@@ -436,9 +436,6 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
     public var external_entity_names = [String]()
     
     // MARK: JS Code Handling
-    private struct Pose: Codable { let x, y, z, r, p, w: Float }
-    private struct EntityPose: Codable { let name: String; let position: Pose }
-    
     private var js_environment = JSEnvironment()
     
     public func reset_js_context()
@@ -483,7 +480,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
         
         // Decode JSON returned from JS
         guard let data = result_string.data(using: .utf8),
-              let decoded = try? JSONDecoder().decode([EntityPose].self, from: data)
+              let decoded = try? JSONDecoder().decode([EntityPositionData].self, from: data)
         else { return [] }
         
         // Map decoded objects to tuple array
@@ -539,5 +536,61 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
             print("JS initial_device_state error: \(error.localizedDescription)")
             return nil
         }
+    }
+}
+
+// MARK: - Animation Storage
+public struct EntityPositionData: Codable
+{
+    let name: String
+    let x, y, z, r, p, w: Float
+    
+    public struct Pose
+    {
+        let x, y, z, r, p, w: Float
+    }
+    
+    var position: Pose
+    {
+        Pose(x: x, y: y, z: z, r: r, p: p, w: w)
+    }
+    
+    enum CodingKeys: String, CodingKey
+    {
+        case name
+        case position
+    }
+    
+    enum PositionKeys: String, CodingKey
+    {
+        case x, y, z, r, p, w
+    }
+    
+    public init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        
+        let pos = try container.nestedContainer(keyedBy: PositionKeys.self, forKey: .position)
+        x = try pos.decode(Float.self, forKey: .x)
+        y = try pos.decode(Float.self, forKey: .y)
+        z = try pos.decode(Float.self, forKey: .z)
+        r = try pos.decode(Float.self, forKey: .r)
+        p = try pos.decode(Float.self, forKey: .p)
+        w = try pos.decode(Float.self, forKey: .w)
+    }
+    
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        
+        var pos = container.nestedContainer(keyedBy: PositionKeys.self, forKey: .position)
+        try pos.encode(x, forKey: .x)
+        try pos.encode(y, forKey: .y)
+        try pos.encode(z, forKey: .z)
+        try pos.encode(r, forKey: .r)
+        try pos.encode(p, forKey: .p)
+        try pos.encode(w, forKey: .w)
     }
 }
