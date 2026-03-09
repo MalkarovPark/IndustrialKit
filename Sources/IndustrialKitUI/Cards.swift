@@ -13,7 +13,7 @@ import IndustrialKit
 public struct BoxCard<Content: View>: View
 {
     // Titles
-    @State public var title: String
+    @State public var title: String?
     @State public var subtitle: String?
     
     // Color
@@ -38,7 +38,7 @@ public struct BoxCard<Content: View>: View
     private let gradient: LinearGradient
     
     public init(
-        title: String,
+        title: String? = nil,
         subtitle: String? = nil,
         
         color: Color? = nil,
@@ -127,96 +127,99 @@ public struct BoxCard<Content: View>: View
                             }
                             .overlay(alignment: .bottomLeading)
                             {
-                                // Rename Handling
-                                HStack
+                                if let displayed_title = title
                                 {
-                                    if !to_rename
+                                    // Rename Handling
+                                    HStack
                                     {
-                                        VStack(alignment: .leading)
+                                        if !to_rename
                                         {
-                                            if let subtitle = subtitle
+                                            VStack(alignment: .leading)
                                             {
-                                                Text(title)
-                                                    .font(.system(size: 28, design: .rounded))
-                                                    .foregroundColor(.white)
-                                                    .padding(.top, 8)
-                                                    .padding(.leading, 4)
-                                                
-                                                Text(subtitle)
-                                                    .font(.system(size: 20, design: .rounded))
-                                                    .foregroundColor(.white)
-                                                    .opacity(0.75)
-                                                    .padding(.bottom, 8)
-                                                    .padding(.leading, 4)
+                                                if let subtitle = subtitle
+                                                {
+                                                    Text(displayed_title)
+                                                        .font(.system(size: 28, design: .rounded))
+                                                        .foregroundColor(.white)
+                                                        .padding(.top, 8)
+                                                        .padding(.leading, 4)
+                                                    
+                                                    Text(subtitle)
+                                                        .font(.system(size: 20, design: .rounded))
+                                                        .foregroundColor(.white)
+                                                        .opacity(0.75)
+                                                        .padding(.bottom, 8)
+                                                        .padding(.leading, 4)
+                                                }
+                                                else
+                                                {
+                                                    Text(displayed_title)
+                                                        .font(.system(size: 28, design: .rounded))
+                                                        .foregroundColor(.white)
+                                                        .padding(.vertical, 8)
+                                                        .padding(.leading, 4)
+                                                }
                                             }
-                                            else
-                                            {
-                                                Text(title)
-                                                    .font(.system(size: 28, design: .rounded))
-                                                    .foregroundColor(.white)
-                                                    .padding(.vertical, 8)
-                                                    .padding(.leading, 4)
-                                            }
+                                            #if !os(visionOS)
+                                            .padding(.horizontal, 8)
+                                            #else
+                                            .padding(.horizontal, 32)
+                                            #endif
+                                            .padding(.trailing, 4)
                                         }
-                                        #if !os(visionOS)
-                                        .padding(.horizontal, 8)
-                                        #else
-                                        .padding(.horizontal, 32)
-                                        #endif
-                                        .padding(.trailing, 4)
-                                    }
-                                    else
-                                    {
-                                        VStack(alignment: .leading)
+                                        else
                                         {
-                                            HStack
+                                            VStack(alignment: .leading)
                                             {
-                                                #if os(macOS)
-                                                TextField("Name", text: $new_name)
+                                                HStack
+                                                {
+                                                    #if os(macOS)
+                                                    TextField("Name", text: $new_name)
+                                                        .font(.system(size: 28, design: .rounded))
+                                                        .foregroundColor(.white)
+                                                        .textFieldStyle(.plain)
+                                                        .focused($is_focused)
+                                                        .labelsHidden()
+                                                        .padding()
+                                                        .onSubmit
+                                                        {
+                                                            edited_name = new_name
+                                                            title = new_name
+                                                            on_rename()
+                                                            to_rename = false
+                                                        }
+                                                        .onExitCommand
+                                                        {
+                                                            to_rename = false
+                                                        }
+                                                        .onAppear
+                                                        {
+                                                            is_focused = true
+                                                        }
+                                                    #else
+                                                    TextField("Name", text: $new_name, onCommit: {
+                                                        edited_name = new_name
+                                                        title = new_name
+                                                        on_rename()
+                                                        to_rename = false
+                                                    })
                                                     .font(.system(size: 28, design: .rounded))
                                                     .foregroundColor(.white)
                                                     .textFieldStyle(.plain)
                                                     .focused($is_focused)
                                                     .labelsHidden()
                                                     .padding()
-                                                    .onSubmit
-                                                    {
-                                                        edited_name = new_name
-                                                        title = new_name
-                                                        on_rename()
-                                                        to_rename = false
-                                                    }
-                                                    .onExitCommand
-                                                    {
-                                                        to_rename = false
-                                                    }
                                                     .onAppear
                                                     {
                                                         is_focused = true
                                                     }
-                                                #else
-                                                TextField("Name", text: $new_name, onCommit: {
-                                                    edited_name = new_name
-                                                    title = new_name
-                                                    on_rename()
-                                                    to_rename = false
-                                                })
-                                                .font(.system(size: 28, design: .rounded))
-                                                .foregroundColor(.white)
-                                                .textFieldStyle(.plain)
-                                                .focused($is_focused)
-                                                .labelsHidden()
-                                                .padding()
-                                                .onAppear
-                                                {
-                                                    is_focused = true
+                                                    #endif
                                                 }
-                                                #endif
                                             }
                                         }
                                     }
+                                    .padding(4)
                                 }
-                                .padding(4)
                             }
                         
                         overlay_view
@@ -243,7 +246,7 @@ public struct BoxCard<Content: View>: View
 public struct GlassBoxCard<Content: View>: View
 {
     // Titles
-    @State public var title: String
+    @State public var title: String?
     @State public var subtitle: String?
     
     // Color
@@ -273,6 +276,39 @@ public struct GlassBoxCard<Content: View>: View
     
     private let default_color = Color(red: 192/255, green: 192/255, blue: 192/255)
     private let gradient: LinearGradient
+    
+    // Init without any properties
+    public init(
+        color: Color? = nil,
+        
+        @ViewBuilder overlay: () -> Content? = { EmptyView() }
+    )
+    {
+        self.color = color ?? default_color
+        self.gradient = LinearGradient(
+            gradient: Gradient(stops: [
+                Gradient.Stop(color: self.color.opacity(0.4), location: 0.0),
+                Gradient.Stop(color: self.color.opacity(0.2), location: 1.0)
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+        
+        self.title = nil
+        self.image = nil
+        
+        self.symbol_name = nil
+        self.symbol_size = 96
+        self.symbol_weight = .semibold
+        self.entity = nil
+        
+        self._to_rename = .constant(false)
+        self._edited_name = .constant("")
+        _new_name = State(initialValue: _edited_name.wrappedValue)
+        self.on_rename = {}
+        
+        self.overlay_view = overlay()
+    }
     
     // Init with Image
     public init(
@@ -511,93 +547,96 @@ public struct GlassBoxCard<Content: View>: View
                             .opacity(0.2)
                             .overlay(alignment: .bottomLeading)
                             {
-                                // Rename Handling
-                                HStack
+                                if let displayed_title = title
                                 {
-                                    if !to_rename
+                                    // Rename Handling
+                                    HStack
                                     {
-                                        VStack(alignment: .leading)
+                                        if !to_rename
                                         {
-                                            if let subtitle = subtitle
+                                            VStack(alignment: .leading)
                                             {
-                                                Text(title)
-                                                    .font(.headline)
-                                                    .padding(.top, 8)
-                                                    .padding(.leading, 4)
-                                                
-                                                Text(subtitle)
-                                                #if os(macOS) || os(iOS)
-                                                    .foregroundColor(.gray)
-                                                #endif
-                                                    .padding(.bottom, 8)
-                                                    .padding(.leading, 4)
+                                                if let subtitle = subtitle
+                                                {
+                                                    Text(displayed_title)
+                                                        .font(.headline)
+                                                        .padding(.top, 8)
+                                                        .padding(.leading, 4)
+                                                    
+                                                    Text(subtitle)
+                                                    #if os(macOS) || os(iOS)
+                                                        .foregroundColor(.gray)
+                                                    #endif
+                                                        .padding(.bottom, 8)
+                                                        .padding(.leading, 4)
+                                                }
+                                                else
+                                                {
+                                                    Text(displayed_title)
+                                                        .font(.headline)
+                                                        .padding(.vertical, 8)
+                                                        .padding(.leading, 4)
+                                                }
                                             }
-                                            else
-                                            {
-                                                Text(title)
-                                                    .font(.headline)
-                                                    .padding(.vertical, 8)
-                                                    .padding(.leading, 4)
-                                            }
+                                            .padding(.horizontal, 8)
+                                            .padding(.trailing, 4)
+                                            //Spacer()
                                         }
-                                        .padding(.horizontal, 8)
-                                        .padding(.trailing, 4)
-                                        //Spacer()
-                                    }
-                                    else
-                                    {
-                                        VStack(alignment: .leading)
+                                        else
                                         {
-                                            HStack
+                                            VStack(alignment: .leading)
                                             {
-                                                #if os(macOS)
-                                                TextField("Name", text: $new_name)
-                                                    .textFieldStyle(.roundedBorder)
-                                                    .focused($is_focused)
-                                                    .labelsHidden()
-                                                    .padding()
-                                                    .onSubmit
-                                                    {
+                                                HStack
+                                                {
+                                                    #if os(macOS)
+                                                    TextField("Name", text: $new_name)
+                                                        .textFieldStyle(.roundedBorder)
+                                                        .focused($is_focused)
+                                                        .labelsHidden()
+                                                        .padding()
+                                                        .onSubmit
+                                                        {
+                                                            edited_name = new_name
+                                                            title = new_name
+                                                            on_rename()
+                                                            to_rename = false
+                                                        }
+                                                        .onExitCommand
+                                                        {
+                                                            to_rename = false
+                                                        }
+                                                        .onAppear
+                                                        {
+                                                            is_focused = true
+                                                        }
+                                                    #else
+                                                    TextField("Name", text: $new_name, onCommit: {
                                                         edited_name = new_name
                                                         title = new_name
                                                         on_rename()
                                                         to_rename = false
-                                                    }
-                                                    .onExitCommand
-                                                    {
-                                                        to_rename = false
-                                                    }
-                                                    .onAppear
-                                                    {
-                                                        is_focused = true
-                                                    }
-                                                #else
-                                                TextField("Name", text: $new_name, onCommit: {
-                                                    edited_name = new_name
-                                                    title = new_name
-                                                    on_rename()
-                                                    to_rename = false
-                                                })
-                                                    .textFieldStyle(.roundedBorder)
-                                                    .focused($is_focused)
-                                                    .labelsHidden()
-                                                    .padding()
-                                                    .onAppear
-                                                    {
-                                                        is_focused = true
-                                                    }
-                                                #endif
+                                                    })
+                                                        .textFieldStyle(.roundedBorder)
+                                                        .focused($is_focused)
+                                                        .labelsHidden()
+                                                        .padding()
+                                                        .onAppear
+                                                        {
+                                                            is_focused = true
+                                                        }
+                                                    #endif
+                                                }
                                             }
                                         }
                                     }
+                                    #if !os(visionOS)
+                                    .background(.bar)
+                                    #else
+                                    .background(.thinMaterial)
+                                    #endif
+                                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                    .padding(8)
                                 }
-                                #if !os(visionOS)
-                                .background(.bar)
-                                #else
-                                .background(.thinMaterial)
-                                #endif
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                                .padding(8)
                             }
                         
                         overlay_view
