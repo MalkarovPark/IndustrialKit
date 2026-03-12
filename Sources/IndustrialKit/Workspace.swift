@@ -520,7 +520,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if element.module_name.isEmpty
         {
-            element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
+            //element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
             
             if !Changer.internal_modules_list.contains(element.module_name)
             {
@@ -545,6 +545,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 }
             }
         }
+        
+        element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
     }
     
     // MARK: - Performing functions
