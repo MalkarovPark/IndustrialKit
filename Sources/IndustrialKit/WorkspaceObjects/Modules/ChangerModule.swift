@@ -11,9 +11,15 @@ import JavaScriptCore
 open class ChangerModule: IndustrialModule
 {
     // MARK: - Module init functions for design
-    public override init(new_name: String = String(), description: String = String())
+    /// Module init with external JS function (context).
+    public override init(
+        name: String = String(),
+        description: String = String()
+    )
     {
-        super.init(new_name: new_name, description: description)
+        super.init(name: name, description: description)
+        
+        self.change = js_change
     }
     
     // MARK: Module init functions for in-app mounting
@@ -42,17 +48,6 @@ open class ChangerModule: IndustrialModule
         
         self.change = js_change
         self.changer_function_code = changer_function_code
-    }
-    
-    /// Module init with external JS function (context).
-    public override init(
-        name: String = String(),
-        description: String = String()
-    )
-    {
-        super.init(name: name, description: description)
-        
-        self.change = js_change
     }
     
     public override init(external_name: String)
