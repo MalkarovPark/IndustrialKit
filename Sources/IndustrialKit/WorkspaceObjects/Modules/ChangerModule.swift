@@ -22,12 +22,12 @@ open class ChangerModule: IndustrialModule
         name: String = String(),
         description: String = String(),
         
-        change_func: @escaping (inout [Float]) throws -> Void
+        changer_function: @escaping (inout [Float]) throws -> Void
     )
     {
         super.init(name: name, description: description)
         
-        self.change = change_func
+        self.change = changer_function
     }
     
     /// Module init with external JS function.
