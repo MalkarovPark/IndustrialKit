@@ -29,9 +29,12 @@ open class RobotModule: IndustrialModule
         name: String = String(),
         description: String = String(),
         
-        origin_shift: (x: Float, y: Float, z: Float) = (0, 0, 0),
-        default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0),
+        default_origin_position: (
+            x: Float, y: Float, z: Float,
+            r: Float, p: Float, w: Float
+        ) = (0, 0, 0, 0, 0, 0),
         
+        origin_shift: (x: Float, y: Float, z: Float) = (0, 0, 0),
         end_entity_name: String = String(),
         
         model_controller: RobotModelController = RobotModelController(),
