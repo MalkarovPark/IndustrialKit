@@ -17,19 +17,49 @@ open class ChangerModule: IndustrialModule
     }
     
     // MARK: Module init functions for in-app mounting
-    /// Internal module init.
-    public init(name: String = String(), description: String = String(), change_func: @escaping (inout [Float]) throws -> Void)
+    /// Module init with internal Swift function.
+    public init(
+        name: String = String(),
+        description: String = String(),
+        
+        change_func: @escaping (inout [Float]) throws -> Void
+    )
     {
         super.init(name: name, description: description)
         
-        //self.change = change_func
+        self.change = change_func
+    }
+    
+    /// Module init with external JS function.
+    public init(
+        name: String = String(),
+        description: String = String(),
+        
+        changer_function_code: String
+    )
+    {
+        super.init(name: name, description: description)
+        
+        self.change = js_change
+        self.changer_function_code = changer_function_code
+    }
+    
+    /// Module init with external JS function (context).
+    public override init(
+        name: String = String(),
+        description: String = String()
+    )
+    {
+        super.init(name: name, description: description)
+        
+        self.change = js_change
     }
     
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
         
-        //self.change = external_change_func
+        self.change = js_change
     }
     
     open override var extension_name: String { "changer" }
@@ -52,7 +82,9 @@ open class ChangerModule: IndustrialModule
      NSError(domain: "Performing Error", code: 1)
      if JavaScript execution fails or returns invalid data.
      */
-    public func change(_ registers: inout [Float]) throws
+    public var change: (_ registers: inout [Float]) throws -> Void = { _ in }
+    
+    public func js_change(_ registers: inout [Float]) throws
     {
         let context = JSContext()!
         

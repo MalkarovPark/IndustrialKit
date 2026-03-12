@@ -212,13 +212,6 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     {
         case name
         case description
-        
-        case is_internal
-        case code_items
-        case linked_components
-        
-        case resources_names
-        case main_scene_name
     }
     
     public required init(from decoder: any Decoder) throws
