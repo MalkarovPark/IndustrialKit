@@ -171,9 +171,14 @@ public class Workspace: ObservableObject, @unchecked Sendable
      - Parameters:
         - index: Selected program index.
      */
-    public func select_program(index: Int) // Delete program by index
+    public func select_program(index: Int)
     {
         selected_program_index = index
+        
+        if let selected_program = selected_program // Elements check on program selection
+        {
+            elements_check(program: selected_program)
+        }
     }
     
     /// Deselects operations program in robot.
@@ -266,6 +271,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
             if let selected_program = selected_program
             {
                 selected_program.set_mark_index(for: current_element)
+            }
+            
+            if let element = current_element as? ChangerModifierElement
+            {
+                changer_element_check(element)
             }
             
             perform(element: current_element)
@@ -438,7 +448,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
         }
         
-        func changer_element_check(_ element: ChangerModifierElement)
+        /*func changer_element_check(_ element: ChangerModifierElement)
         {
             if element.module_name.isEmpty
             {
@@ -467,7 +477,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     }
                 }
             }
-        }
+        }*/
         
         func jump_element_check(_ element: JumpLogicElement)
         {
@@ -502,6 +512,37 @@ public class Workspace: ObservableObject, @unchecked Sendable
             else
             {
                 name = ""
+            }
+        }
+    }
+    
+    private func changer_element_check(_ element: ChangerModifierElement)
+    {
+        if element.module_name.isEmpty
+        {
+            element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
+            
+            if !Changer.internal_modules_list.contains(element.module_name)
+            {
+                if Changer.internal_modules_list.count > 0
+                {
+                    element.module_name = Changer.internal_modules_list.first!
+                }
+                else
+                {
+                    element.module_name = "None"
+                }
+            }
+            else if !Changer.external_modules_list.contains(element.module_name)
+            {
+                if Changer.external_modules_list.count > 0
+                {
+                    element.module_name = Changer.external_modules_list.first!
+                }
+                else
+                {
+                    element.module_name = "None"
+                }
             }
         }
     }

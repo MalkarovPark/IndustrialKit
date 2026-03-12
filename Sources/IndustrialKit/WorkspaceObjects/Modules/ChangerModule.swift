@@ -66,13 +66,6 @@ open class ChangerModule: IndustrialModule
     
     // MARK: - Components
     /**
-     JavaScript code used to transform register values inside the Changer component.
-     
-     The script must operate on the `registers` array (Float[]) and return the modified array as the last expression.
-     */
-    @Published public var changer_function_code = String() // JS
-    
-    /**
      Performs register conversion within a class instance.
      
      - Parameters:
@@ -83,6 +76,13 @@ open class ChangerModule: IndustrialModule
      if JavaScript execution fails or returns invalid data.
      */
     public var change: (_ registers: inout [Float]) throws -> Void = { _ in }
+    
+    /**
+     JavaScript code used to transform register values inside the Changer component.
+     
+     The script must operate on the `registers` array (Float[]) and return the modified array as the last expression.
+     */
+    @Published public var changer_function_code = String() // JS
     
     public func js_change(_ registers: inout [Float]) throws
     {
