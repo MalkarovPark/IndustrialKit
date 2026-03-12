@@ -22,6 +22,11 @@ open class ChangerModule: IndustrialModule
         self.change = js_change
     }
     
+    /*public override init(new_name: String = String(), description: String = String())
+    {
+        super.init(new_name: new_name, description: description)
+    }*/
+    
     // MARK: Module init functions for in-app mounting
     /// Module init with internal Swift function.
     public init(
@@ -171,6 +176,8 @@ open class ChangerModule: IndustrialModule
         self.changer_function_code = try container.decode(String.self, forKey: .changer_function_code)
         
         try super.init(from: decoder)
+        
+        self.change = js_change
     }
     
     public override func encode(to encoder: any Encoder) throws
