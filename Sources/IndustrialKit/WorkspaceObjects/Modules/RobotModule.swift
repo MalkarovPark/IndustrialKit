@@ -162,6 +162,8 @@ open class RobotModule: IndustrialModule
     /// Imports components from external info.
     private func components_import(from module_info: RobotModule)
     {
+        default_origin_position = module_info.default_origin_position
+        
         origin_shift = module_info.origin_shift
         end_entity_name = module_info.end_entity_name
         
@@ -223,7 +225,6 @@ open class RobotModule: IndustrialModule
         }
         self.model_controller_code = try container.decode(String.self, forKey: .model_controller_code)
         
-        
         self.connection_parameters = try container.decode([ConnectionParameter].self, forKey: .connection_parameters)
         self.connector_code = try container.decode(String.self, forKey: .connector_code)
         
@@ -240,7 +241,6 @@ open class RobotModule: IndustrialModule
         try container.encode([origin_shift.x, origin_shift.y, origin_shift.z], forKey: .origin_shift)
         try container.encode([default_origin_position.x, default_origin_position.y, default_origin_position.z, default_origin_position.r, default_origin_position.p, default_origin_position.w], forKey: .default_origin_position)
         try container.encode(model_controller_code, forKey: .model_controller_code)
-        
         
         try container.encode(connection_parameters, forKey: .connection_parameters)
         try container.encode(connector_code, forKey: .connector_code)

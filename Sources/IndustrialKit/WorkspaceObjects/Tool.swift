@@ -43,7 +43,15 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     /// Inits tool by name, entity name, controller and connector.
-    public init(name: String, entity_name: String, model_controller: ToolModelController = ToolModelController(), connector: ToolConnector = ToolConnector(), codes: [OperationCodeInfo] = [OperationCodeInfo]())
+    public init(
+        name: String,
+        entity_name: String,
+        
+        model_controller: ToolModelController = ToolModelController(),
+        connector: ToolConnector = ToolConnector(),
+        
+        codes: [OperationCodeInfo] = [OperationCodeInfo]()
+    )
     {
         current_operation = OperationCode(0)
         
@@ -58,7 +66,12 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     /// Inits part by name and tool module.
-    public init(name: String, module: ToolModule, is_internal: Bool = true)
+    public init(
+        name: String,
+        module: ToolModule,
+        
+        is_internal: Bool = true
+    )
     {
         current_operation = OperationCode(0)
         
@@ -68,7 +81,12 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         module_import(module)
     }
     
-    public override init(name: String, module_name: String, is_internal: Bool)
+    public override init(
+        name: String,
+        module_name: String,
+        
+        is_internal: Bool
+    )
     {
         current_operation = OperationCode(0)
         

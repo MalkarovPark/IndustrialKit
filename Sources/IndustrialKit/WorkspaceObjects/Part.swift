@@ -30,13 +30,21 @@ open class Part: WorkspaceObject
         super.init(name: name)
     }
     
-    public override init(name: String, entity_name: String)
+    public override init(
+        name: String,
+        entity_name: String
+    )
     {
         super.init(name: name, entity_name: entity_name)
     }
     
     /// Inits part by name and part module.
-    public init(name: String, module: PartModule, is_internal: Bool = true)
+    public init(
+        name: String,
+        module: PartModule,
+        
+        is_internal: Bool = true
+    )
     {
         super.init(name: name)
         
@@ -44,7 +52,12 @@ open class Part: WorkspaceObject
         module_import(module)
     }
     
-    public override init(name: String, module_name: String, is_internal: Bool)
+    public override init(
+        name: String,
+        module_name: String,
+        
+        is_internal: Bool
+    )
     {
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }

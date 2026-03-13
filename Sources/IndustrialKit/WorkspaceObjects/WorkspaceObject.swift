@@ -136,7 +136,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
     }
     
     /**
-     A robot pointer position.
+     A workspace object position.
      
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */

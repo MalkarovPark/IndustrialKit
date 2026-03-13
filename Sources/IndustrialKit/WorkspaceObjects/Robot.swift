@@ -82,6 +82,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     public init(
         name: String,
         module: RobotModule,
+        
         is_internal: Bool = true
     )
     {
@@ -94,6 +95,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     public override init(
         name: String,
         module_name: String,
+        
         is_internal: Bool
     )
     {
