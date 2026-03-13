@@ -163,10 +163,14 @@ open class RobotModule: IndustrialModule
     private func components_import(from module_info: RobotModule)
     {
         origin_shift = module_info.origin_shift
+        end_entity_name = module_info.end_entity_name
+        
         model_controller = ExternalRobotModelController(
             entity_names: module_info.entity_names,
             code: module_info.model_controller_code
         )
+        
+        print(model_controller.entity_names)
         
         //#if os(macOS)
         //connector = ExternalRobotConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())

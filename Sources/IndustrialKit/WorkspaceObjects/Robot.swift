@@ -78,7 +78,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         self.connector = connector
     }
     
-    /// Inits robot by name and part module.
+    /// Inits robot by name and robot module.
     public init(
         name: String,
         module: RobotModule,
