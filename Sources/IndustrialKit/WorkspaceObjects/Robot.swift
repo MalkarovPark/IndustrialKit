@@ -197,15 +197,15 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             connector = module.connector
         }
         
-        /*if let model_controller = module.model_controller as? ExternalRobotModelController
+        if let model_controller = module.model_controller as? ExternalRobotModelController
         {
-            self.model_controller = model_controller
+            self.model_controller = model_controller.copy() as! ExternalRobotModelController
         }
         else
         {
             self.model_controller = module.model_controller.copy() as! RobotModelController
-        }*/
-        model_controller = module.model_controller
+        }
+        //model_controller = module.model_controller
         
         connector = module.connector.copy() as! RobotConnector
         
