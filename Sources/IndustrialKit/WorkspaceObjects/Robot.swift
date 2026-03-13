@@ -200,6 +200,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         model_controller = module.model_controller.copy() as! RobotModelController
         connector = module.connector.copy() as! RobotConnector
         
+        print(module.model_controller.entity_names)
+        print(model_controller.entity_names)
+        
         origin_shift = module.origin_shift
         origin_position = module.default_origin_position
         
