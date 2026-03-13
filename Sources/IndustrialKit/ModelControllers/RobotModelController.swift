@@ -11,6 +11,12 @@ import RealityKit
 ///Provides control over visual model for robot.
 open class RobotModelController: ModelController, @unchecked Sendable
 {
+    /// Copy model controller instance.
+    open override func copy(with zone: NSZone? = nil) -> Any
+    {
+        return type(of: self).init() as! Self
+    }
+    
     /**
      Updates entities positions of robot model by target position and origin parameters.
      
