@@ -199,7 +199,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         
         if let model_controller = module.model_controller as? ExternalRobotModelController
         {
-            self.model_controller = model_controller.copy() as! ExternalRobotModelController
+            self.model_controller = model_controller//.copy() as! ExternalRobotModelController
         }
         else
         {
