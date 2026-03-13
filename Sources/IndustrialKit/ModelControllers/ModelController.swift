@@ -28,6 +28,11 @@ open class ModelController: NSCopying
         return type(of: self).init() as! Self
     }
     
+    open func clone() -> Self
+    {
+        return type(of: self).init()
+    }
+    
     // MARK: - Scene handling
     /// Model nodes from connected root node.
     public var entities = [String: Entity]()

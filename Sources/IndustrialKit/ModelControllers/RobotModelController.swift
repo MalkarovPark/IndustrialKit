@@ -420,6 +420,16 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
         return copy
     }
     
+    open override func clone() -> Self
+    {
+        let copy = type(of: self).init()
+        
+        copy.external_entity_names = external_entity_names
+        copy.code = code
+        
+        return copy
+    }
+    
     // MARK: Init functions
     public init(
         entity_names: [String],
