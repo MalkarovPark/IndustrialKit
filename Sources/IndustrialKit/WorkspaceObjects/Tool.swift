@@ -126,15 +126,15 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
             perform_load_entity(module_entity.clone(recursive: true))
         }*/
         
-        if let model_controller = module.model_controller as? ExternalToolModelController
+        /*if let model_controller = module.model_controller as? ExternalToolModelController
         {
             self.model_controller = model_controller.copy() as! ExternalToolModelController
         }
         else
         {
             self.model_controller = module.model_controller.copy() as! ToolModelController
-        }
-        //model_controller = module.model_controller
+        }*/
+        model_controller = model_controller.copy() as! ToolModelController
         
         if !(module.connector is ExternalToolConnector)
         {

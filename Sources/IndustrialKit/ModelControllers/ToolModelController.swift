@@ -141,6 +141,17 @@ open class ToolModelController: ModelController, @unchecked Sendable
 // MARK: - External Model Controller
 open class ExternalToolModelController: ToolModelController, @unchecked Sendable
 {
+    /// Copy model controller instance.
+    open override func copy(with zone: NSZone? = nil) -> Any
+    {
+        let copy = type(of: self).init()
+        
+        copy.external_entity_names = self.external_entity_names
+        copy.code = self.code
+        
+        return copy
+    }
+    
     // MARK: Init functions
     public init(
         entity_names: [String],
