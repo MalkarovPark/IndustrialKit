@@ -15,10 +15,25 @@ public struct SpatialPendantView: View
     @ObservedObject var controller: PendantController
     @ObservedObject var workspace: Workspace
     
-    public init(controller: PendantController, workspace: Workspace)
+    let on_update_workspace: () -> ()
+    let on_update_robot: () -> ()
+    let on_update_tool: () -> ()
+    
+    public init(
+        controller: PendantController,
+        workspace: Workspace,
+        
+        on_update_workspace: @escaping () -> () = {},
+        on_update_robot: @escaping () -> () = {},
+        on_update_tool: @escaping () -> () = {}
+    )
     {
         self.controller = controller
         self.workspace = workspace
+        
+        self.on_update_workspace = on_update_workspace
+        self.on_update_robot = on_update_robot
+        self.on_update_tool = on_update_tool
     }
     
     public var body: some View
@@ -32,9 +47,9 @@ public struct SpatialPendantView: View
                     switch workspace.selected_object
                     {
                     case let robot as Robot:
-                        RobotControlView(robot: robot)
+                        RobotControlView(robot: robot, on_update: on_update_robot)
                     case let tool as Tool:
-                        ToolControlView(tool: tool)
+                        ToolControlView(tool: tool, on_update: on_update_tool)
                     case is Part:
                         ZStack
                         {
@@ -53,7 +68,7 @@ public struct SpatialPendantView: View
                     case .some(_):
                         Text("Nothing")
                     case .none:
-                        WorkspaceControlView(workspace: workspace)
+                        WorkspaceControlView(workspace: workspace, on_update: on_update_workspace)
                     }
                 }
                 .padding(8)
