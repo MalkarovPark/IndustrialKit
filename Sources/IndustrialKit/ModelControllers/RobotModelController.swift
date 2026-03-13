@@ -11,12 +11,6 @@ import RealityKit
 ///Provides control over visual model for robot.
 open class RobotModelController: ModelController, @unchecked Sendable
 {
-    /// Copy model controller instance.
-    open override func copy(with zone: NSZone? = nil) -> Any
-    {
-        return type(of: self).init() as! Self
-    }
-    
     /**
      Updates entities positions of robot model by target position and origin parameters.
      
@@ -415,6 +409,12 @@ open class RobotModelController: ModelController, @unchecked Sendable
 //MARK: - External Controller
 open class ExternalRobotModelController: RobotModelController, @unchecked Sendable
 {
+    /// Copy model controller instance.
+    open override func copy(with zone: NSZone? = nil) -> Any
+    {
+        return type(of: self).init() as! Self
+    }
+    
     // MARK: Init functions
     public init(
         entity_names: [String],
