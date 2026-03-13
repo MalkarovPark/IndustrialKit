@@ -15,19 +15,14 @@ import RealityKit
  Controller can add SCNaction or update position, angles for any nodes nested in object visual model root node.
  > Model controller does not build the visual model, but can change it according to instance's lengths.
  */
-open class ModelController: NSCopying
+open class ModelController
 {
     required public init()
     {
         
     }
     
-    /// Copy model controller instance.
-    open func copy(with zone: NSZone? = nil) -> Any
-    {
-        return type(of: self).init() as! Self
-    }
-    
+    /// Clone model controller instance.
     open func clone() -> Self
     {
         return type(of: self).init()

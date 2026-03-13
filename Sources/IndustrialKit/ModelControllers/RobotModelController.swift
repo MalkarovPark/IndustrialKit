@@ -409,17 +409,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
 //MARK: - External Controller
 open class ExternalRobotModelController: RobotModelController, @unchecked Sendable
 {
-    /// Copy model controller instance.
-    open override func copy(with zone: NSZone? = nil) -> Any
-    {
-        let copy = type(of: self).init()
-        
-        copy.external_entity_names = self.external_entity_names
-        copy.code = self.code
-        
-        return copy
-    }
-    
+    /// Clone model controller instance.
     open override func clone() -> Self
     {
         let copy = type(of: self).init()

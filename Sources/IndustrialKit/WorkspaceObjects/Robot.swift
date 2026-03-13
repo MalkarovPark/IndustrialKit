@@ -179,14 +179,6 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             perform_load_entity(module_entity.clone(recursive: true))
         }*/
         
-        /*if let model_controller = module.model_controller as? ExternalRobotModelController
-        {
-            self.model_controller = model_controller.copy() as! ExternalRobotModelController
-        }
-        else
-        {
-            self.model_controller = module.model_controller.copy() as! RobotModelController
-        }*/
         model_controller = module.model_controller.clone()
         
         if !(module.connector is ExternalRobotConnector)
@@ -197,9 +189,6 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         {
             connector = module.connector
         }
-        
-        print(module.model_controller.entity_names)
-        print(model_controller.entity_names)
         
         origin_shift = module.origin_shift
         origin_position = module.default_origin_position

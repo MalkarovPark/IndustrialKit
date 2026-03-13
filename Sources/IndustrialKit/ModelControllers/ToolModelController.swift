@@ -141,13 +141,13 @@ open class ToolModelController: ModelController, @unchecked Sendable
 // MARK: - External Model Controller
 open class ExternalToolModelController: ToolModelController, @unchecked Sendable
 {
-    /// Copy model controller instance.
-    open override func copy(with zone: NSZone? = nil) -> Any
+    /// Clone model controller instance.
+    open override func clone() -> Self
     {
         let copy = type(of: self).init()
         
-        copy.external_entity_names = self.external_entity_names
-        copy.code = self.code
+        copy.external_entity_names = external_entity_names
+        copy.code = code
         
         return copy
     }
