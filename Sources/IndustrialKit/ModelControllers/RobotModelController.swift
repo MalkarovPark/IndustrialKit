@@ -412,7 +412,12 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
     /// Copy model controller instance.
     open override func copy(with zone: NSZone? = nil) -> Any
     {
-        return type(of: self).init() as! Self
+        let copy = type(of: self).init()
+        
+        copy.external_entity_names = self.external_entity_names
+        copy.code = self.code
+        
+        return copy
     }
     
     // MARK: Init functions
