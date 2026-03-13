@@ -363,7 +363,11 @@ public struct RegistersDataView: View
     
     let save_registers: () -> ()
     
-    public init(is_presented: Binding<Bool>, workspace: Workspace, save_registers: @escaping () -> Void = {})
+    public init(
+        is_presented: Binding<Bool>,
+        workspace: Workspace,
+        save_registers: @escaping () -> Void = {}
+    )
     {
         self._is_presented = is_presented
         self.workspace = workspace

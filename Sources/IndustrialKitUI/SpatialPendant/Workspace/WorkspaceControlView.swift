@@ -118,10 +118,7 @@ struct WorkspaceControlView: View
                 }
                 .sheet(isPresented: $registers_view_presented)
                 {
-                    RegistersDataView(is_presented: $registers_view_presented, workspace: workspace)
-                    {
-                        //document_handler.document_update_registers()
-                    }
+                    RegistersDataView(is_presented: $registers_view_presented, workspace: workspace, save_registers: on_update)
                     .onDisappear()
                     {
                         registers_view_presented = false
