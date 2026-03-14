@@ -562,7 +562,7 @@ public struct EntityPositionData: Codable, Sendable
         Pose(x: x, y: y, z: z, r: r, p: p, w: w)
     }
     
-    /*public init(name: String, position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    public init(name: String, position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
     {
         self.name = name
         
@@ -573,7 +573,7 @@ public struct EntityPositionData: Codable, Sendable
         self.r = position.r
         self.p = position.p
         self.w = position.w
-    }*/
+    }
     
     enum CodingKeys: String, CodingKey
     {
