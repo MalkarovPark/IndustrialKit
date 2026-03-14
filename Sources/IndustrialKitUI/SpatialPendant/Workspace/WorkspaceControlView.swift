@@ -152,6 +152,8 @@ struct WorkspaceControlView: View
                                             if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
                                             {
                                                 workspace.programs[index].name = mismatched_name(name: new_value, names: workspace.programs_names)
+                                                
+                                                on_update()
                                             }
                                         }
                                     ),
@@ -176,8 +178,17 @@ struct WorkspaceControlView: View
                                     dragging_program_id = program.id
                                     return NSItemProvider(object: program.id.uuidString as NSString)
                                 }
-                                .onDrop(of: [.text],
-                                        delegate: ProgramDropDelegate(current_program: program, workspace: workspace, dragging_program_id: $dragging_program_id))
+                                .onDrop(
+                                    of: [.text],
+                                    delegate: ProgramDropDelegate(
+                                        workspace: workspace,
+                                        
+                                        current_program: program,
+                                        dragging_program_id: $dragging_program_id,
+                                        
+                                        on_update: on_update
+                                    )
+                                )
                                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                             }
                         }
@@ -281,10 +292,12 @@ struct WorkspaceControlView: View
 
 private struct ProgramDropDelegate: DropDelegate
 {
-    let current_program: ProductionProgram
     let workspace: Workspace
     
+    let current_program: ProductionProgram
     @Binding var dragging_program_id: UUID?
+    
+    let on_update: () -> ()
     
     func dropEntered(info: DropInfo)
     {
@@ -304,6 +317,7 @@ private struct ProgramDropDelegate: DropDelegate
     func performDrop(info: DropInfo) -> Bool
     {
         dragging_program_id = nil
+        on_update()
         return true
     }
 }
@@ -399,7 +413,8 @@ private struct ProductionProgramView: View
                                 element: element,
                                 on_update: on_update
                             )
-                            { if let index = program.elements.firstIndex(where: { $0.id == element.id })
+                            {
+                                if let index = program.elements.firstIndex(where: { $0.id == element.id })
                                 {
                                     workspace.reset_performing()
                                     program.elements.remove(at: index)
@@ -415,7 +430,18 @@ private struct ProductionProgramView: View
                                 dragging_element_id = element.id
                                 return NSItemProvider(object: element.id.uuidString as NSString)
                             }
-                            .onDrop(of: [.text], delegate: ElementDropDelegate(current_element: element, program: program, dragging_element_id: $dragging_element_id, workspace: workspace, on_update: on_update))
+                            .onDrop(
+                                of: [.text],
+                                delegate: ElementDropDelegate(
+                                    workspace: workspace,
+                                    program: program,
+                                    
+                                    current_element: element,
+                                    dragging_element_id: $dragging_element_id,
+                                    
+                                    on_update: on_update
+                                )
+                            )
                             .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                         }
                     }
@@ -506,12 +532,11 @@ private struct ElementItemView: View
 
 private struct ElementDropDelegate: DropDelegate
 {
-    let current_element: WorkspaceProgramElement
+    let workspace: Workspace
     let program: ProductionProgram
     
+    let current_element: WorkspaceProgramElement
     @Binding var dragging_element_id: UUID?
-    
-    let workspace: Workspace
     
     let on_update: () -> ()
     
@@ -530,8 +555,6 @@ private struct ElementDropDelegate: DropDelegate
             withAnimation
             {
                 program.elements.move(fromOffsets: IndexSet(integer: from_index), toOffset: to_index > from_index ? to_index + 1 : to_index)
-                
-                on_update()
             }
         }
     }
@@ -539,6 +562,7 @@ private struct ElementDropDelegate: DropDelegate
     func performDrop(info: DropInfo) -> Bool
     {
         dragging_element_id = nil
+        on_update()
         return true
     }
 }

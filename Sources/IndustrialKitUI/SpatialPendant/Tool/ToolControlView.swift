@@ -65,6 +65,8 @@ public struct ToolControlView: View
                                             if let index = tool.programs.firstIndex(where: { $0.id == program.id })
                                             {
                                                 tool.programs[index].name = mismatched_name(name: new_value, names: tool.programs_names)
+                                                
+                                                on_update()
                                             }
                                         }
                                     ),
@@ -74,8 +76,9 @@ public struct ToolControlView: View
                                         if let index = tool.programs.firstIndex(where: { $0.id == program.id })
                                         {
                                             tool.reset_performing()
-                                            
                                             tool.programs.remove(at: index)
+                                            
+                                            on_update()
                                         }
                                     }
                                 )
@@ -91,8 +94,17 @@ public struct ToolControlView: View
                                     dragging_program_id = program.id
                                     return NSItemProvider(object: program.id.uuidString as NSString)
                                 }
-                                .onDrop(of: [.text],
-                                        delegate: ProgramDropDelegate(current_program: program, tool: tool, dragging_program_id: $dragging_program_id))
+                                .onDrop(
+                                    of: [.text],
+                                    delegate: ProgramDropDelegate(
+                                        tool: tool,
+                                        
+                                        current_program: program,
+                                        dragging_program_id: $dragging_program_id,
+                                        
+                                        on_update: on_update
+                                    )
+                                )
                                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                             }
                         }
@@ -107,7 +119,11 @@ public struct ToolControlView: View
                 
                 if let program = tool.selected_program
                 {
-                    OperationProgramView(tool: tool, program: program)
+                    OperationProgramView(
+                        tool: tool,
+                        program: program,
+                        on_update: on_update
+                    )
                     {
                         deselect_program()
                     }
@@ -202,10 +218,12 @@ public struct ToolControlView: View
 
 private struct ProgramDropDelegate: DropDelegate
 {
-    let current_program: OperationProgram
     let tool: Tool
     
+    let current_program: OperationProgram
     @Binding var dragging_program_id: UUID?
+    
+    let on_update: () -> ()
     
     func dropEntered(info: DropInfo)
     {
@@ -225,6 +243,7 @@ private struct ProgramDropDelegate: DropDelegate
     func performDrop(info: DropInfo) -> Bool
     {
         dragging_program_id = nil
+        on_update()
         return true
     }
 }
@@ -235,7 +254,11 @@ private struct OperationProgramView: View
     @ObservedObject var tool: Tool
     
     @ObservedObject var program: OperationProgram
-    var dismiss_function: () -> ()
+    
+    let on_update: () -> ()
+    
+    let dismiss_function: () -> ()
+    
     @State private var dragging_code_id: UUID?
     
     var body: some View
@@ -282,10 +305,12 @@ private struct OperationProgramView: View
                             program: program,
                             code_item: code
                         )
-                        { if let index = program.codes.firstIndex(where: { $0.id == code.id })
+                        {
+                            if let index = program.codes.firstIndex(where: { $0.id == code.id })
                             {
                                 program.codes.remove(at: index)
-                                //tool.update_position_program_entity(by: program)
+                                
+                                on_update()
                             }
                         }
                         .onDrag
@@ -293,7 +318,18 @@ private struct OperationProgramView: View
                             dragging_code_id = code.id
                             return NSItemProvider(object: code.id.uuidString as NSString)
                         }
-                        .onDrop(of: [.text], delegate: OperationDropDelegate(current_code: code, program: program, dragging_code_id: $dragging_code_id, tool: tool))
+                        .onDrop(
+                            of: [.text],
+                            delegate: OperationDropDelegate(
+                                tool: tool,
+                                program: program,
+                                
+                                current_code: code,
+                                dragging_code_id: $dragging_code_id,
+                                
+                                on_update: on_update
+                            )
+                        )
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
                     
@@ -388,12 +424,13 @@ private struct OperationItemView: View
 
 private struct OperationDropDelegate: DropDelegate
 {
-    let current_code: OperationCode
+    let tool: Tool
     let program: OperationProgram
     
+    let current_code: OperationCode
     @Binding var dragging_code_id: UUID?
     
-    let tool: Tool
+    let on_update: () -> ()
     
     func dropEntered(info: DropInfo)
     {
@@ -413,7 +450,7 @@ private struct OperationDropDelegate: DropDelegate
     func performDrop(info: DropInfo) -> Bool
     {
         dragging_code_id = nil
-        //robot.update_position_program_entity(by: program)
+        on_update()
         return true
     }
 }

@@ -62,7 +62,9 @@ public struct RobotControlView: View
                                         set: { new_value in
                                             if let index = robot.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                robot.programs[index].name = mismatched_name(name: new_value, names: robot.programs_names)//new_value
+                                                robot.programs[index].name = mismatched_name(name: new_value, names: robot.programs_names)
+                                                
+                                                on_update()
                                             }
                                         }
                                     ),
@@ -72,6 +74,8 @@ public struct RobotControlView: View
                                         if let index = robot.programs.firstIndex(where: { $0.id == program.id })
                                         {
                                             robot.programs.remove(at: index)
+                                            
+                                            on_update()
                                         }
                                     }
                                 )
@@ -85,8 +89,17 @@ public struct RobotControlView: View
                                     dragging_program_id = program.id
                                     return NSItemProvider(object: program.id.uuidString as NSString)
                                 }
-                                .onDrop(of: [.text],
-                                        delegate: ProgramDropDelegate(current_program: program, robot: robot, dragging_program_id: $dragging_program_id))
+                                .onDrop(
+                                    of: [.text],
+                                    delegate: ProgramDropDelegate(
+                                        robot: robot,
+                                        
+                                        current_program: program,
+                                        dragging_program_id: $dragging_program_id,
+                                        
+                                        on_update: on_update
+                                    )
+                                )
                                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                             }
                         }
@@ -101,7 +114,11 @@ public struct RobotControlView: View
                 
                 if let program = robot.selected_program
                 {
-                    PositionProgramView(robot: robot, program: program)
+                    PositionProgramView(
+                        robot: robot,
+                        program: program,
+                        on_update: on_update
+                    )
                     {
                         deselect_program()
                     }
@@ -192,10 +209,12 @@ public struct RobotControlView: View
 
 private struct ProgramDropDelegate: DropDelegate
 {
-    let current_program: PositionProgram
     let robot: Robot
     
+    let current_program: PositionProgram
     @Binding var dragging_program_id: UUID?
+    
+    let on_update: () -> ()
     
     func dropEntered(info: DropInfo)
     {
@@ -215,6 +234,7 @@ private struct ProgramDropDelegate: DropDelegate
     func performDrop(info: DropInfo) -> Bool
     {
         dragging_program_id = nil
+        on_update()
         return true
     }
 }
@@ -225,7 +245,11 @@ private struct PositionProgramView: View
     @ObservedObject var robot: Robot
     
     @ObservedObject var program: PositionProgram
-    var dismiss_function: () -> ()
+    
+    let on_update: () -> ()
+    
+    let dismiss_function: () -> ()
+    
     @State private var dragging_point_id: UUID?
     
     var body: some View
@@ -287,7 +311,18 @@ private struct PositionProgramView: View
                             dragging_point_id = point.id
                             return NSItemProvider(object: point.id.uuidString as NSString)
                         }
-                        .onDrop(of: [.text], delegate: PositionDropDelegate(current_point: point, program: program, dragging_point_id: $dragging_point_id, robot: robot))
+                        .onDrop(
+                            of: [.text],
+                            delegate: PositionDropDelegate(
+                                robot: robot,
+                                program: program,
+                                
+                                current_point: point,
+                                dragging_point_id: $dragging_point_id,
+                                
+                                on_update: on_update
+                            )
+                        )
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
                     
@@ -390,12 +425,13 @@ private struct PositionItemView: View
 
 private struct PositionDropDelegate: DropDelegate
 {
-    let current_point: PositionPoint
+    let robot: Robot
     let program: PositionProgram
     
+    let current_point: PositionPoint
     @Binding var dragging_point_id: UUID?
     
-    let robot: Robot
+    let on_update: () -> ()
     
     func dropEntered(info: DropInfo)
     {
@@ -416,6 +452,7 @@ private struct PositionDropDelegate: DropDelegate
     {
         dragging_point_id = nil
         robot.update_position_program_entity(by: program)
+        on_update()
         return true
     }
 }
