@@ -123,12 +123,7 @@ public class ExternalRobotConnector: RobotConnector
 
         guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: arguments) else
         {
-            if output != String()
-            {
-                output += "\n"
-            }
-            
-            self.output += "Couldn't perform external code"
+            connection_error = NSError(domain: "Couldn't perform external code", code: 0, userInfo: nil)
             return false
         }
         
@@ -136,32 +131,27 @@ public class ExternalRobotConnector: RobotConnector
         if let start = terminal_output.range(of: "<done:")?.upperBound,
            let end = terminal_output[start...].firstIndex(of: ">")
         {
-            if !output.isEmpty { output += "\n" }
-            output += terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+            connection_output_string = terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
             return true
         }
         if let start = terminal_output.range(of: "<failed:")?.upperBound,
            let end = terminal_output[start...].firstIndex(of: ">")
         {
-            if !output.isEmpty { output += "\n" }
-            output += terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines)
+            connection_error = NSError(domain: terminal_output[start..<end].trimmingCharacters(in: .whitespacesAndNewlines), code: 0, userInfo: nil)
             return false
         }
         if terminal_output.contains("<done>")
         {
-            if !output.isEmpty { output += "\n" }
-            output += "Done"
+            connection_output_string = "Connected"
             return true
         }
         if terminal_output.contains("<failed>")
         {
-            if !output.isEmpty { output += "\n" }
-            output += "Failed"
+            connection_error = NSError(domain: "Connection failed", code: 0, userInfo: nil)
             return false
         }
         
-        if !output.isEmpty { output += "\n" }
-        output += "External module connector unavailable"
+        connection_error = NSError(domain: "External module connector unavailable", code: 0, userInfo: nil)
         return false
         #else
         return false
@@ -171,17 +161,13 @@ public class ExternalRobotConnector: RobotConnector
     override open func disconnection_process()// async
     {
         #if os(macOS)
-        if !output.isEmpty { output += "\n" }
-        
         guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["disconnect"])
         else
         {
-            self.output += "Disconnection operation not initiated"
+            
             connection_failure = true
             return
         }
-        
-        self.output += terminal_output.isEmpty ? "Disconnected" : terminal_output
         #endif
     }
     
@@ -256,7 +242,7 @@ public class ExternalRobotConnector: RobotConnector
         guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: command)
         else
         {
-            self.output += "Couldn't move to position"
+            connection_error = NSError(domain: "Couldn't move to position", code: 0, userInfo: nil)
             connection_failure = true
             connected = false
             return

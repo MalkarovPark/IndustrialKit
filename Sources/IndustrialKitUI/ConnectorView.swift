@@ -31,7 +31,7 @@ public struct ConnectorView: View
         {
             if let device = object as? any DeviceTwin
             {
-                ZStack
+                /*ZStack
                 {
                     #if os(iOS)
                     Rectangle()
@@ -49,11 +49,7 @@ public struct ConnectorView: View
                         }
                     }
                     .listStyle(.plain)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .modifier(ViewBorderer())
-                .overlay(alignment: .center)
-                {
+                    
                     if !(device.connector.default_parameters.count > 0)
                     {
                         Text("No connection parameters")
@@ -61,68 +57,73 @@ public struct ConnectorView: View
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
-                .controlSize(.regular)
-                .padding(.bottom)
-                
-                /*HStack(spacing: 0)
-                {
-                    TextEditor(text: $connector.output)
-                        .scrollIndicators(.hidden)
-                    
-                    VStack
-                    {
-                        Rectangle()
-                        #if !os(visionOS)
-                            .fill(.white)
-                        #else
-                            .fill(.clear)
-                        #endif
-                    }
-                    #if !os(visionOS)
-                    .frame(width: 32)
-                    #else
-                    .frame(width: 68)
-                    #endif
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .modifier(ViewBorderer())
-                #if os(visionOS)
-                .frame(height: 128)
-                #endif
-                .overlay(alignment: .topTrailing)
+                .overlay(alignment: .bottomLeading)
                 {
-                    VStack(spacing: 0)
+                    let connection_error = Binding(
+                        get: { device.connector.connection_error },
+                        set:
+                            { new_value in
+                                device.connector.connection_error = new_value
+                                
+                                on_update()
+                            }
+                    )
+                    
+                    if let error = device.connector.connection_error
                     {
-                        Toggle(isOn: $connector.get_output)
+                        Button
                         {
-                            Image(systemName: "text.append")
-                                .frame(width: 16, height: 16)
+                            device.connector.connection_error = nil
                         }
-                        .buttonStyle(.bordered)
-                        .toggleStyle(.button)
-                        .buttonBorderShape(.circle)
+                        label:
+                        {
+                            ZStack
+                            {
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .foregroundStyle(.thinMaterial)
+                                
+                                VStack(alignment: .leading)
+                                {
+                                    Label("Error", systemImage: "xmark.octagon.fill")
+                                    
+                                    ScrollView
+                                    {
+                                        Text(error.localizedDescription)
+                                            .multilineTextAlignment(.leading)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .lineLimit(nil)
+                                        #if os(macOS)
+                                            .font(.system(size: 10))
+                                        #else
+                                            .font(.system(size: 14))
+                                        #endif
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                .padding(8)
+                            }
+                        }
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(
+                            maxHeight: {
+                                #if os(macOS)
+                                80
+                                #else
+                                96
+                                #endif
+                            }(),
+                            alignment: .bottom
+                        )
+                        .buttonStyle(.plain)
                         .padding(8)
-                        
-                        Button(action: {
-                            connector.clear_output()
-                        })
-                        {
-                            Image(systemName: "eraser")
-                                .frame(width: 16, height: 16)
-                        }
-                        .buttonStyle(.bordered)
-                        .buttonBorderShape(.circle)
-                        .toggleStyle(.button)
-                        .padding(.horizontal, 8)
                     }
-                    #if !os(iOS)
-                    .controlSize(.large)
-                    #endif
                 }
-                .frame(maxWidth: .infinity, maxHeight: 112)
-                #if !os(visionOS)
-                .backgroundStyle(.white)
-                #endif
+                .controlSize(.regular)
                 .padding(.bottom)*/
+                
+                ConnectionStatusView(connector: device.connector, on_update: on_update)
                 
                 HStack(spacing: 0)
                 {
@@ -176,40 +177,135 @@ public struct ConnectorView: View
                     
                     ConnectionButton(connector: device.connector, connect_device: { device.connect_device() }, disconnect_device: { device.disconnect_device() })
                         .disabled(device.device_mode == .simulation)
-                    
-                    /*Button
-                    {
-                        if !device.connector.connected
-                        {
-                            device.connect_device()
-                        }
-                        else
-                        {
-                            device.disconnect_device()
-                        }
-                    }
-                    label:
-                    {
-                        HStack
-                        {
-                            Text(device.connector.connection_button.label)
-                            
-                            Circle()
-                                .fill(device.connector.connection_button.color)
-                                .frame(width: 10, height: 10)
-                        }
-                    }
-                    #if os(macOS)
-                    .controlSize(.large)
-                    #endif
-                    .buttonStyle(.bordered)*/
-                    //.disabled(device.device_mode == .simulation)
                 }
             }
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .controlSize(.regular)
+    }
+}
+
+private struct ConnectionStatusView: View
+{
+    @ObservedObject var connector: WorkspaceObjectConnector
+    
+    let on_update: () -> Void
+    
+    var body: some View
+    {
+        ZStack
+        {
+            #if os(iOS)
+            Rectangle()
+                .foregroundStyle(.white)
+            #endif
+            
+            List
+            {
+                if connector.default_parameters.count > 0
+                {
+                    ForEach(connector.parameters.indices, id: \.self)
+                    { index in
+                        ConnectionParameterView(parameter: connector.parameters[index], on_update: on_update)
+                    }
+                }
+            }
+            .listStyle(.plain)
+            
+            if !(connector.default_parameters.count > 0)
+            {
+                Text("No connection parameters")
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .modifier(ViewBorderer())
+        .overlay(alignment: .bottomLeading)
+        {
+            VStack(spacing: 8)
+            {
+                if let output_string = connector.connection_output_string
+                {
+                    Button
+                    {
+                        connector.connection_output_string = nil
+                    }
+                    label:
+                    {
+                        ZStack
+                        {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .foregroundStyle(.thinMaterial)
+                            
+                            VStack(alignment: .leading)
+                            {
+                                Label("Connection", systemImage: "info.circle.fill")
+                                
+                                ScrollView
+                                {
+                                    Text(output_string)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .lineLimit(nil)
+                                    #if os(macOS)
+                                        .font(.system(size: 10))
+                                    #else
+                                        .font(.system(size: 14))
+                                    #endif
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .padding(8)
+                        }
+                    }
+                    .fixedSize(horizontal: false, vertical: true)
+                    .buttonStyle(.plain)
+                }
+                
+                if let error = connector.connection_error
+                {
+                    Button
+                    {
+                        connector.connection_error = nil
+                    }
+                    label:
+                    {
+                        ZStack
+                        {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .foregroundStyle(.thinMaterial)
+                            
+                            VStack(alignment: .leading)
+                            {
+                                Label("Error", systemImage: "xmark.octagon.fill")
+                                
+                                ScrollView
+                                {
+                                    Text(error.localizedDescription)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .lineLimit(nil)
+                                    #if os(macOS)
+                                        .font(.system(size: 10))
+                                    #else
+                                        .font(.system(size: 14))
+                                    #endif
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .padding(8)
+                        }
+                    }
+                    .fixedSize(horizontal: false, vertical: true)
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(8)
+        }
+        .controlSize(.regular)
+        .padding(.bottom)
     }
 }
 
@@ -363,13 +459,17 @@ struct ConnectorView_Previews: PreviewProvider
 {
     struct Container: View
     {
-        @StateObject private var object = Tool(name: "Test", entity_name: "??", connector: Test_Connector())
+        @ObservedObject private var object = Tool(name: "Test", entity_name: "??", connector: Test_Connector())
         @State private var update_model = false
         
         var body: some View
         {
             ConnectorView(object: object)
                 .frame(width: 420)
+                .onAppear
+                {
+                    object.device_mode = .real
+                }
         }
     }
     
@@ -383,18 +483,32 @@ struct ConnectorView_Previews: PreviewProvider
         override var default_parameters: [ConnectionParameter]
         {
             [
-                .init(name: "String", value: "Text"),
-                .init(name: "Int", value: 8),
-                .init(name: "Float", value: Float(6)),
+                //.init(name: "String", value: "Text"),
+                //.init(name: "Int", value: 8),
+                //.init(name: "Float", value: Float(6)),
                 .init(name: "Bool", value: true)
             ]
         }
         
         override func connection_process() async -> Bool
         {
-            sleep(2)
-            return true
+            sleep(1)
+            
+            let result = parameters[safe: 0]?.value as? Bool ?? false
+            
+            if result
+            {
+                connection_output_string = "Connected"
+            }
+            else
+            {
+                connection_output_string = "Failed"
+                connection_error = NSError(domain: "Connection failed", code: 0, userInfo: nil)
+            }
+            
+            return result
+            
+            //return (parameters[safe: 0]?.value as? Bool) ?? false
         }
     }
 }
-

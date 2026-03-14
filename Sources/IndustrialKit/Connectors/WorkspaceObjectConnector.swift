@@ -120,12 +120,16 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     private var connection_task = Task {}
     private var disconnection_task = Task {}
     
+    @Published public var connection_error: Error?
+    @Published public var connection_output_string: String?
+    
     /// Connects instance to real workspace object.
     public func connect()
     {
         disconnection_task.cancel()
         
-        Task { @MainActor in
+        Task
+        { @MainActor in
             connection_failure = false
         }
         
@@ -198,36 +202,6 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     open func disconnection_process()
     {
         
-    }
-    
-    /// A get output flag.
-    @Published public var get_output = false
-    
-    private var connector_output_data = String()
-    
-    /// A connection output data.
-    public var output: String
-    {
-        get
-        {
-            if !get_output
-            {
-                connector_output_data = String()
-            }
-            
-            return connector_output_data
-        }
-        set
-        {
-            connector_output_data = newValue
-        }
-    }
-    
-    /// Clears connectiopn output data.
-    public func clear_output()
-    {
-        output = String()
-        self.objectWillChange.send()
     }
     
     /// Reset device perfoming.
