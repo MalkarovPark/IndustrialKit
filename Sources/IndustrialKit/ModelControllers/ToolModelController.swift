@@ -56,6 +56,26 @@ open class ToolModelController: ModelController, @unchecked Sendable
     {
         let entity_animations = try entity_animations(code: code)
         
+        let animation_time = process_animation(by: entity_animations) // Perform and get animation time
+        
+        usleep(UInt32(animation_time * 1_000_000))
+    }
+    
+    /**
+     Processes a list of entity animations and plays them on the corresponding entities.
+     
+     - Parameters:
+        - entity_animations: An array of `EntityAnimationData`, each containing the target entity name,
+     transform parameters (position, rotation, scale), duration, delay, speed, and repeat count.
+     
+     - Returns: The total time (`TimeInterval`) needed to complete all animations, including
+     duration, speed, delay, and repeat count.
+     
+     Animations are applied immediately if the target entity exists. Entities not found in
+     `entities` are skipped.
+     */
+    public func process_animation(by entity_animations: [EntityAnimationData]) -> TimeInterval
+    {
         var animation_time: TimeInterval = 0
         
         for entity_animation in entity_animations
@@ -63,7 +83,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
             process_animation(by: entity_animation)
         }
         
-        usleep(UInt32(animation_time * 1_000_000))
+        return animation_time
         
         func process_animation(by data: EntityAnimationData)
         {

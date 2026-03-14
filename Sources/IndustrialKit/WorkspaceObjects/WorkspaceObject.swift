@@ -452,10 +452,10 @@ public protocol StateOutputCapable: WorkspaceObject, ObservableObject
     var update_scope_type: ScopeType { get set }
     
     /// Starts the update loop.
-    func start_update_state()
+    func start_state_update()
     
     /// Stops the update loop.
-    func stop_update_state()
+    func stop_state_update()
     
     /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     func update_statistics_data()

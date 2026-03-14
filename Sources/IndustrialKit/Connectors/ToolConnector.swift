@@ -63,14 +63,37 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
     /// A tool model controller.
     public var model_controller: ToolModelController?
     
-    override open func sync_model()
+    override open func sync_device_model()
     {
-        // model_controller?.entities[safe: "Node", default: SCNNode()].runAction(SCNAction())
+        if let model_controller = model_controller,
+           let entity_animations = current_entity_animations
+        {
+            model_controller.process_animation(by: entity_animations)
+        }
+    }
+    
+    open var current_entity_animations: [EntityAnimationData]?
+    {
+        return nil//[]
+    }
+    
+    override open func reset_device_model()
+    {
+        if let model_controller = model_controller,
+           let entity_animations = initial_entity_animations
+        {
+            model_controller.process_animation(by: entity_animations)
+        }
+    }
+    
+    open var initial_entity_animations: [EntityAnimationData]?
+    {
+        return nil//[]
     }
 }
 
 //MARK: - External Connector
-public class ExternalToolConnector: ToolConnector
+public class ExternalToolConnector: ToolConnector, @unchecked Sendable
 {
     // MARK: Init functions
     /// An external module name
@@ -234,14 +257,14 @@ public class ExternalToolConnector: ToolConnector
         // Process output
         while state == .processing && !canceled
         {
-            sync_model()
+            sync_device_model()
         }
         
         model_controller?.reset_entities() // Remove entities actions if performing finished
         #endif
     }
     
-    open override func sync_model()
+    open override func sync_device_model()
     {
         if let actions = entities_actions // Apply entities actions by connector
         {

@@ -75,14 +75,37 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
     /// A robot model controller.
     public var model_controller: RobotModelController?
     
-    override open func sync_model()
+    override open func sync_device_model()
     {
-        
+        if let model_controller = model_controller,
+           let entity_positions = current_entity_positions
+        {
+            model_controller.apply_entity_positions(by: entity_positions)
+        }
+    }
+    
+    open var current_entity_positions: [EntityPositionData]?
+    {
+        return nil//[]
+    }
+    
+    override open func reset_device_model()
+    {
+        if let model_controller = model_controller,
+           let entity_positions = initial_entity_positions
+        {
+            model_controller.apply_entity_positions(by: entity_positions)
+        }
+    }
+    
+    open var initial_entity_positions: [EntityPositionData]?
+    {
+        return nil//[]
     }
 }
 
 //MARK: - External Connector
-public class ExternalRobotConnector: RobotConnector
+public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
 {
     // MARK: Init functions
     /// An external module name
@@ -251,12 +274,12 @@ public class ExternalRobotConnector: RobotConnector
         // Process output
         while state == .processing && !canceled
         {
-            sync_model()
+            sync_device_model()
         }
         #endif
     }
     
-    open override func sync_model()
+    open override func sync_device_model()
     {
         if let position = external_pointer_position // Update pointer node position by connector
         {

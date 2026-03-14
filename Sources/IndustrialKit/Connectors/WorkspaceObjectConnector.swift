@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import SceneKit
 
 //MARK: - Workspace object connector
 /**
@@ -156,7 +155,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
             {
                 await MainActor.run
                 {
-                    sync_model()
+                    start_model_sync()
                 }
             }
             else
@@ -174,6 +173,8 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     /// Disconnects real workspace object from instance.
     public func disconnect()
     {
+        stop_model_sync()
+        
         connection_task.cancel()
         
         if connected
@@ -232,16 +233,86 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     /// Initial charts data.
     open var initial_device_state: DeviceState?
     {
-        // Reset contolleroutput
+        // Reset contoller output
         return nil //DeviceState()
     }
     
     // MARK: - Model handling
-    /// A flag of update model avalibility.
-    //@Published public var update_model = false
+    /// Indicates whether the device–model synchronization loop is currently running.
+    public var is_model_syncing = false
     
-    /// Synchronizes model with real device state.
-    open func sync_model()
+    /// Enables or disables synchronization between the real device and the virtual model.
+    public var model_sync_enabled = false
+    
+    /// Asynchronous task responsible for executing the device–model synchronization loop.
+    public var model_sync_task: Task<Void, Never>?
+    
+    /// Time interval between synchronization cycles (in seconds).
+    public var model_sync_interval: Double = 0.01
+    
+    /**
+     Starts the device–model synchronization loop.
+     
+     If synchronization is enabled (`model_sync_enabled == true`), this function launches an asynchronous task
+     that periodically invokes `sync_device_model()` on the main thread. The loop continues to run while
+     `is_model_syncing` remains `true`.
+     
+     The delay between iterations is defined by `model_sync_interval`. The synchronization process can be
+     terminated by calling `stop_model_sync()`.
+     */
+    public func start_model_sync()
+    {
+        guard model_sync_enabled else { return }
+        
+        is_model_syncing = true
+        
+        model_sync_task = Task
+        {
+            while is_model_syncing
+            {
+                try? await Task.sleep(nanoseconds: UInt64(model_sync_interval * 1_000_000_000))
+                await MainActor.run
+                {
+                    self.sync_device_model()
+                }
+                
+                if model_sync_task == nil
+                {
+                    return
+                }
+            }
+        }
+    }
+    
+    /**
+     Stops the device–model synchronization loop.
+     
+     This function terminates the synchronization process by setting `is_model_syncing` to `false`,
+     cancelling the active synchronization task, and clearing `model_sync_task`.
+     */
+    public func stop_model_sync()
+    {
+        is_model_syncing = false
+        model_sync_task?.cancel()
+        model_sync_task = nil
+    }
+    
+    /**
+     Performs a single synchronization step between the real device and the virtual model.
+     
+     This method is invoked periodically by `start_model_sync()` and is executed on the main thread.
+     Subclasses should override this method to transfer the current state of the real device to the
+     controller of the virtual model.
+     
+     > Since this method is executed frequently, its implementation should remain lightweight and fast to prevent delays in the synchronization loop.
+     */
+    open func sync_device_model()
+    {
+        
+    }
+    
+    /// Resets the internal state of the virtual device model.
+    open func reset_device_model()
     {
         
     }

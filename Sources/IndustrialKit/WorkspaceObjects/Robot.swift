@@ -628,9 +628,12 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         - point: The target position performed by the robot.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
+    public func move_to(
+        point: PositionPoint,
+        completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in }
+    )
     {
-        if update_scope_type == .operational { start_update_state() } // Device State
+        if update_scope_type == .operational { start_state_update() } // Device State
         
         performed = true
         
@@ -643,7 +646,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
-                    if self.update_scope_type == .operational { self.stop_update_state() } // Device State
+                    if self.update_scope_type == .operational { self.stop_state_update() } // Device State
                     
                     self.performed = false
                     
@@ -666,7 +669,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
-                    if self.update_scope_type == .operational { self.stop_update_state() } // Device State
+                    if self.update_scope_type == .operational { self.stop_state_update() } // Device State
                     
                     self.performed = false
                     
@@ -685,7 +688,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// Stops robot movement.
     public func stop()
     {
-        if state_update_enabled && update_scope_type == .operational { stop_update_state() } // Device State
+        if state_update_enabled && update_scope_type == .operational { stop_state_update() } // Device State
         
         if device_mode == .simulation
         {
@@ -930,12 +933,12 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             {
                 if update_scope_type == .continious
                 {
-                    start_update_state()
+                    start_state_update()
                 }
             }
             else
             {
-                stop_update_state()
+                stop_state_update()
             }
         }
     }
@@ -951,11 +954,11 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     {
         didSet
         {
-            stop_update_state()
+            stop_state_update()
             
             if update_scope_type == .continious
             {
-                start_update_state()
+                start_state_update()
             }
         }
     }
@@ -965,7 +968,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
      
      This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
      */
-    public func start_update_state()
+    public func start_state_update()
     {
         guard state_update_enabled else { return }
         
@@ -994,7 +997,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
      
      This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
      */
-    public func stop_update_state()
+    public func stop_state_update()
     {
         is_state_updating = false
         state_update_task?.cancel()

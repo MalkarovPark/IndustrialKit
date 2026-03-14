@@ -44,28 +44,34 @@ open class RobotModelController: ModelController, @unchecked Sendable
                 origin_position: origin_position
             )
             
-            Task
-            { @MainActor in
-                for entity_position in entity_positions
-                {
-                    apply_entity_position(by: entity_position)
-                }
-            }
+            apply_entity_positions(by: entity_positions)
         }
         catch
         {
             throw error
         }
+    }
+    
+    /**
+     Applies a list of entity positions to the corresponding entities in the scene.
+     
+     - Parameters:
+        - entity_positions: An array of `EntityPositionData`, each containing the name, position, and rotation of an entity to apply.
+     
+     Updates are applied asynchronously on the main actor. Entities with names not present
+     in `entities` are skipped.
+     */
+    public func apply_entity_positions(by entity_positions: [EntityPositionData])
+    {
+        Task
+        { @MainActor in
+            for entity_position in entity_positions
+            {
+                apply_entity_position(by: entity_position)
+            }
+        }
         
-        @MainActor func apply_entity_position(
-            by data: (
-                name: String,
-                position: (
-                    x: Float, y: Float, z: Float,
-                    r: Float, p: Float, w: Float
-                )
-            )
-        )
+        @MainActor func apply_entity_position(by data: EntityPositionData)
         {
             guard let entity = entities[data.name] else { return }
             
@@ -102,13 +108,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
             x: Float, y: Float, z: Float,
             r: Float, p: Float, w: Float
         )
-    ) throws -> [(
-        name: String,
-        position: (
-            x: Float, y: Float, z: Float,
-            r: Float, p: Float, w: Float
-        )
-    )]
+    ) throws -> [EntityPositionData]
     {
         return []
     }
@@ -315,7 +315,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
      - Parameters:
         - point: The target position performed by the robot visual model.
      */
-    public func move_to(point: PositionPoint) throws
+    open func move_to(point: PositionPoint) throws
     {
         let parts_count: Int = 1000
         
@@ -392,8 +392,10 @@ open class RobotModelController: ModelController, @unchecked Sendable
         
         if !canceled // Final step to point
         {
-            pointer_position = (x: point.x, y: point.y, z: point.z,
-                                r: point.r, p: point.p, w: point.w)
+            pointer_position = (
+                x: point.x, y: point.y, z: point.z,
+                r: point.r, p: point.p, w: point.w
+            )
             do
             {
                 try update_model()
@@ -470,13 +472,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
             x: Float, y: Float, z: Float,
             r: Float, p: Float, w: Float
         )
-    ) throws -> [(
-        name: String,
-        position: (
-            x: Float, y: Float, z: Float,
-            r: Float, p: Float, w: Float
-        )
-    )]
+    ) throws -> [EntityPositionData]
     {
         // Wrap 12 numbers in a single array for JS
         let args: [Any] = [[
@@ -495,7 +491,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
         else { return [] }
         
         // Map decoded objects to tuple array
-        return decoded.map { ($0.name, ($0.position.x, $0.position.y, $0.position.z, $0.position.r, $0.position.p, $0.position.w)) }
+        return decoded//.map { ($0.name, ($0.position.x, $0.position.y, $0.position.z, $0.position.r, $0.position.p, $0.position.w)) }
     }
     
     // MARK: Statistics
@@ -551,7 +547,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
 }
 
 // MARK: - Animation Storage
-public struct EntityPositionData: Codable
+public struct EntityPositionData: Codable, Sendable
 {
     let name: String
     let x, y, z, r, p, w: Float
@@ -565,6 +561,19 @@ public struct EntityPositionData: Codable
     {
         Pose(x: x, y: y, z: z, r: r, p: p, w: w)
     }
+    
+    /*public init(name: String, position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    {
+        self.name = name
+        
+        self.x = position.x
+        self.y = position.y
+        self.z = position.z
+        
+        self.r = position.r
+        self.p = position.p
+        self.w = position.w
+    }*/
     
     enum CodingKeys: String, CodingKey
     {
