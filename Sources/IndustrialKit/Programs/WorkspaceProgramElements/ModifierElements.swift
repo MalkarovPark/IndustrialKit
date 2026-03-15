@@ -388,7 +388,7 @@ public class ChangerModifierElement: ModifierElement
      - Parameters:
         - name: A list of external modules names.
      */
-    public static func external_modules_import(by names: [String])
+    public static func import_external_modules(by names: [String])
     {
         Changer.external_modules.removeAll()
         

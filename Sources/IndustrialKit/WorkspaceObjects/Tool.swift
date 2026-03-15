@@ -189,7 +189,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
      - Parameters:
         - name: A list of external modules names.
      */
-    public static func external_modules_import(by names: [String])
+    public static func import_external_modules(by names: [String])
     {
         /*#if os(macOS)
         stop_external_module_servers()
