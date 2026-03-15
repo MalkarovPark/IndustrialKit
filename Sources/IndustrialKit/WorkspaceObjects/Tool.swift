@@ -192,7 +192,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     public static func external_modules_import(by names: [String])
     {
         /*#if os(macOS)
-        external_modules_servers_stop()
+        external_module_servers_stop()
         #endif*/
         
         Tool.external_modules.removeAll()
@@ -203,7 +203,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
         
         /*#if os(macOS)
-        external_modules_servers_start()
+        external_module_servers_start()
         #endif*/
     }
     
@@ -235,7 +235,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     
     #if os(macOS)
     /// Start all program components in module.
-    public static func external_modules_servers_start()
+    public static func external_module_servers_start()
     {
         Task
         {
@@ -251,7 +251,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     /// Stop all program components in module.
-    public static func external_modules_servers_stop()
+    public static func external_module_servers_stop()
     {
         for module in external_modules
         {
