@@ -147,13 +147,13 @@ open class ToolModule: IndustrialModule
     }
     
     #if os(macOS)
-    override open var program_components_paths: [(file: String, socket: String)]
+    override open var program_component_paths: [(file: String, socket: String)]
     {
         return [
-            (
+            /*(
                 file: "/Code/Controller",
                 socket: "/tmp/\(name.code_correct_format)_tool_controller_socket"
-            ),
+            ),*/
             (
                 file: "/Code/Connector",
                 socket: "/tmp/\(name.code_correct_format)_tool_connector_socket"

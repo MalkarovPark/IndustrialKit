@@ -114,14 +114,7 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
     {
         self.module_name = ""
         self.package_url = URL(fileURLWithPath: "")
-        // fatalError("init() has not been implemented")
     }
-    
-    /// An array of default connection parameters.
-    /*open var default_parameters: [ConnectionParameter]
-    {
-        return [ConnectionParameter]()
-    }*/
     
     // MARK: Parameters import
     override open var default_parameters: [ConnectionParameter]
@@ -218,26 +211,7 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
         #endif
     }
     
-    private var entities_actions: [String]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(
-            at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
-            with: ["sync_model"])
-        else
-        {
-            return nil
-        }
-        
-        let lines = output.components(separatedBy: "\n")
-        
-        return lines.isEmpty ? nil : Array(lines)
-        #else
-        return nil
-        #endif
-    }
-    
-    open override func perform(code: Int)//, completion: @escaping () -> Void)
+    open override func perform(code: Int)
     {
         #if os(macOS)
         // Perform operation
@@ -264,14 +238,6 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
         #endif
     }
     
-    open override func sync_device_model()
-    {
-        if let actions = entities_actions // Apply entities actions by connector
-        {
-            //model_controller?.apply_entities_actions(by: actions)
-        }
-    }
-    
     open override func reset_device()
     {
         #if os(macOS)
@@ -285,11 +251,11 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
         #endif
     }
     
-    // MARK: Info
-    /*open override var info_output: [Float]?
+    // MARK: State Data
+    open override var current_device_state: DeviceState?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["info_output"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["current_device_state"])
         else
         {
             connection_failure = true
@@ -297,33 +263,20 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
             return nil
         }
         
-        let components = output.split(separator: " ")
-        
-        let floats: [Float] = components.compactMap { Float($0.trimmingCharacters(in: .whitespaces)) }
-        
-        return floats.isEmpty ? nil : floats
-        #else
-        return nil
+        if let device_state: DeviceState = string_to_codable(from: output)
+        {
+            return device_state
+        }
         #endif
-    }*/
-    
-    // MARK: Statistics
-    open override var current_device_state: DeviceState?
-    {
-        // Prepare controller output
-        return DeviceState()
+        
+        connected = false
+        return nil
     }
     
     open override var initial_device_state: DeviceState?
     {
-        // Reset contolleroutput
-        return nil //DeviceState()
-    }
-    
-    /*open override func updated_charts_data() -> [StateChart]?
-    {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["updated_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["initial_device_state"])
         else
         {
             connection_failure = true
@@ -331,30 +284,9 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
             return nil
         }
         
-        if let charts: [StateChart] = string_to_codable(from: output)
+        if let device_state: DeviceState = string_to_codable(from: output)
         {
-            return charts
-        }
-        #endif
-        
-        connected = false
-        return nil
-    }
-    
-    open override func updated_states_data() -> [StateItem]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["updated_states_data"])
-        else
-        {
-            connection_failure = true
-            connected = false
-            return nil
-        }
-        
-        if let states: [StateItem] = string_to_codable(from: output)
-        {
-            return states
+            return device_state
         }
         #endif
         
@@ -362,11 +294,12 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
         connected = false
         return nil
     }
-
-    open override func initial_charts_data() -> [StateChart]?
+    
+    // MARK: Model Sync
+    open override var current_entity_animations: [EntityAnimationData]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["initial_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["current_entity_animations"])
         else
         {
             connection_failure = true
@@ -374,9 +307,9 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
             return nil
         }
         
-        if let charts: [StateChart] = string_to_codable(from: output)
+        if let entity_animations: [EntityAnimationData] = string_to_codable(from: output)
         {
-            return charts
+            return entity_animations
         }
         #endif
         
@@ -384,11 +317,11 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
         connected = false
         return nil
     }
-
-    open override func initial_states_data() -> [StateItem]?
+    
+    open override var initial_entity_animations: [EntityAnimationData]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["initial_states_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["initial_entity_animations"])
         else
         {
             connection_failure = true
@@ -396,49 +329,14 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
             return nil
         }
         
-        if let states: [StateItem] = string_to_codable(from: output)
+        if let entity_animations: [EntityAnimationData] = string_to_codable(from: output)
         {
-            return states
+            return entity_animations
         }
         #endif
         
         connection_failure = true
         connected = false
         return nil
-    }*/
-    
-    // MARK: Modeling
-    /*open override func sync_model()
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["sync_model"])
-        else
-        {
-            connection_failure = true
-            connected = false
-            return
-        }
-        
-        // Split the output into lines
-        let lines = output.split(separator: "\n").map { String($0) }
-        
-        for i in 0..<lines.count // line in lines
-        {
-            // Split output into components
-            let components: [String] = lines[i].split(separator: " ").map { String($0) }
-            
-            // Check that output contains exactly two parameters
-            guard components.count == 2
-            else
-            {
-                continue
-            }
-            
-            if let action = string_to_action(from: components[1])
-            {
-                model_controller?.entities[safe: components[0], default: SCNNode()].runAction(action)
-            }
-        }
-        #endif
-    }*/
+    }
 }

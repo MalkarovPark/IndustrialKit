@@ -21,7 +21,10 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
      
      Tuple with coordinates – *x*, *y*, *z* and angles – *r*, *p*, *w*.
      */
-    public var origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    public var origin_position: (
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
+    ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
     /// A robot cell box scale.
     public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
@@ -126,7 +129,6 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
     {
         self.module_name = ""
         self.package_url = URL(fileURLWithPath: "")
-        // fatalError("init() has not been implemented")
     }
     
     // MARK: Parameters import
@@ -217,43 +219,6 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
         #endif
     }
     
-    private var external_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(
-            at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
-            with: ["sync_pointer"])
-        else
-        {
-            return nil
-        }
-        
-        let components = output.split(separator: " ").compactMap { Float($0) }
-        return components.count == 6 ? (components[0], components[1], components[2],
-                                        components[3], components[4], components[5]) : nil
-        #else
-        return nil
-        #endif
-    }
-    
-    private var external_nodes_positions: [String]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(
-            at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
-            with: ["sync_model"])
-        else
-        {
-            return nil
-        }
-        
-        let lines = output.components(separatedBy: "\n")
-        return lines == [""] ? nil : lines
-        #else
-        return nil
-        #endif
-    }
-    
     override open func move_to(point: PositionPoint)
     {
         #if os(macOS)
@@ -279,30 +244,6 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
         #endif
     }
     
-    open override func sync_device_model()
-    {
-        if let position = external_pointer_position // Update pointer node position by connector
-        {
-            model_controller?.update_pointer_position((x: position.x, y: position.y, z: position.z, r: position.r, p: position.p, w: position.w))
-            
-            if let nodes_positions = external_nodes_positions // Update nodes positions by connector (real device)
-            {
-                //model_controller?.apply_entities_positions(by: nodes_positions)
-            }
-            else // Update nodes positions by model controller (simulated device)
-            {
-                do
-                {
-                    try model_controller?.update_robot_model(pointer_position: position, origin_position: origin_position)
-                }
-                catch
-                {
-                    print(error.localizedDescription)
-                }
-            }
-        }
-    }
-    
     open override func reset_device()
     {
         #if os(macOS)
@@ -316,23 +257,32 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
         #endif
     }
     
-    // MARK: Statistics
+    // MARK: State Data
     open override var current_device_state: DeviceState?
     {
-        // Prepare controller output
-        return DeviceState()
+        #if os(macOS)
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["current_device_state"])
+        else
+        {
+            connection_failure = true
+            connected = false
+            return nil
+        }
+        
+        if let device_state: DeviceState = string_to_codable(from: output)
+        {
+            return device_state
+        }
+        #endif
+        
+        connected = false
+        return nil
     }
     
     open override var initial_device_state: DeviceState?
     {
-        // Reset contolleroutput
-        return nil //DeviceState()
-    }
-    
-    /*open override func updated_charts_data() -> [StateChart]?
-    {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["updated_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["initial_device_state"])
         else
         {
             connection_failure = true
@@ -340,31 +290,9 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
             return nil
         }
         
-        if let charts: [StateChart] = string_to_codable(from: output)
+        if let device_state: DeviceState = string_to_codable(from: output)
         {
-            return charts
-        }
-        #endif
-        
-        return nil
-    }
-    
-    open override func updated_states_data() -> [StateItem]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["updated_states_data"])
-        else
-        {
-            connection_failure = true
-            connected = false
-            return nil
-        }
-        
-        if let states: [StateItem] = string_to_codable(from: output)
-        {
-            connection_failure = true
-            connected = false
-            return states
+            return device_state
         }
         #endif
         
@@ -372,11 +300,12 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
         connected = false
         return nil
     }
-
-    open override func initial_charts_data() -> [StateChart]?
+    
+    // MARK: Model Sync
+    open override var current_entity_positions: [EntityPositionData]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["initial_charts_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["current_entity_positions"])
         else
         {
             connection_failure = true
@@ -384,9 +313,9 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
             return nil
         }
         
-        if let charts: [StateChart] = string_to_codable(from: output)
+        if let entity_animations: [EntityPositionData] = string_to_codable(from: output)
         {
-            return charts
+            return entity_animations
         }
         #endif
         
@@ -394,11 +323,11 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
         connected = false
         return nil
     }
-
-    open override func initial_states_data() -> [StateItem]?
+    
+    open override var initial_entity_positions: [EntityPositionData]?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["initial_states_data"])
+        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["initial_entity_positions"])
         else
         {
             connection_failure = true
@@ -406,18 +335,17 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
             return nil
         }
         
-        if let states: [StateItem] = string_to_codable(from: output)
+        if let entity_animations: [EntityPositionData] = string_to_codable(from: output)
         {
-            return states
+            return entity_animations
         }
         #endif
         
         connection_failure = true
         connected = false
         return nil
-    }*/
+    }
     
-    // MARK: Modeling
     /*open override func sync_model()
     {
         #if os(macOS)
@@ -447,5 +375,48 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
             set_position(for: model_controller?.nodes[safe: components[0], default: SCNNode()] ?? SCNNode(), from: components[1])
         }
         #endif
+    }*/
+    
+    /*private var external_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
+    {
+        #if os(macOS)
+        guard let output: String = send_via_unix_socket(
+            at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket",
+            with: ["sync_pointer"])
+        else
+        {
+            return nil
+        }
+        
+        let components = output.split(separator: " ").compactMap { Float($0) }
+        return components.count == 6 ? (components[0], components[1], components[2],
+                                        components[3], components[4], components[5]) : nil
+        #else
+        return nil
+        #endif
+    }
+    
+    open override func sync_device_model()
+    {
+        if let position = external_pointer_position // Update pointer node position by connector
+        {
+            model_controller?.update_pointer_position((x: position.x, y: position.y, z: position.z, r: position.r, p: position.p, w: position.w))
+            
+            if let nodes_positions = external_nodes_positions // Update nodes positions by connector (real device)
+            {
+                //model_controller?.apply_entities_positions(by: nodes_positions)
+            }
+            else // Update nodes positions by model controller (simulated device)
+            {
+                do
+                {
+                    try model_controller?.update_robot_model(pointer_position: position, origin_position: origin_position)
+                }
+                catch
+                {
+                    print(error.localizedDescription)
+                }
+            }
+        }
     }*/
 }

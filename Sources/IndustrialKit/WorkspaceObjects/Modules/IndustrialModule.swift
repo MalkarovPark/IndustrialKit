@@ -179,7 +179,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
      - `file`: The path to the executable file of the module.
      - `socket`: The path to the Unix socket created by the module for inter-process communication.
      */
-    open var program_components_paths: [(file: String, socket: String)]
+    open var program_component_paths: [(file: String, socket: String)]
     {
         return [(file: String, socket: String)]()
     }
@@ -187,7 +187,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     /// Start all program components in module.
     @MainActor public func start_program_components() async
     {
-        for program_components_path in program_components_paths
+        for program_components_path in program_component_paths
         {
             if await !is_socket_active(at: program_components_path.socket)
             {
@@ -200,7 +200,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     /// Stop all program components in module.
     public func stop_program_components()
     {
-        for program_components_path in program_components_paths
+        for program_components_path in program_component_paths
         {
             send_via_unix_socket(at: program_components_path.socket, command: "stop")
         }
