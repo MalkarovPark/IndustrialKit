@@ -84,7 +84,6 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
            let entity_positions = current_entity_positions
         {
             model_controller.apply_entity_positions(by: entity_positions)
-            start_model_sync()
         }
     }
     
@@ -98,7 +97,6 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
         if let model_controller = model_controller,
            let entity_positions = initial_entity_positions
         {
-            stop_model_sync()
             model_controller.apply_entity_positions(by: entity_positions)
         }
     }

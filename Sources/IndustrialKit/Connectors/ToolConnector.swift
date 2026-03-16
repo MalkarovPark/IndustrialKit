@@ -69,7 +69,6 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
            let entity_animations = current_entity_animations
         {
             model_controller.process_animation(by: entity_animations)
-            start_model_sync()
         }
     }
     
@@ -83,7 +82,6 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
         if let model_controller = model_controller,
            let entity_animations = initial_entity_animations
         {
-            stop_model_sync()
             model_controller.process_animation(by: entity_animations)
         }
     }
