@@ -196,11 +196,6 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
     }
     
     // MARK: Performing
-    override open var performing_state: (output: PerformingState, log: String)
-    {
-        return (output: state, log: String())
-    }
-    
     private var state: PerformingState
     {
         #if os(macOS)
