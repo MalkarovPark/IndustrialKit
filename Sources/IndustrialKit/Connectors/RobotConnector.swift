@@ -29,7 +29,7 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
     /// A robot cell box scale.
     public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
-    // MARK: - Device handling
+    // MARK: - Device Handling
     private var moving_task = Task {}
     
     /**
@@ -74,7 +74,7 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
         
     }
     
-    // MARK: - Model handling
+    // MARK: - Model Handling
     /// A robot model controller.
     public var model_controller: RobotModelController?
     
@@ -84,6 +84,7 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
            let entity_positions = current_entity_positions
         {
             model_controller.apply_entity_positions(by: entity_positions)
+            start_model_sync()
         }
     }
     
@@ -97,6 +98,7 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
         if let model_controller = model_controller,
            let entity_positions = initial_entity_positions
         {
+            stop_model_sync()
             model_controller.apply_entity_positions(by: entity_positions)
         }
     }
