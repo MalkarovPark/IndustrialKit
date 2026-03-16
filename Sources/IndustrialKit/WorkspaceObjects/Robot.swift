@@ -776,15 +776,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
                 switch result
                 {
                 case .success:
-                    if self.device_mode == .simulation
-                    {
-                        self.selected_position_point.performing_state = .completed
-                    }
-                    else if self.connector.connected
-                    {
-                        self.selected_position_point.performing_state = self.connector.performing_state.output
-                    }
-                    
+                    self.selected_position_point.performing_state = .completed
                     self.select_next_point()
                 case .failure(let error):
                     self.process_error(error)

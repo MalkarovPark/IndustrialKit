@@ -211,17 +211,6 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
         
     }
     
-    /**
-     Current performing state of real device operations.
-     
-     - output: The current state of operation performing.
-     - log: A textual log associated with the operation state.
-     */
-    open var performing_state: (output: PerformingState, log: String)
-    {
-        return (output: .none, log: String())
-    }
-    
     // MARK: - Device state data
     /// Updates device state data.
     open var current_device_state: DeviceState?
