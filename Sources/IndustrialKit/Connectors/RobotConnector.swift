@@ -42,6 +42,13 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
      */
     public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
     {
+        if !connected
+        {
+            completion(
+                .failure(NSError(domain: "Not Connected to Robot", code: 0, userInfo: nil))
+            )
+        }
+        
         canceled = false
         
         moving_task = Task

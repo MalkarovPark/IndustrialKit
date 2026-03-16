@@ -38,6 +38,13 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
      */
     public func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
     {
+        if !connected
+        {
+            completion(
+                .failure(NSError(domain: "Not Connected to Tool", code: 0, userInfo: nil))
+            )
+        }
+        
         canceled = false
         
         performing_task = Task
