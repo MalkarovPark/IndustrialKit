@@ -291,12 +291,10 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
             if is_twin_sync
             {
                 connector.model_controller = model_controller
-                connector.start_model_sync()
             }
             else
             {
                 //connector.model_controller?.reset_entities()
-                connector.stop_model_sync()
                 connector.model_controller = nil
             }
         }

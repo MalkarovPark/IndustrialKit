@@ -242,7 +242,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     public var is_model_syncing = false
     
     /// Enables or disables synchronization between the real device and the virtual model.
-    public var model_sync_enabled = false
+    public var model_sync_enabled = true //false
     
     /// Asynchronous task responsible for executing the device–model synchronization loop.
     public var model_sync_task: Task<Void, Never>?
@@ -262,8 +262,6 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
      */
     public func start_model_sync()
     {
-        guard model_sync_enabled else { return }
-        
         is_model_syncing = true
         
         model_sync_task = Task
@@ -273,6 +271,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
                 try? await Task.sleep(nanoseconds: UInt64(model_sync_interval * 1_000_000_000))
                 await MainActor.run
                 {
+                    guard model_sync_enabled else { return }
                     self.sync_device_model()
                 }
                 
