@@ -1247,6 +1247,8 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             else
             {
                 //model_controller.pointer_position = pointer_position
+                
+                model_controller.update_pointer_position(pointer_position)
             }
         }
     }

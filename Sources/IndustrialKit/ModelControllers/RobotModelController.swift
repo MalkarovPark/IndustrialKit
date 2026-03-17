@@ -245,7 +245,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
      */
     open func move_to(point: PositionPoint) throws
     {
-        let parts_count: Int = 1000
+        let parts_count: Int = 1000 // Trajectory steps calculation
         
         let current_position = pointer_position
         
@@ -288,7 +288,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         let step_p: Float = delta_p / Float(parts_count)
         let step_w: Float = delta_w / Float(parts_count)
         
-        for _ in 0..<parts_count
+        for _ in 0..<parts_count // Incremental movement
         {
             var new_position = pointer_position
             
