@@ -16,8 +16,6 @@ import SceneKit
 open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
 {
     // MARK: - Device Handling
-    private var performing_task = Task<Void, Error> {}
-    
     /**
      Performs real tool by operation code value.
      
@@ -28,6 +26,8 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
     {
         
     }
+    
+    private var performing_task = Task<Void, Error> {}
     
     /**
      Performs real tool by operation code value with completion handler.

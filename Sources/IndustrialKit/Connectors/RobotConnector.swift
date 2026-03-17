@@ -30,6 +30,17 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
     public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
     // MARK: - Device Handling
+    /**
+     Performs movement on real robot by target position.
+     
+     - Parameters:
+        - point: The target position performed by the real robot.
+     */
+    open func move_to(point: PositionPoint) throws
+    {
+        
+    }
+    
     private var moving_task = Task {}
     
     /**
@@ -70,17 +81,6 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
         }
     }
     
-    /**
-     Performs movement on real robot by target position.
-     
-     - Parameters:
-        - point: The target position performed by the real robot.
-     */
-    open func move_to(point: PositionPoint) throws
-    {
-        
-    }
-    
     // MARK: - Model Handling
     /// A robot model controller.
     public var model_controller: RobotModelController?
@@ -112,6 +112,11 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
     {
         return nil//[]
     }
+}
+
+public struct CurrentRobotPointerPosition: Codable
+{
+    
 }
 
 //MARK: - External Connector

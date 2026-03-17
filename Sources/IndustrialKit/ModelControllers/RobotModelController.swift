@@ -136,13 +136,13 @@ open class RobotModelController: ModelController, @unchecked Sendable
      - rot_z: Rotation about the Z-axis, in radians.
      */
     public func update_pointer_position(
-        _ position: (
+        /*_ position: (
             x: Float, y: Float, z: Float,
             r: Float, p: Float, w: Float
-        )
+        )*/
     )
     {
-        pointer_entity?.update_position(position)
+        pointer_entity?.update_position(pointer_position)//position)
     }
     
     /// Robot teach pointer.
@@ -168,21 +168,6 @@ open class RobotModelController: ModelController, @unchecked Sendable
     ) = (x: 200, y: 200, z: 200)
     
     // MARK: Device
-    /// Update robot part entities position by target point.
-    public func update_model() throws
-    {
-        update_pointer_position(pointer_position) // Target pointer
-        
-        do
-        {
-            try update_robot_model(pointer_position: pointer_position, origin_position: origin_position) // Robot parts
-        }
-        catch
-        {
-            throw error
-        }
-    }
-    
     /**
      Gets parts entities links from model root node and pass to array.
      
@@ -202,38 +187,18 @@ open class RobotModelController: ModelController, @unchecked Sendable
         pointer_entity = Entity()
     }
     
-    /// Cancel perform flag.
-    public var canceled = false
-    
-    private var moving_task = Task<Void, Error> {}
-    
-    /**
-     Performs robot model movement by target position with completion handler.
-     
-     - Parameters:
-        - point: The target position performed by the robot visual model.
-        - completion: A completion function that is calls when the performing completes.
-     */
-    public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+    /// Update pointer position and robot entity positions by target point.
+    public func update_model() throws
     {
-        canceled = false
+        //update_pointer_position()//pointer_position) // Target pointer pointer
         
-        moving_task = Task
+        do
         {
-            do
-            {
-                try self.move_to(point: point)
-                if !canceled
-                {
-                    completion(.success(()))
-                }
-            }
-            catch
-            {
-                completion(.failure(error))
-            }
-            
-            canceled = false
+            try update_robot_model(pointer_position: pointer_position, origin_position: origin_position) // Robot part positions
+        }
+        catch
+        {
+            throw error
         }
     }
     
@@ -301,6 +266,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
             new_position.w += step_w
             
             pointer_position = new_position
+            
             do
             {
                 try update_model()
@@ -312,10 +278,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
             
             usleep(UInt32(part_time * 1_000_000))
             
-            if canceled
-            {
-                break
-            }
+            if canceled { break }
         }
         
         if !canceled // Final step to point
@@ -324,6 +287,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
                 x: point.x, y: point.y, z: point.z,
                 r: point.r, p: point.p, w: point.w
             )
+            
             do
             {
                 try update_model()
@@ -332,6 +296,41 @@ open class RobotModelController: ModelController, @unchecked Sendable
             {
                 throw error
             }
+        }
+    }
+    
+    /// Cancel perform flag.
+    public var canceled = false
+    
+    private var moving_task = Task<Void, Error> {}
+    
+    /**
+     Performs robot model movement by target position with completion handler.
+     
+     - Parameters:
+        - point: The target position performed by the robot visual model.
+        - completion: A completion function that is calls when the performing completes.
+     */
+    public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+    {
+        canceled = false
+        
+        moving_task = Task
+        {
+            do
+            {
+                try self.move_to(point: point)
+                if !canceled
+                {
+                    completion(.success(()))
+                }
+            }
+            catch
+            {
+                completion(.failure(error))
+            }
+            
+            canceled = false
         }
     }
 }

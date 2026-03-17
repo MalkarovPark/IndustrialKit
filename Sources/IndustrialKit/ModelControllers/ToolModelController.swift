@@ -11,6 +11,21 @@ import RealityKit
 ///Provides control over visual model for robot.
 open class ToolModelController: ModelController, @unchecked Sendable
 {
+    /**
+     Performs tool model action by operation code value.
+     
+     - Parameters:
+        - code: The operation code value of the operation performed by the tool visual model.
+     */
+    public func perform(code: Int) throws
+    {
+        let entity_animations = try entity_animations(code: code)
+        
+        let animation_time = process_animation(by: entity_animations) // Perform and get animation time
+        
+        usleep(UInt32(animation_time * 1_000_000))
+    }
+    
     /// Cancel perform flag.
     public var canceled = false
     
@@ -44,21 +59,6 @@ open class ToolModelController: ModelController, @unchecked Sendable
             
             canceled = false
         }
-    }
-    
-    /**
-     Performs tool model action by operation code value.
-     
-     - Parameters:
-        - code: The operation code value of the operation performed by the tool visual model.
-     */
-    public func perform(code: Int) throws
-    {
-        let entity_animations = try entity_animations(code: code)
-        
-        let animation_time = process_animation(by: entity_animations) // Perform and get animation time
-        
-        usleep(UInt32(animation_time * 1_000_000))
     }
     
     /**

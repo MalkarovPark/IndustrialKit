@@ -144,7 +144,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             )
         )
         
-        update_position()
+        update_model()
     }
     
     // MARK: - Module handling
@@ -560,7 +560,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             
             self.objectWillChange.send()
             
-            update_position()
+            update_model()
             
             func position_point_shift(_ point: inout (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
             {
@@ -1224,8 +1224,8 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     public var end_entity_name = String()
     #endif
     
-    /// Sets robot pointer node position.
-    public func update_position()
+    /// Update robot model.
+    public func update_model()
     {
         if !performed
         {
@@ -1233,7 +1233,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             
             if device_mode == .simulation
             {
-                //model_controller.pointer_position = pointer_position
+                model_controller.update_pointer_position()
                 
                 do
                 {
@@ -1246,9 +1246,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             }
             else
             {
-                //model_controller.pointer_position = pointer_position
-                
-                model_controller.update_pointer_position(pointer_position)
+                model_controller.update_pointer_position()//pointer_position)
             }
         }
     }
@@ -1269,7 +1267,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     {
         didSet
         {
-            update_position()
+            update_model()
             
             #if canImport(RealityKit)
             update_origin_position()
