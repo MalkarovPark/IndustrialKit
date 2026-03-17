@@ -46,8 +46,10 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
      - Parameters:
         - point: The target position performed by the real robot.
      */
-    open func move_to(point: PositionPoint) throws
+    public func move_to(point: PositionPoint) throws
     {
+        start_process(point: point)
+        
         while performing_state == .processing { }
         
         switch performing_state
@@ -57,6 +59,20 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
         default:
             break
         }
+    }
+    
+    /**
+     Starts movement process of the real robot to the specified position.
+     
+     This method initiates the execution but does not block until completion.
+     Use higher-level methods (e.g., `move_to(point:)`) to perform synchronous execution.
+     
+     - Parameters:
+        - point: The target position to which the real robot should move.
+     */
+    open func start_process(point: PositionPoint)
+    {
+        
     }
     
     private var moving_task = Task {}
@@ -276,7 +292,7 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
         #endif
     }
     
-    override open func move_to(point: PositionPoint)
+    override open func start_process(point: PositionPoint)
     {
         #if os(macOS)
         // Perform to point moving

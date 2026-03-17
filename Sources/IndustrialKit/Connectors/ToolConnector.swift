@@ -22,8 +22,9 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
      - Parameters:
         - code: The operation code value of the operation performed by the real tool.
      */
-    open func perform(code: Int) throws
+    public func perform(code: Int) throws
     {
+        start_process(code: code)
         while performing_state == .processing { }
         
         switch performing_state
@@ -33,6 +34,20 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
         default:
             break
         }
+    }
+    
+    /**
+     Starts execution of a real tool operation by its operation code.
+     
+     This method initiates the operation but does not wait for it to complete.
+     Use higher-level methods (e.g., `perform(code:)`) for synchronous execution.
+     
+     - Parameters:
+        - code: The operation code identifying the tool action to be performed.
+     */
+    open func start_process(code: Int)
+    {
+        
     }
     
     private var performing_task = Task<Void, Error> {}
@@ -236,7 +251,7 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
         #endif
     }
     
-    open override func perform(code: Int)
+    open override func start_process(code: Int)
     {
         #if os(macOS)
         // Perform operation
