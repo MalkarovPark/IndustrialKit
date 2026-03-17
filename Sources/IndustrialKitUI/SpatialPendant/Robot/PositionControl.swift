@@ -38,57 +38,45 @@ public struct PositionControl: View
         
         var c1_image_name: String
         {
-            switch self {
-            case .xy_movement:
-                "chevron.up"
-            case .xz_movement:
-                "arrow.up"
-            case .pw_movement:
-                "arrow.trianglehead.topright.capsulepath.clockwise"
-            case .pr_movement:
-                "arrow.trianglehead.topright.capsulepath.clockwise"
+            switch self
+            {
+            case .xy_movement: "chevron.up"
+            case .xz_movement: "arrow.up"
+            case .pw_movement: "arrow.trianglehead.topright.capsulepath.clockwise"
+            case .pr_movement: "arrow.trianglehead.topright.capsulepath.clockwise"
             }
         }
         
         var c2_image_name: String
         {
-            switch self {
-            case .xy_movement:
-                "chevron.right"
-            case .xz_movement:
-                "chevron.right"
-            case .pw_movement:
-                "arrow.turn.up.right"
-            case .pr_movement:
-                "arrow.trianglehead.clockwise.rotate.90"
+            switch self
+            {
+            case .xy_movement: "chevron.right"
+            case .xz_movement: "chevron.right"
+            case .pw_movement: "arrow.turn.up.right"
+            case .pr_movement: "arrow.trianglehead.clockwise.rotate.90"
             }
         }
         
         var c3_image_name: String
         {
-            switch self {
-            case .xy_movement:
-                "chevron.down"
-            case .xz_movement:
-                "arrow.down"
-            case .pw_movement:
-                "arrow.trianglehead.bottomleft.capsulepath.clockwise"
-            case .pr_movement:
-                "arrow.trianglehead.bottomleft.capsulepath.clockwise"
+            switch self
+            {
+            case .xy_movement: "chevron.down"
+            case .xz_movement: "arrow.down"
+            case .pw_movement: "arrow.trianglehead.bottomleft.capsulepath.clockwise"
+            case .pr_movement: "arrow.trianglehead.bottomleft.capsulepath.clockwise"
             }
         }
         
         var c4_image_name: String
         {
-            switch self {
-            case .xy_movement:
-                "chevron.left"
-            case .xz_movement:
-                "chevron.left"
-            case .pw_movement:
-                "arrow.turn.up.left"
-            case .pr_movement:
-                "arrow.trianglehead.counterclockwise.rotate.90"
+            switch self
+            {
+            case .xy_movement: "chevron.left"
+            case .xz_movement: "chevron.left"
+            case .pw_movement: "arrow.turn.up.left"
+            case .pr_movement: "arrow.trianglehead.counterclockwise.rotate.90"
             }
         }
     }
@@ -132,7 +120,7 @@ public struct PositionControl: View
             Rectangle()
                 .fill(.clear)
             
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            Circle()//RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(.quinary)
                 .frame(width: 48, height: 48)
                 .scaleEffect(is_central_pressed ? 0.85 : 1)
@@ -176,8 +164,8 @@ public struct PositionControl: View
                 )
         }
         .frame(width: 120, height: 120)
-        .glassEffect(.regular.tint(.white).interactive(), in: .rect(cornerRadius: 32, style: .continuous))
-        .contentShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+        .glassEffect(.regular.tint(.white).interactive(), in: .circle)//.rect(cornerRadius: 32, style: .continuous))
+        .contentShape(Circle())//RoundedRectangle(cornerRadius: 32, style: .continuous))
         .compositingGroup()
         .rotation3DEffect(.degrees(tilt_magnitude), axis: (x: tilt_x, y: tilt_y, z: 0), perspective: 0.12)
         .gesture(
