@@ -549,7 +549,10 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
      
      Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
      */
-    public var pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    public var pointer_position: (
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
+    ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     {
         didSet
         {
@@ -561,32 +564,14 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             
             func position_point_shift(_ point: inout (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
             {
-                if point.x > Float(space_scale.x)
-                {
-                    point.x = Float(space_scale.x)
-                }
-                else if point.x < 0
-                {
-                    point.x = 0
-                }
+                if point.x > Float(space_scale.x) { point.x = Float(space_scale.x) }
+                else if point.x < 0 { point.x = 0 }
                 
-                if point.y > Float(space_scale.y)
-                {
-                    point.y = Float(space_scale.y)
-                }
-                else if point.y < 0
-                {
-                    point.y = 0
-                }
+                if point.y > Float(space_scale.y) { point.y = Float(space_scale.y) }
+                else if point.y < 0 { point.y = 0 }
                 
-                if point.z > Float(space_scale.z)
-                {
-                    point.z = Float(space_scale.z)
-                }
-                else if point.z < 0
-                {
-                    point.z = 0
-                }
+                if point.z > Float(space_scale.z) { point.z = Float(space_scale.z) }
+                else if point.z < 0 { point.z = 0 }
             }
         }
     }
@@ -1244,9 +1229,11 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     {
         if !performed
         {
+            model_controller.pointer_position = pointer_position
+            
             if device_mode == .simulation
             {
-                model_controller.pointer_position = pointer_position
+                //model_controller.pointer_position = pointer_position
                 
                 do
                 {
@@ -1259,7 +1246,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             }
             else
             {
-                model_controller.alt_pointer_position = pointer_position
+                //model_controller.pointer_position = pointer_position
             }
         }
     }
