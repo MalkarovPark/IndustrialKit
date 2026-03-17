@@ -1127,14 +1127,16 @@ public class Workspace: ObservableObject, @unchecked Sendable
             // Single movement perform
             robot.performed = true
             
-            var target_point = PositionPoint(x: registers[safe_float: element.x_index],
-                                             y: registers[safe_float: element.y_index],
-                                             z: registers[safe_float: element.z_index],
-                                             r: registers[safe_float: element.r_index],
-                                             p: registers[safe_float: element.p_index],
-                                             w: registers[safe_float: element.w_index],
-                                             move_speed: registers[safe_float: element.speed_index],
-                                             move_type: MoveType(register_value: Int(registers[safe_float: element.type_index])))
+            var target_point = PositionPoint(
+                x: registers[safe_float: element.x_index],
+                y: registers[safe_float: element.y_index],
+                z: registers[safe_float: element.z_index],
+                r: registers[safe_float: element.r_index],
+                p: registers[safe_float: element.p_index],
+                w: registers[safe_float: element.w_index],
+                move_speed: registers[safe_float: element.speed_index],
+                move_type: MoveType(register_value: Int(registers[safe_float: element.type_index]))
+            )
             robot.point_shift(&target_point)
             
             robot.move_to(point: target_point)
@@ -2727,6 +2729,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
     
     /// Names of robots placed in the workspace.
     public var placed_robots_names: [String] { robots.compactMap { $0.is_placed ? $0.name : nil } }
+    
+    /// Names of placed robots that support attachments.
+    public var attachment_supporting_robots: [String] { robots.compactMap { $0.is_placed && !$0.end_entity_name.isEmpty ? $0.name : nil } }
     
     // MARK: - Tools handling functions
     // MARK: Tools manage funcions
