@@ -178,6 +178,21 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
 
 public struct RobotState: Codable
 {
+    public init(
+        performing_state: PerformingState = .none,
+        pointer_position: EntityPositionData?,
+        entity_positions: [EntityPositionData]? = nil,
+        
+        output_string: String? = nil
+    )
+    {
+        self.performing_state = performing_state
+        self.pointer_position = pointer_position
+        self.entity_positions = entity_positions
+        
+        self.output_string = output_string
+    }
+    
     public var performing_state: PerformingState = .none
     public var pointer_position: EntityPositionData?
     public var entity_positions: [EntityPositionData]?

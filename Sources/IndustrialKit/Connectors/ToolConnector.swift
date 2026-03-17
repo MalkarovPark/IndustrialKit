@@ -131,6 +131,19 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
 
 public struct ToolState: Codable
 {
+    public init(
+        performing_state: PerformingState = .none,
+        entity_animations: [EntityAnimationData]? = nil,
+        
+        output_string: String? = nil
+    )
+    {
+        self.performing_state = performing_state
+        self.entity_animations = entity_animations
+        
+        self.output_string = output_string
+    }
+    
     public var performing_state: PerformingState = .none
     public var entity_animations: [EntityAnimationData]?
     
