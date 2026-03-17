@@ -25,7 +25,9 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
     public func perform(code: Int) throws
     {
         start_process(code: code)
-        while performing_state == .processing { }
+        
+        while performing_state != .processing {} //Wait for performing state
+        while performing_state == .processing {} //Wait for completion
         
         switch performing_state
         {
