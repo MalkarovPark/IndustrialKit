@@ -73,7 +73,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         
         @MainActor func apply_entity_position(by data: EntityPositionData)
         {
-            guard let entity = entities[data.name] else { return }
+            guard let entity = entities[data.name ?? String()] else { return }
             
             entity.transform = Transform(
                 scale: entity.transform.scale,
@@ -476,7 +476,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
 // MARK: - Animation Storage
 public struct EntityPositionData: Codable, Sendable
 {
-    let name: String
+    let name: String?
     let x, y, z, r, p, w: Float
     
     public struct Pose

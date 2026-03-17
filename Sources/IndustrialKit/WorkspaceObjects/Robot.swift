@@ -887,10 +887,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
         else
         {
-            if let controller = connector.model_controller
-            {
-                pointer_position = controller.pointer_position
-            }
+            pointer_position = connector.pointer_position
         }
     }
     

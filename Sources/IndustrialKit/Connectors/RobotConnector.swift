@@ -17,6 +17,16 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
 {
     // MARK: - Parameters
     /**
+     A robot pointer position.
+     
+     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
+     */
+    public var pointer_position: (
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
+    ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    
+    /**
      A robot cell origin position.
      
      Tuple with coordinates – *x*, *y*, *z* and angles – *r*, *p*, *w*.
@@ -38,7 +48,15 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
      */
     open func move_to(point: PositionPoint) throws
     {
+        while performing_state == .processing { }
         
+        switch performing_state
+        {
+        case .error:
+            throw NSError(domain: output_string ?? "Performing Error", code: 0, userInfo: nil)
+        default:
+            break
+        }
     }
     
     private var moving_task = Task {}
@@ -85,21 +103,49 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
     /// A robot model controller.
     public var model_controller: RobotModelController?
     
-    override open func sync_device_model()
+    override open func sync_with_device()
     {
-        if let model_controller = model_controller,
-           let entity_positions = current_entity_positions
+        guard let current_robot_state = current_robot_state else { return }
+        
+        // Update current performing state
+        performing_state = current_robot_state.performing_state
+        output_string = current_robot_state.output_string
+        
+        // Update current position
+        if let current_pointer_position = current_robot_state.pointer_position
         {
-            model_controller.apply_entity_positions(by: entity_positions)
+            pointer_position = (
+                x: current_pointer_position.x,
+                y: current_pointer_position.y,
+                z: current_pointer_position.z,
+                r: current_pointer_position.r,
+                p: current_pointer_position.p,
+                w: current_pointer_position.w
+            )
+        }
+        
+        // Apply model data
+        if let model_controller = model_controller
+        {
+            if let entity_positions = current_robot_state.entity_positions
+            {
+                model_controller.apply_entity_positions(by: entity_positions)
+            }
+            
+            if current_robot_state.pointer_position != nil
+            {
+                model_controller.pointer_position = pointer_position
+                model_controller.update_pointer_position()
+            }
         }
     }
     
-    open var current_entity_positions: [EntityPositionData]?
+    open var current_robot_state: RobotState?
     {
-        return nil//[]
+        return nil
     }
     
-    override open func reset_device_model()
+    /*override open func reset_device_model()
     {
         if let model_controller = model_controller,
            let entity_positions = initial_entity_positions
@@ -111,12 +157,16 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
     open var initial_entity_positions: [EntityPositionData]?
     {
         return nil//[]
-    }
+    }*/
 }
 
-public struct CurrentRobotPointerPosition: Codable
+public struct RobotState: Codable
 {
+    public var performing_state: PerformingState = .none
+    public var pointer_position: EntityPositionData?
+    public var entity_positions: [EntityPositionData]?
     
+    public var output_string: String?
 }
 
 //MARK: - External Connector
@@ -246,7 +296,7 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
         // Process output
         while state == .processing && !canceled
         {
-            sync_device_model()
+            sync_with_device()
         }
         #endif
     }
@@ -309,7 +359,7 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
     }
     
     // MARK: Model Sync
-    open override var current_entity_positions: [EntityPositionData]?
+    /*open override var current_entity_positions: [EntityPositionData]?
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["current_entity_positions"])
@@ -353,7 +403,7 @@ public class ExternalRobotConnector: RobotConnector, @unchecked Sendable
         return nil
     }
     
-    /*open override func sync_model()
+    open override func sync_model()
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["sync_model"])

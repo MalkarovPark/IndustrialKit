@@ -24,7 +24,15 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
      */
     open func perform(code: Int) throws
     {
+        while performing_state == .processing { }
         
+        switch performing_state
+        {
+        case .error:
+            throw NSError(domain: output_string ?? "Performing Error", code: 0, userInfo: nil)
+        default:
+            break
+        }
     }
     
     private var performing_task = Task<Void, Error> {}
@@ -70,21 +78,28 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
     /// A tool model controller.
     public var model_controller: ToolModelController?
     
-    override open func sync_device_model()
+    override open func sync_with_device()
     {
+        guard let current_tool_state = current_tool_state else { return }
+        
+        // Update current performing state
+        performing_state = current_tool_state.performing_state
+        output_string = current_tool_state.output_string
+        
+        // Apply model data
         if let model_controller = model_controller,
-           let entity_animations = current_entity_animations
+           let entity_animations = current_tool_state.entity_animations
         {
             model_controller.process_animation(by: entity_animations)
         }
     }
     
-    open var current_entity_animations: [EntityAnimationData]?
+    open var current_tool_state: ToolState?
     {
-        return nil//[]
+        return nil
     }
     
-    override open func reset_device_model()
+    /*override open func reset_device_model()
     {
         if let model_controller = model_controller,
            let entity_animations = initial_entity_animations
@@ -96,7 +111,15 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
     open var initial_entity_animations: [EntityAnimationData]?
     {
         return nil//[]
-    }
+    }*/
+}
+
+public struct ToolState: Codable
+{
+    public var performing_state: PerformingState = .none
+    public var entity_animations: [EntityAnimationData]?
+    
+    public var output_string: String?
 }
 
 //MARK: - External Connector
@@ -233,7 +256,7 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
         // Process output
         while state == .processing && !canceled
         {
-            sync_device_model()
+            sync_with_device()
         }
         
         model_controller?.reset_entities() // Remove entities actions if performing finished
@@ -254,7 +277,7 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
     }
     
     // MARK: State Data
-    open override var current_device_state: DeviceState?
+    /*open override var current_device_state: DeviceState?
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["current_device_state"])
@@ -340,5 +363,5 @@ public class ExternalToolConnector: ToolConnector, @unchecked Sendable
         connection_failure = true
         connected = false
         return nil
-    }
+    }*/
 }

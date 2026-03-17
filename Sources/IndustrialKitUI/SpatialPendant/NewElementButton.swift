@@ -118,6 +118,7 @@ public struct NewElementButton: View
                         .buttonBorderShape(.circle)
                         .contentShape(Circle())
                         .padding(.trailing, 6)
+                        .keyboardShortcut(.cancelAction)
                     }
                     #if os(macOS)
                     .frame(height: 36)

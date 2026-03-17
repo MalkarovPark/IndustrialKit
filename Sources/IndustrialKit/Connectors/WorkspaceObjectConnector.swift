@@ -212,6 +212,9 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     }
     
     // MARK: - Device state data
+    @Published public var performing_state: PerformingState = .none
+    @Published public var output_string: String?
+    
     /// Updates device state data.
     open var current_device_state: DeviceState?
     {
@@ -243,7 +246,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
      Starts the device–model synchronization loop.
      
      If synchronization is enabled (`model_sync_enabled == true`), this function launches an asynchronous task
-     that periodically invokes `sync_device_model()` on the main thread. The loop continues to run while
+     that periodically invokes `sync_with_device()` on the main thread. The loop continues to run while
      `is_model_syncing` remains `true`.
      
      The delay between iterations is defined by `model_sync_interval`. The synchronization process can be
@@ -261,7 +264,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
                 await MainActor.run
                 {
                     guard model_sync_enabled else { return }
-                    self.sync_device_model()
+                    self.sync_with_device()
                 }
                 
                 if model_sync_task == nil
@@ -294,7 +297,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
      
      > Since this method is executed frequently, its implementation should remain lightweight and fast to prevent delays in the synchronization loop.
      */
-    open func sync_device_model()
+    open func sync_with_device()
     {
         
     }
