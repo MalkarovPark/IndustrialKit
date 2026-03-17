@@ -50,7 +50,8 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
     {
         start_process(point: point)
         
-        while performing_state == .processing { }
+        while performing_state != .processing {} //Wait for performing state
+        while performing_state == .processing {} //Wait for completion
         
         switch performing_state
         {
