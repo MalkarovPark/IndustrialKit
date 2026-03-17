@@ -510,14 +510,14 @@ public struct ObserverElementView: View
         
         if self.element.object_name == ""
         {
-            self.element.object_name = self.workspace.placed_robots_names.first ?? "???"
+            self.element.object_name = self.workspace.placed_robot_names.first ?? "???"
             
             switch self.element.object_type
             {
             case .robot:
-                element.object_name = workspace.placed_robots_names.first ?? "New Robot"
+                element.object_name = workspace.placed_robot_names.first ?? "New Robot"
             case .tool:
-                element.object_name = workspace.placed_tools_names.first ?? "New Tool"
+                element.object_name = workspace.placed_tool_names.first ?? "New Tool"
             }
         }
     }
@@ -535,9 +535,9 @@ public struct ObserverElementView: View
                         switch new_value
                         {
                         case .robot:
-                            element.object_name = workspace.placed_robots_names.first ?? "New Robot"
+                            element.object_name = workspace.placed_robot_names.first ?? "New Robot"
                         case .tool:
-                            element.object_name = workspace.placed_tools_names.first ?? "New Tool"
+                            element.object_name = workspace.placed_tool_names.first ?? "New Tool"
                         }
                         
                         on_update()
@@ -578,11 +578,11 @@ public struct ObserverElementView: View
             switch element.object_type
             {
             case .robot:
-                if workspace.placed_robots_names.count > 0
+                if workspace.placed_robot_names.count > 0
                 {
                     Picker("Name", selection: object_name) // robot picker
                     {
-                        ForEach(workspace.placed_robots_names, id: \.self)
+                        ForEach(workspace.placed_robot_names, id: \.self)
                         { name in
                             Text(name)
                         }
@@ -590,15 +590,15 @@ public struct ObserverElementView: View
                     #if !os(macOS)
                     .modifier(PickerNamer(name: "Name"))
                     #endif
-                    .disabled(workspace.placed_robots_names.count == 0)
+                    .disabled(workspace.placed_robot_names.count == 0)
                     .padding(.bottom)
                 }
             case .tool:
-                if workspace.placed_tools_names.count > 0
+                if workspace.placed_tool_names.count > 0
                 {
                     Picker("Name", selection: object_name) // tool picker
                     {
-                        ForEach(workspace.placed_tools_names, id: \.self)
+                        ForEach(workspace.placed_tool_names, id: \.self)
                         { name in
                             Text(name)
                         }
@@ -606,7 +606,7 @@ public struct ObserverElementView: View
                     #if !os(macOS)
                     .modifier(PickerNamer(name: "Name"))
                     #endif
-                    .disabled(workspace.placed_tools_names.count == 0)
+                    .disabled(workspace.placed_tool_names.count == 0)
                     .padding(.bottom)
                 }
             }

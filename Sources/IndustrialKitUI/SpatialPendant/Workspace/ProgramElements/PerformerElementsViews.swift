@@ -30,7 +30,7 @@ public struct RobotPerformerElementView: View
         
         if self.element.object_name == ""
         {
-            self.element.object_name = self.workspace.placed_robots_names.first ?? "???"
+            self.element.object_name = self.workspace.placed_robot_names.first ?? "???"
             
             if workspace.robot_by_name(element.object_name).programs_names.count > 0
             {
@@ -43,7 +43,7 @@ public struct RobotPerformerElementView: View
     {
         VStack(spacing: 0)
         {
-            if workspace.placed_robots_names.count > 0
+            if workspace.placed_robot_names.count > 0
             {
                 // MARK: Robot subview
                 let object_name = Binding(
@@ -63,13 +63,13 @@ public struct RobotPerformerElementView: View
                 
                 Picker("Name", selection: object_name) // Robot picker
                 {
-                    ForEach(workspace.placed_robots_names, id: \.self)
+                    ForEach(workspace.placed_robot_names, id: \.self)
                     { name in
                         Text(name)
                     }
                 }
                 .buttonStyle(.bordered)
-                .disabled(workspace.placed_robots_names.count == 0)
+                .disabled(workspace.placed_robot_names.count == 0)
                 .frame(maxWidth: .infinity)
                 .padding(.bottom)
                 
@@ -256,7 +256,7 @@ public struct ToolPerformerElementView: View
         
         if self.element.object_name == ""
         {
-            self.element.object_name = self.workspace.placed_tools_names.first ?? "???"
+            self.element.object_name = self.workspace.placed_tool_names.first ?? "???"
             
             if workspace.tool_by_name(element.object_name).programs_names.count > 0
             {
@@ -269,7 +269,7 @@ public struct ToolPerformerElementView: View
     {
         VStack(spacing: 0)
         {
-            if workspace.placed_tools_names.count > 0
+            if workspace.placed_tool_names.count > 0
             {
                 // MARK: Tool subview
                 let object_name = Binding(
@@ -287,13 +287,13 @@ public struct ToolPerformerElementView: View
                 
                 Picker("Name", selection: object_name) // Tool picker
                 {
-                    ForEach(workspace.placed_tools_names, id: \.self)
+                    ForEach(workspace.placed_tool_names, id: \.self)
                     { name in
                         Text(name)
                     }
                 }
                 .buttonStyle(.bordered)
-                .disabled(workspace.placed_tools_names.count == 0)
+                .disabled(workspace.placed_tool_names.count == 0)
                 .frame(maxWidth: .infinity)
                 .padding(.bottom)
                 

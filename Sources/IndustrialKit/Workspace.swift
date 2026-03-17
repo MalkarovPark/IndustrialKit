@@ -350,9 +350,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             func objects_check()
             {
-                if placed_robots_names.count > 0
+                if placed_robot_names.count > 0
                 {
-                    element.object_name = placed_robots_names.first ?? ""
+                    element.object_name = placed_robot_names.first ?? ""
                     checked_object = robot_by_name(element.object_name)
                     program_check()
                 }
@@ -394,9 +394,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
             
             func objects_check()
             {
-                if placed_tools_names.count > 0
+                if placed_tool_names.count > 0
                 {
-                    element.object_name = placed_tools_names.first ?? ""
+                    element.object_name = placed_tool_names.first ?? ""
                     checked_object = tool_by_name(element.object_name)
                     program_check()
                 }
@@ -428,18 +428,18 @@ public class Workspace: ObservableObject, @unchecked Sendable
             switch element.object_type
             {
             case .robot:
-                if self.placed_robots_names.count > 0
+                if self.placed_robot_names.count > 0
                 {
-                    element.object_name = self.placed_robots_names.first!
+                    element.object_name = self.placed_robot_names.first!
                 }
                 else
                 {
                     element.object_name = ""
                 }
             case .tool:
-                if self.placed_tools_names.count > 0
+                if self.placed_tool_names.count > 0
                 {
-                    element.object_name = self.placed_tools_names.first!
+                    element.object_name = self.placed_tool_names.first!
                 }
                 else
                 {
@@ -2591,7 +2591,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Adds robot in the workspace.
     public func add_robot(_ robot: Robot)
     {
-        robot.name = mismatched_name(name: robot.name, names: robots_names)
+        robot.name = mismatched_name(name: robot.name, names: robot_names)
         robot.is_placed = true
         robots.append(robot)
         
@@ -2638,7 +2638,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if robots.indices.contains(index)
         {
-            let new_name = mismatched_name(name: robots[index].name, names: robots_names)
+            let new_name = mismatched_name(name: robots[index].name, names: robot_names)
             let new_index = robots.count
             
             robots.append(Robot())
@@ -2700,45 +2700,20 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Names of all robots in the workspace.
-    public var robots_names: [String]
-    {
-        var robots_names = [String]()
-        if robots.count > 0
-        {
-            for robot in robots
-            {
-                robots_names.append(robot.name)
-            }
-        }
-        return robots_names
-    }
-    
-    /// Names of robots avaliable to place in the workspace.
-    public var avaliable_robots_names: [String]
-    {
-        var names = [String]()
-        for robot in robots
-        {
-            if !robot.is_placed
-            {
-                names.append(robot.name)
-            }
-        }
-        return names
-    }
+    public var robot_names: [String] { robots.map { $0.name } }
     
     /// Names of robots placed in the workspace.
-    public var placed_robots_names: [String] { robots.compactMap { $0.is_placed ? $0.name : nil } }
+    public var placed_robot_names: [String] { robots.compactMap { $0.is_placed ? $0.name : nil } }
     
     /// Names of placed robots that support attachments.
-    public var attachment_supporting_robots: [String] { robots.compactMap { $0.is_placed && !$0.end_entity_name.isEmpty ? $0.name : nil } }
+    public var attachment_supporting_robot_names: [String] { robots.compactMap { $0.is_placed && !$0.end_entity_name.isEmpty ? $0.name : nil } }
     
     // MARK: - Tools handling functions
     // MARK: Tools manage funcions
     /// Adds tool in the workspace.
     public func add_tool(_ tool: Tool)
     {
-        tool.name = mismatched_name(name: tool.name, names: tools_names)
+        tool.name = mismatched_name(name: tool.name, names: tool_names)
         tool.is_placed = true
         tools.append(tool)
         
@@ -2785,7 +2760,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if tools.indices.contains(index)
         {
-            let new_name = mismatched_name(name: tools[index].name, names: tools_names)
+            let new_name = mismatched_name(name: tools[index].name, names: tool_names)
             let new_index = tools.count
             
             tools.append(Tool())
@@ -2841,35 +2816,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Names of all tools in the workspace.
-    public var tools_names: [String] // Get names of all tools in the workspace
-    {
-        var names = [String]()
-        if tools.count > 0
-        {
-            for tool in tools
-            {
-                names.append(tool.name)
-            }
-        }
-        return names
-    }
-    
-    /// Names of tools avaliable to place in the workspace.
-    public var avaliable_tools_names: [String]
-    {
-        var names = [String]()
-        for tool in tools
-        {
-            if !tool.is_placed
-            {
-                names.append(tool.name)
-            }
-        }
-        return names
-    }
+    public var tool_names: [String] { tools.map { $0.name } }
     
     /// Names of tools placed in the workspace.
-    public var placed_tools_names: [String] { tools.compactMap { $0.is_placed ? $0.name : nil } }
+    public var placed_tool_names: [String] { tools.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: Tool attachment functions
     public func update_tool_attachments()
@@ -2896,7 +2846,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Adds part in the workspace.
     public func add_part(_ part: Part)
     {
-        part.name = mismatched_name(name: part.name, names: parts_names)
+        part.name = mismatched_name(name: part.name, names: part_names)
         part.is_placed = true
         parts.append(part)
         
@@ -2941,7 +2891,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if parts.indices.contains(index)
         {
-            let new_name = mismatched_name(name: parts[index].name, names: parts_names)
+            let new_name = mismatched_name(name: parts[index].name, names: part_names)
             let new_index = parts.count
 
             parts.append(Part())
@@ -2995,35 +2945,10 @@ public class Workspace: ObservableObject, @unchecked Sendable
     }
     
     /// Names of all parts in the workspace.
-    public var parts_names: [String]
-    {
-        var parts_names = [String]()
-        if parts.count > 0
-        {
-            for part in parts
-            {
-                parts_names.append(part.name)
-            }
-        }
-        return parts_names
-    }
-    
-    /// Names of parts avaliable to place in the workspace.
-    public var avaliable_parts_names: [String]
-    {
-        var names = [String]()
-        for part in parts
-        {
-            if !part.is_placed
-            {
-                names.append(part.name)
-            }
-        }
-        return names
-    }
+    public var part_names: [String] { parts.map { $0.name } }
     
     /// Names of parts placed in the workspace.
-    public var placed_parts_names: [String] { parts.compactMap { $0.is_placed ? $0.name : nil } }
+    public var placed_part_names: [String] { parts.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: - Work with file system
     /**
