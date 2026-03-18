@@ -832,18 +832,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         selected_program_element.performing_state = .error
         performing_state = .error // State light (UI)
         
-        //model_controller.reset_entities()
-        
-        /*if demo
-        {
-            //model_controller.reset_entities()
-        }
-        else
-        {
-            // Remove actions for real tool
-            connector.canceled = true
-            connector.reset_device()
-        }*/
+        program_performed = false // Control Buttons (UI)
     }
     
     /// Set the new target program element index.
