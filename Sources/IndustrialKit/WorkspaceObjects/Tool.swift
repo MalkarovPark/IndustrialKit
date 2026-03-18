@@ -671,10 +671,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         else
         {
             // Remove all action if moving was perform
-            //pointer_position_to_robot()
             performed = false
-            
-            //program_performed = false // Control Buttons (UI)
             
             pause_handler()
         }
@@ -738,6 +735,8 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
             connector.canceled = true
             connector.reset_device()
         }
+        
+        program_performed = false // Control Buttons (UI)
     }
     
     /// Set the new target operation code index.

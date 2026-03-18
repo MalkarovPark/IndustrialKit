@@ -797,6 +797,8 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             connector.canceled = true
             connector.reset_device()
         }
+        
+        program_performed = false // Control Buttons (UI)
     }
     
     /// Set the new target point index.
