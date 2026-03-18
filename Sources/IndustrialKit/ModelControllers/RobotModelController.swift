@@ -481,7 +481,18 @@ public struct EntityPositionData: Codable, Sendable
         Pose(x: x, y: y, z: z, r: r, p: p, w: w)
     }
     
-    public init(name: String, position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float))
+    public init(
+        name: String? = nil,
+        position: (
+            x: Float,
+            y: Float,
+            z: Float,
+            
+            r: Float,
+            p: Float,
+            w: Float
+        ) = (0,0,0,0,0,0)
+    )
     {
         self.name = name
         
