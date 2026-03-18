@@ -12,22 +12,22 @@ import IndustrialKit
 
 public struct StateChartsView: View
 {
-    @ObservedObject var device_state: DeviceState
+    @ObservedObject var device_output: DeviceOutputData
     
     @State private var chart_selection = 0
     
     public init(
-        device_state: DeviceState
+        device_output: DeviceOutputData
     )
     {
-        self.device_state = device_state
+        self.device_output = device_output
     }
     
     public var body: some View
     {
         VStack(spacing: 0)
         {
-            let charts = device_state.charts
+            let charts = device_output.charts
             
             if charts.count > 0
             {
@@ -155,16 +155,16 @@ struct ChartsView_PreviewsContainer: PreviewProvider
     
     struct ChartsView_Previews: View
     {
-        @ObservedObject var device_state = DeviceState()
+        @ObservedObject var device_output = DeviceOutputData()
         
         var body: some View
         {
-            StateChartsView(device_state: device_state)
+            StateChartsView(device_output: device_output)
                 .frame(width: 640, height: 480)
                 .onAppear
                 {
-                    /*device_state.charts.append(StateChart(name: "Location", style: .line))
-                    device_state.charts.append(StateChart(name: "Rotation", style: .line))
+                    /*device_output.charts.append(StateChart(name: "Location", style: .line))
+                    device_output.charts.append(StateChart(name: "Rotation", style: .line))
                     
                     for d in 0..<16
                     {
@@ -173,18 +173,18 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                         var components = [position_point.x, position_point.z, position_point.y]
                         for i in 0...axis_names.count - 1
                         {
-                            device_state.charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
+                            device_output.charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
                         }
                         
                         axis_names = ["R", "P", "W"]
                         components = [position_point.r, position_point.p, position_point.w]
                         for i in 0...axis_names.count - 1
                         {
-                            device_state.charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
+                            device_output.charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
                         }
                     }
                     
-                    device_state.charts.append(
+                    device_output.charts.append(
                         StateChart(
                             name: "Bar",
                             style: .bar,
@@ -197,7 +197,7 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                         )
                     )
                     
-                    device_state.charts.append(
+                    device_output.charts.append(
                         StateChart(
                             name: "Circle",
                             style: .sector,

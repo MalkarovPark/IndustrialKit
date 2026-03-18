@@ -773,7 +773,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             robot.clear_finish_handler()
             robot.clear_error_handler()
             
-            robot.stop_state_update()
+            robot.stop_output_updating()
         }
         
         func pause_handler(_ element: ToolPerformerElement)
@@ -956,7 +956,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             robot.clear_finish_handler()
             robot.clear_error_handler()
             
-            robot.stop_state_update()
+            robot.stop_output_updating()
         }
         
         func reset_handler(_ element: ToolPerformerElement)
@@ -1163,7 +1163,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 
                 robot.deselect_program()
                 
-                robot.stop_state_update()
+                robot.stop_output_updating()
                 
                 completion(.success(()))
             }
@@ -1171,7 +1171,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 robot.clear_finish_handler()
                 robot.clear_error_handler()
                 
-                robot.stop_state_update()
+                robot.stop_output_updating()
                 
                 error_handler(error)
             }
@@ -1335,18 +1335,18 @@ public class Workspace: ObservableObject, @unchecked Sendable
         switch element.object_type
         {
         case .robot:
-            if let device_state = robot_by_name(element.object_name).device_state
+            if let device_output = robot_by_name(element.object_name).device_output
             {
-                info_output = items_to_array(from: device_state.items)
+                info_output = items_to_array(from: device_output.items)
             }
             else
             {
                 error_handler(NSError(domain: "No output items", code: 0, userInfo: nil))
             }
         case .tool:
-            if let device_state = tool_by_name(element.object_name).device_state
+            if let device_output = tool_by_name(element.object_name).device_output
             {
-                info_output = items_to_array(from: device_state.items)
+                info_output = items_to_array(from: device_output.items)
             }
             else
             {

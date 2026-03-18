@@ -215,7 +215,7 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     @Published public var performing_state: PerformingState = .none
     @Published public var output_string: String?
     
-    @Published public var current_device_output: DeviceState?
+    @Published public var current_device_output: DeviceOutputData?
     
     /*/// Updates device state data.
     open var current_device_output: DeviceState?
@@ -225,10 +225,10 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     }*/
     
     /// Initial charts data.
-    open var initial_device_output: DeviceState?
+    open var initial_device_output: DeviceOutputData?
     {
         // Reset contoller output
-        return nil //DeviceState()
+        return nil
     }
     
     // MARK: - Model handling

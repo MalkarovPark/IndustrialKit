@@ -186,7 +186,7 @@ public struct RobotState: Codable
     public init(
         performing_state: PerformingState = .none,
         
-        output_data: DeviceState? = nil,
+        output_data: DeviceOutputData? = nil,
         output_string: String? = nil,
         
         pointer_position: EntityPositionData? = nil,
@@ -205,7 +205,7 @@ public struct RobotState: Codable
     public var performing_state: PerformingState = .none
     
     public var output_string: String?
-    public var output_data: DeviceState?
+    public var output_data: DeviceOutputData?
     
     public var pointer_position: EntityPositionData?
     public var entity_positions: [EntityPositionData]?

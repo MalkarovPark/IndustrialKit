@@ -10,29 +10,29 @@ import IndustrialKit
 
 public struct StateItemsView: View
 {
-    @ObservedObject var device_state: DeviceState
+    @ObservedObject var device_output: DeviceOutputData
     
     @State private var expanded_items: [UUID: Bool] = [:]
     
     public init(
-        device_state: DeviceState
+        device_output: DeviceOutputData
     )
     {
-        self.device_state = device_state
+        self.device_output = device_output
     }
     
     public var body: some View
     {
         VStack(spacing: 0)
         {
-            if device_state.items.count > 0
+            if device_output.items.count > 0
             {
                 List
                 {
-                    ForEach(device_state.items.indices, id: \.self)
+                    ForEach(device_output.items.indices, id: \.self)
                     { index in
                         StateItemListView(
-                            item: device_state.items[index],
+                            item: device_output.items[index],
                             expanded_items: $expanded_items
                         )
                     }
@@ -147,7 +147,7 @@ struct StateView_PreviewsContainer: PreviewProvider
     
     struct StateView_Previews: View
     {
-        @ObservedObject var device_state = DeviceState(
+        @ObservedObject var device_output = DeviceOutputData(
             items: [
                 //StateItem(name: "Temperature", value: "+10º", symbol_name: "thermometer"),
                 //StateItem(name: "Еngine", value: "+50º", symbol_name: "thermometer.transmission"), StateItem(name: "Fridge", value: "-40º", symbol_name: "thermometer.snowflake.circle"),
@@ -158,7 +158,7 @@ struct StateView_PreviewsContainer: PreviewProvider
         
         var body: some View
         {
-            StateItemsView(device_state: device_state)
+            StateItemsView(device_output: device_output)
                 .frame(width: 320, height: 240)
         }
     }

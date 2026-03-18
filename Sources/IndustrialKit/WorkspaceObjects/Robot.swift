@@ -618,7 +618,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in }
     )
     {
-        if update_scope_type == .operational { start_state_update() } // Device State
+        if update_scope_type == .operational { start_output_updating() } // Device State
         
         performed = true
         
@@ -631,7 +631,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
-                    if self.update_scope_type == .operational { self.stop_state_update() } // Device State
+                    if self.update_scope_type == .operational { self.stop_output_updating() } // Device State
                     
                     self.performed = false
                     
@@ -654,7 +654,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             { result in
                 Task
                 { @MainActor in
-                    if self.update_scope_type == .operational { self.stop_state_update() } // Device State
+                    if self.update_scope_type == .operational { self.stop_output_updating() } // Device State
                     
                     self.performed = false
                     
@@ -673,7 +673,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// Stops robot movement.
     public func stop()
     {
-        if state_update_enabled && update_scope_type == .operational { stop_state_update() } // Device State
+        if state_update_enabled && update_scope_type == .operational { stop_output_updating() } // Device State
         
         if device_mode == .simulation
         {
@@ -871,7 +871,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             pointer_position_to_robot()
             performed = false
             
-            reset_device_state()
+            reset_device_output()
         }
         
         target_point_index = 0
@@ -895,10 +895,10 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     
     // MARK: - Device state data handling
     /// A device state data.
-    @Published public var device_state: DeviceState?
+    @Published public var device_output: DeviceOutputData?
     
     /// Flag indicating whether the update loop is active.
-    public var is_state_updating = false
+    public var is_output_updating = false
     
     /// Device state updating enable.
     public var state_update_enabled = false
@@ -909,18 +909,18 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             {
                 if update_scope_type == .continious
                 {
-                    start_state_update()
+                    start_output_updating()
                 }
             }
             else
             {
-                stop_state_update()
+                stop_output_updating()
             }
         }
     }
     
     /// The task responsible for executing the update loop.
-    public var state_update_task: Task<Void, Never>?
+    public var output_update_task: Task<Void, Never>?
     
     /// The interval between updates in nanoseconds.
     public var state_update_interval: Double = 0.01
@@ -930,11 +930,11 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     {
         didSet
         {
-            stop_state_update()
+            stop_output_updating()
             
             if update_scope_type == .continious
             {
-                start_state_update()
+                start_output_updating()
             }
         }
     }
@@ -944,23 +944,23 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
      
      This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
      */
-    public func start_state_update()
+    public func start_output_updating()
     {
         guard state_update_enabled else { return }
         
-        is_state_updating = true
+        is_output_updating = true
         
-        state_update_task = Task
+        output_update_task = Task
         {
-            while is_state_updating
+            while is_output_updating
             {
                 try? await Task.sleep(nanoseconds: UInt64(state_update_interval * 1_000_000_000))
                 await MainActor.run
                 {
-                    self.update_device_state()
+                    self.update_device_output()
                 }
                 
-                if state_update_task == nil
+                if output_update_task == nil
                 {
                     return
                 }
@@ -973,11 +973,11 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
      
      This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
      */
-    public func stop_state_update()
+    public func stop_output_updating()
     {
-        is_state_updating = false
-        state_update_task?.cancel()
-        state_update_task = nil
+        is_output_updating = false
+        output_update_task?.cancel()
+        output_update_task = nil
     }
     
     /**
@@ -987,9 +987,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
      
      > This function is called frequently, so it's crucial to keep its performing time as short as possible to avoid performance issues.
      */
-    private func update_device_state()
+    private func update_device_output()
     {
-        if is_state_updating && (performed || update_scope_type == .continious)
+        if is_output_updating && (performed || update_scope_type == .continious)
         {
             if device_mode == .simulation || (connector.connected && is_twin_sync)
             {
@@ -1001,33 +1001,33 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     public func update_statistics_data()
     {
-        if device_state == nil
+        if device_output == nil
         {
-            device_state = DeviceState()
+            device_output = DeviceOutputData()
         }
         
         if device_mode == .simulation // Get statistic from model controller
         {
-            device_state = model_controller.current_device_output
+            device_output = model_controller.current_device_output
         }
         else // Get statistic from real device
         {
-            device_state = connector.current_device_output
+            device_output = connector.current_device_output
         }
     }
     
     /// Clears device state data.
-    public func reset_device_state()
+    public func reset_device_output()
     {
-        device_state = nil
+        device_output = nil
         
         if device_mode == .simulation // Get statistic from model controller
         {
-            device_state = model_controller.initial_device_output
+            device_output = model_controller.initial_device_output
         }
         else // Get statistic from real device
         {
-            device_state = connector.current_device_output
+            device_output = connector.current_device_output
         }
     }
     
@@ -1408,7 +1408,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         self.state_update_enabled = file.state_update_enabled
         self.state_update_interval = file.state_update_interval
         self.update_scope_type = file.update_scope_type
-        self.device_state = file.device_state
+        self.device_output = file.device_output
         
         self.device_mode = file.device_mode
         self.is_twin_sync = file.is_twin_sync
@@ -1451,7 +1451,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             state_update_enabled: state_update_enabled,
             state_update_interval: state_update_interval,
             update_scope_type: update_scope_type,
-            device_state: device_state,
+            device_output: device_output,
             
             device_mode: device_mode,
             
@@ -1484,7 +1484,7 @@ public struct RobotFileData: Codable
     public var state_update_enabled: Bool
     public var state_update_interval: Double
     public var update_scope_type: ScopeType
-    public var device_state: DeviceState?
+    public var device_output: DeviceOutputData?
     
     public var device_mode: DeviceMode
     public var connection_parameters: [String]?
@@ -1506,7 +1506,7 @@ public struct RobotFileData: Codable
         state_update_enabled: Bool,
         state_update_interval: Double,
         update_scope_type: ScopeType,
-        device_state: DeviceState?,
+        device_output: DeviceOutputData?,
         
         device_mode: DeviceMode,
         connection_parameters: [String]?,
@@ -1529,7 +1529,7 @@ public struct RobotFileData: Codable
         self.state_update_enabled = state_update_enabled
         self.state_update_interval = state_update_interval
         self.update_scope_type = update_scope_type
-        self.device_state = device_state
+        self.device_output = device_output
         
         self.programs = programs
     }

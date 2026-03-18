@@ -434,16 +434,16 @@ public protocol DeviceTwin: WorkspaceObject, ObservableObject
 public protocol StateOutputCapable: WorkspaceObject, ObservableObject
 {
     /// A device state data.
-    var device_state: DeviceState? { get set }
+    var device_output: DeviceOutputData? { get set }
     
     /// Flag indicating whether the update loop is active.
-    var is_state_updating: Bool { get set }
+    var is_output_updating: Bool { get set }
     
     /// Device state updating enable.
     var state_update_enabled: Bool { get set }
     
     /// The task responsible for executing the update loop.
-    var state_update_task: Task<Void, Never>? { get set }
+    var output_update_task: Task<Void, Never>? { get set }
     
     /// The interval between updates in nanoseconds.
     var state_update_interval: Double { get set }
@@ -452,14 +452,14 @@ public protocol StateOutputCapable: WorkspaceObject, ObservableObject
     var update_scope_type: ScopeType { get set }
     
     /// Starts the update loop.
-    func start_state_update()
+    func start_output_updating()
     
     /// Stops the update loop.
-    func stop_state_update()
+    func stop_output_updating()
     
     /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
     func update_statistics_data()
     
     /// Clears device state data.
-    func reset_device_state()
+    func reset_device_output()
 }

@@ -1,5 +1,5 @@
 //
-//  DeviceState.swift
+//  DeviceOutputData.swift
 //  IndustrialKit
 //
 //  Created by Artem on 22.02.2026.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-public class DeviceState: Hashable, Identifiable, ObservableObject, Codable
+public class DeviceOutputData: Hashable, Identifiable, ObservableObject, Codable
 {
-    public static func == (lhs: DeviceState, rhs: DeviceState) -> Bool
+    public static func == (lhs: DeviceOutputData, rhs: DeviceOutputData) -> Bool
     {
         return lhs.id == rhs.id
     }

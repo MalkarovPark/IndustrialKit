@@ -235,12 +235,12 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
     }
     
     // MARK: Statistics
-    open override var current_device_output: DeviceState?
+    open override var current_device_output: DeviceOutputData?
     {
         do
         {
             let json_string = try js_environment.call_js_func(
-                name: "current_device_state"
+                name: "current_device_output"
             )
             
             guard let json_data = json_string.data(using: .utf8)
@@ -250,22 +250,22 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
                 return nil
             }
             
-            let state = try JSONDecoder().decode(DeviceState.self, from: json_data)
+            let state = try JSONDecoder().decode(DeviceOutputData.self, from: json_data)
             return state
         }
         catch
         {
-            print("JS current_device_state error: \(error.localizedDescription)")
+            print("JS current_device_output error: \(error.localizedDescription)")
             return nil
         }
     }
 
-    open override var initial_device_output: DeviceState?
+    open override var initial_device_output: DeviceOutputData?
     {
         do
         {
             let json_string = try js_environment.call_js_func(
-                name: "initial_device_state"
+                name: "initial_device_output"
             )
             
             guard let json_data = json_string.data(using: .utf8)
@@ -275,12 +275,12 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
                 return nil
             }
             
-            let state = try JSONDecoder().decode(DeviceState.self, from: json_data)
+            let state = try JSONDecoder().decode(DeviceOutputData.self, from: json_data)
             return state
         }
         catch
         {
-            print("JS initial_device_state error: \(error.localizedDescription)")
+            print("JS initial_device_output error: \(error.localizedDescription)")
             return nil
         }
     }

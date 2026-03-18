@@ -141,7 +141,7 @@ public struct ToolState: Codable
     public init(
         performing_state: PerformingState = .none,
         
-        output_data: DeviceState? = nil,
+        output_data: DeviceOutputData? = nil,
         output_string: String? = nil,
         
         entity_animations: [EntityAnimationData]? = nil
@@ -157,7 +157,7 @@ public struct ToolState: Codable
     
     public var performing_state: PerformingState = .none
     
-    public var output_data: DeviceState?
+    public var output_data: DeviceOutputData?
     public var output_string: String?
     
     public var entity_animations: [EntityAnimationData]?

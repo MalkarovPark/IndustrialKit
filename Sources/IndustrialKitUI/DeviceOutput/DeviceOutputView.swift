@@ -1,5 +1,5 @@
 //
-//  DeviceStateView.swift
+//  DeviceOutputView.swift
 //  IndustrialKit
 //
 //  Created by Artem on 22.02.2026.
@@ -8,7 +8,7 @@
 import SwiftUI
 import IndustrialKit
 
-public struct DeviceStateView: View
+public struct DeviceOutputView: View
 {
     @ObservedObject var object: WorkspaceObject
     
@@ -39,7 +39,7 @@ public struct DeviceStateView: View
                     {
                         Spacer()
                         
-                        let is_state_updating = Binding(
+                        let is_output_updating = Binding(
                             get: { state_output_device.state_update_enabled },
                             set:
                                 { new_value in
@@ -74,14 +74,14 @@ public struct DeviceStateView: View
                         
                         Menu
                         {
-                            Toggle(isOn: is_state_updating)
+                            Toggle(isOn: is_output_updating)
                             {
                                 Text("Enabled")
                             }
                             
                             Divider()
                             
-                            if !state_output_device.is_state_updating
+                            if !state_output_device.is_output_updating
                             {
                                 #if os(macOS)
                                 Picker(selection: $stats_selection, label: Label("View", systemImage: "eye"))
@@ -115,7 +115,7 @@ public struct DeviceStateView: View
                                 Label("Set Interval...", systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
                             }
                             
-                            if !state_output_device.is_state_updating
+                            if !state_output_device.is_output_updating
                             {
                                 #if os(macOS)
                                 Picker(selection: update_scope_type, label: Label("Scope", systemImage: "selection.pin.in.out"))
@@ -152,7 +152,7 @@ public struct DeviceStateView: View
                             
                             Divider()
                             
-                            Button(role: .destructive, action: { state_output_device.reset_device_state() })
+                            Button(role: .destructive, action: { state_output_device.reset_device_output() })
                             {
                                 Label("Clear Output", systemImage: "eraser")
                             }
@@ -200,16 +200,16 @@ public struct DeviceStateView: View
                     }
                     .padding(10)
                     
-                    if let device_state = state_output_device.device_state
+                    if let device_output = state_output_device.device_output
                     {
                         if stats_selection == 0
                         {
-                            StateChartsView(device_state: device_state)
+                            StateChartsView(device_output: device_output)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
                         else
                         {
-                            StateItemsView(device_state: device_state)
+                            StateItemsView(device_output: device_output)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
                     }
@@ -279,7 +279,7 @@ struct DeviceStateView_Previews: PreviewProvider
         
         var body: some View
         {
-            DeviceStateView(object: robot)
+            DeviceOutputView(object: robot)
                 .modifier(SheetCaption(is_presented: .constant(true), label: "Device State", plain: false, clear_background: true))
                 .onAppear
                 {
@@ -289,8 +289,8 @@ struct DeviceStateView_Previews: PreviewProvider
         
         private func prepare_state()
         {
-            let device_state = DeviceState()
-            device_state.charts.append(StateChart(name: "Line", style: .line))
+            let device_output = DeviceOutputData()
+            device_output.charts.append(StateChart(name: "Line", style: .line))
             
             for d in 0..<16
             {
@@ -299,11 +299,11 @@ struct DeviceStateView_Previews: PreviewProvider
                 let components = [position_point.x, position_point.z, position_point.y]
                 for i in 0...axis_names.count - 1
                 {
-                    device_state.charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
+                    device_output.charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
                 }
             }
             
-            device_state.charts.append(
+            device_output.charts.append(
                 StateChart(
                     name: "Circle",
                     style: .sector,
@@ -315,7 +315,7 @@ struct DeviceStateView_Previews: PreviewProvider
                 )
             )
             
-            device_state.charts.append(
+            device_output.charts.append(
                 StateChart(
                     name: "Bar",
                     style: .bar,
@@ -328,9 +328,9 @@ struct DeviceStateView_Previews: PreviewProvider
                 )
             )
             
-            //device_state.items.removeAll()
-            device_state.items.append(StateItem(name: "Speed", value: "70 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
-            device_state.items.append(
+            //device_output.items.removeAll()
+            device_output.items.append(StateItem(name: "Speed", value: "70 mm/sec", symbol_name: "windshield.front.and.wiper.intermittent"))
+            device_output.items.append(
                 StateItem(
                     name: "Temperature",
                     value: "+10º",
@@ -349,7 +349,7 @@ struct DeviceStateView_Previews: PreviewProvider
                 )
             )
             
-            robot.device_state = device_state
+            robot.device_output = device_output
         }
     }
     
