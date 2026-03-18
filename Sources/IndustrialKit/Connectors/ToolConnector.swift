@@ -65,9 +65,8 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
     {
         if !connected
         {
-            completion(
-                .failure(NSError(domain: "Not Connected to Tool", code: 0, userInfo: nil))
-            )
+            completion(.failure(NSError(domain: "Not Connected to Tool", code: 0, userInfo: nil)))
+            return
         }
         
         canceled = false

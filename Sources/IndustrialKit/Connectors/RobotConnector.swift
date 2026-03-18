@@ -90,9 +90,8 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
     {
         if !connected
         {
-            completion(
-                .failure(NSError(domain: "Not Connected to Robot", code: 0, userInfo: nil))
-            )
+            completion(.failure(NSError(domain: "Not Connected to Robot", code: 0, userInfo: nil)))
+            return
         }
         
         canceled = false
