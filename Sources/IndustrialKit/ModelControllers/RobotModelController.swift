@@ -267,14 +267,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
             
             pointer_position = new_position
             
-            do
-            {
-                try update_model()
-            }
-            catch
-            {
-                throw error
-            }
+            update_pointer_position()
+            do { try update_model() } catch { throw error }
             
             usleep(UInt32(part_time * 1_000_000))
             
@@ -289,15 +283,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
             )
             
             update_pointer_position()
-            
-            do
-            {
-                try update_model()
-            }
-            catch
-            {
-                throw error
-            }
+            do { try update_model() } catch { throw error }
         }
     }
     
