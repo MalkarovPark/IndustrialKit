@@ -90,27 +90,33 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
         }
     }
     
-    // MARK: - Model Handling
+    // MARK: - Sync Handling
     /// A tool model controller.
     public var model_controller: ToolModelController?
     
     override open func sync_with_device()
     {
-        guard let current_tool_state = current_tool_state else { return }
+        guard let current_device_state = current_device_state else { return }
         
         // Update current performing state
-        performing_state = current_tool_state.performing_state
-        output_string = current_tool_state.output_string
+        performing_state = current_device_state.performing_state
+        output_string = current_device_state.output_string
+        
+        // Update current output data
+        if let output_data = current_device_state.output_data
+        {
+            current_device_output = output_data
+        }
         
         // Apply model data
         if let model_controller = model_controller,
-           let entity_animations = current_tool_state.entity_animations
+           let entity_animations = current_device_state.entity_animations
         {
             model_controller.process_animation(by: entity_animations)
         }
     }
     
-    open var current_tool_state: ToolState?
+    open var current_device_state: ToolState?
     {
         return nil
     }
@@ -134,21 +140,27 @@ public struct ToolState: Codable
 {
     public init(
         performing_state: PerformingState = .none,
-        entity_animations: [EntityAnimationData]? = nil,
         
-        output_string: String? = nil
+        output_data: DeviceState? = nil,
+        output_string: String? = nil,
+        
+        entity_animations: [EntityAnimationData]? = nil
     )
     {
         self.performing_state = performing_state
-        self.entity_animations = entity_animations
         
+        self.output_data = output_data
         self.output_string = output_string
+        
+        self.entity_animations = entity_animations
     }
     
     public var performing_state: PerformingState = .none
-    public var entity_animations: [EntityAnimationData]?
     
+    public var output_data: DeviceState?
     public var output_string: String?
+    
+    public var entity_animations: [EntityAnimationData]?
 }
 
 //MARK: - External Connector

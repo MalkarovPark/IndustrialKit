@@ -215,15 +215,17 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
     @Published public var performing_state: PerformingState = .none
     @Published public var output_string: String?
     
-    /// Updates device state data.
-    open var current_device_state: DeviceState?
+    @Published public var current_device_output: DeviceState?
+    
+    /*/// Updates device state data.
+    open var current_device_output: DeviceState?
     {
         // Prepare controller output
         return DeviceState()
-    }
+    }*/
     
     /// Initial charts data.
-    open var initial_device_state: DeviceState?
+    open var initial_device_output: DeviceState?
     {
         // Reset contoller output
         return nil //DeviceState()

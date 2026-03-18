@@ -1008,11 +1008,11 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         
         if device_mode == .simulation // Get statistic from model controller
         {
-            device_state = model_controller.current_device_state
+            device_state = model_controller.current_device_output
         }
         else // Get statistic from real device
         {
-            device_state = connector.current_device_state
+            device_state = connector.current_device_output
         }
     }
     
@@ -1023,11 +1023,11 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         
         if device_mode == .simulation // Get statistic from model controller
         {
-            device_state = model_controller.initial_device_state
+            device_state = model_controller.initial_device_output
         }
         else // Get statistic from real device
         {
-            device_state = connector.initial_device_state
+            device_state = connector.current_device_output
         }
     }
     

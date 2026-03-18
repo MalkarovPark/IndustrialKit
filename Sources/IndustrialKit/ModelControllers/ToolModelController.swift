@@ -235,7 +235,7 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
     }
     
     // MARK: Statistics
-    open override var current_device_state: DeviceState?
+    open override var current_device_output: DeviceState?
     {
         do
         {
@@ -260,7 +260,7 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
         }
     }
 
-    open override var initial_device_state: DeviceState?
+    open override var initial_device_output: DeviceState?
     {
         do
         {

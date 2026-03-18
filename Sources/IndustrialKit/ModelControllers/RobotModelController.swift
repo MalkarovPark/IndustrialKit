@@ -414,7 +414,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
     }
     
     // MARK: Statistics
-    open override var current_device_state: DeviceState?
+    open override var current_device_output: DeviceState?
     {
         do
         {
@@ -439,7 +439,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
         }
     }
 
-    open override var initial_device_state: DeviceState?
+    open override var initial_device_output: DeviceState?
     {
         do
         {

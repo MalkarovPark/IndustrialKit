@@ -71,14 +71,14 @@ open class ModelController
     
     // MARK: - Device state data
     /// Updates device state data.
-    open var current_device_state: DeviceState?
+    open var current_device_output: DeviceState?
     {
         // Prepare controller output
         return DeviceState()
     }
     
     /// Initial charts data.
-    open var initial_device_state: DeviceState?
+    open var initial_device_output: DeviceState?
     {
         // Reset contoller output
         return nil //DeviceState()
