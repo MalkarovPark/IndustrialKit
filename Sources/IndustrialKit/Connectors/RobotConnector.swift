@@ -83,7 +83,6 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
      
      - Parameters:
         - point: The target position performed by the real robot.
-        - update_model: Update model by connector.
         - completion: A completion function that is calls when the performing completes.
      */
     public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
@@ -190,7 +189,7 @@ public struct RobotState: Codable
         output_data: DeviceState? = nil,
         output_string: String? = nil,
         
-        pointer_position: EntityPositionData?,
+        pointer_position: EntityPositionData? = nil,
         entity_positions: [EntityPositionData]? = nil
     )
     {
