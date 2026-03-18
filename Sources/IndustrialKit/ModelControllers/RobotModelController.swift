@@ -142,7 +142,11 @@ open class RobotModelController: ModelController, @unchecked Sendable
         )*/
     )
     {
-        pointer_entity?.update_position(pointer_position)//position)
+        Task
+        { @MainActor in
+            pointer_entity?.update_position(pointer_position)
+        }
+        //pointer_entity?.update_position(pointer_position)//position)
     }
     
     /// Robot teach pointer.
