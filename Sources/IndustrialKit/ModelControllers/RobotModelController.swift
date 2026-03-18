@@ -288,6 +288,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
                 r: point.r, p: point.p, w: point.w
             )
             
+            update_pointer_position()
+            
             do
             {
                 try update_model()
