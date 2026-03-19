@@ -429,3 +429,39 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
         }
     }
 }
+
+public protocol ExternalConnector: WorkspaceObjectConnector, ObservableObject
+{
+    var program_component_enabled: Bool { get set }
+    
+    func start_program_component()
+    func stop_program_component()
+    
+    var program_component_status: ProgramComponentStatus { get set }
+    
+    var program_component_url: URL { get set }
+    var socket_postfix: String { get set }
+}
+
+public enum ProgramComponentStatus: String, Codable, Equatable, CaseIterable
+{
+    case disabled = "Disabled"
+    case starting = "Starting"
+    case working = "Processing"
+    case error = "Error"
+    
+    public var color: Color
+    {
+        switch self
+        {
+        case .disabled:
+            .gray
+        case .starting:
+            .yellow
+        case .working:
+            .green
+        case .error:
+            .red
+        }
+    }
+}

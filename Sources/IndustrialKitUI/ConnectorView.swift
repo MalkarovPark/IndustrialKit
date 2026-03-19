@@ -69,6 +69,11 @@ public struct ConnectorView: View
                     
                     Spacer()
                     
+                    #if os(macOS)
+                    ExternalConnectorView(connector: device.connector)
+                        .disabled(device.device_mode == .simulation)
+                    #endif
+                    
                     Toggle(isOn: is_twin_sync)
                     {
                         Image(systemName: "arrow.triangle.2.circlepath")
@@ -83,8 +88,12 @@ public struct ConnectorView: View
                     .buttonBorderShape(.circle)
                     .padding(.trailing)
                     
-                    ConnectionButton(connector: device.connector, connect_device: { device.connect_device() }, disconnect_device: { device.disconnect_device() })
-                        .disabled(device.device_mode == .simulation)
+                    ConnectionButton(
+                        connector: device.connector,
+                        connect_device: { device.connect_device() },
+                        disconnect_device: { device.disconnect_device() }
+                    )
+                    .disabled(device.device_mode == .simulation)
                 }
             }
         }
@@ -341,10 +350,11 @@ public struct ConnectionParameterView: View
             case is Bool:
                 Toggle(isOn: Binding(
                     get: { parameter.value as? Bool ?? false },
-                    set: { new_value in
-                        parameter.value = new_value
-                        on_update()
-                    }
+                    set:
+                        { new_value in
+                            parameter.value = new_value
+                            on_update()
+                        }
                 ))
                 {
                     Text("Bool")
@@ -361,6 +371,158 @@ public struct ConnectionParameterView: View
         .frame(height: 32)
     }
 }
+
+// MARK: - External Connector
+#if os(macOS)
+private struct ExternalConnectorView: View
+{
+    @ObservedObject var connector: WorkspaceObjectConnector
+    
+    @State private var is_presented = false
+    
+    @State private var enabled = false
+    
+    @State private var sharing_enabled = false
+    @State private var sharing_address = "0.0.0.0"
+    
+    var body: some View
+    {
+        if let external_connector = connector as? any ExternalConnector
+        {
+            Button
+            {
+                is_presented = true
+            }
+            label:
+            {
+                Image(systemName: "apple.terminal")
+                    .frame(width: 20, height: 20)
+            }
+            .help("External Connector")
+            //.disabled(device.device_mode == .simulation)
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.circle)
+            .popover(isPresented: $is_presented)
+            {
+                VStack(spacing: 16)
+                {
+                    /*#if os(iOS)
+                    if is_compact
+                    {
+                        HStack
+                        {
+                            Text("External Connector")
+                                .font(.title2)
+                            
+                            Spacer()
+                            
+                            Button
+                            {
+                                position_item_view_presented = false
+                            }
+                            label:
+                            {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 24))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    #endif*/
+                    
+                    HStack
+                    {
+                        VStack(alignment: .leading, spacing: 4)
+                        {
+                            Text("External Program")
+                            
+                            HStack
+                            {
+                                Image(systemName: "circle.fill")
+                                    .foregroundColor(external_connector.program_component_status.color)
+                                    .font(.system(size: program_item_light_size))
+                                
+                                Text(external_connector.program_component_status.rawValue)
+                                    .fontWeight(.light)
+                            }
+                        }
+                        //.padding(.leading, program_item_light_padding)
+                        
+                        Spacer(minLength: 32)
+                        
+                        Toggle(isOn: Binding(
+                            get: { external_connector.program_component_enabled },
+                            set:
+                                { new_value in
+                                    external_connector.program_component_enabled = new_value
+                                    //on_update()
+                                }
+                        ))
+                        {
+                            Text("Bool")
+                        }
+                        .toggleStyle(.switch)
+                        #if os(iOS) || os(visionOS)
+                        .tint(.accentColor)
+                        #endif
+                        .labelsHidden()
+                    }
+                    
+                    Divider()
+                    
+                    VStack(spacing: 8)
+                    {
+                        HStack
+                        {
+                            Text("Enable Sharing")
+                            
+                            Spacer(minLength: 32)
+                            
+                            Toggle(isOn: Binding(
+                                get: { sharing_enabled },
+                                set:
+                                    { new_value in
+                                        sharing_enabled = new_value
+                                        //on_update()
+                                    }
+                            ))
+                            {
+                                Text("Bool")
+                            }
+                            .toggleStyle(.switch)
+                            #if os(iOS) || os(visionOS)
+                            .tint(.accentColor)
+                            #endif
+                            .labelsHidden()
+                        }
+                        
+                        HStack
+                        {
+                            Text("Address")
+                            
+                            TextField(
+                                "0.0.0.0",
+                                text: Binding(
+                                    get: { sharing_address },
+                                    set:
+                                        { new_value in
+                                            sharing_address = new_value
+                                            //on_update()
+                                        }
+                                )
+                            )
+                            .textFieldStyle(.plain)
+                        }
+                        .disabled(!sharing_enabled)
+                    }
+                }
+                .padding()
+            }
+            .padding(.trailing)
+        }
+    }
+}
+#endif
 
 // MARK: - Previews
 struct ConnectorView_Previews: PreviewProvider
@@ -386,14 +548,46 @@ struct ConnectorView_Previews: PreviewProvider
         Container()
     }
     
-    class Test_Connector: ToolConnector, @unchecked Sendable
+    class Test_Connector: ToolConnector, ExternalConnector, @unchecked Sendable
     {
+        // MARK: Program component handling
+        public var program_component_enabled: Bool = false
+        {
+            didSet
+            {
+                program_component_enabled ?
+                start_program_component() :
+                stop_program_component()
+            }
+        }
+        
+        public func start_program_component()
+        {
+            Task
+            {
+                program_component_status = .starting
+                
+                sleep(1)
+                
+                program_component_status = .working
+            }
+        }
+        
+        public func stop_program_component()
+        {
+            program_component_status = .disabled
+        }
+        
+        @Published public var program_component_status: ProgramComponentStatus = .disabled
+        
+        public var program_component_url: URL = URL(fileURLWithPath: "")
+        
+        public var socket_postfix: String = ""
+        
+        // MARK: Connection handling
         override var default_parameters: [ConnectionParameter]
         {
             [
-                //.init(name: "String", value: "Text"),
-                //.init(name: "Int", value: 8),
-                //.init(name: "Float", value: Float(6)),
                 .init(name: "Bool", value: true)
             ]
         }
@@ -415,8 +609,6 @@ struct ConnectorView_Previews: PreviewProvider
             }
             
             return result
-            
-            //return (parameters[safe: 0]?.value as? Bool) ?? false
         }
     }
 }

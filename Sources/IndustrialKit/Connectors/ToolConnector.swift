@@ -164,8 +164,27 @@ public struct ToolState: Codable
 }
 
 //MARK: - External Connector
-public class ExternalToolConnector: ToolConnector, @unchecked Sendable
+public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked Sendable
 {
+    // MARK: Program component handling
+    @Published public var program_component_enabled: Bool = false
+    
+    public func start_program_component()
+    {
+        
+    }
+    
+    public func stop_program_component()
+    {
+        
+    }
+    
+    @Published public var program_component_status: ProgramComponentStatus = .disabled
+    
+    public var program_component_url: URL = URL(fileURLWithPath: "")
+    
+    public var socket_postfix: String = ""
+    
     // MARK: Init functions
     /// An external module name
     public var module_name: String
