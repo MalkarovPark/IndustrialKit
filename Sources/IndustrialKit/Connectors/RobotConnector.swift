@@ -320,7 +320,7 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
     
     public var socket_name: String
     {
-        return "/tmp/_\(module_name)_robot_connector_socket"
+        return "/tmp/\(module_name)_\(id)_robot_connector_socket"
     }
     
     // MARK: Parameters import

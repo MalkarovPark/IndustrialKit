@@ -436,7 +436,7 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
     }
 }
 
-public protocol ExternalConnector: WorkspaceObjectConnector, ObservableObject
+public protocol ExternalConnector: WorkspaceObjectConnector, ObservableObject, Identifiable
 {
     var program_component_enabled: Bool { get set }
     
