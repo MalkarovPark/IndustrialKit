@@ -240,7 +240,7 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
     
     public var program_component_url: URL
     {
-        return package_url.appendingPathComponent("Connector")
+        return package_url.appendingPathComponent("Code/Connector")
     }
     
     public var socket_name: String
