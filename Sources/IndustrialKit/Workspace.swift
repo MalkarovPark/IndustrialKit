@@ -2697,6 +2697,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Names of placed robots that support attachments.
     public var attachment_supporting_robot_names: [String] { robots.compactMap { $0.is_placed && !$0.end_entity_name.isEmpty ? $0.name : nil } }
     
+    /// Stops any external connector programs running on the robots.
+    public func stop_robot_external_connectors()
+    {
+        robots.compactMap { $0.connector as? any ExternalConnector }
+            .forEach { $0.stop_program_component() }
+    }
+    
     // MARK: - Tools handling functions
     // MARK: Tools manage funcions
     /// Adds tool in the workspace.
@@ -2828,6 +2835,13 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 workspace_entity.addChild(tool.entity)
             }
         }
+    }
+    
+    /// Stops any external connector programs running on the tools.
+    public func stop_tool_external_connectors()
+    {
+        robots.compactMap { $0.connector as? any ExternalConnector }
+            .forEach { $0.stop_program_component() }
     }
     
     // MARK: - Parts handling functions

@@ -251,10 +251,10 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
         self.package_url = URL(fileURLWithPath: "")
     }
     
-    deinit
+    /*deinit
     {
         stop_program_component()
-    }
+    }*/
     
     // MARK: Program component handling
     public var program_component_enabled: Bool = false
