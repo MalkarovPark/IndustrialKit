@@ -192,20 +192,12 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
      */
     public static func import_external_modules(by names: [String])
     {
-        /*#if os(macOS)
-        stop_external_module_servers()
-        #endif*/
-        
         Tool.external_modules.removeAll()
         
         for name in names
         {
             Tool.external_modules.append(ToolModule(external_name: name))
         }
-        
-        /*#if os(macOS)
-        start_external_module_servers()
-        #endif*/
     }
     
     /// Performs loading to all entities from internal modules.
@@ -217,6 +209,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
             {
                 await module.perform_load_entity_async()
             }
+            
             completion()
         }
     }
@@ -230,36 +223,10 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
             {
                 await module.perform_load_entity_async()
             }
+            
             completion()
         }
     }
-    
-    #if os(macOS)
-    /// Start all program components in module.
-    public static func start_external_module_servers()
-    {
-        Task
-        {
-            for module in external_modules
-            {
-                await module.start_program_components()
-            }
-        }
-        /*for module in external_modules
-        {
-            module.start_program_components()
-        }*/
-    }
-    
-    /// Stop all program components in module.
-    public static func stop_external_module_servers()
-    {
-        for module in external_modules
-        {
-            module.stop_program_components()
-        }
-    }
-    #endif
     
     // MARK: - Digital Twin
     /**

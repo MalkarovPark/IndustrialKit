@@ -223,6 +223,21 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         module_import(modules[index])
     }
     
+    /**
+     Imports external modules by names.
+     - Parameters:
+        - name: A list of external modules names.
+     */
+    public static func import_external_modules(by names: [String])
+    {
+        Robot.external_modules.removeAll()
+        
+        for name in names
+        {
+            Robot.external_modules.append(RobotModule(external_name: name))
+        }
+    }
+    
     /// Performs loading to all entities from internal modules.
     public static func load_all_internal_modules_entities(_ completion: @escaping () -> Void = {})
     {
@@ -232,6 +247,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             {
                 await module.perform_load_entity_async()
             }
+            
             completion()
         }
     }
@@ -245,55 +261,10 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             {
                 await module.perform_load_entity_async()
             }
+            
             completion()
         }
     }
-    
-    /**
-     Imports external modules by names.
-     - Parameters:
-        - name: A list of external modules names.
-     */
-    public static func import_external_modules(by names: [String])
-    {
-        /*#if os(macOS)
-        stop_external_module_servers()
-        #endif*/
-        
-        Robot.external_modules.removeAll()
-        
-        for name in names
-        {
-            Robot.external_modules.append(RobotModule(external_name: name))
-        }
-        
-        /*#if os(macOS)
-        start_external_module_servers()
-        #endif*/
-    }
-    
-    #if os(macOS)
-    /// Start all program components in module.
-    public static func start_external_module_servers()
-    {
-        Task
-        {
-            for module in external_modules
-            {
-                await module.start_program_components()
-            }
-        }
-    }
-    
-    /// Stop all program components in module.
-    public static func stop_external_module_servers()
-    {
-        for module in external_modules
-        {
-            module.stop_program_components()
-        }
-    }
-    #endif
     
     // MARK: - Digital Twin
     /**
