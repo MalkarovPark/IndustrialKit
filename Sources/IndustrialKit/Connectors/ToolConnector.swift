@@ -110,7 +110,8 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
         
         // Apply model data
         if let model_controller = model_controller,
-           let entity_animations = current_device_state.entity_animations
+           let entity_animations = current_device_state.entity_animations,
+           performing_state == .processing
         {
             model_controller.process_animation(by: entity_animations)
         }
