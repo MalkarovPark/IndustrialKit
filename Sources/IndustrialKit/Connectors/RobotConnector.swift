@@ -146,10 +146,10 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
         }
         
         // Apply model data
-        if let model_controller = model_controller
+        if let model_controller = model_controller,
+           performing_state == .processing
         {
-            if let entity_positions = current_device_state.entity_positions,
-               performing_state == .processing
+            if let entity_positions = current_device_state.entity_positions
             {
                 model_controller.apply_entity_positions(by: entity_positions)
             }
