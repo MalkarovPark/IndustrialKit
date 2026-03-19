@@ -203,6 +203,11 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         self.package_url = URL(fileURLWithPath: "")
     }
     
+    deinit
+    {
+        stop_program_component()
+    }
+    
     // MARK: Program component handling
     public var program_component_enabled: Bool = false
     {
