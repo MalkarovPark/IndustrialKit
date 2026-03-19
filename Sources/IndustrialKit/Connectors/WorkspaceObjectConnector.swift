@@ -242,7 +242,7 @@ open class WorkspaceObjectConnector: ObservableObject, /*NSCopying,*/ @unchecked
     public var is_device_syncing = false
     
     /// Enables or disables synchronization between the real device and the virtual model.
-    public var model_sync_enabled = true //false
+    //public var model_sync_enabled = true //false
     
     /// Asynchronous task responsible for executing the device–model synchronization loop.
     public var device_sync_task: Task<Void, Never>?
@@ -271,7 +271,7 @@ open class WorkspaceObjectConnector: ObservableObject, /*NSCopying,*/ @unchecked
                 try? await Task.sleep(nanoseconds: UInt64(device_sync_interval * 1_000_000_000))
                 await MainActor.run
                 {
-                    guard model_sync_enabled else { return } //??
+                    //guard model_sync_enabled else { return } //??
                     self.sync_with_device()
                 }
                 

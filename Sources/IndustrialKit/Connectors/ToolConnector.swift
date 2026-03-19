@@ -339,7 +339,6 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         guard let terminal_output: String = send_via_unix_socket(at: socket_name, with: ["disconnect"])
         else
         {
-            
             connection_failure = true
             return
         }

@@ -148,7 +148,8 @@ open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
         // Apply model data
         if let model_controller = model_controller
         {
-            if let entity_positions = current_device_state.entity_positions
+            if let entity_positions = current_device_state.entity_positions,
+               performing_state == .processing
             {
                 model_controller.apply_entity_positions(by: entity_positions)
             }
@@ -387,7 +388,6 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
         guard let terminal_output: String = send_via_unix_socket(at: socket_name, with: ["disconnect"])
         else
         {
-            
             connection_failure = true
             return
         }
