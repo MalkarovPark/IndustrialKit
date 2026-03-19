@@ -584,7 +584,7 @@ struct ConnectorView_Previews: PreviewProvider
         
         public var program_component_url: URL = URL(fileURLWithPath: "")
         
-        public var socket_postfix: String = ""
+        public var socket_name: String { String() }
         
         // MARK: Connection handling
         override var default_parameters: [ConnectionParameter]

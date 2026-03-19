@@ -182,15 +182,16 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }*/
         
         model_controller = module.model_controller.clone()
+        connector = module.connector.clone()
         
-        if !(module.connector is ExternalRobotConnector)
+        /*if !(module.connector is ExternalRobotConnector)
         {
             connector = module.connector.copy() as! RobotConnector
         }
         else
         {
             connector = module.connector
-        }
+        }*/
         
         origin_shift = module.origin_shift
         origin_position = module.default_origin_position

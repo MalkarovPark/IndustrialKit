@@ -145,15 +145,16 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }*/
         
         model_controller = module.model_controller.clone()
+        connector = module.connector.clone()
         
-        if !(module.connector is ExternalToolConnector)
+        /*if !(module.connector is ExternalToolConnector)
         {
             connector = module.connector.copy() as! ToolConnector
         }
         else
         {
             connector = module.connector
-        }
+        }*/
         
         codes = module.codes
         

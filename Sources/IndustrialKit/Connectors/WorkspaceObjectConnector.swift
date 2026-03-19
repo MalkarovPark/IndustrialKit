@@ -16,7 +16,7 @@ import SwiftUI
  
  Control functions are specialized for subtypes by workspace objects.
  */
-open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sendable
+open class WorkspaceObjectConnector: ObservableObject, /*NSCopying,*/ @unchecked Sendable
 {
     // MARK: - Init functions
     required public init()
@@ -29,11 +29,17 @@ open class WorkspaceObjectConnector: ObservableObject, NSCopying, @unchecked Sen
         disconnect()
     }
     
-    /// Copy model controller instance.
+    /// Clone connector instance.
+    open func clone() -> Self
+    {
+        return type(of: self).init()
+    }
+    
+    /*/// Copy model controller instance.
     open func copy(with zone: NSZone? = nil) -> Any
     {
         return type(of: self).init() as! Self
-    }
+    }*/
     
     // MARK: - Connection parameters handling
     public func import_connection_parameters_values(_ list: [String]?)
@@ -439,8 +445,8 @@ public protocol ExternalConnector: WorkspaceObjectConnector, ObservableObject
     
     var program_component_status: ProgramComponentStatus { get set }
     
-    var program_component_url: URL { get set }
-    var socket_postfix: String { get set }
+    var program_component_url: URL { get }
+    var socket_name: String { get }
 }
 
 public enum ProgramComponentStatus: String, Codable, Equatable, CaseIterable

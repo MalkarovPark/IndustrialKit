@@ -141,9 +141,14 @@ open class ToolModule: IndustrialModule
             code: module_info.model_controller_code
         )
         
-        //#if os(macOS)
-        //connector = ExternalToolConnector(name.code_correct_format, package_url: package_url, parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]())
-        //#endif
+        #if os(macOS)
+        connector = ExternalToolConnector(
+            name.code_correct_format,
+            package_url: package_url,
+            
+            parameters: external_module_info?.connection_parameters ?? [ConnectionParameter]()
+        )
+        #endif
     }
     
     #if os(macOS)

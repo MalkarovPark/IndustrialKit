@@ -214,24 +214,16 @@ public struct RobotState: Codable
 //MARK: - External Connector
 public class ExternalRobotConnector: RobotConnector, ExternalConnector, @unchecked Sendable
 {
-    // MARK: Program component handling
-    @Published public var program_component_enabled: Bool = false
-    
-    public func start_program_component()
+    /// Clone connector instance.
+    open override func clone() -> Self
     {
+        let copy = type(of: self).init()
         
-    }
-    
-    public func stop_program_component()
-    {
+        copy.module_name = module_name
+        copy.package_url = package_url
         
+        return copy
     }
-    
-    @Published public var program_component_status: ProgramComponentStatus = .not_running
-    
-    public var program_component_url: URL = URL(fileURLWithPath: "")
-    
-    public var socket_postfix: String = ""
     
     // MARK: Init functions
     /// An external module name
@@ -240,7 +232,12 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
     /// For access to code
     public var package_url: URL
     
-    public init(_ module_name: String, package_url: URL, parameters: [ConnectionParameter])
+    public init(
+        _ module_name: String,
+        package_url: URL,
+        
+        parameters: [ConnectionParameter]
+    )
     {
         self.module_name = module_name
         self.package_url = package_url
@@ -252,6 +249,45 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
     {
         self.module_name = ""
         self.package_url = URL(fileURLWithPath: "")
+    }
+    
+    // MARK: Program component handling
+    @Published public var program_component_enabled: Bool = false
+    
+    public func start_program_component()
+    {
+        let program_file_name = "Connector"
+        
+        Task
+        {
+            if await !is_socket_active(at: socket_name)
+            {
+                perform_terminal_app_sync(
+                    at: program_component_url,
+                    with: [
+                        socket_name,
+                        " > /dev/null 2>&1 &"
+                    ]
+                )
+            }
+        }
+    }
+    
+    public func stop_program_component()
+    {
+        send_via_unix_socket(at: socket_name, command: "stop")
+    }
+    
+    @Published public var program_component_status: ProgramComponentStatus = .not_running
+    
+    public var program_component_url: URL
+    {
+        return package_url.appendingPathComponent("Connector")
+    }
+    
+    public var socket_name: String
+    {
+        return "/tmp/_\(module_name)_robot_connector_socket"
     }
     
     // MARK: Parameters import
@@ -268,14 +304,21 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
         #if os(macOS)
         // Perform connection
         let arguments = ["connect"] + (connection_parameters_values?.map { "\($0)" } ?? [])
-
-        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: arguments) else
+        
+        guard let terminal_output: String = send_via_unix_socket(at: socket_name, with: arguments)
+        else
         {
             connection_error = NSError(domain: "Couldn't perform external code", code: 0, userInfo: nil)
             return false
         }
         
         // Get output
+        if let range = terminal_output.range(of: "\"([^\"]*)\"", options: .regularExpression)
+        {
+            connection_output_string = String(terminal_output[range]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+        }
+        
+        // Get connection result
         if let start = terminal_output.range(of: "<done:")?.upperBound,
            let end = terminal_output[start...].firstIndex(of: ">")
         {
@@ -309,7 +352,7 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
     override open func disconnection_process()// async
     {
         #if os(macOS)
-        guard let terminal_output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["disconnect"])
+        guard let terminal_output: String = send_via_unix_socket(at: socket_name, with: ["disconnect"])
         else
         {
             
@@ -320,7 +363,7 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
     }
     
     // MARK: Performing
-    private var state: PerformingState
+    /*private var state: PerformingState
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(
@@ -376,7 +419,7 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
     }
     
     // MARK: State Data
-    /*open override var current_device_state: DeviceState?
+    open override var current_device_state: DeviceState?
     {
         #if os(macOS)
         guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_robot_connector_socket", with: ["current_device_state"])
