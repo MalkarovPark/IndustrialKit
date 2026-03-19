@@ -252,12 +252,18 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
     }
     
     // MARK: Program component handling
-    @Published public var program_component_enabled: Bool = false
+    public var program_component_enabled: Bool = false
+    {
+        didSet
+        {
+            program_component_enabled ?
+            start_program_component() :
+            stop_program_component()
+        }
+    }
     
     public func start_program_component()
     {
-        let program_file_name = "Connector"
-        
         Task
         {
             if await !is_socket_active(at: socket_name)
