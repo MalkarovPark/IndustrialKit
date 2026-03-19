@@ -368,7 +368,6 @@ public func perform_terminal_app_sync(at url: URL, with arguments: [String])
 {
     do
     {
-        print("'\(url.path)' \(arguments.joined(separator: " "))")
         try perform_terminal_command("'\(url.path)' \(arguments.joined(separator: " "))", timeout: 0.1)
     }
     catch
