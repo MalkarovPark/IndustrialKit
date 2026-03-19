@@ -445,23 +445,20 @@ public protocol ExternalConnector: WorkspaceObjectConnector, ObservableObject
 
 public enum ProgramComponentStatus: String, Codable, Equatable, CaseIterable
 {
-    case disabled = "Disabled"
+    case not_running = "Not Running"
     case starting = "Starting"
-    case working = "Processing"
-    case error = "Error"
+    case running = "Running"
     
     public var color: Color
     {
         switch self
         {
-        case .disabled:
-            .gray
+        case .not_running:
+            .red
         case .starting:
             .yellow
-        case .working:
+        case .running:
             .green
-        case .error:
-            .red
         }
     }
 }

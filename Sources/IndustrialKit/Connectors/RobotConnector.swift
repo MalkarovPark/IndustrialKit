@@ -227,7 +227,7 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
         
     }
     
-    @Published public var program_component_status: ProgramComponentStatus = .disabled
+    @Published public var program_component_status: ProgramComponentStatus = .not_running
     
     public var program_component_url: URL = URL(fileURLWithPath: "")
     

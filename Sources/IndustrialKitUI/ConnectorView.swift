@@ -569,16 +569,18 @@ struct ConnectorView_Previews: PreviewProvider
                 
                 sleep(1)
                 
-                program_component_status = .working
+                program_component_status = .running//.disabled
+                
+                //program_component_enabled = false
             }
         }
         
         public func stop_program_component()
         {
-            program_component_status = .disabled
+            program_component_status = .not_running
         }
         
-        @Published public var program_component_status: ProgramComponentStatus = .disabled
+        @Published public var program_component_status: ProgramComponentStatus = .not_running
         
         public var program_component_url: URL = URL(fileURLWithPath: "")
         
