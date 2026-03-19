@@ -272,7 +272,7 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
     
     public var socket_name: String
     {
-        return "/tmp/\(module_name)_\(Int(bitPattern: id))_tool_connector_socket" //self.id.hashValue
+        return "/tmp/\(module_name)\(Int(bitPattern: id))_tool_connector_socket"
     }
     
     // MARK: Parameters import
