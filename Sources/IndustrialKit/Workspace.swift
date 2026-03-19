@@ -2840,7 +2840,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Stops any external connector programs running on the tools.
     public func stop_tool_external_connectors()
     {
-        robots.compactMap { $0.connector as? any ExternalConnector }
+        tools.compactMap { $0.connector as? any ExternalConnector }
             .forEach { $0.stop_program_component() }
     }
     
