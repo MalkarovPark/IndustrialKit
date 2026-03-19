@@ -218,6 +218,8 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
     {
         Task
         {
+            program_component_status = .starting
+            
             if await !is_socket_active(at: socket_name)
             {
                 perform_terminal_app_sync(
@@ -228,12 +230,31 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
                     ]
                 )
             }
+            
+            let timeout_seconds: UInt64 = 2
+            let check_interval: UInt64 = 100_000_000
+            var attempts: UInt64 = 0
+            let max_attempts = timeout_seconds * 10
+            
+            while await !is_socket_active(at: socket_name)
+            {
+                if attempts >= max_attempts
+                {
+                    program_component_status = .not_running
+                    return
+                }
+                try? await Task.sleep(nanoseconds: check_interval)
+                attempts += 1
+            }
+            
+            program_component_status = .running
         }
     }
     
     public func stop_program_component()
     {
         send_via_unix_socket(at: socket_name, command: "stop")
+        program_component_status = .not_running
     }
     
     @Published public var program_component_status: ProgramComponentStatus = .not_running
