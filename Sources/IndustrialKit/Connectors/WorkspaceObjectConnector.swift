@@ -32,7 +32,13 @@ open class WorkspaceObjectConnector: ObservableObject, /*NSCopying,*/ @unchecked
     /// Clone connector instance.
     open func clone() -> Self
     {
-        return type(of: self).init()
+        //return type(of: self).init()
+        
+        let copy = type(of: self).init()
+        
+        copy.parameters = parameters
+        
+        return copy
     }
     
     /*/// Copy model controller instance.
