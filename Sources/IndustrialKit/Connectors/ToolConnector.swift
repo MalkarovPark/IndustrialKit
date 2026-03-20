@@ -162,7 +162,7 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         copy.package_url = package_url
         
         copy.external_parameters = external_parameters
-        //copy.parameters = parameters
+        copy.parameters = external_parameters
         
         return copy
     }
