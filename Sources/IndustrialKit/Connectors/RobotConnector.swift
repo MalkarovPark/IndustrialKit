@@ -209,8 +209,8 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
         copy.module_name = module_name
         copy.package_url = package_url
         
-        copy.external_parameters = external_parameters //default_parameters
-        copy.parameters = external_parameters
+        copy.external_parameters = external_parameters
+        copy.parameters = parameters
         
         return copy
     }
