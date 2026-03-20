@@ -50,6 +50,36 @@ open class WorkspaceObjectConnector: ObservableObject, /*NSCopying,*/ @unchecked
     // MARK: - Connection parameters handling
     public func import_connection_parameters_values(_ list: [String]?)
     {
+        guard let list, list.count == parameters.count else { return }
+        
+        var new_parameters: [ConnectionParameter] = []
+        
+        for i in 0 ..< parameters.count
+        {
+            let original = parameters[i]
+            let new_param = original.copy()
+            
+            switch original.value
+            {
+            case is String:
+                new_param.value = list[i]
+            case is Int:
+                new_param.value = Int(list[i]) ?? 0
+            case is Float:
+                new_param.value = Float(list[i]) ?? 0
+            case is Bool:
+                new_param.value = list[i] == "true"
+            default:
+                break
+            }
+            
+            new_parameters.append(new_param)
+        }
+        
+        parameters = new_parameters
+    }
+    /*public func import_connection_parameters_values(_ list: [String]?)
+    {
         if list != nil && parameters.count > 0
         {
             if list?.count == parameters.count
@@ -72,7 +102,7 @@ open class WorkspaceObjectConnector: ObservableObject, /*NSCopying,*/ @unchecked
                 }
             }
         }
-    }
+    }*/
     
     public var connection_parameters_values: [String]?
     {
@@ -382,6 +412,11 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
         self.value = value
     }
     
+    public func copy() -> ConnectionParameter
+    {
+        return ConnectionParameter(name: self.name, value: self.value)
+    }
+    
     // MARK: - Codable handling
     private enum CodingKeys: String, CodingKey
     {
@@ -404,7 +439,7 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
         switch value_type
         {
         case "String":
-            value = try container.decode(String.self, forKey: .value_int)
+            value = try container.decode(String.self, forKey: .value_string)
         case "Int":
             value = try container.decode(Int.self, forKey: .value_int)
         case "Float":
@@ -412,7 +447,7 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
         case "Bool":
             value = try container.decode(Bool.self, forKey: .value_bool)
         default:
-            throw DecodingError.dataCorruptedError(forKey: .value_type, in: container, debugDescription: "Unknown type")
+            throw DecodingError.dataCorruptedError(forKey: .value_type, in: container, debugDescription: "Unknown Type")
         }
     }
     
@@ -426,7 +461,7 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
         {
         case let value as String:
             try container.encode("String", forKey: .value_type)
-            try container.encode(value, forKey: .value_int)
+            try container.encode(value, forKey: .value_string)
         case let value as Int:
             try container.encode("Int", forKey: .value_type)
             try container.encode(value, forKey: .value_int)
