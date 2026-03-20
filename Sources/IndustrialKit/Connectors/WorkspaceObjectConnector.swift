@@ -407,7 +407,7 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
 {
     public static func == (lhs: ConnectionParameter, rhs: ConnectionParameter) -> Bool
     {
-        lhs.id == rhs.id
+        lhs.name == rhs.name //lhs.id == rhs.id
     }
     
     public var id = UUID()
@@ -428,7 +428,7 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
     // MARK: - Codable handling
     private enum CodingKeys: String, CodingKey
     {
-        case id
+        //case id
         case name
         case value_type
         case value_string
@@ -440,7 +440,7 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
     required public init(from decoder: Decoder) throws
     {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(UUID.self, forKey: .id)
+        //id = try container.decode(UUID.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         
         let value_type = try container.decode(String.self, forKey: .value_type)
@@ -462,7 +462,7 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
     public func encode(to encoder: Encoder) throws
     {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
+        //try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         
         switch value
