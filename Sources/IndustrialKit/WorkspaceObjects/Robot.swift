@@ -89,7 +89,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         super.init(name: name)
         
         is_internal_module = is_internal
-        module_import(module)
+        import_module(module)
     }
     
     public override init(
@@ -158,7 +158,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
      - Robot Model Controller
      - Robot Connector
      */
-    public func module_import(_ module: RobotModule)
+    public func import_module(_ module: RobotModule)
     {
         module_name = module.name
         
@@ -210,7 +210,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// Imported external robot modules.
     nonisolated(unsafe) public static var external_modules = [RobotModule]()
     
-    public override func module_import_by_name(_ name: String, is_internal: Bool = true)
+    public override func import_module(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Robot.internal_modules : Robot.external_modules
         
@@ -220,7 +220,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             return
         }
         
-        module_import(modules[index])
+        import_module(modules[index])
     }
     
     /**

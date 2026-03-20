@@ -78,7 +78,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         super.init(name: name)
         
         is_internal_module = is_internal
-        module_import(module)
+        import_module(module)
     }
     
     public override init(
@@ -121,7 +121,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
      - Tool Connector
      - Codes
      */
-    public func module_import(_ module: ToolModule)
+    public func import_module(_ module: ToolModule)
     {
         module_name = module.name
         
@@ -172,7 +172,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// Imported external tool modules.
     nonisolated(unsafe) public static var external_modules = [ToolModule]()
     
-    public override func module_import_by_name(_ name: String, is_internal: Bool = true)
+    public override func import_module(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Tool.internal_modules : Tool.external_modules
         
@@ -182,7 +182,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
             return
         }
         
-        module_import(modules[index])
+        import_module(modules[index])
     }
     
     /**

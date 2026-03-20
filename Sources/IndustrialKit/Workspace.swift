@@ -546,7 +546,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             }
         }
         
-        element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
+        element.import_module(element.module_name, is_internal: !element.module_name.hasPrefix("."))
     }
     
     // MARK: - Performing functions

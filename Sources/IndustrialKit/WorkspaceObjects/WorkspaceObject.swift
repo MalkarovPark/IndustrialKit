@@ -96,7 +96,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         self.name = name
         self.is_internal_module = is_internal
         
-        module_import_by_name(module_name, is_internal: is_internal)
+        import_module(module_name, is_internal: is_internal)
     }
     
     // MARK: - Module handling
@@ -108,7 +108,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
      - Parameters:
         - name: An installed module name.
      */
-    open func module_import_by_name(_ name: String, is_internal: Bool = true)
+    open func import_module(_ name: String, is_internal: Bool = true)
     {
         
     }
@@ -281,7 +281,7 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         
         self.is_placed = file.is_placed
         
-        module_import_by_name(module_name, is_internal: is_internal_module)
+        import_module(module_name, is_internal: is_internal_module)
     }
     
     public func file_data() -> WorkspaceObjectFileData

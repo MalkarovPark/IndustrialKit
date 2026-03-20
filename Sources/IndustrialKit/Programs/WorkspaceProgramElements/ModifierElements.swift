@@ -307,7 +307,7 @@ public class ChangerModifierElement: ModifierElement
     {
         super.init()
         
-        module_import(module)
+        import_module(module)
     }
     
     /// A name of modifier module.
@@ -346,7 +346,7 @@ public class ChangerModifierElement: ModifierElement
      Set the following components:
      - Registers change function
      */
-    public func module_import(_ module: ChangerModule)
+    public func import_module(_ module: ChangerModule)
     {
         change = module.change
     }
@@ -369,7 +369,7 @@ public class ChangerModifierElement: ModifierElement
         - name: An installed module name.
         - is_internal: Is module internal or external.
      */
-    public func module_import_by_name(_ name: String, is_internal: Bool = true)
+    public func import_module(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Changer.internal_modules : Changer.external_modules
         
@@ -380,7 +380,7 @@ public class ChangerModifierElement: ModifierElement
             return
         }
         
-        module_import(modules[index])
+        import_module(modules[index])
     }
     
     /**

@@ -49,7 +49,7 @@ open class Part: WorkspaceObject
         super.init(name: name)
         
         is_internal_module = is_internal
-        module_import(module)
+        import_module(module)
     }
     
     public override init(
@@ -77,7 +77,7 @@ open class Part: WorkspaceObject
      Set the following components:
      - Scene Node
      */
-    public func module_import(_ module: PartModule)
+    public func import_module(_ module: PartModule)
     {
         module_name = module.name
         
@@ -107,7 +107,7 @@ open class Part: WorkspaceObject
     /// Imported external part modules.
     nonisolated(unsafe) public static var external_modules = [PartModule]()
     
-    public override func module_import_by_name(_ name: String, is_internal: Bool = true)
+    public override func import_module(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Part.internal_modules : Part.external_modules
         
@@ -117,7 +117,7 @@ open class Part: WorkspaceObject
             return
         }
         
-        module_import(modules[index])
+        import_module(modules[index])
     }
     
     override open var has_avaliable_module: Bool
