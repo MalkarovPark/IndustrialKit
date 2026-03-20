@@ -48,6 +48,14 @@ open class WorkspaceObjectConnector: ObservableObject, /*NSCopying,*/ @unchecked
     }*/
     
     // MARK: - Connection parameters handling
+    /**
+     Imports and assigns values to connection parameters from a string list.
+     
+     - Parameters:
+        - list: An optional array of string values.
+     
+     The number of elements must match the number of parameters. Each string is converted to the corresponding parameter type (String, Int, Float, or Bool) before assignment.
+     */
     public func import_connection_parameters_values(_ list: [String]?)
     {
         guard let list, list.count == parameters.count else { return }
