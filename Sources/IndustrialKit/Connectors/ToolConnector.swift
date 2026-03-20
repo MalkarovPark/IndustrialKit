@@ -121,20 +121,6 @@ open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
     {
         return nil
     }
-    
-    /*override open func reset_device_model()
-    {
-        if let model_controller = model_controller,
-           let entity_animations = initial_entity_animations
-        {
-            model_controller.process_animation(by: entity_animations)
-        }
-    }
-    
-    open var initial_entity_animations: [EntityAnimationData]?
-    {
-        return nil//[]
-    }*/
 }
 
 public struct ToolState: Codable
@@ -275,7 +261,7 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         return "/tmp/\(module_name)\(Int(bitPattern: id))_tool_connector_socket"
     }
     
-    // MARK: Parameters import
+    // MARK: Connection Handling
     override open var default_parameters: [ConnectionParameter]
     {
         return external_parameters
@@ -283,7 +269,6 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
     
     public var external_parameters = [ConnectionParameter]()
     
-    // MARK: Connection
     override open func connection_process() async -> Bool
     {
         #if os(macOS)
@@ -346,69 +331,11 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         #endif
     }
     
-    // MARK: Performing
-    /*private var state: PerformingState
+    // MARK: Device Sync
+    open override var current_device_state: ToolState?
     {
         #if os(macOS)
-        guard let output: String = send_via_unix_socket(
-            at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
-            with: ["performing_state"])
-        else
-        {
-            return .completed //.error
-        }
-        
-        return PerformingState(rawValue: output) ?? .completed //.error
-        #else
-        return PerformingState(rawValue: output) ?? .completed //.error
-        #endif
-    }
-    
-    open override func start_process(code: Int)
-    {
-        #if os(macOS)
-        // Perform operation
-        let command = ["perform", "\(code)"]
-        
-        guard let terminal_output: String = send_via_unix_socket(
-            at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket",
-            with: command)
-        else
-        {
-            connection_error = NSError(domain: "Couldn't perform operation", code: 0, userInfo: nil)
-            connection_failure = true
-            connected = false
-            return
-        }
-        
-        // Process output
-        while state == .processing && !canceled
-        {
-            sync_with_device()
-        }
-        
-        model_controller?.reset_entities() // Remove entities actions if performing finished
-        #endif
-    }
-    
-    open override func reset_device()
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["reset_device"])
-        else
-        {
-            connection_failure = true
-            connected = false
-            return
-        }
-        #endif
-    }
-    
-    // MARK: State Data
-    open override var current_device_state: DeviceState?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["current_device_state"])
+        guard let output: String = send_via_unix_socket(at: socket_name, with: ["current_device_state"])
         else
         {
             connection_failure = true
@@ -416,7 +343,7 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
             return nil
         }
         
-        if let device_state: DeviceState = string_to_codable(from: output)
+        if let device_state: ToolState = string_to_codable(from: output)
         {
             return device_state
         }
@@ -425,71 +352,4 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         connected = false
         return nil
     }
-    
-    open override var initial_device_state: DeviceState?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["initial_device_state"])
-        else
-        {
-            connection_failure = true
-            connected = false
-            return nil
-        }
-        
-        if let device_state: DeviceState = string_to_codable(from: output)
-        {
-            return device_state
-        }
-        #endif
-        
-        connection_failure = true
-        connected = false
-        return nil
-    }
-    
-    // MARK: Model Sync
-    open override var current_entity_animations: [EntityAnimationData]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["current_entity_animations"])
-        else
-        {
-            connection_failure = true
-            connected = false
-            return nil
-        }
-        
-        if let entity_animations: [EntityAnimationData] = string_to_codable(from: output)
-        {
-            return entity_animations
-        }
-        #endif
-        
-        connection_failure = true
-        connected = false
-        return nil
-    }
-    
-    open override var initial_entity_animations: [EntityAnimationData]?
-    {
-        #if os(macOS)
-        guard let output: String = send_via_unix_socket(at: "/tmp/\(module_name.code_correct_format)_tool_connector_socket", with: ["initial_entity_animations"])
-        else
-        {
-            connection_failure = true
-            connected = false
-            return nil
-        }
-        
-        if let entity_animations: [EntityAnimationData] = string_to_codable(from: output)
-        {
-            return entity_animations
-        }
-        #endif
-        
-        connection_failure = true
-        connected = false
-        return nil
-    }*/
 }
