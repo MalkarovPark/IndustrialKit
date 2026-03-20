@@ -379,7 +379,27 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
         #endif
     }
     
-    // MARK: Device Sync
+    // MARK: Device Handling
+    override open func start_process(point: PositionPoint)
+    {
+        #if os(macOS)
+        let origin_position = [
+            "\(origin_position.x)",  "\(origin_position.y)",  "\(origin_position.z)",
+            "\(origin_position.r)",  "\(origin_position.p)",  "\(origin_position.w)"
+        ]
+        let command = ["move_to"] + [point.json_string()] + origin_position
+        
+        guard let terminal_output: String = send_via_unix_socket(at: socket_name, with: command)
+        else
+        {
+            connection_error = NSError(domain: "Couldn't move to position", code: 0, userInfo: nil)
+            connection_failure = true
+            connected = false
+            return
+        }
+        #endif
+    }
+    
     open override var current_device_state: RobotState?
     {
         #if os(macOS)

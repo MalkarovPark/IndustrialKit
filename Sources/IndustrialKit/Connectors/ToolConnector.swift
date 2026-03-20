@@ -331,7 +331,26 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         #endif
     }
     
-    // MARK: Device Sync
+    // MARK: Device Handling
+    open override func start_process(code: Int)
+    {
+        #if os(macOS)
+        let command = ["perform", "\(code)"]
+        
+        guard let terminal_output: String = send_via_unix_socket(
+            at: socket_name,
+            with: command
+        )
+        else
+        {
+            connection_error = NSError(domain: "Couldn't perform operation", code: 0, userInfo: nil)
+            connection_failure = true
+            connected = false
+            return
+        }
+        #endif
+    }
+    
     open override var current_device_state: ToolState?
     {
         #if os(macOS)
