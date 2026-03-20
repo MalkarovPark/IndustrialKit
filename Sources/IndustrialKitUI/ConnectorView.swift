@@ -33,7 +33,7 @@ public struct ConnectorView: View
             {
                 ConnectionStatusView(connector: device.connector, on_update: on_update)
                 
-                HStack(spacing: 0)
+                HStack
                 {
                     let is_twin_sync = Binding(
                         get: { device.is_twin_sync },
@@ -86,7 +86,6 @@ public struct ConnectorView: View
                     .toggleStyle(.button)
                     .buttonStyle(.bordered)
                     .buttonBorderShape(.circle)
-                    .padding(.trailing)
                     
                     ConnectionButton(
                         connector: device.connector,
@@ -518,7 +517,6 @@ private struct ExternalConnectorView: View
                 }
                 .padding()
             }
-            .padding(.trailing)
         }
     }
 }
@@ -535,7 +533,7 @@ struct ConnectorView_Previews: PreviewProvider
         var body: some View
         {
             ConnectorView(object: object)
-                .frame(width: 420)
+                .frame(width: 320)
                 .onAppear
                 {
                     object.device_mode = .real
