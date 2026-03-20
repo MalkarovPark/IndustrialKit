@@ -445,7 +445,6 @@ private struct ExternalConnectorView: View
                                     .fontWeight(.light)
                             }
                         }
-                        //.padding(.leading, program_item_light_padding)
                         
                         Spacer(minLength: 32)
                         
@@ -467,7 +466,7 @@ private struct ExternalConnectorView: View
                         .labelsHidden()
                     }
                     
-                    Divider()
+                    /*Divider()
                     
                     VStack(spacing: 8)
                     {
@@ -513,7 +512,7 @@ private struct ExternalConnectorView: View
                             .textFieldStyle(.plain)
                         }
                         .disabled(!sharing_enabled)
-                    }
+                    }*/
                 }
                 .padding()
             }

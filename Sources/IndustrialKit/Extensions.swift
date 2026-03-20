@@ -243,27 +243,6 @@ extension UIColor
     }
 }
 
-//MARK: - Deep SCNNode clone
-/*public extension SCNNode
-{
-    /// Deep clone node including geometry, materials, and children
-    func deep_copy() -> SCNNode
-    {
-        let clonedNode = self.copy()
-        clonedNode.geometry = self.geometry?.copy() as? SCNGeometry
-        if let materials = self.geometry?.materials
-        {
-            clonedNode.geometry?.materials = materials.map { $0.copy() as! SCNMaterial }
-        }
-        clonedNode.childNodes.forEach
-        { childNode in
-            let clonedChild = childNode.deep_copy()
-            clonedNode.addChildNode(clonedChild)
-        }
-        return clonedNode
-    }
-}*/
-
 // MARK: - JSON data output of codable objects
 public extension Encodable
 {

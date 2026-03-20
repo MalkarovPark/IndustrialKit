@@ -211,6 +211,7 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
     
     public func start_program_component()
     {
+        #if os(macOS)
         Task
         {
             program_component_status = .starting
@@ -244,12 +245,15 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
             
             program_component_status = .running
         }
+        #endif
     }
     
     public func stop_program_component()
     {
+        #if os(macOS)
         send_via_unix_socket(at: socket_name, command: "stop")
         program_component_status = .not_running
+        #endif
     }
     
     @Published public var program_component_status: ProgramComponentStatus = .not_running
