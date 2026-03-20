@@ -23,7 +23,7 @@ open class ModelController
     }
     
     /// Clone model controller instance.
-    open func clone() -> Self
+    open func copy() -> Self
     {
         return type(of: self).init()
     }

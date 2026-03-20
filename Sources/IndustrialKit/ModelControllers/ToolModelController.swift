@@ -162,7 +162,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
 open class ExternalToolModelController: ToolModelController, @unchecked Sendable
 {
     /// Clone model controller instance.
-    open override func clone() -> Self
+    open override func copy() -> Self
     {
         let copy = type(of: self).init()
         

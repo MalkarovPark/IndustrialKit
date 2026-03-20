@@ -30,7 +30,7 @@ open class WorkspaceObjectConnector: ObservableObject, /*NSCopying,*/ @unchecked
     }
     
     /// Clone connector instance.
-    open func clone() -> Self
+    open func copy() -> Self
     {
         //return type(of: self).init()
         
@@ -65,52 +65,27 @@ open class WorkspaceObjectConnector: ObservableObject, /*NSCopying,*/ @unchecked
         for i in 0 ..< parameters.count
         {
             let original = parameters[i]
-            let new_param = original.copy()
+            let new_parameter = original.copy()
             
             switch original.value
             {
             case is String:
-                new_param.value = list[i]
+                new_parameter.value = list[i]
             case is Int:
-                new_param.value = Int(list[i]) ?? 0
+                new_parameter.value = Int(list[i]) ?? 0
             case is Float:
-                new_param.value = Float(list[i]) ?? 0
+                new_parameter.value = Float(list[i]) ?? 0
             case is Bool:
-                new_param.value = list[i] == "true"
+                new_parameter.value = list[i] == "true"
             default:
                 break
             }
             
-            new_parameters.append(new_param)
+            new_parameters.append(new_parameter)
         }
         
         parameters = new_parameters
     }
-    /*public func import_connection_parameters_values(_ list: [String]?)
-    {
-        if list != nil && parameters.count > 0
-        {
-            if list?.count == parameters.count
-            {
-                for i in 0 ..< parameters.count
-                {
-                    switch parameters[i].value
-                    {
-                    case is String:
-                        parameters[i].value = list?[i] ?? ""
-                    case is Int:
-                        parameters[i].value = Int(list![i]) ?? 0
-                    case is Float:
-                        parameters[i].value = Float(list![i]) ?? 0
-                    case is Bool:
-                        parameters[i].value = list![i] == "true"
-                    default:
-                        break
-                    }
-                }
-            }
-        }
-    }*/
     
     public var connection_parameters_values: [String]?
     {

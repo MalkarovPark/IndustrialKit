@@ -154,7 +154,7 @@ public struct ToolState: Codable
 public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked Sendable
 {
     /// Clone connector instance.
-    open override func clone() -> Self
+    open override func copy() -> Self
     {
         let copy = type(of: self).init()
         

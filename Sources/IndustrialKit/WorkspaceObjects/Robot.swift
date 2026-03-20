@@ -181,8 +181,8 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             perform_load_entity(module_entity.clone(recursive: true))
         }*/
         
-        model_controller = module.model_controller.clone()
-        connector = module.connector.clone()
+        model_controller = module.model_controller.copy()
+        connector = module.connector.copy()
         
         /*if !(module.connector is ExternalRobotConnector)
         {

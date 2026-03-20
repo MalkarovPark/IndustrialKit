@@ -331,7 +331,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
 open class ExternalRobotModelController: RobotModelController, @unchecked Sendable
 {
     /// Clone model controller instance.
-    open override func clone() -> Self
+    open override func copy() -> Self
     {
         let copy = type(of: self).init()
         

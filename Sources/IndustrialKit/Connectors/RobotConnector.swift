@@ -202,7 +202,7 @@ public struct RobotState: Codable
 public class ExternalRobotConnector: RobotConnector, ExternalConnector, @unchecked Sendable
 {
     /// Clone connector instance.
-    open override func clone() -> Self
+    open override func copy() -> Self
     {
         let copy = type(of: self).init()
         
