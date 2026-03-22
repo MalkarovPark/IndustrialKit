@@ -321,7 +321,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
      */
     public func add_program(_ program: OperationProgram)
     {
-        program.name = mismatched_name(name: program.name, names: programs_names)
+        program.name = unique_name(for: program.name, in: programs_names)
         programs.append(program)
     }
     

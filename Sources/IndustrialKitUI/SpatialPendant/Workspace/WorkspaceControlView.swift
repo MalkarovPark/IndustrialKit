@@ -151,7 +151,7 @@ struct WorkspaceControlView: View
                                         set: { new_value in
                                             if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                workspace.programs[index].name = mismatched_name(name: new_value, names: workspace.programs_names)
+                                                workspace.programs[index].name = unique_name(for: new_value, in: workspace.programs_names)
                                                 
                                                 on_update()
                                             }

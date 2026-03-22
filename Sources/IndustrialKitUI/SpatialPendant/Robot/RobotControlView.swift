@@ -62,7 +62,7 @@ public struct RobotControlView: View
                                         set: { new_value in
                                             if let index = robot.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                robot.programs[index].name = mismatched_name(name: new_value, names: robot.programs_names)
+                                                robot.programs[index].name = unique_name(for: new_value, in: robot.programs_names)
                                                 
                                                 on_update()
                                             }

@@ -18,7 +18,35 @@ import RealityKit
  
  - Returns: Name after validation. May differ from the input.
  */
-public func mismatched_name(name: String, names: [String]) -> String
+public func unique_name(for name: String, in names: [String]) -> String
+{
+    let set = Set(names)
+    
+    var candidate = name
+    var counter = 2
+    
+    while set.contains(candidate)
+    {
+        candidate = "\(name) \(counter)"
+        counter += 1
+    }
+    
+    return candidate
+}
+/*public func unique_name(for name: String, in names: [String]) -> String
+{
+    var candidate = name
+    var counter = 2
+    
+    while names.contains(candidate)
+    {
+        candidate = "\(name) \(counter)"
+        counter += 1
+    }
+    
+    return candidate
+}*/
+/*public func unique_name(name: String, in names: [String]) -> String
 {
     var name_count = 1
     var name_postfix: String
@@ -41,7 +69,7 @@ public func mismatched_name(name: String, names: [String]) -> String
     }
     
     return name + name_postfix
-}
+}*/
 
 /**
  Transforms input position by origin rotation.

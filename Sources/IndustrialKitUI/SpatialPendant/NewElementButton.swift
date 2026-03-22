@@ -147,7 +147,7 @@ public struct NewElementButton: View
         
         if names != nil
         {
-            new_item_name = mismatched_name(name: new_item_name, names: names!)
+            new_item_name = unique_name(for: new_item_name, in: names!)
         }
         
         add_name_action(new_item_name)

@@ -114,7 +114,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     public func add_program(_ program: ProductionProgram)
     {
-        program.name = mismatched_name(name: program.name, names: programs_names)
+        program.name = unique_name(for: program.name, in: programs_names)
         programs.append(program)
     }
     
@@ -2580,7 +2580,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Adds robot in the workspace.
     public func add_robot(_ robot: Robot)
     {
-        robot.name = mismatched_name(name: robot.name, names: robot_names)
+        robot.name = unique_name(for: robot.name, in: robot_names)
         robot.is_placed = true
         robots.append(robot)
         
@@ -2627,7 +2627,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if robots.indices.contains(index)
         {
-            let new_name = mismatched_name(name: robots[index].name, names: robot_names)
+            let new_name = unique_name(for: robots[index].name, in: robot_names)
             let new_index = robots.count
             
             robots.append(Robot())
@@ -2709,7 +2709,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Adds tool in the workspace.
     public func add_tool(_ tool: Tool)
     {
-        tool.name = mismatched_name(name: tool.name, names: tool_names)
+        tool.name = unique_name(for: tool.name, in: tool_names)
         tool.is_placed = true
         tools.append(tool)
         
@@ -2756,7 +2756,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if tools.indices.contains(index)
         {
-            let new_name = mismatched_name(name: tools[index].name, names: tool_names)
+            let new_name = unique_name(for: tools[index].name, in: tool_names)
             let new_index = tools.count
             
             tools.append(Tool())
@@ -2849,7 +2849,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Adds part in the workspace.
     public func add_part(_ part: Part)
     {
-        part.name = mismatched_name(name: part.name, names: part_names)
+        part.name = unique_name(for: part.name, in: part_names)
         part.is_placed = true
         parts.append(part)
         
@@ -2894,7 +2894,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if parts.indices.contains(index)
         {
-            let new_name = mismatched_name(name: parts[index].name, names: part_names)
+            let new_name = unique_name(for: parts[index].name, in: part_names)
             let new_index = parts.count
 
             parts.append(Part())

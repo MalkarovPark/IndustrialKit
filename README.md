@@ -117,7 +117,7 @@ Also, controllers can change the model in accordance with the specified paramete
 
 Some functions that can be used both in framework and independently by developers.
 
-   * `mismatched_name` – finds and updates mismatched name;
+   * `unique_name` – finds and updates mismatched name;
 
    * `origin_transform` – transforms input position by origin rotation;
 

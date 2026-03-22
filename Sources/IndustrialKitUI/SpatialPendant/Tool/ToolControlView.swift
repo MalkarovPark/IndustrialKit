@@ -64,7 +64,7 @@ public struct ToolControlView: View
                                         set: { new_value in
                                             if let index = tool.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                tool.programs[index].name = mismatched_name(name: new_value, names: tool.programs_names)
+                                                tool.programs[index].name = unique_name(for: new_value, in: tool.programs_names)
                                                 
                                                 on_update()
                                             }
