@@ -13,8 +13,8 @@ import IndustrialKit
 public struct BoxCard<Content: View>: View
 {
     // Titles
-    @State public var title: String?
-    @State public var subtitle: String?
+    let title: String?
+    let subtitle: String?
     
     // Color
     let color: Color
@@ -25,11 +25,10 @@ public struct BoxCard<Content: View>: View
     let symbol_weight: Font.Weight
     
     // Rename
-    @Binding public var to_rename: Bool
-    @Binding public var edited_name: String
+    @Binding public var is_renaming: Bool
     @State private var new_name: String
     @FocusState private var is_focused: Bool
-    let on_rename: () -> ()
+    let on_rename: (String) -> ()
     
     // Overlay
     let overlay_view: Content?
@@ -47,9 +46,8 @@ public struct BoxCard<Content: View>: View
         symbol_size: CGFloat = 96,
         symbol_weight: Font.Weight = .semibold,
         
-        to_rename: Binding<Bool> = .constant(false),
-        edited_name: Binding<String> = .constant(""),
-        on_rename: @escaping () -> () = {},
+        is_renaming: Binding<Bool> = .constant(false),
+        on_rename: @escaping (String) -> () = { _ in },
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
@@ -71,9 +69,8 @@ public struct BoxCard<Content: View>: View
         self.symbol_size = symbol_size
         self.symbol_weight = symbol_weight
         
-        self._to_rename = to_rename
-        self._edited_name = edited_name
-        _new_name = State(initialValue: _edited_name.wrappedValue)
+        self._is_renaming = is_renaming
+        self.new_name = title ?? String()
         self.on_rename = on_rename
         
         self.overlay_view = overlay()
@@ -132,7 +129,7 @@ public struct BoxCard<Content: View>: View
                                     // Rename Handling
                                     HStack
                                     {
-                                        if !to_rename
+                                        if !is_renaming
                                         {
                                             VStack(alignment: .leading)
                                             {
@@ -183,25 +180,17 @@ public struct BoxCard<Content: View>: View
                                                         .padding()
                                                         .onSubmit
                                                         {
-                                                            edited_name = new_name
-                                                            title = new_name
-                                                            on_rename()
-                                                            to_rename = false
+                                                            on_rename(new_name)
+                                                            is_renaming = false
                                                         }
                                                         .onExitCommand
                                                         {
-                                                            to_rename = false
-                                                        }
-                                                        .onAppear
-                                                        {
-                                                            is_focused = true
+                                                            is_renaming = false
                                                         }
                                                     #else
                                                     TextField("Name", text: $new_name, onCommit: {
-                                                        edited_name = new_name
-                                                        title = new_name
-                                                        on_rename()
-                                                        to_rename = false
+                                                        on_rename(new_name)
+                                                        is_renaming = false
                                                     })
                                                     .font(.system(size: 28, design: .rounded))
                                                     .foregroundColor(.white)
@@ -209,16 +198,16 @@ public struct BoxCard<Content: View>: View
                                                     .focused($is_focused)
                                                     .labelsHidden()
                                                     .padding()
-                                                    .onAppear
-                                                    {
-                                                        is_focused = true
-                                                    }
                                                     #endif
                                                 }
                                             }
                                         }
                                     }
                                     .padding(4)
+                                    .onChange(of: is_renaming)
+                                    { _, new_value in
+                                        is_focused = new_value
+                                    }
                                 }
                             }
                         
@@ -237,7 +226,7 @@ public struct BoxCard<Content: View>: View
                     self.hovered = hovered
                 }
             }
-            .offset(y: hovered ? -2 : 0)
+            .offset(y: hovered && !is_renaming ? -2 : 0)
         }
     }
 }
@@ -246,8 +235,8 @@ public struct BoxCard<Content: View>: View
 public struct GlassBoxCard<Content: View>: View
 {
     // Titles
-    @State public var title: String?
-    @State public var subtitle: String?
+    let title: String?
+    let subtitle: String?
     
     // Color
     let color: Color
@@ -265,11 +254,10 @@ public struct GlassBoxCard<Content: View>: View
     private var vertical_entity_reposition = false
     
     // Rename
-    @Binding public var to_rename: Bool
-    @Binding public var edited_name: String
+    @Binding public var is_renaming: Bool
     @State private var new_name: String
     @FocusState private var is_focused: Bool
-    let on_rename: () -> ()
+    let on_rename: (String) -> ()
     
     // Overlay
     let overlay_view: Content?
@@ -295,6 +283,7 @@ public struct GlassBoxCard<Content: View>: View
         )
         
         self.title = nil
+        self.subtitle = nil
         self.image = nil
         
         self.symbol_name = nil
@@ -302,25 +291,23 @@ public struct GlassBoxCard<Content: View>: View
         self.symbol_weight = .semibold
         self.entity = nil
         
-        self._to_rename = .constant(false)
-        self._edited_name = .constant("")
-        _new_name = State(initialValue: _edited_name.wrappedValue)
-        self.on_rename = {}
+        self._is_renaming = .constant(false)
+        self.new_name = title ?? String()
+        self.on_rename = { _ in }
         
         self.overlay_view = overlay()
     }
     
     // Init with Image
     public init(
-        title: String,
+        title: String? = nil,
         subtitle: String? = nil,
         
         color: Color? = nil,
         image: UIImage?,
         
-        to_rename: Binding<Bool> = .constant(false),
-        edited_name: Binding<String> = .constant(""),
-        on_rename: @escaping () -> () = {},
+        is_renaming: Binding<Bool> = .constant(false),
+        on_rename: @escaping (String) -> () = { _ in },
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
@@ -345,9 +332,8 @@ public struct GlassBoxCard<Content: View>: View
         self.symbol_weight = .semibold
         self.entity = nil
         
-        self._to_rename = to_rename
-        self._edited_name = edited_name
-        _new_name = State(initialValue: _edited_name.wrappedValue)
+        self._is_renaming = is_renaming
+        self.new_name = title ?? String()
         self.on_rename = on_rename
         
         self.overlay_view = overlay()
@@ -355,7 +341,7 @@ public struct GlassBoxCard<Content: View>: View
     
     // Init with Symbol
     public init(
-        title: String,
+        title: String? = nil,
         subtitle: String? = nil,
         
         color: Color? = nil,
@@ -364,9 +350,8 @@ public struct GlassBoxCard<Content: View>: View
         symbol_size: CGFloat = 96,
         symbol_weight: Font.Weight = .semibold,
         
-        to_rename: Binding<Bool> = .constant(false),
-        edited_name: Binding<String> = .constant(""),
-        on_rename: @escaping () -> () = {},
+        is_renaming: Binding<Bool> = .constant(false),
+        on_rename: @escaping (String) -> () = { _ in },
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
@@ -391,9 +376,8 @@ public struct GlassBoxCard<Content: View>: View
         self.image = nil
         self.entity = nil
         
-        self._to_rename = to_rename
-        self._edited_name = edited_name
-        _new_name = State(initialValue: _edited_name.wrappedValue)
+        self._is_renaming = is_renaming
+        self.new_name = title ?? String()
         self.on_rename = on_rename
         
         self.overlay_view = overlay()
@@ -401,16 +385,15 @@ public struct GlassBoxCard<Content: View>: View
     
     // Init with Entity
     public init(
-        title: String,
+        title: String? = nil,
         subtitle: String? = nil,
         color: Color? = nil,
         
         entity: Entity?,
         vertical_repostion: Bool = false,
         
-        to_rename: Binding<Bool> = .constant(false),
-        edited_name: Binding<String> = .constant(""),
-        on_rename: @escaping () -> () = {},
+        is_renaming: Binding<Bool> = .constant(false),
+        on_rename: @escaping (String) -> () = { _ in },
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
@@ -436,9 +419,8 @@ public struct GlassBoxCard<Content: View>: View
         self.symbol_size = 96
         self.symbol_weight = .semibold
         
-        self._to_rename = to_rename
-        self._edited_name = edited_name
-        _new_name = State(initialValue: _edited_name.wrappedValue)
+        self._is_renaming = is_renaming
+        self.new_name = title ?? String()
         self.on_rename = on_rename
         
         self.overlay_view = overlay()
@@ -552,7 +534,7 @@ public struct GlassBoxCard<Content: View>: View
                                     // Rename Handling
                                     HStack
                                     {
-                                        if !to_rename
+                                        if !is_renaming
                                         {
                                             VStack(alignment: .leading)
                                             {
@@ -596,34 +578,22 @@ public struct GlassBoxCard<Content: View>: View
                                                         .padding()
                                                         .onSubmit
                                                         {
-                                                            edited_name = new_name
-                                                            title = new_name
-                                                            on_rename()
-                                                            to_rename = false
+                                                            on_rename(new_name)
+                                                            is_renaming = false
                                                         }
                                                         .onExitCommand
                                                         {
-                                                            to_rename = false
-                                                        }
-                                                        .onAppear
-                                                        {
-                                                            is_focused = true
+                                                            is_renaming = false
                                                         }
                                                     #else
                                                     TextField("Name", text: $new_name, onCommit: {
-                                                        edited_name = new_name
-                                                        title = new_name
                                                         on_rename()
-                                                        to_rename = false
+                                                        is_renaming = false
                                                     })
                                                         .textFieldStyle(.roundedBorder)
                                                         .focused($is_focused)
                                                         .labelsHidden()
                                                         .padding()
-                                                        .onAppear
-                                                        {
-                                                            is_focused = true
-                                                        }
                                                     #endif
                                                 }
                                             }
@@ -636,6 +606,10 @@ public struct GlassBoxCard<Content: View>: View
                                     #endif
                                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                     .padding(8)
+                                    .onChange(of: is_renaming)
+                                    { _, new_value in
+                                        is_focused = new_value
+                                    }
                                 }
                             }
                         
@@ -653,7 +627,7 @@ public struct GlassBoxCard<Content: View>: View
                     self.hovered = hovered
                 }
             }
-            .offset(y: hovered ? -2 : 0)
+            .offset(y: hovered && !is_renaming ? -2 : 0)
         }
     }
 }
@@ -751,7 +725,7 @@ struct Cards_Previews: PreviewProvider
 {
     struct Container: View
     {
-        @State var to_rename = [false, false, false]
+        @State var is_renaming = [false, false, false]
         @State var names = ["Robotic", "Image", "Scene"]
         @State var values: [Float] = [2, 4, 6]
         
@@ -768,9 +742,11 @@ struct Cards_Previews: PreviewProvider
                             subtitle: "Workspace",
                             color: .teal,
                             symbol_name: "cube",
-                            to_rename: $to_rename[0],
-                            edited_name: $names[0]
+                            is_renaming: $is_renaming[0]
                         )
+                        { new_name in
+                            names[0] = new_name
+                        }
                         .contextMenu
                         {
                             RenameButton()
@@ -778,7 +754,7 @@ struct Cards_Previews: PreviewProvider
                             {
                                 withAnimation
                                 {
-                                    to_rename[0].toggle()
+                                    is_renaming[0].toggle()
                                 }
                             }
                         }
@@ -794,9 +770,11 @@ struct Cards_Previews: PreviewProvider
                             subtitle: "Color Wheel",
                             color: .green,
                             image: UIImage(named: "NSTouchBarColorPickerFill"),
-                            to_rename: $to_rename[1],
-                            edited_name: $names[1]
+                            is_renaming: $is_renaming[1]
                         )
+                        { new_name in
+                            names[1] = new_name
+                        }
                         .contextMenu
                         {
                             RenameButton()
@@ -804,7 +782,7 @@ struct Cards_Previews: PreviewProvider
                             {
                                 withAnimation
                                 {
-                                    to_rename[1].toggle()
+                                    is_renaming[1].toggle()
                                 }
                             }
                         }
@@ -821,9 +799,11 @@ struct Cards_Previews: PreviewProvider
                                 mesh: .generateBox(size: 1.0, cornerRadius: 0.1),
                                 materials: [SimpleMaterial(color: .white, isMetallic: false)]
                             ),
-                            to_rename: $to_rename[2],
-                            edited_name: $names[2]
+                            is_renaming: $is_renaming[2]
                         )
+                        { new_name in
+                            names[2] = new_name
+                        }
                         .contextMenu
                         {
                             RenameButton()
@@ -831,7 +811,7 @@ struct Cards_Previews: PreviewProvider
                             {
                                 withAnimation
                                 {
-                                    to_rename[2].toggle()
+                                    is_renaming[2].toggle()
                                 }
                             }
                         }
