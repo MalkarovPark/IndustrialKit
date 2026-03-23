@@ -12,6 +12,8 @@ public struct DeviceOutputView: View
 {
     @ObservedObject var object: WorkspaceObject
     
+    let shows_output_indices: Bool
+    
     let on_update: () -> ()
     
     @State private var stats_selection = 0
@@ -19,10 +21,13 @@ public struct DeviceOutputView: View
     
     public init(
         object: WorkspaceObject,
+        shows_output_indices: Bool = false,
+        
         on_update: @escaping () -> Void = {}
     )
     {
         self.object = object
+        self.shows_output_indices = shows_output_indices
         
         self.on_update = on_update
     }
@@ -209,8 +214,11 @@ public struct DeviceOutputView: View
                         }
                         else
                         {
-                            StateItemsView(device_output: device_output)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            StateItemsView(
+                                device_output: device_output,
+                                shows_output_indices: shows_output_indices
+                            )
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
                     }
                     else
