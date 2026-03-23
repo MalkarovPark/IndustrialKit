@@ -29,25 +29,27 @@ public class DeviceOutputData: Hashable, Identifiable, ObservableObject, Codable
     {
         self.items = items
         self.charts = charts
+        
+        define_item_indices()
     }
     
     // MARK: - Items
     @Published public var items: [StateItem]
-    {
+    /*{
         didSet
         {
             define_item_indices()
         }
-    }
+    }*/
     
     // MARK: - Charts
     @Published public var charts: [StateChart]
     
     // MARK: - Observable
-    open var output_values: [Float]
+    /*open var output_values: [Float]
     {
         return []
-    }
+    }*/
     
     public func define_item_indices()//for items: [StateItem])
     {
