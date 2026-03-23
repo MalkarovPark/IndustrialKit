@@ -99,7 +99,7 @@ public struct StateItemsView: View
                 }
                 .listStyle(.plain)
                 .padding()
-                .onAppear
+                .onChange(of: device_output.items)
                 {
                     if shows_output_indices
                     {
