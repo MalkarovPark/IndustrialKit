@@ -15,6 +15,8 @@ public struct SpatialPendantView: View
     @ObservedObject var controller: PendantController
     @ObservedObject var workspace: Workspace
     
+    let shows_program_indices: Bool
+    
     let on_update_workspace: () -> ()
     let on_update_robot: () -> ()
     let on_update_tool: () -> ()
@@ -23,6 +25,8 @@ public struct SpatialPendantView: View
         controller: PendantController,
         workspace: Workspace,
         
+        shows_program_indices: Bool = false,
+        
         on_update_workspace: @escaping () -> () = {},
         on_update_robot: @escaping () -> () = {},
         on_update_tool: @escaping () -> () = {}
@@ -30,6 +34,8 @@ public struct SpatialPendantView: View
     {
         self.controller = controller
         self.workspace = workspace
+        
+        self.shows_program_indices = shows_program_indices
         
         self.on_update_workspace = on_update_workspace
         self.on_update_robot = on_update_robot
@@ -47,9 +53,17 @@ public struct SpatialPendantView: View
                     switch workspace.selected_object
                     {
                     case let robot as Robot:
-                        RobotControlView(robot: robot, on_update: on_update_robot)
+                        RobotControlView(
+                            robot: robot,
+                            shows_program_indices: shows_program_indices,
+                            on_update: on_update_robot
+                        )
                     case let tool as Tool:
-                        ToolControlView(tool: tool, on_update: on_update_tool)
+                        ToolControlView(
+                            tool: tool,
+                            shows_program_indices: shows_program_indices,
+                            on_update: on_update_tool
+                        )
                     case is Part:
                         ZStack
                         {
@@ -68,7 +82,10 @@ public struct SpatialPendantView: View
                     case .some(_):
                         Text("Nothing")
                     case .none:
-                        WorkspaceControlView(workspace: workspace, on_update: on_update_workspace)
+                        WorkspaceControlView(
+                            workspace: workspace,
+                            on_update: on_update_workspace
+                        )
                     }
                 }
                 .padding(8)
@@ -306,7 +323,10 @@ struct SpatialPendant_Previews: PreviewProvider
         {
             ZStack
             {
-                SpatialPendantView(controller: pendant_controller, workspace: workspace)
+                SpatialPendantView(
+                    controller: pendant_controller,
+                    workspace: workspace, shows_program_indices: true
+                )
             }
             .frame(minWidth: 480, minHeight: 480)
             .padding(10)
