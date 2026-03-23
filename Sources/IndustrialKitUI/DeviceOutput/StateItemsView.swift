@@ -44,68 +44,16 @@ public struct StateItemsView: View
                             expanded_items: $expanded_items
                         )
                     }
-                    
-                    /*if !shows_output_indices
-                    {
-                        ForEach(device_output.items.indices, id: \.self)
-                        { index in
-                            StateItemListView(
-                                item: device_output.items[index],
-                                expanded_items: $expanded_items
-                            )
-                        }
-                    }
-                    else
-                    {
-                        //let index_map = index_map(for: device_output.items)
-                        
-                        ForEach(device_output.items.indices, id: \.self)
-                        { index in
-                            /*HStack
-                            {
-                                /*Text("\(index_map[device_output.items[index].id] ?? 0)")
-                                    //.font(.system(size: program_index_font_size))
-                                    .foregroundStyle(.tertiary)
-                                    .lineLimit(1)
-                                    .padding(.leading, -6)
-                                    .allowsHitTesting(false)*/
-                                
-                                StateItemListView(
-                                    item: device_output.items[index],
-                                    expanded_items: $expanded_items
-                                )
-                            }*/
-                            
-                            StateItemListView(
-                                item: device_output.items[index],
-                                expanded_items: $expanded_items
-                            )
-                            
-                            /*StateItemListView(
-                                item: device_output.items[index],
-                                expanded_items: $expanded_items
-                            )
-                            .badge("\(index_map[device_output.items[index].id] ?? 0)")*/
-                        }
-                        /*ForEach(flatten_items_with_indices(device_output.items), id: \.item.id)
-                        { element in
-                            StateItemListView(
-                                item: element.item,
-                                expanded_items: $expanded_items
-                            )
-                            .badge("\(element.index)")
-                        }*/
-                    }*/
                 }
                 .listStyle(.plain)
                 .padding()
-                .onChange(of: device_output.items)
+                /*.onChange(of: device_output.items)
                 {
                     if shows_output_indices
                     {
                         device_output.define_item_indices()
                     }
-                }
+                }*/
             }
             else
             {
@@ -119,32 +67,6 @@ public struct StateItemsView: View
         //.background(.white)
         //#endif
     }
-    /*private func flatten_items_with_indices(_ items: [StateItem]) -> [(index: Int, item: StateItem)]
-    {
-        var result: [(Int, StateItem)] = []
-        var counter = 0
-        
-        func traverse(_ item: StateItem)
-        {
-            result.append((counter, item))
-            counter += 1
-            
-            if let children = item.children
-            {
-                for child in children
-                {
-                    traverse(child)
-                }
-            }
-        }
-        
-        for item in items
-        {
-            traverse(item)
-        }
-        
-        return result
-    }*/
 }
 
 public struct StateItemListView: View

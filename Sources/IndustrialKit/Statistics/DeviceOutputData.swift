@@ -33,6 +33,12 @@ public class DeviceOutputData: Hashable, Identifiable, ObservableObject, Codable
     
     // MARK: - Items
     @Published public var items: [StateItem]
+    {
+        didSet
+        {
+            define_item_indices()
+        }
+    }
     
     // MARK: - Charts
     @Published public var charts: [StateChart]
