@@ -12,13 +12,19 @@ public struct StateItemsView: View
 {
     @ObservedObject var device_output: DeviceOutputData
     
+    let shows_output_indices: Bool
+    
     @State private var expanded_items: [UUID: Bool] = [:]
     
     public init(
-        device_output: DeviceOutputData
+        device_output: DeviceOutputData,
+        
+        shows_output_indices: Bool = false
     )
     {
         self.device_output = device_output
+        
+        self.shows_output_indices = shows_output_indices
     }
     
     public var body: some View
@@ -29,12 +35,26 @@ public struct StateItemsView: View
             {
                 List
                 {
-                    ForEach(device_output.items.indices, id: \.self)
-                    { index in
-                        StateItemListView(
-                            item: device_output.items[index],
-                            expanded_items: $expanded_items
-                        )
+                    if !shows_output_indices
+                    {
+                        ForEach(device_output.items.indices, id: \.self)
+                        { index in
+                            StateItemListView(
+                                item: device_output.items[index],
+                                expanded_items: $expanded_items
+                            )
+                        }
+                    }
+                    else
+                    {
+                        ForEach(flatten_items_with_indices(device_output.items), id: \.item.id)
+                        { element in
+                            StateItemListView(
+                                item: element.item,
+                                expanded_items: $expanded_items
+                            )
+                            .badge("\(element.index)")
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -52,16 +72,43 @@ public struct StateItemsView: View
         //.background(.white)
         //#endif
     }
+    
+    private func flatten_items_with_indices(_ items: [StateItem]) -> [(index: Int, item: StateItem)]
+    {
+        var result: [(Int, StateItem)] = []
+        var counter = 0
+        
+        func traverse(_ item: StateItem)
+        {
+            result.append((counter, item))
+            counter += 1
+            
+            if let children = item.children
+            {
+                for child in children
+                {
+                    traverse(child)
+                }
+            }
+        }
+        
+        for item in items
+        {
+            traverse(item)
+        }
+        
+        return result
+    }
 }
 
-struct StateItemListView: View
+public struct StateItemListView: View
 {
     @ObservedObject var item: StateItem
     @Binding var expanded_items: [UUID: Bool]
     
     private var is_expanded_binding: Binding<Bool>
     
-    init(item: StateItem, expanded_items: Binding<[UUID: Bool]>)
+    public init(item: StateItem, expanded_items: Binding<[UUID: Bool]>)
     {
         self.item = item
         self._expanded_items = expanded_items
@@ -72,7 +119,7 @@ struct StateItemListView: View
         )
     }
     
-    var body: some View
+    public var body: some View
     {
         if let children = item.children, !children.isEmpty
         {
@@ -158,8 +205,11 @@ struct StateView_PreviewsContainer: PreviewProvider
         
         var body: some View
         {
-            StateItemsView(device_output: device_output)
-                .frame(width: 320, height: 240)
+            StateItemsView(
+                device_output: device_output,
+                shows_output_indices: true
+            )
+            .frame(width: 320, height: 240)
         }
     }
 }
