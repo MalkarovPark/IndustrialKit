@@ -47,14 +47,24 @@ public struct StateItemsView: View
                     }
                     else
                     {
-                        ForEach(flatten_items_with_indices(device_output.items), id: \.item.id)
+                        let index_map = index_map(for: device_output.items)
+                        
+                        ForEach(device_output.items.indices, id: \.self)
+                        { index in
+                            StateItemListView(
+                                item: device_output.items[index],
+                                expanded_items: $expanded_items
+                            )
+                            .badge("\(index_map[device_output.items[index].id] ?? 0)")
+                        }
+                        /*ForEach(flatten_items_with_indices(device_output.items), id: \.item.id)
                         { element in
                             StateItemListView(
                                 item: element.item,
                                 expanded_items: $expanded_items
                             )
                             .badge("\(element.index)")
-                        }
+                        }*/
                     }
                 }
                 .listStyle(.plain)
@@ -73,7 +83,33 @@ public struct StateItemsView: View
         //#endif
     }
     
-    private func flatten_items_with_indices(_ items: [StateItem]) -> [(index: Int, item: StateItem)]
+    func index_map(for items: [StateItem]) -> [UUID: Int]
+    {
+        var index_map: [UUID: Int] = [:]
+        var counter = 0
+        
+        func traverse(_ item: StateItem)
+        {
+            index_map[item.id] = counter
+            counter += 1
+            
+            if let children = item.children
+            {
+                for child in children
+                {
+                    traverse(child)
+                }
+            }
+        }
+        
+        for item in items
+        {
+            traverse(item)
+        }
+        
+        return index_map
+    }
+    /*private func flatten_items_with_indices(_ items: [StateItem]) -> [(index: Int, item: StateItem)]
     {
         var result: [(Int, StateItem)] = []
         var counter = 0
@@ -98,7 +134,7 @@ public struct StateItemsView: View
         }
         
         return result
-    }
+    }*/
 }
 
 public struct StateItemListView: View
