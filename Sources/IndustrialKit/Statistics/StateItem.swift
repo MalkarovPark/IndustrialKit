@@ -30,6 +30,8 @@ public class StateItem: Hashable, Identifiable, ObservableObject, Codable
     
     @Published public var children: [StateItem]?
     
+    /*@Published*/ public var item_index = Int()
+    
     public init(
         name: String,
         value: String? = nil,

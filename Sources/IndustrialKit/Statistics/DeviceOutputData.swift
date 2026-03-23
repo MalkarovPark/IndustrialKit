@@ -43,6 +43,30 @@ public class DeviceOutputData: Hashable, Identifiable, ObservableObject, Codable
         return []
     }
     
+    public func define_item_indices()//for items: [StateItem])
+    {
+        var counter = 0
+        
+        func traverse(_ item: StateItem)
+        {
+            item.item_index = counter
+            counter += 1
+            
+            if let children = item.children
+            {
+                for child in children
+                {
+                    traverse(child)
+                }
+            }
+        }
+        
+        for item in items
+        {
+            traverse(item)
+        }
+    }
+    
     // MARK: - Codable handling
     enum CodingKeys: String, CodingKey
     {

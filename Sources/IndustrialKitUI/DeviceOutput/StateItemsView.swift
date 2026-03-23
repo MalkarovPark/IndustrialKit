@@ -35,7 +35,17 @@ public struct StateItemsView: View
             {
                 List
                 {
-                    if !shows_output_indices
+                    ForEach(device_output.items.indices, id: \.self)
+                    { index in
+                        StateItemListView(
+                            item: device_output.items[index],
+                            shows_indices: shows_output_indices,
+                            
+                            expanded_items: $expanded_items
+                        )
+                    }
+                    
+                    /*if !shows_output_indices
                     {
                         ForEach(device_output.items.indices, id: \.self)
                         { index in
@@ -85,10 +95,17 @@ public struct StateItemsView: View
                             )
                             .badge("\(element.index)")
                         }*/
-                    }
+                    }*/
                 }
                 .listStyle(.plain)
                 .padding()
+                .onAppear
+                {
+                    if shows_output_indices
+                    {
+                        device_output.define_item_indices()
+                    }
+                }
             }
             else
             {
@@ -101,33 +118,6 @@ public struct StateItemsView: View
         //#if !os(visionOS)
         //.background(.white)
         //#endif
-    }
-    
-    func index_map(for items: [StateItem]) -> [UUID: Int]
-    {
-        var index_map: [UUID: Int] = [:]
-        var counter = 0
-        
-        func traverse(_ item: StateItem)
-        {
-            index_map[item.id] = counter
-            counter += 1
-            
-            if let children = item.children
-            {
-                for child in children
-                {
-                    traverse(child)
-                }
-            }
-        }
-        
-        for item in items
-        {
-            traverse(item)
-        }
-        
-        return index_map
     }
     /*private func flatten_items_with_indices(_ items: [StateItem]) -> [(index: Int, item: StateItem)]
     {
@@ -160,15 +150,40 @@ public struct StateItemsView: View
 public struct StateItemListView: View
 {
     @ObservedObject var item: StateItem
+    
+    let shows_indices: Bool
+    
     @Binding var expanded_items: [UUID: Bool]
     
     private var is_expanded_binding: Binding<Bool>
     
-    public init(item: StateItem, expanded_items: Binding<[UUID: Bool]>)
+    public init(
+        item: StateItem,
+        
+        expanded_items: Binding<[UUID: Bool]>
+    )
     {
         self.item = item
-        self._expanded_items = expanded_items
+        self.shows_indices = false
         
+        self._expanded_items = expanded_items
+        self.is_expanded_binding = Binding(
+            get: { expanded_items.wrappedValue[item.id] ?? true },
+            set: { expanded_items.wrappedValue[item.id] = $0 }
+        )
+    }
+    
+    public init(
+        item: StateItem,
+        shows_indices: Bool,
+        
+        expanded_items: Binding<[UUID: Bool]>
+    )
+    {
+        self.item = item
+        self.shows_indices = shows_indices
+        
+        self._expanded_items = expanded_items
         self.is_expanded_binding = Binding(
             get: { expanded_items.wrappedValue[item.id] ?? true },
             set: { expanded_items.wrappedValue[item.id] = $0 }
@@ -185,6 +200,8 @@ public struct StateItemListView: View
                 { index in
                     StateItemListView(
                         item: children[index],
+                        shows_indices: shows_indices,
+                        
                         expanded_items: $expanded_items
                     )
                     .padding(.leading, 20)
@@ -193,11 +210,13 @@ public struct StateItemListView: View
             label:
             {
                 item_label
+                    .modifier(IndexBadge(show_index: shows_indices, index_text: "\(item.item_index)"))
             }
         }
         else
         {
             item_label
+                .modifier(IndexBadge(show_index: shows_indices, index_text: "\(item.item_index)"))
         }
     }
     
@@ -229,6 +248,35 @@ public struct StateItemListView: View
         #else
         return UIImage(systemName: symbol) != nil
         #endif
+    }
+}
+
+private struct IndexBadge: ViewModifier
+{
+    let show_index: Bool
+    let index_text: String
+    
+    public func body(content: Content) -> some View
+    {
+        if !show_index
+        {
+            content
+        }
+        else
+        {
+            HStack
+            {
+                Text(index_text)
+                    //.font(.system(size: program_index_font_size))
+                    .foregroundStyle(.tertiary)
+                    .lineLimit(1)
+                    .padding(.leading, -6)
+                    .allowsHitTesting(false)
+                
+                content
+                    //.badge(index_text)
+            }
+        }
     }
 }
 
