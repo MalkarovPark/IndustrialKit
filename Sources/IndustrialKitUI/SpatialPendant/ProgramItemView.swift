@@ -115,10 +115,14 @@ public struct ProgramItemView: View
 let program_item_height: CGFloat = 24
 let program_item_light_size: CGFloat = 8
 let program_item_light_padding: CGFloat = 6
+
+let program_index_font_size: CGFloat = 10
 #else
 let program_item_height: CGFloat = 32
 let program_item_light_size: CGFloat = 8
 let program_item_light_padding: CGFloat = 6
+
+let program_index_font_size: CGFloat = 10
 #endif
 
 // MARK: - Preview

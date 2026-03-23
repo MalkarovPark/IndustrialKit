@@ -14,17 +14,22 @@ public struct RobotControlView: View
 {
     @ObservedObject var robot: Robot
     
-    @State private var dragging_program_id: UUID?
-    @State private var new_program_view_presented = false
+    let shows_program_indices: Bool
     
     let on_update: () -> ()
     
+    @State private var dragging_program_id: UUID?
+    @State private var new_program_view_presented = false
+    
     public init(
         robot: Robot,
+        shows_program_indices: Bool = false,
+        
         on_update: @escaping () -> Void = { }
     )
     {
         self.robot = robot
+        self.shows_program_indices = shows_program_indices
         
         self.on_update = on_update
     }
@@ -52,8 +57,8 @@ public struct RobotControlView: View
                 {
                     LazyVStack(spacing: 8)
                     {
-                        ForEach(robot.programs)
-                        { program in
+                        ForEach(Array(robot.programs.enumerated()), id: \.element.id)
+                        { index, program in
                             if robot.selected_program == nil
                             {
                                 ProgramItemView(
@@ -101,6 +106,19 @@ public struct RobotControlView: View
                                     )
                                 )
                                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                .overlay(alignment: .topLeading)
+                                {
+                                    if shows_program_indices
+                                    {
+                                        Text("\(index)")
+                                            .font(.system(size: program_index_font_size))
+                                            .foregroundStyle(.tertiary)
+                                            .frame(height: 20)
+                                            .lineLimit(1)
+                                            .padding(.leading, 6)
+                                            .allowsHitTesting(false)
+                                    }
+                                }
                             }
                         }
                         .animation(.spring(), value: robot.programs)
@@ -650,7 +668,7 @@ struct RobotControlView_Previews: PreviewProvider
             {
                 FloatingView(alignment: .trailing)
                 {
-                    RobotControlView(robot: robot)
+                    RobotControlView(robot: robot, shows_program_indices: true)
                         .padding(8)
                 }
                 .padding(10)

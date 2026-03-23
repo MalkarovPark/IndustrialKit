@@ -14,6 +14,10 @@ public struct ToolControlView: View
 {
     @ObservedObject var tool: Tool
     
+    let shows_program_indices: Bool
+    
+    let on_update: () -> ()
+    
     @State private var dragging_program_id: UUID?
     @State private var new_program_view_presented = false
     
@@ -23,14 +27,15 @@ public struct ToolControlView: View
     
     @State private var code_value = 0
     
-    let on_update: () -> ()
-    
     public init(
         tool: Tool,
+        shows_program_indices: Bool = false,
+        
         on_update: @escaping () -> Void = { }
     )
     {
         self.tool = tool
+        self.shows_program_indices = shows_program_indices
         
         self.on_update = on_update
     }
@@ -54,8 +59,8 @@ public struct ToolControlView: View
                 {
                     LazyVStack(spacing: 8)
                     {
-                        ForEach(tool.programs)
-                        { program in
+                        ForEach(Array(tool.programs.enumerated()), id: \.element.id)
+                        { index, program in
                             if tool.selected_program == nil
                             {
                                 ProgramItemView(
@@ -106,6 +111,19 @@ public struct ToolControlView: View
                                     )
                                 )
                                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                .overlay(alignment: .topLeading)
+                                {
+                                    if shows_program_indices
+                                    {
+                                        Text("\(index)")
+                                            .font(.system(size: program_index_font_size))
+                                            .foregroundStyle(.tertiary)
+                                            .frame(height: 20)
+                                            .lineLimit(1)
+                                            .padding(.leading, 6)
+                                            .allowsHitTesting(false)
+                                    }
+                                }
                             }
                         }
                         .animation(.spring(), value: tool.programs)
@@ -529,7 +547,7 @@ struct ToolControlView_Previews: PreviewProvider
             {
                 FloatingView(alignment: .trailing)
                 {
-                    ToolControlView(tool: tool)
+                    ToolControlView(tool: tool, shows_program_indices: true)
                         .padding(8)
                 }
                 .padding(10)
