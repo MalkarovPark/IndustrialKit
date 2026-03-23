@@ -47,7 +47,7 @@ public struct StateItemsView: View
                     }
                     else
                     {
-                        let index_map = index_map(for: device_output.items)
+                        //let index_map = index_map(for: device_output.items)
                         
                         ForEach(device_output.items.indices, id: \.self)
                         { index in
