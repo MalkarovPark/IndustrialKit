@@ -29,8 +29,6 @@ public class DeviceOutputData: Hashable, Identifiable, ObservableObject, Codable
     {
         self.items = items
         self.charts = charts
-        
-        define_item_indices()
     }
     
     // MARK: - Items
@@ -46,11 +44,6 @@ public class DeviceOutputData: Hashable, Identifiable, ObservableObject, Codable
     @Published public var charts: [StateChart]
     
     // MARK: - Observable
-    /*open var output_values: [Float]
-    {
-        return []
-    }*/
-    
     public func define_item_indices()//for items: [StateItem])
     {
         var counter = 0

@@ -47,13 +47,13 @@ public struct StateItemsView: View
                 }
                 .listStyle(.plain)
                 .padding()
-                /*.onChange(of: device_output.items)
+                .onChange(of: device_output.items)
                 {
                     if shows_output_indices
                     {
                         device_output.define_item_indices()
                     }
-                }*/
+                }
             }
             else
             {

@@ -157,7 +157,19 @@ public struct DeviceOutputView: View
                             
                             Divider()
                             
-                            Button(role: .destructive, action: { state_output_device.reset_device_output() })
+                            Button(
+                                role: .destructive,
+                                action:
+                                    {
+                                        if shows_output_indices,
+                                           let device_output = state_output_device.device_output
+                                        {
+                                            device_output.define_item_indices()
+                                        }
+                                        
+                                        state_output_device.reset_device_output()
+                                    }
+                            )
                             {
                                 Label("Clear Output", systemImage: "eraser")
                             }
