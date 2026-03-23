@@ -51,11 +51,26 @@ public struct StateItemsView: View
                         
                         ForEach(device_output.items.indices, id: \.self)
                         { index in
-                            StateItemListView(
+                            HStack
+                            {
+                                Text("\(index_map[device_output.items[index].id] ?? 0)")
+                                    //.font(.system(size: program_index_font_size))
+                                    .foregroundStyle(.tertiary)
+                                    .lineLimit(1)
+                                    .padding(.leading, -6)
+                                    .allowsHitTesting(false)
+                                
+                                StateItemListView(
+                                    item: device_output.items[index],
+                                    expanded_items: $expanded_items
+                                )
+                            }
+                            
+                            /*StateItemListView(
                                 item: device_output.items[index],
                                 expanded_items: $expanded_items
                             )
-                            .badge("\(index_map[device_output.items[index].id] ?? 0)")
+                            .badge("\(index_map[device_output.items[index].id] ?? 0)")*/
                         }
                         /*ForEach(flatten_items_with_indices(device_output.items), id: \.item.id)
                         { element in
