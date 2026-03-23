@@ -51,7 +51,7 @@ public struct StateItemsView: View
                         
                         ForEach(device_output.items.indices, id: \.self)
                         { index in
-                            HStack
+                            /*HStack
                             {
                                 /*Text("\(index_map[device_output.items[index].id] ?? 0)")
                                     //.font(.system(size: program_index_font_size))
@@ -64,7 +64,12 @@ public struct StateItemsView: View
                                     item: device_output.items[index],
                                     expanded_items: $expanded_items
                                 )
-                            }
+                            }*/
+                            
+                            StateItemListView(
+                                item: device_output.items[index],
+                                expanded_items: $expanded_items
+                            )
                             
                             /*StateItemListView(
                                 item: device_output.items[index],
