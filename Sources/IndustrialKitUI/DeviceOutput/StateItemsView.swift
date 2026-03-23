@@ -53,12 +53,12 @@ public struct StateItemsView: View
                         { index in
                             HStack
                             {
-                                Text("\(index_map[device_output.items[index].id] ?? 0)")
+                                /*Text("\(index_map[device_output.items[index].id] ?? 0)")
                                     //.font(.system(size: program_index_font_size))
                                     .foregroundStyle(.tertiary)
                                     .lineLimit(1)
                                     .padding(.leading, -6)
-                                    .allowsHitTesting(false)
+                                    .allowsHitTesting(false)*/
                                 
                                 StateItemListView(
                                     item: device_output.items[index],
