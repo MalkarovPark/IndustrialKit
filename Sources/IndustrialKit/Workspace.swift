@@ -1802,7 +1802,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
     private let major_line_mesh_z = MeshResource.generatePlane(width: 0.0025, depth: Float(200*2) * 0.1)
     private let axis_line_mesh_z  = MeshResource.generatePlane(width: 0.00375, depth: Float(200*2) * 0.1)
     
-    public var is_grid_visible: Bool { grid_visible } // UI Only
+    /*public var is_grid_visible: Bool { grid_visible } // UI Only
     
     public func toggle_grid_visiblity()
     {
@@ -1810,6 +1810,21 @@ public class Workspace: ObservableObject, @unchecked Sendable
         grid_lines.values.forEach { $0.isEnabled = grid_visible }
         
         self.objectWillChange.send() // UI Only
+    }*/
+    
+    public var shows_grid: Bool
+    {
+        get
+        {
+            grid_visible
+        }
+        set
+        {
+            grid_visible = newValue
+            grid_lines.values.forEach { $0.isEnabled = newValue }
+            
+            self.objectWillChange.send() // UI Only
+        }
     }
     
     private func update_grid(camera_position: SIMD3<Float>)
