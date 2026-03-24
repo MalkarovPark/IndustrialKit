@@ -308,6 +308,7 @@ private struct OperationProgramView: View
                 }
                 .buttonStyle(.plain)
                 .padding(.leading, 8)
+                .keyboardShortcut(.cancelAction)
             }
             
             Divider()

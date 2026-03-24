@@ -370,6 +370,7 @@ private struct ProductionProgramView: View
                 }
                 .buttonStyle(.plain)
                 .padding(.leading, 8)
+                .keyboardShortcut(.cancelAction)
             }
             .overlay(alignment: .trailing)
             {
