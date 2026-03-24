@@ -51,6 +51,43 @@ public class Workspace: ObservableObject, @unchecked Sendable
     /// Selected workspace object.
     @Published public var selected_object: WorkspaceObject?
     
+    /**
+     Selects a workspace object by type (Robot, Tool, or Part), updates the current selection, and focuses the camera on it.
+     
+     - Parameters:
+        - object: An object to select.
+     */
+    public func select_object(_ object: WorkspaceObject)
+    {
+        deselect_object() // Test
+        pointer_entity.isEnabled = false
+        
+        deselect_program()
+        
+        switch object
+        {
+        case is Robot:
+            select_robot(name: object.name)
+            pointer_entity.isEnabled = true
+        case is Tool:
+            select_tool(name: object.name)
+            pointer_entity.isEnabled = true
+        case is Part:
+            select_part(name: object.name)
+            pointer_entity.isEnabled = true
+        default:
+            break
+        }
+        
+        // Camera pivot reposition
+        if let selected_object = selected_object
+        {
+            focus(on: selected_object.entity)
+        }
+        
+        self.objectWillChange.send() // UI only
+    }
+    
     /// Deselects selected object.
     public func deselect_object()
     {
