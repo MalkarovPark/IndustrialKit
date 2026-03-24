@@ -586,14 +586,18 @@ public struct GlassBoxCard<Content: View>: View
                                                             is_renaming = false
                                                         }
                                                     #else
-                                                    TextField("Name", text: $new_name, onCommit: {
-                                                        on_rename()
-                                                        is_renaming = false
-                                                    })
-                                                        .textFieldStyle(.roundedBorder)
-                                                        .focused($is_focused)
-                                                        .labelsHidden()
-                                                        .padding()
+                                                    TextField(
+                                                        "Name",
+                                                        text: $new_name, onCommit:
+                                                            {
+                                                                on_rename(new_name)
+                                                                is_renaming = false
+                                                            }
+                                                    )
+                                                    .textFieldStyle(.roundedBorder)
+                                                    .focused($is_focused)
+                                                    .labelsHidden()
+                                                    .padding()
                                                     #endif
                                                 }
                                             }
