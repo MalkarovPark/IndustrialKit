@@ -63,6 +63,13 @@ public struct StateItemsView: View
                 }
             }
         }
+        .onAppear
+        {
+            if shows_output_indices
+            {
+                device_output.define_item_indices()
+            }
+        }
         //#if !os(visionOS)
         //.background(.white)
         //#endif
