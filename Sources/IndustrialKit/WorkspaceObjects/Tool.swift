@@ -100,13 +100,14 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         model_controller.connect_entities(of: entity)
         
         // Apply physics
-        entity.apply_physics(
+        update_model_physics()
+        /*entity.apply_physics(
             by: PhysicsBodyComponent(
                 massProperties: .default,
                 material: .default,
                 mode: .kinematic
             )
-        )
+        )*/
     }
     
     // MARK: - Module handling
@@ -937,6 +938,39 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
+    // MARK: - Physics
+    /**
+     Physics body data of part.
+     
+     > This variable is codable.
+     */
+    @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
+    
+    /// The state of physics calculation for part node.
+    public var physics_enabled = false
+    {
+        didSet
+        {
+            update_model_physics()
+        }
+    }
+    
+    public func update_model_physics()
+    {
+        if physics_enabled
+        {
+            entity.apply_physics(by: physics_body_data.component)
+        }
+        else
+        {
+            entity.visit
+            { child in
+                child.components.remove(PhysicsBodyComponent.self)
+                child.components.remove(PhysicsMotionComponent.self)
+            }
+        }
+    }
+    
     // MARK: - UI functions
     /// Apply corresponded label and SF Symbol to operation code.
     public func code_info(_ value: Int) -> OperationCodeInfo
@@ -989,6 +1023,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         self.is_twin_sync = file.is_twin_sync
         self.connector.import_connection_parameters_values(file.connection_parameters)
         
+        self.physics_enabled = file.physics_enabled
+        self.physics_body_data = file.physics_body_data
+        
         if self.is_twin_sync
         {
             self.connector.model_controller = self.model_controller
@@ -1022,7 +1059,10 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
             
             device_mode: device_mode,
             connection_parameters: connector.connection_parameters_values,
-            is_twin_sync: is_twin_sync
+            is_twin_sync: is_twin_sync,
+            
+            physics_enabled: physics_enabled,
+            physics_body_data: physics_body_data
         )
     }
     
@@ -1053,6 +1093,9 @@ public struct ToolFileData: Codable
     public var connection_parameters: [String]?
     public var is_twin_sync: Bool
     
+    public var physics_enabled: Bool = true
+    public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
+    
     // MARK: Init
     public init(
         object: WorkspaceObjectFileData,
@@ -1070,7 +1113,10 @@ public struct ToolFileData: Codable
         
         device_mode: DeviceMode,
         connection_parameters: [String]?,
-        is_twin_sync: Bool
+        is_twin_sync: Bool,
+        
+        physics_enabled: Bool,
+        physics_body_data: PhysicsBodyComponentFileData
     )
     {
         self.object = object
@@ -1089,5 +1135,8 @@ public struct ToolFileData: Codable
         self.device_mode = device_mode
         self.connection_parameters = connection_parameters
         self.is_twin_sync = is_twin_sync
+        
+        self.physics_enabled = physics_enabled
+        self.physics_body_data = physics_body_data
     }
 }
