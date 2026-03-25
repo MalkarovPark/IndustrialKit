@@ -206,6 +206,7 @@ public struct BoxCard<Content: View>: View
                                     .padding(4)
                                     .onChange(of: is_renaming)
                                     { _, new_value in
+                                        new_name = title ?? String()
                                         is_focused = new_value
                                     }
                                     .onChange(of: is_focused)
@@ -619,6 +620,7 @@ public struct GlassBoxCard<Content: View>: View
                                     .padding(8)
                                     .onChange(of: is_renaming)
                                     { _, new_value in
+                                        new_name = title ?? String()
                                         is_focused = new_value
                                     }
                                     .onChange(of: is_focused)
