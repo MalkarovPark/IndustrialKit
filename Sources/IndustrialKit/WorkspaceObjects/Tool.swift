@@ -944,7 +944,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
      
      > This variable is codable.
      */
-    @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
+    @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData(mode: ._kinematic)
     
     /// The state of physics calculation for part node.
     public var physics_enabled = false
