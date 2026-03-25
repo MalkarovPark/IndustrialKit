@@ -15,6 +15,7 @@ public struct DeviceOutputView: View
     let shows_output_indices: Bool
     
     let on_update: () -> ()
+    let on_update_avaliable: Bool
     
     @State private var stats_selection = 0
     @State private var update_interval_view_presented = false
@@ -23,14 +24,33 @@ public struct DeviceOutputView: View
         object: WorkspaceObject,
         shows_output_indices: Bool = false,
         
-        on_update: @escaping () -> Void = {}
+        on_update: @escaping () -> Void
     )
     {
         self.object = object
         self.shows_output_indices = shows_output_indices
         
         self.on_update = on_update
+        on_update_avaliable = true
     }
+    
+    public init(
+        object: WorkspaceObject,
+        shows_output_indices: Bool = false
+    )
+    {
+        self.object = object
+        self.shows_output_indices = shows_output_indices
+        
+        self.on_update = {}
+        on_update_avaliable = false
+    }
+    
+    #if os(macOS)
+    private let interval_popover_edge: Edge = .bottom
+    #else
+    private let interval_popover_edge: Edge = .top
+    #endif
     
     public var body: some View
     {
@@ -174,9 +194,12 @@ public struct DeviceOutputView: View
                                 Label("Clear Output", systemImage: "eraser")
                             }
                             
-                            Button(action: on_update)
+                            if on_update_avaliable
                             {
-                                Label("Update in File", systemImage: "arrow.down.doc")
+                                Button(action: on_update)
+                                {
+                                    Label("Update in File", systemImage: "arrow.down.doc")
+                                }
                             }
                         }
                         label:
@@ -201,7 +224,7 @@ public struct DeviceOutputView: View
                         .padding(15)
                         #endif
                         #endif
-                        .popover(isPresented: $update_interval_view_presented, arrowEdge: .bottom)
+                        .popover(isPresented: $update_interval_view_presented, arrowEdge: interval_popover_edge)
                         {
                             UpdateIntervalView(is_presented: $update_interval_view_presented, time_interval: state_update_interval)
                                 .controlSize(.regular)
@@ -300,7 +323,7 @@ struct DeviceStateView_Previews: PreviewProvider
         var body: some View
         {
             DeviceOutputView(object: robot)
-                .modifier(SheetCaption(is_presented: .constant(true), label: "Device State", plain: false, clear_background: true))
+                .modifier(SheetCaption(is_presented: .constant(true), label: "Device Output", plain: false, clear_background: true))
                 .onAppear
                 {
                     prepare_state()

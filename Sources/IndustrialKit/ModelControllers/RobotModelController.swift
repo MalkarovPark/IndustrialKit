@@ -124,29 +124,14 @@ open class RobotModelController: ModelController, @unchecked Sendable
         r: Float, p: Float, w: Float
     ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
-    /**
-     Updates the pointer’s position and orientation in the scene.
-     
-     - Parameters:
-     - pos_x: The X coordinate of the pointer's position.
-     - pos_y: The Y coordinate of the pointer's position.
-     - pos_z: The Z coordinate of the pointer's position.
-     - rot_x: Rotation about the X-axis, in radians.
-     - rot_y: Rotation about the Y-axis, in radians.
-     - rot_z: Rotation about the Z-axis, in radians.
-     */
-    public func update_pointer_position(
-        /*_ position: (
-            x: Float, y: Float, z: Float,
-            r: Float, p: Float, w: Float
-        )*/
-    )
+    ///Updates the pointer’s position and orientation in the scene.
+    public func update_pointer_position()
     {
         Task
         { @MainActor in
             pointer_entity?.update_position(pointer_position)
         }
-        //pointer_entity?.update_position(pointer_position)//position)
+        //pointer_entity?.update_position(pointer_position)
     }
     
     /// Robot teach pointer.
