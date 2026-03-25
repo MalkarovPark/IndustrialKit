@@ -353,7 +353,11 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
     return collected_output
 }
 
-public func perform_terminal_app(at url: URL, with arguments: [String] = [String](), timeout: TimeInterval? = nil, output_handler: @escaping (String) -> Void = { _ in })
+public func perform_terminal_app(
+    at url: URL, with arguments: [String] = [String](),
+    timeout: TimeInterval? = nil,
+    output_handler: @escaping @Sendable (String) -> Void = { _ in }
+)
 {
     DispatchQueue.global(qos: .background).async
     {
@@ -494,7 +498,11 @@ public func send_via_unix_socket(at socket_path: String, command: String) -> Str
 
  - Note: The response is returned on the main thread.
  */
-public func send_via_unix_socket(at socket_path: String, command: String, completion: @escaping (String) -> Void)
+public func send_via_unix_socket(
+    at socket_path: String,
+    command: String,
+    completion: @escaping @Sendable (String) -> Void
+)
 {
     DispatchQueue.global(qos: .userInitiated).async
     {
@@ -526,7 +534,7 @@ public func send_via_unix_socket(at socket_path: String, command: String, comple
 
  - Note: The response is returned on the main thread.
  */
-public func send_via_unix_socket(at socket_path: String, with arguments: [String], completion: @escaping (String) -> Void)
+public func send_via_unix_socket(at socket_path: String, with arguments: [String], completion: @Sendable @escaping (String) -> Void)
 {
     send_via_unix_socket(at: socket_path, command: arguments.joined(separator: " "), completion: completion)
 }

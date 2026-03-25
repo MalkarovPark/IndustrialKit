@@ -157,7 +157,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         }
     }
     
-    private func load_external_entity() async throws -> Entity
+    @MainActor private func load_external_entity() async throws -> Entity
     {
         let scene_url = package_url.appendingPathComponent(scene_file_name + ".usdz")
         
