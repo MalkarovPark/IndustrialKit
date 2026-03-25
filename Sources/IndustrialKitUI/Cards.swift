@@ -208,6 +208,13 @@ public struct BoxCard<Content: View>: View
                                     { _, new_value in
                                         is_focused = new_value
                                     }
+                                    .onChange(of: is_focused)
+                                    { _, new_value in
+                                        if !new_value
+                                        {
+                                            is_renaming = false
+                                        }
+                                    }
                                 }
                             }
                         
@@ -613,6 +620,13 @@ public struct GlassBoxCard<Content: View>: View
                                     .onChange(of: is_renaming)
                                     { _, new_value in
                                         is_focused = new_value
+                                    }
+                                    .onChange(of: is_focused)
+                                    { _, new_value in
+                                        if !new_value
+                                        {
+                                            is_renaming = false
+                                        }
                                     }
                                 }
                             }
