@@ -2045,6 +2045,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             if let object_identifier = current.components[EntityModelIdentifier.self]
             {
+                print(current.name)
                 print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
                 
                 if !already_selecting_same_object(object_identifier)
