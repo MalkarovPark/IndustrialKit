@@ -2039,7 +2039,31 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Pointer Handling
     public func process_tap(value: EntityTargetValue<TapGesture.Value>)
     {
-        print("Tapped on entity: \(value.entity.name)")
+        var entity: Entity? = value.entity
+        
+        while let current = entity
+        {
+            if let object_identifier = current.components[EntityModelIdentifier.self]
+            {
+                print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
+                
+                if !already_selecting_same_object(object_identifier)
+                {
+                    select_object_by_entity_identifier(object_identifier)
+                }
+                else
+                {
+                    process_empty_tap()
+                }
+                
+                return
+            }
+            
+            entity = current.parent
+        }
+        
+        process_empty_tap()
+        /*print("Tapped on entity: \(value.entity.name)")
         
         let tapped_entity = value.entity
         
@@ -2059,7 +2083,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         else
         {
             process_empty_tap()
-        }
+        }*/
         
         func already_selecting_same_object(_ object_identifier: EntityModelIdentifier) -> Bool
         {
