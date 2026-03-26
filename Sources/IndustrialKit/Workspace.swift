@@ -2881,12 +2881,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 let end_point_entity = robot_by_name(attached_to).end_point_entity
                 
                 end_point_entity.addChild(tool.entity)
-                tool.set_local_position()
+                //tool.set_local_position()
             }
             else
             {
                 workspace_entity.addChild(tool.entity)
-                tool.set_global_position()
+                //tool.set_global_position()
             }
         }
     }
