@@ -2043,6 +2043,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         while let current = entity
         {
+            print(current.name)
             if let object_identifier = current.components[EntityModelIdentifier.self]
             {
                 print(current.name)
@@ -2064,6 +2065,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }
         
         process_empty_tap()
+        
+        ////
+        
         /*print("Tapped on entity: \(value.entity.name)")
         
         let tapped_entity = value.entity
@@ -2085,6 +2089,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             process_empty_tap()
         }*/
+        
+        ////
         
         func already_selecting_same_object(_ object_identifier: EntityModelIdentifier) -> Bool
         {
