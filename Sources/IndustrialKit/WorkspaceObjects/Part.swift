@@ -335,8 +335,11 @@ open class Part: WorkspaceObject
                 module_name: module_name,
                 is_internal_module: is_internal_module,
                 
-                location: [position.x, position.y, position.z],
-                rotation: [position.r, position.p, position.w],
+                position: [
+                    position.x, position.y, position.z,
+                    position.r, position.p, position.w
+                ],
+                
                 is_placed: is_placed
             ),
             

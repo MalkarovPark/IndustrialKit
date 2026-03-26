@@ -274,12 +274,12 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
         self.is_internal_module = file.is_internal_module
         
         self.position = (
-            file.location[safe: 0] ?? 0,
-            file.location[safe: 1] ?? 0,
-            file.location[safe: 2] ?? 0,
-            file.rotation[safe: 0] ?? 0,
-            file.rotation[safe: 1] ?? 0,
-            file.rotation[safe: 2] ?? 0
+            file.position[safe: 0] ?? 0,
+            file.position[safe: 1] ?? 0,
+            file.position[safe: 2] ?? 0,
+            file.position[safe: 3] ?? 0,
+            file.position[safe: 4] ?? 0,
+            file.position[safe: 5] ?? 0
         )
         
         self.is_placed = file.is_placed
@@ -295,8 +295,10 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
             module_name: module_name,
             is_internal_module: is_internal_module,
             
-            location: [position.x, position.y, position.z],
-            rotation: [position.r, position.p, position.w],
+            position: [
+                position.x, position.y, position.z,
+                position.r, position.p, position.w
+            ],
             
             is_placed: is_placed
         )
@@ -311,8 +313,10 @@ open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @pre
                 module_name: object.module_name,
                 is_internal_module: object.is_internal_module,
                 
-                location: [object.position.x, object.position.y, object.position.z],
-                rotation: [object.position.r, object.position.p, object.position.w],
+                position: [
+                    object.position.x, object.position.y, object.position.z,
+                    object.position.r, object.position.p, object.position.w
+                ],
                 
                 is_placed: object.is_placed
             )
@@ -328,8 +332,7 @@ public struct WorkspaceObjectFileData: Codable
     public var module_name: String
     public var is_internal_module: Bool
     
-    public var location: [Float] // [x, y, z]
-    public var rotation: [Float] // [r, p, w]
+    public var position: [Float] // [x, y, z, r, p, w]
     
     public var is_placed: Bool
     
@@ -340,8 +343,7 @@ public struct WorkspaceObjectFileData: Codable
         module_name: String,
         is_internal_module: Bool,
         
-        location: [Float],
-        rotation: [Float],
+        position: [Float],
         
         is_placed: Bool
     )
@@ -351,8 +353,7 @@ public struct WorkspaceObjectFileData: Codable
         self.module_name = module_name
         self.is_internal_module = is_internal_module
         
-        self.location = location
-        self.rotation = rotation
+        self.position = position
         
         self.is_placed = is_placed
     }
