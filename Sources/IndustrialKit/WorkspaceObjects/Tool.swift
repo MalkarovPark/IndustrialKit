@@ -947,7 +947,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData(mode: ._kinematic)
     
     /// The state of physics calculation for part node.
-    public var physics_enabled = false
+    public var physics_enabled = true
     {
         didSet
         {
