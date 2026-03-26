@@ -802,6 +802,15 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         x: Float, y: Float, z: Float,
         r: Float, p: Float, w: Float
     ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    {
+        didSet
+        {
+            if attached_to != nil
+            {
+                entity.update_position(local_position)
+            }
+        }
+    }
     
     // MARK: - Reality Functions
     #if canImport(RealityKit)
