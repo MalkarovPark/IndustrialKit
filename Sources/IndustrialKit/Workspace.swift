@@ -2041,6 +2041,49 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         var entity: Entity? = value.entity
         
+        var found_tool: EntityModelIdentifier?
+        var found_end_point: EntityModelIdentifier?
+        
+        while let current = entity
+        {
+            if let object_identifier = current.components[EntityModelIdentifier.self]
+            {
+                print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
+                
+                if object_identifier.type == .tool
+                {
+                    found_tool = object_identifier
+                }
+                else
+                {
+                    found_end_point = object_identifier
+                }
+            }
+            
+            entity = current.parent
+        }
+        
+        if let tool = found_tool
+        {
+            if !already_selecting_same_object(tool)
+            {
+                select_object_by_entity_identifier(tool)
+            }
+            else
+            {
+                process_empty_tap()
+            }
+        }
+        else if let end_point = found_end_point
+        {
+            select_object_by_entity_identifier(end_point)
+        }
+        else
+        {
+            process_empty_tap()
+        }
+        /*var entity: Entity? = value.entity
+        
         while let current = entity
         {
             if let object_identifier = current.components[EntityModelIdentifier.self]
@@ -2062,7 +2105,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             entity = current.parent
         }
         
-        process_empty_tap()
+        process_empty_tap()*/
         /*print("Tapped on entity: \(value.entity.name)")
         
         let tapped_entity = value.entity
