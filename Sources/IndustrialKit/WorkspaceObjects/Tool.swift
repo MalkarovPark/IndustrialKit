@@ -784,14 +784,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         reset_error()
     }
     
-    // MARK: - Reality Functions
-    #if canImport(RealityKit)
-    override public var entity_tag: EntityModelIdentifier
-    {
-        return EntityModelIdentifier(type: .tool, name: name)
-    }
-    #endif
-    
+    // MARK: - Attachment handling
     /// A name of the robot that the tool is attached to.
     public var attached_to: String?
     
@@ -799,6 +792,34 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     {
         attached_to = nil
     }
+    
+    /**
+     A tool local position.
+     
+     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
+     */
+    @Published public var local_position: (
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
+    ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
+    
+    // MARK: - Reality Functions
+    #if canImport(RealityKit)
+    override public var entity_tag: EntityModelIdentifier
+    {
+        return EntityModelIdentifier(type: .tool, name: name)
+    }
+    
+    public func set_local_position()
+    {
+        entity.update_position(local_position)
+    }
+    
+    public func set_global_position()
+    {
+        entity.update_position(position)
+    }
+    #endif
     
     // MARK: - Device state data handling
     /// A device state data.
@@ -1014,6 +1035,15 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         
         self.attached_to = file.attached_to
         
+        self.local_position = (
+            file.local_position[safe: 0] ?? 0,
+            file.local_position[safe: 1] ?? 0,
+            file.local_position[safe: 2] ?? 0,
+            file.local_position[safe: 3] ?? 0,
+            file.local_position[safe: 4] ?? 0,
+            file.local_position[safe: 5] ?? 0
+        )
+        
         self.state_update_enabled = file.state_update_enabled
         self.state_update_interval = file.state_update_interval
         self.update_scope_type = file.update_scope_type
@@ -1051,6 +1081,10 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
             codes: codes,
             
             attached_to: attached_to,
+            local_position: [
+                local_position.x, local_position.y, local_position.z,
+                local_position.r, local_position.p, local_position.w
+            ],
             
             state_update_enabled: state_update_enabled,
             state_update_interval: state_update_interval,
@@ -1083,6 +1117,7 @@ public struct ToolFileData: Codable
     public var codes: [OperationCodeInfo]
     
     public var attached_to: String?
+    public var local_position: [Float] // [x, y, z, r, p, w]
     
     public var state_update_enabled: Bool
     public var state_update_interval: Double
@@ -1105,6 +1140,7 @@ public struct ToolFileData: Codable
         codes: [OperationCodeInfo],
         
         attached_to: String?,
+        local_position: [Float],
         
         state_update_enabled: Bool,
         state_update_interval: Double,
@@ -1126,6 +1162,7 @@ public struct ToolFileData: Codable
         self.codes = codes
         
         self.attached_to = attached_to
+        self.local_position = local_position
         
         self.state_update_enabled = state_update_enabled
         self.state_update_interval = state_update_interval
