@@ -2048,16 +2048,25 @@ public class Workspace: ObservableObject, @unchecked Sendable
             {
                 print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
                 
-                //
                 if object_identifier.type == .robot
                 {
-                    print("🍭")
-                    current.visit
-                    { child in
-                        print(child.name)
+                    if let tool_entity = find_tool(in: current)
+                    {
+                        if let tool_id = tool_entity.components[EntityModelIdentifier.self]
+                        {
+                            if !already_selecting_same_object(tool_id)
+                            {
+                                select_object_by_entity_identifier(tool_id)
+                            }
+                            else
+                            {
+                                process_empty_tap()
+                            }
+                            
+                            return
+                        }
                     }
                 }
-                //
                 
                 if !already_selecting_same_object(object_identifier)
                 {
@@ -2101,6 +2110,12 @@ public class Workspace: ObservableObject, @unchecked Sendable
         }*/
         
         ////
+        
+        func find_tool(in root: Entity) -> Entity?
+        {
+            (root.components[EntityModelIdentifier.self]?.type == .tool) ? root :
+            root.children.lazy.compactMap { find_tool(in: $0) }.first
+        }
         
         func already_selecting_same_object(_ object_identifier: EntityModelIdentifier) -> Bool
         {
