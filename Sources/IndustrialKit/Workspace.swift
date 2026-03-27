@@ -2046,51 +2046,9 @@ public class Workspace: ObservableObject, @unchecked Sendable
             print(current.name)
             if let object_identifier = current.components[EntityModelIdentifier.self]
             {
-                if object_identifier.type == .robot
-                {
-                    if let parent_object_identifier = current.parent?.components[EntityModelIdentifier.self],
-                       parent_object_identifier.type != .tool
-                    {
-                        print(current.name)
-                        print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
-                        
-                        if !already_selecting_same_object(object_identifier)
-                        {
-                            select_object_by_entity_identifier(object_identifier)
-                        }
-                        else
-                        {
-                            process_empty_tap()
-                        }
-                        
-                        return
-                    }
-                }
-                else
-                {
-                    print(current.name)
-                    print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
-                    
-                    if !already_selecting_same_object(object_identifier)
-                    {
-                        select_object_by_entity_identifier(object_identifier)
-                    }
-                    else
-                    {
-                        process_empty_tap()
-                    }
-                    
-                    return
-                }
-            }
-            
-            /*print(current.name)
-            if let object_identifier = current.components[EntityModelIdentifier.self]
-            {
-                print(current.name)
                 print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
                 
-                if !already_selecting_same_object(object_identifier)
+                /*if !already_selecting_same_object(object_identifier)
                 {
                     select_object_by_entity_identifier(object_identifier)
                 }
@@ -2099,8 +2057,8 @@ public class Workspace: ObservableObject, @unchecked Sendable
                     process_empty_tap()
                 }
                 
-                return
-            }*/
+                return*/
+            }
             
             entity = current.parent
         }
