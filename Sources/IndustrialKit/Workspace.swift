@@ -1493,7 +1493,7 @@ import SwiftUI
     private var scene_content: RealityViewCameraContent?
     
     public func place_entity(
-        to content: RealityViewCameraContent,
+        in content: RealityViewCameraContent,
         completion: @escaping () -> () = {}
     )
     {

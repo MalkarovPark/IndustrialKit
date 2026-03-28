@@ -249,7 +249,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     scene_content = content
                     scene_content?.camera = .virtual
                     
-                    workspace.place_entity(to: content)
+                    workspace.place_entity(in: content)
                 }
                 .realityViewCameraControls(is_pan ? .pan : .orbit)
                 .highPriorityGesture(

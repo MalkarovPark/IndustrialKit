@@ -307,7 +307,7 @@ import RealityKit
     ///   after the entity has already been added to the scene.
     ///
     public func place_entity(
-        to content: RealityViewCameraContent,
+        in content: RealityViewCameraContent,
         applying_position: Bool = false
     )
     {
