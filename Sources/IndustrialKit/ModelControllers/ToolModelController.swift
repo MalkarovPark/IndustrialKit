@@ -139,7 +139,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
             }
             catch
             {
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
             }
         }
     }
@@ -229,7 +229,7 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
             return []
         }
     }
@@ -246,7 +246,7 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
             guard let json_data = json_string.data(using: .utf8)
             else
             {
-                print("Failed to convert JS output to Data: \(json_string)")
+                //print("Failed to convert JS output to Data: \(json_string)")
                 return nil
             }
             
@@ -255,7 +255,7 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
         }
         catch
         {
-            print("JS current_device_output error: \(error.localizedDescription)")
+            //print("JS current_device_output error: \(error.localizedDescription)")
             return nil
         }
     }
@@ -271,7 +271,7 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
             guard let json_data = json_string.data(using: .utf8)
             else
             {
-                print("Failed to convert JS output to Data: \(json_string)")
+                //print("Failed to convert JS output to Data: \(json_string)")
                 return nil
             }
             
@@ -280,7 +280,7 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
         }
         catch
         {
-            print("JS initial_device_output error: \(error.localizedDescription)")
+            //print("JS initial_device_output error: \(error.localizedDescription)")
             return nil
         }
     }

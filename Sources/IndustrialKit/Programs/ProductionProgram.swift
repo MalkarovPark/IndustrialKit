@@ -421,7 +421,7 @@ private func match_regex(text: String, pattern: String) -> Bool
     }
     catch
     {
-        print(error.localizedDescription)
+        //print(error.localizedDescription)
         return false
     }
 }
@@ -451,7 +451,7 @@ private func extract_data_array(from text: String, pattern regex: String) -> [St
     }
     catch
     {
-        print(error.localizedDescription)
+        //print(error.localizedDescription)
         return []
     }
 }

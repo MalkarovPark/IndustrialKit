@@ -1492,7 +1492,10 @@ import SwiftUI
     private var workspace_entity = Entity()
     private var scene_content: RealityViewCameraContent?
     
-    public func place_entity(to content: RealityViewCameraContent, completion: @escaping () -> () = {})
+    public func place_entity(
+        to content: RealityViewCameraContent,
+        completion: @escaping () -> () = {}
+    )
     {
         scene_content = content
         scene_content?.add(workspace_entity)
@@ -1599,7 +1602,7 @@ import SwiftUI
                 {
                     Part.load_all_internal_modules_entities
                     {
-                        print("Internal loaded")
+                        //print("Internal loaded")
                         completion()
                     }
                 }
@@ -1614,7 +1617,7 @@ import SwiftUI
                 {
                     Part.load_all_external_modules_entities
                     {
-                        print("External loaded")
+                        //print("External loaded")
                         completion()
                     }
                 }
@@ -2025,10 +2028,11 @@ import SwiftUI
         
         while let current = entity
         {
-            print(current.name)
+            //print(current.name)
+            
             if let object_identifier = current.components[ObjectEntityIdentifier.self]
             {
-                print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
+                //print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
                 
                 if object_identifier.type == .robot
                 {

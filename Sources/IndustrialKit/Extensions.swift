@@ -259,7 +259,7 @@ public extension Encodable
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
         }
         
         return data

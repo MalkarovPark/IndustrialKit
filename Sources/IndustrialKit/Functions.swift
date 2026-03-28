@@ -81,7 +81,7 @@ public func clone_codable<T: WorkspaceProgramElement>(_ object: T) -> T?
     }
     catch
     {
-        print(error)
+        //print(error)
         return nil
     }
 }
@@ -198,7 +198,7 @@ func clone_codable<T: Codable>(_ object: T) -> T?
     }
     catch
     {
-        print(error)
+        //print(error)
         return nil
     }
 }
@@ -321,7 +321,7 @@ public func perform_terminal_app(at url: URL, with arguments: [String], timeout:
     }
     catch
     {
-        print(error.localizedDescription)
+        //print(error.localizedDescription)
     }
     
     return collected_output
@@ -378,7 +378,7 @@ public func perform_terminal_app_sync(at url: URL, with arguments: [String])
     }
     catch
     {
-        print(error.localizedDescription)
+        //print(error.localizedDescription)
     }
 }
 #endif
@@ -597,7 +597,7 @@ public func string_to_codable<T: Codable>(from string: String) -> T?
     }
     catch
     {
-        print(error)
+        //print(error)
         return nil
     }
 }

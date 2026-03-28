@@ -358,7 +358,7 @@ struct SpatialPendant_Previews: PreviewProvider
                 pendant_controller.is_opened = false
             }
             
-            print(workspace.selected_object?.name ?? "Nothing")
+            //print(workspace.selected_object?.name ?? "Nothing")
             
             inc += 1
             if inc > 4 { inc = 0 }
@@ -380,7 +380,7 @@ struct SpatialPendant_Previews: PreviewProvider
             workspace.parts.append(Part(name: "Cup"))
             workspace.parts.append(Part(name: "Book"))
             
-            print("Added")
+            //print("Added")
             
             button_tap()
         }

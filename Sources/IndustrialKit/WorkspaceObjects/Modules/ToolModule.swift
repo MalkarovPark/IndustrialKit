@@ -105,7 +105,7 @@ open class ToolModule: IndustrialModule
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
         }
         
         return URL(filePath: "")
@@ -126,7 +126,7 @@ open class ToolModule: IndustrialModule
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
         }
         
         return nil

@@ -132,7 +132,7 @@ open class RobotModule: IndustrialModule
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
         }
         
         return URL(filePath: "")
@@ -153,7 +153,7 @@ open class RobotModule: IndustrialModule
         }
         catch
         {
-            print(error.localizedDescription)
+            //print(error.localizedDescription)
         }
         
         return nil

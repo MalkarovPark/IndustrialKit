@@ -1201,7 +1201,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
                 }
                 catch
                 {
-                    print(error.localizedDescription)
+                    //print(error.localizedDescription)
                 }
             }
             else

@@ -137,8 +137,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
             }
             catch
             {
-                print(error.localizedDescription)
-                
+                //print(error.localizedDescription)
                 completion()
             }
         }

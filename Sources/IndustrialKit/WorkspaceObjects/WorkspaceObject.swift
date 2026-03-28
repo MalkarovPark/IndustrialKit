@@ -190,7 +190,7 @@ import RealityKit
     {
         didSet
         {
-            update_model_position()
+            update_entity_position()
         }
     }
     
@@ -227,7 +227,7 @@ import RealityKit
             {
                 //entity_loaded = false
                 
-                print(error.localizedDescription)
+                //print(error.localizedDescription)
             }
         }
     }
@@ -284,12 +284,32 @@ import RealityKit
     /// - Parameter entity: The entity to configure.
     open func extend_entity_preparation(_ entity: Entity) {}
     
-    /// Places the object into the specified scene content.
+    /// Places the entity into the specified RealityKit scene content.
     ///
-    /// The method waits until the entity becomes available before placement.
+    /// This method ensures that the underlying model entity is available
+    /// before performing placement. If the entity is not yet initialized,
+    /// the method waits asynchronously until it becomes available.
     ///
-    /// - Parameter content: The scene content container.
-    public func place_entity(to content: RealityViewCameraContent)
+    /// Optionally, the method can also apply the entity's spatial configuration
+    /// after placement, including position updates.
+    ///
+    /// The placement process consists of two independent asynchronous steps:
+    /// 1. Waiting for the model entity to become available.
+    /// 2. Adding the entity to the scene content.
+    /// 3. Optionally applying spatial positioning.
+    ///
+    /// - Parameters:
+    ///   - content: The scene content container in which the entity will be placed.
+    ///   - applying_position: A Boolean value that determines whether the entity's
+    ///     spatial position should be applied after placement. Default is `false`.
+    ///
+    /// - Important: Position updates are executed asynchronously and may occur
+    ///   after the entity has already been added to the scene.
+    ///
+    public func place_entity(
+        to content: RealityViewCameraContent,
+        applying_position: Bool = false
+    )
     {
         Task
         {
@@ -303,25 +323,20 @@ import RealityKit
             
             extend_entity_placement(entity)
         }
-    }
-    
-    /// Places the object into the scene and applies its spatial configuration.
-    ///
-    /// - Parameter content: The scene content container.
-    public func place_entity_at_position(to content: RealityViewCameraContent)
-    {
-        place_entity(to: content)
         
-        Task
+        if applying_position
         {
-            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
-            
-            update_model_position() //entity.update_position(position)
+            Task
+            {
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+                
+                update_entity_position() //entity.update_position(position)
+            }
         }
     }
     
     /// Updates the entity transform according to the current spatial configuration.
-    public func update_model_position()
+    public func update_entity_position()
     {
         entity.update_position(position)
     }

@@ -395,7 +395,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
         else { return [] }
         
         // Map decoded objects to tuple array
-        return decoded//.map { ($0.name, ($0.position.x, $0.position.y, $0.position.z, $0.position.r, $0.position.p, $0.position.w)) }
+        return decoded
     }
     
     // MARK: Statistics
@@ -410,7 +410,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
             guard let json_data = json_string.data(using: .utf8)
             else
             {
-                print("Failed to convert JS output to Data: \(json_string)")
+                //print("Failed to convert JS output to Data: \(json_string)")
                 return nil
             }
             
@@ -419,7 +419,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
         }
         catch
         {
-            print("JS current_device_output error: \(error.localizedDescription)")
+            //print("JS current_device_output error: \(error.localizedDescription)")
             return nil
         }
     }
@@ -435,7 +435,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
             guard let json_data = json_string.data(using: .utf8)
             else
             {
-                print("Failed to convert JS output to Data: \(json_string)")
+                //print("Failed to convert JS output to Data: \(json_string)")
                 return nil
             }
             
@@ -444,7 +444,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
         }
         catch
         {
-            print("JS initial_device_output error: \(error.localizedDescription)")
+            //print("JS initial_device_output error: \(error.localizedDescription)")
             return nil
         }
     }
