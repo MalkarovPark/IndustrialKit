@@ -2026,7 +2026,7 @@ import SwiftUI
         while let current = entity
         {
             print(current.name)
-            if let object_identifier = current.components[EntityModelIdentifier.self]
+            if let object_identifier = current.components[ObjectEntityIdentifier.self]
             {
                 print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
                 
@@ -2034,7 +2034,7 @@ import SwiftUI
                 {
                     if let tool_entity = find_tool(in: current)
                     {
-                        if let tool_id = tool_entity.components[EntityModelIdentifier.self]
+                        if let tool_id = tool_entity.components[ObjectEntityIdentifier.self]
                         {
                             if !already_selecting_same_object(tool_id)
                             {
@@ -2069,11 +2069,11 @@ import SwiftUI
         
         func find_tool(in root: Entity) -> Entity?
         {
-            (root.components[EntityModelIdentifier.self]?.type == .tool) ? root :
+            (root.components[ObjectEntityIdentifier.self]?.type == .tool) ? root :
             root.children.lazy.compactMap { find_tool(in: $0) }.first
         }
         
-        func already_selecting_same_object(_ object_identifier: EntityModelIdentifier) -> Bool
+        func already_selecting_same_object(_ object_identifier: ObjectEntityIdentifier) -> Bool
         {
             guard let identifier_type = object_identifier.type, let selected = selected_object else
             {
@@ -2107,7 +2107,7 @@ import SwiftUI
     
     private var pointer_entity = Entity()
     
-    private func select_object_by_entity_identifier(_ entity_identifier: EntityModelIdentifier)
+    private func select_object_by_entity_identifier(_ entity_identifier: ObjectEntityIdentifier)
     {
         deselect_object() // Test
         pointer_entity.isEnabled = false
@@ -3325,4 +3325,3 @@ private func to_rpn(_ tokens: [MathToken]) -> [MathToken] // Shunting-Yard to RP
     
     return output
 }
-

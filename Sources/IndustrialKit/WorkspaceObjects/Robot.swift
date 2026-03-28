@@ -994,9 +994,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     
     // MARK: - Visual Functions
     #if canImport(RealityKit)
-    override public var entity_tag: EntityModelIdentifier
+    override public var entity_tag: ObjectEntityIdentifier
     {
-        return EntityModelIdentifier(type: .robot, name: name)
+        return ObjectEntityIdentifier(type: .robot, name: name)
     }
     
     // MARK: Origin Entity

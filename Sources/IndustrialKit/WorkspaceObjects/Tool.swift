@@ -814,9 +814,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     
     // MARK: - Reality Functions
     #if canImport(RealityKit)
-    override public var entity_tag: EntityModelIdentifier
+    override public var entity_tag: ObjectEntityIdentifier
     {
-        return EntityModelIdentifier(type: .tool, name: name)
+        return ObjectEntityIdentifier(type: .tool, name: name)
     }
     
     public func set_local_position()

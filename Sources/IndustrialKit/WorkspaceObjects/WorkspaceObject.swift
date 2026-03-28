@@ -11,59 +11,93 @@ import SwiftUI
 import RealityKit
 #endif
 
-/**
- A base class of industrial production object.
- 
- Industrial production objects are represented by equipment that provide technological operations performing.
- */
+/// A base class that represents an industrial production object in a workspace.
+///
+/// Use ``WorkspaceObject`` as a common abstraction for equipment units that
+/// perform technological operations within a production environment.
+///
+/// A workspace object models a physical or logical production element, such as
+/// a robotic device, tool, or auxiliary equipment. The object encapsulates its
+/// identity, spatial configuration, and integration with functional modules.
+///
+/// Each object can be associated with a module that defines its behavior,
+/// control logic, and external connectivity. Optionally, the object may provide
+/// a visual representation for simulation and interaction in a 3D scene.
+///
+/// Subclass ``WorkspaceObject`` to implement domain-specific equipment behavior.
 @MainActor open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable
 {
+    /// Returns a Boolean value indicating whether two objects are equal.
+    ///
+    /// Equality is determined by comparing the ``name`` property and the dynamic type
+    /// of both objects.
+    ///
+    /// - Parameters:
+    ///   - lhs: A workspace object to compare.
+    ///   - rhs: Another workspace object to compare.
+    /// - Returns: `true` if both objects have the same identity; otherwise, `false`.
     public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool // Identity condition by names & types
     {
         return lhs.name == rhs.name && type(of: lhs) == type(of: rhs)
     }
     
+    /// Hashes the essential components of the object by feeding them into the given hasher.
+    ///
+    /// The hash value is derived from the object's ``name`` and is consistent with
+    /// the equality definition.
+    ///
+    /// - Parameter hasher: The hasher to use when combining components.
     public func hash(into hasher: inout Hasher)
     {
         hasher.combine(name)
     }
     
-    /// Object identifier.
+    /// A unique identifier of the object.
     public var id = UUID()
     
-    /// Object name in workspace.
+    /// The name of the object in the workspace.
+    ///
+    /// The name identifies the object within a production configuration.
+    /// Updating this value also updates the associated entity metadata.
     @Published public var name = String()
     {
         didSet
         {
-            update_entity_model_identifier() //! Test
+            update_entity_model_identifier()
         }
     }
     
-    /// A name of module to describe scene, controller and connector.
+    /// The name of the module associated with the object.
+    ///
+    /// The module defines the control logic, scene description, and connectivity
+    /// of the object.
     public var module_name = ""
     
-    /// A module access type identifier – external or internal.
+    /// A Boolean value that indicates whether the module is internal.
+    ///
+    /// Internal modules are provided as part of the system,
+    /// while external modules are loaded from external sources.
     public var is_internal_module = true
     
-    /// Object init function.
+    /// Creates a new workspace object.
     public init()
     {
         
     }
     
-    /**
-     Inits object by name.
-     
-     Used for object mismatch.
-     */
-    public init(
-        name: String
-    )
+    /// Creates a workspace object with the specified name.
+    ///
+    /// - Parameter name: The name of the object.
+    public init(name: String)
     {
         self.name = name
     }
     
+    /// Creates a workspace object and loads an entity resource.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the object.
+    ///   - entity_name: The name of the entity resource.
     public init(
         name: String,
         entity_name: String
@@ -73,6 +107,11 @@ import RealityKit
         perform_load_entity(named: entity_name)
     }
     
+    /// Creates a workspace object with a specified entity.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the object.
+    ///   - entity: The entity that represents the object.
     public convenience init(
         name: String,
         entity: Entity
@@ -84,7 +123,12 @@ import RealityKit
         import_entity(model_entity)
     }
     
-    /// Inits object by name and module name of installed module.
+    /// Creates a workspace object and imports a module.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the object.
+    ///   - module_name: The name of the module.
+    ///   - is_internal: A Boolean value indicating whether the module is internal.
     public init(
         name: String,
         module_name: String,
@@ -98,27 +142,30 @@ import RealityKit
     }
     
     // MARK: - Module handling
-    /// Modules folder access bookmark.
+    /// A security-scoped bookmark for accessing the modules directory.
+    ///
+    /// Use this property to persist access to the folder that contains
+    /// external modules across application launches.
     nonisolated(unsafe) public static var modules_folder_bookmark: Data?
     
-    /**
-     Imports module by name.
-     - Parameters:
-        - name: An installed module name.
-     */
-    open func import_module(_ name: String, is_internal: Bool = true)
-    {
-        
-    }
+    /// Imports a module that defines the object's functionality.
+    ///
+    /// Override this method to implement module loading and initialization.
+    ///
+    /// - Parameters:
+    ///   - name: The module name.
+    ///   - is_internal: Indicates whether the module is internal.
+    open func import_module(_ name: String, is_internal: Bool = true) {}
     
-    /**
-     Indicates whether an available module is present for the workspace object.
-     - Returns: `true` if a module is available, otherwise `false`.
-     */
+    /// A Boolean value that indicates whether a compatible module is available.
+    ///
+    /// Override to provide module availability logic.
     open var has_avaliable_module: Bool { false }
     
     // MARK: - Object in workspace handling
-    /// In workspace placement state.
+    /// A Boolean value that indicates whether the object is placed in the workspace.
+    ///
+    /// When set to `true`, the associated entity becomes active in the scene.
     @Published public var is_placed = false
     {
         didSet
@@ -127,17 +174,15 @@ import RealityKit
         }
     }
     
-    /// Additional operations after remowing an object from the workspace.
-    open func on_remove()
-    {
-        
-    }
+    /// Performs additional operations when removing the object from the workspace.
+    ///
+    /// Override to release resources or perform cleanup.
+    open func on_remove() {}
     
-    /**
-     A workspace object position.
-     
-     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
-     */
+    /// The spatial configuration of the object.
+    ///
+    /// The value represents the object's pose, including position (*x*, *y*, *z*)
+    /// and orientation (*r*, *p*, *w*), in the workspace coordinate system.
     @Published public var position: (
         x: Float, y: Float, z: Float,
         r: Float, p: Float, w: Float
@@ -145,21 +190,27 @@ import RealityKit
     {
         didSet
         {
-            update_model_position() //! Test
+            update_model_position()
         }
     }
     
     // MARK: - Visual functions
     #if canImport(RealityKit)
-    /// A complex workspace object entity.
-    public var entity = Entity() //public var entity: Entity?
+    /// The root entity that represents the object in a scene.
+    public var entity = Entity()
     
-    /// A workspace object entity for visual modeling and physical simulation.
+    /// The entity used for visualization and simulation.
     public var model_entity: Entity?
     
     /// An entity loading state.
     //@Published public var entity_loaded = false
     
+    /// Asynchronously loads an entity resource by name.
+    ///
+    /// The method attempts to load a model entity and, upon success,
+    /// integrates it into the object using ``import_entity(_:)``.
+    ///
+    /// - Parameter name: The name of the entity resource.
     private func perform_load_entity(named name: String)
     {
         Task
@@ -168,7 +219,7 @@ import RealityKit
             {
                 let model_entity = try await Entity(named: name)
                 
-                print("🥂 Loaded! (\(name))")
+                //print("🥂 Loaded! (\(name))")
                 
                 import_entity(model_entity)
             }
@@ -181,6 +232,12 @@ import RealityKit
         }
     }
     
+    /// Imports and configures a model entity.
+    ///
+    /// The method prepares the entity for interaction and simulation,
+    /// and attaches it to the object's root entity.
+    ///
+    /// - Parameter model_entity: The entity to import.
     public func import_entity(_ model_entity: Entity?)
     {
         guard let model_entity = model_entity else { return }
@@ -200,28 +257,38 @@ import RealityKit
         extend_entity_preparation(entity)
     }
     
-    open var entity_tag: EntityModelIdentifier
+    /// An identifier component assigned to entities of the object.
+    ///
+    /// Override to provide a custom identifier.
+    open var entity_tag: ObjectEntityIdentifier
     {
-        return EntityModelIdentifier(type: .none, name: name)
+        return ObjectEntityIdentifier(type: .none, name: name)
     }
     
+    /// Updates the identifier associated with the entity hierarchy.
     public func update_entity_model_identifier()
     {
         guard let model_entity = model_entity else { return }
         
         model_entity.visit
         { entity in
-            entity.components.remove(EntityModelIdentifier.self)
+            entity.components.remove(ObjectEntityIdentifier.self)
             entity.components.set(entity_tag)
         }
     }
     
-    open func extend_entity_preparation(_ entity: Entity)
-    {
-        
-    }
+    /// Extends the entity preparation process.
+    ///
+    /// Override to apply additional configuration after importing the entity.
+    ///
+    /// - Parameter entity: The entity to configure.
+    open func extend_entity_preparation(_ entity: Entity) {}
     
-    /// Places entity to "scene" and connects with handling avalibility.
+    /// Places the object into the specified scene content.
+    ///
+    /// The method waits until the entity becomes available before placement.
+    ///
+    /// - Parameter content: The scene content container.
     public func place_entity(to content: RealityViewCameraContent)
     {
         Task
@@ -238,7 +305,9 @@ import RealityKit
         }
     }
     
-    /// Places entity to "scene" and connects with handling avalibility.
+    /// Places the object into the scene and applies its spatial configuration.
+    ///
+    /// - Parameter content: The scene content container.
     public func place_entity_at_position(to content: RealityViewCameraContent)
     {
         place_entity(to: content)
@@ -251,11 +320,17 @@ import RealityKit
         }
     }
     
+    /// Updates the entity transform according to the current spatial configuration.
     public func update_model_position()
     {
         entity.update_position(position)
     }
     
+    /// Extends the placement process of the entity.
+    ///
+    /// Override to connect additional systems after placement.
+    ///
+    /// - Parameter entity: The placed entity.
     open func extend_entity_placement(_ entity: Entity)
     {
         //reality_controller.connect_entities(of: entity)
@@ -263,6 +338,9 @@ import RealityKit
     #endif
     
     // MARK: - Work with file system
+    /// Creates an object from serialized file data.
+    ///
+    /// - Parameter file: The stored object data.
     public convenience init(file: WorkspaceObjectFileData)
     {
         self.init()
@@ -285,6 +363,9 @@ import RealityKit
         import_module(module_name, is_internal: is_internal_module)
     }
     
+    /// Returns a serialized representation of the object.
+    ///
+    /// - Returns: A structure containing object data.
     public func file_data() -> WorkspaceObjectFileData
     {
         return WorkspaceObjectFileData(
@@ -302,6 +383,9 @@ import RealityKit
         )
     }
     
+    /// Creates an object by copying another object.
+    ///
+    /// - Parameter object: The source object.
     public convenience init(file_from_object object: WorkspaceObject)
     {
         self.init(
@@ -323,6 +407,9 @@ import RealityKit
 }
 
 // MARK: - File
+/// A structure that represents serialized workspace object data.
+///
+/// Use this type to store and restore object configuration.
 public struct WorkspaceObjectFileData: Codable
 {
     public var name: String
@@ -334,7 +421,6 @@ public struct WorkspaceObjectFileData: Codable
     
     public var is_placed: Bool
     
-    // MARK: - Init
     public init(
         name: String,
         
@@ -358,11 +444,24 @@ public struct WorkspaceObjectFileData: Codable
 }
 
 // MARK: - Entity Tag
-public struct EntityModelIdentifier: Component
+/// An entity component that identifies a workspace object.
+///
+/// The identifier stores the object type and name for interaction
+/// and processing in the scene.
+public struct ObjectEntityIdentifier: Component
 {
+    /// The type of the workspace object associated with the entity.
+    ///
+    /// Use this property to classify entities by their functional role
+    /// in the workspace.
     public var type: WorkspaceObjectType?
+    
+    /// The name of the workspace object associated with the entity.
+    ///
+    /// The name corresponds to the ``WorkspaceObject/name`` value
+    /// and is used to identify the entity within the scene.
     public var name: String
-
+    
     public init(
         type: WorkspaceObjectType? = .none,
         name: String
@@ -374,12 +473,14 @@ public struct EntityModelIdentifier: Component
 }
 
 // MARK: - Enums
+/// Defines the execution scope of a process.
 public enum ScopeType: String, Codable, Equatable, CaseIterable
 {
     case operational = "Operational"
     case continious = "Continuous"
 }
 
+/// Defines the state of a technological operation.
 public enum PerformingState: String, Codable, Equatable, CaseIterable
 {
     case none = "None"
@@ -388,20 +489,19 @@ public enum PerformingState: String, Codable, Equatable, CaseIterable
     case completed = "Completed"
     case error = "Error"
     
+    /// A color that represents the current performing state.
+    ///
+    /// Use this property to visualize the state in user interfaces.
+    /// Each state is mapped to a distinct color for quick recognition.
     public var color: Color
     {
         switch self
         {
-        case .none:
-            .gray
-        case .current:
-            .cyan
-        case .processing:
-            .yellow
-        case .completed:
-            .green
-        case .error:
-            .red
+        case .none: .gray
+        case .current: .cyan
+        case .processing: .yellow
+        case .completed: .green
+        case .error: .red
         }
     }
 }
@@ -411,57 +511,99 @@ public enum PerformingState: String, Codable, Equatable, CaseIterable
     
 }*/
 
+/// Defines the operation mode of a device.
 public enum DeviceMode: String, CaseIterable, Codable
 {
     case simulation = "Simulation"
     case real = "Real"
 }
 
+/// A protocol that represents a digital twin of a device.
+///
+/// A device twin synchronizes a virtual model with a physical or simulated device.
 public protocol DeviceTwin: WorkspaceObject, ObservableObject
 {
+    /// The operating mode of the device.
+    ///
+    /// The mode defines whether the device operates in a simulated environment
+    /// or interacts with a physical system.
     var device_mode: DeviceMode { get set }
     
+    /// The connector that provides interaction with an external system.
+    ///
+    /// The connector enables communication with a physical device or
+    /// an external control interface.
     var model_controller: ModelControllerType { get set }
+    
+    /// A type that represents the model controller of the device.
+    ///
+    /// Conforming types implement control logic in accordance with
+    /// the device model.
     associatedtype ModelControllerType: ModelController
     
+    /// The connector that provides interaction with an external system.
+    ///
+    /// The connector enables communication with a physical device or
+    /// an external control interface.
     var connector: ConnectorType { get set }
+    
+    /// A type that represents the connector of the device.
+    ///
+    /// Conforming types implement communication with external systems.
     associatedtype ConnectorType: WorkspaceObjectConnector
     
+    /// Connects the device to its data source.
     func connect_device()
+    
+    /// Disconnects the device from its data source.
     func disconnect_device()
     
+    /// A Boolean value that indicates whether the digital twin is synchronized.
+    ///
+    /// When `true`, the virtual model state corresponds to the actual device state.
     var is_twin_sync: Bool { get set }
 }
 
+/// A protocol for objects that produce state output.
+///
+/// Provides mechanisms for periodic data acquisition and update.
 public protocol StateOutputCapable: WorkspaceObject, ObservableObject
 {
-    /// A device state data.
+    /// The current state data of the device.
+    ///
+    /// The value represents the observable output of the device,
+    /// including parameters obtained from the control system or sensors.
     var device_output: DeviceOutputData? { get set }
     
-    /// Flag indicating whether the update loop is active.
+    /// A Boolean value that indicates whether the output update loop is active.
     var is_output_updating: Bool { get set }
     
-    /// Device state updating enable.
+    /// A Boolean value that enables or disables state updating.
     var state_update_enabled: Bool { get set }
     
-    /// The task responsible for executing the update loop.
+    /// The task responsible for executing the state update loop.
     var output_update_task: Task<Void, Never>? { get set }
     
-    /// The interval between updates in nanoseconds.
+    /// The time interval between state updates, in nanoseconds.
+    ///
+    /// The interval defines the frequency of data acquisition.
     var state_update_interval: Double { get set }
     
-    /// Defines the update timing scope.
+    /// The scope that defines how state updates are performed.
+    ///
+    /// The scope determines whether updates are executed continuously
+    /// or within a specific operational cycle.
     var update_scope_type: ScopeType { get set }
     
-    /// Starts the update loop.
+    /// Starts the state update process.
     func start_output_updating()
     
-    /// Stops the update loop.
+    /// Stops the state update process.
     func stop_output_updating()
     
-    /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
+    /// Updates the device state data.
     func update_statistics_data()
     
-    /// Clears device state data.
+    /// Resets the device state data.
     func reset_device_output()
 }
