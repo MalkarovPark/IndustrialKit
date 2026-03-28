@@ -51,7 +51,7 @@ open class ToolModule: IndustrialModule
         }
     }
     
-    open override var extension_name: String { "tool" }
+    open override var file_extension_name: String { "tool" }
     
     // MARK: - Components
     /// A model controller of the tool model.

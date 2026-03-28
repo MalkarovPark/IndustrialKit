@@ -33,7 +33,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     nonisolated(unsafe) public static var work_folder_bookmark: Data?
     
     /// An object package extension name.
-    open var extension_name: String { "module" }
+    open var file_extension_name: String { "module" }
     
     // MARK: - Module init functions for design
     /**
@@ -72,7 +72,8 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         is_internal_entity = false
     }
     
-    public var internal_url: String? /// An adress to package contents access.
+    /// An adress to package contents access.
+    public var internal_url: String?
     {
         do
         {
@@ -86,16 +87,13 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
                 return nil
             }
             
-            return "\(url.absoluteString)\(name).\(extension_name)/"
+            return "\(url.absoluteString)\(name).\(file_extension_name)/"
         }
         catch
         {
             return nil
         }
     }
-    
-    // MARK: - Module design functions
-    // ...
     
     // MARK: - Entities handling
     private var is_internal_entity = true
@@ -105,7 +103,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     /// A scene passed to object.
     public var internal_entity_name: String
     {
-        return "\(name).\(extension_name).\(scene_file_name)" // name.module.scene 6DOF.robot.scene
+        return "\(name).\(file_extension_name).\(scene_file_name)" // name.module.scene 6DOF.robot.scene
     }
     
     private var scene_file_name: String { "Scene" }
@@ -125,14 +123,14 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
                 if is_internal_entity
                 {
                     self.entity = try await Entity(named: internal_entity_name)
-                    print("🥂 Internal Loaded! (\(internal_entity_name))")
+                    //print("🥂 Internal Loaded! (\(internal_entity_name))")
                     
                     completion()
                 }
                 else
                 {
                     self.entity = try await load_external_entity()
-                    print("🥂 External Loaded! (\(name))")
+                    //print("🥂 External Loaded! (\(name))")
                     
                     completion()
                 }

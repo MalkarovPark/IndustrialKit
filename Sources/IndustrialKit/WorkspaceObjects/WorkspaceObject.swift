@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import SwiftUI
 #if canImport(RealityKit)
 import RealityKit
@@ -17,8 +16,7 @@ import RealityKit
  
  Industrial production objects are represented by equipment that provide technological operations performing.
  */
-@MainActor
-open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable//, @preconcurrency Codable
+@MainActor open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable
 {
     public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool // Identity condition by names & types
     {

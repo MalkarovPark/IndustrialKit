@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import SwiftUI
 #if canImport(RealityKit)
 import RealityKit
@@ -121,7 +120,6 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         
         origin_entity.addChild(position_pointer_entity)
         
-        //position_program_entity = build_position_program_entity()
         position_program_entity.isEnabled = false
         
         origin_entity.addChild(position_program_entity)
@@ -183,15 +181,6 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         
         model_controller = module.model_controller.copy()
         connector = module.connector.copy()
-        
-        /*if !(module.connector is ExternalRobotConnector)
-        {
-            connector = module.connector.copy() as! RobotConnector
-        }
-        else
-        {
-            connector = module.connector
-        }*/
         
         origin_shift = module.origin_shift
         origin_position = module.default_origin_position

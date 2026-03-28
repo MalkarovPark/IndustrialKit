@@ -34,7 +34,7 @@ open class PartModule: IndustrialModule
         super.init(external_name: external_name)
     }
     
-    open override var extension_name: String { "part" }
+    open override var file_extension_name: String { "part" }
     
     // MARK: - Components
     /// USDZ file name for for module build (designer).

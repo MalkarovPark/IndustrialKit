@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SceneKit
 
 /**
  A type of value that describes the target position.

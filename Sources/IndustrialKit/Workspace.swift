@@ -19,8 +19,7 @@ import SwiftUI
  
  Also can build a visual model of the production system with editing functions.
  */
-@MainActor
-public class Workspace: ObservableObject, @unchecked Sendable
+@MainActor public class Workspace: ObservableObject, @unchecked Sendable
 {
     // MARK: - Init functions
     public init()
@@ -30,7 +29,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         registers = [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
-    // MARK: - Workspace objects data
+    // MARK: Workspace objects data
     @Published public var robots = [Robot]()
     @Published public var tools = [Tool]()
     @Published public var parts = [Part]()
@@ -343,8 +342,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
         if is_single_performed
         {
             is_single_performed = false
-            //stop()
-            performing_state = previous_performing_state //.none
+            performing_state = previous_performing_state
         }
     }
     
@@ -557,8 +555,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
     {
         if element.module_name.isEmpty
         {
-            //element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
-            
             if !Changer.internal_modules_list.contains(element.module_name)
             {
                 if Changer.internal_modules_list.count > 0
@@ -844,7 +840,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
                 {
                 case .success:
                     self.selected_program_element.performing_state = .completed
-                    //self.selected_operation_code.performing_state = self.connector.performing_state.output
                     
                     self.select_next_element()
                 case .failure(let error):
@@ -1484,14 +1479,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         {
             program.elements[safe: i]?.performing_state = .none
         }
-        
-        /*let end = max(0, min(selected_element_index, program.elements_count))
-        if end == 0 { return }
-        
-        for i in 0..<end
-        {
-            program.elements[safe: i]?.performing_state = .none
-        }*/
     }
     
     /// Prepare workspace program to perform.
@@ -1673,13 +1660,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
             if p.z < min_z { min_z = p.z }
             if p.z > max_z { max_z = p.z }
         }
-        
-        /*let dx = max_x - min_x
-        let dy = max_y - min_y
-        
-        let average = (dx + dy) * 0.5 * 0.001
-        
-        return max(average /** 1.2*/, 0.5)*/
         
         let dx = (max_x - min_x) * 0.001
         let dy = (max_y - min_y) * 0.001
@@ -2087,32 +2067,6 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         process_empty_tap()
         
-        ////
-        
-        /*print("Tapped on entity: \(value.entity.name)")
-        
-        let tapped_entity = value.entity
-        
-        if let object_identifier = tapped_entity.components[EntityModelIdentifier.self]
-        {
-            print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
-            
-            if !already_selecting_same_object(object_identifier)
-            {
-                select_object_by_entity_identifier(object_identifier)
-            }
-            else
-            {
-                process_empty_tap()
-            }
-        }
-        else
-        {
-            process_empty_tap()
-        }*/
-        
-        ////
-        
         func find_tool(in root: Entity) -> Entity?
         {
             (root.components[EntityModelIdentifier.self]?.type == .tool) ? root :
@@ -2187,20 +2141,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
     // MARK: Pointer Entity
     public var pointer_entity_group: (
         cones: (
-            x: Entity,
-            y: Entity,
-            z: Entity
+            x: Entity, y: Entity, z: Entity
         ),
         faces: (
-            xz0: Entity,
-            xz1: Entity,
-            xz2: Entity,
-            xz3: Entity,
-            
-            xy0: Entity,
-            xy1: Entity,
-            xy2: Entity,
-            xy3: Entity,
+            xz0: Entity, xz1: Entity, xz2: Entity, xz3: Entity,
+            xy0: Entity, xy1: Entity, xy2: Entity, xy3: Entity,
             
             yz0: (a: Entity, b: Entity),
             yz1: (a: Entity, b: Entity),
@@ -2209,20 +2154,11 @@ public class Workspace: ObservableObject, @unchecked Sendable
         )
     ) = (
         cones: (
-            x: Entity(),
-            y: Entity(),
-            z: Entity()
+            x: Entity(), y: Entity(), z: Entity()
         ),
         faces: (
-            xz0: Entity(),
-            xz1: Entity(),
-            xz2: Entity(),
-            xz3: Entity(),
-            
-            xy0: Entity(),
-            xy1: Entity(),
-            xy2: Entity(),
-            xy3: Entity(),
+            xz0: Entity(), xz1: Entity(), xz2: Entity(), xz3: Entity(),
+            xy0: Entity(), xy1: Entity(), xy2: Entity(), xy3: Entity(),
             
             yz0: (a: Entity(), b: Entity()),
             yz1: (a: Entity(), b: Entity()),
@@ -3117,7 +3053,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
      */
     public func file_view(preset: WorkspacePreset)
     {
-        // MARK: - Robots
+        // Robots
         robots.removeAll()
         
         for robot_file in preset.robots
@@ -3126,7 +3062,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             robots.append(robot)
         }
         
-        // MARK: - Tools
+        // Tools
         tools.removeAll()
         
         for tool_file in preset.tools
@@ -3135,7 +3071,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             tools.append(tool)
         }
         
-        // MARK: - Parts
+        // Parts
         parts.removeAll()
         
         for part_file in preset.parts
@@ -3144,7 +3080,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             parts.append(part)
         }
         
-        // MARK: - Workspace production programs
+        // Workspace production programs
         programs.removeAll()
         
         for program in preset.programs
@@ -3152,7 +3088,7 @@ public class Workspace: ObservableObject, @unchecked Sendable
             programs.append(program)
         }
         
-        // MARK: - Registers
+        // MARK: Registers
         registers = preset.registers ?? [Float](repeating: 0, count: Workspace.default_registers_count)
     }
 }
@@ -3199,7 +3135,7 @@ public struct WorkspacePreset: Codable
     }
 }
 
-// MARK: - Math element functions
+// MARK: - Math Element Functions
 private enum MathToken // Tokens
 {
     case number(Float)

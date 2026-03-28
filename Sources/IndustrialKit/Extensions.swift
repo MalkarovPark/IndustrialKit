@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import SwiftUI
 import RealityKit
 import Combine
@@ -132,33 +131,33 @@ public extension Color
     /// Initialize Color from HEX string with optional alpha
     init(hex: String, alpha: Double = 1.0)
     {
-        let sanitizedHex = hex
+        let sanitized_hex = hex
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: "#", with: "")
             .uppercased()
         
-        var hexValue: UInt64 = 0
-        guard Scanner(string: sanitizedHex).scanHexInt64(&hexValue)
+        var hex_value: UInt64 = 0
+        guard Scanner(string: sanitized_hex).scanHexInt64(&hex_value)
         else
         {
             self = .clear
             return
         }
         
-        let red, green, blue, computedAlpha: Double
+        let red, green, blue, computed_alpha: Double
         
-        switch sanitizedHex.count
+        switch sanitized_hex.count
         {
         case 6:
-            red = Double((hexValue >> 16) & 0xFF) / 255.0
-            green = Double((hexValue >> 8) & 0xFF) / 255.0
-            blue = Double(hexValue & 0xFF) / 255.0
-            computedAlpha = alpha
+            red = Double((hex_value >> 16) & 0xFF) / 255.0
+            green = Double((hex_value >> 8) & 0xFF) / 255.0
+            blue = Double(hex_value & 0xFF) / 255.0
+            computed_alpha = alpha
         case 8:
-            red = Double((hexValue >> 24) & 0xFF) / 255.0
-            green = Double((hexValue >> 16) & 0xFF) / 255.0
-            blue = Double((hexValue >> 8) & 0xFF) / 255.0
-            computedAlpha = Double(hexValue & 0xFF) / 255.0
+            red = Double((hex_value >> 24) & 0xFF) / 255.0
+            green = Double((hex_value >> 16) & 0xFF) / 255.0
+            blue = Double((hex_value >> 8) & 0xFF) / 255.0
+            computed_alpha = Double(hex_value & 0xFF) / 255.0
         default:
             self = .clear
             return
@@ -168,7 +167,7 @@ public extension Color
             red: red,
             green: green,
             blue: blue,
-            opacity: computedAlpha
+            opacity: computed_alpha
         )
     }
 }
@@ -216,11 +215,12 @@ extension Color
         let g = components.count > 1 ? components[1] : 0.0
         let b = components.count > 2 ? components[2] : 0.0
         
-        let hexString = String(format: "#%02lX%02lX%02lX",
-                               lroundf(Float(r * 255)),
-                               lroundf(Float(g * 255)),
-                               lroundf(Float(b * 255)))
-        return hexString
+        return String(
+            format: "#%02lX%02lX%02lX",
+            lroundf(Float(r * 255)),
+            lroundf(Float(g * 255)),
+            lroundf(Float(b * 255))
+        )
     }
 }
 

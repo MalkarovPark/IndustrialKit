@@ -72,7 +72,7 @@ open class RobotModule: IndustrialModule
         }
     }
     
-    open override var extension_name: String { "robot" }
+    open override var file_extension_name: String { "robot" }
     
     // MARK: - Components
     /// A model controller of the robot model.

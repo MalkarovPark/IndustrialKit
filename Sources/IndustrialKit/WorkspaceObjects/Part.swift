@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 #if canImport(RealityKit)
 import RealityKit
 #endif

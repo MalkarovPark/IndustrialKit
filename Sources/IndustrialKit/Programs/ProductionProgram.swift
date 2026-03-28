@@ -455,4 +455,3 @@ private func extract_data_array(from text: String, pattern regex: String) -> [St
         return []
     }
 }
-

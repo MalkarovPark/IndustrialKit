@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-///Controls the order of performing of program elements through conditional and unconditional transitions to given labels.
+/// Controls the order of performing of program elements through conditional and unconditional transitions to given labels.
 public class LogicElement: WorkspaceProgramElement
 {
     public override var title: String
@@ -22,7 +22,7 @@ public class LogicElement: WorkspaceProgramElement
     }
 }
 
-///Jumps to the specified mark.
+/// Jumps to the specified mark.
 public class JumpLogicElement: LogicElement
 {
     public init(
