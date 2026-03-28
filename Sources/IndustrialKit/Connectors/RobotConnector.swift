@@ -308,7 +308,7 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
     
     public var program_component_url: URL
     {
-        return package_url.appendingPathComponent("Code/Connector")
+        return package_url.appendingPathComponent("Connector")
     }
     
     public var socket_name: String

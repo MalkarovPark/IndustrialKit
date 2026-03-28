@@ -181,12 +181,8 @@ open class RobotModule: IndustrialModule
     override open var program_component_paths: [(file: String, socket: String)]
     {
         return [
-            /*(
-                file: "/Code/Controller",
-                socket: "/tmp/\(name.code_correct_format)_robot_controller_socket"
-            ),*/
             (
-                file: "/Code/Connector",
+                file: "/Connector",
                 socket: "/tmp/\(name.code_correct_format)_robot_connector_socket"
             )
         ]

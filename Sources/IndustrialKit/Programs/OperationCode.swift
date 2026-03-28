@@ -71,7 +71,7 @@ public class OperationCode: Identifiable, Codable, Hashable, ObservableObject, @
  
  An array of them determines the opcode values ​​available for a given device.
  */
-public class OperationCodeInfo: Identifiable/*, Equatable*/, Codable, Hashable, ObservableObject
+public class OperationCodeInfo: Identifiable, Codable, Hashable, ObservableObject
 {
     public let id: UUID = UUID()
     

@@ -155,12 +155,8 @@ open class ToolModule: IndustrialModule
     override open var program_component_paths: [(file: String, socket: String)]
     {
         return [
-            /*(
-                file: "/Code/Controller",
-                socket: "/tmp/\(name.code_correct_format)_tool_controller_socket"
-            ),*/
             (
-                file: "/Code/Connector",
+                file: "/Connector",
                 socket: "/tmp/\(name.code_correct_format)_tool_connector_socket"
             )
         ]
