@@ -1393,24 +1393,26 @@ public class Workspace: ObservableObject, @unchecked Sendable
         
         if element.outputs.count > 0
         {
-            for i in 0..<element.outputs.count
+            for output in element.outputs
             {
-                if element.outputs[i].to <= 255 && element.outputs[i].to >= 0 && (element.outputs[i].from < info_output.count)
+                guard output.from < info_output.count,
+                      output.to >= 0,
+                      output.to < registers.count else { continue }
+                
+                let raw = info_output[output.from]
+                
+                if let value = Float(raw)
                 {
-                    if let value = Float(info_output[element.outputs[i].from])
-                    {
-                        registers[safe: element.outputs[i].to] = value
-                    }
-                    else if let value = Bool(info_output[element.outputs[i].from])
-                    {
-                        registers[safe: element.outputs[i].to] = value ? 1 : 0
-                    }
+                    registers[output.to] = value
                 }
-                /*if element.outputs[i].to <= 255 && element.outputs[i].to >= 0 && (element.outputs[i].from < info_output.count),
-                   let value = Float(info_output[element.outputs[i].from])
+                else if let value = Bool(raw)
                 {
-                    registers[safe: element.outputs[i].to] = value
-                }*/
+                    registers[output.to] = value ? 1 : 0
+                }
+                else
+                {
+                    registers[output.to] = raw.isEmpty ? 0 : 1
+                }
             }
         }
         
