@@ -372,7 +372,7 @@ import SwiftUI
         
         func robot_element_check(_ element: RobotPerformerElement) // Check element by selected robot exists
         {
-            var checked_object = robot_by_name(element.object_name)
+            var checked_object = robot(named: element.object_name)
             
             if checked_object.is_placed
             {
@@ -388,7 +388,7 @@ import SwiftUI
                 if placed_robot_names.count > 0
                 {
                     element.object_name = placed_robot_names.first ?? ""
-                    checked_object = robot_by_name(element.object_name)
+                    checked_object = robot(named: element.object_name)
                     program_check()
                 }
                 else
@@ -416,7 +416,7 @@ import SwiftUI
         
         func tool_element_check(_ element: ToolPerformerElement)
         {
-            var checked_object = tool_by_name(element.object_name)
+            var checked_object = tool(named: element.object_name)
             
             if checked_object.is_placed
             {
@@ -432,7 +432,7 @@ import SwiftUI
                 if placed_tool_names.count > 0
                 {
                     element.object_name = placed_tool_names.first ?? ""
-                    checked_object = tool_by_name(element.object_name)
+                    checked_object = tool(named: element.object_name)
                     program_check()
                 }
                 else
@@ -792,7 +792,7 @@ import SwiftUI
         
         func pause_handler(_ element: RobotPerformerElement)
         {
-            let robot = robot_by_name(element.object_name)
+            let robot = robot(named: element.object_name)
             
             if element.is_single_perfrom
             {
@@ -811,7 +811,7 @@ import SwiftUI
         
         func pause_handler(_ element: ToolPerformerElement)
         {
-            let tool = tool_by_name(element.object_name)
+            let tool = tool(named: element.object_name)
             
             if element.is_single_perfrom
             {
@@ -973,7 +973,7 @@ import SwiftUI
         
         func reset_handler(_ element: RobotPerformerElement)
         {
-            let robot = robot_by_name(element.object_name)
+            let robot = robot(named: element.object_name)
             
             if element.is_single_perfrom
             {
@@ -993,7 +993,7 @@ import SwiftUI
         
         func reset_handler(_ element: ToolPerformerElement)
         {
-            let tool = tool_by_name(element.object_name)
+            let tool = tool(named: element.object_name)
             
             if element.is_single_perfrom
             {
@@ -1141,7 +1141,7 @@ import SwiftUI
      */
     private func perform_robot(by element: RobotPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
-        let robot = robot_by_name(element.object_name)
+        let robot = robot(named: element.object_name)
         
         if element.is_single_perfrom
         {
@@ -1219,7 +1219,7 @@ import SwiftUI
      */
     private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
-        let tool = tool_by_name(element.object_name)
+        let tool = tool(named: element.object_name)
         
         if element.is_single_perfrom
         {
@@ -1367,7 +1367,7 @@ import SwiftUI
         switch element.object_type
         {
         case .robot:
-            if let device_output = robot_by_name(element.object_name).device_output
+            if let device_output = robot(named: element.object_name).device_output
             {
                 info_output = items_to_array(from: device_output.items)
             }
@@ -1376,7 +1376,7 @@ import SwiftUI
                 error_handler(NSError(domain: "No output items", code: 0, userInfo: nil))
             }
         case .tool:
-            if let device_output = tool_by_name(element.object_name).device_output
+            if let device_output = tool(named: element.object_name).device_output
             {
                 info_output = items_to_array(from: device_output.items)
             }
@@ -2723,7 +2723,7 @@ import SwiftUI
      - Parameters:
         - name: A name of tobot for index find.
      */
-    public func robot_by_name(_ name: String) -> Robot
+    public func robot(named name: String) -> Robot
     {
         let index = index_by_name(name, objects: robots)
         if robots.indices.contains(index)
@@ -2846,7 +2846,7 @@ import SwiftUI
      - Parameters:
         - name: A name of tobot for index find.
      */
-    public func tool_by_name(_ name: String) -> Tool
+    public func tool(named name: String) -> Tool
     {
         let index = index_by_name(name, objects: tools)
         if tools.indices.contains(index)
@@ -2857,8 +2857,6 @@ import SwiftUI
         {
             return Tool()
         }
-        
-        // return self.tools[tool_index_by_name(name)]
     }
     
     /// Names of all tools in the workspace.
@@ -2876,7 +2874,7 @@ import SwiftUI
         {
             if let attached_to = tool.attached_to
             {
-                let end_point_entity = robot_by_name(attached_to).end_point_entity
+                let end_point_entity = robot(named: attached_to).end_point_entity
                 
                 end_point_entity.addChild(tool.entity)
                 tool.set_local_position()
@@ -2986,7 +2984,7 @@ import SwiftUI
      - Parameters:
         - name: A name of tobot for index find.
      */
-    public func part_by_name(_ name: String) -> Part
+    public func part(named name: String) -> Part
     {
         let index = index_by_name(name, objects: parts)
         if parts.indices.contains(index)
