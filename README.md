@@ -18,13 +18,18 @@ IndustrialKit is an open source software platform for creating applications that
 * [Requirements](#requirements)
 * [Getting Started](#getting-started)
     * [Robotic Complex Workspace App](#rcworkspace-app)
+    * [Industrial Builder App](#ib-app)
 * [IndustrialKit](#industrialkit)
     * [Workspace](#workspace)
     * [Robot](#robot)
     * [Tool](#tool)
     * [Part](#part)
-    * [Connectors](#connectors)
-    * [Model Controllers](#model-controllers)
+    * [Device Twin](#device-twin)
+    * [Model Controller](#model-controller)
+    * [Connector](#connector)
+    * [Device Output](#device-output)
+    * [Workspace](#workspace)
+    * [Modules](#modules)
     * [Functions](#functions)
     * [Extensions](#extensions)
 * [IMA](#ima) <!-- * [Ithi Macro Assembler](#ima) -->
@@ -53,107 +58,123 @@ The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS, visionO
 
 ### Installation with SPM
 
-CareKit can be installed via SPM. Create a new Xcode project and navigate to `File > Add Package Dependences`. Enter the url `https://github.com/MalkarovPark/IndustrialKit` and select the `main` branch. Next, select targeted project and tap `Add Package`.
+IndustrialKit can be installed via SPM. Create a new Xcode project and navigate to `File > Add Package Dependences`. Enter the url `https://github.com/MalkarovPark/IndustrialKit` and select the `main` branch. Next, select targeted project and tap `Add Package`.
 
 <img width="1226" height="797" alt="Add Package" src="https://github.com/user-attachments/assets/290c243b-bea1-4779-b7da-033ef2e91ebe" />
 
-### [Robotic Complex Workspace](https://github.com/MalkarovPark/Robotic-Complex-Workspace) <a name="rcworkspace-app"></a>
+### [Robotic Complex Workspace App](https://github.com/MalkarovPark/Robotic-Complex-Workspace) <a name="rcworkspace-app"></a>
 
-This sample demonstrates a fully constructed IndustrialKit app.
+This sample demonstrates a fully assembled, document-based IndustrialKit app. Each document represents a preset description of a robotic complex. The app enables you to design and simulate the complex, as well as program and control the robotic devices within it.
 
 <p align="center">
    <img width="1012" height="696" alt="rcworkspace app" src="https://github.com/user-attachments/assets/a47c48ec-8bc2-4bd0-95f1-f8f2bcc4a5fd" />
 </p>
 
-# IndustrialKit <a name="industrialkit"></a>
+### [Industrial Builder App](https://github.com/MalkarovPark/Industrial-Builder) <a name="ib-app"></a>
+This document-based app provides tools for preparing and deploying production according to user requirements and the underlying technological basis. Each document represents a Standard Template Construction (STC), whose processing enables the implementation of production for a specific product.
 
-IndustrialKit is the overarching package that provides all need classes, structures, functions, enums for build industrial applications.
+# IndustrialKit
 
-IndustrialKitUI provides some views and modifiers for use in design and data processing tasks.
+### WorkspaceObject <a name="workspace-object"></a>
+`WorkspaceObject` defines the means of production that make up the content of a robotic complex. It provides core properties such as an identifier name, spatial data, physical body parameters, and a visual model represented by a RealityKit `Entity`.
 
-### Workspace <a name="workspace">
+Out of the box, this open class serves as the foundation for `Robot`, `Tool`, and `Part`. Developers can extend it to define additional types of production assets.
 
-Described by the `Workspace` class is the basis of the production complex, which consists of robots, tools, parts and controlled by a global program, presented as a sequence of blocks – algorithmic elements. Thus, this class contains four properties of an array of values of types of workspace objects (`WorkspaceObject` class) inherited such as `Robot`, `Tool`, `Part` and elements of the global control program with type `WorkspaceProgramElement`.
+### Robot  <a name="robot"></a>
+`Robot` represents an automatically controlled, reprogrammable, and versatile manipulator with configurable kinematics and degrees of freedom. A robot operates in spatial coordinates and can sequentially define the position of its end effector.
 
-For arrays of objects, a standard set of functions is used, including adding, deleting, selecting, deselecting, searching by name. However, some features may not be available for some objects.
+Robot programming is performed using positional programs (`PositionsProgram`), each consisting of a sequence of target positions (`PositionPoint`). Each target position defines:
+- Spatial configuration — position relative to the robot’s local coordinate system (`x`, `y`, `z`) and orientation (`r`, `p`, `w`)
+- Trajectory smoothing mode (`linear` or `fine`)
+- Motion speed (mm/s)
 
-### Robot <a name="robot">
+Movement of the end effector to a target position is initiated by calling the `move_to(_:)` function with a `PositionPoint`.
 
-The `Robot` class describes an object of the production system that works with the representation of positions in space and is able to move its arm (manipulator) endpoint to them. The robot contains in its property an array of positional programs related to the `PositionProgram` class.
+### Tool <a name="tool"></a>
+`Tool` describes other types of robotic devices that do not implement the full capabilities of a robot. A tool can function as a standalone device or as a robot end effector mounted via a mechanical interface.
 
-The positional program contains an array of target positions of type `PositionPoint`. Position describes the location (`x`, `y`, `z`), rotation angles in it (`r`, `p`, `w`), type and speed of movement.
+Tool programming is based on operation codes. Each code corresponds to a predefined set of operations or parameters. A sequence of operation codes (`OperationCode`) forms an operation program (`OperationProgram`). Available codes are defined by `OperationCodeInfo`, which includes additional descriptions.
 
-Robot can add, delete and edit its programs. There are functions for selecting and starting, pausing, resetting the program.
+Execution of an operation is initiated by calling the `perform(_:)` function with an `OperationCode`.
 
-### Tool <a name="tool">
+### Part <a name="part"></a>
+`Part` represents non-controllable components of a robotic complex. These include both means of production (such as tables, drives, and safety enclosures) and objects of labor, such as raw materials and workpieces that are transformed into finished products.
 
-Other kinds of industrial equipment used in a technological complex is described by the `Tool` class. Tool can be either free-standing or attached to the endpoint of the robot manipulator.
+### Device Twin <a name="device-twin"></a>
+Robots and robotic devices can be linked to their physical counterparts as digital twins. A digital twin propagates actions from the software instance to the connected device and reflects the real device state back into the virtual model.
 
-Interaction with tools is organized by opcides and infocodes. The opcode is responsible for the executable technological operation – when a numerical value is set in the spectial property, the start of the operation associated with the code is initialized. The default value for this property is __-1__, which means no operation performed. When the operation is done, the value of the opcode is reset to this value.
+Digital twin functionality is enabled by conforming to the `DeviceTwin` protocol. It includes a pair of components: a model controller and a connector, along with supporting properties and methods.
 
-Operational code sequences are contained in the programs array, the elements are the `OperationProgram` class, with a set of numeric code values with `OperationCode` class. Program management is similar to that of robots – there are functions for adding, deleting, selecting and performing.
+`DeviceMode` defines two operating modes:
+- **Simulation** — the device is fully simulated by the `ModelController`
+- **Real** — the physical device is controlled via a `Connector`, while the virtual model remains synchronized
 
-### Part <a name="part">
+### Model Controller <a name="model-controller"></a>
+The `ModelController` base class manages the virtual representation of a device (`Entity`). Each device type can use its own subclass:
 
-Parts form the environment, such as tables, drives, safety fences, etc., and also represent objects with which the executing devices interact directly – an example is the parts assembled by robots. Described by the `Part` class.
+- `RobotModelController` continuously updates the positions of robot links based on the end effector state. Link transforms are defined by an array of `EntityPositionData`, generated by the `entity_positions` function.
+- `ToolModelController` applies animations to tool components. Animation parameters are stored in `EntityAnimationData`, generated by `entity_animations` based on the current operation code. Animations are applied using `process_animations`.
 
-This class has a set of properties that describe the appearance and physical properties of the part. A part model can be obtained both parametrically – from an array of lengths and the name of a geometric primitive, and by importing from a scene file.
+### Connector <a name="connector"></a>
+`Connector` enables communication between virtual and physical devices. It synchronizes device state and transmits commands such as starting or stopping operations.
 
-### Connectors <a name="connectors">
+A connector periodically produces state data (`RobotState` / `ToolState`), including:
+- Performing state (`PerformingState`)
+- Statistical output (`DeviceOutputData`)
+- Model parameters (link positions or animations)
 
-Connectors are used to connect and control industrial equipment. They are divided into two subtypes – for switching robots and tools, described by the `RobotConnector` and `ToolConnector` classes, respectively.
+Connection parameters (`ConnectionParameter`) may include values of type `String`, `Int`, `Float`, and `Bool`.
 
-Connectors of individual models are inherited from these base classes and have their own specific redefinitions of functions and variables.
+### Device Output <a name="device-output"></a>
+Devices can provide extended output beyond the performing state. This includes:
+- Charts (`StateChart`)
+- Nested data arrays (`StateItem`)
 
-Connection to the equipment is performed by the connect function, disconnection – disconnect. The connection state returns by Bool property. State of the equipment returns in array of dictionaries. They contain String name of the returned property and the value of Any type. The connection parameters are set in the corresponding array of structures.
+These are aggregated into `DeviceOutputData`.
 
-### Model Controllers <a name="model-controllers">
+For `Robot` and `Tool`, the current output is available via `current_device_output`, while default values are provided by `initial_device_output`.
 
-This controllers are used to connect to and control robot and tool models in the rendered scene. Represented by `RobotModelController` and `ToolModelController` subclasses.
+### Workspace <a name="workspace"></a>
+`Workspace` represents a unified environment for robots, tools, and parts. It stores them in separate collections and provides services for managing, selecting, adding, removing, and controlling them.
 
-Also, controllers can change the model in accordance with the specified parameters.
+Control of the robotic complex is implemented using **Ithi Macro Assembler (IMA)** — a pendant-style language elevated from the robot level to the system level.
 
-### Functions <a name="functions">
+An IMA program consists of `WorkspaceProgramElement` types:
+- `Performers` — execute programs or operations on devices
+- `Modifiers` — update register values, including device data
+- `Logic` — control execution flow (branching and jumps)
 
-Some functions that can be used both in framework and independently by developers.
+The workspace includes a configurable array of `Float` registers. These registers are used to select device programs and parameters. Values are rounded when integer interpretation is required.
 
-   * `unique_name` – finds and updates mismatched name;
+Registers can also be populated from `DeviceOutputData`, using indexed access across flattened `StateItem` collections.
 
-   * `origin_transform` – transforms input position by origin rotation;
+### Extensibility and Compatibility <a name="modules"></a>
+Support for diverse robot and tool configurations, as well as advanced data processing, is provided through industrial modules (`IndustrialModule`).
 
-   * `apply_bit_mask` – applies certain category bit mask int value for inputed node and all nested;
+Module types include:
+- `RobotModule` — defines a `RobotModelController`, `RobotConnector`, and a RealityKit `Entity`
+- `ToolModule` — defines a `ToolModelController`, `ToolConnector`, `Entity`, and supported operation codes
+- `PartModule` — defines only an `Entity`
+- `ChangerModule` — defines register update logic for the workspace
 
-   * `pass_robot_preferences` – pass parameters between robots, such as origin location/rotation and working space scaling;
+Instances of `Robot`, `Tool`, `Part`, and `Changer` (alias: `ChangerProgramElement`) can be initialized either directly from a module or by name. Named modules must be registered in `internal_modules` or `external_modules`.
 
-   * `pass_position_programs` – pass positions programs, specified by names, between robots.
+Modules can be:
+- **Internal** — compiled into the app for maximum performance
+- **External** — loaded from packages for easier updates
 
-   * `element_from_struct` – universal function, that initializes the workspace program element by corresponding file struct data.
+External modules are packaged with extensions (`.robot`, `.tool`, `.part`, `.changer`) and include:
+- A module descriptor (XML)
+- Component code
+- A USDZ model (except for changers)
 
-### Extensions <a name="extensions">
+External logic (ModelController and IMA Changer) is executed in a `JSEnvironment`. External connectors are implemented as executable processes communicating via UNIX sockets.
 
-Added methods for `Float` to convert radians to degrees – `to_deg` and vice versa – `to_rad`.
+### Extensions <a name="extensions"></a>
+A collection of extensions for working with arrays and dictionaries, JSON transformation, RealityKit `Entity` manipulation, angle conversions, and color initialization from hex values.
 
-Provided new methods for `SCNNode` – `remove_all_constraints` to remove all constraints and refresh node, `remove_all_child_nodes` to remove all child nodes, and `deep_clone` to fully clone node with geometry, materials, and children.
-
-Extension to provide the `pngData` method for `UIImage` (UIKit / NSImage AppKit).
-
-Aliases for `NSImage` and `NSColor` to use them as `UIImage` and `UIColor` respectively (AppKit).
-
-Safe access extensions for `Array` and `Dictionary` – `safe`, `safe_float`, `safe_name` to get/set elements or nodes without crashes.
-
-Extensions for `Color` and `UIColor` to initialize from HEX (`init(hex:)`) and get HEX string (`to_hex`).
-
-Encodable extensions – `json_data` and `json_string` for pretty-printed JSON output.
-
-String extension – `code_correct_format` to convert to code-safe string (spaces → underscores, digits prefixed with `_`).
-
-# IMA <a name="ima"></a> <!-- # [Ithi Macro Assembler](https://celadon-production-systems.blogspot.com/2023/12/the-ithi-macro-assembler-ima-formalizes.html) <a name="ima"></a> -->
-
-The built-in programming language of the IndustrialKit platform formalizes methods for robotic systems algoritmization and organizes unified connection and control of various robots and equipment tools.
-
-<!-- <p align="center">
-   <img width="168" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/2792a352-5574-4965-885d-cc69a27de9c2">
-</p> -->
+### Functions <a name="functions"></a>
+Utility functions for generating unique object names, coordinate transformations, cloning codable objects, interacting with terminal applications, and working with UNIX sockets.
 
 # IndustrialKitUI <a name="industrialkitui"></a>
 
