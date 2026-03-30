@@ -46,62 +46,65 @@ public struct SpatialPendantView: View
     {
         FloatingView(alignment: .trailing)
         {
-            if is_opened
+            ZStack
             {
-                ZStack
+                if is_opened
                 {
-                    switch workspace.selected_object
+                    ZStack
                     {
-                    case let robot as Robot:
-                        RobotControlView(
-                            robot: robot,
-                            shows_program_indices: shows_program_indices,
-                            on_update: on_update_robot
-                        )
-                    case let tool as Tool:
-                        ToolControlView(
-                            tool: tool,
-                            shows_program_indices: shows_program_indices,
-                            on_update: on_update_tool
-                        )
-                    case is Part:
-                        ZStack
+                        switch workspace.selected_object
                         {
-                            Rectangle()
-                                .fill(.clear)
-                                .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
-                            
-                            /*Text("Part")
-                            #if os(macOS)
-                                .font(.system(size: 14, design: .rounded))
-                            #else
-                                .font(.system(size: 18, design: .rounded))
-                            #endif
-                                .foregroundStyle(.secondary)*/
+                        case let robot as Robot:
+                            RobotControlView(
+                                robot: robot,
+                                shows_program_indices: shows_program_indices,
+                                on_update: on_update_robot
+                            )
+                        case let tool as Tool:
+                            ToolControlView(
+                                tool: tool,
+                                shows_program_indices: shows_program_indices,
+                                on_update: on_update_tool
+                            )
+                        case is Part:
+                            ZStack
+                            {
+                                Rectangle()
+                                    .fill(.clear)
+                                    .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                                
+                                /*Text("Part")
+                                #if os(macOS)
+                                    .font(.system(size: 14, design: .rounded))
+                                #else
+                                    .font(.system(size: 18, design: .rounded))
+                                #endif
+                                    .foregroundStyle(.secondary)*/
+                            }
+                        case .some(_):
+                            Text("Nothing")
+                        case .none:
+                            WorkspaceControlView(
+                                workspace: workspace,
+                                on_update: on_update_workspace
+                            )
                         }
-                    case .some(_):
-                        Text("Nothing")
-                    case .none:
-                        WorkspaceControlView(
-                            workspace: workspace,
-                            on_update: on_update_workspace
-                        )
                     }
+                    .padding(8)
+                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
                 }
-                .padding(8)
-                .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
-            }
-            else
-            {
-                ZStack
+                else
                 {
-                    Rectangle()
-                        .fill(.clear)
-                        .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                    ZStack
+                    {
+                        Rectangle()
+                            .fill(.clear)
+                            .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                    }
+                    .frame(width: pendant_content_width)
+                    .hidden()
                 }
-                .frame(width: pendant_content_width)
-                .hidden()
             }
         }
         .scaleEffect(is_opened ? 1.0 : 0.82, anchor: .center)
@@ -333,7 +336,7 @@ struct SpatialPendant_Previews: PreviewProvider
             .onAppear { workspace_preparation() }
             .overlay(alignment: .topLeading)
             {
-                Button("Switch") { button_tap() }
+                Button("Switch...") { button_tap() }
                     .buttonStyle(.bordered)
                     .padding()
             }
@@ -371,7 +374,6 @@ struct SpatialPendant_Previews: PreviewProvider
             
             workspace.tools.append(Tool(name: "Drill"))
             workspace.tools.append(Tool(name: "Gripper"))
-            
             workspace.tool(named: "Gripper").codes = [
                 OperationCodeInfo(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "UwU"),
                 OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "OwO")
@@ -379,8 +381,6 @@ struct SpatialPendant_Previews: PreviewProvider
             
             workspace.parts.append(Part(name: "Cup"))
             workspace.parts.append(Part(name: "Book"))
-            
-            //print("Added")
             
             button_tap()
         }

@@ -30,20 +30,14 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
     @Published public var points = [PositionPoint]()
     
     // MARK: - Positions program init functions
-    /// Creates a new positions program.
-    public init()
-    {
-        self.name = "None"
-    }
-    
     /**
      Creates a new positions program.
      - Parameters:
         - name: A new program name.
      */
-    public init(name: String?)
+    public init(name: String = "None")
     {
-        self.name = name ?? "None"
+        self.name = name
     }
     
     // MARK: - Point manage functions

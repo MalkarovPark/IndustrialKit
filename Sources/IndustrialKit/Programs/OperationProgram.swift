@@ -29,20 +29,14 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
     
     // MARK: - Init functions
     
-    /// Creates a new operations program.
-    public init()
-    {
-        self.name = "None"
-    }
-    
     /**
      Creates a new operations program.
      - Parameters:
         - name: A new program name.
      */
-    public init(name: String?)
+    public init(name: String = "None")
     {
-        self.name = name ?? "None"
+        self.name = name
     }
     
     // MARK: - Code manage functions

@@ -89,6 +89,21 @@ public struct NewElementButton: View
                             .padding(.leading, 14)
                         
                         Button(action: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
+                            {
+                                is_expanded = false
+                            }
+                        })
+                        {
+                            Image(systemName: "xmark")
+                                .modifier(CircleButtonImageFramer())
+                        }
+                        .buttonStyle(.plain)
+                        .buttonBorderShape(.circle)
+                        .contentShape(Circle())
+                        .keyboardShortcut(.cancelAction)
+                        
+                        Button(action: {
                             withAnimation(/*.spring(response: 0.35, dampingFraction: 0.75)*/)
                             {
                                 is_expanded = false
@@ -102,23 +117,8 @@ public struct NewElementButton: View
                         .buttonStyle(.plain)
                         .buttonBorderShape(.circle)
                         .contentShape(Circle())
-                        .keyboardShortcut(.defaultAction)
-                        
-                        Button(action: {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
-                            {
-                                is_expanded = false
-                            }
-                        })
-                        {
-                            Image(systemName: "xmark")
-                                .modifier(CircleButtonImageFramer())
-                        }
-                        .buttonStyle(.plain)
-                        .buttonBorderShape(.circle)
-                        .contentShape(Circle())
                         .padding(.trailing, 6)
-                        .keyboardShortcut(.cancelAction)
+                        .keyboardShortcut(.defaultAction)
                     }
                     #if os(macOS)
                     .frame(height: 36)
