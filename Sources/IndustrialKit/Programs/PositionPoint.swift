@@ -73,7 +73,7 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
     // MARK: - UI functions
     @Published public var performing_state: PerformingState = .none
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     // For performing_state exclusion
     enum CodingKeys: String, CodingKey
     {

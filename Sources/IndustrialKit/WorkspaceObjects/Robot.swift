@@ -11,11 +11,29 @@ import SwiftUI
 import RealityKit
 #endif
 
-/**
- An industrial robot class.
- 
- Permorms reposition operation by target points order in selected positions program.
- */
+/// A programmable robotic manipulator capable of performing spatial operations.
+///
+/// A robot is an automatically controlled, reprogrammable, and versatile
+/// manipulator that operates within a workspace and may have different
+/// kinematic structures and degrees of freedom.
+///
+/// The robot operates in spatial coordinates and performs sequential
+/// positioning of its end-effector at target locations.
+///
+/// Robot behavior is defined using positional programs (``PositionsProgram``),
+/// each representing an ordered sequence of target points (``PositionPoint``).
+///
+/// Each position point specifies:
+/// - Linear displacement relative to the robot coordinate system (x, y, z)
+/// - Orientation in space (r, p, w)
+/// - Motion type (for example, linear or fine)
+/// - Movement speed in millimeters per second
+///
+/// Use the ``move_to(_:)`` method to initiate performing of a movement
+/// toward a target position defined by a ``PositionPoint``.
+///
+/// This abstraction enables deterministic motion planning and performing
+/// of robotic tasks such as manipulation, assembly, and automated processing.
 open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
 {
     // MARK: - Init functions
@@ -131,7 +149,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         model_controller.connect_entities(entity, pointer_entity: position_pointer_entity)
         
         // Connect end point
-        if let end_entity = entity.childEntity(withName: end_entity_name, recursively: true) { end_point_entity = end_entity }
+        if let end_entity = entity.child_entity(withName: end_entity_name, recursively: true) { end_point_entity = end_entity }
         
         // Apply physics
         entity.apply_physics(
@@ -1140,7 +1158,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             let cone = ModelEntity(mesh: .generateCylinder(height: Float(0.0125), radius: Float(0.002)), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
             
             cone.position = positions[i]
-            cone.eulerAngles = rotations[i]
+            cone.euler_angles = rotations[i]
             
             //parent.addChild(point)
             parent.addChild(cone)
@@ -1331,7 +1349,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// A program performing state of robot.
     @Published public var program_performed = false
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     public convenience init(file: RobotFileData)
     {
         self.init(file: file.object) //self.init()

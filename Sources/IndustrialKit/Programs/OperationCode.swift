@@ -44,7 +44,7 @@ public class OperationCode: Identifiable, Codable, Hashable, ObservableObject, @
     // MARK: - UI functions
     @Published public var performing_state: PerformingState = .none
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     enum CodingKeys: String, CodingKey
     {
         case value
@@ -115,7 +115,7 @@ public class OperationCodeInfo: Identifiable, Codable, Hashable, ObservableObjec
         return Image(systemName: symbol_name)
     }
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     enum CodingKeys: String, CodingKey
     {
         case value

@@ -140,8 +140,7 @@ public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] // Scal
     - from: A robot that preferences pass from.
     - to: Robot that preferences pass to.
  */
-@MainActor
-public func pass_robot_preferences(_ origin_location: Bool, _ origin_rotation: Bool, _ space_scale: Bool, from: Robot, to: Robot)
+@MainActor public func pass_robot_preferences(_ origin_location: Bool, _ origin_rotation: Bool, _ space_scale: Bool, from: Robot, to: Robot)
 {
     if origin_location
     {
@@ -171,8 +170,7 @@ public func pass_robot_preferences(_ origin_location: Bool, _ origin_rotation: B
     - from: A robot that programs pass from.
     - to: Robot that programs pass to.
  */
-@MainActor
-public func pass_position_programs(names: [String], from: Robot, to: Robot)
+@MainActor public func pass_position_programs(names: [String], from: Robot, to: Robot)
 {
     let programs = from.programs
     

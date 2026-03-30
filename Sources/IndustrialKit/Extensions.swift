@@ -308,7 +308,7 @@ public extension String
 #if canImport(RealityKit)
 public extension Entity
 {
-    func childEntity(withName name: String, recursively: Bool) -> Entity?
+    func child_entity(withName name: String, recursively: Bool) -> Entity?
     {
         for child in children
         {
@@ -319,7 +319,7 @@ public extension Entity
             
             if recursively
             {
-                if let found = child.childEntity(withName: name, recursively: true)
+                if let found = child.child_entity(withName: name, recursively: true)
                 {
                     return found
                 }
@@ -401,7 +401,7 @@ public extension Entity
         transform.rotation = delta * transform.rotation
     }
     
-    var eulerAngles: SIMD3<Float>
+    var euler_angles: SIMD3<Float>
     {
         get
         {
@@ -474,7 +474,7 @@ public extension Entity
     }
     
     @discardableResult
-    func playAnimation(
+    func play_animation(
         _ animation: AnimationResource,
         transitionDuration: TimeInterval = 0,
         completion: @escaping () -> Void

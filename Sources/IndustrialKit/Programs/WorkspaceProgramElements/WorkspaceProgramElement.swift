@@ -79,7 +79,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject, 
         return String()
     }
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     private enum CodingKeys: String, CodingKey { case id }
     
     public required init(from decoder: Decoder) throws

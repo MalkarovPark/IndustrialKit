@@ -101,7 +101,7 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
         }
     }
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     private enum CodingKeys: String, CodingKey
     {
         case name

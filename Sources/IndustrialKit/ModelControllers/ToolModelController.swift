@@ -327,7 +327,7 @@ public struct EntityAnimationData: Codable
         self.repeat_count = repeat_count
     }
     
-    // MARK: Work with file system
+    // MARK: File Data
     private enum CodingKeys: String, CodingKey
     {
         case entity_name

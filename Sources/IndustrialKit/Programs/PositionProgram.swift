@@ -229,7 +229,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                 let cone = ModelEntity(mesh: .generateCone(height: 0.004, radius: 0.002), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
                 
                 cone.position = positions[i]
-                cone.eulerAngles = rotations[i]
+                cone.euler_angles = rotations[i]
                 
                 parent.addChild(cone)
             }
@@ -256,7 +256,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
     #endif
     #endif
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     private enum CodingKeys: String, CodingKey
     {
         case name

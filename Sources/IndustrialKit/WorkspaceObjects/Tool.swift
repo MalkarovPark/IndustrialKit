@@ -6,20 +6,34 @@
 //
 
 import Foundation
-
-//import SwiftUI
 #if canImport(RealityKit)
 import RealityKit
 #endif
 
-/**
- An industrial tool class.
- 
- Permorms operation by codes order in selected operations program.
- */
+/// A robotic device that performs specialized operations within a workspace.
+///
+/// A tool represents a class of robotic devices that do not implement
+/// the full functionality of a robot.
+///
+/// A tool can operate either as:
+/// - An independent device
+/// - An end-effector mounted on a robot via a mechanical interface
+///
+/// Tool behavior is defined using operation codes (``OperationCode``),
+/// where each code corresponds to a specific operation or a set of parameters.
+///
+/// A sequence of operation codes forms an operational program
+/// (``OperationProgram``), which defines the performing logic of the tool.
+///
+/// The available operation codes are described by ``OperationCodeInfo``
+/// instances, which provide metadata and semantic meaning of each operation.
+///
+/// Use the ``perform(_:)`` method to initiate performing of an operation
+/// associated with a given ``OperationCode``.
 open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
 {
-    // MARK: - Init functions
+    // MARK: - Initializers
+    /// Creates a tool instance with default parameters.
     public override init()
     {
         current_operation = OperationCode(0)
@@ -27,7 +41,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         super.init()
     }
     
-    /// Inits tool by name.
+    /// Creates a tool with a specified name.
+    ///
+    /// - Parameter name: A human-readable identifier of the tool.
     public override init(name: String)
     {
         current_operation = OperationCode(0)
@@ -35,14 +51,29 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         super.init(name: name)
     }
     
-    public override init(name: String, entity_name: String)
+    /// Creates a tool with a name and associated entity resource.
+    ///
+    /// - Parameters:
+    ///   - name: A human-readable identifier.
+    ///   - entity_name: A name of the associated scene entity.
+    public override init(
+        name: String,
+        entity_name: String
+    )
     {
         current_operation = OperationCode(0)
         
         super.init(name: name, entity_name: entity_name)
     }
     
-    /// Inits tool by name, entity name, controller and connector.
+    /// Creates a fully configured tool instance.
+    ///
+    /// - Parameters:
+    ///   - name: A human-readable identifier.
+    ///   - entity_name: A name of the associated scene entity.
+    ///   - model_controller: A controller responsible for model performing.
+    ///   - connector: A connector responsible for device communication.
+    ///   - codes: A list of supported operation codes.
     public init(
         name: String,
         entity_name: String,
@@ -65,7 +96,12 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         current_operation = OperationCode(codes.first?.value ?? 0)
     }
     
-    /// Inits part by name and tool module.
+    /// Creates a tool instance from a module configuration.
+    ///
+    /// - Parameters:
+    ///   - name: A tool identifier.
+    ///   - module: A tool module defining structure and behavior.
+    ///   - is_internal: A flag indicating whether the module is internal.
     public init(
         name: String,
         module: ToolModule,
@@ -81,6 +117,12 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         import_module(module)
     }
     
+    /// Creates a tool instance using a module name.
+    ///
+    /// - Parameters:
+    ///   - name: A tool identifier.
+    ///   - module_name: A module identifier.
+    ///   - is_internal: A flag indicating internal or external module source.
     public override init(
         name: String,
         module_name: String,
@@ -93,6 +135,10 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
     
+    // MARK: - Entity Preparation
+    /// Extends entity preparation by connecting model components and applying physics.
+    ///
+    /// - Parameter entity: A root entity representing the tool.
     override open func extend_entity_preparation(_ entity: Entity)
     {
         // Connect tool parts
@@ -110,18 +156,13 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         )*/
     }
     
-    // MARK: - Module handling
-    /**
-     Sets modular components to object instance.
-     - Parameters:
-        - module: A tool module.
-     
-     Set the following components:
-     - Scene Node
-     - Tool Model Controller
-     - Tool Connector
-     - Codes
-     */
+    // MARK: - Module Handling
+    /// Imports a tool module and configures the tool instance.
+    ///
+    /// The method assigns model controller, connector, and operation codes
+    /// from the module. Entity loading is performed asynchronously.
+    ///
+    /// - Parameter module: A tool module describing structure and behavior.
     public func import_module(_ module: ToolModule)
     {
         module_name = module.name
@@ -148,31 +189,28 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         model_controller = module.model_controller.copy()
         connector = module.connector.copy()
         
-        /*if !(module.connector is ExternalToolConnector)
-        {
-            connector = module.connector.copy() as! ToolConnector
-        }
-        else
-        {
-            connector = module.connector
-        }*/
-        
         codes = module.codes
         
         current_operation = OperationCode(codes.first?.value ?? 0)
     }
     
+    /// Indicates whether a compatible module is available for the tool.
     override open var has_avaliable_module: Bool
     {
         return is_internal_module ? Tool.internal_modules.contains(where: { $0.name == module_name }) : Tool.external_modules.contains(where: { $0.name == module_name })
     }
     
-    /// Imported internal tool modules.
+    /// A collection of registered internal tool modules.
     nonisolated(unsafe) public static var internal_modules = [ToolModule]()
     
-    /// Imported external tool modules.
+    /// A collection of registered external tool modules.
     nonisolated(unsafe) public static var external_modules = [ToolModule]()
     
+    /// Imports a module by name from registered modules.
+    ///
+    /// - Parameters:
+    ///   - name: A module identifier.
+    ///   - is_internal: A flag indicating module source.
     public override func import_module(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Tool.internal_modules : Tool.external_modules
@@ -186,11 +224,11 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         import_module(modules[index])
     }
     
-    /**
-     Imports external modules by names.
-     - Parameters:
-        - name: A list of external modules names.
-     */
+    /// Registers external tool modules by their names.
+    ///
+    /// Existing external modules are replaced.
+    ///
+    /// - Parameter names: A list of module identifiers.
     public static func import_external_modules(by names: [String])
     {
         Tool.external_modules.removeAll()
@@ -201,7 +239,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Performs loading to all entities from internal modules.
+    /// Performs loading of all internal module entities.
+    ///
+    /// - Parameter completion: A callback invoked after performing completes.
     public static func load_all_internal_modules_entities(_ completion: @escaping () -> Void = {})
     {
         Task
@@ -215,7 +255,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Performs loading to all entities from external modules.
+    /// Performs loading of all external module entities.
+    ///
+    /// - Parameter completion: A callback invoked after performing completes.
     public static func load_all_external_modules_entities(_ completion: @escaping () -> Void = {})
     {
         Task
@@ -230,12 +272,12 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     // MARK: - Digital Twin
-    /**
-     Device state of tool.
-     
-     If did set *Simulation* – class instance try to connects a real tool by connector.
-     If did set *Real* – class instance disconnects from a real tool.
-     */
+    /// Defines the operating mode of the tool.
+    ///
+    /// - simulation: Performs using a virtual model.
+    /// - real: Performs on a physical device.
+    ///
+    /// Switching modes affects connection and performing behavior.
     @Published public var device_mode: DeviceMode = .simulation
     {
         didSet
@@ -252,7 +294,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Updates tool visual model by model controller in connector.
+    /// Enables synchronization between the digital twin and the real device.
+    ///
+    /// When enabled, the model controller is linked to the connector.
     @Published public var is_twin_sync = false
     {
         didSet
@@ -269,7 +313,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// A tool visual model controller.
+    /// A controller responsible for tool model performing.
+    ///
+    /// Updating this value reconnects entities automatically.
     public var model_controller = ToolModelController()
     {
         didSet // Entities reconnection if model contoller changed
@@ -280,13 +326,16 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
             }
         }
     }
+    
     public typealias ModelControllerType = ToolModelController
     
-    /// A tool connector.
+    /// A communication interface for controlling a real tool device.
     public var connector: ToolConnector = ToolConnector()
     public typealias ConnectorType = ToolConnector
     
-    /// Connects to real tool.
+    /// Establishes connection to the real tool.
+    ///
+    /// The connection is performed only in `.real` mode.
     public func connect_device()
     {
         guard device_mode == .real else { return }
@@ -294,17 +343,17 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         connector.connect()
     }
     
-    /// Disconnects from real tool.
+    /// Disconnects from the real tool device.
     public func disconnect_device()
     {
         connector.disconnect()
     }
     
-    // MARK: - Program manage functions
-    /// An array of tool operations programs.
+    // MARK: - Program Handling
+    /// A collection of operation programs available for performing.
     @Published public var programs = [OperationProgram]()
     
-    /// A selected operations program index.
+    /// Index of the selected program.
     public var selected_program_index = -1
     {
         willSet
@@ -315,76 +364,80 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Adds new operations program to tool.
-     - Parameters:
-        - program: A new tool operations program.
-     */
+    /// Adds a new operation program.
+    ///
+    /// - Parameter program: A program to add.
     public func add_program(_ program: OperationProgram)
     {
         program.name = unique_name(for: program.name, in: programs_names)
         programs.append(program)
     }
     
-    /**
-     Updates operations program in tool by index.
-     - Parameters:
-        - index: Updated program index.
-        - program: A new tool operations program.
-     */
-    public func update_program(index: Int, _ program: OperationProgram) // Update program by index
+    /// Updates a program at the specified index.
+    ///
+    /// - Parameters:
+    ///   - index: Program index.
+    ///   - program: A new program instance.
+    public func update_program(
+        index: Int,
+        _ program: OperationProgram
+    )
     {
-        if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
+        if programs.indices.contains(index)
         {
             programs[index] = program
         }
     }
     
-    /**
-     Updates operations program by name.
-     - Parameters:
-        - name: Updated program name.
-        - program: A new tool operations program.
-     */
-    public func update_program(name: String, _ program: OperationProgram) // Update program by name
+    /// Updates a program by name.
+    ///
+    /// - Parameters:
+    ///   - name: Program identifier.
+    ///   - program: A new program instance.
+    public func update_program(
+        name: String,
+        _ program: OperationProgram
+    )
     {
         update_program(index: index_by_name(name: name), program)
     }
     
-    /**
-     Deletes operations program in tool by index.
-     - Parameters:
-        - index: Deleted program index.
-     */
-    public func delete_program(index: Int) // Delete program by index
+    /// Deletes a program at the specified index.
+    ///
+    /// - Parameter index: Program index.
+    public func delete_program(index: Int)
     {
-        if programs.indices.contains(index) // Checking for the presence of a position program with a given number to delete
+        if programs.indices.contains(index)
         {
             programs.remove(at: index)
         }
     }
     
-    /**
-     Deletes operations program in tool by name.
-     - Parameters:
-        - name: Deleted program name.
-     */
-    public func delete_program(name: String) // Delete program by name
+    /// Deletes a program by name.
+    ///
+    /// - Parameter name: Program identifier.
+    public func delete_program(name: String)
     {
         delete_program(index: index_by_name(name: name))
     }
     
-    /**
-     Selects operations program in tool by index.
-     - Parameters:
-        - index: Selected program index.
-     */
-    public func select_program(index: Int) // Delete program by index
+    /// Selects a program by index.
+    ///
+    /// - Parameter index: Program index.
+    public func select_program(index: Int)
     {
         selected_program_index = index
     }
     
-    /// Deselects operations program in robot.
+    /// Selects a program by name.
+    ///
+    /// - Parameter name: Program identifier.
+    public func select_program(name: String)
+    {
+        select_program(index: index_by_name(name: name))
+    }
+    
+    /// Deselects the current program and resets performing state.
     public func deselect_program()
     {
         reset_performing()
@@ -393,17 +446,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         selected_program_index = -1
     }
     
-    /**
-     Selects operations program in tool by name.
-     - Parameters:
-        - name: Selected program name.
-     */
-    public func select_program(name: String) // Select program by name
-    {
-        select_program(index: index_by_name(name: name))
-    }
-    
-    /// A selected operations program.
+    /// The currently selected program.
     public var selected_program: OperationProgram?
     {
         get // Return operations program by selected index
@@ -422,8 +465,8 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         return programs.firstIndex(of: OperationProgram(name: name)) ?? -1
     }
     
-    /// All operations programs names in tool.
-    public var programs_names: [String] // Get all names of programs in tool
+    /// All operations program names in tool.
+    public var programs_names: [String]
     {
         var prog_names = [String]()
         if programs.count > 0
@@ -436,23 +479,24 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         return prog_names
     }
     
-    /// A operations programs coount in tool.
+    /// A operation programs coount in tool.
     public var programs_count: Int
     {
         return programs.count
     }
     
-    // MARK: Single operation handling
-    /// An array of avaliable operation codes values for tool.
+    // MARK: Single Operation
+    /// A collection of available operation codes.
     @Published public var codes = [OperationCodeInfo]()
     
-    /// Single pendant operation.
+    /// The current operation code.
     @Published public var current_operation: OperationCode
     
     private var is_single_performed = false
     
     private var previous_performing_state: PerformingState = .none
     
+    /// Toggles performing of a single operation.
     public func start_pause_single_operation()
     {
         if !is_single_performed
@@ -465,6 +509,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
+    /// Performs a single operation.
     public func single_operation_perform()
     {
         if !is_single_performed
@@ -497,6 +542,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
+    /// Stops a single operation.
     public func single_operation_reset()
     {
         if is_single_performed
@@ -507,14 +553,14 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    // MARK: - Performing functions
-    /// A moving state of tool.
+    // MARK: - Performing
+    /// Indicates whether the tool is currently performing.
     public var performed = false
     
-    /// An Index of target code in operation codes array.
+    /// Index of the selected operation code.
     public var selected_code_index = 0
     
-    /// A target code in operation codes array.
+    /// The currently selected operation code.
     public var selected_operation_code: OperationCode
     {
         get
@@ -527,14 +573,11 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    // MARK: Performation cycle
-    /**
-     Performs tool by operation code value with completion handler.
-     
-     - Parameters:
-        - code: The operation code value of the operation performed by the tool.
-        - completion: A completion function that is calls when the performing completes.
-     */
+    /// Performs an operation by code value.
+    ///
+    /// - Parameters:
+    ///   - code: Operation code value.
+    ///   - completion: A callback invoked after performing completes.
     public func perform(
         code: Int,
         completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in }
@@ -588,7 +631,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Stops tool movement.
+    /// Stops tool performing.
     public func stop()
     {
         if state_update_enabled && update_scope_type == .operational { stop_output_updating() } // Device State
@@ -607,7 +650,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// A tool performation toggle.
+    /// Performs the next operation in the program.
     public func start_pause_performing()
     {
         single_operation_reset()
@@ -623,11 +666,6 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         if !performed
         {
             reset_error()
-            
-            /*if !demo // Pass workcell parameters to model controller
-            {
-                sync_connector_parameters()
-            }*/
             
             // Perform next code if performing was stop
             performed = false //???
@@ -656,7 +694,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Selects a code and performs the corresponding operation.
+    /// Processes an error that occurred during performing.
+    ///
+    /// - Parameter error: An error describing the failure.
     public func perform_next_code()
     {
         selected_operation_code.performing_state = .processing
@@ -678,11 +718,9 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Processes an error that occurred during the operation performing.
-     - Parameters:
-        - error: A tool performing error.
-     */
+    /// Processes an error that occurred during performing.
+    ///
+    /// - Parameter error: An error describing the failure.
     public func process_error(_ error: Error)
     {
         performed = false // Pause performing
@@ -708,7 +746,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         program_performed = false // Control Buttons (UI)
     }
     
-    /// Set the new target operation code index.
+    /// Selects the next operation code.
     private func select_next_code()
     {
         guard let selected_program = self.selected_program
@@ -743,25 +781,25 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Finish handler for operation program performation.
+    /// A handler called when program performing finishes.
     public var finish_handler: (() -> Void) = {}
     
-    /// Clears finish handler.
+    /// Clears the finish handler.
     public func clear_finish_handler()
     {
         finish_handler = {}
     }
     
-    /// Error handler for operation program performation.
+    /// A handler called when an error occurs.
     public var error_handler: ((Error) -> Void) = { _ in }
     
-    /// Clears error handler.
+    /// Clears the error handler.
     public func clear_error_handler()
     {
         error_handler = { _ in }
     }
     
-    /// Resets tool operation performation.
+    /// Resets performing state of the tool.
     public func reset_performing()
     {
         guard let selected_program = self.selected_program else { return }
@@ -784,20 +822,19 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         reset_error()
     }
     
-    // MARK: - Attachment handling
-    /// A name of the robot that the tool is attached to.
+    // MARK: - Attachment
+    /// The name of the robot the tool is attached to.
     public var attached_to: String?
     
+    /// Called when the tool is removed from the workspace.
     override public func on_remove()
     {
         attached_to = nil
     }
     
-    /**
-     A tool local position.
-     
-     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
-     */
+    /// Local position of the tool relative to its attachment.
+    ///
+    /// Includes translation (*x*, *y*, *z*) and rotation (*r*, *p*, *w*).
     @Published public var local_position: (
         x: Float, y: Float, z: Float,
         r: Float, p: Float, w: Float
@@ -830,14 +867,14 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     #endif
     
-    // MARK: - Device state data handling
-    /// A device state data.
+    // MARK: - Device State
+    /// Current device output data.
     @Published public var device_output: DeviceOutputData?
     
-    /// Flag indicating whether the update loop is active.
+    /// Indicates whether output updating is active.
     public var is_output_updating = false
     
-    /// Device state updating enable.
+    /// Enables or disables device state updating.
     public var state_update_enabled = false
     {
         didSet
@@ -856,13 +893,13 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// The task responsible for executing the update loop.
+    /// Task responsible for updating device state.
     public var output_update_task: Task<Void, Never>?
     
-    /// The interval between updates in nanoseconds.
+    /// Interval between state updates.
     public var state_update_interval: Double = 0.01
     
-    /// Defines the update timing scope.
+    /// Defines update scope type.
     public var update_scope_type: ScopeType = ScopeType.operational
     {
         didSet
@@ -876,11 +913,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Starts the update loop.
-     
-     This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
-     */
+    /// Stops device state updating loop.
     public func start_output_updating()
     {
         guard state_update_enabled else { return }
@@ -905,11 +938,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Stops the update loop.
-     
-     This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
-     */
+    /// Stops device state updating loop.
     public func stop_output_updating()
     {
         is_output_updating = false
@@ -917,13 +946,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         output_update_task = nil
     }
     
-    /**
-     Called repeatedly within the update loop to perform updates.
-     
-     This function is called on the main thread by the `perform_update()` function as long as the `updated` flag is `true`. Subclasses should override this method to implement their specific update logic.
-     
-     > This function is called frequently, so it's crucial to keep its performing time as short as possible to avoid performance issues.
-     */
+    /// Updates device output data.
     private func update_device_output()
     {
         if is_output_updating && (performed || update_scope_type == .continious)
@@ -935,7 +958,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
+    /// Updates statistics data from model or connector.
     public func update_statistics_data()
     {
         if device_output == nil
@@ -953,7 +976,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Clears device state data.
+    /// Resets device output data.
     public func reset_device_output()
     {
         device_output = nil
@@ -969,14 +992,10 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     // MARK: - Physics
-    /**
-     Physics body data of part.
-     
-     > This variable is codable.
-     */
+    /// Physics body configuration of the tool.
     @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData(mode: ._kinematic)
     
-    /// The state of physics calculation for part node.
+    /// Indicates whether physics simulation is enabled.
     public var physics_enabled = true
     {
         didSet
@@ -985,6 +1004,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
+    /// Updates physics state of the model.
     public func update_model_physics()
     {
         if physics_enabled
@@ -1001,8 +1021,11 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    // MARK: - UI functions
-    /// Apply corresponded label and SF Symbol to operation code.
+    // MARK: - UI
+    /// Returns metadata for an operation code.
+    ///
+    /// - Parameter value: Operation code value.
+    /// - Returns: Associated operation code info.
     public func code_info(_ value: Int) -> OperationCodeInfo
     {
         let index = codes.firstIndex(where: { $0.value == value }) ?? -1
@@ -1017,26 +1040,29 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     // MARK: - Performing State
-    /// Last performing error.
+    /// Last error that occurred during performing.
     public var last_error: Error?
     
-    /// Resets last hanled error.
+    /// Current performing state.
     public func reset_error()
     {
         last_error = nil
         //performing_state = .processing
     }
     
-    /// Performing state light.
+    /// Current performing state.
     @Published public var performing_state: PerformingState = .none
     
-    /// A program performing state of robot.
+    /// Indicates whether a program is being performed.
     @Published public var program_performed = false
     
-    // MARK: - Work with file system
+    // MARK: - File Data
+    /// Creates a tool from file data.
+    ///
+    /// - Parameter file: A serialized tool representation.
     public convenience init(file: ToolFileData)
     {
-        self.init(file: file.object) //self.init()
+        self.init(file: file.object)
         
         self.programs = file.programs
         
@@ -1071,6 +1097,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
+    /// Returns a serializable representation of the tool.
     public func file_data() -> ToolFileData
     {
         return ToolFileData(
@@ -1112,6 +1139,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         )
     }
     
+    /// Creates a tool by copying another instance.
     public convenience init(file_from_object object: Tool)
     {
         let file: ToolFileData = object.file_data()
@@ -1119,7 +1147,11 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
 }
 
-// MARK: - File Data
+// MARK: - Tool File Data
+/// A serializable representation of a tool.
+///
+/// This structure contains all data required to restore tool state,
+/// including programs, configuration, device parameters, and physics.
 public struct ToolFileData: Codable
 {
     public var object: WorkspaceObjectFileData

@@ -50,7 +50,7 @@ open class ModelController
         
         for entity_name in entity_names
         {
-            if let found_entity = entity.childEntity(withName: entity_name, recursively: true)
+            if let found_entity = entity.child_entity(withName: entity_name, recursively: true)
             {
                 entities[entity_name] = found_entity
             }

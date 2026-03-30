@@ -2217,7 +2217,7 @@ import SwiftUI
             )
             
             cone.position = positions[i]
-            cone.eulerAngles = rotations[i]
+            cone.euler_angles = rotations[i]
             
             // Cylinder
             let cylinder = ModelEntity(mesh: .generateCylinder(height: cylinder_shift, radius: cone_radius), materials: [SimpleMaterial(color: .white, roughness: 1.0, isMetallic: false)])
@@ -3005,7 +3005,7 @@ import SwiftUI
     /// Names of parts placed in the workspace.
     public var placed_part_names: [String] { parts.compactMap { $0.is_placed ? $0.name : nil } }
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     /**
      Returns arrays of document structures by workspace objects type.
      

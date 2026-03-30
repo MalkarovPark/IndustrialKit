@@ -11,20 +11,23 @@ import SwiftUI
 import RealityKit
 #endif
 
-/// A base class that represents an industrial production object in a workspace.
+/// A base class that represents a production object in a robotic workspace.
 ///
-/// Use ``WorkspaceObject`` as a common abstraction for equipment units that
-/// perform technological operations within a production environment.
+/// Use ``WorkspaceObject`` as a common abstraction for elements that form
+/// the content of a robotic system, including equipment, tools, and parts.
 ///
-/// A workspace object models a physical or logical production element, such as
-/// a robotic device, tool, or auxiliary equipment. The object encapsulates its
-/// identity, spatial configuration, and integration with functional modules.
+/// A workspace object models a production entity by encapsulating:
+/// - A unique identifier and name
+/// - Spatial configuration within a coordinate system
+/// - Physical properties of the object
+/// - A visual representation as a RealityKit ``Entity``
 ///
-/// Each object can be associated with a module that defines its behavior,
-/// control logic, and external connectivity. Optionally, the object may provide
-/// a visual representation for simulation and interaction in a 3D scene.
+/// This class serves as the foundation for all production elements.
+/// The system provides built-in subclasses such as ``Robot``, ``Tool``,
+/// and ``Part``.
 ///
-/// Subclass ``WorkspaceObject`` to implement domain-specific equipment behavior.
+/// You can subclass ``WorkspaceObject`` to define custom types of
+/// production resources and extend system functionality.
 @MainActor open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable
 {
     /// Returns a Boolean value indicating whether two objects are equal.
@@ -352,7 +355,7 @@ import RealityKit
     }
     #endif
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     /// Creates an object from serialized file data.
     ///
     /// - Parameter file: The stored object data.

@@ -11,11 +11,22 @@ import RealityKit
 #endif
 import SwiftUI
 
-/**
- A part in production complex class.
- 
- Forms environment, and represent objects with which executing devices interact directly.
- */
+/// A passive object within a robotic production environment.
+///
+/// A part represents a non-controllable component of a robotic system.
+/// It does not perform actions independently but serves as an object
+/// of interaction for active components such as robots and tools.
+///
+/// Parts may represent:
+/// - Production equipment elements (for example, tables, drives, safety enclosures)
+/// - Raw materials entering the production process
+/// - Workpieces being processed or assembled into final products
+///
+/// During system operation, parts are manipulated, transported, or
+/// transformed by robots and tools.
+///
+/// Use ``Part`` instances to model the physical environment and material
+/// flow within a robotic workspace.
 open class Part: WorkspaceObject
 {
     // MARK: - Init functions
@@ -313,7 +324,7 @@ open class Part: WorkspaceObject
     }
     #endif
     
-    // MARK: - Work with file system
+    // MARK: - File Data
     public convenience init(file: PartFileData)
     {
         self.init(file: file.object) //self.init()
