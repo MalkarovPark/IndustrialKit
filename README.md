@@ -137,7 +137,7 @@ For `Robot` and `Tool`, the current output is available via `current_device_outp
 ### Workspace <a name="workspace"></a>
 `Workspace` represents a unified environment for robots, tools, and parts. It stores them in separate collections and provides services for managing, selecting, adding, removing, and controlling them.
 
-Control of the robotic complex is implemented using **Ithi Macro Assembler (IMA)** — a pendant-style language elevated from the robot level to the system level.
+Control of the robotic complex is performed by executing programs (`ProductionProgram`) written in **Ithi Macro Assembler (IMA)**, a pendant-style language transferred from robot level—where execution units are target positions—to system level, where execution units are individual robotic devices.
 
 An IMA program consists of `WorkspaceProgramElement` types:
 - `Performers` — execute programs or operations on devices
