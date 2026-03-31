@@ -32,18 +32,17 @@ IndustrialKit is an open source software platform for creating applications that
     * [Modules](#modules)
     * [Functions](#functions)
     * [Extensions](#extensions)
-* [IMA](#ima) <!-- * [Ithi Macro Assembler](#ima) -->
 * [IndustrialKitUI](#industrialkitui)
-    * [Object Scene View](#industrialkitui-objectsceneview)
-    * [Cards](#industrialkitui-cards)
-    * [Position View](#industrialkitui-positionview)
-    * [Position Control](#industrialkitui-positioncontrol)
-    * [Registers View](#industrialkitui-registersview)
-    * [Registers Selector](#industrialkitui-registersselector)
-    * [Program Elements Views](#industrialkitui-programelementsviews)
-    * [Charts View](#industrialkitui-chartsview)
-    * [State View](#industrialkitui-stateview)
-    * [Spatial Pendant](#industrialkitui-spendant)
+    * [Spatial Pendant](#spatial-pendant)
+    * [Controls](#controls)
+    * [PositionControl](#position-control)
+    * [OperationControl](#operation-control)
+    * [ElementControl](#element-control)
+    * [Pendant Views](#pendant-views)
+    * [Registers](#registers)
+    * [Cards](#cards)
+    * [BoxCard](#box-card)
+    * [GlassBoxCard](#glass-box-card)
 * [Getting Help](#getting-help)
 * [License](#license)
 
@@ -178,109 +177,135 @@ Utility functions for generating unique object names, coordinate transformations
 
 # IndustrialKitUI <a name="industrialkitui"></a>
 
-### Object Scene View <a name="industrialkitui-objectsceneview"></a>
+### Spatial Pendant <a name="spatial-pendant"></a>
 
-The simple view for SceneKit nodes. Initalises only by `SCNNode` and has transparent background.
+A universal pendant for `Workspace` and its constituent **means of production** — `Robot` and `Tool`.
 
-It has the functionality of double tap to reset camera position for macOS.
+`Spatial Pendant` represents a **unified control organ of labor**, in which the content dynamically adapts depending on the selected production object. It acts as a synthesis of multiple device-specific pendants into a single adaptive interface.
 
 <p align="center">
-  <img width="712" height="512" alt="Object Scene View" src="https://github.com/user-attachments/assets/59ad9231-bf58-4039-9c25-ec142c7de42e" />
+  <img width="712" height="512" alt="Spatial Pendant" src="🎆 (Spatial Pendant animation)" />
 </p>
 
-### Cards <a name="industrialkitui-cards"></a>
+The state of the pendant is determined by the `Workspace` property:
 
-Used to display various objects. Box Card can display title, subtitle and SF Symbol. Glass Box Card can display title and subtitle with an Image or a SceneKit Node.
+* `selected_object` — defines the currently selected means of production
+* `select_object(_:)` / `deselect_object()` — perform selection management
 
-These cards can be used in conjunction with objects inherited from WorkspaceObject by passing them the values ​​returned by the object's `card_info` method.
+External control over pendant presentation is handled by `PendantController`.
+
+### Controls <a name="controls"></a>
+
+Manual performing of a **means of labor** is carried out using controls that directly define the state of robotic devices and their representation within the `Workspace`.
+
+### PositionControl <a name="position-control"></a>
+
+`PositionControl` is a control element for updating the current position of a robot end-effector.
+
+It is implemented as a virtual **ClickWheel**, enabling intuitive manual guiding of a manipulator in space.
 
 <p align="center">
-  <img width="992" height="224" alt="Cards" src="https://github.com/user-attachments/assets/11c19b3a-9a5a-4aa5-bc2f-3ea6cde07ec0" />
+  <img width="712" height="512" alt="Controls" src="🎆 (animation)" />
 </p>
 
-The program element card. Marked if corresponding program element is performing.
+For fine adjustment, use `PositionView`, which can also be applied independently to edit arbitrary positions.
 
 <p align="center">
-  <img width="304" src="https://github.com/user-attachments/assets/f10aa961-b91e-4bd1-a501-b1ef7f3be87a" />
+  <img width="712" height="512" alt="Position Control" src="🎆" />
 </p>
 
-The registers cards allows edit the registers values.
+### OperationControl <a name="operation-control"></a>
+
+`OperationControl` enables performing a single operation on a `Tool` via a direct interaction.
+
+In expanded form, the control provides:
+
+* Selection of operation code
+* Numeric representation of the code
+* Detailed description (if available)
 
 <p align="center">
-  <img width="336" height="128" alt="RegisterCard" src="https://github.com/user-attachments/assets/d91bb81c-82db-4abd-8d05-8ba0cbc9a304" />
+  <img width="712" height="512" alt="Operation Control" src="🎆 (animation)" />
 </p>
 
-### Position View <a name="industrialkitui-positionview"></a>
+### ElementControl <a name="element-control"></a>
 
-Provides editing of positions, for example for production objects in the workspace or target positions for robots.
-The editing window contains two groups of three editable parameters:
-   * `Location` with editable position parameters in a rectangular coordinate system – `x`, `y`, `z`;
-   * `Rotation` with editable rotation angles at a point – `r`, `p`, `w`.
+`ElementControl` provides a mechanism for constructing a program element of the **Ithi Macro Assembler (IMA)**.
 
-Each editable parameter consists of a field and an associated stepper. The described sequence of groups can be displayed in a vertical, horizontal or some other stack.
+In expanded form, it allows flexible configuration of element parameters. During creation, the visual representation of the control evolves, reflecting the forming program structure.
+
+A completed element can be tested by triggering performing at the `Workspace` level.
 
 <p align="center">
-  <img width="352" height="243" alt="PositionView" src="https://github.com/user-attachments/assets/04afbdf8-d7c2-4545-83ba-9d6dec1e5498" />
+  <img width="712" height="512" alt="Element Control" src="🎆 (animation)" />
 </p>
 
-### Position Control <a name="industrialkitui-positioncontrol"></a>
+### Pendant Views <a name="pendant-views"></a>
 
-Provides position editing with sliders. For location should set upper limits (lower limits have 0 value). Rotations are limited to the range __-180º__ – __180º__.
+For both individual means of labor (`Robot`, `Tool`) and composite systems (`Workspace`), the framework provides **pendant content views**.
+
+These views represent controls combined with program management in the form of a dynamic program list.
+
+Program formation is achieved through a process analogous to **teaching**: a control defines the current state (*e.g., position or operation*), the state is tested and refined, and then recorded into a program as an element (`PositionPoint`, `OperationCode`, or `WorkspaceProgramElement`).
+
+These assembled views, placed within a `FloatingView`, form a complete pendant that can be attached to a specific means of production. They collectively define the dynamic content of the `Spatial Pendant`.
 
 <p align="center">
-  <img width="352" src="https://github.com/user-attachments/assets/acc3e380-79ab-485f-acbc-1c37440ab547" />
+  <img width="712" height="512" alt="Pendant Views" src="🎆 (program list separately)" />
 </p>
 
-### Registers View <a name="industrialkitui-registersview"></a>
+### Registers <a name="registers"></a>
 
-View for editing the Workspace memory of the robotic technological complex.
+Management of the **register memory** of the `Workspace` is performed using `RegisterDataView`.
+
+This view enables:
+
+* Editing register values
+* Clearing register contents
+* Adjusting the number of registers
 
 <p align="center">
-  <img width="527" height="592" alt="RegistersView" src="https://github.com/user-attachments/assets/888f9387-8516-4fdd-8430-de3510bc8560" />
+  <img width="712" height="512" alt="Registers" src="🎆" />
 </p>
 
-### Registers Selector <a name="industrialkitui-registersselector"></a>
-
-Pruposed for elements, registers from which they take data can be specified. This functionality is provided by the Registers Selector control. One or more registers can be selected.
+Manual selection of registers for IMA program elements is provided by `RegistersSelector`.
 
 <p align="center">
-  <img width="600" src="https://github.com/user-attachments/assets/543859bc-e595-42dd-957a-df2413ede23f" />
+  <img width="712" height="512" alt="Registers" src="🎆" />
 </p>
 
-### Program Elements Views <a name="industrialkitui-programelementsviews"></a>
+### Cards <a name="cards"></a>
 
-Views for editing different types of IMA program elements – *Performers*, *Modifiers* and *Logic*.
+Representation of **means of production** and other objects is not limited to `Entity`.
+
+Objects may also be expressed through a system of **cards**, reflecting their role within the production structure.
+
+### BoxCard <a name="box-card"></a>
+
+`BoxCard` displays:
+
+* An SF Symbol
+* A name (and optional subtitle)
+
+This card emphasizes the **form and primary color**, highlighting the identity of the object as a unit of production.
 
 <p align="center">
-  <img width="600" alt="performers_views" src="https://github.com/user-attachments/assets/605e9781-6f3c-44eb-8c67-25f2ebcbf23f" />
-  <img width="600" alt="modifier_views" src="https://github.com/user-attachments/assets/2387d9ce-da14-46dd-88db-2a573f4e55ce" />
-  <img width="600" alt="logic_views" src="https://github.com/user-attachments/assets/ecc0cce4-7565-47f8-9028-533c00a972fc" />
+  <img width="712" height="512" alt="Registers" src="🎆" />
 </p>
 
-### Charts View <a name="industrialkitui-chartsview"></a>
+### GlassBoxCard <a name="glass-box-card"></a>
 
-Output of an arrays of `WorkspaceObjectChart` charts, with the ability to switch between them by segmented picker (if count of arrays of arrays is more than one). The type of chart is determined by its properties.
+`GlassBoxCard` is a translucent card resembling a thick glass plate.
 
-<p align="center">
-  <img width="752" src="https://github.com/user-attachments/assets/c77a8564-e3dd-4f67-aec8-a24e1a0af774" />
-</p>
+It can contain:
 
-### State View <a name="industrialkitui-stateview"></a>
+* A UI image
+* A RealityKit `Entity`
 
-Output statistics by the StateItem array. If the elements are nested within each other, they will be displayed in the corresponding disclosure group. Icons are defined by the name of avaliable [SF Symbols](https://developer.apple.com/sf-symbols/).
-
-<p align="center">
-  <img width="432" height="384" alt="StateView" src="https://github.com/user-attachments/assets/22cf3a4a-b96f-4fbe-98a9-58260eb6d836" />
-</p>
-
-### Spatial Pendant <a name="industrialkitui-spendant"></a>
-
-A universal UI control for programming and handling workspace and its constituent industrial equipment. Contents of this pendant vary depending on the specific selected object and its type – `Workspace`, `Robot` or `Tool`. Content of this control is blank if no suitable object is selected.
-
-The spatial pendant allows you to set the sequence of program elements and control their performing.
+This card shifts emphasis from color to **content**, reflecting the internal structure or visual model of the production object.
 
 <p align="center">
-  <img width="500" src="https://github.com/MalkarovPark/IndustrialKit/assets/62340924/1741d4b2-34aa-4679-a2a4-d94a2b301406" />
+  <img width="712" height="512" alt="Registers" src="🎆" />
 </p>
 
 # Getting Help <a name="getting-help"></a>

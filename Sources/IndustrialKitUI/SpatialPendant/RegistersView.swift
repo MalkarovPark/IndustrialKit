@@ -362,16 +362,30 @@ public struct RegistersDataView: View
     @ObservedObject var workspace: Workspace
     
     let save_registers: () -> ()
+    private var with_save_registers_func = false
     
     public init(
         is_presented: Binding<Bool>,
         workspace: Workspace,
-        save_registers: @escaping () -> Void = {}
+        save_registers: @escaping () -> Void
     )
     {
         self._is_presented = is_presented
         self.workspace = workspace
+        
         self.save_registers = save_registers
+        self.with_save_registers_func = true
+    }
+    
+    public init(
+        is_presented: Binding<Bool>,
+        workspace: Workspace
+    )
+    {
+        self._is_presented = is_presented
+        self.workspace = workspace
+        
+        self.save_registers = {}
     }
     
     public var body: some View
@@ -393,12 +407,15 @@ public struct RegistersDataView: View
                             }
                             .modifier(CircleButtonGlassBorderer())
                             
-                            Button(action: save_registers)
+                            if with_save_registers_func
                             {
-                                Image(systemName: "arrow.down.doc")
-                                    .modifier(CircleButtonImageFramer())
+                                Button(action: save_registers)
+                                {
+                                    Image(systemName: "arrow.down.doc")
+                                        .modifier(CircleButtonImageFramer())
+                                }
+                                .modifier(CircleButtonGlassBorderer())
                             }
-                            .modifier(CircleButtonGlassBorderer())
                             
                             Button(action: { registers_count_presented = true })
                             {
@@ -430,13 +447,16 @@ public struct RegistersDataView: View
                         .modifier(CircleButtonGlassBorderer())
                         .padding(.trailing, 16)
                         
-                        Button(action: save_registers)
+                        if with_save_registers_func
                         {
-                            Image(systemName: "arrow.down.doc")
-                                .modifier(CircleButtonImageFramer())
+                            Button(action: save_registers)
+                            {
+                                Image(systemName: "arrow.down.doc")
+                                    .modifier(CircleButtonImageFramer())
+                            }
+                            .modifier(CircleButtonGlassBorderer())
+                            .padding(.trailing, 16)
                         }
-                        .modifier(CircleButtonGlassBorderer())
-                        .padding(.trailing, 16)
                         
                         Button(action: { registers_count_presented = true })
                         {
