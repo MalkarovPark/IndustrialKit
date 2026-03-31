@@ -328,7 +328,8 @@ struct SpatialPendant_Previews: PreviewProvider
             {
                 SpatialPendantView(
                     controller: pendant_controller,
-                    workspace: workspace, shows_program_indices: true
+                    workspace: workspace,
+                    shows_program_indices: true
                 )
             }
             .frame(minWidth: 480, minHeight: 480)

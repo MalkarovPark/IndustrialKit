@@ -78,7 +78,7 @@ import IndustrialKit
     private var open = {}
     private var dismiss = {}
     
-    // MARK: - New data
+    /*// MARK: - New data
     @Published var new_operation_code = OperationCodeInfo()
     @Published var new_program_element: WorkspaceProgramElement = RobotPerformerElement()
     
@@ -91,5 +91,5 @@ import IndustrialKit
     // MARK: - Document data
     @Published var update_workspace_in_document = false
     @Published var update_robot_in_document = false
-    @Published var update_tool_in_document = false
+    @Published var update_tool_in_document = false*/
 }

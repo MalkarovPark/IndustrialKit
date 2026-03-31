@@ -95,7 +95,7 @@ Movement of the end effector to a target position is initiated by calling the `m
 
 Tool programming is based on operation codes. Each code corresponds to a predefined set of operations or parameters. A sequence of operation codes (`OperationCode`) forms an operation program (`OperationProgram`). Available codes are defined by `OperationCodeInfo`, which includes additional descriptions.
 
-Execution of an operation is initiated by calling the `perform(_:)` function with an `OperationCode`.
+Performing an operation is initiated by calling the `perform(_:)` function with an `Int` value representing an `OperationCode`.
 
 ### Part <a name="part"></a>
 `Part` represents non-controllable components of a robotic complex. These include both means of production (such as tables, drives, and safety enclosures) and objects of labor, such as raw materials and workpieces that are transformed into finished products.

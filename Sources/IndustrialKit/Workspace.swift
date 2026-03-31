@@ -2042,7 +2042,7 @@ import SwiftUI
                         {
                             if !already_selecting_same_object(tool_id)
                             {
-                                select_object_by_entity_identifier(tool_id)
+                                select_object(by: tool_id)
                             }
                             else
                             {
@@ -2056,7 +2056,7 @@ import SwiftUI
                 
                 if !already_selecting_same_object(object_identifier)
                 {
-                    select_object_by_entity_identifier(object_identifier)
+                    select_object(by: object_identifier)
                 }
                 else
                 {
@@ -2111,7 +2111,7 @@ import SwiftUI
     
     private var pointer_entity = Entity()
     
-    private func select_object_by_entity_identifier(_ entity_identifier: ObjectEntityIdentifier)
+    private func select_object(by entity_identifier: ObjectEntityIdentifier)
     {
         deselect_object() // Test
         pointer_entity.isEnabled = false
