@@ -181,7 +181,7 @@ Utility functions for generating unique object names, coordinate transformations
 
 A universal pendant for `Workspace` and its constituent **means of production** — `Robot` and `Tool`.
 
-`Spatial Pendant` represents a **unified control organ of labor**, in which the content dynamically adapts depending on the selected production object. It acts as a synthesis of multiple device-specific pendants into a single adaptive interface.
+`Spatial Pendant` represents a **unified control interface of labor**, in which the content dynamically adapts depending on the selected production object. It acts as a synthesis of multiple device-specific pendants into a single adaptive interface.
 
 <p align="center">
   <img width="712" height="512" alt="Spatial Pendant" src="🎆 (Spatial Pendant animation)" />
