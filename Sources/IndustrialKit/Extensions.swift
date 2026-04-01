@@ -559,3 +559,179 @@ public extension Entity
     }
 }
 #endif
+
+// MARK: - visionOS compatibility.
+#if os(visionOS)
+public typealias RealityViewCameraContent = RealityViewContent
+
+// MARK: - Glass
+
+public struct Glass: Equatable, @unchecked Sendable
+{
+    public static let regular = Glass()
+    public static let clear = Glass()
+    
+    var tint: Color? = nil
+    var isInteractive: Bool = false
+    var intensity: Double = 1.0
+    
+    public init() {}
+}
+
+// MARK: - modifiers
+
+public extension Glass
+{
+    func tint(_ color: Color) -> Glass
+    {
+        var copy = self
+        copy.tint = color
+        return copy
+    }
+    
+    func interactive(_ value: Bool = true) -> Glass
+    {
+        var copy = self
+        copy.isInteractive = value
+        return copy
+    }
+}
+
+// MARK: - Shape wrapper (IMPORTANT: now used only for layout/mask)
+
+public struct GlassShape
+{
+    let make: (CGRect) -> AnyShape
+    
+    public init<S: Shape>(_ shape: S)
+    {
+        self.make = { _ in AnyShape(shape) }
+    }
+}
+
+// MARK: - presets
+
+public extension GlassShape
+{
+    static var circle: GlassShape
+    {
+        GlassShape(Circle())
+    }
+    
+    static func rect(cornerRadius: CGFloat, style: RoundedCornerStyle = .continuous) -> GlassShape
+    {
+        GlassShape(RoundedRectangle(cornerRadius: cornerRadius, style: style))
+    }
+    
+    static func capsule(style: RoundedCornerStyle = .continuous) -> GlassShape
+    {
+        GlassShape(Capsule(style: style))
+    }
+}
+
+// MARK: - AnyShape
+
+public struct AnyShape: Shape, @unchecked Sendable
+{
+    private let pathBuilder: @Sendable (CGRect) -> Path
+    
+    public init<S: Shape>(_ shape: S)
+    {
+        self.pathBuilder = { rect in
+            shape.path(in: rect)
+        }
+    }
+    
+    public func path(in rect: CGRect) -> Path
+    {
+        pathBuilder(rect)
+    }
+}
+
+// MARK: - Core modifier (visionOS replacement)
+
+private struct GlassEffectModifier: ViewModifier
+{
+    let glass: Glass
+    let shape: GlassShape
+    
+    @State private var rect: CGRect = .zero
+    @State private var isHovered = false
+    
+    func body(content: Content) -> some View
+    {
+        content
+            .background
+            {
+                GeometryReader { proxy in
+                    let frame = proxy.frame(in: .local)
+                    
+                    ZStack
+                    {
+                        // 1. Glass material layer
+                        shapeView(in: frame)
+                        
+                        // 2. Optional tint overlay
+                        if let tint = glass.tint
+                        {
+                            shapeView(in: frame)
+                                .fill(tint.opacity(0.15 * glass.intensity))
+                                .blendMode(.plusLighter)
+                        }
+                    }
+                    .onAppear { rect = frame }
+                }
+            }
+            .clipShape(shapeView(in: rect))
+            .scaleEffect(glass.isInteractive && isHovered ? 1.05 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: isHovered)
+            .onHover
+            {
+                if glass.isInteractive
+                {
+                    isHovered = $0
+                }
+            }
+    }
+    
+    // MARK: glass shape builder
+    
+    private func shapeView(in rect: CGRect) -> AnyShape
+    {
+        shape.make(rect)
+    }
+}
+
+// MARK: - View API
+
+public extension View
+{
+    func glassEffect(
+        _ glass: Glass = .regular,
+        in shape: GlassShape = .rect(cornerRadius: 16)
+    ) -> some View
+    {
+        modifier(GlassEffectModifier(glass: glass, shape: shape))
+    }
+}
+
+// MARK: - Glass Effect Container
+public struct GlassEffectContainer<Content: View>: View
+{
+    private let content: Content
+    
+    public init(@ViewBuilder content: () -> Content)
+    {
+        self.content = content()
+    }
+    
+    public var body: some View
+    {
+        ZStack
+        {
+            content
+        }
+        .compositingGroup()
+    }
+}
+#endif

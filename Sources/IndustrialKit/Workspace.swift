@@ -1522,6 +1522,7 @@ import SwiftUI
             target_tile = wall
             wall.isEnabled = false
             
+            #if !os(visionOS)
             workspace_camera_target.addChild(wall)
             scene_content?.cameraTarget = workspace_camera_target
             
@@ -1541,6 +1542,7 @@ import SwiftUI
                     self.move_camera_target()
                 }
             }
+            #endif
             
             // Prebuild grid
             let cx = Int(round(camera.position.x / cell_size))

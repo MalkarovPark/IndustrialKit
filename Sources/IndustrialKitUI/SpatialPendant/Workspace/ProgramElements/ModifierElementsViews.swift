@@ -589,9 +589,6 @@ public struct ObserverElementView: View
                             Text(name)
                         }
                     }
-                    #if !os(macOS)
-                    .modifier(PickerNamer(name: "Name"))
-                    #endif
                     .disabled(workspace.placed_robot_names.count == 0)
                     .padding(.bottom)
                 }
@@ -605,9 +602,6 @@ public struct ObserverElementView: View
                             Text(name)
                         }
                     }
-                    #if !os(macOS)
-                    .modifier(PickerNamer(name: "Name"))
-                    #endif
                     .disabled(workspace.placed_tool_names.count == 0)
                     .padding(.bottom)
                 }

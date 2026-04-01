@@ -466,7 +466,7 @@ public struct RegistersDataView: View
                         .modifier(CircleButtonGlassBorderer())
                         .popover(isPresented: $registers_count_presented, arrowEdge: default_popover_edge)
                         {
-                            RegistersCountView(is_presented: $registers_count_presented, registers_count: workspace.registers.count)
+                            RegistersCountView(is_presented: $registers_count_presented, workspace: workspace)
                             {
                                 save_registers()
                             }

@@ -133,7 +133,7 @@ let pendant_content_width: CGFloat = 240
  
  This pendant can change its content according to selected *workspace*, *robot* or *tool*.
  */
-public struct SpatialPendantScene: Scene
+public struct SpatialPendantScene: SwiftUI.Scene
 {
     var window_id: String
     let controller: PendantController
@@ -147,14 +147,12 @@ public struct SpatialPendantScene: Scene
         self.workspace = workspace
     }
     
-    @SceneBuilder public var body: some Scene
+    @SceneBuilder public var body: some SwiftUI.Scene
     {
         WindowGroup(id: window_id)
         {
-            SpatialPendantView()
-                .environmentObject(controller)
-                .environmentObject(workspace)
-                .onDisappear(perform: controller.dismiss_pendant)
+            SpatialPendantView(controller: controller, workspace: workspace)
+                .onDisappear(perform: controller.on_dismiss)
         }
         .windowResizability(.contentSize)
     }
