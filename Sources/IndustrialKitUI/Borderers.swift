@@ -17,7 +17,11 @@ public struct ViewBorderer: ViewModifier
     public func body(content: Content) -> some View
     {
         content
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        #if os(macOS)
+            .clipShape(RoundedRectangle(cornerRadius: 6.5, style: .continuous))
+        #else
+            .clipShape(RoundedRectangle(cornerRadius: 7.5, style: .continuous))
+        #endif
             .shadow(color: .black.opacity(0.1), radius: 4)
     }
 }

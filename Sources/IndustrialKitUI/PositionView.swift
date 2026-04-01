@@ -217,11 +217,11 @@ struct PositionView_Previews: PreviewProvider
         public func body(content: Content) -> some View
         {
             content
-                //.frame(width: 256)
                 .padding()
                 .background(.bar)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .shadow(color: .black.opacity(0.2), radius: 8)
+                .padding()
                 .padding()
         }
     }

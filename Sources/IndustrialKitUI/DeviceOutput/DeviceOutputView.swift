@@ -319,15 +319,31 @@ struct DeviceStateView_Previews: PreviewProvider
     struct Container: View
     {
         @StateObject var robot = Robot(name: "6DOF Robot")
+        //@State private var is_presented = false
         
         var body: some View
         {
             DeviceOutputView(object: robot)
-                .modifier(SheetCaption(is_presented: .constant(true), label: "Device Output", plain: false, clear_background: true))
+                //.modifier(SheetCaption(is_presented: .constant(true), label: "Device Output", plain: false, clear_background: true))
                 .onAppear
                 {
                     prepare_state()
                 }
+            
+            /*Button("Device Output")
+            {
+                is_presented = true
+            }
+            .sheet(isPresented: $is_presented)
+            {
+                DeviceOutputView(object: robot)
+                    .modifier(SheetCaption(is_presented: $is_presented, label: "Device Output", plain: false, clear_background: true))
+                    .onAppear
+                    {
+                        prepare_state()
+                    }
+            }
+            .padding()*/
         }
         
         private func prepare_state()

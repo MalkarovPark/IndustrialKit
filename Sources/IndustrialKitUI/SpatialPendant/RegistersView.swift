@@ -570,6 +570,7 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
             RegistersView_Previews(registers: $registers)
             RegistersSelectors_Previews(index: $index, indices: $indices)
             RegistersDataPreview()
+            RegistersDataPreviewAlt()
         }
     }
     
@@ -672,6 +673,28 @@ struct RegistersSelectors_PreviewsContainer: PreviewProvider
                     .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                     .shadow(color: .black.opacity(0.25), radius: 16)
                     .padding(48)
+            }
+        }
+    }
+    
+    struct RegistersDataPreviewAlt: View
+    {
+        @State private var is_presented: Bool = false
+        
+        var body: some View
+        {
+            ZStack
+            {
+                Button("RegisersData")
+                {
+                    is_presented = true
+                }
+                .sheet(isPresented: $is_presented)
+                {
+                    RegistersDataView(is_presented: $is_presented, workspace: Workspace())
+                        .frame(width: 420, height: 480)
+                }
+                .padding()
             }
         }
     }

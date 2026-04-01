@@ -269,7 +269,7 @@ public struct MarkLogicElementView: View
         HStack
         {
             Text("Name")
-            TextField("Mark Name", text: name) // Mark name field
+            TextField("None", text: name)
                 .textFieldStyle(.roundedBorder)
                 .onSubmit
                 {

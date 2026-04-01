@@ -336,7 +336,7 @@ struct ElementControl_Previews: PreviewProvider
                 ElementControl(workspace: workspace)
                     .padding()
             }
-            .frame(width: 400, height: 400)
+            .frame(width: 400, height: 440)
             .onAppear
             {
                 let robot = Robot(name: "6DOF")
@@ -356,5 +356,6 @@ struct ElementControl_Previews: PreviewProvider
     static var previews: some View
     {
         Container()
+            .padding()
     }
 }

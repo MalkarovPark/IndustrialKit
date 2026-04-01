@@ -115,6 +115,7 @@ public struct MoverElementView: View
                         .foregroundStyle(.white)
                     
                     Text("No values to \(element.move_type == .move ? "move" : "copy")")
+                        .foregroundStyle(.secondary)
                 }
                 .frame(height: 160)
                 .modifier(ListBorderer())
@@ -273,6 +274,7 @@ public struct WriterElementView: View
                         .foregroundStyle(.white)
                     
                     Text("No values to write")
+                        .foregroundStyle(.secondary)
                 }
                 .frame(height: 160)
                 .modifier(ListBorderer())
@@ -677,6 +679,7 @@ public struct ObserverElementView: View
                         .foregroundStyle(.white)
                     
                     Text("No items to ouput")
+                        .foregroundStyle(.secondary)
                 }
                 .frame(height: 160)
                 .modifier(ListBorderer())

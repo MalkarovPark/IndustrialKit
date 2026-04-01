@@ -746,7 +746,7 @@ struct Cards_Previews: PreviewProvider
     struct Container: View
     {
         @State var is_renaming = [false, false, false]
-        @State var names = ["Robotic", "Image", "Scene"]
+        @State var names = ["Robotic", "Image", "Entity"]
         @State var values: [Float] = [2, 4, 6]
         
         var body: some View

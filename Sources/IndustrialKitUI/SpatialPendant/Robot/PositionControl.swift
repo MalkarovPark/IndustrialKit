@@ -504,5 +504,6 @@ struct PositionControl_Previews: PreviewProvider
     static var previews: some View
     {
         Container()
+            .padding()
     }
 }

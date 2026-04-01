@@ -334,8 +334,8 @@ struct OperationControl_Previews: PreviewProvider
             .onAppear
             {
                 tool.codes = [
-                    OperationCodeInfo(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "UwU"),
-                    OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "OwO")
+                    OperationCodeInfo(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "Close the Tool"),
+                    OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "Open the Tool")
                 ]
             }
         }
@@ -344,5 +344,6 @@ struct OperationControl_Previews: PreviewProvider
     static var previews: some View
     {
         Container()
+            .padding()
     }
 }

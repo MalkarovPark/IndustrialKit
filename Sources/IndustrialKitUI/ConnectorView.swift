@@ -532,6 +532,8 @@ struct ConnectorView_Previews: PreviewProvider
         var body: some View
         {
             ConnectorView(object: object)
+                //.frame(width: 320, height: 448)
+                //.padding(40)
                 .frame(width: 320)
                 .onAppear
                 {
@@ -545,7 +547,7 @@ struct ConnectorView_Previews: PreviewProvider
         Container()
     }
     
-    class Test_Connector: ToolConnector, ExternalConnector, @unchecked Sendable
+    class Test_Connector: ToolConnector, /*ExternalConnector,*/ @unchecked Sendable
     {
         // MARK: Program component handling
         public var program_component_enabled: Bool = false
@@ -587,7 +589,7 @@ struct ConnectorView_Previews: PreviewProvider
         override var default_parameters: [ConnectionParameter]
         {
             [
-                .init(name: "Bool", value: true)
+                .init(name: "Parameter", value: true)
             ]
         }
         

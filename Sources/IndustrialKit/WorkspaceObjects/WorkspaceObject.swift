@@ -169,7 +169,7 @@ import RealityKit
     /// A Boolean value that indicates whether the object is placed in the workspace.
     ///
     /// When set to `true`, the associated entity becomes active in the scene.
-    @Published public var is_placed = false
+    @Published public var is_placed = true
     {
         didSet
         {

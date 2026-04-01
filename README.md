@@ -40,6 +40,8 @@ IndustrialKit is an open source software platform for creating applications that
     * [ElementControl](#element-control)
     * [Pendant Views](#pendant-views)
     * [Registers](#registers)
+    * [Output Views](#output-views)
+    * [Connector View](#connector-view)
     * [Cards](#cards)
     * [BoxCard](#box-card)
     * [GlassBoxCard](#glass-box-card)
@@ -184,7 +186,7 @@ A universal pendant for `Workspace` and its constituent **means of production** 
 `Spatial Pendant` represents a **unified control interface of labor**, in which the content dynamically adapts depending on the selected production object. It acts as a synthesis of multiple device-specific pendants into a single adaptive interface.
 
 <p align="center">
-  <img width="712" height="512" alt="Spatial Pendant" src="🎆 (Spatial Pendant animation)" />
+  <img width="316" height="580" alt="Spatial Pendant" src="https://github.com/user-attachments/assets/0d90f6bf-3839-4c5a-a99a-91cef311db88" />
 </p>
 
 The state of the pendant is determined by the `Workspace` property:
@@ -196,7 +198,7 @@ External control over pendant presentation is handled by `PendantController`.
 
 ### Controls <a name="controls"></a>
 
-Manual performing of a **means of labor** is carried out using controls that directly define the state of robotic devices and their representation within the `Workspace`.
+Manual performing of a **means of production** is carried out using controls that directly define the state of robotic devices and their representation within the `Workspace`.
 
 ### PositionControl <a name="position-control"></a>
 
@@ -205,13 +207,13 @@ Manual performing of a **means of labor** is carried out using controls that dir
 It is implemented as a virtual **ClickWheel**, enabling intuitive manual guiding of a manipulator in space.
 
 <p align="center">
-  <img width="712" height="512" alt="Controls" src="🎆 (animation)" />
+  <img width="208" height="312" alt="Position Control" src="https://github.com/user-attachments/assets/0fa41d01-3a6e-4d1a-bc42-870c3722d125" />
 </p>
 
 For fine adjustment, use `PositionView`, which can also be applied independently to edit arbitrary positions.
 
 <p align="center">
-  <img width="712" height="512" alt="Position Control" src="🎆" />
+  <img width="384" height="280" alt="Position View" src="https://github.com/user-attachments/assets/b1f44e02-2660-4a81-8e8d-3da8109f298a" />
 </p>
 
 ### OperationControl <a name="operation-control"></a>
@@ -225,7 +227,7 @@ In expanded form, the control provides:
 * Detailed description (if available)
 
 <p align="center">
-  <img width="712" height="512" alt="Operation Control" src="🎆 (animation)" />
+  <img width="408" height="184" alt="Operation Control" src="https://github.com/user-attachments/assets/69f9751f-f19c-4b11-9b55-224d034edb85" />
 </p>
 
 ### ElementControl <a name="element-control"></a>
@@ -237,7 +239,7 @@ In expanded form, it allows flexible configuration of element parameters. During
 A completed element can be tested by triggering performing at the `Workspace` level.
 
 <p align="center">
-  <img width="712" height="512" alt="Element Control" src="🎆 (animation)" />
+  <img width="404" height="456" alt="Element Control" src="https://github.com/user-attachments/assets/40d61417-c2c1-4b1f-9c89-074d8571baad" />
 </p>
 
 ### Pendant Views <a name="pendant-views"></a>
@@ -250,9 +252,9 @@ Program formation is achieved through a process analogous to **teaching**: a con
 
 These assembled views, placed within a `FloatingView`, form a complete pendant that can be attached to a specific means of production. They collectively define the dynamic content of the `Spatial Pendant`.
 
-<p align="center">
+<!-- <p align="center">
   <img width="712" height="512" alt="Pendant Views" src="🎆 (program list separately)" />
-</p>
+</p> -->
 
 ### Registers <a name="registers"></a>
 
@@ -265,20 +267,48 @@ This view enables:
 * Adjusting the number of registers
 
 <p align="center">
-  <img width="712" height="512" alt="Registers" src="🎆" />
+  <img width="532" height="592" alt="Registers Data View" src="https://github.com/user-attachments/assets/0e1a285e-b0d5-4b29-b7ac-5f0ec71b048c" />
 </p>
 
 Manual selection of registers for IMA program elements is provided by `RegistersSelector`.
 
 <p align="center">
-  <img width="712" height="512" alt="Registers" src="🎆" />
+  <img width="320" height="416" alt="Registers" src="https://github.com/user-attachments/assets/8b92ed81-3ee1-4fe7-91db-80ee2e62d3b0" />
 </p>
+
+### Output Views <a name="output-views"></a>
+
+For visual representation of **state data** of a robotic device — including charts and nested items — the framework provides dedicated views: `StateChartsView` and `StateItemsView`.
+
+`DeviceOutputView` consolidates these data representations into a single interface and provides UI controls for managing and configuring statistical data collection parameters, including synchronization interval and scope type.
+
+<p align="center">
+  <img width="592" height="592" alt="Output Views" src="https://github.com/user-attachments/assets/b772287e-4bef-47be-8f6c-1dbb1fd1f9cb" />
+</p>
+
+This view is available for devices conforming to the `StateOutputCapable` protocol — out of the box, these are `Robot` and `Tool`.
+
+### Connector View <a name="connector-view"></a>
+
+A UI for managing the connection between a virtual robotic device and its physical counterpart, as well as synchronizing the digital twin.
+
+`ConnectorView` allows switching between **simulation** and **real** modes, configuring connection parameters, and performing connection and disconnection operations.
+
+<p align="center">
+  <img width="352" height="512" alt="Connector View" src="https://github.com/user-attachments/assets/43565e4e-9565-4e7c-8a58-af77c9a88fe4" />
+</p>
+
+This view is available for classes of means of production conforming to the `DeviceTwin` protocol. For external connectors, management of the executable process is also supported.
 
 ### Cards <a name="cards"></a>
 
 Representation of **means of production** and other objects is not limited to `Entity`.
 
 Objects may also be expressed through a system of **cards**, reflecting their role within the production structure.
+
+<p align="center">
+  <img width="1008" height="240" alt="Cards" src="https://github.com/user-attachments/assets/82e83d28-acfc-4cee-8caa-8c206df6dd5c" />
+</p>
 
 ### BoxCard <a name="box-card"></a>
 
@@ -288,10 +318,6 @@ Objects may also be expressed through a system of **cards**, reflecting their ro
 * A name (and optional subtitle)
 
 This card emphasizes the **form and primary color**, highlighting the identity of the object as a unit of production.
-
-<p align="center">
-  <img width="712" height="512" alt="Registers" src="🎆" />
-</p>
 
 ### GlassBoxCard <a name="glass-box-card"></a>
 
@@ -303,10 +329,6 @@ It can contain:
 * A RealityKit `Entity`
 
 This card shifts emphasis from color to **content**, reflecting the internal structure or visual model of the production object.
-
-<p align="center">
-  <img width="712" height="512" alt="Registers" src="🎆" />
-</p>
 
 # Getting Help <a name="getting-help"></a>
 GitHub is our primary forum for IndustrialKit. Feel free to open up issues about questions, problems, or ideas.
