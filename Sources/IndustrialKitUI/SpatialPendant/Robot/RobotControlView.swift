@@ -413,11 +413,11 @@ private struct PositionItemView: View
             .popover(isPresented: $position_item_view_presented,
                      arrowEdge: .trailing)
             {
-                #if os(macOS)
+                #if os(macOS) || os(visionOS)
                 PositionPointView(robot: robot, program: program, point: point_item, position_item_view_presented: $position_item_view_presented)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                 #else
-                PositionPointView(robot: robot, program: program, point: point_item, position_item_view_presented: $position_item_view_presented)
+                PositionPointView(robot: robot, program: program, point: point_item, position_item_view_presented: $position_item_view_presented, is_compact: horizontal_size_class == .compact)
                     .presentationDetents([.height(496)])
                 #endif
             }
