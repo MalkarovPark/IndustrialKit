@@ -117,9 +117,6 @@ public struct PositionControl: View
             .padding(10)
             .opacity(0.2)
             
-            //Rectangle()
-                //.fill(.clear)
-            
             Circle()
                 .fill(.quinary)
                 .frame(width: 48, height: 48)
@@ -169,7 +166,6 @@ public struct PositionControl: View
         #else
         .glassEffect(.regular.interactive(), in: .circle)
         .offset(z: 4)
-        .padding(.vertical, 8)
         #endif
         .contentShape(Circle())
         .compositingGroup()
