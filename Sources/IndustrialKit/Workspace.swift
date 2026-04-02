@@ -1919,7 +1919,7 @@ import SwiftUI
             mesh = is_axis ? axis_line_mesh_z : is_major ? major_line_mesh_z : minor_line_mesh_z
         }
         
-        var material = SimpleMaterial(color: color, roughness: 1, isMetallic: false)
+        var material = UnlitMaterial(color: color)
         material.faceCulling = .none
         
         let line = ModelEntity(mesh: mesh, materials: [material])

@@ -117,10 +117,10 @@ public struct PositionControl: View
             .padding(10)
             .opacity(0.2)
             
-            Rectangle()
-                .fill(.clear)
+            //Rectangle()
+                //.fill(.clear)
             
-            Circle()//RoundedRectangle(cornerRadius: 16, style: .continuous)
+            Circle()
                 .fill(.quinary)
                 .frame(width: 48, height: 48)
                 .scaleEffect(is_central_pressed ? 0.85 : 1)
@@ -168,6 +168,7 @@ public struct PositionControl: View
         .glassEffect(.regular.tint(.white).interactive(), in: .circle)
         #else
         .glassEffect(.regular.interactive(), in: .circle)
+        .frame(depth: 4)
         #endif
         .contentShape(Circle())
         .compositingGroup()

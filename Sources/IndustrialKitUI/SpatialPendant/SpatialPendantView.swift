@@ -162,8 +162,10 @@ public struct SpatialPendantView: View
 
 #if os(macOS)
 let pendant_content_width: CGFloat = 200
-#else
+#elseif os(iOS)
 let pendant_content_width: CGFloat = 240
+#elseif os(visionOS)
+let pendant_content_width: CGFloat = 280
 #endif
 
 #if os(visionOS)
@@ -199,74 +201,6 @@ public struct SpatialPendantScene: SwiftUI.Scene
 
 ///The default widow id of Spatial Pendant.
 public let SPendantDefaultID = "pendant"
-
-    /*.ornament(attachmentAnchor: .scene(.bottom))
-    {
-        if controller.add_item_button_avaliable
-        {
-            Button(action: add_item)
-            {
-                ZStack
-                {
-                    Image(systemName: "plus")
-                        .resizable()
-                        .imageScale(.large)
-                        .padding()
-                }
-                .frame(width: 64, height: 64)
-            }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-            .glassBackgroundEffect()
-            .frame(depth: 24)
-            .padding(32)
-        }
-    }
-    .ornament(attachmentAnchor: .scene(.trailing))
-    {
-        VStack(spacing: 0)
-        {
-            Button(action: reset_performing)
-            {
-                ZStack
-                {
-                    Rectangle()
-                        .foregroundStyle(controller.view_type != nil ? .red : .secondary)
-                        .glassBackgroundEffect()
-                    Image(systemName: "stop")
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                        .padding()
-                }
-                .frame(width: 64, height: 64)
-            }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-            .padding([.horizontal, .top])
-            
-            Button(action: start_pause_performing)
-            {
-                ZStack
-                {
-                    Image(systemName: "playpause")
-                        .resizable()
-                        .scaledToFit()
-                        .padding()
-                }
-                .frame(width: 64, height: 64)
-            }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-            .padding()
-        }
-        .glassBackgroundEffect()
-        .disabled(controller.view_type == .tool && workspace.selected_tool.programs_count == 0)
-    }
-    .disabled(controller.view_type == nil)
-    .ornament(attachmentAnchor: .scene(.top))
-    {
-        
-    }*/
 #endif
 
 // MARK: - Previews
@@ -279,85 +213,6 @@ struct SpatialPendant_Previews: PreviewProvider
         
         @State private var is_pan = false
         @State private var scene_content: RealityViewCameraContent?
-        
-        /*var body: some View
-        {
-            ZStack
-            {
-                RealityView
-                { content in
-                    scene_content = content
-                    scene_content?.camera = .virtual
-                    
-                    workspace.place_entity(in: content)
-                }
-                .realityViewCameraControls(is_pan ? .pan : .orbit)
-                .highPriorityGesture(
-                    TapGesture()
-                        .targetedToAnyEntity()
-                        .onEnded
-                        { value in
-                            workspace.process_tap(value: value)
-                        }
-                )
-                .gesture(
-                    TapGesture()
-                        .onEnded
-                        {
-                            workspace.process_empty_tap()
-                        }
-                )
-                .overlay(alignment: .topLeading)
-                {
-                    Button("Switch") { button_tap(); test() }
-                        .buttonStyle(.bordered)
-                        .padding()
-                }
-                .overlay(alignment: .bottomLeading)
-                {
-                    Button(action: { is_pan.toggle() })
-                    {
-                        Image(systemName: is_pan ? "move.3d" : "rotate.3d")
-                    }
-                    .buttonStyle(.bordered)
-                    .padding()
-                }
-                
-                SpatialPendantView(controller: pendant_controller, workspace: workspace)
-                    .padding(10)
-            }
-            .frame(height: 480)
-            .onAppear
-            {
-                workspace_preparation()
-            }
-        }
-        
-        func test()
-        {
-            let main = ModelEntity()
-            let sphere = ModelEntity(
-                mesh: MeshResource.generateSphere(radius: 0.05),
-                materials: [SimpleMaterial(color: .systemTeal, isMetallic: true)]
-            )
-            
-            sphere.update_position((x: 0, y: 0, z: -100, r: 0, p: 0, w: 0))
-            
-            let cube = ModelEntity(
-                mesh: MeshResource.generateBox(size: 0.1),
-                materials: [SimpleMaterial(color: .purple, isMetallic: true)]
-            )
-            
-            main.addChild(cube)
-            main.addChild(sphere)
-            //cube.addChild(sphere)
-            
-            let part = Part(name: "Test", entity: main)
-            part.position.z = 400
-            part.physics_enabled = true
-            
-            workspace.add_part(part)
-        }*/
         
         var body: some View
         {
