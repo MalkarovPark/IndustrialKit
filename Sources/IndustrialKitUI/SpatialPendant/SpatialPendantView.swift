@@ -165,7 +165,7 @@ let pendant_content_width: CGFloat = 200
 #elseif os(iOS)
 let pendant_content_width: CGFloat = 240
 #elseif os(visionOS)
-let pendant_content_width: CGFloat = 280
+let pendant_content_width: CGFloat = 300
 #endif
 
 #if os(visionOS)
