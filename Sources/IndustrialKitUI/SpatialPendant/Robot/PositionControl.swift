@@ -165,7 +165,7 @@ public struct PositionControl: View
         .glassEffect(.regular.tint(.white).interactive(), in: .circle)
         #else
         .glassEffect(.regular.interactive(), in: .circle)
-        .offset(z: 4)
+        .offset(z: 16)
         #endif
         .contentShape(Circle())
         .compositingGroup()

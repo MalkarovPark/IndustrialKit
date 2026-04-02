@@ -184,7 +184,8 @@ public struct RobotControlView: View
                     .frame(width: 120)
             }
             #if os(visionOS)
-            .padding(.vertical, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 8)
             #endif
         }
     }
