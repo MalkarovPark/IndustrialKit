@@ -194,6 +194,7 @@ public struct SpatialPendantScene: SwiftUI.Scene
         {
             SpatialPendantView(controller: controller, workspace: workspace)
                 .onDisappear(perform: controller.on_dismiss)
+                .padding(20)
         }
         .windowResizability(.contentSize)
     }
