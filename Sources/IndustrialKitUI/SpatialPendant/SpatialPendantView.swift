@@ -117,64 +117,40 @@ public struct SpatialPendantView: View
         #else
         ZStack
         {
-            if is_opened
+            switch workspace.selected_object
             {
-                ZStack
-                {
-                    switch workspace.selected_object
-                    {
-                    case let robot as Robot:
-                        RobotControlView(
-                            robot: robot,
-                            shows_program_indices: shows_program_indices,
-                            on_update: on_update_robot
-                        )
-                    case let tool as Tool:
-                        ToolControlView(
-                            tool: tool,
-                            shows_program_indices: shows_program_indices,
-                            on_update: on_update_tool
-                        )
-                    case is Part:
-                        ZStack
-                        {
-                            Rectangle()
-                                .fill(.clear)
-                                .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
-                            
-                            /*Text("Part")
-                            #if os(macOS)
-                                .font(.system(size: 14, design: .rounded))
-                            #else
-                                .font(.system(size: 18, design: .rounded))
-                            #endif
-                                .foregroundStyle(.secondary)*/
-                        }
-                    case .some(_):
-                        Text("Nothing")
-                    case .none:
-                        WorkspaceControlView(
-                            workspace: workspace,
-                            on_update: on_update_workspace
-                        )
-                    }
-                }
-                .padding(8)
-                .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
-            }
-            else
-            {
+            case let robot as Robot:
+                RobotControlView(
+                    robot: robot,
+                    shows_program_indices: shows_program_indices,
+                    on_update: on_update_robot
+                )
+            case let tool as Tool:
+                ToolControlView(
+                    tool: tool,
+                    shows_program_indices: shows_program_indices,
+                    on_update: on_update_tool
+                )
+            case is Part:
                 ZStack
                 {
                     Rectangle()
                         .fill(.clear)
                         .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
                 }
-                .frame(width: pendant_content_width)
-                .hidden()
+            case .some(_):
+                Text("Nothing")
+            case .none:
+                WorkspaceControlView(
+                    workspace: workspace,
+                    on_update: on_update_workspace
+                )
             }
         }
+        .padding(8)
+        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+        .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
+        //.frame(width: pendant_content_width)
         #endif
     }
     

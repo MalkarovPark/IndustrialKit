@@ -164,10 +164,18 @@ public struct PositionControl: View
                 )
         }
         .frame(width: 120, height: 120)
-        .glassEffect(.regular.tint(.white).interactive(), in: .circle)//.rect(cornerRadius: 32, style: .continuous))
-        .contentShape(Circle())//RoundedRectangle(cornerRadius: 32, style: .continuous))
+        #if !os(visionOS)
+        .glassEffect(.regular.tint(.white).interactive(), in: .circle)
+        #else
+        .glassEffect(.regular.interactive(), in: .circle)
+        #endif
+        .contentShape(Circle())
         .compositingGroup()
+        #if !os(visionOS)
         .rotation3DEffect(.degrees(tilt_magnitude), axis: (x: tilt_x, y: tilt_y, z: 0), perspective: 0.12)
+        #else
+        .rotation3DEffect(.degrees(tilt_magnitude), axis: (x: tilt_x, y: tilt_y, z: 0))
+        #endif
         .gesture(
             DragGesture(minimumDistance: 0)
                 .onChanged
