@@ -44,6 +44,7 @@ public struct SpatialPendantView: View
     
     public var body: some View
     {
+        #if os(macOS) || os(iOS)
         FloatingView(alignment: .trailing)
         {
             ZStack
@@ -113,6 +114,68 @@ public struct SpatialPendantView: View
         .allowsHitTesting(is_opened)
         .animation(.spring(response: 0.42, dampingFraction: 0.78), value: is_opened)
         .animation(.easeInOut(duration: 0.25), value: is_opened)
+        #else
+        ZStack
+        {
+            if is_opened
+            {
+                ZStack
+                {
+                    switch workspace.selected_object
+                    {
+                    case let robot as Robot:
+                        RobotControlView(
+                            robot: robot,
+                            shows_program_indices: shows_program_indices,
+                            on_update: on_update_robot
+                        )
+                    case let tool as Tool:
+                        ToolControlView(
+                            tool: tool,
+                            shows_program_indices: shows_program_indices,
+                            on_update: on_update_tool
+                        )
+                    case is Part:
+                        ZStack
+                        {
+                            Rectangle()
+                                .fill(.clear)
+                                .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                            
+                            /*Text("Part")
+                            #if os(macOS)
+                                .font(.system(size: 14, design: .rounded))
+                            #else
+                                .font(.system(size: 18, design: .rounded))
+                            #endif
+                                .foregroundStyle(.secondary)*/
+                        }
+                    case .some(_):
+                        Text("Nothing")
+                    case .none:
+                        WorkspaceControlView(
+                            workspace: workspace,
+                            on_update: on_update_workspace
+                        )
+                    }
+                }
+                .padding(8)
+                .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                .animation(.easeInOut(duration: 0.3), value: workspace.selected_object)
+            }
+            else
+            {
+                ZStack
+                {
+                    Rectangle()
+                        .fill(.clear)
+                        .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                }
+                .frame(width: pendant_content_width)
+                .hidden()
+            }
+        }
+        #endif
     }
     
     private var is_opened: Bool
@@ -329,8 +392,15 @@ struct SpatialPendant_Previews: PreviewProvider
                     workspace: workspace,
                     shows_program_indices: true
                 )
+                #if os(visionOS)
+                .glassBackgroundEffect(in: .rect(cornerRadius: 24, style: .continuous))
+                #endif
             }
+            #if !os(visionOS)
             .frame(minWidth: 480, minHeight: 480)
+            #else
+            .frame(minWidth: 800, minHeight: 480)
+            #endif
             .padding(10)
             .onAppear { workspace_preparation() }
             .overlay(alignment: .topLeading)

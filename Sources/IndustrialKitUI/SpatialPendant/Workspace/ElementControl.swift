@@ -181,14 +181,7 @@ public struct ElementControl: View
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             .buttonStyle(.plain)
-            #if !os(visionOS)
             .glassEffect(.regular.interactive().tint(workspace.current_element.color), in: .rect(cornerRadius: 16, style: .continuous))
-            #else
-            .controlSize(.large)
-            .buttonStyle(.borderless)
-            .glassBackgroundEffect()
-            .frame(depth: 24)
-            #endif
             #if os(macOS) || os(iOS)
             .padding(10)
             #else

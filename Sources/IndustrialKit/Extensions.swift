@@ -565,7 +565,6 @@ public extension Entity
 public typealias RealityViewCameraContent = RealityViewContent
 
 // MARK: - Glass
-
 public struct Glass: Equatable, @unchecked Sendable
 {
     public static let regular = Glass()
@@ -579,7 +578,6 @@ public struct Glass: Equatable, @unchecked Sendable
 }
 
 // MARK: - modifiers
-
 public extension Glass
 {
     func tint(_ color: Color) -> Glass
@@ -597,40 +595,7 @@ public extension Glass
     }
 }
 
-// MARK: - Shape wrapper (IMPORTANT: now used only for layout/mask)
-
-public struct GlassShape
-{
-    let make: (CGRect) -> AnyShape
-    
-    public init<S: Shape>(_ shape: S)
-    {
-        self.make = { _ in AnyShape(shape) }
-    }
-}
-
-// MARK: - presets
-
-public extension GlassShape
-{
-    static var circle: GlassShape
-    {
-        GlassShape(Circle())
-    }
-    
-    static func rect(cornerRadius: CGFloat, style: RoundedCornerStyle = .continuous) -> GlassShape
-    {
-        GlassShape(RoundedRectangle(cornerRadius: cornerRadius, style: style))
-    }
-    
-    static func capsule(style: RoundedCornerStyle = .continuous) -> GlassShape
-    {
-        GlassShape(Capsule(style: style))
-    }
-}
-
 // MARK: - AnyShape
-
 public struct AnyShape: Shape, @unchecked Sendable
 {
     private let pathBuilder: @Sendable (CGRect) -> Path
@@ -649,66 +614,25 @@ public struct AnyShape: Shape, @unchecked Sendable
 }
 
 // MARK: - Core modifier (visionOS replacement)
-
-private struct GlassEffectModifier: ViewModifier
+private struct GlassEffectModifier<S: InsettableShape>: ViewModifier
 {
     let glass: Glass
-    let shape: GlassShape
-    
-    @State private var rect: CGRect = .zero
-    @State private var isHovered = false
+    let shape: S
     
     func body(content: Content) -> some View
     {
         content
-            .background
-            {
-                GeometryReader { proxy in
-                    let frame = proxy.frame(in: .local)
-                    
-                    ZStack
-                    {
-                        // 1. Glass material layer
-                        shapeView(in: frame)
-                        
-                        // 2. Optional tint overlay
-                        if let tint = glass.tint
-                        {
-                            shapeView(in: frame)
-                                .fill(tint.opacity(0.15 * glass.intensity))
-                                .blendMode(.plusLighter)
-                        }
-                    }
-                    .onAppear { rect = frame }
-                }
-            }
-            .clipShape(shapeView(in: rect))
-            .scaleEffect(glass.isInteractive && isHovered ? 1.05 : 1.0)
-            .animation(.easeInOut(duration: 0.2), value: isHovered)
-            .onHover
-            {
-                if glass.isInteractive
-                {
-                    isHovered = $0
-                }
-            }
-    }
-    
-    // MARK: glass shape builder
-    
-    private func shapeView(in rect: CGRect) -> AnyShape
-    {
-        shape.make(rect)
+            .background(glass.tint)
+            .glassBackgroundEffect(in: shape)
     }
 }
 
 // MARK: - View API
-
 public extension View
 {
-    func glassEffect(
+    func glassEffect<S: InsettableShape>(
         _ glass: Glass = .regular,
-        in shape: GlassShape = .rect(cornerRadius: 16)
+        in shape: S
     ) -> some View
     {
         modifier(GlassEffectModifier(glass: glass, shape: shape))
