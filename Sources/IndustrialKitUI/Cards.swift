@@ -126,7 +126,6 @@ public struct BoxCard<Content: View>: View
                             {
                                 if let displayed_title = title
                                 {
-                                    // Rename Handling
                                     HStack
                                     {
                                         if !is_renaming
@@ -157,11 +156,7 @@ public struct BoxCard<Content: View>: View
                                                         .padding(.leading, 4)
                                                 }
                                             }
-                                            #if !os(visionOS)
                                             .padding(.horizontal, 8)
-                                            #else
-                                            .padding(.horizontal, 32)
-                                            #endif
                                             .padding(.trailing, 4)
                                         }
                                         else
@@ -499,6 +494,7 @@ public struct GlassBoxCard<Content: View>: View
                 {
                     RealityView
                     { content in
+                        #if os(macOS) || os(iOS)
                         content.add(entity)
                         
                         // Camera reposition
@@ -513,9 +509,43 @@ public struct GlassBoxCard<Content: View>: View
                         camera.position = [0, 0, 1]
                         //camera.rotate_x(by: -.pi / 6)
                         content.add(camera)*/
+                        #else
+                        let world = make_world(with: entity)
+                        portal_entity = make_portal(world: world)
+                        
+                        content.add(world)
+                        content.add(portal_entity)
+                        #endif
+                    }
+                    update:
+                    { _ in
+                        #if os(visionOS)
+                        update_portal(with: tile_size)
+                        #endif
                     }
                     .disabled(true)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    #if os(visionOS)
+                    .frame(depth: 2)
+                    .background
+                    {
+                        GeometryReader
+                        { geometry in
+                            Color.clear
+                                .onAppear
+                            {
+                                tile_size = geometry.size
+                                //update_portal(with: geometry.size)
+                            }
+                            .onChange(of: geometry.size)
+                            { new_size, _ in
+                                tile_size = new_size
+                                //update_portal(with: new_size)
+                            }
+                        }
+                        //.border(.green)
+                    }
+                    #endif
                 }
                 
                 // Forward Side
@@ -650,6 +680,58 @@ public struct GlassBoxCard<Content: View>: View
             .offset(y: hovered && !is_renaming ? -2 : 0)
         }
     }
+    
+    #if os(visionOS)
+    @State private var portal_entity = Entity()
+    @State private var tile_size = CGSize()
+    
+    private func make_world(with entity: Entity) -> Entity
+    {
+        let world = Entity()
+        world.components[WorldComponent.self] = .init()
+        
+        let material = UnlitMaterial(color: UIColor(color))//.white)
+        let background = Entity()
+        background.components.set(ModelComponent(
+            mesh: .generateSphere(radius: 0.8),
+            materials: [material]))
+        background.scale.x *= -1
+        world.addChild(background)
+        
+        entity.components[PortalCrossingComponent.self] = .init()
+        
+        world.addChild(entity)
+        
+        return world
+    }
+    
+    private func make_portal(world: Entity) -> Entity
+    {
+        let portal = Entity()
+        portal.components[PortalComponent.self] = .init(target: world)
+        
+        let portalComponent = PortalComponent(
+            target: world,
+            clippingMode: .disabled,
+            crossingMode: .disabled
+        )
+        portal.components.set(portalComponent)
+        
+        return portal
+    }
+    
+    func update_portal(with size: CGSize = CGSize(width: 0.2, height: 0.2))
+    {
+        portal_entity.components.remove(ModelComponent.self)
+        portal_entity.components[ModelComponent.self] = .init(
+            mesh: .generatePlane(
+                width: Float(size.width / 1370),
+                height: Float(size.height / 1370),
+                cornerRadius: Float(0.01)),
+            materials: [PortalMaterial()]
+        )
+    }
+    #endif
 }
 
 //MARK: - Register card view
@@ -741,154 +823,112 @@ let register_card_font_size: CGFloat = 32
 #endif
 
 //MARK: - Cards preview
-struct Cards_Previews: PreviewProvider
+#Preview//(windowStyle: .volumetric)
 {
-    struct Container: View
+    @Previewable @State var is_renaming = [false, false, false]
+    @Previewable @State var names = ["Robotic", "Image", "Entity"]
+    
+    VStack(spacing: 0) //HStack(spacing: 0)
     {
-        @State var is_renaming = [false, false, false]
-        @State var names = ["Robotic", "Image", "Entity"]
-        @State var values: [Float] = [2, 4, 6]
-        
-        var body: some View
+        VStack()
         {
-            Group
-            {
-                VStack(spacing: 0) //HStack(spacing: 0)
-                {
-                    VStack()
-                    {
-                        BoxCard(
-                            title: names[0],
-                            subtitle: "Workspace",
-                            color: .teal,
-                            symbol_name: "cube",
-                            is_renaming: $is_renaming[0]
-                        )
-                        { new_name in
-                            names[0] = new_name
-                        }
-                        .contextMenu
-                        {
-                            RenameButton()
-                                .renameAction
-                            {
-                                withAnimation
-                                {
-                                    is_renaming[0].toggle()
-                                }
-                            }
-                        }
-                        .padding()
-                    }
-                    .padding(4)
-                    .frame(width: 320, height: 192)
-                    
-                    VStack()
-                    {
-                        GlassBoxCard(
-                            title: names[1],
-                            subtitle: "Color Wheel",
-                            color: .green,
-                            image: UIImage(named: "NSTouchBarColorPickerFill"),
-                            is_renaming: $is_renaming[1]
-                        )
-                        { new_name in
-                            names[1] = new_name
-                        }
-                        .contextMenu
-                        {
-                            RenameButton()
-                                .renameAction
-                            {
-                                withAnimation
-                                {
-                                    is_renaming[1].toggle()
-                                }
-                            }
-                        }
-                        .padding()
-                    }
-                    .padding(4)
-                    .frame(width: 320, height: 192)
-                    
-                    VStack()
-                    {
-                        GlassBoxCard(
-                            title: names[2],
-                            entity: ModelEntity(
-                                mesh: .generateBox(size: 1.0, cornerRadius: 0.1),
-                                materials: [SimpleMaterial(color: .white, isMetallic: false)]
-                            ),
-                            is_renaming: $is_renaming[2]
-                        )
-                        { new_name in
-                            names[2] = new_name
-                        }
-                        .contextMenu
-                        {
-                            RenameButton()
-                                .renameAction
-                            {
-                                withAnimation
-                                {
-                                    is_renaming[2].toggle()
-                                }
-                            }
-                        }
-                        .padding()
-                    }
-                    .padding(4)
-                    .frame(width: 320, height: 192)
-                }
-                .padding(8)
-                
-                HStack(spacing: 24)
-                {
-                    RegisterCard(value: $values[0], number: 40, color: .mint)
-                    
-                    RegisterCard(value: $values[1], number: 60, color: .cyan)
-                    
-                    RegisterCard(value: $values[2], number: 20, color: .indigo)
-                }
-                .padding(16)
+            BoxCard(
+                title: names[0],
+                subtitle: "Workspace",
+                color: .teal,
+                symbol_name: "cube",
+                is_renaming: $is_renaming[0]
+            )
+            { new_name in
+                names[0] = new_name
             }
-            .padding(8)
+            .contextMenu
+            {
+                RenameButton()
+                    .renameAction
+                {
+                    withAnimation
+                    {
+                        is_renaming[0].toggle()
+                    }
+                }
+            }
+            .padding()
         }
-    }
-    
-    static var previews: some View
-    {
-        Container()
-    }
-    
-    struct RegistersView_Previews: View
-    {
-        @Binding var registers: [Float]
+        .padding(4)
+        .frame(width: 320, height: 192)
         
-        var body: some View
+        VStack()
         {
-            EmptyView()
+            GlassBoxCard(
+                title: names[1],
+                subtitle: "Color Wheel",
+                color: .green,
+                image: UIImage(named: "NSTouchBarColorPickerFill"),
+                is_renaming: $is_renaming[1]
+            )
+            { new_name in
+                names[1] = new_name
+            }
+            .contextMenu
+            {
+                RenameButton()
+                    .renameAction
+                {
+                    withAnimation
+                    {
+                        is_renaming[1].toggle()
+                    }
+                }
+            }
+            .padding()
         }
-    }
-    
-    struct RegistersSelectors_Previews: View
-    {
-        @Binding var index: [Int]
-        @Binding var indices: [Int]
+        .padding(4)
+        .frame(width: 320, height: 192)
         
-        var body: some View
+        VStack()
         {
-            EmptyView()
+            GlassBoxCard(
+                title: names[2],
+                entity: ModelEntity(
+                    mesh: .generateBox(size: Float(0.1), cornerRadius: Float(0.01)),
+                    materials: [SimpleMaterial(color: .white, isMetallic: false)]
+                ),
+                is_renaming: $is_renaming[2]
+            )
+            { new_name in
+                names[2] = new_name
+            }
+            .contextMenu
+            {
+                RenameButton()
+                    .renameAction
+                {
+                    withAnimation
+                    {
+                        is_renaming[2].toggle()
+                    }
+                }
+            }
+            .padding()
         }
+        .padding(4)
+        .frame(width: 320, height: 192)
     }
+    .padding(8)
+}
+
+#Preview
+{
+    @Previewable @State var values: [Float] = [2, 4, 6]
     
-    struct RegistersDataPreview: View
+    HStack(spacing: 24)
     {
-        @State private var is_presented: Bool = false
+        RegisterCard(value: $values[0], number: 40, color: .mint)
         
-        var body: some View
-        {
-            EmptyView()
-        }
+        RegisterCard(value: $values[1], number: 60, color: .cyan)
+        
+        RegisterCard(value: $values[2], number: 20, color: .indigo)
     }
+    .padding(16)
 }
