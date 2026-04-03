@@ -36,11 +36,11 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
 public extension View
 {
     func inspector<InspectorContent: View>(
-        is_presented: Binding<Bool>,
-        @ViewBuilder inspector_content: @escaping () -> InspectorContent
+        isPresented: Binding<Bool>,
+        @ViewBuilder inspectorContent: @escaping () -> InspectorContent
     ) -> some View
     {
-        self.modifier(InspectorModifier(is_presented: is_presented, inspector_content: inspector_content))
+        self.modifier(InspectorModifier(is_presented: isPresented, inspector_content: inspectorContent))
     }
 }
 #endif
