@@ -18,7 +18,18 @@ import IndustrialKit
         
     }
     
+    // MARK: - Workspace management
+    @Published public var workspace = Workspace()
+    
+    public init(workspace: Workspace)
+    {
+        self.workspace = workspace
+    }
+    
     // MARK: - Windows management
+    private var open = {}
+    private var dismiss = {}
+    
     @Published public var is_opened = false
     {
         didSet
@@ -69,12 +80,12 @@ import IndustrialKit
                 dismissWindow(id: SPendantDefaultID)
             }
      */
-    public func set_windows_functions(_ open: @escaping () -> (), _ dismiss: @escaping () -> ())
+    public func set_windows_functions(
+        _ open: @escaping () -> (),
+        _ dismiss: @escaping () -> ()
+    )
     {
         self.open = open
         self.dismiss = dismiss
     }
-    
-    private var open = {}
-    private var dismiss = {}
 }

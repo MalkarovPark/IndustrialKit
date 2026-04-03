@@ -23,7 +23,7 @@ public struct SpatialPendantView: View
     
     public init(
         controller: PendantController,
-        workspace: Workspace,
+        //workspace: Workspace,
         
         shows_program_indices: Bool = false,
         
@@ -33,7 +33,8 @@ public struct SpatialPendantView: View
     )
     {
         self.controller = controller
-        self.workspace = workspace
+        self.workspace = controller.workspace
+        //self.workspace = workspace
         
         self.shows_program_indices = shows_program_indices
         
@@ -170,21 +171,21 @@ public struct SpatialPendantScene: SwiftUI.Scene
 {
     var window_id: String
     let controller: PendantController
-    let workspace: Workspace
     
-    public init(window_id: String = SPendantDefaultID, controller: PendantController, workspace: Workspace = Workspace())
+    public init(
+        window_id: String = SPendantDefaultID,
+        controller: PendantController
+    )
     {
         self.window_id = window_id
         self.controller = controller
-        
-        self.workspace = workspace
     }
     
     @SceneBuilder public var body: some SwiftUI.Scene
     {
         WindowGroup(id: window_id)
         {
-            SpatialPendantView(controller: controller, workspace: workspace)
+            SpatialPendantView(controller: controller)//, workspace: controller.workspace)
                 .onDisappear(perform: controller.on_dismiss)
                 .padding([.horizontal, .top], 16)
         }
@@ -213,7 +214,7 @@ struct SpatialPendant_Previews: PreviewProvider
             {
                 SpatialPendantView(
                     controller: pendant_controller,
-                    workspace: workspace,
+                    //workspace: workspace,
                     shows_program_indices: true
                 )
                 #if os(visionOS)
@@ -254,14 +255,14 @@ struct SpatialPendant_Previews: PreviewProvider
                 pendant_controller.is_opened = false
             }
             
-            //print(workspace.selected_object?.name ?? "Nothing")
-            
             inc += 1
             if inc > 4 { inc = 0 }
         }
         
         private func workspace_preparation()
         {
+            pendant_controller.workspace = workspace
+            
             workspace.robots.append(Robot(name: "6DOF Robot"))
             workspace.robots.append(Robot(name: "Portal Robot"))
             
