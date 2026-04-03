@@ -11,31 +11,22 @@ import SwiftUI
 
 public struct InspectorModifier<InspectorContent: View>: ViewModifier
 {
-    @Binding var isPresented: Bool
-    let inspectorContent: () -> InspectorContent
-
+    @Binding var is_presented: Bool
+    let inspector_content: () -> InspectorContent
+    
     public func body(content: Content) -> some View
     {
-        ZStack(alignment: .trailing)
+        HStack(spacing: 0)
         {
             content
-
-            if isPresented
+            
+            if is_presented
             {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-                    .onTapGesture
-                    {
-                        isPresented = false
-                    }
-                    .transition(.opacity)
-                    .animation(.easeInOut, value: isPresented)
-                
-                inspectorContent()
-                    .background(.bar)
+                inspector_content()
+                    .background(.regularMaterial)
                     .fixedSize(horizontal: true, vertical: false)
                     .transition(.move(edge: .trailing))
-                    .animation(.easeInOut, value: isPresented)
+                    .animation(.easeInOut, value: is_presented)
             }
         }
     }
@@ -44,9 +35,12 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
 //MARK: - Inspector modifier for visionOS
 public extension View
 {
-    func inspector<InspectorContent: View>(isPresented: Binding<Bool>, @ViewBuilder inspectorContent: @escaping () -> InspectorContent) -> some View
+    func inspector<InspectorContent: View>(
+        is_presented: Binding<Bool>,
+        @ViewBuilder inspector_content: @escaping () -> InspectorContent
+    ) -> some View
     {
-        self.modifier(InspectorModifier(isPresented: isPresented, inspectorContent: inspectorContent))
+        self.modifier(InspectorModifier(is_presented: is_presented, inspector_content: inspector_content))
     }
 }
 #endif
