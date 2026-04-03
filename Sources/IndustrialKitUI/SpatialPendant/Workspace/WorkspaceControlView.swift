@@ -348,7 +348,7 @@ private struct ProductionProgramView: View
             HStack
             {
                 Text(program.name)
-                #if os(macOS)
+                #if os(macOS) || os(visionOS)
                     .font(.system(size: 14, design: .rounded))
                 #else
                     .font(.system(size: 18, design: .rounded))
@@ -625,7 +625,7 @@ private struct PerformingControlView: View
 // MARK: - Sizes
 let element_card_maximum = element_card_scale + element_card_spacing
 
-#if os(macOS)
+#if os(macOS) || os(visionOS)
 let element_card_scale: CGFloat = 35
 let element_card_spacing: CGFloat = 10
 let element_card_font_size: CGFloat = 14

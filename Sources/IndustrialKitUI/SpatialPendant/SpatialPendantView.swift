@@ -70,17 +70,17 @@ public struct SpatialPendantView: View
                         case is Part:
                             ZStack
                             {
-                                Rectangle()
-                                    .fill(.clear)
-                                    .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                                //Rectangle()
+                                    //.fill(.clear)
+                                    //.glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
                                 
-                                /*Text("Part")
+                                Text("Part")
                                 #if os(macOS)
                                     .font(.system(size: 14, design: .rounded))
                                 #else
                                     .font(.system(size: 18, design: .rounded))
                                 #endif
-                                    .foregroundStyle(.secondary)*/
+                                    .foregroundStyle(.secondary)
                             }
                         case .some(_):
                             Text("Nothing")
