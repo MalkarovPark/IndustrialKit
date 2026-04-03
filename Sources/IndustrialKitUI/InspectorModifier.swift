@@ -16,14 +16,23 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        HStack(spacing: 0)
+        ZStack(alignment: .trailing)
         {
             content
-            
+
             if is_presented
             {
+                /*Color.black.opacity(0.2)
+                    .ignoresSafeArea()
+                    .onTapGesture
+                    {
+                        is_presented = false
+                    }
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: is_presented)*/
+                
                 inspector_content()
-                    .background(.regularMaterial)
+                    .background(.thickMaterial)
                     .fixedSize(horizontal: true, vertical: false)
                     .transition(.move(edge: .trailing))
                     .animation(.easeInOut, value: is_presented)
