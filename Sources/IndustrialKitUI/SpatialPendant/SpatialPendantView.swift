@@ -68,27 +68,12 @@ public struct SpatialPendantView: View
                                 on_update: on_update_tool
                             )
                         case is Part:
-                            #if !os(visionOS)
                             ZStack
                             {
-                                //Rectangle()
-                                    //.fill(.clear)
-                                    //.glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
-                                
-                                Text("Part")
-                                #if os(macOS)
-                                    .font(.system(size: 14, design: .rounded))
-                                #else
-                                    .font(.system(size: 18, design: .rounded))
-                                #endif
-                                    .foregroundStyle(.secondary)
+                                Rectangle()
+                                    .fill(.clear)
+                                    .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
                             }
-                            #else
-                            Text("Part")
-                                .font(.system(size: 18, design: .rounded))
-                                .foregroundStyle(.secondary)
-                                .frame(width: pendant_content_width)
-                            #endif
                         case .some(_):
                             Text("Nothing")
                         case .none:
@@ -141,9 +126,9 @@ public struct SpatialPendantView: View
             case is Part:
                 ZStack
                 {
-                    Rectangle()
-                        .fill(.clear)
-                        .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                    Text("Part")
+                        .font(.system(size: 18, design: .rounded))
+                        .foregroundStyle(.secondary)
                 }
             case .some(_):
                 Text("Nothing")
