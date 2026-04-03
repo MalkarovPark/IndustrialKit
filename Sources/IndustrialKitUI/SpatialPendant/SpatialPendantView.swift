@@ -68,6 +68,7 @@ public struct SpatialPendantView: View
                                 on_update: on_update_tool
                             )
                         case is Part:
+                            #if !os(visionOS)
                             ZStack
                             {
                                 //Rectangle()
@@ -82,6 +83,12 @@ public struct SpatialPendantView: View
                                 #endif
                                     .foregroundStyle(.secondary)
                             }
+                            #else
+                            Text("Part")
+                                .font(.system(size: 18, design: .rounded))
+                                .foregroundStyle(.secondary)
+                                .frame(width: pendant_content_width)
+                            #endif
                         case .some(_):
                             Text("Nothing")
                         case .none:
