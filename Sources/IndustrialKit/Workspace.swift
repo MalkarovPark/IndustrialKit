@@ -78,11 +78,13 @@ import SwiftUI
             break
         }
         
+        #if os(macOS) || os(iOS)
         // Camera pivot reposition
         if let selected_object = selected_object
         {
             focus(on: selected_object.entity)
         }
+        #endif
         
         self.objectWillChange.send() // UI only
     }
@@ -111,7 +113,9 @@ import SwiftUI
     
     public func delete_object(_ object: WorkspaceObject)
     {
+        #if os(macOS) || os(iOS)
         focus(on: nil)
+        #endif
         
         object.entity.removeFromParent() //Change to separate removes for objects?
         
@@ -1598,39 +1602,17 @@ import SwiftUI
         
         scene_content?.add(workspace_anchor) // Physics
         
-        // Place (connect) camera
-        if workspace_camera == nil
-        {
-            // Camera setup
-            let camera = PerspectiveCamera()
-            camera.camera.fieldOfViewInDegrees = 60
-            camera.position = [0, 1, 0]
-            camera.rotate_x(by: -.pi / 6)
-            
-            workspace_entity.addChild(camera)
-            workspace_camera = camera
-            workspace_entity.addChild(workspace_camera_target)
-            
-            // Target entity setup
-            let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.5, depth: 0.5))
-            wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
-            workspace_camera_target.addChild(wall)
-            target_tile = wall
-            wall.isEnabled = false
-            
-            // Prebuild grid
-            let cx = Int(round(camera.position.x / cell_size))
-            let cz = Int(round(camera.position.z / cell_size))
-            
-            create_grid_async(center_x: cx, center_z: cz)
-        }
-        
         // Place grid
-        _ = content.subscribe(to: SceneEvents.Update.self)
+        let cx = Int(round(0 / cell_size))
+        let cz = Int(round(0 / cell_size))
+        
+        create_grid_async(center_x: cx, center_z: cz)
+        
+        /*_ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self, let camera = self.workspace_camera else { return }
             self.update_grid(camera_position: camera.position)
-        }
+        }*/
         
         // Place pointer
         workspace_entity.addChild(pointer_entity)
@@ -1650,10 +1632,12 @@ import SwiftUI
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
             
+            #if os(macOS) || os(iOS)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
             {
                 self.focus(on: nil) // Focus on a whole workspace
             }
+            #endif
             
             completion()
         }
@@ -1702,9 +1686,10 @@ import SwiftUI
         }
     }
     
-    // MARK: Camera
     private var workspace_anchor = AnchorEntity(world: .zero)
     
+    #if os(macOS) || os(iOS)
+    // MARK: Camera
     private var workspace_camera: PerspectiveCamera?
     private var workspace_camera_target = Entity()
     
@@ -1874,6 +1859,7 @@ import SwiftUI
             tile.scale = SIMD3<Float>(repeating: clamped)
         }
     }
+    #endif
     
     #if os(macOS) || os(iOS)
     public func remove_entity(from content: RealityViewCameraContent)
@@ -2188,8 +2174,10 @@ import SwiftUI
         deselect_object()
         pointer_entity.removeFromParent()
         
+        #if os(macOS) || os(iOS)
         // Camera pivot reposition
         focus(on: nil)
+        #endif
         
         self.objectWillChange.send() // UI only
     }
@@ -2218,11 +2206,13 @@ import SwiftUI
             break
         }
         
+        #if os(macOS) || os(iOS)
         // Camera pivot reposition
         if let selected_object = selected_object
         {
             focus(on: selected_object.entity)
         }
+        #endif
         
         self.objectWillChange.send() // UI only
     }
