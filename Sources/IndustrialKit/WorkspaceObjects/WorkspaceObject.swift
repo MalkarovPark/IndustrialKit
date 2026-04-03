@@ -287,6 +287,7 @@ import RealityKit
     /// - Parameter entity: The entity to configure.
     open func extend_entity_preparation(_ entity: Entity) {}
     
+    #if os(macOS) || os(iOS)
     /// Places the entity into the specified RealityKit scene content.
     ///
     /// This method ensures that the underlying model entity is available
@@ -337,6 +338,36 @@ import RealityKit
             }
         }
     }
+    #else
+    public func place_entity(
+        in content: RealityViewContent,
+        applying_position: Bool = false
+    )
+    {
+        Task
+        {
+            // Wait until bot.entity becomes available, then place it once
+            while model_entity == nil
+            {
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+            }
+            
+            content.add(entity)
+            
+            extend_entity_placement(entity)
+        }
+        
+        if applying_position
+        {
+            Task
+            {
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+                
+                update_entity_position() //entity.update_position(position)
+            }
+        }
+    }
+    #endif
     
     /// Updates the entity transform according to the current spatial configuration.
     public func update_entity_position()

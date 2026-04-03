@@ -1490,8 +1490,13 @@ import SwiftUI
     // MARK: - Visual Functions
     #if canImport(RealityKit)
     private var workspace_entity = Entity()
+    #if os(macOS) || os(iOS)
     private var scene_content: RealityViewCameraContent?
+    #else
+    private var scene_content: RealityViewContent?
+    #endif
     
+    #if os(macOS) || os(iOS)
     public func place_entity(
         in content: RealityViewCameraContent,
         completion: @escaping () -> () = {}
@@ -1522,7 +1527,6 @@ import SwiftUI
             target_tile = wall
             wall.isEnabled = false
             
-            #if !os(visionOS)
             workspace_camera_target.addChild(wall)
             scene_content?.cameraTarget = workspace_camera_target
             
@@ -1542,7 +1546,6 @@ import SwiftUI
                     self.move_camera_target()
                 }
             }
-            #endif
             
             // Prebuild grid
             let cx = Int(round(camera.position.x / cell_size))
@@ -1584,6 +1587,78 @@ import SwiftUI
             completion()
         }
     }
+    #else
+    public func place_entity(
+        in content: RealityViewContent,
+        completion: @escaping () -> () = {}
+    )
+    {
+        scene_content = content
+        scene_content?.add(workspace_entity)
+        
+        scene_content?.add(workspace_anchor) // Physics
+        
+        // Place (connect) camera
+        if workspace_camera == nil
+        {
+            // Camera setup
+            let camera = PerspectiveCamera()
+            camera.camera.fieldOfViewInDegrees = 60
+            camera.position = [0, 1, 0]
+            camera.rotate_x(by: -.pi / 6)
+            
+            workspace_entity.addChild(camera)
+            workspace_camera = camera
+            workspace_entity.addChild(workspace_camera_target)
+            
+            // Target entity setup
+            let wall = ModelEntity(mesh: MeshResource.generatePlane(width: 0.5, depth: 0.5))
+            wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
+            workspace_camera_target.addChild(wall)
+            target_tile = wall
+            wall.isEnabled = false
+            
+            // Prebuild grid
+            let cx = Int(round(camera.position.x / cell_size))
+            let cz = Int(round(camera.position.z / cell_size))
+            
+            create_grid_async(center_x: cx, center_z: cz)
+        }
+        
+        // Place grid
+        _ = content.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self, let camera = self.workspace_camera else { return }
+            self.update_grid(camera_position: camera.position)
+        }
+        
+        // Place pointer
+        workspace_entity.addChild(pointer_entity)
+        pointer_entity.isEnabled = false
+        let bounding_box = make_wire_bounding_box()
+        bounding_box.addChild(make_object_pointer_entity())
+        pointer_entity.addChild(bounding_box)
+        _ = content.subscribe(to: SceneEvents.Update.self)
+        { [weak self] _ in
+            guard let self else { return }
+            
+            if self.selected_object != nil { self.update_pointer_entity() } // Dynamic pointer update
+        }
+        
+        load_all_modules_entities
+        {
+            self.place_physical_floor() // Place floor
+            self.place_objects() // Place objects
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+            {
+                self.focus(on: nil) // Focus on a whole workspace
+            }
+            
+            completion()
+        }
+    }
+    #endif
     
     // MARK: Entities from modules
     private func load_all_modules_entities(_ completion: @escaping () -> Void = {})
@@ -1800,11 +1875,19 @@ import SwiftUI
         }
     }
     
+    #if os(macOS) || os(iOS)
     public func remove_entity(from content: RealityViewCameraContent)
     {
         content.remove(workspace_entity)
         grid_lines.removeAll()
     }
+    #else
+    public func remove_entity(from content: RealityViewContent)
+    {
+        content.remove(workspace_entity)
+        grid_lines.removeAll()
+    }
+    #endif
     
     // MARK: Grid
     private var grid_visible = true

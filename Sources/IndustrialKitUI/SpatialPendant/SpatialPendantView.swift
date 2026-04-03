@@ -206,7 +206,11 @@ struct SpatialPendant_Previews: PreviewProvider
         @StateObject var pendant_controller = PendantController()
         
         @State private var is_pan = false
+        #if os(macOS) || os(iOS)
         @State private var scene_content: RealityViewCameraContent?
+        #else
+        @State private var scene_content: RealityViewContent?
+        #endif
         
         var body: some View
         {

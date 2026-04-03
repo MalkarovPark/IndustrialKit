@@ -562,7 +562,7 @@ public extension Entity
 
 // MARK: - visionOS compatibility.
 #if os(visionOS)
-public typealias RealityViewCameraContent = RealityViewContent
+//public typealias RealityViewCameraContent = RealityViewContent
 
 // MARK: - Glass
 public struct Glass: Equatable, @unchecked Sendable
