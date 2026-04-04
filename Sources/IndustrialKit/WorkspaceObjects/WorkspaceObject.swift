@@ -28,6 +28,7 @@ import RealityKit
 ///
 /// You can subclass ``WorkspaceObject`` to define custom types of
 /// production resources and extend system functionality.
+/// 
 @MainActor open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable
 {
     /// Returns a Boolean value indicating whether two objects are equal.
@@ -88,6 +89,7 @@ import RealityKit
         
     }
     
+    // MARK: - Initializers
     /// Creates a workspace object with the specified name.
     ///
     /// - Parameter name: The name of the object.
@@ -459,6 +461,7 @@ import RealityKit
 /// A structure that represents serialized workspace object data.
 ///
 /// Use this type to store and restore object configuration.
+///
 public struct WorkspaceObjectFileData: Codable
 {
     public var name: String
@@ -497,6 +500,7 @@ public struct WorkspaceObjectFileData: Codable
 ///
 /// The identifier stores the object type and name for interaction
 /// and processing in the scene.
+///
 public struct ObjectEntityIdentifier: Component
 {
     /// The type of the workspace object associated with the entity.
@@ -570,6 +574,7 @@ public enum DeviceMode: String, CaseIterable, Codable
 /// A protocol that represents a digital twin of a device.
 ///
 /// A device twin synchronizes a virtual model with a physical or simulated device.
+///
 public protocol DeviceTwin: WorkspaceObject, ObservableObject
 {
     /// The operating mode of the device.
@@ -616,6 +621,7 @@ public protocol DeviceTwin: WorkspaceObject, ObservableObject
 /// A protocol for objects that produce state output.
 ///
 /// Provides mechanisms for periodic data acquisition and update.
+///
 public protocol StateOutputCapable: WorkspaceObject, ObservableObject
 {
     /// The current state data of the device.

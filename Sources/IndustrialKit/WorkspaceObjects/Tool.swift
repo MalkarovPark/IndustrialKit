@@ -30,6 +30,7 @@ import RealityKit
 ///
 /// Use the ``perform(_:)`` method to initiate performing of an operation
 /// associated with a given ``OperationCode``.
+///
 open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
 {
     // MARK: - Initializers
@@ -485,7 +486,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         return programs.count
     }
     
-    // MARK: Single Operation
+    // MARK: - Single Operation
     /// A collection of available operation codes.
     @Published public var codes = [OperationCodeInfo]()
     
@@ -746,7 +747,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         program_performed = false // Control Buttons (UI)
     }
     
-    /// Selects the next operation code.
+    /// Selects the next operation code and continues program performing.
     private func select_next_code()
     {
         guard let selected_program = self.selected_program
@@ -781,25 +782,30 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// A handler called when program performing finishes.
+    /// A closure invoked when program performing finishes successfully.
+    ///
+    /// Use this handler to trigger post-performing actions such as UI updates
+    /// or workflow continuation.
     public var finish_handler: (() -> Void) = {}
     
-    /// Clears the finish handler.
+    /// Resets the finish handler to an empty closure.
     public func clear_finish_handler()
     {
         finish_handler = {}
     }
     
-    /// A handler called when an error occurs.
+    /// A closure invoked when an error occurs during program performing.
+    ///
+    /// - Parameter error: The error describing the failure.
     public var error_handler: ((Error) -> Void) = { _ in }
     
-    /// Clears the error handler.
+    /// Resets the error handler to a default empty implementation.
     public func clear_error_handler()
     {
         error_handler = { _ in }
     }
     
-    /// Resets performing state of the tool.
+    /// Resets tool performing state and program progress.
     public func reset_performing()
     {
         guard let selected_program = self.selected_program else { return }
@@ -1152,6 +1158,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
 ///
 /// This structure contains all data required to restore tool state,
 /// including programs, configuration, device parameters, and physics.
+/// 
 public struct ToolFileData: Codable
 {
     public var object: WorkspaceObjectFileData

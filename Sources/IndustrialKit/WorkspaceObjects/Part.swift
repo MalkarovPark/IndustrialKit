@@ -27,19 +27,29 @@ import SwiftUI
 ///
 /// Use ``Part`` instances to model the physical environment and material
 /// flow within a robotic workspace.
+///
 open class Part: WorkspaceObject
 {
-    // MARK: - Init functions
+    // MARK: - Initializers
+    /// Creates a part instance with default parameters.
     public override init()
     {
         super.init()
     }
     
+    /// Creates a part with a specified name.
+    ///
+    /// - Parameter name: A human-readable identifier of the part.
     public override init(name: String)
     {
         super.init(name: name)
     }
     
+    /// Creates a part with a name and associated entity resource.
+    ///
+    /// - Parameters:
+    ///   - name: A human-readable identifier.
+    ///   - entity_name: A name of the associated scene entity.
     public override init(
         name: String,
         entity_name: String
@@ -48,7 +58,14 @@ open class Part: WorkspaceObject
         super.init(name: name, entity_name: entity_name)
     }
     
-    /// Inits part by name and part module.
+    /// Creates a part instance using a module configuration.
+    ///
+    /// - Parameters:
+    ///   - name: A part identifier.
+    ///   - module: A part module defining structure and geometry.
+    ///   - is_internal: A flag indicating whether the module is internal.
+    ///
+    /// The module entity is loaded asynchronously and applied when available.
     public init(
         name: String,
         module: PartModule,
@@ -62,6 +79,12 @@ open class Part: WorkspaceObject
         import_module(module)
     }
     
+    /// Creates a part instance using a module name.
+    ///
+    /// - Parameters:
+    ///   - name: A part identifier.
+    ///   - module_name: A module identifier.
+    ///   - is_internal: A flag indicating internal or external module source.
     public override init(
         name: String,
         module_name: String,
@@ -72,21 +95,28 @@ open class Part: WorkspaceObject
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
     
+    // MARK: - Entity Preparation
+    /// Extends entity preparation by applying visual and physical configuration.
+    ///
+    /// - Parameter entity: A root entity representing the part.
+    ///
+    /// This method updates model color and physics state after the entity
+    /// is loaded or modified.
     override open func extend_entity_preparation(_ entity: Entity)
     {
         update_model_color()
         update_model_physics()
     }
     
-    // MARK: - Module handling
-    /**
-     Sets modular components to object instance.
-     - Parameters:
-        - module: A part module.
-     
-     Set the following components:
-     - Scene Node
-     */
+    // MARK: - Module Handling
+    /// Imports a part module and applies its entity representation.
+    ///
+    /// The method asynchronously waits for the module entity to become available,
+    /// then clones and imports it into the part instance.
+    ///
+    /// - Parameter module: A part module describing geometry and structure.
+    ///
+    /// Performing of entity import occurs on the main actor.
     public func import_module(_ module: PartModule)
     {
         module_name = module.name
@@ -111,10 +141,16 @@ open class Part: WorkspaceObject
         }*/
     }
     
-    /// Imported internal part modules.
+    /// A collection of registered external part modules.
+    ///
+    /// External modules are loaded dynamically from external sources.
     nonisolated(unsafe) public static var internal_modules = [PartModule]()
     
-    /// Imported external part modules.
+    /// Imports a module by name from registered modules.
+    ///
+    /// - Parameters:
+    ///   - name: A module identifier.
+    ///   - is_internal: A flag indicating module source.
     nonisolated(unsafe) public static var external_modules = [PartModule]()
     
     public override func import_module(_ name: String, is_internal: Bool = true)
@@ -130,16 +166,19 @@ open class Part: WorkspaceObject
         import_module(modules[index])
     }
     
+    /// Registers external part modules by their names.
+    ///
+    /// Existing external modules are replaced.
+    ///
+    /// - Parameter names: A list of module identifiers.
     override open var has_avaliable_module: Bool
     {
         return is_internal_module ? Part.internal_modules.contains(where: { $0.name == module_name }) : Part.external_modules.contains(where: { $0.name == module_name })
     }
     
-    /**
-     Imports external modules by names.
-     - Parameters:
-        - name: A list of external modules names.
-     */
+    /// Performs loading of all internal module entities asynchronously.
+    ///
+    /// - Parameter completion: A callback invoked after performing completes.
     public static func import_external_modules(by names: [String])
     {
         Part.external_modules.removeAll()
@@ -150,7 +189,9 @@ open class Part: WorkspaceObject
         }
     }
     
-    /// Performs loading to all entities from internal modules.
+    /// Performs loading of all external module entities asynchronously.
+    ///
+    /// - Parameter completion: A callback invoked after performing completes.
     public static func load_all_internal_modules_entities(_ completion: @escaping () -> Void = {})
     {
         Task
@@ -163,7 +204,9 @@ open class Part: WorkspaceObject
         }
     }
     
-    /// Performs loading to all entities from external modules.
+    /// Performs loading of all external module entities asynchronously.
+    ///
+    /// - Parameter completion: A callback invoked after performing completes.
     public static func load_all_external_modules_entities(_ completion: @escaping () -> Void = {})
     {
         Task
@@ -177,14 +220,18 @@ open class Part: WorkspaceObject
     }
     
     // MARK: - Physics
-    /**
-     Physics body data of part.
-     
-     > This variable is codable.
-     */
+    /// Physical body configuration of the part.
+    ///
+    /// This value defines collision shape, mass, and other physics properties
+    /// applied to the part entity.
+    ///
+    /// > This property is codable.
     @Published public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
     
-    /// The state of physics calculation for part node.
+    /// A Boolean value that indicates whether physics simulation is enabled.
+    ///
+    /// When enabled, physics components are applied to the entity hierarchy.
+    /// When disabled, all physics components are removed.
     public var physics_enabled = false
     {
         didSet
@@ -193,6 +240,10 @@ open class Part: WorkspaceObject
         }
     }
     
+    /// Updates physics components of the part entity.
+    ///
+    /// Applies or removes physics simulation depending on the current
+    /// ``physics_enabled`` state.
     public func update_model_physics()
     {
         if physics_enabled
@@ -210,6 +261,10 @@ open class Part: WorkspaceObject
     }
     
     // MARK: - Color
+    /// A Boolean value that indicates whether a custom color is applied.
+    ///
+    /// When enabled, the part model uses the specified ``color`` value.
+    /// When disabled, original material textures are restored.
     public var is_custom_color: Bool = false
     {
         didSet
@@ -220,7 +275,10 @@ open class Part: WorkspaceObject
     
     private var color_code: String = "#05A89D" // Color hex for part without scene figure
     
-    /// Part model color.
+    /// The color of the part model.
+    ///
+    /// Setting this value updates the visual appearance of the entity.
+    /// The color is stored internally as a hexadecimal string representation.
     public var color: Color
     {
         get
@@ -237,6 +295,9 @@ open class Part: WorkspaceObject
     
     private var saved_basecolor_textures: [ObjectIdentifier: [MaterialParameters.Texture?]] = [:]
     
+    /// Updates the visual appearance of the part model.
+    ///
+    /// Applies or removes color tint while preserving original material textures.
     private func update_model_color()
     {
         guard let model_entity = model_entity else { return }
@@ -316,8 +377,11 @@ open class Part: WorkspaceObject
         }
     }
     
-    // MARK: - Visual Functions
+    // MARK: - Visual
     #if canImport(RealityKit)
+    /// An identifier used for tagging the entity within the scene.
+    ///
+    /// The identifier encodes the object type and its name.
     override public var entity_tag: ObjectEntityIdentifier
     {
         return ObjectEntityIdentifier(type: .part, name: name)
@@ -325,6 +389,9 @@ open class Part: WorkspaceObject
     #endif
     
     // MARK: - File Data
+    /// Creates a part instance from serialized file data.
+    ///
+    /// - Parameter file: A data structure containing part configuration.
     public convenience init(file: PartFileData)
     {
         self.init(file: file.object) //self.init()
@@ -336,6 +403,9 @@ open class Part: WorkspaceObject
         self.color_code = file.color_code
     }
     
+    /// Generates a serializable representation of the part.
+    ///
+    /// - Returns: A ``PartFileData`` instance containing current state.
     public func file_data() -> PartFileData
     {
         return PartFileData(
@@ -361,6 +431,9 @@ open class Part: WorkspaceObject
         )
     }
     
+    /// Creates a part instance by copying data from another part.
+    ///
+    /// - Parameter object: A source part instance.
     public convenience init(file_from_object object: Part)
     {
         let file: PartFileData = object.file_data()
@@ -369,6 +442,12 @@ open class Part: WorkspaceObject
 }
 
 // MARK: - File Data
+/// A serializable representation of a part configuration.
+///
+/// This structure stores all necessary data to reconstruct a part,
+/// including its workspace configuration, physics parameters,
+/// and visual customization.
+///
 public struct PartFileData: Codable
 {
     public var object: WorkspaceObjectFileData

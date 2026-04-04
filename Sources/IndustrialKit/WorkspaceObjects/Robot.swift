@@ -34,22 +34,29 @@ import RealityKit
 ///
 /// This abstraction enables deterministic motion planning and performing
 /// of robotic tasks such as manipulation, assembly, and automated processing.
+/// 
 open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
 {
-    // MARK: - Init functions
-    /// Inits robot with default parameters.
+    // MARK: - Initializers
+    /// Creates a robot instance with default parameters.
     public override init()
     {
         super.init()
     }
     
-    /// Inits robot by name.
+    /// Creates a robot instance with a specified name.
+    ///
+    /// - Parameter name: A human-readable identifier of the robot.
     public override init(name: String)
     {
         super.init(name: name)
     }
     
-    /// Inits robot by name and entity name.
+    /// Creates a robot instance with a name and associated entity resource.
+    ///
+    /// - Parameters:
+    ///   - name: A human-readable identifier.
+    ///   - entity_name: A name of the associated scene entity.
     public override init(
         name: String,
         entity_name: String
@@ -58,7 +65,14 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         super.init(name: name, entity_name: entity_name)
     }
     
-    /// Inits robot by name, entity name, controller and connector.
+    /// Creates a fully configured robot instance.
+    ///
+    /// - Parameters:
+    ///   - name: A human-readable identifier.
+    ///   - entity_name: A name of the associated scene entity.
+    ///   - end_entity_name: A name of the end-effector entity.
+    ///   - model_controller: A controller responsible for virtual model performing.
+    ///   - connector: A connector responsible for real-device communication.
     public init(
         name: String,
         entity_name: String,
@@ -77,6 +91,14 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         self.connector = connector
     }
     
+    /// Creates a robot instance from an existing entity.
+    ///
+    /// - Parameters:
+    ///   - name: A robot identifier.
+    ///   - entity: A 3D entity representing the robot model.
+    ///   - end_entity_name: A name of the end-effector entity.
+    ///   - model_controller: A model controller instance.
+    ///   - connector: A device connector instance.
     public convenience init(
         name: String,
         entity: Entity,
@@ -95,7 +117,12 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         self.connector = connector
     }
     
-    /// Inits robot by name and robot module.
+    /// Creates a robot instance from a module configuration.
+    ///
+    /// - Parameters:
+    ///   - name: A robot identifier.
+    ///   - module: A robot module defining structure and behavior.
+    ///   - is_internal: A flag indicating whether the module is internal.
     public init(
         name: String,
         module: RobotModule,
@@ -109,6 +136,12 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         import_module(module)
     }
     
+    /// Creates a robot instance using a module name.
+    ///
+    /// - Parameters:
+    ///   - name: A robot identifier.
+    ///   - module_name: A module identifier.
+    ///   - is_internal: A flag indicating whether the module is internal.
     public override init(
         name: String,
         module_name: String,
@@ -119,12 +152,26 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         super.init(name: name, module_name: module_name, is_internal: is_internal)
     }
     
+    /// Creates a robot instance using a module name.
+    ///
+    /// - Parameters:
+    ///   - name: A robot identifier.
+    ///   - module_name: A module identifier.
+    ///   - is_internal: A flag indicating whether the module is internal.
     private func set_default_cell_parameters()
     {
         self.origin_position = Robot.default_origin_position
         self.space_scale = Robot.default_space_scale
     }
     
+    // MARK: - Entity Preparation
+    /// Extends entity preparation by assembling robot components.
+    ///
+    /// This method attaches auxiliary entities such as working area,
+    /// position pointer, and position program visualization, and connects
+    /// the kinematic structure using the model controller.
+    ///
+    /// - Parameter entity: A root entity representing the robot.
     override open func extend_entity_preparation(_ entity: Entity)
     {
         // Place robot accesories
@@ -163,17 +210,13 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         update_model()
     }
     
-    // MARK: - Module handling
-    /**
-     Sets modular components to object instance.
-     - Parameters:
-        - module: A robot module.
-     
-     Set the following components:
-     - Robot Model Entity
-     - Robot Model Controller
-     - Robot Connector
-     */
+    // MARK: - Module Handling
+    /// Imports a robot module and configures the instance.
+    ///
+    /// The method asynchronously loads the module entity and applies
+    /// controller, connector, and spatial configuration parameters.
+    ///
+    /// - Parameter module: A robot module describing structure and behavior.
     public func import_module(_ module: RobotModule)
     {
         module_name = module.name
@@ -206,17 +249,23 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         end_entity_name = module.end_entity_name
     }
     
+    /// A Boolean value indicating whether a compatible module is available.
     override open var has_avaliable_module: Bool
     {
         return is_internal_module ? Robot.internal_modules.contains(where: { $0.name == module_name }) : Robot.external_modules.contains(where: { $0.name == module_name })
     }
     
-    /// Imported internal robot modules.
+    /// A collection of registered internal robot modules.
     nonisolated(unsafe) public static var internal_modules = [RobotModule]()
     
-    /// Imported external robot modules.
+    /// A collection of registered external robot modules.
     nonisolated(unsafe) public static var external_modules = [RobotModule]()
     
+    /// Imports a module by name from the registered module pool.
+    ///
+    /// - Parameters:
+    ///   - name: A module identifier.
+    ///   - is_internal: A flag indicating module source.
     public override func import_module(_ name: String, is_internal: Bool = true)
     {
         let modules = is_internal ? Robot.internal_modules : Robot.external_modules
@@ -230,11 +279,11 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         import_module(modules[index])
     }
     
-    /**
-     Imports external modules by names.
-     - Parameters:
-        - name: A list of external modules names.
-     */
+    /// Registers external modules by their names.
+    ///
+    /// Existing external modules are replaced.
+    ///
+    /// - Parameter names: A list of module identifiers.
     public static func import_external_modules(by names: [String])
     {
         Robot.external_modules.removeAll()
@@ -245,7 +294,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Performs loading to all entities from internal modules.
+    /// Performs loading of all internal module entities.
+    ///
+    /// - Parameter completion: A closure invoked after performing completes.
     public static func load_all_internal_modules_entities(_ completion: @escaping () -> Void = {})
     {
         Task
@@ -259,7 +310,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Performs loading to all entities from external modules.
+    /// Performs loading of all external module entities.
+    ///
+    /// - Parameter completion: A closure invoked after performing completes.
     public static func load_all_external_modules_entities(_ completion: @escaping () -> Void = {})
     {
         Task
@@ -274,12 +327,12 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     // MARK: - Digital Twin
-    /**
-     Device state of robot.
-     
-     If did set *Simulation* – class instance try to connects a real tool by connector.
-     If did set *Real* – class instance disconnects from a real tool.
-     */
+    /// Defines the operating mode of the robot.
+    ///
+    /// - simulation: Performs using a virtual model.
+    /// - real: Performs on a physical device.
+    ///
+    /// Changing the mode affects connection and synchronization behavior.
     @Published public var device_mode: DeviceMode = .simulation
     {
         didSet
@@ -298,7 +351,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Updates tool visual model by model controller in connector.
+    /// A Boolean value indicating whether digital twin synchronization is enabled.
+    ///
+    /// When enabled, the model controller state is mirrored to the connector.
     @Published public var is_twin_sync = false
     {
         didSet
@@ -315,7 +370,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// A robot visual model controller.
+    /// A controller responsible for robot model performing and kinematics.
+    ///
+    /// Updating this value reconnects the model entity automatically.
     public var model_controller = RobotModelController()
     {
         didSet // Entities reconnection if model contoller changed
@@ -329,11 +386,13 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     public typealias ModelControllerType = RobotModelController
     
-    /// A tool connector.
+    /// A connector responsible for communication with a real robot device.
     public var connector: RobotConnector = RobotConnector()
     public typealias ConnectorType = RobotConnector
     
-    /// Connects to real robot.
+    /// Establishes a connection to a real robot device.
+    ///
+    /// The method performs only when the device mode is set to `.real`.
     public func connect_device()
     {
         guard device_mode == .real else { return }
@@ -341,7 +400,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         connector.connect()
     }
     
-    /// Disconnects from real robot.
+    /// Disconnects from the real robot device.
     public func disconnect_device()
     {
         connector.model_controller = nil
@@ -360,11 +419,13 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         connector.space_scale = space_scale
     }
     
-    // MARK: - Program manage functions
-    /// An array of robot positions programs.
+    // MARK: - Program Handling
+    /// A collection of robot position programs.
     @Published public var programs = [PositionProgram]()
     
-    /// A selected positions program index.
+    /// The index of the currently selected program.
+    ///
+    /// Changing this value resets performing state.
     public var selected_program_index = -1
     {
         willSet
@@ -375,23 +436,20 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Adds new positions program to robot.
-     - Parameters:
-        - program: A new robot positions program.
-     */
+    /// Adds a new position program to the robot.
+    ///
+    /// - Parameter program: A program to add.
     public func add_program(_ program: PositionProgram)
     {
         program.name = unique_name(for: program.name, in: programs_names)
         programs.append(program)
     }
     
-    /**
-     Updates positions program in robot by index.
-     - Parameters:
-        - index: Updated program index.
-        - program: A new robot positions program.
-     */
+    /// Updates a position program by index.
+    ///
+    /// - Parameters:
+    ///   - index: The index of the program.
+    ///   - program: A new program value.
     public func update_program(index: Int, _ program: PositionProgram) // Update program by index
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
@@ -400,22 +458,19 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Updates positions program by name.
-     - Parameters:
-        - name: Updated program name.
-        - program: A new robot positions program.
-     */
+    /// Updates a position program by name.
+    ///
+    /// - Parameters:
+    ///   - name: A program identifier.
+    ///   - program: A new program value.
     public func update_program(name: String, _ program: PositionProgram)
     {
         update_program(index: index_by_name(name: name), program)
     }
     
-    /**
-     Deletes positions program in robot by index.
-     - Parameters:
-        - index: Deleted program index.
-     */
+    /// Deletes a position program by index.
+    ///
+    /// - Parameter index: The index of the program to delete.
     public func delete_program(index: Int)
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to delete
@@ -425,37 +480,31 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Deletes positions program in robot by name.
-     - Parameters:
-        - name: Deleted program name.
-     */
+    /// Deletes a position program by name.
+    ///
+    /// - Parameter name: A program identifier.
     public func delete_program(name: String)
     {
         delete_program(index: index_by_name(name: name))
     }
     
-    /**
-     Selects positions program in robot by index.
-     - Parameters:
-        - index: Selected program index.
-     */
+    /// Selects a program by index.
+    ///
+    /// - Parameter index: A program index.
     public func select_program(index: Int)
     {
         selected_program_index = index
     }
     
-    /**
-     Selects positions program in robot by name.
-     - Parameters:
-        - name: Selected program name.
-     */
+    /// Selects a program by name.
+    ///
+    /// - Parameter name: A program identifier.
     public func select_program(name: String)
     {
         select_program(index: index_by_name(name: name))
     }
     
-    /// Deselects positions program in robot.
+    /// The currently selected program.
     public func deselect_program()
     {
         reset_moving()
@@ -464,7 +513,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         selected_program_index = -1
     }
     
-    /// A selected positions program.
+    /// A list of all program names.
     public var selected_program: PositionProgram?
     {
         get // Return positions program by selected index
@@ -483,7 +532,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         return programs.firstIndex(of: PositionProgram(name: name)) ?? -1
     }
     
-    /// All positions programs names in robot.
+    /// The total number of programs.
     public var programs_names: [String]
     {
         var prog_names = [String]()
@@ -497,20 +546,20 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         return prog_names
     }
     
-    /// A positions programs coount in robot.
+    /// The total number of programs.
     public var programs_count: Int
     {
         return programs.count
     }
     
-    // MARK: - Moving functions
-    /// A moving state of robot.
+    // MARK: - Moving
+    /// Indicates whether the robot is currently performing motion.
     @Published public var performed = false
     
-    /// An Index of target point in points array.
+    /// The index of the current target point.
     public var target_point_index = 0
     
-    /// A target position in position points array.
+    /// The currently selected position point.
     public var selected_position_point: PositionPoint
     {
         get
@@ -523,11 +572,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     A robot pointer position.
-     
-     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
-     */
+    /// The current pointer position of the robot.
+    ///
+    /// Contains translation (x, y, z) and rotation (r, p, w).
     public var pointer_position: (
         x: Float, y: Float, z: Float,
         r: Float, p: Float, w: Float
@@ -558,19 +605,25 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// A robot default pointer position.
     private var default_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
     
-    /// Sets default robot pointer position by current pointer position.
+    /// Stores the current pointer position as the default position.
+    ///
+    /// This position can later be restored using ``reset_pointer_to_default()``.
     public func set_default_pointer_position()
     {
         default_pointer_position = pointer_position
     }
     
-    /// Clears default robot pointer position.
+    /// Clears the stored default pointer position.
+    ///
+    /// After calling this method, ``has_default_position`` returns `false`.
     public func clear_default_pointer_position()
     {
         default_pointer_position = nil
     }
     
-    /// Resets robot pointer to default position.
+    /// Restores the pointer position to the previously stored default value.
+    ///
+    /// The method performs no action if a default position is not set.
     public func reset_pointer_to_default()
     {
         guard let position = default_pointer_position else { return }
@@ -578,20 +631,18 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         pointer_position = position
     }
     
-    /// Returns information about default pointer position avalibility of robot.
+    /// A Boolean value indicating whether a default pointer position is available.
     public var has_default_position: Bool
     {
         return default_pointer_position != nil
     }
     
-    // MARK: Performation cycle
-    /**
-     Performs movement on robot by target position with completion handler.
-     
-     - Parameters:
-        - point: The target position performed by the robot.
-        - completion: A completion function that is calls when the performing completes.
-     */
+    // MARK: Performing
+    /// Moves the robot to a specified position.
+    ///
+    /// - Parameters:
+    ///   - point: A target position.
+    ///   - completion: A closure invoked after performing completes.
     public func move_to(
         point: PositionPoint,
         completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in }
@@ -649,7 +700,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Stops robot movement.
+    /// Stops current robot motion.
     public func stop()
     {
         if state_update_enabled && update_scope_type == .operational { stop_output_updating() } // Device State
@@ -668,7 +719,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// A robot moving performation toggle.
+    /// Toggles start and pause of program performing.
     public func start_pause_moving()
     {
         guard let selected_program = self.selected_program, selected_program.points_count > 0
@@ -728,7 +779,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Performs robot to selected point movement and select next.
+    /// Moves the robot to the next point in the program sequence.
     public func move_to_next_point()
     {
         selected_position_point.performing_state = .processing
@@ -750,11 +801,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Processes an error that occurred during the operation performing.
-     - Parameters:
-        - error: A robot moving error.
-     */
+    /// Resets robot performing state and program progress.
     public func process_error(_ error: Error)
     {
         performed = false // Pause performing
@@ -780,7 +827,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         program_performed = false // Control Buttons (UI)
     }
     
-    /// Set the new target point index.
+    /// Selects the next target point and continues program performing.
     private func select_next_point()
     {
         guard let selected_program = self.selected_program
@@ -817,25 +864,30 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Finish handler for to point moving.
+    /// A closure invoked when program performing finishes successfully.
+    ///
+    /// Use this handler to trigger post-processing logic such as UI updates
+    /// or workflow continuation.
     public var finish_handler: (() -> Void) = {}
     
-    /// Clears finish handler.
+    /// Resets the finish handler to an empty closure.
     public func clear_finish_handler()
     {
         finish_handler = {}
     }
     
-    /// Error handler for operation program performation.
+    /// A closure invoked when an error occurs during program performing.
+    ///
+    /// - Parameter error: The error describing the failure.
     public var error_handler: ((Error) -> Void) = { _ in }
     
-    /// Clears error handler.
+    /// Resets the error handler to a default empty implementation.
     public func clear_error_handler()
     {
         error_handler = { _ in }
     }
     
-    /// Resets robot moving.
+    /// Resets robot performing state and program progress.
     public func reset_moving()
     {
         guard let selected_program = self.selected_program else { return }
@@ -872,14 +924,14 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    // MARK: - Device state data handling
-    /// A device state data.
+    // MARK: - Device S
+    /// The current device output data.
     @Published public var device_output: DeviceOutputData?
     
-    /// Flag indicating whether the update loop is active.
+    /// Indicates whether output updating is active.
     public var is_output_updating = false
     
-    /// Device state updating enable.
+    /// Enables or disables device state updating.
     public var state_update_enabled = false
     {
         didSet
@@ -898,13 +950,13 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// The task responsible for executing the update loop.
+    /// A task responsible for updating device output.
     public var output_update_task: Task<Void, Never>?
     
-    /// The interval between updates in nanoseconds.
+    /// The interval between updates in seconds.
     public var state_update_interval: Double = 0.01
     
-    /// Defines the update timing scope.
+    /// Defines the update scope behavior.
     public var update_scope_type: ScopeType = ScopeType.operational
     {
         didSet
@@ -918,11 +970,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Starts the update loop.
-     
-     This function sets the `updated` flag to `true` and initiates a new task that repeatedly calls the `update()` function on the main thread.  The loop runs as long as the `updated` flag remains `true`.  A sleep duration of approximately 1 millisecond is introduced between each update cycle. The task can be cancelled by calling `disable_update()`.
-     */
+    /// Stops device output updating loop.
     public func start_output_updating()
     {
         guard state_update_enabled else { return }
@@ -947,11 +995,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Stops the update loop.
-     
-     This function sets the `updated` flag to `false`, cancels the `update_task`, and sets it to `nil`.  This effectively terminates the update loop initiated by `perform_update()`.
-     */
+    /// Stops device output updating loop.
     public func stop_output_updating()
     {
         is_output_updating = false
@@ -959,13 +1003,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         output_update_task = nil
     }
     
-    /**
-     Called repeatedly within the update loop to perform updates.
-     
-     This function is called on the main thread by the `perform_update()` function as long as the `updated` flag is `true`. Subclasses should override this method to implement their specific update logic.
-     
-     > This function is called frequently, so it's crucial to keep its performing time as short as possible to avoid performance issues.
-     */
+    /// Updates device output data.
     private func update_device_output()
     {
         if is_output_updating && (performed || update_scope_type == .continious)
@@ -977,7 +1015,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Updates statisitcs data by model controller (if demo is *true*) or connector (if demo is *false*).
+    /// Updates device output data.
     public func update_statistics_data()
     {
         if device_output == nil
@@ -995,7 +1033,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// Clears device state data.
+    /// Resets device output data to initial state.
     public func reset_device_output()
     {
         device_output = nil
@@ -1010,8 +1048,12 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    // MARK: - Visual Functions
+    // MARK: - Visal
     #if canImport(RealityKit)
+    /// A unique identifier for the robot entity in a 3D scene.
+    ///
+    /// This value is used to distinguish robot entities from other
+    /// workspace objects during scene interaction and processing.
     override public var entity_tag: ObjectEntityIdentifier
     {
         return ObjectEntityIdentifier(type: .robot, name: name)
@@ -1230,17 +1272,18 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     // MARK: Cell box handling
-    /// A default location of robot cell origin.
+    /// The default origin position of the robot workspace.
+    ///
+    /// Defines the initial translation (x, y, z) and rotation (r, p, w)
+    /// of the robot coordinate system.
     public static var default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
-    /// A default scale of robot cell box.
+    /// The default scale of the robot workspace.
+    ///
+    /// Defines the maximum working area dimensions along each axis.
     public static var default_space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
-    /**
-     A robot cell origin position.
-     
-     Tuple with coordinates – *x*, *y*, *z* and angles – *r*, *p*, *w*.
-     */
+    /// The origin position of the robot cell.
     public var origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     {
         didSet
@@ -1253,7 +1296,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// A robot cell box scale.
+    /// The scale of the robot workspace.
     public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     {
         didSet
@@ -1266,7 +1309,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /// A robot cell box default shift.
+    /// A positional shift applied to the origin.
     public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
     {
         didSet
@@ -1277,12 +1320,9 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    /**
-     Shifts positions when reducing the robot workcell area.
-     
-     - Parameters:
-        - point: The position to which the shifting is applied.
-     */
+    /// Adjusts a position point to fit within workspace bounds.
+    ///
+    /// - Parameter point: A position point to adjust.
     public func point_shift(_ point: inout PositionPoint)
     {
         if point.x > Float(space_scale.x)
@@ -1333,23 +1373,26 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     // MARK: - Performing State
-    /// Last performing error.
+    /// The last error occurred during performing.
     public var last_error: Error?
     
-    /// Resets last hanled error.
+    /// Resets the last performing error.
     public func reset_error()
     {
         last_error = nil
         //performing_state = .processing
     }
     
-    /// Performing state light.
+    /// The current performing state indicator.
     @Published public var performing_state: PerformingState = .none
     
-    /// A program performing state of robot.
+    /// Indicates whether a program is currently being performed.
     @Published public var program_performed = false
     
     // MARK: - File Data
+    /// Creates a robot instance from file data.
+    ///
+    /// - Parameter file: Serialized robot data.
     public convenience init(file: RobotFileData)
     {
         self.init(file: file.object) //self.init()
@@ -1401,6 +1444,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         self.reset_pointer_to_default()
     }
     
+    /// Generates file data representation of the robot.
     public func file_data() -> RobotFileData
     {
         return RobotFileData(
@@ -1441,7 +1485,10 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
             is_twin_sync: is_twin_sync
         )
     }
-
+    
+    /// Creates a robot instance by copying file data from another object.
+    ///
+    /// - Parameter object: A source robot.
     public convenience init(file_from_object object: Robot)
     {
         let file: RobotFileData = object.file_data()
@@ -1450,6 +1497,10 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
 }
 
 // MARK: - File Data
+/// A serializable representation of a robot state.
+///
+/// `RobotFileData` stores configuration, programs, spatial parameters,
+/// and device state required to reconstruct a robot instance.
 public struct RobotFileData: Codable
 {
     public var object: WorkspaceObjectFileData
