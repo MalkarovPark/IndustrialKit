@@ -120,7 +120,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                     
                     if let selected_index = point_index, selected_index == index
                     {
-                        visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.002)), materials: [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)])
+                        visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)])
                     }
                     else
                     {
@@ -161,7 +161,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             }
             else
             {
-                let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.002)), materials: [SimpleMaterial(color: target_point_color, isMetallic: false)])
+                let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: target_point_color, roughness: 1.0, isMetallic: false)])
                 
                 let point = points.first ?? PositionPoint()
                 node_by_data(node: visual_point, point: point, location: &point_location)
