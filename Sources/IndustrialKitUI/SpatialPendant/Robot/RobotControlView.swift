@@ -77,6 +77,7 @@ public struct RobotControlView: View
                                     on_delete:
                                     {
                                         robot.programs.remove(at: index)
+                                        
                                         on_update()
                                         /*if let index = robot.programs.firstIndex(where: { $0.id == program.id })
                                         {
@@ -420,10 +421,10 @@ private struct PositionItemView: View
                      arrowEdge: .trailing)
             {
                 #if os(macOS) || os(visionOS)
-                PositionPointView(robot: robot, program: program, point: point_item, position_item_view_presented: $position_item_view_presented)
+                PositionPointView(robot: robot, program: program, point: point_item, point_index: point_index, position_item_view_presented: $position_item_view_presented)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
                 #else
-                PositionPointView(robot: robot, program: program, point: point_item, position_item_view_presented: $position_item_view_presented, is_compact: horizontal_size_class == .compact)
+                PositionPointView(robot: robot, program: program, point: point_item, point_index: point_index, position_item_view_presented: $position_item_view_presented, is_compact: horizontal_size_class == .compact)
                     .presentationDetents([.height(496)])
                 #endif
             }
@@ -488,6 +489,9 @@ private struct PositionPointView: View
     @ObservedObject var program: PositionProgram
     
     @ObservedObject var point: PositionPoint
+    
+    let point_index: Int
+    
     @Binding var position_item_view_presented: Bool
     
     #if os(iOS)
@@ -571,7 +575,7 @@ private struct PositionPointView: View
         .padding()
         .onAppear
         {
-            robot.update_program_entity(by: program, point_index: robot.programs.firstIndex(where: { $0.id == program.id }))
+            robot.update_program_entity(by: program, point_index: point_index)
         }
         .onDisappear
         {

@@ -78,13 +78,17 @@ public struct ToolControlView: View
                                     count: program.codes_count,
                                     on_delete:
                                     {
-                                        if let index = tool.programs.firstIndex(where: { $0.id == program.id })
+                                        tool.reset_performing()
+                                        tool.programs.remove(at: index)
+                                        
+                                        on_update()
+                                        /*if let index = tool.programs.firstIndex(where: { $0.id == program.id })
                                         {
                                             tool.reset_performing()
                                             tool.programs.remove(at: index)
                                             
                                             on_update()
-                                        }
+                                        }*/
                                     }
                                 )
                                 .matchedGeometryEffect(id: program.id, in: animation_namespace)
