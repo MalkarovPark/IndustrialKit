@@ -1060,8 +1060,25 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     // MARK: Origin Entity
+    /// The root entity representing the robot coordinate system origin.
+    ///
+    /// This entity acts as a spatial anchor for all robot-related visualization
+    /// objects, including the working area, program paths, and pointer markers.
+    ///
+    /// All transformations applied to the robot workspace are relative to this entity.
     private var origin_entity = Entity()
     
+    /// Updates the robot origin position by applying the current origin shift.
+    ///
+    /// The method:
+    /// - Applies `origin_shift` to the base origin position
+    /// - Synchronizes updated parameters with the model controller
+    /// - Updates the underlying scene entity transform
+    ///
+    /// This ensures consistency between logical workspace coordinates and
+    /// visual representation.
+    ///
+    /// - Important: Must be called on the main thread due to scene updates.
     @MainActor public func update_origin_position()
     {
         var origin_position = origin_position
@@ -1076,23 +1093,40 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     // MARK: Working Area Entity
+    /// A visual representation of the robot working volume.
+    ///
+    /// This entity defines the 3D bounding box of the robot workspace
+    /// and is used for visualization and spatial constraints.
     private var working_area_entity = Entity()
     
+    /// Toggles visibility of the working area visualization.
+    ///
+    /// When disabled, the workspace bounding box is hidden from the scene.
     @MainActor public func toggle_working_area_visibility()
     {
         working_area_entity.isEnabled.toggle()
     }
     
+    /// Makes the working area visible in the scene.
     @MainActor public func show_working_area()
     {
         working_area_entity.isEnabled = true
     }
     
+    /// Hides the working area visualization from the scene.
     @MainActor public func hide_working_area()
     {
         working_area_entity.isEnabled = false
     }
     
+    /// Rebuilds the working area visualization using the current workspace scale.
+    ///
+    /// This method:
+    /// - Recreates the 3D bounding box geometry
+    /// - Preserves current visibility state
+    /// - Reattaches the entity to the origin node
+    ///
+    /// It is typically called when `space_scale` changes.
     @MainActor public func update_working_area_scale()
     {
         let is_enabled = working_area_entity.isEnabled
@@ -1104,6 +1138,16 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         origin_entity.addChild(working_area_entity)
     }
     
+    /// Constructs a 3D working area box entity.
+    ///
+    /// The box is built from semi-transparent planes representing
+    /// the six faces of the workspace volume:
+    /// - XY planes (red)
+    /// - XZ planes (blue)
+    /// - YZ planes (green)
+    ///
+    /// - Parameter scale: The workspace dimensions in millimeters.
+    /// - Returns: A fully constructed scene entity representing the workspace volume.
     @MainActor func build_working_area_entity(scale: (x: Float, y: Float, z: Float)) -> Entity
     {
         let box = Entity()
@@ -1164,23 +1208,36 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     // MARK: Position Pointer Entity
+    /// A visual marker representing the robot end-effector pointer orientation.
+    ///
+    /// The pointer consists of three orthogonal indicators representing
+    /// X, Y, and Z axes directions in 3D space.
     private var position_pointer_entity = Entity()
     
+    /// Toggles visibility of the position pointer visualization.
     @MainActor public func toggle_position_pointer_visibility()
     {
         position_pointer_entity.isEnabled.toggle()
     }
     
+    /// Shows the position pointer in the scene.
     @MainActor public func show_position_pointer()
     {
         position_pointer_entity.isEnabled = true
     }
     
+    /// Hides the position pointer from the scene.
     @MainActor public func hide_position_pointer()
     {
         position_pointer_entity.isEnabled = false
     }
     
+    /// Builds the 3-axis position pointer visualization.
+    ///
+    /// The pointer is composed of three directional cones representing
+    /// the local orientation axes of the robot end-effector.
+    ///
+    /// - Returns: A composite entity representing the pointer model.
     @MainActor func build_position_pointer_entity() -> Entity
     {
         let colors: [UIColor] = [
@@ -1209,42 +1266,81 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
         return parent
     }
     
-    //MARK: Position Program Entity
+    // MARK: Position Program Entity
+    /// A visual representation of the currently active position program.
+    ///
+    /// This entity contains all trajectory points and motion paths
+    /// currently assigned to the robot.
     private var position_program_entity = Entity()
     
+    /// Toggles visibility of the position program visualization.
     @MainActor public func toggle_position_program_visibility()
     {
         position_program_entity.isEnabled.toggle()
     }
     
+    /// Shows the position program in the scene.
     @MainActor public func show_position_program()
     {
         position_program_entity.isEnabled = true
     }
     
+    /// Hides the position program visualization.
     @MainActor public func hide_position_program()
     {
         position_program_entity.isEnabled = false
     }
     
-    @MainActor public func update_position_program_entity(by program: PositionProgram, edited_point: Int? = nil)
+    /// Rebuilds the program visualization from a position program model.
+    ///
+    /// The method:
+    /// - Removes previous program visualization
+    /// - Generates new trajectory geometry
+    /// - Optionally highlights an edited point
+    /// - Restores previous visibility state
+    ///
+    /// - Parameters:
+    ///   - program: The position program to visualize.
+    ///   - point_index: Optional index of a point being edited.
+    @MainActor public func update_program_entity(
+        by program: PositionProgram,
+        point_index: Int? = nil
+    )
     {
         let is_enabled = position_program_entity.isEnabled
         
         position_program_entity.removeFromParent()
-        position_program_entity = program.entity(edited_point)
+        position_program_entity = program.entity(point_index)
         position_program_entity.isEnabled = is_enabled
         
         origin_entity.addChild(position_program_entity)
     }
     
     // MARK: End Point Entity
-    /*private*/ var end_point_entity = Entity()
+    /// A visual marker representing the final or target endpoint in a program.
+    ///
+    /// This entity is used to highlight the last position in a sequence
+    /// or a selected target point in the workspace visualization.
+    public var end_point_entity = Entity()
     
+    /// A scene identifier for the robot end-effector entity.
+    ///
+    /// This value is used to bind the logical robot model to a visual 3D entity
+    /// in the scene graph.
     public var end_entity_name = String()
     #endif
     
-    /// Update robot model.
+    /// Updates the robot model state and synchronizes it with the current pointer position.
+    ///
+    /// In simulation mode:
+    /// - Updates pointer position in the model controller
+    /// - Performs full kinematic model update
+    ///
+    /// In real device mode:
+    /// - Updates pointer position only
+    /// - Delegates execution to external connector system
+    ///
+    /// This method is skipped when the robot is in performing state.
     public func update_model()
     {
         if !performed

@@ -195,7 +195,7 @@ public struct RobotControlView: View
         if let program = robot.selected_program
         {
             program.add_point(PositionPoint(x: robot.pointer_position.x, y: robot.pointer_position.y, z: robot.pointer_position.z, r: robot.pointer_position.r, p: robot.pointer_position.p, w: robot.pointer_position.w))
-            robot.update_position_program_entity(by: program)
+            robot.update_program_entity(by: program)
             
             on_update()
         }
@@ -210,7 +210,7 @@ public struct RobotControlView: View
             
             // Editor handling
             robot.selected_program = program
-            robot.update_position_program_entity(by: program)
+            robot.update_program_entity(by: program)
             
             robot.toggle_position_program_visibility()
             
@@ -323,7 +323,7 @@ private struct PositionProgramView: View
                                 robot.reset_moving()
                                 
                                 program.points.remove(at: index)
-                                robot.update_position_program_entity(by: program)
+                                robot.update_program_entity(by: program)
                             }
                         }
                         .onDrag
@@ -473,7 +473,7 @@ private struct PositionDropDelegate: DropDelegate
     func performDrop(info: DropInfo) -> Bool
     {
         dragging_point_id = nil
-        robot.update_position_program_entity(by: program)
+        robot.update_program_entity(by: program)
         on_update()
         return true
     }
@@ -566,6 +566,14 @@ private struct PositionPointView: View
             }
         }
         .padding()
+        .onAppear
+        {
+            robot.update_program_entity(by: program, point_index: robot.programs.firstIndex(where: { $0.id == program.id }))
+        }
+        .onDisappear
+        {
+            robot.update_program_entity(by: program)
+        }
     }
 
     private func position_binding() -> Binding<(x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)>
@@ -594,7 +602,7 @@ private struct PositionPointView: View
                 point.p = new_point.p
                 point.w = new_point.w
                 
-                robot.update_position_program_entity(by: program)
+                robot.update_program_entity(by: program)
             }
         )
     }
