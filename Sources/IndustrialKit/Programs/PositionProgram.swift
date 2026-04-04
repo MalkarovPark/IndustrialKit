@@ -204,9 +204,9 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             location = SIMD3<Float>(point.y / 1000, point.z / 1000, point.x / 1000)
             node.position = location
             
-            let cones_entity = build_cones() // pointer without rotation
+            let cones_entity = build_cones() // Pointer without rotation
             
-            // Apply rotations ONLY to pointer_entity
+            // Apply rotations only to pointer_entity
             let r_rot = simd_quatf(angle: Float(point.r.to_rad), axis: [0, 0, 1])
             let p_rot = simd_quatf(angle: Float(point.p.to_rad), axis: [1, 0, 0])
             let w_rot = simd_quatf(angle: Float(point.w.to_rad), axis: [0, 1, 0])
@@ -215,8 +215,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             
             node.addChild(cones_entity)
             
-            // The node itself remains without rotation or has identity rotation
-            node.orientation = simd_quatf() // optional, explicit identity rotation
+            node.orientation = simd_quatf() // Optional, explicit identity rotation
         }
         
         func build_cones() -> Entity

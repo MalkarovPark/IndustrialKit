@@ -1309,15 +1309,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     {
         let is_enabled = position_program_entity.isEnabled
         
-        position_program_entity.children.forEach
-        {
-            if $0 !== position_program_entity
-            {
-                $0.removeFromParent()
-            }
-        }
-        
-        //position_program_entity.removeFromParent()
+        position_program_entity.removeFromParent()
         position_program_entity = program.entity(point_index)
         
         position_program_entity.isEnabled = is_enabled
