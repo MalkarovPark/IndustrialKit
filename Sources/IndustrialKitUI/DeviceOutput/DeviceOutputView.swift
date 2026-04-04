@@ -10,7 +10,7 @@ import IndustrialKit
 
 public struct DeviceOutputView: View
 {
-    @ObservedObject var object: WorkspaceObject
+    @ObservedObject var object: ProductionObject
     
     let shows_output_indices: Bool
     
@@ -21,7 +21,7 @@ public struct DeviceOutputView: View
     @State private var update_interval_view_presented = false
     
     public init(
-        object: WorkspaceObject,
+        object: ProductionObject,
         shows_output_indices: Bool = false,
         
         on_update: @escaping () -> Void
@@ -35,7 +35,7 @@ public struct DeviceOutputView: View
     }
     
     public init(
-        object: WorkspaceObject,
+        object: ProductionObject,
         shows_output_indices: Bool = false
     )
     {

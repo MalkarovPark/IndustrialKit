@@ -119,7 +119,7 @@ open class RobotModule: IndustrialModule
         do
         {
             var is_stale = false
-            var local_url = try URL(resolvingBookmarkData: WorkspaceObject.modules_folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
+            var local_url = try URL(resolvingBookmarkData: ProductionObject.modules_folder_bookmark ?? Data(), bookmarkDataIsStale: &is_stale)
             
             guard !is_stale else
             {

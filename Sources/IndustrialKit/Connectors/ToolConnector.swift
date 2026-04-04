@@ -13,7 +13,7 @@ import SceneKit
  
  Contains special function for operation code performation.
  */
-open class ToolConnector: WorkspaceObjectConnector, @unchecked Sendable
+open class ToolConnector: ProductionObjectConnector, @unchecked Sendable
 {
     // MARK: - Device Handling
     /**

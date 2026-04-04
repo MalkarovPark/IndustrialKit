@@ -42,13 +42,13 @@ import SwiftUI
         - name: A name of object for index find.
         - objects: An array of objects where the index searches.
      */
-    private func index_by_name(_ name: String, objects: [WorkspaceObject]) -> Int
+    private func index_by_name(_ name: String, objects: [ProductionObject]) -> Int
     {
         return objects.firstIndex(where: { $0.name == name }) ?? -1
     }
     
     /// Selected workspace object.
-    @Published public var selected_object: WorkspaceObject?
+    @Published public var selected_object: ProductionObject?
     
     /**
      Selects a workspace object by type (Robot, Tool, or Part), updates the current selection, and focuses the camera on it.
@@ -56,7 +56,7 @@ import SwiftUI
      - Parameters:
         - object: An object to select.
      */
-    public func select_object(_ object: WorkspaceObject)
+    public func select_object(_ object: ProductionObject)
     {
         deselect_object() // Test
         pointer_entity.isEnabled = false
@@ -111,7 +111,7 @@ import SwiftUI
         selected_object = nil
     }
     
-    public func delete_object(_ object: WorkspaceObject)
+    public func delete_object(_ object: ProductionObject)
     {
         #if os(macOS) || os(iOS)
         focus(on: nil)
@@ -2030,13 +2030,13 @@ import SwiftUI
     #endif
     
     // MARK: Workspace Objects Placement
-    public func place_object_entity(object: WorkspaceObject)
+    public func place_object_entity(object: ProductionObject)
     {
         object.entity.update_position(object.position)
         workspace_anchor.addChild(object.entity)
     }
     
-    public func remove_object_entity(object: WorkspaceObject)
+    public func remove_object_entity(object: ProductionObject)
     {
         object.entity.removeFromParent()
     }
@@ -2590,14 +2590,14 @@ import SwiftUI
     }
     
     // MARK: - Placements
-    private func comfort_placement(for object: WorkspaceObject)
+    private func comfort_placement(for object: ProductionObject)
     {
         let object_rect = rect(of: object)
 
         // Occupied rectangles
         var occupied: [(center: SIMD2<Float>, half: SIMD2<Float>)] = []
         
-        for group in [robots as [WorkspaceObject], tools, parts]
+        for group in [robots as [ProductionObject], tools, parts]
         {
             for item in group
             {
@@ -2610,7 +2610,7 @@ import SwiftUI
         }
         
         // Convert RealityKit bounds to workspace units
-        func rect(of item: WorkspaceObject) -> (center: SIMD2<Float>, half: SIMD2<Float>)
+        func rect(of item: ProductionObject) -> (center: SIMD2<Float>, half: SIMD2<Float>)
         {
             let entity = item.model_entity ?? Entity()
             let b = entity.visualBounds(relativeTo: entity)
@@ -3170,7 +3170,7 @@ import SwiftUI
     }
 }
 
-public enum WorkspaceObjectType: String, Equatable, CaseIterable
+public enum ProductionObjectType: String, Equatable, CaseIterable
 {
     case robot = "Robot"
     case tool = "Tool"

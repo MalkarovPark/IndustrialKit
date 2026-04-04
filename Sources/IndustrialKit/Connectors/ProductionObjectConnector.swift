@@ -1,5 +1,5 @@
 //
-//  WorkspaceObjectConnector.swift
+//  ProductionObjectConnector.swift
 //  IndustrialKit
 //
 //  Created by Artem on 08.10.2022.
@@ -16,7 +16,7 @@ import SwiftUI
  
  Control functions are specialized for subtypes by workspace objects.
  */
-open class WorkspaceObjectConnector: ObservableObject, @unchecked Sendable
+open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
 {
     // MARK: - Init functions
     required public init()
@@ -457,7 +457,7 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
     }
 }
 
-public protocol ExternalConnector: WorkspaceObjectConnector, ObservableObject, Identifiable
+public protocol ExternalConnector: ProductionObjectConnector, ObservableObject, Identifiable
 {
     var program_component_enabled: Bool { get set }
     

@@ -76,8 +76,8 @@ This document-based app provides tools for preparing and deploying production ac
 
 # IndustrialKit
 
-### WorkspaceObject <a name="workspace-object"></a>
-`WorkspaceObject` defines the means of production that make up the content of a robotic complex. It provides core properties such as an identifier name, spatial data, physical body parameters, and a visual model represented by a RealityKit `Entity`.
+### ProductionObject <a name="workspace-object"></a>
+`ProductionObject` defines the means of production that make up the content of a robotic complex. It provides core properties such as an identifier name, spatial data, physical body parameters, and a visual model represented by a RealityKit `Entity`.
 
 Out of the box, this open class serves as the foundation for `Robot`, `Tool`, and `Part`. Developers can extend it to define additional types of production assets.
 

@@ -13,7 +13,7 @@ import SceneKit
  
  Contains special function for movement to point performation.
  */
-open class RobotConnector: WorkspaceObjectConnector, @unchecked Sendable
+open class RobotConnector: ProductionObjectConnector, @unchecked Sendable
 {
     // MARK: - Parameters
     /**

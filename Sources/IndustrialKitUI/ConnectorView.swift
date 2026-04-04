@@ -10,12 +10,12 @@ import IndustrialKit
 
 public struct ConnectorView: View
 {
-    @ObservedObject var object: WorkspaceObject
+    @ObservedObject var object: ProductionObject
     
     let on_update: () -> Void
     
     public init(
-        object: WorkspaceObject,
+        object: ProductionObject,
         
         on_update: @escaping () -> Void = {}
     )
@@ -107,7 +107,7 @@ public struct ConnectorView: View
 
 private struct ConnectionStatusView: View
 {
-    @ObservedObject var connector: WorkspaceObjectConnector
+    @ObservedObject var connector: ProductionObjectConnector
     
     let on_update: () -> Void
     
@@ -243,7 +243,7 @@ private struct ConnectionStatusView: View
 
 private struct ConnectionButton: View
 {
-    @ObservedObject var connector: WorkspaceObjectConnector
+    @ObservedObject var connector: ProductionObjectConnector
     
     let connect_device: () -> Void
     let disconnect_device: () -> Void
@@ -400,7 +400,7 @@ public struct ConnectionParameterView: View
 #if os(macOS)
 private struct ExternalConnectorView: View
 {
-    @ObservedObject var connector: WorkspaceObjectConnector
+    @ObservedObject var connector: ProductionObjectConnector
     
     @State private var is_presented = false
     

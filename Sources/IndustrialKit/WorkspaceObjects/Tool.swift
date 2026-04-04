@@ -31,7 +31,7 @@ import RealityKit
 /// Use the ``perform(_:)`` method to initiate performing of an operation
 /// associated with a given ``OperationCode``.
 ///
-open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
+open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
 {
     // MARK: - Initializers
     /// Creates a tool instance with default parameters.
@@ -1107,7 +1107,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     public func file_data() -> ToolFileData
     {
         return ToolFileData(
-            object: WorkspaceObjectFileData(
+            object: ProductionObjectFileData(
                 name: name,
                 
                 module_name: module_name,
@@ -1161,7 +1161,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
 /// 
 public struct ToolFileData: Codable
 {
-    public var object: WorkspaceObjectFileData
+    public var object: ProductionObjectFileData
     
     public var programs: [OperationProgram]
     
@@ -1184,7 +1184,7 @@ public struct ToolFileData: Codable
     
     // MARK: Init
     public init(
-        object: WorkspaceObjectFileData,
+        object: ProductionObjectFileData,
         
         programs: [OperationProgram],
         

@@ -506,7 +506,7 @@ public struct ObserverElementView: View
     
     let on_update: () -> ()
     
-    @State private var viewed_object: WorkspaceObject?
+    @State private var viewed_object: ProductionObject?
     
     public init(
         element: ObserverModifierElement,

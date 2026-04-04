@@ -35,7 +35,7 @@ import RealityKit
 /// This abstraction enables deterministic motion planning and performing
 /// of robotic tasks such as manipulation, assembly, and automated processing.
 /// 
-open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
+open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
 {
     // MARK: - Initializers
     /// Creates a robot instance with default parameters.
@@ -1554,7 +1554,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     public func file_data() -> RobotFileData
     {
         return RobotFileData(
-            object: WorkspaceObjectFileData(
+            object: ProductionObjectFileData(
                 name: name,
                 
                 module_name: module_name,
@@ -1609,7 +1609,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
 /// and device state required to reconstruct a robot instance.
 public struct RobotFileData: Codable
 {
-    public var object: WorkspaceObjectFileData
+    public var object: ProductionObjectFileData
     
     public var programs: [PositionProgram]
     
@@ -1631,7 +1631,7 @@ public struct RobotFileData: Codable
     
     // MARK: - Init
     public init(
-        object: WorkspaceObjectFileData,
+        object: ProductionObjectFileData,
         
         programs: [PositionProgram],
         

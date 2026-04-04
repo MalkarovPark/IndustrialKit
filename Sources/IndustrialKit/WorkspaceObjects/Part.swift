@@ -28,7 +28,7 @@ import SwiftUI
 /// Use ``Part`` instances to model the physical environment and material
 /// flow within a robotic workspace.
 ///
-open class Part: WorkspaceObject
+open class Part: ProductionObject
 {
     // MARK: - Initializers
     /// Creates a part instance with default parameters.
@@ -409,7 +409,7 @@ open class Part: WorkspaceObject
     public func file_data() -> PartFileData
     {
         return PartFileData(
-            object: WorkspaceObjectFileData(
+            object: ProductionObjectFileData(
                 name: name,
                 
                 module_name: module_name,
@@ -450,7 +450,7 @@ open class Part: WorkspaceObject
 ///
 public struct PartFileData: Codable
 {
-    public var object: WorkspaceObjectFileData
+    public var object: ProductionObjectFileData
     
     public var physics_enabled: Bool = true
     public var physics_body_data: PhysicsBodyComponentFileData = PhysicsBodyComponentFileData()
@@ -460,7 +460,7 @@ public struct PartFileData: Codable
     
     // MARK: Init
     public init(
-        object: WorkspaceObjectFileData,
+        object: ProductionObjectFileData,
         
         physics_enabled: Bool,
         physics_body_data: PhysicsBodyComponentFileData,

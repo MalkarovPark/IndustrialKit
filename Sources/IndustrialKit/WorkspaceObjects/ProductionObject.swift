@@ -1,5 +1,5 @@
 //
-//  WorkspaceObject.swift
+//  ProductionObject.swift
 //  IndustrialKit
 //
 //  Created by Artem on 29.10.2022.
@@ -13,7 +13,7 @@ import RealityKit
 
 /// A base class that represents a production object in a robotic workspace.
 ///
-/// Use ``WorkspaceObject`` as a common abstraction for elements that form
+/// Use ``ProductionObject`` as a common abstraction for elements that form
 /// the content of a robotic system, including equipment, tools, and parts.
 ///
 /// A workspace object models a production entity by encapsulating:
@@ -26,10 +26,10 @@ import RealityKit
 /// The system provides built-in subclasses such as ``Robot``, ``Tool``,
 /// and ``Part``.
 ///
-/// You can subclass ``WorkspaceObject`` to define custom types of
+/// You can subclass ``ProductionObject`` to define custom types of
 /// production resources and extend system functionality.
 /// 
-@MainActor open class WorkspaceObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable
+@MainActor open class ProductionObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable
 {
     /// Returns a Boolean value indicating whether two objects are equal.
     ///
@@ -40,7 +40,7 @@ import RealityKit
     ///   - lhs: A workspace object to compare.
     ///   - rhs: Another workspace object to compare.
     /// - Returns: `true` if both objects have the same identity; otherwise, `false`.
-    public static func == (lhs: WorkspaceObject, rhs: WorkspaceObject) -> Bool // Identity condition by names & types
+    public static func == (lhs: ProductionObject, rhs: ProductionObject) -> Bool // Identity condition by names & types
     {
         return lhs.name == rhs.name && type(of: lhs) == type(of: rhs)
     }
@@ -392,7 +392,7 @@ import RealityKit
     /// Creates an object from serialized file data.
     ///
     /// - Parameter file: The stored object data.
-    public convenience init(file: WorkspaceObjectFileData)
+    public convenience init(file: ProductionObjectFileData)
     {
         self.init()
         
@@ -417,9 +417,9 @@ import RealityKit
     /// Returns a serialized representation of the object.
     ///
     /// - Returns: A structure containing object data.
-    public func file_data() -> WorkspaceObjectFileData
+    public func file_data() -> ProductionObjectFileData
     {
-        return WorkspaceObjectFileData(
+        return ProductionObjectFileData(
             name: name,
             
             module_name: module_name,
@@ -437,10 +437,10 @@ import RealityKit
     /// Creates an object by copying another object.
     ///
     /// - Parameter object: The source object.
-    public convenience init(file_from_object object: WorkspaceObject)
+    public convenience init(file_from_object object: ProductionObject)
     {
         self.init(
-            file: WorkspaceObjectFileData(
+            file: ProductionObjectFileData(
                 name: object.name,
                 
                 module_name: object.module_name,
@@ -462,7 +462,7 @@ import RealityKit
 ///
 /// Use this type to store and restore object configuration.
 ///
-public struct WorkspaceObjectFileData: Codable
+public struct ProductionObjectFileData: Codable
 {
     public var name: String
     
@@ -507,16 +507,16 @@ public struct ObjectEntityIdentifier: Component
     ///
     /// Use this property to classify entities by their functional role
     /// in the workspace.
-    public var type: WorkspaceObjectType?
+    public var type: ProductionObjectType?
     
     /// The name of the workspace object associated with the entity.
     ///
-    /// The name corresponds to the ``WorkspaceObject/name`` value
+    /// The name corresponds to the ``ProductionObject/name`` value
     /// and is used to identify the entity within the scene.
     public var name: String
     
     public init(
-        type: WorkspaceObjectType? = .none,
+        type: ProductionObjectType? = .none,
         name: String
     )
     {
@@ -575,7 +575,7 @@ public enum DeviceMode: String, CaseIterable, Codable
 ///
 /// A device twin synchronizes a virtual model with a physical or simulated device.
 ///
-public protocol DeviceTwin: WorkspaceObject, ObservableObject
+public protocol DeviceTwin: ProductionObject, ObservableObject
 {
     /// The operating mode of the device.
     ///
@@ -604,7 +604,7 @@ public protocol DeviceTwin: WorkspaceObject, ObservableObject
     /// A type that represents the connector of the device.
     ///
     /// Conforming types implement communication with external systems.
-    associatedtype ConnectorType: WorkspaceObjectConnector
+    associatedtype ConnectorType: ProductionObjectConnector
     
     /// Connects the device to its data source.
     func connect_device()
@@ -622,7 +622,7 @@ public protocol DeviceTwin: WorkspaceObject, ObservableObject
 ///
 /// Provides mechanisms for periodic data acquisition and update.
 ///
-public protocol StateOutputCapable: WorkspaceObject, ObservableObject
+public protocol StateOutputCapable: ProductionObject, ObservableObject
 {
     /// The current state data of the device.
     ///
