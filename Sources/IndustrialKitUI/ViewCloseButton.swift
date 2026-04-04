@@ -27,7 +27,14 @@ public struct ViewCloseButton: ViewModifier
                         .modifier(CircleButtonImageFramer())
                 }
                 .keyboardShortcut(.cancelAction)
+                #if !os(visionOS)
                 .modifier(CircleButtonGlassBorderer())
+                #else
+                .buttonBorderShape(.circle)
+                .controlSize(.large)
+                .buttonStyle(.bordered)
+                .frame(depth: 24)
+                #endif
                 #if os(macOS) || os(iOS)
                 .padding(10)
                 #else
@@ -57,7 +64,14 @@ public struct ViewCloseFuncButton: ViewModifier
                         .modifier(CircleButtonImageFramer())
                 }
                 .keyboardShortcut(.cancelAction)
+                #if !os(visionOS)
                 .modifier(CircleButtonGlassBorderer())
+                #else
+                .buttonBorderShape(.circle)
+                .controlSize(.large)
+                .buttonStyle(.bordered)
+                .frame(depth: 24)
+                #endif
                 #if os(macOS) || os(iOS)
                 .padding(10)
                 #else

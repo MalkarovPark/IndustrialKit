@@ -73,7 +73,14 @@ public struct SheetCaption: ViewModifier
                             .modifier(CircleButtonImageFramer())
                     }
                     .keyboardShortcut(.cancelAction)
+                    #if !os(visionOS)
                     .modifier(CircleButtonGlassBorderer())
+                    #else
+                    .buttonBorderShape(.circle)
+                    .controlSize(.large)
+                    .buttonStyle(.bordered)
+                    .frame(depth: 24)
+                    #endif
                     .keyboardShortcut(.cancelAction)
                     #if os(macOS) || os(iOS)
                     .padding(10)
@@ -119,6 +126,7 @@ public struct SheetCaption: ViewModifier
     }
 }
 
+// MARK: - Previews
 #Preview
 {
     ZStack
@@ -157,7 +165,6 @@ public struct SheetCaption: ViewModifier
     .padding(32)
 }
 
-// MARK: - Previews
 #Preview
 {
     @Previewable @State var is_presented: Bool = false
