@@ -76,12 +76,14 @@ public struct RobotControlView: View
                                     count: program.points_count,
                                     on_delete:
                                     {
-                                        if let index = robot.programs.firstIndex(where: { $0.id == program.id })
+                                        robot.programs.remove(at: index)
+                                        on_update()
+                                        /*if let index = robot.programs.firstIndex(where: { $0.id == program.id })
                                         {
                                             robot.programs.remove(at: index)
                                             
                                             on_update()
-                                        }
+                                        }*/
                                     }
                                 )
                                 .matchedGeometryEffect(id: program.id, in: animation_namespace)
@@ -311,20 +313,19 @@ private struct PositionProgramView: View
             {
                 LazyVStack(spacing: 8)
                 {
-                    ForEach($program.points)
-                    { $point in
+                    ForEach(Array(program.points.enumerated()), id: \.element.id)
+                    { index, point in
                         PositionItemView(
                             robot: robot,
                             program: program,
-                            point_item: point
+                            point_item: point,
+                            point_index: index
                         )
-                        { if let index = program.points.firstIndex(where: { $0.id == point.id })
-                            {
-                                robot.reset_moving()
-                                
-                                program.points.remove(at: index)
-                                robot.update_program_entity(by: program)
-                            }
+                        {
+                            robot.reset_moving()
+                            
+                            program.points.remove(at: index)
+                            robot.update_program_entity(by: program)
                         }
                         .onDrag
                         {
@@ -368,6 +369,8 @@ private struct PositionItemView: View
     @ObservedObject var robot: Robot
     @ObservedObject var program: PositionProgram
     @ObservedObject var point_item: PositionPoint
+    
+    let point_index: Int
     
     @State private var position_item_view_presented = false
     
