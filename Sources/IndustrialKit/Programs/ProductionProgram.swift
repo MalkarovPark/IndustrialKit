@@ -28,7 +28,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     @Published public var listing_text: String?
     
     /// An array of opertaions elements.
-    @Published public var elements = [WorkspaceProgramElement]()
+    @Published public var elements = [ProductionProgramElement]()
     
     // MARK: - Init functions
     /**
@@ -47,7 +47,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
      - Parameters:
         - element: An added element.
      */
-    public func add_element(_ element: WorkspaceProgramElement)
+    public func add_element(_ element: ProductionProgramElement)
     {
         elements.append(element)
     }
@@ -58,7 +58,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         - index: Updated operation element index.
         - element: New operation element.
      */
-    public func update_element(index: Int, _ element: WorkspaceProgramElement)
+    public func update_element(index: Int, _ element: ProductionProgramElement)
     {
         if elements.indices.contains(index)
         {
@@ -136,7 +136,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     }
     
     /// Define element index for logic element.
-    public func set_mark_index(for element: WorkspaceProgramElement)
+    public func set_mark_index(for element: ProductionProgramElement)
     {
         // Build map of mark name – index
         let marks: [String: Int] = elements.enumerated().reduce(into: [:])
@@ -227,7 +227,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         
         self.name = try container.decode(String.self, forKey: .name)
         
-        let wrapped = try container.decode([AnyWorkspaceProgramElement].self, forKey: .elements)
+        let wrapped = try container.decode([AnyProductionProgramElement].self, forKey: .elements)
         self.elements = wrapped.map { $0.base }
         
         self.listing_text = try container.decodeIfPresent(String.self, forKey: .listing_text)
@@ -239,7 +239,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         
         try container.encode(name, forKey: .name)
         
-        let wrapped = elements.map { AnyWorkspaceProgramElement($0) }
+        let wrapped = elements.map { AnyProductionProgramElement($0) }
         try container.encode(wrapped, forKey: .elements)
         
         try container.encode(listing_text, forKey: .listing_text)
@@ -289,7 +289,7 @@ public enum RegexPatterns: String, CaseIterable
     // MarkLogicElement
     case _MarkLogicElement = #"l: mark\.\(([^()]*)\)"#
     
-    func make_element(from input: String) -> WorkspaceProgramElement?
+    func make_element(from input: String) -> ProductionProgramElement?
     {
         guard match_regex(text: input, pattern: self.rawValue) else
         {

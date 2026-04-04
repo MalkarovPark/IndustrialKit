@@ -281,7 +281,7 @@ import SwiftUI
     
     // MARK: Single element handling
     /// Single program element.
-    @Published public var current_element: WorkspaceProgramElement
+    @Published public var current_element: ProductionProgramElement
     
     private var is_single_performed = false
     
@@ -597,11 +597,11 @@ import SwiftUI
     private var selected_element_index = 0
     
     /// A target code in operation codes array.
-    public var selected_program_element: WorkspaceProgramElement //A selected workspace program element.
+    public var selected_program_element: ProductionProgramElement //A selected workspace program element.
     {
         get
         {
-            return selected_program?.elements[safe: selected_element_index] ?? WorkspaceProgramElement()
+            return selected_program?.elements[safe: selected_element_index] ?? ProductionProgramElement()
         }
         set
         {
@@ -622,7 +622,7 @@ import SwiftUI
         - element: The program element performed by the workspace.
         - completion: A completion function that is calls when the performing completes.
      */
-    public func perform(element: WorkspaceProgramElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
+    public func perform(element: ProductionProgramElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
         performed = true
         

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 ///Initiates operations on controllable devices such as robots or tools.
-public class PerformerElement: WorkspaceProgramElement
+public class PerformerElement: ProductionProgramElement
 {
     public init(
         object_name: String = "",

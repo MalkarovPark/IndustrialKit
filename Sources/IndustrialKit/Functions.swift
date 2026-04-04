@@ -70,7 +70,7 @@ public func origin_transform(
 }
 
 ///Deep copy for codable objects.
-public func clone_codable<T: WorkspaceProgramElement>(_ object: T) -> T?
+public func clone_codable<T: ProductionProgramElement>(_ object: T) -> T?
 {
     do
     {
@@ -87,7 +87,7 @@ public func clone_codable<T: WorkspaceProgramElement>(_ object: T) -> T?
 }
 
 /// Deep copy of any program element with preserving subclass and properties.
-public func clone_element(_ element: WorkspaceProgramElement, to program: ProductionProgram)
+public func clone_element(_ element: ProductionProgramElement, to program: ProductionProgram)
 {
     // Performer
     if let e = element as? RobotPerformerElement { insert(e); return }
@@ -108,7 +108,7 @@ public func clone_element(_ element: WorkspaceProgramElement, to program: Produc
 
     //print("clone_element: unsupported type:", type(of: element))
     
-    func insert<T: WorkspaceProgramElement>(_ original: T)
+    func insert<T: ProductionProgramElement>(_ original: T)
     {
         if let copy = clone_codable(original)
         {

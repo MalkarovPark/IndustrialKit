@@ -240,7 +240,7 @@ struct ControlTextView_Previews: PreviewProvider
     {
         @ObservedObject var workspace: Workspace
         @ObservedObject var program: ProductionProgram
-        @ObservedObject var element: WorkspaceProgramElement
+        @ObservedObject var element: ProductionProgramElement
         
         @State private var element_view_presented = false
         
@@ -282,7 +282,7 @@ struct ControlTextView_Previews: PreviewProvider
             }
             .popover(isPresented: $element_view_presented)
             {
-                WorkspaceProgramElementView(element: element, workspace: workspace, program: program)
+                ProductionProgramElementView(element: element, workspace: workspace, program: program)
                 {
                     workspace.objectWillChange.send()
                 }
@@ -305,7 +305,7 @@ struct ControlTextView_Previews: PreviewProvider
     
     private struct ElementDropDelegate: DropDelegate
     {
-        let current_element: WorkspaceProgramElement
+        let current_element: ProductionProgramElement
         let program: ProductionProgram
         
         @Binding var dragging_element_id: UUID?

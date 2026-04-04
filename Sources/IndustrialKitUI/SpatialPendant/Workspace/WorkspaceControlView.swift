@@ -469,7 +469,7 @@ private struct ElementItemView: View
 {
     @ObservedObject var workspace: Workspace
     @ObservedObject var program: ProductionProgram
-    @ObservedObject var element: WorkspaceProgramElement
+    @ObservedObject var element: ProductionProgramElement
     
     @State private var element_view_presented = false
     
@@ -513,7 +513,7 @@ private struct ElementItemView: View
         }
         .popover(isPresented: $element_view_presented)
         {
-            WorkspaceProgramElementView(element: element, workspace: workspace, program: program, on_update: on_update)
+            ProductionProgramElementView(element: element, workspace: workspace, program: program, on_update: on_update)
                 .padding()
         }
         .contextMenu
@@ -536,7 +536,7 @@ private struct ElementDropDelegate: DropDelegate
     let workspace: Workspace
     let program: ProductionProgram
     
-    let current_element: WorkspaceProgramElement
+    let current_element: ProductionProgramElement
     @Binding var dragging_element_id: UUID?
     
     let on_update: () -> ()

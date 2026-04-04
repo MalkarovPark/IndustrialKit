@@ -105,7 +105,7 @@ public struct ElementControl: View
                         {
                             GroupBox
                             {
-                                WorkspaceProgramElementView(element: workspace.current_element, workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
+                                ProductionProgramElementView(element: workspace.current_element, workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
                                     .padding(4)
                             }
                             
@@ -254,16 +254,16 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
     }
 }
 
-public struct WorkspaceProgramElementView: View
+public struct ProductionProgramElementView: View
 {
-    @ObservedObject var element: WorkspaceProgramElement
+    @ObservedObject var element: ProductionProgramElement
     @ObservedObject var workspace: Workspace
     @ObservedObject var program: ProductionProgram
     
     let on_update: () -> ()
     
     public init(
-        element: WorkspaceProgramElement,
+        element: ProductionProgramElement,
         workspace: Workspace,
         program: ProductionProgram = ProductionProgram(),
         

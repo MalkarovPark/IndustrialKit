@@ -1,5 +1,5 @@
 //
-//  WorkspaceProgramElement.swift
+//  ProductionProgramElement.swift
 //  IndustrialKit
 //
 //  Created by Artem on 01.04.2022.
@@ -13,9 +13,9 @@ import SwiftUI
  
  The element contains some action performed by the production system.
  */
-public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject, Codable
+public class ProductionProgramElement: Hashable, Identifiable, ObservableObject, Codable
 {
-    public static func == (lhs: WorkspaceProgramElement, rhs: WorkspaceProgramElement) -> Bool
+    public static func == (lhs: ProductionProgramElement, rhs: ProductionProgramElement) -> Bool
     {
         return lhs.id == rhs.id // Identity condition by id with element type
     }
@@ -34,7 +34,7 @@ public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject, 
     }
     
     /// Element type identifier.
-    open var identifier: WorkspaceProgramElementIdentifier?
+    open var identifier: ProductionProgramElementIdentifier?
     {
         return nil
     }
@@ -94,13 +94,13 @@ public class WorkspaceProgramElement: Hashable, Identifiable, ObservableObject, 
 }
 
 // MARK: - Anytype Wrapper
-public class AnyWorkspaceProgramElement: ObservableObject, Codable, Identifiable
+public class AnyProductionProgramElement: ObservableObject, Codable, Identifiable
 {
-    @Published public var base: WorkspaceProgramElement
+    @Published public var base: ProductionProgramElement
     
     public var id: UUID { base.id }
     
-    public init(_ base: WorkspaceProgramElement)
+    public init(_ base: ProductionProgramElement)
     {
         self.base = base
     }
@@ -141,7 +141,7 @@ public class AnyWorkspaceProgramElement: ObservableObject, Codable, Identifiable
         case "MarkLogicElement": base = try JSONDecoder().decode(MarkLogicElement.self, from: data)
             
         default:
-            throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown WorkspaceProgramElement type: \(type)")
+            throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown ProductionProgramElement type: \(type)")
         }
     }
 }
@@ -181,7 +181,7 @@ public enum ObserverObjectType: String, Codable, Equatable, CaseIterable
 }
 
 ///A workspace program element type enum.
-public enum WorkspaceProgramElementIdentifier: Codable, Equatable, CaseIterable
+public enum ProductionProgramElementIdentifier: Codable, Equatable, CaseIterable
 {
     // Performer
     case robot_performer

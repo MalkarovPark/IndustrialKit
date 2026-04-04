@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 ///Manipulates data in memory, which is an array of registers containing floating point numbers.
-public class ModifierElement: WorkspaceProgramElement
+public class ModifierElement: ProductionProgramElement
 {
     public override var title: String
     {

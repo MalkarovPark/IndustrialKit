@@ -140,7 +140,7 @@ For `Robot` and `Tool`, the current output is available via `current_device_outp
 
 Control of the robotic complex is performed by executing programs (`ProductionProgram`) written in **Ithi Macro Assembler (IMA)**, a pendant-style language transferred from robot level—where execution units are target positions—to system level, where execution units are individual robotic devices.
 
-An IMA program consists of `WorkspaceProgramElement` types:
+An IMA program consists of `ProductionProgramElement` types:
 - `Performers` — execute programs or operations on devices
 - `Modifiers` — update register values, including device data
 - `Logic` — control execution flow (branching and jumps)
@@ -248,7 +248,7 @@ For both individual means of labor (`Robot`, `Tool`) and composite systems (`Wor
 
 These views represent controls combined with program management in the form of a dynamic program list.
 
-Program formation is achieved through a process analogous to **teaching**: a control defines the current state (*e.g., position or operation*), the state is tested and refined, and then recorded into a program as an element (`PositionPoint`, `OperationCode`, or `WorkspaceProgramElement`).
+Program formation is achieved through a process analogous to **teaching**: a control defines the current state (*e.g., position or operation*), the state is tested and refined, and then recorded into a program as an element (`PositionPoint`, `OperationCode`, or `ProductionProgramElement`).
 
 These assembled views, placed within a `FloatingView`, form a complete pendant that can be attached to a specific means of production. They collectively define the dynamic content of the `Spatial Pendant`.
 
