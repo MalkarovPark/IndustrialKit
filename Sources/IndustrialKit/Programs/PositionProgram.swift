@@ -98,7 +98,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
     @MainActor public func entity(_ point_index: Int? = nil) -> Entity
     {
         // MARK: - Color definitions
-        let target_point_color = UIColor.systemPurple
+        let point_color = UIColor.systemPurple
         let selected_point_color = UIColor.systemIndigo
         let cylinder_color = UIColor.white.withAlphaComponent(0.75)
         
@@ -116,7 +116,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                 
                 for point in points
                 {
-                    var visual_point = ModelEntity()
+                    /*var visual_point = ModelEntity()
                     
                     if let selected_index = point_index, selected_index == index
                     {
@@ -127,9 +127,9 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                         visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: target_point_color, roughness: 1.0, isMetallic: false)])
                     }
                     
-                    node_by_data(node: visual_point, point: point, location: &point_location)
+                    node_by_data(node: visual_point, point: point, location: &point_location)*/
                     
-                    /*let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: target_point_color, isMetallic: false)])
+                    let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)))
                     
                     node_by_data(node: visual_point, point: point, location: &point_location)
                     
@@ -139,8 +139,8 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                     }
                     else
                     {
-                        visual_point.model?.materials = [SimpleMaterial(color: target_point_color, roughness: 1.0, isMetallic: false)]
-                    }*/
+                        visual_point.model?.materials = [SimpleMaterial(color: point_color, roughness: 1.0, isMetallic: false)]
+                    }
                     
                     if is_first
                     {
@@ -161,18 +161,18 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             }
             else
             {
-                let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: target_point_color, roughness: 1.0, isMetallic: false)])
+                let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)))
                 
                 let point = points.first ?? PositionPoint()
                 node_by_data(node: visual_point, point: point, location: &point_location)
                 
                 if point_index == 0
                 {
-                    visual_point.model?.materials = [SimpleMaterial(color: selected_point_color, isMetallic: false)]
+                    visual_point.model?.materials = [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)]
                 }
                 else
                 {
-                    visual_point.model?.materials = [SimpleMaterial(color: target_point_color, isMetallic: false)]
+                    visual_point.model?.materials = [SimpleMaterial(color: point_color, roughness: 1.0, isMetallic: false)]
                 }
                 
                 positions_group.addChild(visual_point)
