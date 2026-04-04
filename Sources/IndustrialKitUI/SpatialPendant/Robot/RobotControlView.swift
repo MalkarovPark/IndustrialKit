@@ -67,7 +67,7 @@ public struct RobotControlView: View
                                         set: { new_value in
                                             if let index = robot.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                robot.programs[index].name = unique_name(for: new_value, in: robot.programs_names)
+                                                robot.programs[index].name = unique_name(for: new_value, in: robot.program_names)
                                                 
                                                 on_update()
                                             }
@@ -159,7 +159,7 @@ public struct RobotControlView: View
                     NewElementButton(
                         with_name: robot.selected_program == nil,
                         is_expanded: $new_view_is_expanded,
-                        names: robot.programs_names,
+                        names: robot.program_names,
                         add_name_action:
                             { new_name in
                                 robot.add_program(PositionProgram(name: new_name))

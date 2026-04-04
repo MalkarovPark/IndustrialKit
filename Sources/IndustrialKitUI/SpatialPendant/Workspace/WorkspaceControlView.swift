@@ -151,7 +151,7 @@ struct WorkspaceControlView: View
                                         set: { new_value in
                                             if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                workspace.programs[index].name = unique_name(for: new_value, in: workspace.programs_names)
+                                                workspace.programs[index].name = unique_name(for: new_value, in: workspace.program_names)
                                                 
                                                 on_update()
                                             }
@@ -226,7 +226,7 @@ struct WorkspaceControlView: View
                     NewElementButton(
                         with_name: workspace.selected_program == nil,
                         is_expanded: $new_view_is_expanded,
-                        names: workspace.programs_names,
+                        names: workspace.program_names,
                         add_name_action:
                             { new_name in
                                 workspace.add_program(ProductionProgram(name: new_name))

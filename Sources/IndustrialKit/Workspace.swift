@@ -154,7 +154,7 @@ import SwiftUI
      */
     public func add_program(_ program: ProductionProgram)
     {
-        program.name = unique_name(for: program.name, in: programs_names)
+        program.name = unique_name(for: program.name, in: program_names)
         programs.append(program)
     }
     
@@ -260,7 +260,7 @@ import SwiftUI
     }
     
     /// All operations programs names in tool.
-    public var programs_names: [String] // Get all names of programs in tool
+    public var program_names: [String] // Get all names of programs in tool
     {
         var prog_names = [String]()
         if programs.count > 0
@@ -406,9 +406,9 @@ import SwiftUI
             {
                 if checked_object.programs_count > 0
                 {
-                    if !checked_object.programs_names.contains(element.program_name)
+                    if !checked_object.program_names.contains(element.program_name)
                     {
-                        element.program_name = checked_object.programs_names.first ?? ""
+                        element.program_name = checked_object.program_names.first ?? ""
                     }
                 }
                 else
@@ -450,9 +450,9 @@ import SwiftUI
             {
                 if checked_object.programs_count > 0
                 {
-                    if !checked_object.programs_names.contains(element.program_name)
+                    if !checked_object.program_names.contains(element.program_name)
                     {
-                        element.program_name = checked_object.programs_names.first ?? ""
+                        element.program_name = checked_object.program_names.first ?? ""
                     }
                 }
                 else

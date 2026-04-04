@@ -370,7 +370,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// - Parameter program: A program to add.
     public func add_program(_ program: OperationProgram)
     {
-        program.name = unique_name(for: program.name, in: programs_names)
+        program.name = unique_name(for: program.name, in: program_names)
         programs.append(program)
     }
     
@@ -467,7 +467,7 @@ open class Tool: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     /// All operations program names in tool.
-    public var programs_names: [String]
+    public var program_names: [String]
     {
         var prog_names = [String]()
         if programs.count > 0

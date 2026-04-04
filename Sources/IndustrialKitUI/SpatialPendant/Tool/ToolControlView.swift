@@ -69,7 +69,7 @@ public struct ToolControlView: View
                                         set: { new_value in
                                             if let index = tool.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                tool.programs[index].name = unique_name(for: new_value, in: tool.programs_names)
+                                                tool.programs[index].name = unique_name(for: new_value, in: tool.program_names)
                                                 
                                                 on_update()
                                             }
@@ -177,7 +177,7 @@ public struct ToolControlView: View
                         NewElementButton(
                             with_name: tool.selected_program == nil,
                             is_expanded: $new_view_is_expanded,
-                            names: tool.programs_names,
+                            names: tool.program_names,
                             add_name_action:
                                 { new_name in
                                     tool.add_program(OperationProgram(name: new_name))

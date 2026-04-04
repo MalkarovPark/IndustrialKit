@@ -441,7 +441,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     /// - Parameter program: A program to add.
     public func add_program(_ program: PositionProgram)
     {
-        program.name = unique_name(for: program.name, in: programs_names)
+        program.name = unique_name(for: program.name, in: program_names)
         programs.append(program)
     }
     
@@ -533,7 +533,7 @@ open class Robot: WorkspaceObject, DeviceTwin, StateOutputCapable
     }
     
     /// The total number of programs.
-    public var programs_names: [String]
+    public var program_names: [String]
     {
         var prog_names = [String]()
         if programs.count > 0

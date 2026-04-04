@@ -32,9 +32,9 @@ public struct RobotPerformerElementView: View
         {
             self.element.object_name = self.workspace.placed_robot_names.first ?? "???"
             
-            if workspace.robot(named: element.object_name).programs_names.count > 0
+            if workspace.robot(named: element.object_name).program_names.count > 0
             {
-                element.program_name = workspace.robot(named: element.object_name).programs_names.first ?? ""
+                element.program_name = workspace.robot(named: element.object_name).program_names.first ?? ""
             }
         }
     }
@@ -52,9 +52,9 @@ public struct RobotPerformerElementView: View
                         { new_value in
                             element.object_name = new_value
                             
-                            if workspace.robot(named: new_value).programs_names.count > 0
+                            if workspace.robot(named: new_value).program_names.count > 0
                             {
-                                element.program_name = workspace.robot(named: new_value).programs_names.first ?? ""
+                                element.program_name = workspace.robot(named: new_value).program_names.first ?? ""
                             }
                             
                             on_update()
@@ -204,9 +204,9 @@ public struct RobotPerformerElementView: View
                         {
                             Picker("Program", selection: $element.program_name) // Robot program picker
                             {
-                                if workspace.robot(named: element.object_name).programs_names.count > 0
+                                if workspace.robot(named: element.object_name).program_names.count > 0
                                 {
-                                    ForEach(workspace.robot(named: element.object_name).programs_names, id: \.self)
+                                    ForEach(workspace.robot(named: element.object_name).program_names, id: \.self)
                                     { name in
                                         Text(name)
                                     }
@@ -217,7 +217,7 @@ public struct RobotPerformerElementView: View
                                 }
                             }
                             .buttonStyle(.bordered)
-                            .disabled(workspace.robot(named: element.object_name).programs_names.count == 0)
+                            .disabled(workspace.robot(named: element.object_name).program_names.count == 0)
                         }
                     }
                     .padding(.top)
@@ -258,9 +258,9 @@ public struct ToolPerformerElementView: View
         {
             self.element.object_name = self.workspace.placed_tool_names.first ?? "???"
             
-            if workspace.tool(named: element.object_name).programs_names.count > 0
+            if workspace.tool(named: element.object_name).program_names.count > 0
             {
-                element.program_name = workspace.tool(named: element.object_name).programs_names.first ?? ""
+                element.program_name = workspace.tool(named: element.object_name).program_names.first ?? ""
             }
         }
     }
@@ -278,9 +278,9 @@ public struct ToolPerformerElementView: View
                         { new_value in
                             element.object_name = new_value
                             
-                            if workspace.robot(named: new_value).programs_names.count > 0
+                            if workspace.robot(named: new_value).program_names.count > 0
                             {
-                                element.program_name = workspace.robot(named: new_value).programs_names.first ?? ""
+                                element.program_name = workspace.robot(named: new_value).program_names.first ?? ""
                             }
                         }
                 )
@@ -379,9 +379,9 @@ public struct ToolPerformerElementView: View
                         {
                             Picker("Program", selection: $element.program_name) // Robot program picker
                             {
-                                if workspace.tool(named: element.object_name).programs_names.count > 0
+                                if workspace.tool(named: element.object_name).program_names.count > 0
                                 {
-                                    ForEach(workspace.tool(named: element.object_name).programs_names, id: \.self)
+                                    ForEach(workspace.tool(named: element.object_name).program_names, id: \.self)
                                     { name in
                                         Text(name)
                                     }
@@ -392,7 +392,7 @@ public struct ToolPerformerElementView: View
                                 }
                             }
                             .buttonStyle(.bordered)
-                            .disabled(workspace.tool(named: element.object_name).programs_names.count == 0)
+                            .disabled(workspace.tool(named: element.object_name).program_names.count == 0)
                         }
                     }
                     .padding(.top)
