@@ -120,7 +120,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                     
                     if let selected_index = point_index, selected_index == index
                     {
-                        visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)])
+                        //visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)])
                     }
                     else
                     {
