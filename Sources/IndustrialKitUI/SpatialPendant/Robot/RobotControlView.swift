@@ -609,7 +609,7 @@ private struct PositionPointView: View
                 point.p = new_point.p
                 point.w = new_point.w
                 
-                robot.update_program_entity(by: program, point_index: robot.programs.firstIndex(where: { $0.id == program.id }))
+                robot.update_program_entity(by: program, point_index: point_index)
             }
         )
     }
