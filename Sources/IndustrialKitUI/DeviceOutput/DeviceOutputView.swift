@@ -233,12 +233,18 @@ public struct DeviceOutputView: View
                         .glassEffect()
                         #else
                         .padding(4)
+                        #if !os(visionOS)
                         .buttonStyle(.borderless)
                         .glassBackgroundEffect()
+                        #endif
                         .padding(6)
                         #endif
                     }
+                    #if !os(visionOS)
                     .padding(10)
+                    #else
+                    .padding(5)
+                    #endif
                     
                     if let device_output = state_output_device.device_output
                     {
@@ -415,5 +421,8 @@ struct DeviceStateView_Previews: PreviewProvider
     static var previews: some View
     {
         Container()
+        #if os(visionOS)
+            .glassBackgroundEffect()
+        #endif
     }
 }

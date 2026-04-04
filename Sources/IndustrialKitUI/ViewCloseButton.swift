@@ -102,7 +102,9 @@ public struct CircleButtonImageFramer: ViewModifier
     public func body(content: Content) -> some View
     {
         content
+        #if !os(visionOS)
             .imageScale(.large)
+        #endif
         #if os(macOS)
             .frame(width: 16, height: 16)
         #else

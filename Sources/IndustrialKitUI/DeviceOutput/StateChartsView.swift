@@ -42,12 +42,23 @@ public struct StateChartsView: View
                 .controlSize(.regular)
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                #if !os(macOS)
+                #if os(iOS)
                 .padding()
+                #elseif os(visionOS)
+                .padding(.horizontal)
                 #endif
                 
                 ChartContent(chart: charts[chart_selection])
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                #if os(visionOS)
+                    .padding()
+                    .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+                    .background
+                    {
+                        RoundedRectangle(cornerRadius: 32, style: .continuous)
+                        .fill(.thickMaterial)
+                    }
+                #endif
                     .padding()
             }
             else
@@ -58,9 +69,6 @@ public struct StateChartsView: View
                 }
             }
         }
-        //#if !os(visionOS)
-        //.background(.white)
-        //#endif
     }
     
     @ViewBuilder

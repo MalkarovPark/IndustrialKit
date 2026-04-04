@@ -94,8 +94,11 @@ public struct MoverElementView: View
                                 Label("Delete", systemImage: "trash")
                             }
                         }
-                        #if !os(macOS)
+                        #if os(iOS)
                         .frame(height: 2)
+                        #endif
+                        #if os(visionOS)
+                        .listRowInsets(EdgeInsets(top: 16, leading: -10, bottom: 0, trailing: -10))
                         #endif
                     }
                     .onDelete
@@ -111,8 +114,10 @@ public struct MoverElementView: View
             {
                 ZStack
                 {
+                    #if !os(visionOS)
                     Rectangle()
                         .foregroundStyle(.white)
+                    #endif
                     
                     Text("No values to \(element.move_type == .move ? "move" : "copy")")
                         .foregroundStyle(.secondary)
@@ -253,8 +258,11 @@ public struct WriterElementView: View
                                 Label("Delete", systemImage: "trash")
                             }
                         }
-                        #if !os(macOS)
+                        #if os(iOS)
                         .frame(height: 2)
+                        #endif
+                        #if os(visionOS)
+                        .listRowInsets(EdgeInsets(top: 16, leading: -10, bottom: 0, trailing: -10))
                         #endif
                     }
                     .onDelete
@@ -270,8 +278,10 @@ public struct WriterElementView: View
             {
                 ZStack
                 {
+                    #if !os(visionOS)
                     Rectangle()
                         .foregroundStyle(.white)
+                    #endif
                     
                     Text("No values to write")
                         .foregroundStyle(.secondary)
@@ -651,8 +661,11 @@ public struct ObserverElementView: View
                                 Label("Delete", systemImage: "trash")
                             }
                         }
-                        #if !os(macOS)
+                        #if os(iOS)
                         .frame(height: 2)
+                        #endif
+                        #if os(visionOS)
+                        .listRowInsets(EdgeInsets(top: 16, leading: -10, bottom: 0, trailing: -10))
                         #endif
                     }
                     .onDelete
@@ -669,8 +682,10 @@ public struct ObserverElementView: View
             {
                 ZStack
                 {
+                    #if !os(visionOS)
                     Rectangle()
                         .foregroundStyle(.white)
+                    #endif
                     
                     Text("No items to ouput")
                         .foregroundStyle(.secondary)
@@ -740,8 +755,10 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
         {
             ZStack
             {
+                #if !os(visionOS)
                 Rectangle()
                     .foregroundStyle(.white)
+                #endif
                 
                 ModifiersView(workspace: workspace)
                     .onAppear
@@ -810,10 +827,19 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
         {
             content
                 .padding()
+            #if !os(visionOS)
                 .frame(width: 256)
+            #else
+                .frame(width: 320)
+            #endif
                 .background(.bar)
+            #if !os(visionOS)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .shadow(color: .black.opacity(0.2), radius: 8)
+            #else
+                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                .glassBackgroundEffect(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            #endif
                 .padding()
         }
     }

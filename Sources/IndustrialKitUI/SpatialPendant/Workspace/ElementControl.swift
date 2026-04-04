@@ -90,6 +90,9 @@ public struct ElementControl: View
                                 .font(.system(size: 16))
                                 .frame(width: 32, height: 16)
                             #endif
+                            #if os(visionOS)
+                                .padding(2)
+                            #endif
                         }
                         .buttonStyle(.plain)
                         .padding(.top, 10)
@@ -329,7 +332,11 @@ struct ElementControl_Previews: PreviewProvider
                 ElementControl(workspace: workspace)
                     .padding()
             }
+            #if !os(visionOS)
             .frame(width: 400, height: 440)
+            #else
+            .frame(width: 512, height: 440)
+            #endif
             .onAppear
             {
                 let robot = Robot(name: "6DOF")

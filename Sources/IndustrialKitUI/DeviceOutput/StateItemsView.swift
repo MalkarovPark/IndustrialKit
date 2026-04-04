@@ -43,8 +43,19 @@ public struct StateItemsView: View
                             
                             expanded_items: $expanded_items
                         )
+                        #if os(visionOS)
+                        .listRowInsets(EdgeInsets(top: 0, leading: -16, bottom: 0, trailing: -16))
+                        #endif
                     }
                 }
+                #if os(visionOS)
+                .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+                .background
+                {
+                    RoundedRectangle(cornerRadius: 32, style: .continuous)
+                        .fill(.thickMaterial)
+                }
+                #endif
                 .listStyle(.plain)
                 .padding()
                 .onChange(of: device_output.items)
@@ -70,9 +81,6 @@ public struct StateItemsView: View
                 device_output.define_item_indices()
             }
         }
-        //#if !os(visionOS)
-        //.background(.white)
-        //#endif
     }
 }
 

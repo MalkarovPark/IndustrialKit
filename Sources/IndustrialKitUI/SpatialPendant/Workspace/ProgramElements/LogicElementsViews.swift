@@ -16,8 +16,6 @@ public struct JumpElementView: View
     
     let on_update: () -> ()
     
-    @State private var picker_is_presented = false
-    
     public init(
         element: JumpLogicElement,
         program: ProductionProgram,
@@ -83,8 +81,6 @@ public struct ComparatorElementView: View
     @ObservedObject var program: ProductionProgram
     
     private let on_update: () -> ()
-    
-    @State private var picker_is_presented = false
     
     public init(
         element: ComparatorLogicElement,
@@ -153,17 +149,7 @@ public struct ComparatorElementView: View
                 
                 RegistersSelector(text: "\(element.value_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: value_index, names: ["Value 1"])
                 
-                Button(element.compare_type.rawValue)
-                {
-                    picker_is_presented = true
-                }
-                .popover(isPresented: $picker_is_presented)
-                {
-                    CompareTypePicker(compare_type: compare_type)
-                    #if !os(macOS)
-                        .presentationDetents([.height(96)])
-                    #endif
-                }
+                CompareTypePicker(compare_type: compare_type)
                 
                 Text("value of")
                     .frame(minWidth: 48)
@@ -213,6 +199,8 @@ public struct CompareTypePicker: View
 {
     @Binding var compare_type: CompareType
     
+    @State private var picker_is_presented = false
+    
     public init(compare_type: Binding<CompareType>)
     {
         self._compare_type = compare_type
@@ -220,16 +208,33 @@ public struct CompareTypePicker: View
     
     public var body: some View
     {
-        Picker("Compare", selection: $compare_type)
+        Button
         {
-            ForEach(CompareType.allCases, id: \.self)
-            { compare_type in
-                Text(compare_type.rawValue)
-            }
+            picker_is_presented = true
         }
-        .pickerStyle(.segmented)
-        .labelsHidden()
-        .padding()
+        label:
+        {
+            Image(systemName: compare_type.rawValue)
+        }
+        .popover(isPresented: $picker_is_presented)
+        {
+            Picker("Compare", selection: $compare_type)
+            {
+                ForEach(CompareType.allCases, id: \.self)
+                { compare_type in
+                    Image(systemName: compare_type.rawValue)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .padding()
+            #if !os(macOS)
+            .presentationDetents([.height(96)])
+            #endif
+        }
+        #if os(visionOS)
+        .buttonBorderShape(.circle)
+        #endif
     }
 }
 
@@ -360,10 +365,19 @@ struct IMALogicPreviewsContainer: PreviewProvider
         {
             content
                 .padding()
+            #if !os(visionOS)
                 .frame(width: 256)
+            #else
+                .frame(width: 320)
+            #endif
                 .background(.bar)
+            #if !os(visionOS)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .shadow(color: .black.opacity(0.2), radius: 8)
+            #else
+                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                .glassBackgroundEffect(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            #endif
                 .padding()
         }
     }

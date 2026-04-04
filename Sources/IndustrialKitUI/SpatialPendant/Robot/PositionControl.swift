@@ -431,6 +431,9 @@ public struct PositionPane: View
                                 .font(.system(size: 16))
                                 .frame(width: 32, height: 16)
                             #endif
+                            #if os(visionOS)
+                                .padding(2)
+                            #endif
                         }
                         .buttonStyle(.plain)
                         .padding(.top, 10)

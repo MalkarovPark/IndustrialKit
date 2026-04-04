@@ -472,16 +472,23 @@ struct IMAPerformersPreviewsContainer: PreviewProvider
     
     private struct PreviewBorder: ViewModifier
     {
-        @ObservedObject var workspace = Workspace()
-        
         public func body(content: Content) -> some View
         {
             content
                 .padding()
+            #if !os(visionOS)
                 .frame(width: 256)
+            #else
+                .frame(width: 320)
+            #endif
                 .background(.bar)
+            #if !os(visionOS)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .shadow(color: .black.opacity(0.2), radius: 8)
+            #else
+                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                .glassBackgroundEffect(in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            #endif
                 .padding()
         }
     }

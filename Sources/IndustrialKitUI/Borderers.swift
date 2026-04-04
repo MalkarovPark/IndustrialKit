@@ -19,10 +19,14 @@ public struct ViewBorderer: ViewModifier
         content
         #if os(macOS)
             .clipShape(RoundedRectangle(cornerRadius: 6.5, style: .continuous))
-        #else
+        #elseif os(iOS)
             .clipShape(RoundedRectangle(cornerRadius: 7.5, style: .continuous))
+        #elseif os(visionOS)
+            .clipShape(RoundedRectangle(cornerRadius: 22.5, style: .continuous)) //.clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
         #endif
+        #if !os(visionOS)
             .shadow(color: .black.opacity(0.1), radius: 4)
+        #endif
     }
 }
 

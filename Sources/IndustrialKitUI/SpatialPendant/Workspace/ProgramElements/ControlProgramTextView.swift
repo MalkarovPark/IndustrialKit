@@ -176,11 +176,7 @@ struct ControlTextView_Previews: PreviewProvider
                                 .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                             }
                         }
-                        #if os(macOS)
-                        .padding(.vertical, 16)//.padding(8)
-                        #else
-                        .padding(.vertical, 16)//.padding(8)
-                        #endif
+                        .padding(.vertical, 16)
                     }
                 }
                 else

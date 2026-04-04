@@ -186,12 +186,12 @@ public class ComparatorLogicElement: LogicElement
 ///A logic program element compare type enum.
 public enum CompareType: String, Codable, Equatable, CaseIterable
 {
-    case equal = "="
-    case unequal = "≠"
-    case greater = ">"
-    case greater_equal = "⩾"
-    case less = "<"
-    case less_equal = "⩽"
+    case equal = "equal"
+    case unequal = "notequal"
+    case greater = "greaterthan"
+    case greater_equal = "greaterthanorequalto"
+    case less = "lessthan"
+    case less_equal = "lessthanorequalto"
     
     func compare(_ value1: Float, _ value2: Float) -> Bool
     {

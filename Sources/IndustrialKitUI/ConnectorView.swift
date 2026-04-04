@@ -86,6 +86,9 @@ public struct ConnectorView: View
                     .toggleStyle(.button)
                     .buttonStyle(.bordered)
                     .buttonBorderShape(.circle)
+                    #if os(visionOS)
+                    .padding(.trailing, 6)
+                    #endif
                     
                     ConnectionButton(
                         connector: device.connector,
@@ -128,6 +131,9 @@ private struct ConnectionStatusView: View
                 }
             }
             .listStyle(.plain)
+            #if os(visionOS)
+            .modifier(ListBorderer())
+            #endif
             
             if !(connector.default_parameters.count > 0)
             {
@@ -152,8 +158,13 @@ private struct ConnectionStatusView: View
                     {
                         ZStack
                         {
+                            #if !os(visionOS)
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
                                 .foregroundStyle(.thinMaterial)
+                            #else
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .foregroundStyle(.thinMaterial)
+                            #endif
                             
                             VStack(alignment: .leading)
                             {
@@ -190,8 +201,13 @@ private struct ConnectionStatusView: View
                     {
                         ZStack
                         {
+                            #if !os(visionOS)
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
                                 .foregroundStyle(.thinMaterial)
+                            #else
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .foregroundStyle(.thinMaterial)
+                            #endif
                             
                             VStack(alignment: .leading)
                             {
@@ -250,10 +266,19 @@ private struct ConnectionButton: View
             HStack
             {
                 Text(connector.connection_button.label)
+                #if os(visionOS)
+                    .padding(.trailing, 4)
+                #endif
                 
                 Circle()
                     .fill(connector.connection_button.color)
+                #if !os(visionOS)
                     .frame(width: 10, height: 10)
+                #else
+                    .frame(width: 16, height: 16)
+                    .glassBackgroundEffect(in: Circle())
+                    //.frame(depth: 2)
+                #endif
             }
         }
         #if os(macOS)
@@ -534,11 +559,18 @@ struct ConnectorView_Previews: PreviewProvider
             ConnectorView(object: object)
                 //.frame(width: 320, height: 448)
                 //.padding(40)
+            #if !os(visionOS)
                 .frame(width: 320)
+            #else
+                .frame(width: 600)
+            #endif
                 .onAppear
                 {
                     object.device_mode = .real
                 }
+            #if os(visionOS)
+                .glassBackgroundEffect()
+            #endif
         }
     }
     

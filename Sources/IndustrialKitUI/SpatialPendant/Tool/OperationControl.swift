@@ -40,8 +40,11 @@ public struct OperationControl: View
                             Text(tool.codes.count > 0 ? tool.code_info(tool.current_operation.value).name : "")
                             #if os(macOS)
                                 .font(.system(size: 14, design: .rounded))
-                            #else
+                            #elseif os(iOS)
                                 .font(.system(size: 18, design: .rounded))
+                            #elseif os(visionOS)
+                                .font(.system(size: 20, design: .rounded))
+                                .padding(4)
                             #endif
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity)
@@ -99,6 +102,9 @@ public struct OperationControl: View
                             #if !os(macOS)
                                 .font(.system(size: 16))
                                 .frame(width: 32, height: 16)
+                            #endif
+                            #if os(visionOS)
+                                .padding(2)
                             #endif
                         }
                         .buttonStyle(.plain)
