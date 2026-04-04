@@ -122,11 +122,11 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                     
                     if let selected_index = point_index, selected_index == index
                     {
-                        visual_point.model?.materials = [UnlitMaterial(color: selected_point_color)]//[SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)]
+                        visual_point.model?.materials = [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)]
                     }
                     else
                     {
-                        visual_point.model?.materials = [UnlitMaterial(color: point_color)]//[SimpleMaterial(color: point_color, roughness: 1.0, isMetallic: false)]
+                        visual_point.model?.materials = [SimpleMaterial(color: point_color, roughness: 1.0, isMetallic: false)]
                     }
                     
                     if is_first
@@ -155,11 +155,11 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                 
                 if point_index == 0
                 {
-                    visual_point.model?.materials = [UnlitMaterial(color: selected_point_color)]//[SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)]
+                    visual_point.model?.materials = [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)]
                 }
                 else
                 {
-                    visual_point.model?.materials = [UnlitMaterial(color: point_color)]//[SimpleMaterial(color: point_color, roughness: 1.0, isMetallic: false)]
+                    visual_point.model?.materials = [SimpleMaterial(color: point_color, roughness: 1.0, isMetallic: false)]
                 }
                 
                 positions_group.addChild(visual_point)
@@ -175,7 +175,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             let height = length(vector)
             
             let cylinder_mesh = MeshResource.generateCylinder(height: height, radius: Float(0.001))
-            let line_entity = ModelEntity(mesh: cylinder_mesh, materials: [UnlitMaterial(color: cylinder_color)])//[SimpleMaterial(color: cylinder_color, roughness: 1.0, isMetallic: false)])
+            let line_entity = ModelEntity(mesh: cylinder_mesh, materials: [SimpleMaterial(color: cylinder_color, roughness: 1.0, isMetallic: false)])
             
             line_entity.position = from + vector / 2
             
@@ -219,7 +219,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             
             for i in 0..<3
             {
-                let cone = ModelEntity(mesh: .generateCone(height: 0.004, radius: 0.002), materials: [UnlitMaterial(color: colors[i])])//[SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
+                let cone = ModelEntity(mesh: .generateCone(height: 0.004, radius: 0.002), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
                 
                 cone.position = positions[i]
                 cone.euler_angles = rotations[i]
