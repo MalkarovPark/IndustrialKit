@@ -116,7 +116,20 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                 
                 for point in points
                 {
-                    let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: target_point_color, isMetallic: false)])
+                    var visual_point = ModelEntity()
+                    
+                    if let selected_index = point_index, selected_index == index
+                    {
+                        visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: selected_point_color, isMetallic: false)])
+                    }
+                    else
+                    {
+                        visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: target_point_color, isMetallic: false)])
+                    }
+                    
+                    node_by_data(node: visual_point, point: point, location: &point_location)
+                    
+                    /*let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.003)), materials: [SimpleMaterial(color: target_point_color, isMetallic: false)])
                     
                     node_by_data(node: visual_point, point: point, location: &point_location)
                     
@@ -127,7 +140,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                     else
                     {
                         visual_point.model?.materials = [SimpleMaterial(color: target_point_color, roughness: 1.0, isMetallic: false)]
-                    }
+                    }*/
                     
                     if is_first
                     {
