@@ -22,6 +22,12 @@ import SwiftUI
 @MainActor public class Workspace: ObservableObject, @unchecked Sendable
 {
     // MARK: - Init functions
+    /// Initializes an empty workspace instance.
+    ///
+    /// Creates default runtime state including:
+    /// - A default `RobotPerformerElement` as current element
+    /// - A register memory block with default size
+    /// - Empty collections of robots, tools, and parts
     public init()
     {
         current_element = RobotPerformerElement()//MarkLogicElement(name: "")
@@ -29,33 +35,52 @@ import SwiftUI
         registers = [Float](repeating: 0, count: Workspace.default_registers_count)
     }
     
-    // MARK: Workspace objects data
+    // MARK: - Production Objects
+    /// Collection of robots currently registered in the workspace.
+    ///
+    /// Each robot represents a programmable production unit capable of executing
+    /// motion and operation programs.
     @Published public var robots = [Robot]()
+    
+    /// Collection of tools currently registered in the workspace.
+    ///
+    /// Tools represent executable end-effectors or functional devices used
+    /// within production programs.
     @Published public var tools = [Tool]()
+    
+    /// Collection of parts currently registered in the workspace.
+    ///
+    /// Parts represent passive production objects manipulated by robots or tools.
     @Published public var parts = [Part]()
     
-    // MARK: - Selection handling functions
-    /**
-     Returns index number of workspace object by name.
-     
-     - Parameters:
-        - name: A name of object for index find.
-        - objects: An array of objects where the index searches.
-     */
+    /// Returns index of a production object by name within a given collection.
+    ///
+    /// - Parameters:
+    ///   - name: Target object name.
+    ///   - objects: Collection of production objects to search.
+    ///
+    /// - Returns: Index of object if found, otherwise `-1`.
     private func index_by_name(_ name: String, objects: [ProductionObject]) -> Int
     {
         return objects.firstIndex(where: { $0.name == name }) ?? -1
     }
     
-    /// Selected workspace object.
+    /// Currently selected production object in the workspace.
+    ///
+    /// Can be a robot, tool, or part. Selection affects camera focus,
+    /// program context, and interaction state.
     @Published public var selected_object: ProductionObject?
     
-    /**
-     Selects a workspace object by type (Robot, Tool, or Part), updates the current selection, and focuses the camera on it.
-     
-     - Parameters:
-        - object: An object to select.
-     */
+    /// Selects a production object and updates workspace interaction state.
+    ///
+    /// This method:
+    /// - Clears previous selection
+    /// - Disables pointer interaction temporarily
+    /// - Selects the appropriate object type handler
+    /// - Focuses camera on the selected entity (macOS/iOS)
+    /// - Enables interaction pointer if applicable
+    ///
+    /// - Parameter object: Object to be selected (Robot, Tool, or Part)
     public func select_object(_ object: ProductionObject)
     {
         deselect_object() // Test
@@ -89,7 +114,14 @@ import SwiftUI
         self.objectWillChange.send() // UI only
     }
     
-    /// Deselects selected object.
+    /// Deselects currently active production object.
+    ///
+    /// Performs cleanup depending on object type:
+    /// - Robot: stops program and disables visual aids
+    /// - Tool: stops program execution
+    /// - Part: no additional cleanup
+    ///
+    /// Also clears program selection state if no object is active.
     public func deselect_object()
     {
         switch selected_object
@@ -111,6 +143,14 @@ import SwiftUI
         selected_object = nil
     }
     
+    /// Removes a production object from the workspace and scene.
+    ///
+    /// This method:
+    /// - Removes the entity from the scene graph
+    /// - Clears camera focus
+    /// - Deletes object from its corresponding collection
+    ///
+    /// - Parameter object: Object to be removed
     public func delete_object(_ object: ProductionObject)
     {
         #if os(macOS) || os(iOS)
@@ -132,11 +172,16 @@ import SwiftUI
         }
     }
     
-    // MARK: - Program manage functions
-    /// An array of tool operations programs.
+    // MARK: - Program Management
+    /// Collection of production programs available in workspace.
+    ///
+    /// Programs define ordered sequences of `ProductionProgramElement`
+    /// executed by robots or tools.
     @Published public var programs = [ProductionProgram]()
     
-    /// A selected operations program index.
+    /// Index of currently selected production program.
+    ///
+    /// Changing this value resets execution state and selected element index.
     public var selected_program_index = -1
     {
         willSet
@@ -147,23 +192,22 @@ import SwiftUI
         }
     }
     
-    /**
-     Adds new operations program to tool.
-     - Parameters:
-        - program: A new tool operations program.
-     */
+    /// Adds a new production program to the workspace.
+    ///
+    /// Automatically ensures unique program name before insertion.
+    ///
+    /// - Parameter program: Program to be added
     public func add_program(_ program: ProductionProgram)
     {
         program.name = unique_name(for: program.name, in: program_names)
         programs.append(program)
     }
     
-    /**
-     Updates operations program in tool by index.
-     - Parameters:
-        - index: Updated program index.
-        - program: A new tool operations program.
-     */
+    /// Updates an existing program at a given index.
+    ///
+    /// - Parameters:
+    ///   - index: Program index in collection
+    ///   - program: New program instance
     public func update_program(index: Int, _ program: ProductionProgram) // Update program by index
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
@@ -172,22 +216,19 @@ import SwiftUI
         }
     }
     
-    /**
-     Updates operations program by name.
-     - Parameters:
-        - name: Updated program name.
-        - program: A new tool operations program.
-     */
+    /// Updates an existing program by name lookup.
+    ///
+    /// - Parameters:
+    ///   - name: Program name
+    ///   - program: Replacement program instance
     public func update_program(name: String, _ program: ProductionProgram) // Update program by name
     {
         update_program(index: index_by_name(name: name), program)
     }
     
-    /**
-     Deletes operations program in tool by index.
-     - Parameters:
-        - index: Deleted program index.
-     */
+    /// Deletes a program by index.
+    ///
+    /// - Parameter index: Index of program to remove
     public func delete_program(index: Int) // Delete program by index
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to delete
@@ -196,21 +237,19 @@ import SwiftUI
         }
     }
     
-    /**
-     Deletes operations program in tool by name.
-     - Parameters:
-        - name: Deleted program name.
-     */
+    /// Deletes a program by name.
+    ///
+    /// - Parameter name: Program identifier
     public func delete_program(name: String) // Delete program by name
     {
         delete_program(index: index_by_name(name: name))
     }
     
-    /**
-     Selects operations program in tool by index.
-     - Parameters:
-        - index: Selected program index.
-     */
+    /// Selects a program by index and validates its elements.
+    ///
+    /// Performs integrity check of all program elements after selection.
+    ///
+    /// - Parameter index: Program index
     public func select_program(index: Int)
     {
         selected_program_index = index
@@ -221,7 +260,9 @@ import SwiftUI
         }
     }
     
-    /// Deselects operations program in robot.
+    /// Deselects current program and resets execution state.
+    ///
+    /// Stops all performing processes and resets execution index.
     public func deselect_program()
     {
         reset_performing()
@@ -230,17 +271,17 @@ import SwiftUI
         selected_program_index = -1
     }
     
-    /**
-     Selects operations program in tool by name.
-     - Parameters:
-        - name: Selected program name.
-     */
+    /// Selects a program by its name.
+    ///
+    /// - Parameter name: Program identifier
     public func select_program(name: String) // Select program by name
     {
         select_program(index: index_by_name(name: name))
     }
     
-    /// A selected operations program.
+    /// Currently active production program.
+    ///
+    /// Provides safe access to program at `selected_program_index`.
     public var selected_program: ProductionProgram?
     {
         get // Return operations program by selected index
@@ -253,13 +294,18 @@ import SwiftUI
         }
     }
     
-    /// Returns index by program name.
+    /// Returns program index by name.
+    ///
+    /// - Parameter name: Program name
+    /// - Returns: Index or `-1` if not found
     private func index_by_name(name: String) -> Int // Get index of program by name
     {
         return programs.firstIndex(of: ProductionProgram(name: name)) ?? -1
     }
     
-    /// All operations programs names in tool.
+    /// List of all program names in workspace.
+    ///
+    /// Used for UI display and validation of program references.
     public var program_names: [String] // Get all names of programs in tool
     {
         var prog_names = [String]()
@@ -273,25 +319,30 @@ import SwiftUI
         return prog_names
     }
     
-    /// A operations programs coount in tool.
+    /// Number of programs in workspace.
     public var programs_count: Int
     {
         return programs.count
     }
     
-    // MARK: Single element handling
-    /// Single program element.
+    // MARK: Single Element Processing
+    /// Currently active program element for single-step execution.
+    ///
+    /// Used when executing or debugging a single operation outside full program cycle.
     @Published public var current_element: ProductionProgramElement
     
     private var is_single_performed = false
     
     private var previous_performing_state: PerformingState = .none
     
+    /// Starts or pauses single element execution.
+    ///
+    /// Toggles between execution and reset states.
     public func start_pause_single_element()
     {
         if !is_single_performed
         {
-            single_element_perform()
+            perform_single_element()
         }
         else
         {
@@ -299,7 +350,10 @@ import SwiftUI
         }
     }
     
-    public func single_element_perform()
+    /// Executes a single program element asynchronously.
+    ///
+    /// Updates performing state and handles completion callback.
+    public func perform_single_element()
     {
         if !is_single_performed
         {
@@ -341,6 +395,9 @@ import SwiftUI
         }
     }
     
+    /// Resets single element execution state.
+    ///
+    /// Restores previous performing state if execution was interrupted.
     public func single_operation_reset()
     {
         if is_single_performed
@@ -350,7 +407,18 @@ import SwiftUI
         }
     }
     
-    // MARK: Workspace progem elements checking functions
+    // MARK: Element Validation
+    /// Validates all elements of a production program.
+    ///
+    /// Ensures consistency between:
+    /// - Selected robots/tools existence
+    /// - Available program names
+    /// - Mark references for logic elements
+    /// - Module availability for changer elements
+    ///
+    /// Automatically repairs invalid references where possible.
+    ///
+    /// - Parameter program: Program to validate
     public func elements_check(program: ProductionProgram)
     {
         for element in program.elements
@@ -555,6 +623,12 @@ import SwiftUI
         }
     }
     
+    /// Validates and corrects module-based changer elements.
+    ///
+    /// Ensures module references are valid and available in registry.
+    /// Falls back to default module if necessary.
+    ///
+    /// - Parameter element: Changer element to validate
     private func changer_element_check(_ element: ChangerModifierElement)
     {
         if element.module_name.isEmpty
@@ -586,17 +660,19 @@ import SwiftUI
         element.import_module(element.module_name, is_internal: !element.module_name.hasPrefix("."))
     }
     
-    // MARK: - Performing functions
-    /// Program performing cycle state.
+    // MARK: - Performing State
+    /// Indicates whether program execution is running in cyclic mode.
     @Published public var cycled = false
     
-    /// Workspace performing state.
+    /// Indicates whether workspace is currently performing any operation.
     @Published public var performed = false
     
-    /// An Index of target element in control program array.
+    /// Index of currently executing program element.
     private var selected_element_index = 0
     
-    /// A target code in operation codes array.
+    /// Currently active program element (safe access).
+    ///
+    /// Returns fallback element if index is invalid.
     public var selected_program_element: ProductionProgramElement //A selected workspace program element.
     {
         get
@@ -614,14 +690,18 @@ import SwiftUI
     
     private var performing_task = Task<Void, Error> {}
     
-    // MARK: Performation cycle
-    /**
-     Performs program element on workspace with completion handler.
-     
-     - Parameters:
-        - element: The program element performed by the workspace.
-        - completion: A completion function that is calls when the performing completes.
-     */
+    // MARK: Performing
+    /// Executes a single production program element.
+    ///
+    /// Dispatches execution based on runtime type:
+    /// - Robot/Tool performers
+    /// - Modifiers (math, move, write, observe)
+    /// - Logic operations (jump, compare, mark)
+    /// - Memory operations (changer, cleaner)
+    ///
+    /// - Parameters:
+    ///   - element: Element to execute
+    ///   - completion: Completion callback with success or failure result
     public func perform(element: ProductionProgramElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in })
     {
         performed = true
@@ -739,7 +819,16 @@ import SwiftUI
         }
     }
     
-    /// A workspace performation toggle.
+    /// Starts or pauses full program execution cycle.
+    ///
+    /// If program is not running → starts execution from first element.
+    /// If running → pauses current execution step.
+    ///
+    /// Handles:
+    /// - Program preparation
+    /// - Error reset
+    /// - State transitions
+    /// - Sequential execution pipeline
     public func start_pause_performing() //Selects program element and performs by workspace.
     {
         single_operation_reset()
@@ -831,7 +920,9 @@ import SwiftUI
         }
     }
     
-    /// Selects and performs program element by workspace.
+    /// Executes next program element in sequence.
+    ///
+    /// Updates state and advances execution pointer.
     public func perform_next_element()
     {
         selected_program_element.performing_state = .processing
@@ -854,11 +945,11 @@ import SwiftUI
         }
     }
     
-    /**
-     Processes an error that occurred during the operation performing.
-     - Parameters:
-        - error: A tool performing error.
-     */
+    /// Processes execution error during program runtime.
+    ///
+    /// Updates workspace state and UI indicators.
+    ///
+    /// - Parameter error: Execution error
     public func process_error(_ error: Error)
     {
         performed = false // Pause performing
@@ -871,7 +962,12 @@ import SwiftUI
         program_performed = false // Control Buttons (UI)
     }
     
-    /// Set the new target program element index.
+    /// Advances execution pointer to next program element.
+    ///
+    /// Handles:
+    /// - Normal progression
+    /// - Loop cycling mode
+    /// - Program completion state
     private func select_next_element()
     {
         guard let selected_program = self.selected_program
@@ -919,16 +1015,20 @@ import SwiftUI
         }
     }
     
-    /// Finish handler for operation program performation.
+    /// Callback invoked when program execution finishes.
     public var finish_handler: (() -> Void) = {}
     
-    /// Clears finish handler.
+    /// Clears finish handler callback.
     public func clear_finish_handler()
     {
         finish_handler = {}
     }
     
-    /// Error handler for operation program performation.
+    /// Handles execution error state internally.
+    ///
+    /// Updates UI and execution state without stopping pipeline logic directly.
+    ///
+    /// - Parameter error: Execution error
     private func error_handler(_ error: Error)
     {
         performed = false // Pause performing
@@ -948,7 +1048,13 @@ import SwiftUI
         error_handler = { _ in }
     }*/
     
-    /// Resets workspace performing.
+    /// Resets full workspace execution state.
+    ///
+    /// Clears:
+    /// - Program progress
+    /// - Execution flags
+    /// - Selected element index
+    /// - Robot/tool runtime states
     public func reset_performing()
     {
         //disable_constant_objects_update()
@@ -1014,14 +1120,16 @@ import SwiftUI
         }
     }
     
-    // MARK: Registers handling
-    /// A default count of data registers for workspace.
+    // MARK: Registers
+    /// Default number of workspace registers used for computation and memory flow.
     nonisolated(unsafe) public static var default_registers_count = 256
     
-    /// An array of data registers of workspace.
+    /// Register memory buffer used for program execution.
+    ///
+    /// Stores intermediate computation values.
     @Published public var registers: [Float]
     
-    /// Registers count control.
+    /// Number of active registers in workspace memory.
     public var registers_count: Int
     {
         get { registers.count }
@@ -1031,6 +1139,12 @@ import SwiftUI
         }
     }
     
+    /// Resizes register memory while preserving existing values where possible.
+    ///
+    /// - Parameters:
+    ///   - registers: Current register array
+    ///   - new_count: Desired register count
+    /// - Returns: Updated register buffer
     private func updated_registers(_ registers: [Float], _ new_count: Int) -> [Float]
     {
         if registers.count > 0
@@ -1057,18 +1171,15 @@ import SwiftUI
         }
     }
     
-    /// Clears all data registers.
+    /// Clears all register values.
     public func clear_registers()
     {
         registers = [Float](repeating: 0, count: registers.count)
     }
     
-    /**
-     Clears selected register data.
-     
-     - Parameters:
-        - index: An index of register to be cleared.
-     */
+    /// Clears value at specific register index.
+    ///
+    /// - Parameter index: Register index
     public func clear_register(_ index: Int)
     {
         if index < registers.count && index >= 0
@@ -1077,13 +1188,11 @@ import SwiftUI
         }
     }
     
-    /**
-     Updates selected register data.
-     
-     - Parameters:
-        - index: An index of register to be updated.
-        - new_value: A new data register value.
-     */
+    /// Updates value of specific register.
+    ///
+    /// - Parameters:
+    ///   - index: Register index
+    ///   - new_value: New float value
     public func update_register(_ index: Int, new_value: Float)
     {
         if index < registers.count && index >= 0
@@ -1093,20 +1202,30 @@ import SwiftUI
     }
     
     // MARK: - Performing State
-    /// Last performing error.
+    /// Last runtime error produced during program execution.
+    ///
+    /// Stores the most recent error from robot/tool/program execution pipeline.
+    /// Used for diagnostics and UI feedback.
     public var last_error: Error?
     
-    /// Resets last hanled error.
+    /// Resets current execution error state.
+    ///
+    /// Clears `last_error` without affecting execution flow.
+    /// Useful when restarting program or clearing UI error indicators.
     public func reset_error()
     {
         last_error = nil
         //performing_state = .processing
     }
     
-    /// Performing state light.
+    /// Lightweight global performing state of workspace.
+    ///
+    /// Represents aggregated execution state across robots, tools, and programs.
     @Published public var performing_state: PerformingState = .none
     
-    /// A program performing state of robot.
+    /// Indicates whether a production program is currently executing.
+    ///
+    /// Used for UI binding and runtime control of execution lifecycle.
     @Published public var program_performed = false
     
     /*/// Last performing error
@@ -1137,12 +1256,20 @@ import SwiftUI
         }
     }*/
     
-    // MARK: - Element processing
-    /**
-     Perform robot by element data.
-     - Parameters:
-        - element: A robot performer element.
-     */
+    // MARK: - Element Processing
+    /// Executes a robot-related program element.
+    ///
+    /// Supports:
+    /// - Single motion execution (point-to-point move)
+    /// - Full program execution via robot internal program system
+    ///
+    /// Handles register-based parameter extraction, motion execution,
+    /// and asynchronous completion/error propagation.
+    ///
+    /// - Parameters:
+    ///   - element: Robot execution descriptor
+    ///   - completion: Success callback
+    ///   - error_handler: Error callback
     private func perform_robot(by element: RobotPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
         let robot = robot(named: element.object_name)
@@ -1216,11 +1343,18 @@ import SwiftUI
         }
     }
     
-    /**
-     Perform tool by element data.
-     - Parameters:
-        - element: A tool performer element.
-     */
+    /// Executes a tool-related program element.
+    ///
+    /// Supports:
+    /// - Single operation execution (opcode-based action)
+    /// - Full tool program execution
+    ///
+    /// Uses register-based parameter resolution and async completion handling.
+    ///
+    /// - Parameters:
+    ///   - element: Tool execution descriptor
+    ///   - completion: Success callback
+    ///   - error_handler: Error callback
     private func perform_tool(by element: ToolPerformerElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
         let tool = tool(named: element.object_name)
@@ -1275,11 +1409,11 @@ import SwiftUI
         }
     }
     
-    /**
-     Move value between registers.
-     - Parameters:
-        - element: A mover modifier element.
-     */
+    /// Moves values between registers using link definitions.
+    ///
+    /// Supports optional clearing of source register depending on move mode.
+    ///
+    /// - Parameter element: Move operation descriptor
     private func move(by element: MoverModifierElement)
     {
         for link in element.links
@@ -1292,11 +1426,11 @@ import SwiftUI
         }
     }
     
-    /**
-     Write value from element to regiser.
-     - Parameters:
-        - element: A write modifier element.
-     */
+    /// Writes constant or computed values into registers.
+    ///
+    /// Overwrites target register values defined by input mapping.
+    ///
+    /// - Parameter element: Write operation descriptor
     private func write(by element: WriterModifierElement)
     {
         for input in element.inputs
@@ -1305,6 +1439,18 @@ import SwiftUI
         }
     }
     
+    /// Evaluates mathematical expression and stores result in register.
+    ///
+    /// Expression is parsed into tokens, converted to Reverse Polish Notation,
+    /// and evaluated using stack-based execution.
+    ///
+    /// Supports:
+    /// - arithmetic operators (+, -, *, /, ^)
+    /// - registers
+    /// - constants
+    /// - functions
+    ///
+    /// - Parameter element: Math expression descriptor
     private func math(by element: MathModifierElement)
     {
         let tokens = tokenize(element.expression)
@@ -1359,11 +1505,19 @@ import SwiftUI
         }
     }
     
-    /**
-     Pushes info from tool to register.
-     - Parameters:
-        - element: An observable modifier element.
-     */
+    /// Reads structured output from robot or tool and maps it into registers.
+    ///
+    /// Extracts hierarchical state items and flattens them into linear register space.
+    ///
+    /// Supports type inference:
+    /// - Float values
+    /// - Boolean values
+    /// - Fallback string encoding
+    ///
+    /// - Parameters:
+    ///   - element: Observation descriptor
+    ///   - completion: Success callback
+    ///   - error_handler: Error callback
     private func observe(by element: ObserverModifierElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void, error_handler: @escaping @Sendable (Error) -> Void)
     {
         var info_output = [String]()
@@ -1448,11 +1602,11 @@ import SwiftUI
         }
     }
     
-    /**
-     Jumps to program element by index.
-     - Parameters:
-        - index: An element index to jump.
-     */
+    /// Jumps unconditionally to target program element index.
+    ///
+    /// Used for control-flow redirection in program execution.
+    ///
+    /// - Parameter element: Jump descriptor
     private func jump(by element: JumpLogicElement)
     {
         selected_element_index = element.target_element_index
@@ -1460,11 +1614,11 @@ import SwiftUI
         reset_elements_states_to_current() // UI only
     }
     
-    /**
-     Jumps to program element by index if compare condition is met.
-     - Parameters:
-        - index: An element index to jump.
-     */
+    /// Conditional jump based on register comparison result.
+    ///
+    /// If comparison evaluates to true, execution pointer is redirected.
+    ///
+    /// - Parameter element: Comparator descriptor
     private func compare(by element: ComparatorLogicElement)
     {
         if element.compare_type.compare(registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
@@ -1475,6 +1629,10 @@ import SwiftUI
         }
     }
     
+    /// Resets UI execution state from current element index onward.
+    ///
+    /// Marks all following elements as non-executing.
+    /// Used for visual synchronization only (no logic impact).
     private func reset_elements_states_to_current()
     {
         guard let program = selected_program else { return }
@@ -1485,15 +1643,24 @@ import SwiftUI
         }
     }
     
-    /// Prepare workspace program to perform.
+    /// Prepares program for execution by resolving internal element indices.
+    ///
+    /// Builds execution metadata required for runtime traversal.
     private func prepare_program(_ program: ProductionProgram)
     {
         program.defining_elements_indexes()
     }
     
-    // MARK: - Visual Functions
+    // MARK: - UI
     #if canImport(RealityKit)
+    /// Root RealityKit entity representing entire workspace scene graph.
+    ///
+    /// Contains robots, tools, parts, grid, pointer, and camera anchors.
     private var workspace_entity = Entity()
+    
+    /// Anchor entity used for physics and world alignment in RealityKit scene.
+    private var workspace_anchor = AnchorEntity(world: .zero)
+    
     #if os(macOS) || os(iOS)
     private var scene_content: RealityViewCameraContent?
     #else
@@ -1501,6 +1668,19 @@ import SwiftUI
     #endif
     
     #if os(macOS) || os(iOS)
+    /// Injects workspace into RealityKit scene content.
+    ///
+    /// Responsible for:
+    /// - Scene initialization
+    /// - Camera setup (macOS/iOS)
+    /// - Grid generation
+    /// - Pointer system activation
+    /// - Module entity loading
+    /// - Object placement
+    ///
+    /// - Parameters:
+    ///   - content: RealityKit scene container
+    ///   - completion: Completion callback
     public func place_entity(
         in content: RealityViewCameraContent,
         completion: @escaping () -> () = {}
@@ -1578,7 +1758,7 @@ import SwiftUI
             if self.selected_object != nil { self.update_pointer_entity() } // Dynamic pointer update
         }
         
-        load_all_modules_entities
+        load_all_module_entities
         {
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
@@ -1627,7 +1807,7 @@ import SwiftUI
             if self.selected_object != nil { self.update_pointer_entity() } // Dynamic pointer update
         }
         
-        load_all_modules_entities
+        load_all_module_entities
         {
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
@@ -1644,24 +1824,46 @@ import SwiftUI
     }
     #endif
     
-    // MARK: Entities from modules
-    private func load_all_modules_entities(_ completion: @escaping () -> Void = {})
+    #if os(macOS) || os(iOS)
+    /// Removes workspace from RealityKit scene.
+    ///
+    /// Cleans up entity hierarchy and grid state.
+    ///
+    /// - Parameter content: Scene container
+    public func remove_entity(from content: RealityViewCameraContent)
     {
-        load_all_internal_modules_entities
+        content.remove(workspace_entity)
+        grid_lines.removeAll()
+    }
+    #else
+    public func remove_entity(from content: RealityViewContent)
+    {
+        content.remove(workspace_entity)
+        grid_lines.removeAll()
+    }
+    #endif
+    
+    // MARK: Entities from modules
+    /// Loads all internal and external module entities for robots, tools, and parts.
+    ///
+    /// Ensures that all visual representations are available before scene assembly.
+    private func load_all_module_entities(_ completion: @escaping () -> Void = {})
+    {
+        load_all_internal_module_entities
         {
-            load_all_external_modules_entities
+            load_all_external_module_entities
             {
                 completion()
             }
         }
         
-        func load_all_internal_modules_entities(_ completion: @escaping () -> Void = {})
+        func load_all_internal_module_entities(_ completion: @escaping () -> Void = {})
         {
-            Robot.load_all_internal_modules_entities
+            Robot.load_all_internal_module_entities
             {
-                Tool.load_all_internal_modules_entities
+                Tool.load_all_internal_module_entities
                 {
-                    Part.load_all_internal_modules_entities
+                    Part.load_all_internal_module_entities
                     {
                         //print("Internal loaded")
                         completion()
@@ -1670,13 +1872,13 @@ import SwiftUI
             }
         }
         
-        func load_all_external_modules_entities(_ completion: @escaping () -> Void = {})
+        func load_all_external_module_entities(_ completion: @escaping () -> Void = {})
         {
-            Robot.load_all_external_modules_entities
+            Robot.load_all_external_module_entities
             {
-                Tool.load_all_external_modules_entities
+                Tool.load_all_external_module_entities
                 {
-                    Part.load_all_external_modules_entities
+                    Part.load_all_external_module_entities
                     {
                         //print("External loaded")
                         completion()
@@ -1686,19 +1888,29 @@ import SwiftUI
         }
     }
     
-    private var workspace_anchor = AnchorEntity(world: .zero)
-    
     #if os(macOS) || os(iOS)
     // MARK: Camera
+    /// Perspective camera used for workspace visualization.
     private var workspace_camera: PerspectiveCamera?
+    
+    /// Camera target entity used as pivot for smooth movement and focus control.
     private var workspace_camera_target = Entity()
     
+    /// Current offset between camera and target pivot point.
     private var camera_target_offset: SIMD3<Float> = .zero
+    
+    /// Indicates whether camera target offset has been initialized.
     private var camera_target_initialized = false
     
+    /// Base distance reference for camera scaling computations.
     private var base_camera_distance: Float?
+    
+    /// Indicates whether camera is currently in focus animation mode.
     private var is_focusing = false
     
+    /// Default tile size computed from bounding box of placed objects.
+    ///
+    /// Used for grid scaling and visual framing.
     private var target_tile_default_size: Float // = 0.5
     {
         let placed = (robots + tools + parts).filter { $0.is_placed }
@@ -1735,9 +1947,17 @@ import SwiftUI
         return max(diagonal * 1.2, 0.5)
     }
     
+    /// Weak reference to grid tile entity used for scaling during camera focus.
     private weak var target_tile: ModelEntity?
     
-    /// Focus camera to pivot
+    /// Moves camera focus to specified entity or workspace center.
+    ///
+    /// Animates:
+    /// - Camera pivot movement
+    /// - Grid tile scaling
+    /// - Smooth easing transitions
+    ///
+    /// - Parameter entity: Target entity to focus on (nil = full workspace)
     public func focus(on entity: Entity?)
     {
         //scene_content?.cameraTarget = entity?
@@ -1805,6 +2025,9 @@ import SwiftUI
         }
     }
     
+    /// Captures initial offset between camera and target pivot.
+    ///
+    /// Used for maintaining stable relative camera movement.
     private func capture_initial_camera_target_offset()
     {
         guard let camera = workspace_camera else { return }
@@ -1816,6 +2039,10 @@ import SwiftUI
         camera_target_initialized = true
     }
     
+    /// Continuously updates camera target position based on camera direction.
+    ///
+    /// Computes ray-plane intersection to maintain grounded pivot movement.
+    /// Also updates grid scaling based on camera distance.
     func move_camera_target()
     {
         guard let camera = workspace_camera else { return }
@@ -1838,7 +2065,7 @@ import SwiftUI
         
         update_target_tile_scale(camera_pos, intersection)
         
-        func update_target_tile_scale(_ camera_position: SIMD3<Float>, _ target_position: SIMD3<Float>)
+        func update_target_tile_scale(_ camera_position: SIMD3<Float>, _ target_position: SIMD3<Float>) // Performs smooth animated scaling of grid tile during focus transitions.
         {
             guard let tile = target_tile else { return }
             
@@ -1858,20 +2085,6 @@ import SwiftUI
             
             tile.scale = SIMD3<Float>(repeating: clamped)
         }
-    }
-    #endif
-    
-    #if os(macOS) || os(iOS)
-    public func remove_entity(from content: RealityViewCameraContent)
-    {
-        content.remove(workspace_entity)
-        grid_lines.removeAll()
-    }
-    #else
-    public func remove_entity(from content: RealityViewContent)
-    {
-        content.remove(workspace_entity)
-        grid_lines.removeAll()
     }
     #endif
     
@@ -1895,6 +2108,8 @@ import SwiftUI
     private let major_line_mesh_z = MeshResource.generatePlane(width: 0.0025, depth: Float(200*2) * 0.1)
     private let axis_line_mesh_z  = MeshResource.generatePlane(width: 0.00375, depth: Float(200*2) * 0.1)
     
+    private enum Axis { case x, z }
+    
     /*public var is_grid_visible: Bool { grid_visible } // UI Only
     
     public func toggle_grid_visiblity()
@@ -1905,6 +2120,10 @@ import SwiftUI
         self.objectWillChange.send() // UI Only
     }*/
     
+    /// Public toggle for grid visibility.
+    ///
+    /// Automatically enables/disables all grid line entities
+    /// and triggers UI update.
     public var shows_grid: Bool
     {
         get
@@ -1920,6 +2139,12 @@ import SwiftUI
         }
     }
     
+    /// Updates grid based on camera position.
+    ///
+    /// Dynamically spawns and removes grid lines around the camera.
+    /// Ensures stable visual density independent of world scale.
+    ///
+    /// - Parameter camera_position: Current camera world position.
     private func update_grid(camera_position: SIMD3<Float>)
     {
         if !grid_visible { return }
@@ -1936,8 +2161,14 @@ import SwiftUI
         cleanup_lines(center_x: cx, center_z: cz)
     }
     
-    private enum Axis { case x, z }
-    
+    /// Asynchronously builds grid around a center position.
+    ///
+    /// Uses batched updates to avoid blocking main thread.
+    /// Suitable for initial scene setup or teleport-like camera moves.
+    ///
+    /// - Parameters:
+    ///   - center_x: Grid X center index
+    ///   - center_z: Grid Z center index
     private func create_grid_async(center_x: Int, center_z: Int)
     {
         Task.detached(priority: .userInitiated)
@@ -1965,6 +2196,13 @@ import SwiftUI
         }
     }
     
+    /// Adds a single grid line at given index and axis.
+    ///
+    /// Performs:
+    /// - Major/minor classification
+    /// - Material assignment
+    /// - Positioning in world space
+    /// - Entity caching
     private func add_line(index: Int, axis: Axis)
     {
         let key = "\(axis)_\(index)"
@@ -2006,6 +2244,13 @@ import SwiftUI
         grid_lines[key] = line
     }
     
+    /// Removes grid lines that are outside render radius.
+    ///
+    /// Prevents memory growth and keeps scene graph lightweight.
+    ///
+    /// - Parameters:
+    ///   - center_x: Current grid center X
+    ///   - center_z: Current grid center Z
     private func cleanup_lines(center_x: Int, center_z: Int)
     {
         for (key, line) in grid_lines
@@ -2029,18 +2274,34 @@ import SwiftUI
     }
     #endif
     
-    // MARK: Workspace Objects Placement
+    // MARK: Production Objects Placement
+    /// Attaches a production object entity to workspace anchor.
+    ///
+    /// Ensures correct positioning in world coordinate system.
+    ///
+    /// - Parameter object: Production object to place
     public func place_object_entity(object: ProductionObject)
     {
         object.entity.update_position(object.position)
         workspace_anchor.addChild(object.entity)
     }
     
+    /// Removes a production object entity from workspace.
+    ///
+    /// Detaches visual representation from scene graph.
     public func remove_object_entity(object: ProductionObject)
     {
         object.entity.removeFromParent()
     }
     
+    /// Places all workspace objects into the scene.
+    ///
+    /// Includes:
+    /// - Robots
+    /// - Tools (with attachments resolved)
+    /// - Parts
+    ///
+    /// Also updates internal transforms and tool bindings.
     private func place_objects()
     {
         for robot in robots
@@ -2062,6 +2323,11 @@ import SwiftUI
         }
     }
     
+    /// Creates static physical floor for workspace.
+    ///
+    /// Adds collision + physics body to prevent object falling.
+    ///
+    /// Used only in simulation mode.
     private func place_physical_floor()
     {
         let size: Float = 2000
@@ -2093,6 +2359,14 @@ import SwiftUI
     }
     
     // MARK: Pointer Handling
+    /// Handles tap gesture interaction with workspace entities.
+    ///
+    /// Traverses entity hierarchy to resolve object identifiers.
+    /// Supports:
+    /// - Robot selection
+    /// - Tool selection
+    /// - Part selection
+    /// - Nested tool-in-robot detection
     public func process_tap(value: EntityTargetValue<TapGesture.Value>)
     {
         var entity: Entity? = value.entity
@@ -2169,6 +2443,9 @@ import SwiftUI
         }
     }
     
+    /// Clears current selection and resets interaction state.
+    ///
+    /// Removes pointer visualization and resets camera focus.
     public func process_empty_tap()
     {
         deselect_object()
@@ -2182,8 +2459,14 @@ import SwiftUI
         self.objectWillChange.send() // UI only
     }
     
+    /// Visual pointer entity used for selection highlighting.
+    ///
+    /// Dynamically attached to selected object.
     private var pointer_entity = Entity()
     
+    /// Visual pointer entity used for selection highlighting.
+    ///
+    /// Dynamically attached to selected object.
     private func select_object(by entity_identifier: ObjectEntityIdentifier)
     {
         deselect_object() // Test
@@ -2218,6 +2501,11 @@ import SwiftUI
     }
     
     // MARK: Pointer Entity
+    /// Group of entities used to render 3D selection bounding visualization.
+    ///
+    /// Includes:
+    /// - Axis cones (X/Y/Z)
+    /// - Wireframe edges for bounding box faces
     public var pointer_entity_group: (
         cones: (
             x: Entity, y: Entity, z: Entity
@@ -2246,6 +2534,11 @@ import SwiftUI
         )
     )
     
+    /// Updates pointer position to match selected object bounds.
+    ///
+    /// Aligns cones and bounding box with visual bounds of model entity.
+    ///
+    /// - Parameter model_entity: Selected object model
     public func update_pointer_entity()
     {
         if let selected_object = selected_object, let model_entity = selected_object.model_entity
@@ -2257,6 +2550,9 @@ import SwiftUI
         }
     }
     
+    /// Creates axis cones used for 3D orientation visualization.
+    ///
+    /// Each cone represents one axis direction (X, Y, Z).
     private func make_object_pointer_entity() -> Entity
     {
         let hx: Float = 0
@@ -2315,6 +2611,13 @@ import SwiftUI
         return parent
     }
     
+    /// Updates size and offset of axis cones based on object bounds.
+    ///
+    /// Keeps pointer visually aligned with object geometry.
+    ///
+    /// - Parameters:
+    ///   - size: Bounding box extents
+    ///   - shift: Padding offset
     private func update_object_pointer_entity(by size: SIMD3<Float>, shift: Float = 0.04)
     {
         let hx = size.x / 2 + shift
@@ -2331,6 +2634,9 @@ import SwiftUI
         }
     }
     
+    /// Builds wireframe bounding box visualization for selected object.
+    ///
+    /// Creates edge-aligned line segments forming a 3D box.
     public func make_wire_bounding_box(line_width: Float = 0.001) -> Entity
     {
         let parent = Entity()
@@ -2529,6 +2835,14 @@ import SwiftUI
         }
     }
     
+    /// Updates wireframe bounding box to match object size.
+    ///
+    /// Dynamically scales and repositions edges.
+    ///
+    /// - Parameters:
+    ///   - size: Object bounding box size
+    ///   - color: Line color
+    ///   - line_width: Thickness of wireframe
     private func update_wire_bounding_box(by size: SIMD3<Float>, color: UIColor = .gray, line_width: Float = 0.001)
     {
         let hx = size.x / 2
@@ -2590,6 +2904,12 @@ import SwiftUI
     }
     
     // MARK: - Placements
+    /// Computes collision-free placement for a new object.
+    ///
+    /// Uses AABB intersection checks and radial candidate search
+    /// to avoid overlaps with existing robots/tools/parts.
+    ///
+    /// - Parameter object: Object to place
     private func comfort_placement(for object: ProductionObject)
     {
         let object_rect = rect(of: object)
@@ -2702,7 +3022,13 @@ import SwiftUI
     
     // MARK: - Robots handling functions
     // MARK: Robots manage functions
-    /// Adds robot in the workspace.
+    /// Adds a robot to the workspace.
+    ///
+    /// Automatically:
+    /// - Assigns unique name
+    /// - Marks as placed
+    /// - Computes safe position
+    /// - Inserts into scene graph
     public func add_robot(_ robot: Robot)
     {
         robot.name = unique_name(for: robot.name, in: robot_names)
@@ -2713,12 +3039,11 @@ import SwiftUI
         place_object_entity(object: robot)
     }
     
-    /**
-     Deletes robot from workspace.
-     
-     - Parameters:
-        - index: An index of robot to be deleted.
-     */
+    /// Removes robot from workspace by index.
+    ///
+    /// Cleans scene graph and updates program dependencies.
+    ///
+    /// - Parameter index: Robot index
     public func delete_robot(index: Int)
     {
         if robots.indices.contains(index)
@@ -2731,23 +3056,17 @@ import SwiftUI
         }
     }
     
-    /**
-     Deletes robot from workspace.
-     
-     - Parameters:
-        - name: A name of robot to be deleted.
-     */
+    /// Removes robot from workspace by name.
+    ///
+    /// Resolves index internally before deletion.
     public func delete_robot(name: String)
     {
         delete_robot(index: index_by_name(name, objects: robots))
     }
     
-    /**
-     Duplicates robot in the workspace.
-     
-     - Parameters:
-        - index: An index of robot to be duplicated.
-     */
+    /// Creates a duplicate of robot by index.
+    ///
+    /// New robot is unplaced and assigned a unique name.
     public func duplicate_robot(index: Int)
     {
         if robots.indices.contains(index)
@@ -2763,24 +3082,18 @@ import SwiftUI
         }
     }
     
-    /**
-     Duplicates robot in the workspace.
-     
-     - Parameters:
-        - name: A name of robot to be duplicated.
-     */
+    /// Creates a duplicate of robot by name.
     public func duplicate_robot(name: String)
     {
         duplicate_robot(index: index_by_name(name, objects: robots))
     }
     
     // MARK: Robot selection functions
-    /**
-     Selects robot by name.
-     
-     - Parameters:
-        - name: A name of robot to be selected.
-     */
+    /// Selects robot by name and enables auxiliary visualization systems.
+    ///
+    /// Activates:
+    /// - Position pointer
+    /// - Working area visualization
     public func select_robot(name: String)
     {
         selected_object = robots[index_by_name(name, objects: robots)]
@@ -2792,12 +3105,9 @@ import SwiftUI
     }
     
     // MARK: Robots naming
-    /**
-     Returns robot by name.
-     
-     - Parameters:
-        - name: A name of tobot for index find.
-     */
+    /// Retrieves robot instance by name.
+    ///
+    /// Returns fallback empty Robot if not found.
     public func robot(named name: String) -> Robot
     {
         let index = index_by_name(name, objects: robots)
@@ -2813,16 +3123,18 @@ import SwiftUI
         // return self.robots[robot_index_by_name(name)]
     }
     
-    /// Names of all robots in the workspace.
+    /// List of robot names in workspace.
     public var robot_names: [String] { robots.map { $0.name } }
     
-    /// Names of robots placed in the workspace.
+    /// Names of robots currently placed in workspace.
     public var placed_robot_names: [String] { robots.compactMap { $0.is_placed ? $0.name : nil } }
     
-    /// Names of placed robots that support attachments.
+    /// Names of robots supporting tool attachment.
     public var attachment_supporting_robot_names: [String] { robots.compactMap { $0.is_placed && !$0.end_entity_name.isEmpty ? $0.name : nil } }
     
-    /// Stops any external connector programs running on the robots.
+    /// Stops all external connector programs attached to robots.
+    ///
+    /// Used for safe shutdown and reset of external integrations.
     public func stop_robot_external_connectors()
     {
         robots.compactMap { $0.connector as? any ExternalConnector }
@@ -2831,7 +3143,9 @@ import SwiftUI
     
     // MARK: - Tools handling functions
     // MARK: Tools manage funcions
-    /// Adds tool in the workspace.
+    /// Adds tool to workspace with automatic placement and naming.
+    ///
+    /// Also resolves attachment state and scene insertion.
     public func add_tool(_ tool: Tool)
     {
         tool.name = unique_name(for: tool.name, in: tool_names)
@@ -2842,12 +3156,7 @@ import SwiftUI
         place_object_entity(object: tool)
     }
     
-    /**
-     Deletes tool from workspace.
-     
-     - Parameters:
-        - index: An index of tool to be deleted.
-     */
+    /// Removes tool from workspace by index.
     public func delete_tool(index: Int)
     {
         if tools.indices.contains(index)
@@ -2860,23 +3169,15 @@ import SwiftUI
         }
     }
     
-    /**
-     Deletes tool from workspace.
-     
-     - Parameters:
-        - name: A name of tool to be deleted.
-     */
+    /// Removes tool from workspace by name.
     public func delete_tool(name: String)
     {
         delete_tool(index: index_by_name(name, objects: tools))
     }
     
-    /**
-     Duplicates tool in the workspace.
-     
-     - Parameters:
-        - index: An index of tool to be duplicated.
-     */
+    /// Duplicates tool by index.
+    ///
+    /// New instance is unplaced and renamed uniquely.
     public func duplicate_tool(index: Int)
     {
         if tools.indices.contains(index)
@@ -2892,35 +3193,20 @@ import SwiftUI
         }
     }
     
-    /**
-     Duplicates tool in the workspace.
-     
-     - Parameters:
-        - name: A name of tool to be duplicated.
-     */
+    /// Duplicates tool by name.
     public func duplicate_tool(name: String)
     {
         duplicate_tool(index: index_by_name(name, objects: tools))
     }
 
     // MARK: Tools selection functions
-    /**
-     Selects tool by name.
-     
-     - Parameters:
-        - name: A name of tool to be selected.
-     */
+    /// Selects tool by name.
     public func select_tool(name: String) // Select tool by name
     {
         selected_object = tools[index_by_name(name, objects: tools)]
     }
     
-    /**
-     Returns tool by name.
-     
-     - Parameters:
-        - name: A name of tobot for index find.
-     */
+    /// Retrieves tool instance by name.
     public func tool(named name: String) -> Tool
     {
         let index = index_by_name(name, objects: tools)
@@ -2934,13 +3220,18 @@ import SwiftUI
         }
     }
     
-    /// Names of all tools in the workspace.
+    /// List of tool names in workspace.
     public var tool_names: [String] { tools.map { $0.name } }
     
-    /// Names of tools placed in the workspace.
+    /// Names of tools currently placed in workspace.
     public var placed_tool_names: [String] { tools.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: Tool attachment functions
+    /// Updates tool attachment hierarchy.
+    ///
+    /// Tools are either:
+    /// - Attached to robot end effector
+    /// - Or placed in workspace root
     public func update_tool_attachments()
     {
         if !(tools.count > 0) { return }
@@ -2962,7 +3253,7 @@ import SwiftUI
         }
     }
     
-    /// Stops any external connector programs running on the tools.
+    /// Stops all external connector programs attached to tools.
     public func stop_tool_external_connectors()
     {
         tools.compactMap { $0.connector as? any ExternalConnector }
@@ -2971,7 +3262,7 @@ import SwiftUI
     
     // MARK: - Parts handling functions
     // MARK: Parts manage funcions
-    /// Adds part in the workspace.
+    /// Adds part to workspace with auto placement.
     public func add_part(_ part: Part)
     {
         part.name = unique_name(for: part.name, in: part_names)
@@ -2982,12 +3273,7 @@ import SwiftUI
         place_object_entity(object: part)
     }
     
-    /**
-     Deletes part from workspace.
-     
-     - Parameters:
-        - index: An index of part to be deleted.
-     */
+    /// Removes part by index.
     public func delete_part(index: Int)
     {
         if parts.indices.contains(index)
@@ -2998,23 +3284,13 @@ import SwiftUI
         }
     }
     
-    /**
-     Deletes part from workspace.
-     
-     - Parameters:
-        - name: A name of part to be deleted.
-     */
+    /// Removes part by name.
     public func delete_part(name: String)
     {
         delete_part(index: index_by_name(name, objects: parts))
     }
     
-    /**
-     Duplicates part in the workspace.
-     
-     - Parameters:
-        - index: An index of part to be duplicated.
-     */
+    /// Duplicates part by index.
     public func duplicate_part(index: Int)
     {
         if parts.indices.contains(index)
@@ -3030,35 +3306,20 @@ import SwiftUI
         }
     }
     
-    /**
-     Duplicates part in the workspace.
-     
-     - Parameters:
-        - name: A name of part to be duplicated.
-     */
+    /// Selects part by name.
     public func duplicate_part(name: String)
     {
         duplicate_part(index: index_by_name(name, objects: parts))
     }
     
     // MARK: Parts selection functions
-    /**
-     Selects part by name.
-     
-     - Parameters:
-        - name: A name of part to be selected.
-     */
+    /// Retrieves part by name.
     public func select_part(name: String)
     {
         selected_object = parts[index_by_name(name, objects: parts)]
     }
     
-    /**
-     Returns part by name.
-     
-     - Parameters:
-        - name: A name of tobot for index find.
-     */
+    /// Retrieves part by name.
     public func part(named name: String) -> Part
     {
         let index = index_by_name(name, objects: parts)
@@ -3072,20 +3333,16 @@ import SwiftUI
         }
     }
     
-    /// Names of all parts in the workspace.
+    /// List of part names in workspace.
     public var part_names: [String] { parts.map { $0.name } }
     
-    /// Names of parts placed in the workspace.
+    /// Names of parts currently placed in workspace.
     public var placed_part_names: [String] { parts.compactMap { $0.is_placed ? $0.name : nil } }
     
     // MARK: - File Data
-    /**
-     Returns arrays of document structures by workspace objects type.
-     
-     - Returns: Codable structures for robots, tools, parts and elements ordered as control program.
-     */
-    public func file_data()
-    -> (
+    /// Returns a serializable representation of the tool.
+    public func file_data() ->
+    (
         robots: [RobotFileData],
         tools: [ToolFileData],
         parts: [PartFileData],
@@ -3122,12 +3379,9 @@ import SwiftUI
         )
     }
     
-    /**
-     Imports file data to workspace from preset structure.
-     
-     - Parameters:
-        - preset: Imported workspace preset.
-     */
+    /// Creates a workspace from file data.
+    ///
+    /// - Parameter file: A serialized workspace representation.
     public func file_view(preset: WorkspacePreset)
     {
         // Robots
@@ -3165,11 +3419,16 @@ import SwiftUI
             programs.append(program)
         }
         
-        // MARK: Registers
+        // Registers
         registers = preset.registers ?? [Float](repeating: 0, count: Workspace.default_registers_count)
     }
 }
 
+//MARK: - Workspace File Data
+
+/// Type of production object in workspace.
+///
+/// Used for runtime identification and selection logic.
 public enum ProductionObjectType: String, Equatable, CaseIterable
 {
     case robot = "Robot"
@@ -3177,7 +3436,9 @@ public enum ProductionObjectType: String, Equatable, CaseIterable
     case part = "Part"
 }
 
-//MARK: - Structures for workspace preset document handling
+/// Serializable workspace snapshot used for saving/loading.
+///
+/// Contains all production objects and execution state.
 public struct WorkspacePreset: Codable
 {
     public var robots = [RobotFileData]()

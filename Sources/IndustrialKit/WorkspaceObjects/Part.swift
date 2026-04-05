@@ -192,7 +192,7 @@ open class Part: ProductionObject
     /// Performs loading of all external module entities asynchronously.
     ///
     /// - Parameter completion: A callback invoked after performing completes.
-    public static func load_all_internal_modules_entities(_ completion: @escaping () -> Void = {})
+    public static func load_all_internal_module_entities(_ completion: @escaping () -> Void = {})
     {
         Task
         {
@@ -207,7 +207,7 @@ open class Part: ProductionObject
     /// Performs loading of all external module entities asynchronously.
     ///
     /// - Parameter completion: A callback invoked after performing completes.
-    public static func load_all_external_modules_entities(_ completion: @escaping () -> Void = {})
+    public static func load_all_external_module_entities(_ completion: @escaping () -> Void = {})
     {
         Task
         {

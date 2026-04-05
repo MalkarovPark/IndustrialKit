@@ -243,7 +243,7 @@ open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
     /// Performs loading of all internal module entities.
     ///
     /// - Parameter completion: A callback invoked after performing completes.
-    public static func load_all_internal_modules_entities(_ completion: @escaping () -> Void = {})
+    public static func load_all_internal_module_entities(_ completion: @escaping () -> Void = {})
     {
         Task
         {
@@ -259,7 +259,7 @@ open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
     /// Performs loading of all external module entities.
     ///
     /// - Parameter completion: A callback invoked after performing completes.
-    public static func load_all_external_modules_entities(_ completion: @escaping () -> Void = {})
+    public static func load_all_external_module_entities(_ completion: @escaping () -> Void = {})
     {
         Task
         {
@@ -350,7 +350,7 @@ open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
         connector.disconnect()
     }
     
-    // MARK: - Program Handling
+    // MARK: - Program Management
     /// A collection of operation programs available for performing.
     @Published public var programs = [OperationProgram]()
     
