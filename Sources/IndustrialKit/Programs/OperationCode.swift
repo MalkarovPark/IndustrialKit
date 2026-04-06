@@ -8,11 +8,20 @@
 import Foundation
 import SwiftUI
 
-/**
- A type that contains the numerical value of the operation code performed by the tool in production.
- 
- A program unit with an integer. This class is identifiable in an array.
- */
+/// A discrete operation command represented by an integer value.
+///
+/// `OperationCode` defines a single executable unit within an
+/// ``OperationProgram``. Each instance encapsulates a numeric code
+/// that corresponds to a tool-specific action.
+///
+/// The class supports:
+/// - Identification and hashing for collection usage
+/// - Performing state tracking for UI and runtime visualization
+/// - Serialization for persistence and transfer
+///
+/// Operation codes are typically interpreted by a tool or controller,
+/// where the numeric value maps to a predefined operation.
+///
 public class OperationCode: Identifiable, Codable, Hashable, ObservableObject, @unchecked Sendable
 {
     public let id: UUID = UUID()
@@ -30,21 +39,19 @@ public class OperationCode: Identifiable, Codable, Hashable, ObservableObject, @
     /// Operation code value.
     @Published public var value = 0
     
-    // MARK: - Init functions
-    /**
-     Creates a performable operation code element.
-     - Parameters:
-        - value: A new operation code value.
-     */
+    // MARK: - Initializer
+    /// The numeric value of the operation code.
+    ///
+    /// This value is interpreted by the device as a specific command.
     public init(_ value: Int)
     {
         self.value = value
     }
     
-    // MARK: - UI functions
+    // MARK: - UI
     @Published public var performing_state: PerformingState = .none
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     enum CodingKeys: String, CodingKey
     {
         case value
@@ -66,11 +73,20 @@ public class OperationCode: Identifiable, Codable, Hashable, ObservableObject, @
     }
 }
 
-/**
- Provides information about the operation code.
- 
- An array of them determines the opcode values ​​available for a given device.
- */
+/// A descriptor that provides semantic information about an operation code.
+///
+/// `OperationCodeInfo` defines metadata associated with a numeric
+/// ``OperationCode`` value, enabling human-readable representation
+/// and UI integration.
+///
+/// The descriptor includes:
+/// - A numeric value corresponding to the operation code
+/// - A human-readable name
+/// - A system symbol identifier for UI rendering
+/// - A textual description of the operation
+///
+/// Instances of this type are typically used to define the set of
+/// supported operations for a specific device or module.
 public class OperationCodeInfo: Identifiable, Codable, Hashable, ObservableObject
 {
     public let id: UUID = UUID()
@@ -85,18 +101,21 @@ public class OperationCodeInfo: Identifiable, Codable, Hashable, ObservableObjec
         hasher.combine(id)
     }
     
-    /// Operation code value.
+    /// The numeric value of the operation code.
     public var value: Int
     
-    /// Operation code name.
+    /// A human-readable name of the operation.
     public var name: String
     
-    /// Operation code symbol.
+    /// A system symbol name used for UI representation.
+    ///
+    /// This value is typically used with SF Symbols.
     public var symbol_name: String
     
-    /// Operation code description.
+    /// A textual description of the operation.
     public var description: String
     
+    // MARK: - Initializer
     public init(
         value: Int = 0,
         name: String = "",
@@ -110,12 +129,16 @@ public class OperationCodeInfo: Identifiable, Codable, Hashable, ObservableObjec
         self.description = description
     }
     
+    // MARK: - UI
+    /// A system image representing the operation code.
+    ///
+    /// The image is created using the ``symbol_name`` value.
     public var image: Image
     {
         return Image(systemName: symbol_name)
     }
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     enum CodingKeys: String, CodingKey
     {
         case value

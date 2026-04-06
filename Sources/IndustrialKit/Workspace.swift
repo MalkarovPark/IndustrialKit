@@ -3413,7 +3413,7 @@ import SwiftUI
     /// Names of parts currently placed in workspace.
     public var placed_part_names: [String] { parts.compactMap { $0.is_placed ? $0.name : nil } }
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     /// Returns a serializable representation of the tool.
     public func file_data() ->
     (

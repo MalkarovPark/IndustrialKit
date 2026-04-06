@@ -7,11 +7,25 @@
 
 import Foundation
 
-/**
- A type of named set of operation codes performed by an industrial robot.
- 
- Contains an array of opcodes and a custom name used for identification.
- */
+/// A named sequence of operation codes executed by a production device.
+///
+/// `OperationProgram` defines an ordered set of ``OperationCode`` instances
+/// representing discrete commands performed by tool.
+///
+/// Unlike position-based programs, this type operates on symbolic or numeric
+/// operation codes that map to tool-specific actions.
+///
+/// The program provides:
+/// - Sequential execution of operation codes
+/// - State management for performing lifecycle
+/// - Basic editing operations (add, update, delete)
+/// - Serialization for persistence and transfer
+///
+/// This abstraction is typically used for tools or devices that operate
+/// via command-based control rather than spatial trajectories.
+///
+/// Equality between programs is determined by their ``name``.
+///
 public class OperationProgram: Identifiable, Codable, Equatable, ObservableObject
 {
     public let id: UUID = UUID()
@@ -21,41 +35,39 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
         return lhs.name == rhs.name // Identity condition by names
     }
     
-    /// An operations program name
+    /// A human-readable name of the operation program.
+    ///
+    /// The name is used as the primary identity condition when comparing programs.
     public var name: String
     
-    /// An array of opertaions codes.
+    /// An ordered collection of operation codes.
+    ///
+    /// Each code represents a discrete command executed by a device.
     @Published public var codes = [OperationCode]()
     
-    // MARK: - Init functions
-    
-    /**
-     Creates a new operations program.
-     - Parameters:
-        - name: A new program name.
-     */
+    // MARK: - Initializer
+    /// Creates a new operation program.
+    ///
+    /// - Parameter name: A human-readable program name. Defaults to `"None"`.
     public init(name: String = "None")
     {
         self.name = name
     }
     
-    // MARK: - Code manage functions
-    /**
-     Add the new code to opertaions program.
-     - Parameters:
-        - code: An added code.
-     */
+    // MARK: - Code Management
+    /// Appends a new operation code to the program.
+    ///
+    /// - Parameter code: An operation code to add.
     public func add_code(_ code: OperationCode)
     {
         codes.append(OperationCode(code.value))
     }
     
-    /**
-     Creates a new operations program.
-     - Parameters:
-        - index: Updated operation code index.
-        - code: New operation code.
-     */
+    /// Updates an operation code at the specified index.
+    ///
+    /// - Parameters:
+    ///   - index: The position of the code to update.
+    ///   - code: A new operation code.
     public func update_code(index: Int, _ code: OperationCode)
     {
         if codes.indices.contains(index)
@@ -64,11 +76,9 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
         }
     }
     
-    /**
-     Checks for the presence of a code with a given index to delete.
-     - Parameters:
-        - index: An index of deleted code.
-     */
+    /// Removes an operation code at the specified index, if it exists.
+    ///
+    /// - Parameter index: The index of the code to remove.
     public func delete_code(index: Int)
     {
         if codes.indices.contains(index)
@@ -77,13 +87,15 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
         }
     }
     
-    /// Returns the operations codes count.
+    /// The number of operation codes contained in the program.
     public var codes_count: Int
     {
         return codes.count
     }
     
-    /// Resets the performing state of all operation codes to the `.none` state.
+    /// Resets the performing state of all operation codes to `.none`.
+    ///
+    /// This method is typically used before starting program performing.
     public func reset_codes_states()
     {
         for code in codes
@@ -92,7 +104,7 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
         }
     }
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     private enum CodingKeys: String, CodingKey
     {
         case name

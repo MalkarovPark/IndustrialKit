@@ -1056,7 +1056,7 @@ open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
     /// Indicates whether a program is being performed.
     @Published public var program_performed = false
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     /// Creates a tool from file data.
     ///
     /// - Parameter file: A serialized tool representation.

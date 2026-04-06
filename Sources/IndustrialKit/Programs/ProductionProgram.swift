@@ -7,11 +7,27 @@
 
 import Foundation
 
-/**
- A type of named set of program elements performed by a workspace.
- 
- Contains an array of opelements and a custom name used for identification.
- */
+/// A named sequence of production program elements executed within a workspace.
+///
+/// `ProductionProgram` defines a linear and logical structure of performing
+/// instructions that control robots, tools, and auxiliary production objects.
+///
+/// The program consists of ordered ``ProductionProgramElement`` instances,
+/// representing performers, modifiers, and logic constructs such as jumps
+/// and conditional comparisons.
+///
+/// In addition to structured elements, the program can be represented as a
+/// textual listing (`listing_text`) and supports bidirectional conversion
+/// between code and internal element representation.
+///
+/// The class provides:
+/// - Element management (add, update, delete)
+/// - Logical linking via marks and jumps
+/// - Code parsing and serialization
+/// - State control for performing lifecycle
+///
+/// Equality between programs is determined by their ``name``.
+///
 public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObject
 {
     public let id: UUID = UUID()
@@ -21,43 +37,47 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         return lhs.name == rhs.name // Identity condition by names
     }
     
-    /// An operations program name
+    /// A textual code listing representing the program.
+    ///
+    /// This optional value may contain a serialized representation of program
+    /// elements and is typically used for editor integration.
     public var name: String
     
-    /// Code listing with position for elements
+    /// A textual code listing representing the program.
+    ///
+    /// This optional value may contain a serialized representation of program
+    /// elements and is typically used for editor integration.
     @Published public var listing_text: String?
     
-    /// An array of opertaions elements.
+    /// An ordered collection of program elements.
+    ///
+    /// Elements define the performing logic, including performers, modifiers,
+    /// and control flow constructs.
     @Published public var elements = [ProductionProgramElement]()
     
-    // MARK: - Init functions
-    /**
-     Creates a new operations program.
-     - Parameters:
-        - name: A new program name.
-     */
+    // MARK: - Initializer
+    /// Creates a new production program.
+    ///
+    /// - Parameter name: A human-readable program name. Defaults to `"None"`.
     public init(name: String = "None")
     {
         self.name = name
     }
     
-    // MARK: - Code manage functions
-    /**
-     Add the new element to opertaions program.
-     - Parameters:
-        - element: An added element.
-     */
+    // MARK: - Element Management
+    /// Appends a new element to the program.
+    ///
+    /// - Parameter element: A program element to add.
     public func add_element(_ element: ProductionProgramElement)
     {
         elements.append(element)
     }
     
-    /**
-     Creates a new operations program.
-     - Parameters:
-        - index: Updated operation element index.
-        - element: New operation element.
-     */
+    /// Updates an existing element at the specified index.
+    ///
+    /// - Parameters:
+    ///   - index: The position of the element to update.
+    ///   - element: A new element to replace the existing one.
     public func update_element(index: Int, _ element: ProductionProgramElement)
     {
         if elements.indices.contains(index)
@@ -66,12 +86,10 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
     }
     
-    /**
-     Checks for the presence of a element with a given index to delete.
-     - Parameters:
-        - index: An index of deleted element.
-     */
-    public func delete_element(index: Int)
+    /// Removes an element at the specified index, if it exists.
+    ///
+    /// - Parameter index: The index of the element to remove.
+    public func delete_element(at index: Int)
     {
         if elements.indices.contains(index)
         {
@@ -79,13 +97,15 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
     }
     
-    /// Returns the operations elements count.
+    /// The number of elements contained in the program.
     public var elements_count: Int
     {
         return elements.count
     }
     
-    /// Resets the performing state of all operation elements to the `.none` state.
+    /// Resets the performing state of all elements to `.none`.
+    ///
+    /// This method is typically used before starting program execution.
     public func reset_elements_states()
     {
         for element in elements
@@ -94,13 +114,18 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
     }
     
-    // MARK: - Editor functions
+    /// A collection of all defined mark names within the program.
+    ///
+    /// Marks are used as jump targets for logic elements.
     public var mark_names: [String]
     {
         return elements.compactMap { ($0 as? MarkLogicElement)?.name }
     }
     
-    /// Define program element indexes.
+    /// Resolves and assigns element indexes for all logic elements.
+    ///
+    /// The method builds a mapping between mark names and their positions,
+    /// then assigns target indexes for jump and comparator elements.
     public func defining_elements_indexes()
     {
         // Build map of mark name – index in one pass
@@ -135,7 +160,9 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
     }
     
-    /// Define element index for logic element.
+    /// Resolves and assigns a target index for a specific logic element.
+    ///
+    /// - Parameter element: A logic element requiring mark resolution.
     public func set_mark_index(for element: ProductionProgramElement)
     {
         // Build map of mark name – index
@@ -162,6 +189,10 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     }
     
     // MARK: - Listing functions
+    /// A textual representation of the program.
+    ///
+    /// Getting this property serializes elements into code.
+    /// Setting this property parses the code into program elements.
     public var code: String
     {
         get
@@ -174,6 +205,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
     }
     
+    /// Converts program elements into a multiline code string.
     private var elements_to_code: String
     {
         var code: String = ""
@@ -191,6 +223,9 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         return code
     }
     
+    /// Parses a code string and rebuilds program elements.
+    ///
+    /// - Parameter code: A textual program representation.
     private func code_to_elements(from code: String)
     {
         elements.removeAll()
@@ -213,7 +248,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
     }
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     private enum CodingKeys: String, CodingKey
     {
         case name

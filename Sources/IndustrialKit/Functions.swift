@@ -70,21 +70,19 @@ public func origin_transform(
 }
 
 ///Deep copy for codable objects.
-/*public func clone_program_element<T: ProductionProgramElement>(_ object: T) -> T?
+public func clone_codable<T: Codable>(_ object: T) -> T?
 {
     do
     {
         let encoded = try JSONEncoder().encode(object)
-        let clone = try JSONDecoder().decode(T.self, from: encoded)
-        clone.id = UUID()
-        return clone
+        return try JSONDecoder().decode(T.self, from: encoded)
     }
     catch
     {
         //print(error)
         return nil
     }
-}*/
+}
 
 /// Deep copy of any program element with preserving subclass and properties.
 public func clone_element(_ element: ProductionProgramElement, to program: ProductionProgram)
@@ -170,7 +168,7 @@ public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] // Scal
     - from: A robot that programs pass from.
     - to: Robot that programs pass to.
  */
-@MainActor public func pass_position_programs(names: [String], from: Robot, to: Robot)
+@MainActor public func pass_position_programs(by names: [String], from: Robot, to: Robot)
 {
     let programs = from.programs
     
@@ -183,21 +181,6 @@ public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] // Scal
                 to.add_program(clone_codable(program)!)
             }
         }
-    }
-}
-
-///Deep copy for codable objects.
-public func clone_codable<T: Codable>(_ object: T) -> T?
-{
-    do
-    {
-        let encoded = try JSONEncoder().encode(object)
-        return try JSONDecoder().decode(T.self, from: encoded)
-    }
-    catch
-    {
-        //print(error)
-        return nil
     }
 }
 

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-///Manipulates data in memory, which is an array of registers containing floating point numbers.
+/// Manipulates data in memory, which is an array of registers containing floating point numbers.
 public class ModifierElement: ProductionProgramElement
 {
     public override var title: String
@@ -22,7 +22,7 @@ public class ModifierElement: ProductionProgramElement
     }
 }
 
-///Moves data between registers.
+/// Moves data between registers.
 public class MoverModifierElement: ModifierElement
 {
     public init(
@@ -132,7 +132,7 @@ public class MoverLink: ObservableObject, Codable, Identifiable
     }
 }
 
-///Writes data to selected register.
+/// Writes data to selected register.
 public class WriterModifierElement: ModifierElement
 {
     public init(
@@ -425,7 +425,7 @@ public class ChangerModifierElement: ModifierElement
 
 public typealias Changer = ChangerModifierElement
 
-///Pushes info code from tool to registers.
+/// Pushes info code from tool to registers.
 public class ObserverModifierElement: ModifierElement
 {
     public init(
@@ -536,7 +536,7 @@ public class ObserverOutput: ObservableObject, Codable, Identifiable
     }
 }
 
-///Cleares data in all registers.
+/// Cleares data in all registers.
 public class CleanerModifierElement: ModifierElement
 {
     public override init()

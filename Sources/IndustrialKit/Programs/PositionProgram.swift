@@ -9,11 +9,25 @@ import Foundation
 import RealityKit
 import SwiftUI
 
-/**
- A type of named set of target positions performed by an industrial robot.
- 
- Contains an array of positions and a custom name used for identification. Builds a visual model of the points with trajectory and provides actions for the robot model.
- */
+/// A named sequence of spatial target points executed by a robot.
+///
+/// `PositionProgram` defines an ordered set of ``PositionPoint`` instances
+/// representing robot motion targets in 3D space.
+///
+/// Each point describes a full pose of the robot end-effector, including
+/// position, orientation, motion type, and speed parameters.
+///
+/// The program supports:
+/// - Sequential motion definition
+/// - Performing state management
+/// - Visual representation of trajectory and points
+/// - Serialization for storage and transfer
+///
+/// The program can be visualized as a trajectory consisting of connected
+/// segments between points, enabling intuitive inspection and debugging.
+///
+/// Equality between programs is determined by their ``name``.
+///
 public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
 {
     public let id: UUID = UUID()
@@ -23,68 +37,65 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
         return lhs.name == rhs.name // Identity condition by names
     }
     
-    /// A positions program name.
+    /// A human-readable name of the position program.
+    ///
+    /// The name is used as the primary identity condition when comparing programs.
     public var name: String
     
     /// An array of positions points.
     @Published public var points = [PositionPoint]()
     
-    // MARK: - Positions program init functions
-    /**
-     Creates a new positions program.
-     - Parameters:
-        - name: A new program name.
-     */
+    // MARK: - Initializer
+    /// Creates a new position program.
+    ///
+    /// - Parameter name: A human-readable program name. Defaults to `"None"`.
     public init(name: String = "None")
     {
         self.name = name
     }
     
     // MARK: - Point manage functions
-    /**
-     Add the new point to positions program.
-     - Parameters:
-        - code: An added code.
-     */
+    /// Appends a new position point to the program.
+    ///
+    /// - Parameter point: A position point to add.
     public func add_point(_ point: PositionPoint)
     {
         points.append(point)
     }
     
-    /**
-     Creates a new positions program.
-     - Parameters:
-        - index: Updated position pint index.
-        - code: New position point.
-     */
-    public func update_point(number: Int, _ point: PositionPoint)
+    /// Updates a position point at the specified index.
+    ///
+    /// - Parameters:
+    ///   - index: The index of the point to update.
+    ///   - point: A new position point.
+    public func update_point(at index: Int, _ point: PositionPoint)
     {
-        if points.indices.contains(number) // Checking for the presence of a point with a given number to update
+        if points.indices.contains(index) // Checking for the presence of a point with a given number to update
         {
-            points[number] = point
+            points[index] = point
         }
     }
     
-    /**
-     Checks for the presence of a point with a given index to delete.
-     - Parameters:
-        - index: An index of deleted point.
-     */
-    public func delete_point(number: Int)
+    /// Removes a position point at the specified index, if it exists.
+    ///
+    /// - Parameter index: The index of the point to remove.
+    public func delete_point(at index: Int)
     {
-        if points.indices.contains(number)
+        if points.indices.contains(index)
         {
-            points.remove(at: number)
+            points.remove(at: index)
         }
     }
     
-    /// Returns the positions points count.
+    /// The number of points contained in the program.
     public var points_count: Int
     {
         return points.count
     }
     
-    /// Resets the performing state of all position points to the `.none` state.
+    /// Resets the performing state of all position points to `.none`.
+    ///
+    /// This method is typically used before starting program performing.
     public func reset_points_states()
     {
         for point in points
@@ -93,8 +104,17 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
         }
     }
     
-    // MARK: - Visual functions
+    // MARK: - Reality Functions
     #if canImport(RealityKit)
+    /// Builds a visual representation of the position program.
+    ///
+    /// The method generates a 3D entity containing:
+    /// - Spherical markers for each point
+    /// - Directional cones representing orientation
+    /// - Cylindrical segments forming a trajectory path
+    ///
+    /// - Parameter point_index: An optional index of the selected point.
+    /// - Returns: A root entity containing the full trajectory visualization.
     @MainActor public func entity(_ point_index: Int? = nil) -> Entity
     {
         // MARK: - Color definitions
@@ -249,7 +269,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
     #endif
     #endif
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     private enum CodingKeys: String, CodingKey
     {
         case name

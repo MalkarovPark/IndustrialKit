@@ -8,9 +8,31 @@
 import Foundation
 import JavaScriptCore
 
+/// A lightweight JavaScript execution environment.
+///
+/// `JSEnvironment` provides an isolated runtime for evaluating JavaScript code
+/// and invoking functions from Swift.
+///
+/// The environment encapsulates:
+/// - A dedicated JavaScript virtual machine
+/// - A runtime context (`JSContext`)
+/// - A function cache for optimized repeated calls
+///
+/// JavaScript code is evaluated upon initialization or when ``js_code`` changes,
+/// rebuilding the execution context and resetting all runtime state.
+///
+/// This abstraction enables integration of dynamic scripting logic into
+/// production workflows, simulation pipelines, or device-level processing.
+/// 
 public class JSEnvironment
 {
-    // MARK: - Init
+    // MARK: - Initializer
+    /// Creates a JavaScript execution environment.
+    ///
+    /// The provided JavaScript code is evaluated immediately, initializing
+    /// the runtime context and preparing callable functions.
+    ///
+    /// - Parameter js_code: A JavaScript source code string.
     public init(js_code: String = String())
     {
         self.js_code = js_code
@@ -18,7 +40,10 @@ public class JSEnvironment
         build_context()
     }
     
-    /// JavaScript code to be executed in this environment.
+    /// JavaScript code evaluated within the environment.
+    ///
+    /// Updating this value rebuilds the underlying context,
+    /// clearing all previously defined variables and cached functions.
     public var js_code: String
     {
         didSet
@@ -27,19 +52,41 @@ public class JSEnvironment
         }
     }
     
-    /// Underlying JS virtual machine.
+    /// The underlying JavaScript virtual machine.
+    ///
+    /// The virtual machine isolates execution and manages memory
+    /// for the associated JavaScript context.
     private let vm = JSVirtualMachine()
     
-    /// JSContext storing the runtime state.
+    /// The JavaScript execution context.
+    ///
+    /// The context stores runtime state, including variables,
+    /// functions, and evaluation results.
     private var context: JSContext?
     
-    /// Last JS error message.
+    /// The last error message produced during JavaScript evaluation.
+    ///
+    /// This value is updated by the exception handler and used
+    /// for error propagation to Swift.
     private var js_error_message: String?
     
-    /// Cache of JS functions for faster repeated calls.
+    /// A cache of resolved JavaScript functions.
+    ///
+    /// Cached functions improve performance by avoiding repeated
+    /// lookups in the JavaScript context.
     private var functions: [String: JSValue] = [:]
     
-    /// Build or rebuild JS context and function cache.
+    // MARK: - Context Management
+    /// Builds or rebuilds the JavaScript execution context.
+    ///
+    /// The method:
+    /// - Clears previous error state
+    /// - Resets the function cache
+    /// - Creates a new `JSContext`
+    /// - Installs an exception handler
+    /// - Evaluates the current ``js_code``
+    ///
+    /// This operation fully resets the runtime environment.
     private func build_context()
     {
         js_error_message = nil
@@ -55,7 +102,13 @@ public class JSEnvironment
         context?.evaluateScript(js_code)
     }
     
-    /// Retrieve a JS function by name, using cache.
+    /// Retrieves a JavaScript function by name.
+    ///
+    /// The method first checks the internal cache, then queries
+    /// the JavaScript context if needed.
+    ///
+    /// - Parameter name: A function identifier.
+    /// - Returns: A `JSValue` representing the function, or `nil` if not found.
     private func js_function(named name: String) -> JSValue?
     {
         if let cached = functions[name] {
@@ -72,14 +125,30 @@ public class JSEnvironment
         return function_name
     }
     
-    // MARK: - Call JS Function
-    /// Call a JS function with no arguments.
+    // MARK: - Function Invocation
+    /// Calls a JavaScript function without arguments.
+    ///
+    /// - Parameter name: A function identifier.
+    /// - Returns: A string representation of the result.
+    /// - Throws: An error if the function is not found or execution fails.
     public func call_js_func(name: String) throws -> String
     {
         return try call_js_func(name: name, args: [])
     }
     
-    /// Call a JS function with arguments.
+    /// Calls a JavaScript function with arguments.
+    ///
+    /// The method resolves the function, executes it with provided arguments,
+    /// and converts the result to a string.
+    ///
+    /// Errors occurring during execution are captured via the exception handler
+    /// and propagated as Swift errors.
+    ///
+    /// - Parameters:
+    ///   - name: A function identifier.
+    ///   - args: A list of arguments passed to the function.
+    /// - Returns: A string representation of the result.
+    /// - Throws: An error if the function is missing or execution fails.
     public func call_js_func(name: String, args: [Any]) throws -> String
     {
         js_error_message = nil
@@ -120,7 +189,10 @@ public class JSEnvironment
         return result.toString()
     }
     
-    /// Reset JS context, clearing all variables and function cache.
+    /// Resets the JavaScript execution context.
+    ///
+    /// This method rebuilds the context, clearing all variables,
+    /// cached functions, and previous execution state.
     public func reset_context()
     {
         build_context()

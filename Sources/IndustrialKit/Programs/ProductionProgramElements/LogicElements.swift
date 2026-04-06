@@ -92,7 +92,7 @@ public class JumpLogicElement: LogicElement
     }
 }
 
-///Jumps to the specified mark when the conditions are met.
+/// Jumps to the specified mark when the conditions are met.
 public class ComparatorLogicElement: LogicElement
 {
     public init(
@@ -183,7 +183,7 @@ public class ComparatorLogicElement: LogicElement
     }
 }
 
-///A logic program element compare type enum.
+/// A logic program element compare type enum.
 public enum CompareType: String, Codable, Equatable, CaseIterable
 {
     case equal = "equal"
@@ -232,7 +232,7 @@ public enum CompareType: String, Codable, Equatable, CaseIterable
     }
 }
 
-///A logic mark to jump.
+/// A logic mark to jump.
 public class MarkLogicElement: LogicElement
 {
     public init(name: String = "")

@@ -31,32 +31,16 @@ import RealityKit
 /// 
 @MainActor open class ProductionObject: ObservableObject, @preconcurrency Identifiable, @preconcurrency Equatable, @preconcurrency Hashable
 {
-    /// Returns a Boolean value indicating whether two objects are equal.
-    ///
-    /// Equality is determined by comparing the ``name`` property and the dynamic type
-    /// of both objects.
-    ///
-    /// - Parameters:
-    ///   - lhs: A workspace object to compare.
-    ///   - rhs: Another workspace object to compare.
-    /// - Returns: `true` if both objects have the same identity; otherwise, `false`.
     public static func == (lhs: ProductionObject, rhs: ProductionObject) -> Bool // Identity condition by names & types
     {
         return lhs.name == rhs.name && type(of: lhs) == type(of: rhs)
     }
     
-    /// Hashes the essential components of the object by feeding them into the given hasher.
-    ///
-    /// The hash value is derived from the object's ``name`` and is consistent with
-    /// the equality definition.
-    ///
-    /// - Parameter hasher: The hasher to use when combining components.
     public func hash(into hasher: inout Hasher)
     {
         hasher.combine(name)
     }
     
-    /// A unique identifier of the object.
     public var id = UUID()
     
     /// The name of the object in the workspace.
@@ -199,7 +183,7 @@ import RealityKit
         }
     }
     
-    // MARK: - Visual functions
+    // MARK: - Reality Functions
     #if canImport(RealityKit)
     /// The root entity that represents the object in a scene.
     public var entity = Entity()
@@ -388,7 +372,7 @@ import RealityKit
     }
     #endif
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     /// Creates an object from serialized file data.
     ///
     /// - Parameter file: The stored object data.

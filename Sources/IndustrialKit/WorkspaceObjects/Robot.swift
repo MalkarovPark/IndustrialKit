@@ -1048,7 +1048,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
         }
     }
     
-    // MARK: - Visal
+    // MARK: - Reality Functions
     #if canImport(RealityKit)
     /// A unique identifier for the robot entity in a 3D scene.
     ///
@@ -1495,7 +1495,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// Indicates whether a program is currently being performed.
     @Published public var program_performed = false
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     /// Creates a robot instance from file data.
     ///
     /// - Parameter file: Serialized robot data.
@@ -1602,7 +1602,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     }
 }
 
-// MARK: - File Data
+// MARK: - File Hanlding
 /// A serializable representation of a robot state.
 ///
 /// `RobotFileData` stores configuration, programs, spatial parameters,

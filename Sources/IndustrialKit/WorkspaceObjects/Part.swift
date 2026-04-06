@@ -377,7 +377,7 @@ open class Part: ProductionObject
         }
     }
     
-    // MARK: - Visual
+    // MARK: - Reality Functions
     #if canImport(RealityKit)
     /// An identifier used for tagging the entity within the scene.
     ///
@@ -388,7 +388,7 @@ open class Part: ProductionObject
     }
     #endif
     
-    // MARK: - File Data
+    // MARK: - File Hanlding
     /// Creates a part instance from serialized file data.
     ///
     /// - Parameter file: A data structure containing part configuration.
@@ -441,7 +441,7 @@ open class Part: ProductionObject
     }
 }
 
-// MARK: - File Data
+// MARK: - File Hanlding
 /// A serializable representation of a part configuration.
 ///
 /// This structure stores all necessary data to reconstruct a part,
