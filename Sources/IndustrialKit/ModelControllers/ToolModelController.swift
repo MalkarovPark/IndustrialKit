@@ -8,15 +8,28 @@
 import Foundation
 import RealityKit
 
-///Provides control over visual model for robot.
+/// A controller that manages the visual model of a tool.
+///
+/// `ToolModelController` extends ``ModelController`` to provide
+/// animation-based behavior driven by operation codes.
+///
+/// The controller translates operation codes into sequences of entity
+/// animations, enabling visualization of discrete tool actions such as
+/// gripping, welding, or actuation.
+///
+/// Subclasses define animation logic by overriding
+/// ``entity_animations(code:)``.
+///
 open class ToolModelController: ModelController, @unchecked Sendable
 {
-    /**
-     Performs tool model action by operation code value.
-     
-     - Parameters:
-        - code: The operation code value of the operation performed by the tool visual model.
-     */
+    // MARK: - Performing
+    /// Performs a tool action using an operation code.
+    ///
+    /// The method resolves animation data, applies animations to the model,
+    /// and waits for completion based on calculated animation duration.
+    ///
+    /// - Parameter code: An operation code defining the tool action.
+    /// - Throws: An error if animation generation fails.
     public func perform(code: Int) throws
     {
         let entity_animations = try entity_animations(code: code)
@@ -26,18 +39,27 @@ open class ToolModelController: ModelController, @unchecked Sendable
         usleep(UInt32(animation_time * 1_000_000))
     }
     
-    /// Cancel perform flag.
+    /// Indicates whether the current performing operation is canceled.
     public var canceled = false
     
+    /// Performs a tool action with a completion handler.
+    ///
+    /// - Parameters:
+    ///   - code: An operation code defining the tool action.
+    ///   - completion: A closure called when performing completes.
     private var performing_task = Task<Void, Error> {}
     
-    /**
-     Performs tool model action by operation code value with completion handler.
-     
-     - Parameters:
-        - code: The operation code value of the operation performed by the tool visual model.
-        - completion: A completion function that is calls when the performing completes.
-     */
+    // MARK: - Animation Processing
+    /// Processes and applies entity animations to the visual model.
+    ///
+    /// The method iterates through animation data, generates animation resources,
+    /// and applies them to corresponding entities.
+    ///
+    /// The total execution time is calculated based on animation duration,
+    /// speed, delay, and repeat count.
+    ///
+    /// - Parameter entity_animations: A list of animation data.
+    /// - Returns: Total time required to complete all animations.
     public func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
     {
         canceled = false
@@ -61,19 +83,14 @@ open class ToolModelController: ModelController, @unchecked Sendable
         }
     }
     
-    /**
-     Processes a list of entity animations and plays them on the corresponding entities.
-     
-     - Parameters:
-        - entity_animations: An array of `EntityAnimationData`, each containing the target entity name,
-     transform parameters (position, rotation, scale), duration, delay, speed, and repeat count.
-     
-     - Returns: The total time (`TimeInterval`) needed to complete all animations, including
-     duration, speed, delay, and repeat count.
-     
-     Animations are applied immediately if the target entity exists. Entities not found in
-     `entities` are skipped.
-     */
+    /// Generates animation data for a given operation code.
+    ///
+    /// Subclasses override this method to define mapping between
+    /// operation codes and animation sequences.
+    ///
+    /// - Parameter code: An operation code.
+    /// - Returns: A list of animation data.
+    /// - Throws: An error if generation fails.
     public func process_animation(by entity_animations: [EntityAnimationData]) -> TimeInterval
     {
         var animation_time: TimeInterval = 0
@@ -144,11 +161,22 @@ open class ToolModelController: ModelController, @unchecked Sendable
         }
     }
     
+    /// Generates animation data for a given operation code.
+    ///
+    /// Subclasses override this method to define mapping between
+    /// operation codes and animation sequences.
+    ///
+    /// - Parameter code: An operation code.
+    /// - Returns: A list of animation data.
+    /// - Throws: An error if generation fails.
     open func entity_animations(code: Int) throws -> [EntityAnimationData]
     {
         return []
     }
     
+    /// Stops all animations for connected entities.
+    ///
+    /// This method resets the visual model to a non-animated state.
     public func reset_entities()
     {
         for (_, entity) in entities // Remove all node actions
@@ -159,20 +187,25 @@ open class ToolModelController: ModelController, @unchecked Sendable
 }
 
 // MARK: - External Model Controller
+/// A tool model controller driven by external JavaScript logic.
+///
+/// `ExternalToolModelController` extends ``ToolModelController`` by
+/// delegating animation generation and state computation to a
+/// JavaScript environment.
+///
+/// This enables dynamic definition of tool behavior and animation
+/// sequences without recompilation.
 open class ExternalToolModelController: ToolModelController, @unchecked Sendable
 {
-    /// Clone model controller instance.
-    open override func copy() -> Self
-    {
-        let copy = type(of: self).init()
-        
-        copy.external_entity_names = external_entity_names
-        copy.code = code
-        
-        return copy
-    }
-    
     // MARK: Init functions
+    /// Creates a default external tool model controller.
+    required public init() {}
+    
+    /// Creates an external tool model controller.
+    ///
+    /// - Parameters:
+    ///   - entity_names: Names of entities used in the model.
+    ///   - code: JavaScript code defining animation behavior.
     public init(
         entity_names: [String],
         
@@ -184,28 +217,35 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
         self.js_environment.js_code = code
     }
     
-    required public init()
+    open override func copy() -> Self
     {
-        //self.module_name = ""
-        //self.package_url = URL(fileURLWithPath: "")
+        let copy = type(of: self).init()
+        
+        copy.external_entity_names = external_entity_names
+        copy.code = code
+        
+        return copy
     }
     
-    // MARK: Parameters import
-    override open var entity_names: [String]
-    {
-        return external_entity_names
-    }
-    
-    public var external_entity_names = [String]()
-    
-    // MARK: JS Code Handling
+    // MARK: JavaScript Handling
+    /// Resets the JavaScript execution context.
     private var js_environment = JSEnvironment()
     
+    /// JavaScript code defining tool behavior.
+    ///
+    /// Updating this value rebuilds the scripting environment.
     public func reset_js_context()
     {
         js_environment.reset_context()
     }
     
+    /// Generates animation data using JavaScript.
+    ///
+    /// The method calls a JS function `entity_animations`,
+    /// decodes the returned JSON, and converts it into animation data.
+    ///
+    /// - Parameter code: An operation code.
+    /// - Returns: A list of animation data.
     public var code: String
     {
         get { js_environment.js_code }
@@ -213,6 +253,13 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
     }
     
     // MARK: Modeling
+    public var external_entity_names = [String]()
+    
+    override open var entity_names: [String]
+    {
+        return external_entity_names
+    }
+    
     override open func entity_animations(code: Int) -> [EntityAnimationData]
     {
         do
@@ -234,7 +281,11 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
         }
     }
     
-    // MARK: Statistics
+    // MARK: Device Output
+    /// Current device output generated by JavaScript.
+    ///
+    /// The method calls a JS function `current_device_output`
+    /// and decodes the result into ``DeviceOutputData``.
     open override var current_device_output: DeviceOutputData?
     {
         do
@@ -259,7 +310,11 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
             return nil
         }
     }
-
+    
+    /// Initial device output generated by JavaScript.
+    ///
+    /// The method calls a JS function `initial_device_output`
+    /// and decodes the result into ``DeviceOutputData``.
     open override var initial_device_output: DeviceOutputData?
     {
         do
@@ -286,26 +341,77 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
     }
 }
 
-// MARK: - Animation Storage
-/**
- A storage for entity animation.
- */
+// MARK: - Entity Animation Data
+/// A structure describing animation parameters for an entity.
+///
+/// `EntityAnimationData` defines transformation and timing properties
+/// used to animate a specific entity within the visual model.
+///
+/// It includes:
+/// - Target entity name
+/// - Position and rotation (pose)
+/// - Scale
+/// - Timing parameters (duration, delay, speed)
+/// - Repeat behavior
 public struct EntityAnimationData: Codable
 {
+    /// An optional name of the target entity.
+    ///
+    /// Identifies the entity in the model to which the transformation
+    /// or animation will be applied.
+    ///
+    /// The name is used to match data with a corresponding entity in
+    /// the controller’s ``ModelController/entities`` dictionary.
+    ///
     public var entity_name: String
     
-    public var position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0)
+    /// Position and rotation of the entity.
+    ///
+    /// Contains translation (*x, y, z*) and orientation (*r, p, w*)
+    /// components used to build the target transform.
+    public var position: (
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
+    ) = (0, 0, 0, 0, 0, 0)
     
+    /// Scale of the entity.
+    ///
+    /// Defines scaling factors along each axis (*x, y, z*).
     public var scale: (x: Float, y: Float, z: Float) = (1, 1, 1)
     
+    /// Animation duration in seconds.
     public var duration: Double = 1
+    
+    /// Timing function describing animation interpolation.
     public var timing_function: TimingFunction = .linear
     
+    /// Delay before animation starts in seconds.
     public var delay: Double = 0
+    
+    /// Playback speed multiplier.
+    ///
+    /// Values greater than 1 accelerate animation,
+    /// while values less than 1 slow it down.
     public var speed: Float = 1
     
+    /// Number of animation repetitions.
+    ///
+    /// - `nil`: Infinite repetition
+    /// - `0`: No animation
+    /// - `1`: Single execution (default)
     public var repeat_count: Int? = 1 //nil – infinity
     
+    /// Creates animation data for an entity.
+    ///
+    /// - Parameters:
+    ///   - entity_name: A target entity name.
+    ///   - position: Position and rotation components.
+    ///   - scale: Scale components.
+    ///   - duration: Animation duration.
+    ///   - timing_function: Timing function of animation.
+    ///   - delay: Delay before animation starts.
+    ///   - speed: Playback speed.
+    ///   - repeat_count: Number of repetitions (`nil` for infinite).
     public init(
         entity_name: String,
         position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0),
@@ -430,7 +536,20 @@ public struct EntityAnimationData: Codable
     }
 }
 
+/// A type defining animation timing functions.
+///
+/// `TimingFunction` specifies how animation progress evolves over time.
 public enum TimingFunction: Codable
 {
-    case linear, easeIn, easeOut, easeInOut
+    /// A linear timing function.
+    case linear
+    
+    /// An accelerating timing function.
+    case ease_in
+    
+    /// A decelerating timing function.
+    case ease_out
+    
+    /// A combined acceleration and deceleration timing function.
+    case ease_in_out
 }
