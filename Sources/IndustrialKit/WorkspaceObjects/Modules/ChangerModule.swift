@@ -8,10 +8,30 @@
 import Foundation
 import JavaScriptCore
 
+/// A module that performs transformation of register data within a production system.
+///
+/// `ChangerModule` extends ``IndustrialModule`` by providing a mechanism
+/// for dynamic modification of numeric register arrays.
+///
+/// The module defines a transformation function that can be implemented:
+/// - As a native Swift closure
+/// - As a JavaScript function executed at runtime
+///
+/// This abstraction enables flexible data processing pipelines,
+/// including signal transformation, calibration, normalization,
+/// and custom runtime logic.
+///
+/// Changer modules are typically used as intermediate processing units
+/// between devices, programs, or control layers.
 open class ChangerModule: IndustrialModule
 {
-    // MARK: - Module init functions for design
-    /// Module init with external JS function (context).
+    // MARK: - MARK: - Initialization
+    // MARK: Module init functions for design
+    /// Creates a changer module using a default JavaScript-based transformation.
+    ///
+    /// - Parameters:
+    ///   - name: A module identifier.
+    ///   - description: A textual description of the module.
     public override init(
         name: String = String(),
         description: String = String()
@@ -31,7 +51,12 @@ open class ChangerModule: IndustrialModule
     }*/
     
     // MARK: Module init functions for in-app mounting
-    /// Module init with internal Swift function.
+    /// Creates a changer module with a native Swift transformation function.
+    ///
+    /// - Parameters:
+    ///   - name: A module identifier.
+    ///   - description: A textual description.
+    ///   - changer_function: A closure that modifies register values.
     public init(
         name: String = String(),
         description: String = String(),
@@ -44,7 +69,14 @@ open class ChangerModule: IndustrialModule
         self.change = changer_function
     }
     
-    /// Module init with external JS function.
+    /// Creates a changer module using JavaScript transformation code.
+    ///
+    /// The provided code is executed at runtime to transform register values.
+    ///
+    /// - Parameters:
+    ///   - name: A module identifier.
+    ///   - description: A textual description.
+    ///   - changer_function_code: A JavaScript source code string.
     public init(
         name: String = String(),
         description: String = String(),
@@ -58,6 +90,11 @@ open class ChangerModule: IndustrialModule
         self.changer_function_code = changer_function_code
     }
     
+    /// Creates a changer module from an external package.
+    ///
+    /// The module uses JavaScript-based transformation by default.
+    ///
+    /// - Parameter external_name: A module identifier.
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
@@ -65,28 +102,34 @@ open class ChangerModule: IndustrialModule
         self.change = js_change
     }
     
+    /// A file extension representing the changer module package format.
     open override var file_extension_name: String { "changer" }
     
     // MARK: - Components
-    /**
-     Performs register conversion within a class instance.
-     
-     - Parameters:
-     - registers: A mutable registers data array.
-     
-     - Throws:
-     NSError(domain: "Performing Error", code: 1)
-     if JavaScript execution fails or returns invalid data.
-     */
+    /// A transformation function that modifies register values.
+    ///
+    /// The function receives a mutable array of registers and applies
+    /// in-place modifications. It may throw an error if transformation fails.
+    ///
+    /// This function can be implemented either as a native Swift closure
+    /// or as a wrapper around JavaScript execution.
     public var change: (_ registers: inout [Float]) throws -> Void = { _ in }
     
-    /**
-     JavaScript code used to transform register values inside the Changer component.
-     
-     The script must operate on the `registers` array (Float[]) and return the modified array as the last expression.
-     */
+    /// A JavaScript source code used for register transformation.
+    ///
+    /// The script operates on a `registers` array and must return
+    /// a modified array of numeric values.
+    ///
+    /// The result is converted back into Swift `[Float]` representation.
     @Published public var changer_function_code = String() // JS
     
+    /// Executes the JavaScript transformation on register values.
+    ///
+    /// The method evaluates ``changer_function_code`` inside a JavaScript context,
+    /// passing the current register array and expecting a transformed array in return.
+    ///
+    /// - Parameter registers: A mutable array of register values.
+    /// - Throws: An error if script execution fails or returns invalid data.
     public func js_change(_ registers: inout [Float]) throws
     {
         let context = JSContext()!
@@ -166,7 +209,7 @@ open class ChangerModule: IndustrialModule
         return URL(filePath: "")
     }
     
-    // MARK: - Codable handling
+    // MARK: - File Data
     enum CodingKeys: String, CodingKey
     {
         case changer_function_code

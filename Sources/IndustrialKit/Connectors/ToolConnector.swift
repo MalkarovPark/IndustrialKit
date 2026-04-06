@@ -184,12 +184,26 @@ public struct ToolState: Codable
 public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked Sendable
 {
     // MARK: Initializators
+    /// Creates an empty external tool connector instance.
+    ///
+    /// This initializer is required for dynamic instantiation and copying.
+    /// The connector is created in an unconfigured state and must be
+    /// configured before use.
     required init()
     {
         self.module_name = ""
         self.package_url = URL(fileURLWithPath: "")
     }
     
+    /// Creates an external tool connector with module configuration.
+    ///
+    /// - Parameters:
+    ///   - module_name: The name of the external module providing tool logic.
+    ///   - package_url: The location of the external module package.
+    ///   - parameters: A list of connection parameters for the external tool.
+    ///
+    /// This initializer prepares the connector for interaction with an
+    /// external runtime responsible for performing tool operations.
     public init(
         _ module_name: String,
         package_url: URL,

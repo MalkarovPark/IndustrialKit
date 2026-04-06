@@ -6,11 +6,34 @@
 //
 
 import Foundation
-import SceneKit
 
+/// A module that defines structure, behavior, and integration of an industrial robot.
+///
+/// `RobotModule` extends ``IndustrialModule`` by providing robot-specific
+/// configuration, including kinematic structure, control logic,
+/// and device connectivity.
+///
+/// The module encapsulates:
+/// - A robot model controller for simulation and kinematics
+/// - A connector for real device communication
+/// - Spatial configuration (origin position and shift)
+/// - Entity structure and end-effector definition
+/// - Program components and external execution logic
+///
+/// Robot modules can be defined internally or imported from external packages,
+/// enabling reusable and extensible robot configurations.
+///
+/// Subclass `RobotModule` to implement specialized robotic systems.
+/// 
 open class RobotModule: IndustrialModule
 {
-    // MARK: - Module init functions for design
+    // MARK: - Initializators
+    // MARK: Module init functions for design
+    /// Creates a robot module for design-time configuration.
+    ///
+    /// - Parameters:
+    ///   - new_name: A module identifier.
+    ///   - description: A textual description of the module.
     public override init(
         new_name: String,
         description: String = String()
@@ -20,11 +43,19 @@ open class RobotModule: IndustrialModule
     }
     
     // MARK: Module init functions for in-app mounting
-    /**
-     Internal init.
-     
-     For in-code declaration.
-     */
+    /// Creates a robot module for internal runtime usage.
+    ///
+    /// This initializer configures all core components of the robot,
+    /// including spatial parameters, model controller, and connector.
+    ///
+    /// - Parameters:
+    ///   - name: A module identifier.
+    ///   - description: A textual description.
+    ///   - default_origin_position: A default robot origin pose (position and orientation).
+    ///   - origin_shift: A positional offset applied to the origin.
+    ///   - end_entity_name: A name of the end-effector entity.
+    ///   - model_controller: A controller responsible for robot model behavior.
+    ///   - connector: A connector responsible for device communication.
     public init(
         name: String = String(),
         description: String = String(),
@@ -53,11 +84,12 @@ open class RobotModule: IndustrialModule
         self.connector = connector
     }
     
-    /**
-     External init.
-     
-     Import data from external info file.
-     */
+    /// Creates a robot module from an external package.
+    ///
+    /// The initializer attempts to load module metadata from an external
+    /// information file and imports all available components.
+    ///
+    /// - Parameter external_name: A module identifier.
     public override init(
         external_name: String
     )
@@ -72,48 +104,69 @@ open class RobotModule: IndustrialModule
         }
     }
     
+    /// A file extension representing the robot module package format.
     open override var file_extension_name: String { "robot" }
     
     // MARK: - Components
-    /// A model controller of the robot model.
+    /// A controller responsible for robot model behavior and kinematics.
+    ///
+    /// The controller manages entity hierarchy, joint transformations,
+    /// and simulation performing.
     public var model_controller = RobotModelController()
     
-    /// A connector of the robot model.
+    /// A connector responsible for communication with a real robot device.
+    ///
+    /// The connector manages connection lifecycle, parameter configuration,
+    /// and synchronization between virtual and physical robot.
     public var connector = RobotConnector()
     
-    /**
-     A sequence of nodes names nested within the main node.
-        
-     > Used by model controller for nested nodes access.
-     */
+    /// A collection of entity node names within the robot model.
+    ///
+    /// Used by the model controller to access and manipulate nested nodes
+    /// in the entity hierarchy.
     @Published public var entity_names = [String]()
     
-    /**
-     A sequence of connection parameters.
-        
-     > Used by connector.
-     */
+    /// A collection of connection parameters used by the connector.
+    ///
+    /// Defines configuration required for establishing communication
+    /// with a physical device.
     @Published public var connection_parameters = [ConnectionParameter]()
     
-    /// A robot cell box default shift.
+    /// A positional offset applied to the robot origin.
+    ///
+    /// Defines translation of the robot base within the workspace.
     @Published public var origin_shift: (x: Float, y: Float, z: Float) = (x: 0, y: 0, z: 0)
     
-    /// A robot cell box default position.
-    @Published public var default_origin_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0)
+    /// A default robot origin pose.
+    ///
+    /// Contains position (x, y, z) and orientation (r, p, w)
+    /// used as an initial configuration in the workspace.
+    @Published public var default_origin_position: (
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
+    ) = (0, 0, 0, 0, 0, 0)
     
-    /// A robot model entity name for end-effector mounting.
+    /// A name of the entity used for end-effector mounting.
+    ///
+    /// Defines the attachment point for tools or external components.
     @Published public var end_entity_name: String = String()
     
-    /// USDZ file name for for module build (designer).
+    /// A file name of the USDZ entity used during module design.
+    ///
+    /// This value is used by the module builder for resource packaging.
     @Published public var entity_file_name: String?
     
+    /// A source code string defining model controller logic.
     ///
+    /// Typically contains JavaScript code used for dynamic model behavior.
     @Published public var model_controller_code = String() //JS
     
+    /// A source code string defining connector logic.
     ///
+    /// Contains Swift code used for internal or external module integration.
     @Published public var connector_code = String() //Swift (Internal and External module)
     
-    // MARK: - Import functions
+    // MARK: - Import Functions
     open override var package_url: URL
     {
         do
@@ -138,8 +191,14 @@ open class RobotModule: IndustrialModule
         return URL(filePath: "")
     }
     
+    /// A reference to imported external module information.
+    ///
+    /// Stores decoded metadata for reuse and inspection.
     public var external_module_info: RobotModule?
     
+    /// Loads external module metadata from the package.
+    ///
+    /// - Returns: A decoded `RobotModule` instance or `nil` if unavailable.
     private func get_external_module_info() -> RobotModule?
     {
         do
@@ -159,7 +218,12 @@ open class RobotModule: IndustrialModule
         return nil
     }
     
-    /// Imports components from external info.
+    /// Imports components from external module metadata.
+    ///
+    /// The method applies spatial configuration, entity structure,
+    /// and initializes model controller using external code definitions.
+    ///
+    /// - Parameter module_info: A module containing external configuration.
     private func components_import(from module_info: RobotModule)
     {
         default_origin_position = module_info.default_origin_position
@@ -189,7 +253,7 @@ open class RobotModule: IndustrialModule
     }
     #endif
     
-    // MARK: - Codable handling
+    // MARK: - File Data
     enum CodingKeys: String, CodingKey
     {
         case default_origin_position

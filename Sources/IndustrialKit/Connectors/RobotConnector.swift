@@ -256,12 +256,26 @@ public struct RobotState: Codable
 public class ExternalRobotConnector: RobotConnector, ExternalConnector, @unchecked Sendable
 {
     // MARK: Initializators
+    /// Creates an empty external robot connector instance.
+    ///
+    /// This initializer is required for dynamic instantiation and copying.
+    /// The connector is created without configuration and must be set up
+    /// before establishing a connection.
     required init()
     {
         self.module_name = ""
         self.package_url = URL(fileURLWithPath: "")
     }
     
+    /// Creates an external robot connector with module configuration.
+    ///
+    /// - Parameters:
+    ///   - module_name: The name of the external module controlling the robot.
+    ///   - package_url: The location of the external module package.
+    ///   - parameters: A list of connection parameters for the robot.
+    ///
+    /// This initializer configures the connector to communicate with an
+    /// external runtime responsible for robot control and motion execution.
     public init(
         _ module_name: String,
         package_url: URL,

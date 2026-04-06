@@ -6,11 +6,33 @@
 //
 
 import Foundation
-import SceneKit
 
+/// A module that defines a passive component of a production environment.
+///
+/// `PartModule` extends ``IndustrialModule`` by providing configuration
+/// for non-actuated elements within a workspace.
+///
+/// Unlike robots and tools, a part module does not define performing logic
+/// or device interaction. Instead, it represents static or externally
+/// manipulated objects used in production processes.
+///
+/// The module encapsulates:
+/// - A visual representation of the part
+/// - Resource packaging for simulation
+/// - External module loading support
+///
+/// Part modules are used to model workpieces, fixtures,
+/// and environmental elements within a production system.
+/// 
 open class PartModule: IndustrialModule
 {
-    // MARK: - Module init functions for design
+    // MARK: - Initialization
+    // MARK: Module init functions for design
+    /// Creates a part module for design-time configuration.
+    ///
+    /// - Parameters:
+    ///   - new_name: A module identifier.
+    ///   - description: A textual description of the module.
     public override init(
         new_name: String,
         description: String = String()
@@ -20,7 +42,11 @@ open class PartModule: IndustrialModule
     }
     
     // MARK: Module init functions for in-app mounting
-    /// Internal init.
+    /// Creates a part module for internal runtime usage.
+    ///
+    /// - Parameters:
+    ///   - name: A module identifier.
+    ///   - description: A textual description.
     public override init(
         name: String = String(),
         description: String = String()
@@ -29,15 +55,22 @@ open class PartModule: IndustrialModule
         super.init(name: name, description: description)
     }
     
+    /// Creates a part module from an external package.
+    ///
+    /// - Parameter external_name: A module identifier.
     public override init(external_name: String)
     {
         super.init(external_name: external_name)
     }
     
+    /// A file extension representing the part module package format.
     open override var file_extension_name: String { "part" }
     
     // MARK: - Components
-    /// USDZ file name for for module build (designer).
+    /// A file name of the USDZ entity used during module design.
+    ///
+    /// Defines the visual representation of the part
+    /// used in simulation and rendering.
     @Published public var entity_file_name: String?
     
     // MARK: - Import functions
@@ -65,6 +98,10 @@ open class PartModule: IndustrialModule
         return URL(filePath: "")
     }
     
+    /// A lazily loaded external module metadata representation.
+    ///
+    /// Attempts to read and decode module information
+    /// from the external package on access.
     public var external_module_info: PartModule?
     {
         do
@@ -84,7 +121,7 @@ open class PartModule: IndustrialModule
         return nil
     }
     
-    // MARK: - Codable handling
+    // MARK: - File Data
     enum CodingKeys: String, CodingKey
     {
         case entity_file_name

@@ -8,11 +8,22 @@
 import Foundation
 import RealityKit
 
-/**
- A base class of industrial production object.
- 
- Sets parameters of the model and links them with the components of the package module.
- */
+/// A base representation of a modular industrial production component.
+///
+/// `IndustrialModule` defines a reusable unit that encapsulates
+/// structure, resources, and integration logic of a production object.
+///
+/// A module provides:
+/// - A named identity and descriptive metadata
+/// - Access to packaged resources (internal or external)
+/// - A 3D entity representation for simulation
+/// - Integration points for program components and runtime execution
+///
+/// Modules can be bundled within the application or loaded from external sources,
+/// enabling extensibility of the production system without recompilation.
+///
+/// Subclass `IndustrialModule` to implement domain-specific equipment modules.
+///
 open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
 {
     public var id = UUID()
@@ -22,25 +33,36 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         lhs.name == rhs.name
     }
     
-    /// A module name.
+    /// A human-readable name of the module.
+    ///
+    /// The name is used for identification, file resolution,
+    /// and integration within the workspace.
     @Published public var name = String()
     
-    /// An optional module description.
+    /// A textual description of the module.
+    ///
+    /// Provides additional information about module purpose,
+    /// configuration, or usage.
     @Published public var description = String()
     
-    // MARK: - File handling
-    /// A folder bookmark to resources access.
+    // MARK: - File Handling
+    /// A security-scoped bookmark used to access module resources.
+    ///
+    /// This bookmark provides persistent access to the working directory
+    /// containing external module packages.
     nonisolated(unsafe) public static var work_folder_bookmark: Data?
     
-    /// An object package extension name.
+    /// A file extension representing the module package format.
+    ///
+    /// Subclasses override this value to define custom module types.
     open var file_extension_name: String { "module" }
     
     // MARK: - Module init functions for design
-    /**
-     New module init.
-     
-     For new designed modules.
-     */
+    /// Creates a new module for design-time configuration.
+    ///
+    /// - Parameters:
+    ///   - new_name: A module identifier.
+    ///   - description: A textual description of the module.
     public init(
         new_name: String = String(),
         description: String = String()
@@ -51,7 +73,11 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }
     
     // MARK: Module init functions for in-app mounting
-    /// Internal module init.
+    /// Creates a module instance for internal runtime usage.
+    ///
+    /// - Parameters:
+    ///   - name: A module identifier.
+    ///   - description: A textual description.
     public init(
         name: String = String(),
         description: String = String()
@@ -61,7 +87,9 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         self.description = description
     }
     
-    /// External module init.
+    /// Creates a module instance representing an external package.
+    ///
+    /// - Parameter external_name: A module identifier loaded from external source.
     public init(
         external_name: String = String()
     )
@@ -72,7 +100,10 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         is_internal_entity = false
     }
     
-    /// An adress to package contents access.
+    /// A resolved internal URL to the module package contents.
+    ///
+    /// The URL is constructed using the stored bookmark and module name.
+    /// Returns `nil` if the bookmark is invalid or stale.
     public var internal_url: String?
     {
         do
@@ -95,25 +126,41 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         }
     }
     
-    // MARK: - Entities handling
+    // MARK: - Entity Handling
+    /// Indicates whether the module uses an internal entity resource.
     private var is_internal_entity = true
     
+    /// A 3D entity representing the module in a scene.
+    ///
+    /// The entity is loaded asynchronously and may be `nil` until loading completes.
     @MainActor public var entity: Entity?
     
-    /// A scene passed to object.
+    /// A name of the internal entity resource.
+    ///
+    /// The name is constructed using module naming conventions
+    /// and is used for resource lookup in bundled assets.
     public var internal_entity_name: String
     {
         return "\(name).\(file_extension_name).\(scene_file_name)" // name.module.scene 6DOF.robot.scene
     }
     
+    /// A base name of the scene file associated with the module.
     private var scene_file_name: String { "Scene" }
     
-    /// A module package url of external module.
+    /// A URL pointing to the external module package.
+    ///
+    /// Subclasses override this property to provide actual package location.
     open var package_url: URL
     {
         return URL(filePath: "")
     }
     
+    /// Asynchronously loads the module entity.
+    ///
+    /// The method determines whether the module is internal or external
+    /// and loads the corresponding entity resource.
+    ///
+    /// - Parameter completion: A closure called after loading finishes.
     @MainActor public func perform_load_entity(_ completion: @escaping () -> Void = {}) //@escaping @Sendable (Result<Void, Error>) -> Void)
     {
         Task
@@ -143,6 +190,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         }
     }
     
+    /// Performs asynchronous entity loading using Swift concurrency.
     @MainActor func perform_load_entity_async() async
     {
         await withCheckedContinuation
@@ -154,6 +202,10 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         }
     }
     
+    /// Loads an entity from an external module package.
+    ///
+    /// - Returns: A loaded `Entity`.
+    /// - Throws: An error if the resource is missing or cannot be loaded.
     @MainActor private func load_external_entity() async throws -> Entity
     {
         let scene_url = package_url.appendingPathComponent(scene_file_name + ".usdz")
@@ -169,19 +221,21 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     
     // MARK: - External Program Components
     #if os(macOS)
-    /**
-     Returns an array of program component paths used in the module.
-     
-     Each element of the array is a tuple containing:
-     - `file`: The path to the executable file of the module.
-     - `socket`: The path to the Unix socket created by the module for inter-process communication.
-     */
+    /// A list of executable program components associated with the module.
+    ///
+    /// Each element defines:
+    /// - `file`: Path to the executable
+    /// - `socket`: Path to the communication socket
+    ///
+    /// These components provide runtime logic and device interaction.
     open var program_component_paths: [(file: String, socket: String)]
     {
         return [(file: String, socket: String)]()
     }
     
-    /// Start all program components in module.
+    /// Starts all program components associated with the module.
+    ///
+    /// Each component is launched if its communication socket is not active.
     @MainActor public func start_program_components() async
     {
         for program_components_path in program_component_paths
@@ -194,7 +248,9 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
         }
     }
     
-    /// Stop all program components in module.
+    /// Stops all running program components.
+    ///
+    /// Sends a termination command to each component via its socket.
     public func stop_program_components()
     {
         for program_components_path in program_component_paths
@@ -204,7 +260,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }
     #endif
     
-    // MARK: - Codable handling
+    // MARK: - File Data
     enum CodingKeys: String, CodingKey
     {
         case name
@@ -228,10 +284,15 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     }
 }
 
-//MARK: - Code struct
-/**
- A named text block of code that is inserted into a module during compilation.
- */
+//MARK: - Code Item
+/// A named code fragment used in module generation.
+///
+/// `CodeItem` represents a reusable unit of source code that can be
+/// inserted into generated modules during compilation or assembly.
+///
+/// Code items enable modular construction of program logic,
+/// allowing dynamic composition of executable behavior.
+///
 public class CodeItem: Codable, Equatable
 {
     public static func == (lhs: CodeItem, rhs: CodeItem) -> Bool
@@ -239,16 +300,31 @@ public class CodeItem: Codable, Equatable
         lhs.name == rhs.name
     }
     
-    public init(name: String = String(), code: String = String())
+    /// Creates a code item with a name and source code.
+    ///
+    /// - Parameters:
+    ///   - name: A code block identifier.
+    ///   - code: A textual representation of source code.
+    public init(
+        name: String = String(),
+        code: String = String()
+    )
     {
         self.name = name
         self.code = code
     }
     
+    /// A name of the code item.
+    ///
+    /// Used for identification and referencing during module assembly.
     @Published public var name = String()
+    
+    /// A textual representation of the code block.
+    ///
+    /// Contains source code inserted into generated modules.
     @Published public var code = String()
     
-    // MARK: Codable handling
+    // MARK: File Data
     enum CodingKeys: String, CodingKey
     {
         case name
