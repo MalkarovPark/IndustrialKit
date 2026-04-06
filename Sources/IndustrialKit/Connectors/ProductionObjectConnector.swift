@@ -8,28 +8,42 @@
 import Foundation
 import SwiftUI
 
-//MARK: - Workspace object connector
-/**
- A type provides connection and control for real workspace objects.
- 
- Contains connect, disconnect functions and connection parameters array.
- 
- Control functions are specialized for subtypes by workspace objects.
- */
+//MARK: - Production Object Connector
+/// A connector that provides communication with a real workspace object.
+///
+/// `ProductionObjectConnector` defines a unified interface for connecting,
+/// controlling, and synchronizing a physical device with its virtual model.
+///
+/// The connector manages:
+/// - Connection lifecycle (connect / disconnect)
+/// - Parameter configuration
+/// - Device state synchronization
+/// - Performing control and cancellation
+///
+/// Subclasses implement device-specific logic by overriding connection,
+/// disconnection, and synchronization methods.
+/// 
 open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
 {
-    // MARK: - Init functions
+    // MARK: - Initializers
+    /// Creates a connector instance with default parameters.
     required public init()
     {
         parameters = default_parameters
     }
     
+    /// Releases resources and disconnects the device if needed.
     deinit
     {
         disconnect()
     }
     
-    /// Clone connector instance.
+    /// Creates a copy of the connector.
+    ///
+    /// The copy preserves connection parameters but does not inherit
+    /// the active connection state.
+    ///
+    /// - Returns: A new connector instance.
     open func copy() -> Self
     {
         //return type(of: self).init()
@@ -41,21 +55,13 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         return copy
     }
     
-    /*/// Copy model controller instance.
-    open func copy(with zone: NSZone? = nil) -> Any
-    {
-        return type(of: self).init() as! Self
-    }*/
-    
-    // MARK: - Connection parameters handling
-    /**
-     Imports and assigns values to connection parameters from a string list.
-     
-     - Parameters:
-        - list: An optional array of string values.
-     
-     The number of elements must match the number of parameters. Each string is converted to the corresponding parameter type (String, Int, Float, or Bool) before assignment.
-     */
+    // MARK: - Connection Parameters
+    /// Imports connection parameter values from a string list.
+    ///
+    /// Values are converted to the corresponding parameter types
+    /// (`String`, `Int`, `Float`, `Bool`) and assigned to parameters.
+    ///
+    /// - Parameter list: A list of string values matching parameter count.
     public func import_connection_parameters_values(_ list: [String]?)
     {
         guard let list, list.count == parameters.count else { return }
@@ -87,6 +93,9 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         parameters = new_parameters
     }
     
+    /// A list of connection parameter values represented as strings.
+    ///
+    /// Used for serialization or UI binding.
     public var connection_parameters_values: [String]?
     {
         if parameters.count > 0
@@ -118,36 +127,45 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         }
     }
     
-    // MARK: - Connection handling
-    /// A connection state.
-    @Published public var connected: Bool = false
-    
-    /// A connection in updating process state.
-    @Published public var connection_updating: Bool = false
-    
-    /// An array of default connection parameters.
+    /// Default connection parameters.
+    ///
+    /// Subclasses override this property to define required parameters.
     open var default_parameters: [ConnectionParameter]
     {
         return [ConnectionParameter]()
     }
     
-    /// An array of connection parameters.
+    /// Current connection parameters.
     @Published public var parameters = [ConnectionParameter]()
     
-    /**
-     A pause flag of performation.
-     
-     Used to pass to the performation function (*move to point* or *perform code*) information about the stop.
-     */
+    // MARK: - Connection Handling
+    // MARK: Connection State
+    /// Indicates whether the device is currently connected.
+    @Published public var connected: Bool = false
+    
+    /// Indicates whether a connection or disconnection process is in progress.
+    @Published public var connection_updating: Bool = false
+    
+    /// Indicates whether performing operations are canceled.
+    ///
+    /// This flag is used to interrupt long-running device actions.
     public var canceled = true
     
     private var connection_task = Task {}
     private var disconnection_task = Task {}
     
+    /// An error describing the last connection issue.
     @Published public var connection_error: Error?
+    
+    /// A textual output describing connection status or logs.
     @Published public var connection_output_string: String?
     
-    /// Connects instance to real workspace object.
+    /// Initiates connection to the real device.
+    ///
+    /// This method starts an asynchronous connection process and updates
+    /// connection state properties accordingly.
+    ///
+    /// On success, device synchronization is started automatically.
     public func connect()
     {
         disconnection_task.cancel()
@@ -195,7 +213,9 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         }
     }
     
-    /// Disconnects real workspace object from instance.
+    /// Disconnects the device.
+    ///
+    /// Stops synchronization, cancels active tasks, and resets connection state.
     public func disconnect()
     {
         stop_device_sync()
@@ -220,26 +240,38 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         }
     }
     
+    /// Performs the connection process.
+    ///
+    /// Subclasses override this method to implement device-specific logic.
+    ///
+    /// - Returns: `true` if connection succeeded.
     open func connection_process() async -> Bool
     {
         return true
     }
     
-    open func disconnection_process()
-    {
-        
-    }
+    /// Performs the connection process.
+    ///
+    /// Subclasses override this method to implement device-specific logic.
+    ///
+    /// - Returns: `true` if connection succeeded.
+    open func disconnection_process() {}
     
-    /// Reset device perfoming.
-    open func reset_device()
-    {
-        
-    }
+    /// Resets the device performing state.
+    ///
+    /// Subclasses override this method to stop active operations on the device.
+    open func reset_device() {}
     
-    // MARK: - Device state data
+    // MARK: - Device State
+    /// Current performing state of the device.
     @Published public var performing_state: PerformingState = .none
+    
+    /// A textual representation of device output.
     @Published public var output_string: String?
     
+    /// Current device output data.
+    ///
+    /// Contains structured state information such as charts and items.
     @Published public var current_device_output: DeviceOutputData?
     
     /*/// Updates device state data.
@@ -249,36 +281,31 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         return DeviceState()
     }*/
     
-    /// Initial charts data.
+    /// Initial device output data.
+    ///
+    /// Used to reset or initialize the device state.
     open var initial_device_output: DeviceOutputData?
     {
         // Reset contoller output
         return nil
     }
     
-    // MARK: - Model handling
-    /// Indicates whether the device–model synchronization loop is currently running.
+    // MARK: - Device Sync
+    /// Indicates whether device synchronization is active.
     public var is_device_syncing = false
     
     /// Enables or disables synchronization between the real device and the virtual model.
     //public var model_sync_enabled = true //false
     
-    /// Asynchronous task responsible for executing the device–model synchronization loop.
+    /// A task responsible for periodic device synchronization.
     public var device_sync_task: Task<Void, Never>?
     
-    /// Time interval between synchronization cycles (in seconds).
+    /// Time interval between synchronization updates in seconds.
     public var device_sync_interval: Double = 0.01
     
-    /**
-     Starts the device–model synchronization loop.
-     
-     If synchronization is enabled (`model_sync_enabled == true`), this function launches an asynchronous task
-     that periodically invokes `sync_with_device()` on the main thread. The loop continues to run while
-     `is_device_syncing` remains `true`.
-     
-     The delay between iterations is defined by `device_sync_interval`. The synchronization process can be
-     terminated by calling `stop_device_sync()`.
-     */
+    /// Starts the device–model synchronization loop.
+    ///
+    /// Periodically invokes ``sync_with_device()`` while synchronization is active.
     public func start_device_sync()
     {
         is_device_syncing = true
@@ -302,12 +329,7 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         }
     }
     
-    /**
-     Stops the device–model synchronization loop.
-     
-     This function terminates the synchronization process by setting `is_device_syncing` to `false`,
-     cancelling the active synchronization task, and clearing `device_sync_task`.
-     */
+    /// Stops the device–model synchronization loop.
     public func stop_device_sync()
     {
         is_device_syncing = false
@@ -315,15 +337,13 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         device_sync_task = nil
     }
     
-    /**
-     Performs a single synchronization step between the real device and the virtual model.
-     
-     This method is invoked periodically by `start_device_sync()` and is executed on the main thread.
-     Subclasses should override this method to transfer the current state of the real device to the
-     controller of the virtual model.
-     
-     > Since this method is executed frequently, its implementation should remain lightweight and fast to prevent delays in the synchronization loop.
-     */
+    /// Synchronizes the virtual model with the real device.
+    ///
+    /// Subclasses override this method to transfer device state
+    /// into the virtual representation.
+    ///
+    /// - Important:
+    /// This method should remain lightweight to avoid blocking the update loop.
     open func sync_with_device()
     {
         
@@ -335,12 +355,13 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         
     }*/
     
-    // MARK: - UI functions
-    /// A failure result of connection.
+    // MARK: - UI
+    /// Indicates whether the last connection attempt failed.
     @Published public var connection_failure = false
     
-    /// Data for connection button.
-    ///  - Returns: Button label and light color – *label*, *color*.
+    /// Data for connection button representation.
+    ///
+    /// Returns a label and color reflecting current connection state.
     public var connection_button: (label: String, color: Color)
     {
         var label = String()
@@ -377,7 +398,11 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
     }
 }
 
-//MARK: - Connector parameter
+//MARK: - Connector Parameter
+/// A parameter describing a connection setting.
+///
+/// `ConnectionParameter` stores a named value used to configure
+/// connection to a real device.
 public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableObject
 {
     public static func == (lhs: ConnectionParameter, rhs: ConnectionParameter) -> Bool
@@ -386,9 +411,20 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
     }
     
     public var id = UUID()
+    
+    /// Parameter name.
     public var name: String
+    
+    /// Parameter value.
+    ///
+    /// Supports `String`, `Int`, `Float`, and `Bool` types.
     public var value: Any
     
+    /// Creates a connection parameter.
+    ///
+    /// - Parameters:
+    ///   - name: Parameter name.
+    ///   - value: Parameter value.
     public init(name: String, value: Any)
     {
         self.name = name
@@ -400,7 +436,6 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
         return ConnectionParameter(name: self.name, value: self.value)
     }
     
-    // MARK: - Codable handling
     private enum CodingKeys: String, CodingKey
     {
         case name
@@ -457,25 +492,46 @@ public class ConnectionParameter: Identifiable, Equatable, Codable, ObservableOb
     }
 }
 
+// MARK: - External Connector
+/// A protocol describing connectors with external program components.
+///
+/// `ExternalConnector` extends ``ProductionObjectConnector`` by adding
+/// support for external processes such as runtime controllers or services.
 public protocol ExternalConnector: ProductionObjectConnector, ObservableObject, Identifiable
 {
+    /// Indicates whether the program component is enabled.
     var program_component_enabled: Bool { get set }
     
+    /// Starts the external program component.
     func start_program_component()
+    
+    /// Stops the external program component.
     func stop_program_component()
     
+    /// Current status of the program component.
     var program_component_status: ProgramComponentStatus { get set }
     
+    /// URL of the program component executable or resource.
     var program_component_url: URL { get }
+    
+    /// Name of the communication socket.
     var socket_name: String { get }
 }
 
+// MARK: - Program Component Status
+/// A status representing the lifecycle of an external program component.
 public enum ProgramComponentStatus: String, Codable, Equatable, CaseIterable
 {
+    /// The component is not running.
     case not_running = "Not Running"
+    
+    /// The component is starting.
     case starting = "Starting"
+    
+    /// The component is running.
     case running = "Running"
     
+    /// A color representing the current status.
     public var color: Color
     {
         switch self

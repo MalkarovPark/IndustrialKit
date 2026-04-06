@@ -27,6 +27,7 @@ import RealityKit
 ///
 open class ModelController
 {
+    // MARK: - Initializers
     required public init() {}
     
     /// Creates a copy of the model controller.

@@ -338,6 +338,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
 ///
 /// This enables dynamic definition of robot behavior without recompilation,
 /// supporting flexible integration of external algorithms.
+/// 
 open class ExternalRobotModelController: RobotModelController, @unchecked Sendable
 {
     /// Creates a default external robot model controller.
@@ -510,6 +511,7 @@ open class ExternalRobotModelController: RobotModelController, @unchecked Sendab
 ///
 /// This structure is used as an intermediate representation between
 /// kinematic computation and visual model updates.
+///
 public struct EntityPositionData: Codable, Sendable
 {
     /// An optional name of the target entity.

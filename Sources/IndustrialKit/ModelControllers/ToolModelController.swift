@@ -195,6 +195,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
 ///
 /// This enables dynamic definition of tool behavior and animation
 /// sequences without recompilation.
+/// 
 open class ExternalToolModelController: ToolModelController, @unchecked Sendable
 {
     // MARK: Init functions
@@ -353,6 +354,7 @@ open class ExternalToolModelController: ToolModelController, @unchecked Sendable
 /// - Scale
 /// - Timing parameters (duration, delay, speed)
 /// - Repeat behavior
+///
 public struct EntityAnimationData: Codable
 {
     /// An optional name of the target entity.
@@ -539,6 +541,7 @@ public struct EntityAnimationData: Codable
 /// A type defining animation timing functions.
 ///
 /// `TimingFunction` specifies how animation progress evolves over time.
+///
 public enum TimingFunction: Codable
 {
     /// A linear timing function.

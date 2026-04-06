@@ -8,44 +8,58 @@
 import Foundation
 import SceneKit
 
-/**
- This subtype provides control for industrial robot.
- 
- Contains special function for movement to point performation.
- */
+/// A connector that provides control over an industrial robot.
+///
+/// `RobotConnector` extends ``ProductionObjectConnector`` and adds
+/// high-level motion control, including synchronous and asynchronous
+/// movement execution.
+///
+/// It bridges:
+/// - High-level movement commands (`move_to`)
+/// - Real device execution (`start_process`)
+/// - Live synchronization with robot state
+/// - Model visualization updates via ``RobotModelController``
 open class RobotConnector: ProductionObjectConnector, @unchecked Sendable
 {
     // MARK: - Parameters
-    /**
-     A robot pointer position.
-     
-     Tuple with three coordinates – *x*, *y*, *z* and three angles – *r*, *p*, *w*.
-     */
+    /// The current end-effector position of the robot.
+    ///
+    /// Represents full spatial pose consisting of:
+    /// - Linear coordinates (*x*, *y*, *z*)
+    /// - Orientation angles (*r*, *p*, *w*)
+    ///
+    /// Updated automatically during device synchronization.
     public var pointer_position: (
         x: Float, y: Float, z: Float,
         r: Float, p: Float, w: Float
     ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
-    /**
-     A robot cell origin position.
-     
-     Tuple with coordinates – *x*, *y*, *z* and angles – *r*, *p*, *w*.
-     */
+    /// The origin pose of the robot workspace.
+    ///
+    /// Defines the base coordinate system of the robot cell in both position
+    /// and orientation space.
     public var origin_position: (
         x: Float, y: Float, z: Float,
         r: Float, p: Float, w: Float
     ) = (x: 0, y: 0, z: 0, r: 0, p: 0, w: 0)
     
-    /// A robot cell box scale.
+    /// The scaling factor of the robot workspace.
+    ///
+    /// Defines the physical dimensions of the simulated or real working area.
     public var space_scale: (x: Float, y: Float, z: Float) = (x: 200, y: 200, z: 200)
     
     // MARK: - Device Handling
-    /**
-     Performs movement on real robot by target position.
-     
-     - Parameters:
-        - point: The target position performed by the real robot.
-     */
+    /// Performs a synchronous movement of the robot to a target position.
+    ///
+    /// The method blocks execution until the device completes the movement.
+    /// Internally it:
+    /// 1. Starts the movement process
+    /// 2. Waits for the device to enter performing state
+    /// 3. Waits for completion
+    /// 4. Evaluates result state and throws an error if needed
+    ///
+    /// - Parameter point: Target position in workspace coordinates.
+    /// - Throws: An error if the device reports a failure state.
     public func move_to(point: PositionPoint) throws
     {
         start_process(point: point)
@@ -62,30 +76,27 @@ open class RobotConnector: ProductionObjectConnector, @unchecked Sendable
         }
     }
     
-    /**
-     Starts movement process of the real robot to the specified position.
-     
-     This method initiates the execution but does not block until completion.
-     Use higher-level methods (e.g., `move_to(point:)`) to perform synchronous execution.
-     
-     - Parameters:
-        - point: The target position to which the real robot should move.
-     */
-    open func start_process(point: PositionPoint)
-    {
-        
-    }
+    /// Starts a movement process on the robot without blocking execution.
+    ///
+    /// This method triggers device-side execution and returns immediately.
+    /// Use ``move_to(point:)`` for synchronous execution control.
+    ///
+    /// - Parameter point: Target position in workspace coordinates.
+    open func start_process(point: PositionPoint) {}
     
     private var moving_task = Task {}
     
-    /**
-     Performs movement on real robot by target position with completion handler.
-     
-     - Parameters:
-        - point: The target position performed by the real robot.
-        - completion: A completion function that is calls when the performing completes.
-     */
-    public func move_to(point: PositionPoint, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+    /// Performs an asynchronous movement to a target position with completion handler.
+    ///
+    /// This method wraps synchronous execution in an asynchronous task.
+    ///
+    /// - Parameters:
+    ///   - point: Target position in workspace coordinates.
+    ///   - completion: Completion handler returning success or failure result.
+    public func move_to(
+        point: PositionPoint,
+        completion: @escaping @Sendable (Result<Void, Error>) -> Void
+    )
     {
         if !connected
         {
@@ -114,10 +125,22 @@ open class RobotConnector: ProductionObjectConnector, @unchecked Sendable
         }
     }
     
-    // MARK: - Sync Handling
-    /// A robot model controller.
+    // MARK: - Robot Sync
+    /// A model controller responsible for visual representation of the robot.
+    ///
+    /// Synchronizes virtual robot state with device state.
     public var model_controller: RobotModelController?
     
+    /// Synchronizes the robot state with the connected device.
+    ///
+    /// Updates:
+    /// - Performing state
+    /// - Output messages and data
+    /// - Pointer position
+    /// - Entity transformations via model controller
+    ///
+    /// This method ensures consistency between physical device state and
+    /// virtual simulation model.
     override open func sync_with_device()
     {
         guard let current_device_state = current_device_state else { return }
@@ -162,14 +185,41 @@ open class RobotConnector: ProductionObjectConnector, @unchecked Sendable
         }
     }
     
+    /// The current state of the robot device.
+    ///
+    /// Subclasses must override this property to provide actual device state.
+    ///
+    /// Returns `nil` by default when no device is connected.
     open var current_device_state: RobotState?
     {
         return nil
     }
 }
 
+/// A snapshot of the robot's runtime state.
+///
+/// Contains:
+/// - Execution state
+/// - Output data
+/// - Pointer position
+/// - Entity transformations
 public struct RobotState: Codable
 {
+    /// Current execution state of the robot.
+    public var performing_state: PerformingState = .none
+    
+    /// Robot output message.
+    public var output_string: String?
+    
+    /// Structured output data from the robot.
+    public var output_data: DeviceOutputData?
+    
+    /// Current TCP position of the robot.
+    public var pointer_position: EntityPositionData?
+    
+    /// Positions of entities in robot workspace.
+    public var entity_positions: [EntityPositionData]?
+    
     public init(
         performing_state: PerformingState = .none,
         
@@ -188,39 +238,29 @@ public struct RobotState: Codable
         self.pointer_position = pointer_position
         self.entity_positions = entity_positions
     }
-    
-    public var performing_state: PerformingState = .none
-    
-    public var output_string: String?
-    public var output_data: DeviceOutputData?
-    
-    public var pointer_position: EntityPositionData?
-    public var entity_positions: [EntityPositionData]?
 }
 
 //MARK: - External Connector
+/// A robot connector that communicates with an external runtime module.
+///
+/// `ExternalRobotConnector` extends ``RobotConnector`` by delegating all
+/// device control and state processing to an external executable module.
+///
+/// The connector manages:
+/// - External process lifecycle (start/stop program component)
+/// - Unix socket communication
+/// - Connection negotiation with external runtime
+/// - Remote execution of movement commands
+///
+/// This class is used when robot logic is implemented outside the main system.
 public class ExternalRobotConnector: RobotConnector, ExternalConnector, @unchecked Sendable
 {
-    /// Clone connector instance.
-    open override func copy() -> Self
+    // MARK: Initializators
+    required init()
     {
-        let copy = type(of: self).init()
-        
-        copy.module_name = module_name
-        copy.package_url = package_url
-        
-        copy.external_parameters = external_parameters
-        copy.parameters = parameters
-        
-        return copy
+        self.module_name = ""
+        self.package_url = URL(fileURLWithPath: "")
     }
-    
-    // MARK: Init functions
-    /// An external module name
-    public var module_name: String
-    
-    /// For access to code
-    public var package_url: URL
     
     public init(
         _ module_name: String,
@@ -235,10 +275,17 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
         self.external_parameters = parameters
     }
     
-    required init()
+    open override func copy() -> Self
     {
-        self.module_name = ""
-        self.package_url = URL(fileURLWithPath: "")
+        let copy = type(of: self).init()
+        
+        copy.module_name = module_name
+        copy.package_url = package_url
+        
+        copy.external_parameters = external_parameters
+        copy.parameters = parameters
+        
+        return copy
     }
     
     /*deinit
@@ -246,7 +293,14 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
         stop_program_component()
     }*/
     
-    // MARK: Program component handling
+    // MARK: External Module
+    /// The name of the external module controlling the robot.
+    public var module_name: String
+    
+    /// The filesystem URL of the external package providing robot logic.
+    public var package_url: URL
+    
+    // MARK: External Program Component
     public var program_component_enabled: Bool = false
     {
         didSet
@@ -322,6 +376,9 @@ public class ExternalRobotConnector: RobotConnector, ExternalConnector, @uncheck
         return external_parameters
     }
     
+    /// A list of external connection parameters used for runtime configuration.
+    ///
+    /// This array defines parameters received from or passed to an external system.
     public var external_parameters = [ConnectionParameter]()
     
     override open func connection_process() async -> Bool

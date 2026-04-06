@@ -8,20 +8,24 @@
 import Foundation
 import SceneKit
 
-/**
- This subtype provides control for industrial tool.
- 
- Contains special function for operation code performation.
- */
+/// A connector that provides control over an industrial tool.
+///
+/// `ToolConnector` executes discrete operation codes on a real device
+/// and synchronizes execution state with a virtual model.
+///
+/// It supports:
+/// - Operation-based execution
+/// - Synchronous and asynchronous performing
+/// - Model animation synchronization
 open class ToolConnector: ProductionObjectConnector, @unchecked Sendable
 {
     // MARK: - Device Handling
-    /**
-     Performs real tool by operation code value.
-     
-     - Parameters:
-        - code: The operation code value of the operation performed by the real tool.
-     */
+    /// Performs a synchronous operation on the tool by operation code.
+    ///
+    /// Blocks execution until the operation completes or fails.
+    ///
+    /// - Parameter code: Operation code defining tool action.
+    /// - Throws: Error if operation fails on device side.
     public func perform(code: Int) throws
     {
         start_process(code: code)
@@ -38,30 +42,22 @@ open class ToolConnector: ProductionObjectConnector, @unchecked Sendable
         }
     }
     
-    /**
-     Starts execution of a real tool operation by its operation code.
-     
-     This method initiates the operation but does not wait for it to complete.
-     Use higher-level methods (e.g., `perform(code:)`) for synchronous execution.
-     
-     - Parameters:
-        - code: The operation code identifying the tool action to be performed.
-     */
-    open func start_process(code: Int)
-    {
-        
-    }
+    /// Starts execution of a tool operation without blocking.
+    ///
+    /// - Parameter code: Operation code defining tool action.
+    open func start_process(code: Int) {}
     
     private var performing_task = Task<Void, Error> {}
     
-    /**
-     Performs real tool by operation code value with completion handler.
-     
-     - Parameters:
-        - code: The operation code value of the operation performed by the real tool.
-        - completion: A completion function that is calls when the performing completes.
-     */
-    public func perform(code: Int, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+    /// Performs a tool operation asynchronously with completion handler.
+    ///
+    /// - Parameters:
+    ///   - code: Operation code defining tool action.
+    ///   - completion: Completion result callback.
+    public func perform(
+        code: Int,
+        completion: @escaping @Sendable (Result<Void, Error>) -> Void
+    )
     {
         if !connected
         {
@@ -90,10 +86,20 @@ open class ToolConnector: ProductionObjectConnector, @unchecked Sendable
         }
     }
     
-    // MARK: - Sync Handling
-    /// A tool model controller.
+    // MARK: - Tool Sync
+    /// A model controller responsible for tool animation and visualization.
+    ///
+    /// Synchronizes tool state with entity-based animation system.
     public var model_controller: ToolModelController?
     
+    /// Synchronizes tool state with device feedback.
+    ///
+    /// Updates:
+    /// - Performing state
+    /// - Output data
+    /// - Entity animations
+    ///
+    /// Ensures consistency between simulation and real device behavior.
     override open func sync_with_device()
     {
         guard let current_device_state = current_device_state else { return }
@@ -117,12 +123,22 @@ open class ToolConnector: ProductionObjectConnector, @unchecked Sendable
         }
     }
     
+    /// The current state of the tool device.
+    ///
+    /// Must be overridden by subclasses to provide real device state.
     open var current_device_state: ToolState?
     {
         return nil
     }
 }
 
+/// A snapshot of tool execution state.
+///
+/// Contains:
+/// - Performing state
+/// - Output data
+/// - Output string
+/// - Entity animations for visualization
 public struct ToolState: Codable
 {
     public init(
@@ -142,37 +158,37 @@ public struct ToolState: Codable
         self.entity_animations = entity_animations
     }
     
+    /// Current performing state of the tool.
     public var performing_state: PerformingState = .none
     
+    /// Output data produced by tool execution.
     public var output_data: DeviceOutputData?
+    
+    /// Human-readable output string from tool device.
     public var output_string: String?
     
+    /// Animation data describing tool entity behavior.
     public var entity_animations: [EntityAnimationData]?
 }
 
 //MARK: - External Connector
+/// A tool connector driven by an external runtime module.
+///
+/// Executes tool operations via socket communication with a
+/// background process.
+///
+/// Supports:
+/// - External execution lifecycle
+/// - Operation dispatching
+/// - Live model animation updates
 public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked Sendable
 {
-    /// Clone connector instance.
-    open override func copy() -> Self
+    // MARK: Initializators
+    required init()
     {
-        let copy = type(of: self).init()
-        
-        copy.module_name = module_name
-        copy.package_url = package_url
-        
-        copy.external_parameters = external_parameters
-        copy.parameters = parameters
-        
-        return copy
+        self.module_name = ""
+        self.package_url = URL(fileURLWithPath: "")
     }
-    
-    // MARK: Init functions
-    /// An external module name
-    public var module_name: String
-    
-    /// For access to code
-    public var package_url: URL
     
     public init(
         _ module_name: String,
@@ -187,16 +203,30 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         self.external_parameters = parameters
     }
     
-    required init()
+    open override func copy() -> Self
     {
-        self.module_name = ""
-        self.package_url = URL(fileURLWithPath: "")
+        let copy = type(of: self).init()
+        
+        copy.module_name = module_name
+        copy.package_url = package_url
+        
+        copy.external_parameters = external_parameters
+        copy.parameters = parameters
+        
+        return copy
     }
     
     /*deinit
     {
         stop_program_component()
     }*/
+    
+    // MARK: External Module
+    /// The name of the external module controlling the tool.
+    public var module_name: String
+    
+    /// The filesystem URL of the external package providing robot logic.
+    public var package_url: URL
     
     // MARK: Program component handling
     public var program_component_enabled: Bool = false
@@ -274,6 +304,9 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         return external_parameters
     }
     
+    /// A list of external connection parameters used for runtime configuration.
+    ///
+    /// This array defines parameters received from or passed to an external system.
     public var external_parameters = [ConnectionParameter]()
     
     override open func connection_process() async -> Bool
