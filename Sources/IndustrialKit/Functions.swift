@@ -70,7 +70,7 @@ public func origin_transform(
 }
 
 ///Deep copy for codable objects.
-public func clone_codable<T: ProductionProgramElement>(_ object: T) -> T?
+/*public func clone_program_element<T: ProductionProgramElement>(_ object: T) -> T?
 {
     do
     {
@@ -84,7 +84,7 @@ public func clone_codable<T: ProductionProgramElement>(_ object: T) -> T?
         //print(error)
         return nil
     }
-}
+}*/
 
 /// Deep copy of any program element with preserving subclass and properties.
 public func clone_element(_ element: ProductionProgramElement, to program: ProductionProgram)
@@ -187,7 +187,7 @@ public func visual_scaling(_ numbers: [Float], factor: Float) -> [Float] // Scal
 }
 
 ///Deep copy for codable objects.
-func clone_codable<T: Codable>(_ object: T) -> T?
+public func clone_codable<T: Codable>(_ object: T) -> T?
 {
     do
     {

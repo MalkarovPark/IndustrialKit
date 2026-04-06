@@ -76,6 +76,10 @@ public struct ToolControlView: View
                                         }
                                     ),
                                     count: program.codes_count,
+                                    on_duplicate:
+                                    {
+                                        tool.add_program(clone_codable(program) ?? OperationProgram())
+                                    },
                                     on_delete:
                                     {
                                         tool.reset_performing()
@@ -433,6 +437,17 @@ private struct OperationItemView: View
         .contentShape(Rectangle())
         .contextMenu
         {
+            Button
+            {
+                program.add_code(clone_codable(code_item) ?? OperationCode(0))
+            }
+            label:
+            {
+                Label("Duplicate", systemImage: "plus.square.on.square")
+            }
+            
+            Divider()
+            
             Button(role: .destructive)
             {
                 on_delete()

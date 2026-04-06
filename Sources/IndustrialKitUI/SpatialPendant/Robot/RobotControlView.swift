@@ -74,6 +74,10 @@ public struct RobotControlView: View
                                         }
                                     ),
                                     count: program.points_count,
+                                    on_duplicate:
+                                    {
+                                        robot.add_program(clone_codable(program) ?? PositionProgram())
+                                    },
                                     on_delete:
                                     {
                                         robot.programs.remove(at: index)
@@ -437,6 +441,17 @@ private struct PositionItemView: View
         }
         .contextMenu
         {
+            Button
+            {
+                program.add_point(clone_codable(point_item) ?? PositionPoint())
+            }
+            label:
+            {
+                Label("Duplicate", systemImage: "plus.square.on.square")
+            }
+            
+            Divider()
+            
             Button(role: .destructive)
             {
                 on_delete()

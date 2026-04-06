@@ -158,6 +158,10 @@ struct WorkspaceControlView: View
                                         }
                                     ),
                                     count: program.elements_count,
+                                    on_duplicate:
+                                    {
+                                        workspace.add_program(clone_codable(program) ?? ProductionProgram())
+                                    },
                                     on_delete:
                                     {
                                         if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
@@ -518,6 +522,17 @@ private struct ElementItemView: View
         }
         .contextMenu
         {
+            Button
+            {
+                clone_element(element, to: program)
+            }
+            label:
+            {
+                Label("Duplicate", systemImage: "plus.square.on.square")
+            }
+            
+            Divider()
+            
             Button(role: .destructive)
             {
                 on_delete()

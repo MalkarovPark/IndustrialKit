@@ -43,6 +43,8 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
     /// > In mm/sec
     @Published public var move_speed: Float
     
+    
+    
     // MARK: - Init functions
     /**
      Creates a point with location and rotation values and move type.

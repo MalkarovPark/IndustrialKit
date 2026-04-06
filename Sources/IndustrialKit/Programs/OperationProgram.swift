@@ -48,8 +48,6 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
     public func add_code(_ code: OperationCode)
     {
         codes.append(OperationCode(code.value))
-        //codes.append(code)
-        //new_code_check(index: codes.count - 1)
     }
     
     /**
@@ -63,7 +61,6 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
         if codes.indices.contains(index)
         {
             codes[index] = code
-            //new_code_check(index: index)
         }
     }
     

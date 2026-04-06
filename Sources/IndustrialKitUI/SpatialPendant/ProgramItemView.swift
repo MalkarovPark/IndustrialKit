@@ -12,6 +12,7 @@ public struct ProgramItemView: View
     @Binding var name: String
     
     let count: Int
+    let on_duplicate: () -> Void
     let on_delete: () -> Void
     
     @State private var to_rename = false
@@ -22,11 +23,13 @@ public struct ProgramItemView: View
     public init(
         name: Binding<String>,
         count: Int,
+        on_duplicate: @escaping () -> Void,
         on_delete: @escaping () -> Void
     )
     {
         self._name = name
         self.count = count
+        self.on_duplicate = on_duplicate
         self.on_delete = on_delete
     }
     
@@ -90,6 +93,15 @@ public struct ProgramItemView: View
         .clipShape(.rect(cornerRadius: 8, style: .continuous))
         .contextMenu
         {
+            Button
+            {
+                on_duplicate()
+            }
+            label:
+            {
+                Label("Duplicate", systemImage: "plus.square.on.square")
+            }
+            
             Button("Rename", systemImage: "pencil")
             {
                 to_rename = true
@@ -130,7 +142,7 @@ let program_index_font_size: CGFloat = 10
 {
     @Previewable @State var name: String = "Test"
     
-    ProgramItemView(name: $name, count: 4, on_delete: {})
+    ProgramItemView(name: $name, count: 4, on_duplicate: {}, on_delete: {})
         .padding(.horizontal, 8)
         .frame(width: pendant_content_width)
 }
