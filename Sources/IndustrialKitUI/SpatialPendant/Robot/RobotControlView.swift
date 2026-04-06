@@ -218,7 +218,7 @@ public struct RobotControlView: View
             robot.toggle_position_program_visibility()
             
             // Performing Handling
-            robot.select_program(name: program.name)
+            robot.select_program(named: program.name)
         }
     }
     

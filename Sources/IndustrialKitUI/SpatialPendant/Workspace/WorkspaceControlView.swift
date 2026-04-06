@@ -277,7 +277,7 @@ struct WorkspaceControlView: View
             workspace.selected_program = program
             
             // Performing Handling
-            workspace.select_program(name: program.name)
+            workspace.select_program(named: program.name)
         }
     }
     

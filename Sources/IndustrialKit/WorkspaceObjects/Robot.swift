@@ -450,7 +450,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// - Parameters:
     ///   - index: The index of the program.
     ///   - program: A new program value.
-    public func update_program(index: Int, _ program: PositionProgram) // Update program by index
+    public func update_program(at index: Int, with program: PositionProgram) // Update program by index
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
         {
@@ -463,15 +463,15 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// - Parameters:
     ///   - name: A program identifier.
     ///   - program: A new program value.
-    public func update_program(name: String, _ program: PositionProgram)
+    public func update_program(named name: String, with program: PositionProgram)
     {
-        update_program(index: index_by_name(name: name), program)
+        update_program(at: program_index(of: name), with: program)
     }
     
     /// Deletes a position program by index.
     ///
     /// - Parameter index: The index of the program to delete.
-    public func delete_program(index: Int)
+    public func delete_program(at index: Int)
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to delete
         {
@@ -483,15 +483,15 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// Deletes a position program by name.
     ///
     /// - Parameter name: A program identifier.
-    public func delete_program(name: String)
+    public func delete_program(named name: String)
     {
-        delete_program(index: index_by_name(name: name))
+        delete_program(at: program_index(of: name))
     }
     
     /// Selects a program by index.
     ///
     /// - Parameter index: A program index.
-    public func select_program(index: Int)
+    public func select_program(at index: Int)
     {
         selected_program_index = index
     }
@@ -499,9 +499,9 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// Selects a program by name.
     ///
     /// - Parameter name: A program identifier.
-    public func select_program(name: String)
+    public func select_program(named name: String)
     {
-        select_program(index: index_by_name(name: name))
+        select_program(at: program_index(of: name))
     }
     
     /// The currently selected program.
@@ -527,7 +527,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     }
     
     /// Returns index by program name.
-    private func index_by_name(name: String) -> Int
+    private func program_index(of name: String) -> Int
     {
         return programs.firstIndex(of: PositionProgram(name: name)) ?? -1
     }

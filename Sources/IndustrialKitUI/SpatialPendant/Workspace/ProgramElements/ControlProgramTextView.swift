@@ -122,7 +122,7 @@ struct ControlTextView_Previews: PreviewProvider
                 workspace.tools.append(tool)
                 
                 workspace.programs.append(ProductionProgram(name: "Program"))
-                workspace.select_program(name: "Program")
+                workspace.select_program(named: "Program")
             }
         }
     }

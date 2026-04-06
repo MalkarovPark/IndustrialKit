@@ -304,7 +304,7 @@ struct IMALogicPreviewsContainer: PreviewProvider
                 .onAppear
                 {
                     workspace.programs.append(ProductionProgram(name: "Program"))
-                    workspace.select_program(name: "Program")
+                    workspace.select_program(named: "Program")
                     
                     if let selected_program = workspace.selected_program
                     {

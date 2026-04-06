@@ -225,7 +225,7 @@ public struct ToolControlView: View
             tool.selected_program = program
             
             // Performing Handling
-            tool.select_program(name: program.name)
+            tool.select_program(named: program.name)
         }
     }
     

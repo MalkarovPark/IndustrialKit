@@ -60,7 +60,7 @@ import SwiftUI
     ///   - objects: Collection of production objects to search.
     ///
     /// - Returns: Index of object if found, otherwise `-1`.
-    private func index_by_name(_ name: String, objects: [ProductionObject]) -> Int
+    private func object_index(of name: String, in objects: [ProductionObject]) -> Int
     {
         return objects.firstIndex(where: { $0.name == name }) ?? -1
     }
@@ -91,13 +91,13 @@ import SwiftUI
         switch object
         {
         case is Robot:
-            select_robot(name: object.name)
+            select_robot(named: object.name)
             pointer_entity.isEnabled = true
         case is Tool:
-            select_tool(name: object.name)
+            select_tool(named: object.name)
             pointer_entity.isEnabled = true
         case is Part:
-            select_part(name: object.name)
+            select_part(named: object.name)
             pointer_entity.isEnabled = true
         default:
             break
@@ -208,7 +208,7 @@ import SwiftUI
     /// - Parameters:
     ///   - index: Program index in collection
     ///   - program: New program instance
-    public func update_program(index: Int, _ program: ProductionProgram) // Update program by index
+    public func update_program(at index: Int, with program: ProductionProgram) // Update program by index
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to update
         {
@@ -221,15 +221,15 @@ import SwiftUI
     /// - Parameters:
     ///   - name: Program name
     ///   - program: Replacement program instance
-    public func update_program(name: String, _ program: ProductionProgram) // Update program by name
+    public func update_program(named name: String, with program: ProductionProgram) // Update program by name
     {
-        update_program(index: index_by_name(name: name), program)
+        update_program(at: index_by_name(name: name), with: program)
     }
     
     /// Deletes a program by index.
     ///
     /// - Parameter index: Index of program to remove
-    public func delete_program(index: Int) // Delete program by index
+    public func delete_program(at index: Int) // Delete program by index
     {
         if programs.indices.contains(index) // Checking for the presence of a position program with a given number to delete
         {
@@ -240,9 +240,9 @@ import SwiftUI
     /// Deletes a program by name.
     ///
     /// - Parameter name: Program identifier
-    public func delete_program(name: String) // Delete program by name
+    public func delete_program(named name: String) // Delete program by name
     {
-        delete_program(index: index_by_name(name: name))
+        delete_program(at: index_by_name(name: name))
     }
     
     /// Selects a program by index and validates its elements.
@@ -250,7 +250,7 @@ import SwiftUI
     /// Performs integrity check of all program elements after selection.
     ///
     /// - Parameter index: Program index
-    public func select_program(index: Int)
+    public func select_program(at index: Int)
     {
         selected_program_index = index
         
@@ -274,9 +274,9 @@ import SwiftUI
     /// Selects a program by its name.
     ///
     /// - Parameter name: Program identifier
-    public func select_program(name: String) // Select program by name
+    public func select_program(named name: String) // Select program by name
     {
-        select_program(index: index_by_name(name: name))
+        select_program(at: index_by_name(name: name))
     }
     
     /// Currently active production program.
@@ -1313,11 +1313,11 @@ import SwiftUI
             // Robot program perform
             if !element.is_program_by_index
             {
-                robot.select_program(name: element.program_name)
+                robot.select_program(named: element.program_name)
             }
             else
             {
-                robot.select_program(index: Int(registers[safe: element.program_index] ?? 0))
+                robot.select_program(at: Int(registers[safe: element.program_index] ?? 0))
             }
             
             robot.finish_handler = {
@@ -1383,11 +1383,11 @@ import SwiftUI
             // Tool program perform
             if !element.is_program_by_index
             {
-                tool.select_program(name: element.program_name)
+                tool.select_program(named: element.program_name)
             }
             else
             {
-                tool.select_program(index: Int(registers[safe: element.program_index] ?? 0))
+                tool.select_program(at: Int(registers[safe: element.program_index] ?? 0))
             }
             
             tool.finish_handler = {
@@ -2477,13 +2477,13 @@ import SwiftUI
         switch entity_identifier.type
         {
         case .robot:
-            select_robot(name: entity_identifier.name)
+            select_robot(named: entity_identifier.name)
             pointer_entity.isEnabled = true
         case .tool:
-            select_tool(name: entity_identifier.name)
+            select_tool(named: entity_identifier.name)
             pointer_entity.isEnabled = true
         case .part:
-            select_part(name: entity_identifier.name)
+            select_part(named: entity_identifier.name)
             pointer_entity.isEnabled = true
         case .none:
             break
@@ -3024,11 +3024,10 @@ import SwiftUI
     // MARK: Robots manage functions
     /// Adds a robot to the workspace.
     ///
-    /// Automatically:
-    /// - Assigns unique name
-    /// - Marks as placed
-    /// - Computes safe position
-    /// - Inserts into scene graph
+    /// The robot is inserted into the workspace model and registered in the scene.
+    /// Its name is normalized to ensure uniqueness before insertion.
+    ///
+    /// - Parameter robot: The robot instance to add.
     public func add_robot(_ robot: Robot)
     {
         robot.name = unique_name(for: robot.name, in: robot_names)
@@ -3039,12 +3038,13 @@ import SwiftUI
         place_object_entity(object: robot)
     }
     
-    /// Removes robot from workspace by index.
+    /// Removes a robot from the workspace by index.
     ///
-    /// Cleans scene graph and updates program dependencies.
+    /// The robot is removed from internal storage and detached from the scene graph.
+    /// Any dependent program state is updated after removal.
     ///
-    /// - Parameter index: Robot index
-    public func delete_robot(index: Int)
+    /// - Parameter index: Index of the robot in the workspace.
+    public func delete_robot(at index: Int)
     {
         if robots.indices.contains(index)
         {
@@ -3056,18 +3056,23 @@ import SwiftUI
         }
     }
     
-    /// Removes robot from workspace by name.
+    /// Removes a robot from the workspace by name.
     ///
-    /// Resolves index internally before deletion.
+    /// The robot is resolved by name and removed using its index.
+    ///
+    /// - Parameter name: Name of the robot to remove.
     public func delete_robot(name: String)
     {
-        delete_robot(index: index_by_name(name, objects: robots))
+        delete_robot(at: object_index(of: name, in: robots))
     }
     
-    /// Creates a duplicate of robot by index.
+    /// Creates a duplicate of a robot by index.
     ///
-    /// New robot is unplaced and assigned a unique name.
-    public func duplicate_robot(index: Int)
+    /// The new robot is inserted as a separate instance with a unique name.
+    /// It is initially marked as not placed in the workspace.
+    ///
+    /// - Parameter index: Index of the robot to duplicate.
+    public func duplicate_robot(at index: Int)
     {
         if robots.indices.contains(index)
         {
@@ -3082,21 +3087,26 @@ import SwiftUI
         }
     }
     
-    /// Creates a duplicate of robot by name.
+    /// Creates a duplicate of a robot by name.
+    ///
+    /// The robot is resolved by name and duplicated using index-based lookup.
+    ///
+    /// - Parameter name: Name of the robot to duplicate.
     public func duplicate_robot(name: String)
     {
-        duplicate_robot(index: index_by_name(name, objects: robots))
+        duplicate_robot(at: object_index(of: name, in: robots))
     }
     
     // MARK: Robot selection functions
-    /// Selects robot by name and enables auxiliary visualization systems.
+    /// Selects a robot by name.
     ///
-    /// Activates:
-    /// - Position pointer
-    /// - Working area visualization
-    public func select_robot(name: String)
+    /// The selected robot becomes the active object in the workspace.
+    /// Auxiliary visualization components are enabled for the robot.
+    ///
+    /// - Parameter name: Name of the robot to select.
+    public func select_robot(named name: String)
     {
-        selected_object = robots[index_by_name(name, objects: robots)]
+        selected_object = robots[object_index(of: name, in: robots)]
         
         // Enable accessories
         let robot = selected_object as? Robot
@@ -3105,12 +3115,15 @@ import SwiftUI
     }
     
     // MARK: Robots naming
-    /// Retrieves robot instance by name.
+    /// Returns a robot by name.
     ///
-    /// Returns fallback empty Robot if not found.
+    /// If no robot is found, an empty `Robot` instance is returned.
+    ///
+    /// - Parameter name: Name of the robot.
+    /// - Returns: The robot instance if found, otherwise an empty `Robot`.
     public func robot(named name: String) -> Robot
     {
-        let index = index_by_name(name, objects: robots)
+        let index = object_index(of: name, in: robots)
         if robots.indices.contains(index)
         {
             return self.robots[index]
@@ -3134,7 +3147,7 @@ import SwiftUI
     
     /// Stops all external connector programs attached to robots.
     ///
-    /// Used for safe shutdown and reset of external integrations.
+    /// All active external integrations associated with robots are terminated.
     public func stop_robot_external_connectors()
     {
         robots.compactMap { $0.connector as? any ExternalConnector }
@@ -3143,9 +3156,12 @@ import SwiftUI
     
     // MARK: - Tools handling functions
     // MARK: Tools manage funcions
-    /// Adds tool to workspace with automatic placement and naming.
+    /// Adds a tool to the workspace.
     ///
-    /// Also resolves attachment state and scene insertion.
+    /// The tool is inserted into the workspace model and registered in the scene.
+    /// Its name is normalized to ensure uniqueness before insertion.
+    ///
+    /// - Parameter tool: The tool instance to add.
     public func add_tool(_ tool: Tool)
     {
         tool.name = unique_name(for: tool.name, in: tool_names)
@@ -3156,7 +3172,12 @@ import SwiftUI
         place_object_entity(object: tool)
     }
     
-    /// Removes tool from workspace by index.
+    /// Removes a tool from the workspace by index.
+    ///
+    /// The tool is detached from the scene graph and removed from storage.
+    /// Dependent program state is updated after removal.
+    ///
+    /// - Parameter index: Index of the tool in the workspace.
     public func delete_tool(index: Int)
     {
         if tools.indices.contains(index)
@@ -3169,15 +3190,22 @@ import SwiftUI
         }
     }
     
-    /// Removes tool from workspace by name.
+    /// Removes a tool from the workspace by name.
+    ///
+    /// The tool is resolved by name and removed using its index.
+    ///
+    /// - Parameter name: Name of the tool to remove.
     public func delete_tool(name: String)
     {
-        delete_tool(index: index_by_name(name, objects: tools))
+        delete_tool(index: object_index(of: name, in: tools))
     }
     
-    /// Duplicates tool by index.
+    /// Creates a duplicate of a tool by index.
     ///
-    /// New instance is unplaced and renamed uniquely.
+    /// The new tool is inserted as a separate instance with a unique name.
+    /// It is initially marked as not placed.
+    ///
+    /// - Parameter index: Index of the tool to duplicate.
     public func duplicate_tool(index: Int)
     {
         if tools.indices.contains(index)
@@ -3193,23 +3221,36 @@ import SwiftUI
         }
     }
     
-    /// Duplicates tool by name.
+    /// Creates a duplicate of a tool by name.
+    ///
+    /// The tool is resolved by name and duplicated using index-based lookup.
+    ///
+    /// - Parameter name: Name of the tool to duplicate.
     public func duplicate_tool(name: String)
     {
-        duplicate_tool(index: index_by_name(name, objects: tools))
+        duplicate_tool(index: object_index(of: name, in: tools))
     }
 
     // MARK: Tools selection functions
-    /// Selects tool by name.
-    public func select_tool(name: String) // Select tool by name
+    /// Selects a tool by name.
+    ///
+    /// The selected tool becomes the active object in the workspace.
+    ///
+    /// - Parameter name: Name of the tool to select.
+    public func select_tool(named name: String) // Select tool by name
     {
-        selected_object = tools[index_by_name(name, objects: tools)]
+        selected_object = tools[object_index(of: name, in: tools)]
     }
     
-    /// Retrieves tool instance by name.
+    /// Returns a tool by name.
+    ///
+    /// If no tool is found, an empty `Tool` instance is returned.
+    ///
+    /// - Parameter name: Name of the tool.
+    /// - Returns: The tool instance if found, otherwise an empty `Tool`.
     public func tool(named name: String) -> Tool
     {
-        let index = index_by_name(name, objects: tools)
+        let index = object_index(of: name, in: tools)
         if tools.indices.contains(index)
         {
             return self.tools[index]
@@ -3229,9 +3270,8 @@ import SwiftUI
     // MARK: Tool attachment functions
     /// Updates tool attachment hierarchy.
     ///
-    /// Tools are either:
-    /// - Attached to robot end effector
-    /// - Or placed in workspace root
+    /// Tools are attached either to a robot end effector or to the workspace root,
+    /// depending on their attachment state.
     public func update_tool_attachments()
     {
         if !(tools.count > 0) { return }
@@ -3254,6 +3294,8 @@ import SwiftUI
     }
     
     /// Stops all external connector programs attached to tools.
+    ///
+    /// All active external integrations associated with tools are terminated.
     public func stop_tool_external_connectors()
     {
         tools.compactMap { $0.connector as? any ExternalConnector }
@@ -3262,7 +3304,13 @@ import SwiftUI
     
     // MARK: - Parts handling functions
     // MARK: Parts manage funcions
-    /// Adds part to workspace with auto placement.
+    /// Adds a part to the workspace.
+    ///
+    /// The part is inserted into the workspace model and registered in the scene.
+    /// Its name is normalized to ensure uniqueness before insertion, and the part
+    /// becomes available for interaction within the workspace.
+    ///
+    /// - Parameter part: The part instance to add.
     public func add_part(_ part: Part)
     {
         part.name = unique_name(for: part.name, in: part_names)
@@ -3273,7 +3321,11 @@ import SwiftUI
         place_object_entity(object: part)
     }
     
-    /// Removes part by index.
+    /// Removes a part from the workspace by index.
+    ///
+    /// The part is detached from the scene graph and removed from internal storage.
+    ///
+    /// - Parameter index: Index of the part in the workspace.
     public func delete_part(index: Int)
     {
         if parts.indices.contains(index)
@@ -3284,13 +3336,22 @@ import SwiftUI
         }
     }
     
-    /// Removes part by name.
+    /// Removes a part from the workspace by name.
+    ///
+    /// The part is resolved by its name and removed using its index.
+    ///
+    /// - Parameter name: Name of the part to remove.
     public func delete_part(name: String)
     {
-        delete_part(index: index_by_name(name, objects: parts))
+        delete_part(index: object_index(of: name, in: parts))
     }
     
-    /// Duplicates part by index.
+    /// Creates a duplicate of a part by index.
+    ///
+    /// The new part is inserted as a separate instance with a unique name.
+    /// It is initially marked as not placed in the workspace.
+    ///
+    /// - Parameter index: Index of the part to duplicate.
     public func duplicate_part(index: Int)
     {
         if parts.indices.contains(index)
@@ -3306,23 +3367,36 @@ import SwiftUI
         }
     }
     
-    /// Selects part by name.
+    /// Creates a duplicate of a part by name.
+    ///
+    /// The part is resolved by name and duplicated using index-based lookup.
+    ///
+    /// - Parameter name: Name of the part to duplicate.
     public func duplicate_part(name: String)
     {
-        duplicate_part(index: index_by_name(name, objects: parts))
+        duplicate_part(index: object_index(of: name, in: parts))
     }
     
     // MARK: Parts selection functions
-    /// Retrieves part by name.
-    public func select_part(name: String)
+    /// Selects a part by name.
+    ///
+    /// The selected part becomes the active object in the workspace.
+    ///
+    /// - Parameter name: Name of the part to select.
+    public func select_part(named name: String)
     {
-        selected_object = parts[index_by_name(name, objects: parts)]
+        selected_object = parts[object_index(of: name, in: parts)]
     }
     
-    /// Retrieves part by name.
+    /// Returns a part by name.
+    ///
+    /// If no part is found, a new empty `Part` instance is returned.
+    ///
+    /// - Parameter name: Name of the part.
+    /// - Returns: The part instance if found, otherwise an empty `Part`.
     public func part(named name: String) -> Part
     {
-        let index = index_by_name(name, objects: parts)
+        let index = object_index(of: name, in: parts)
         if parts.indices.contains(index)
         {
             return self.parts[index]

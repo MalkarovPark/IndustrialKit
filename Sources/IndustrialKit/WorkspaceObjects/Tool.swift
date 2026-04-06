@@ -379,10 +379,7 @@ open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
     /// - Parameters:
     ///   - index: Program index.
     ///   - program: A new program instance.
-    public func update_program(
-        index: Int,
-        _ program: OperationProgram
-    )
+    public func update_program(at index: Int, with program: OperationProgram)
     {
         if programs.indices.contains(index)
         {
@@ -395,18 +392,15 @@ open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
     /// - Parameters:
     ///   - name: Program identifier.
     ///   - program: A new program instance.
-    public func update_program(
-        name: String,
-        _ program: OperationProgram
-    )
+    public func update_program(named name: String, with program: OperationProgram)
     {
-        update_program(index: index_by_name(name: name), program)
+        update_program(at: program_index(of: name), with: program)
     }
     
     /// Deletes a program at the specified index.
     ///
     /// - Parameter index: Program index.
-    public func delete_program(index: Int)
+    public func delete_program(at index: Int)
     {
         if programs.indices.contains(index)
         {
@@ -417,15 +411,15 @@ open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
     /// Deletes a program by name.
     ///
     /// - Parameter name: Program identifier.
-    public func delete_program(name: String)
+    public func delete_program(named name: String)
     {
-        delete_program(index: index_by_name(name: name))
+        delete_program(at: program_index(of: name))
     }
     
     /// Selects a program by index.
     ///
     /// - Parameter index: Program index.
-    public func select_program(index: Int)
+    public func select_program(at index: Int)
     {
         selected_program_index = index
     }
@@ -433,9 +427,9 @@ open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
     /// Selects a program by name.
     ///
     /// - Parameter name: Program identifier.
-    public func select_program(name: String)
+    public func select_program(named name: String)
     {
-        select_program(index: index_by_name(name: name))
+        select_program(at: program_index(of: name))
     }
     
     /// Deselects the current program and resets performing state.
@@ -461,7 +455,7 @@ open class Tool: ProductionObject, DeviceTwin, StateOutputCapable
     }
     
     /// Returns index by program name.
-    private func index_by_name(name: String) -> Int // Get index of program by name
+    private func program_index(of name: String) -> Int // Get index of program by name
     {
         return programs.firstIndex(of: OperationProgram(name: name)) ?? -1
     }
