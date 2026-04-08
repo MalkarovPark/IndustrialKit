@@ -77,7 +77,6 @@ public struct RobotControlView: View
                                     on_duplicate:
                                     {
                                         robot.add_program(clone_codable(program) ?? PositionProgram())
-                                        on_update()
                                     },
                                     on_delete:
                                     {

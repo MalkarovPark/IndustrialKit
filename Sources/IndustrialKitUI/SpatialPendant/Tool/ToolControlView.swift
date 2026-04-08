@@ -80,7 +80,6 @@ public struct ToolControlView: View
                                     on_duplicate:
                                     {
                                         tool.add_program(clone_codable(program) ?? OperationProgram())
-                                        on_update()
                                     },
                                     on_delete:
                                     {
