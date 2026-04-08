@@ -79,6 +79,7 @@ public struct ToolControlView: View
                                     on_duplicate:
                                     {
                                         tool.add_program(clone_codable(program) ?? OperationProgram())
+                                        on_update()
                                     },
                                     on_delete:
                                     {
@@ -189,7 +190,6 @@ public struct ToolControlView: View
                             add_name_action:
                                 { new_name in
                                     tool.add_program(OperationProgram(name: new_name))
-                                    
                                     on_update()
                                 },
                             add_action:
@@ -213,7 +213,6 @@ public struct ToolControlView: View
         if let program = tool.selected_program
         {
             program.add_code(tool.current_operation)
-            
             on_update()
         }
     }
@@ -330,13 +329,13 @@ private struct OperationProgramView: View
                         OperationItemView(
                             tool: tool,
                             program: program,
-                            code_item: code
+                            code_item: code,
+                            on_update: on_update
                         )
                         {
                             if let index = program.codes.firstIndex(where: { $0.id == code.id })
                             {
                                 program.codes.remove(at: index)
-                                
                                 on_update()
                             }
                         }
@@ -376,6 +375,7 @@ private struct OperationItemView: View
     @ObservedObject var program: OperationProgram
     @ObservedObject var code_item: OperationCode
     
+    let on_update: () -> ()
     let on_delete: () -> ()
     
     var body: some View
@@ -440,6 +440,7 @@ private struct OperationItemView: View
             Button
             {
                 program.add_code(clone_codable(code_item) ?? OperationCode(0))
+                on_update()
             }
             label:
             {

@@ -161,13 +161,13 @@ struct WorkspaceControlView: View
                                     on_duplicate:
                                     {
                                         workspace.add_program(clone_codable(program) ?? ProductionProgram())
+                                        on_update()
                                     },
                                     on_delete:
                                     {
                                         if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
                                         {
                                             workspace.programs.remove(at: index)
-                                            
                                             on_update()
                                         }
                                     }
@@ -234,7 +234,6 @@ struct WorkspaceControlView: View
                         add_name_action:
                             { new_name in
                                 workspace.add_program(ProductionProgram(name: new_name))
-                                
                                 on_update()
                             },
                         add_action:
@@ -322,6 +321,7 @@ private struct ProgramDropDelegate: DropDelegate
     {
         dragging_program_id = nil
         on_update()
+        
         return true
     }
 }
@@ -482,7 +482,6 @@ private struct ElementItemView: View
     #endif
     
     let on_update: () -> ()
-    
     let on_delete: () -> ()
     
     var body: some View
@@ -525,6 +524,7 @@ private struct ElementItemView: View
             Button
             {
                 clone_element(element, to: program)
+                on_update()
             }
             label:
             {
@@ -579,6 +579,7 @@ private struct ElementDropDelegate: DropDelegate
     {
         dragging_element_id = nil
         on_update()
+        
         return true
     }
 }

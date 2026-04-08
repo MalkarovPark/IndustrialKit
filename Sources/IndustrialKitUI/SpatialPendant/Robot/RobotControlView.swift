@@ -68,7 +68,6 @@ public struct RobotControlView: View
                                             if let index = robot.programs.firstIndex(where: { $0.id == program.id })
                                             {
                                                 robot.programs[index].name = unique_name(for: new_value, in: robot.program_names)
-                                                
                                                 on_update()
                                             }
                                         }
@@ -77,11 +76,11 @@ public struct RobotControlView: View
                                     on_duplicate:
                                     {
                                         robot.add_program(clone_codable(program) ?? PositionProgram())
+                                        on_update()
                                     },
                                     on_delete:
                                     {
                                         robot.programs.remove(at: index)
-                                        
                                         on_update()
                                         /*if let index = robot.programs.firstIndex(where: { $0.id == program.id })
                                         {
@@ -170,7 +169,6 @@ public struct RobotControlView: View
                         add_name_action:
                             { new_name in
                                 robot.add_program(PositionProgram(name: new_name))
-                                
                                 on_update()
                             },
                         add_action:
@@ -263,6 +261,7 @@ private struct ProgramDropDelegate: DropDelegate
     {
         dragging_program_id = nil
         on_update()
+        
         return true
     }
 }
@@ -324,7 +323,8 @@ private struct PositionProgramView: View
                             robot: robot,
                             program: program,
                             point_item: point,
-                            point_index: index
+                            point_index: index,
+                            on_update: on_update
                         )
                         {
                             robot.reset_moving()
@@ -383,6 +383,7 @@ private struct PositionItemView: View
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
+    let on_update: () -> ()
     let on_delete: () -> ()
     
     var body: some View
@@ -444,6 +445,7 @@ private struct PositionItemView: View
             Button
             {
                 program.add_point(clone_codable(point_item) ?? PositionPoint())
+                on_update()
             }
             label:
             {
