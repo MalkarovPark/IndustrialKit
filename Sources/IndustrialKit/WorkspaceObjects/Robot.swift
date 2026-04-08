@@ -610,7 +610,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     
     /// Stores the current pointer position as the default position.
     ///
-    /// This position can later be restored using ``reset_pointer_to_default()``.
+    /// This position can later be restored using ``restore_default_pointer_position()``.
     public func set_default_pointer_position()
     {
         default_pointer_position = pointer_position
@@ -627,7 +627,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// Restores the pointer position to the previously stored default value.
     ///
     /// The method performs no action if a default position is not set.
-    public func reset_pointer_to_default()
+    public func restore_default_pointer_position()
     {
         guard let position = default_pointer_position else { return }
         
@@ -1550,7 +1550,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
             self.connector.model_controller = self.model_controller
         }
         
-        self.reset_pointer_to_default()
+        self.restore_default_pointer_position()
     }
     
     /// Generates file data representation of the robot.
