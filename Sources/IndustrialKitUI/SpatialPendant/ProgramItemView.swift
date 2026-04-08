@@ -12,6 +12,8 @@ public struct ProgramItemView: View
     @Binding var name: String
     
     let count: Int
+    
+    let on_update: () -> Void
     let on_duplicate: () -> Void
     let on_delete: () -> Void
     
@@ -23,12 +25,16 @@ public struct ProgramItemView: View
     public init(
         name: Binding<String>,
         count: Int,
+        
+        on_update: @escaping () -> Void,
         on_duplicate: @escaping () -> Void,
         on_delete: @escaping () -> Void
     )
     {
         self._name = name
         self.count = count
+        
+        self.on_update = on_update
         self.on_duplicate = on_duplicate
         self.on_delete = on_delete
     }
@@ -96,6 +102,7 @@ public struct ProgramItemView: View
             Button
             {
                 on_duplicate()
+                on_update()
             }
             label:
             {
@@ -113,6 +120,7 @@ public struct ProgramItemView: View
             Button(role: .destructive)
             {
                 on_delete()
+                on_update()
             }
             label:
             {
@@ -142,7 +150,7 @@ let program_index_font_size: CGFloat = 10
 {
     @Previewable @State var name: String = "Test"
     
-    ProgramItemView(name: $name, count: 4, on_duplicate: {}, on_delete: {})
+    ProgramItemView(name: $name, count: 4, on_update: {}, on_duplicate: {}, on_delete: {})
         .padding(.horizontal, 8)
         .frame(width: pendant_content_width)
 }

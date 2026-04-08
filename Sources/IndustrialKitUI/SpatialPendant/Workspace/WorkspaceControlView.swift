@@ -158,17 +158,16 @@ struct WorkspaceControlView: View
                                         }
                                     ),
                                     count: program.elements_count,
+                                    on_update: on_update,
                                     on_duplicate:
                                     {
                                         workspace.add_program(clone_codable(program) ?? ProductionProgram())
-                                        on_update()
                                     },
                                     on_delete:
                                     {
                                         if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
                                         {
                                             workspace.programs.remove(at: index)
-                                            on_update()
                                         }
                                     }
                                 )

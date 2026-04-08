@@ -76,6 +76,7 @@ public struct ToolControlView: View
                                         }
                                     ),
                                     count: program.codes_count,
+                                    on_update: on_update,
                                     on_duplicate:
                                     {
                                         tool.add_program(clone_codable(program) ?? OperationProgram())
@@ -336,7 +337,6 @@ private struct OperationProgramView: View
                             if let index = program.codes.firstIndex(where: { $0.id == code.id })
                             {
                                 program.codes.remove(at: index)
-                                on_update()
                             }
                         }
                         .onDrag
@@ -452,6 +452,7 @@ private struct OperationItemView: View
             Button(role: .destructive)
             {
                 on_delete()
+                on_update()
             }
             label:
             {

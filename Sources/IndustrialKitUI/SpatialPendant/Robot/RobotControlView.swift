@@ -73,6 +73,7 @@ public struct RobotControlView: View
                                         }
                                     ),
                                     count: program.points_count,
+                                    on_update: on_update,
                                     on_duplicate:
                                     {
                                         robot.add_program(clone_codable(program) ?? PositionProgram())
@@ -457,6 +458,7 @@ private struct PositionItemView: View
             Button(role: .destructive)
             {
                 on_delete()
+                on_update()
             }
             label:
             {
@@ -496,6 +498,7 @@ private struct PositionDropDelegate: DropDelegate
         dragging_point_id = nil
         robot.update_program_entity(by: program)
         on_update()
+        
         return true
     }
 }
