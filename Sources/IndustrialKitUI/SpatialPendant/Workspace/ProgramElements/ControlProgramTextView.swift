@@ -56,7 +56,7 @@ struct ControlTextView_Previews: PreviewProvider
         
         var body: some View
         {
-            HStack
+            HStack(spacing: 16)
             {
                 if let selected_program = workspace.selected_program
                 {

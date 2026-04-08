@@ -205,6 +205,8 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
     }
     
+    //private var code_text = String()
+    
     /// Converts program elements into a multiline code string.
     private var elements_to_code: String
     {
@@ -375,6 +377,7 @@ public enum RegexPatterns: String, CaseIterable
                 is_single_perfrom: true,
                 opcode_index: Int(data[1]) ?? 0
             )
+            
         // Math
         case ._MathModifierElement: // m: [#] = <expression>
             return MathModifierElement(

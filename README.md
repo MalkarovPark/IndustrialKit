@@ -1,4 +1,5 @@
-![ik_caption_image](https://github.com/user-attachments/assets/d057dc41-9f3a-4b27-be8a-5667766e97ae)
+![IndustrialKit](https://github.com/user-attachments/assets/7923a40f-443e-4dd3-a618-a577b4c2f231)
+<!-- ![ik_caption_image](https://github.com/user-attachments/assets/d057dc41-9f3a-4b27-be8a-5667766e97ae) -->
 <!-- ![IndustiralKit](https://user-images.githubusercontent.com/62340924/206910209-87495b62-2a9b-42c2-b825-85830a1d2623.png) -->
 <!-- (https://user-images.githubusercontent.com/62340924/206910169-3009a0da-eeeb-475b-9983-4a2fffa58f9a.png) -->
 
