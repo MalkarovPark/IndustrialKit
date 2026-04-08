@@ -603,7 +603,10 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     }
     
     /// A robot default pointer position.
-    private var default_pointer_position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float)?
+    public var default_pointer_position: (
+        x: Float, y: Float, z: Float,
+        r: Float, p: Float, w: Float
+    )?
     
     /// Stores the current pointer position as the default position.
     ///
