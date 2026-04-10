@@ -1,5 +1,5 @@
 //
-//  SpatialPendantView.swift
+//  SpatialPendant.swift
 //  IndustrialKit
 //
 //  Created by Artem on 09.02.2024.
@@ -10,7 +10,7 @@ import IndustrialKit
 
 import RealityKit
 
-public struct SpatialPendantView: View
+public struct SpatialPendant: View
 {
     @ObservedObject var controller: PendantController
     @ObservedObject var workspace: Workspace
@@ -185,7 +185,7 @@ public struct SpatialPendantScene: SwiftUI.Scene
     {
         WindowGroup(id: window_id)
         {
-            SpatialPendantView(controller: controller)//, workspace: controller.workspace)
+            SpatialPendant(controller: controller)//, workspace: controller.workspace)
                 .onDisappear(perform: controller.on_dismiss)
                 .padding([.horizontal, .top], 16)
         }
@@ -216,7 +216,7 @@ struct SpatialPendant_Previews: PreviewProvider
         {
             ZStack
             {
-                SpatialPendantView(
+                SpatialPendant(
                     controller: pendant_controller,
                     //workspace: workspace,
                     shows_program_indices: true
