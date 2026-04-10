@@ -189,7 +189,7 @@ Utility functions for generating unique object names, coordinate transformations
 
 A universal pendant for `Workspace` and its constituent **means of production** — `Robot` and `Tool`.
 
-`Spatial Pendant` represents a **unified control interface of labor**, in which the content dynamically adapts depending on the selected production object. It acts as a synthesis of multiple device-specific pendants into a single adaptive interface.
+`SpatialPendant` represents a **unified control interface of labor**, in which the content dynamically adapts depending on the selected production object. It acts as a synthesis of multiple device-specific pendants into a single adaptive interface.
 
 <p align="center">
   <img width="316" height="580" alt="Spatial Pendant" src="https://github.com/user-attachments/assets/0d90f6bf-3839-4c5a-a99a-91cef311db88" />
@@ -256,7 +256,7 @@ These views represent controls combined with program management in the form of a
 
 Program formation is achieved through a process analogous to **teaching**: a control defines the current state (*e.g., position or operation*), the state is tested and refined, and then recorded into a program as an element (`PositionPoint`, `OperationCode`, or `ProductionProgramElement`).
 
-These assembled views, placed within a `FloatingView`, form a complete pendant that can be attached to a specific means of production. They collectively define the dynamic content of the `Spatial Pendant`.
+These assembled views, placed within a `FloatingView`, form a complete pendant that can be attached to a specific means of production. They collectively define the dynamic content of the `SpatialPendant`.
 
 <!-- <p align="center">
   <img width="712" height="512" alt="Pendant Views" src="🎆 (program list separately)" />
