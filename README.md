@@ -69,7 +69,7 @@ IndustrialKit can be installed via SPM. Create a new Xcode project and navigate 
 This sample demonstrates a fully assembled, document-based IndustrialKit app. Each document represents a preset description of a robotic complex. The app enables you to design and simulate the complex, as well as program and control the robotic devices within it.
 
 <p align="center">
-   <img width="1012" height="696" alt="rcworkspace app" src="https://github.com/user-attachments/assets/a47c48ec-8bc2-4bd0-95f1-f8f2bcc4a5fd" />
+   <img width="1012" height="792" alt="rcworkspace_app" src="https://github.com/user-attachments/assets/639aa364-eb64-4857-831a-228c896a8cbd" />
 </p>
 
 ### [Industrial Builder App](https://github.com/MalkarovPark/Industrial-Builder) <a name="ib-app"></a>
