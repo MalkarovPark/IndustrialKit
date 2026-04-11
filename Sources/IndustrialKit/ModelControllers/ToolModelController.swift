@@ -429,7 +429,7 @@ public struct EntityAnimationData: Codable
         timing_function: TimingFunction = .linear,
         delay: Double = 0,
         speed: Float = 1,
-        repeat_count: Int? = 1
+        repeat_count: Int?
     )
     {
         self.entity_name = entity_name
@@ -447,8 +447,7 @@ public struct EntityAnimationData: Codable
     {
         case entity_name
         
-        case location     // [x, y, z]
-        case rotation     // [r, p, w]
+        case position     // [x, y, z, r, p, w]
         
         case scale        // [x, y, z]
         
@@ -466,11 +465,10 @@ public struct EntityAnimationData: Codable
         
         entity_name = try container.decode(String.self, forKey: .entity_name)
         
-        let location = try container.decodeIfPresent([Float].self, forKey: .location) ?? [0, 0, 0]
-        let rotation = try container.decodeIfPresent([Float].self, forKey: .rotation) ?? [0, 0, 0]
-        let scaleArr = try container.decodeIfPresent([Float].self, forKey: .scale) ?? [1, 1, 1]
+        let position = try container.decodeIfPresent([Float].self, forKey: .position) ?? [0, 0, 0, 0, 0, 0]
+        let scale = try container.decodeIfPresent([Float].self, forKey: .scale) ?? [1, 1, 1]
         
-        guard location.count == 3, rotation.count == 3, scaleArr.count == 3
+        guard position.count == 6, scale.count == 3
         else
         {
             throw DecodingError.dataCorrupted(
@@ -481,19 +479,19 @@ public struct EntityAnimationData: Codable
             )
         }
         
-        position = (
-            x: location[0],
-            y: location[1],
-            z: location[2],
-            r: rotation[0],
-            p: rotation[1],
-            w: rotation[2]
+        self.position = (
+            x: position[0],
+            y: position[1],
+            z: position[2],
+            r: position[3],
+            p: position[4],
+            w: position[5]
         )
         
-        scale = (
-            x: scaleArr[0],
-            y: scaleArr[1],
-            z: scaleArr[2]
+        self.scale = (
+            x: scale[0],
+            y: scale[1],
+            z: scale[2]
         )
         
         duration = try container.decodeIfPresent(Double.self, forKey: .duration) ?? 1
@@ -512,13 +510,8 @@ public struct EntityAnimationData: Codable
         try container.encode(entity_name, forKey: .entity_name)
         
         try container.encode(
-            [position.x, position.y, position.z],
-            forKey: .location
-        )
-        
-        try container.encode(
-            [position.r, position.p, position.w],
-            forKey: .rotation
+            [position.x, position.y, position.z, position.r, position.p, position.w],
+            forKey: .position
         )
         
         try container.encode(
