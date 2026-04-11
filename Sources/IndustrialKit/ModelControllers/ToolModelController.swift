@@ -401,7 +401,7 @@ public struct EntityAnimationData: Codable
     /// - `nil`: Infinite repetition
     /// - `0`: No animation
     /// - `1`: Single execution (default)
-    public var repeat_count: Int? = 1 //nil – infinity
+    public var repeat_count: Int?// = 1 //nil – infinity
     
     /// Creates animation data for an entity.
     ///
