@@ -142,7 +142,14 @@ open class ToolModelController: ModelController, @unchecked Sendable
                     case nil:
                         entity.playAnimation(resource.repeat(duration: .infinity))
                     default:
-                        entity.playAnimation(resource.repeat(count: data.repeat_count ?? 1))
+                        if data.repeat_count ?? 1 > 0
+                        {
+                            entity.playAnimation(resource.repeat(count: data.repeat_count ?? 1))
+                        }
+                        else // repeat_count < 0
+                        {
+                            entity.stopAllAnimations()
+                        }
                     }
                     
                     let current_animation_time = (data.duration * Double(data.speed)) * Double(data.repeat_count ?? 1) + data.delay
