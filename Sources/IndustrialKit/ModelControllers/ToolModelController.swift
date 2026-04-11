@@ -495,7 +495,7 @@ public struct EntityAnimationData: Codable
         delay = try container.decodeIfPresent(Double.self, forKey: .delay) ?? 0
         speed = try container.decodeIfPresent(Float.self, forKey: .speed) ?? 1
         
-        repeat_count = try container.decodeIfPresent(Int.self, forKey: .repeat_count) ?? 1
+        repeat_count = try container.decodeIfPresent(Int.self, forKey: .repeat_count) ?? nil
     }
     
     public func encode(to encoder: Encoder) throws
