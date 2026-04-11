@@ -438,8 +438,8 @@ public extension Entity
 
 public extension Entity
 {
-    func move_to(
-        position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0),
+    func move(
+        to position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (0, 0, 0, 0, 0, 0),
         scale: (x: Float, y: Float, z: Float) = (1, 1, 1),
         duration: Double = 1,
         timing_function: AnimationTimingFunction = .linear,

@@ -213,7 +213,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
     ///
     /// - Parameter point: A target position point.
     /// - Throws: An error if movement fails.
-    open func move_to(point: PositionPoint) throws
+    open func move(to point: PositionPoint) throws
     {
         let parts_count: Int = 1000 // Trajectory steps calculation
         
@@ -302,8 +302,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
     /// - Parameters:
     ///   - point: A target position point.
     ///   - completion: A closure called when performing completes.
-    public func move_to(
-        point: PositionPoint,
+    public func move(
+        to point: PositionPoint,
         completion: @escaping @Sendable (Result<Void, Error>) -> Void
     )
     {
@@ -313,7 +313,7 @@ open class RobotModelController: ModelController, @unchecked Sendable
         {
             do
             {
-                try self.move_to(point: point)
+                try self.move(to: point)
                 if !canceled
                 {
                     completion(.success(()))

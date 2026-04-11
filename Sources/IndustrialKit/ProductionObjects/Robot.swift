@@ -29,7 +29,7 @@ import RealityKit
 /// - Motion type (for example, linear or fine)
 /// - Movement speed in millimeters per second
 ///
-/// Use the ``move_to(_:)`` method to initiate performing of a movement
+/// Use the ``move(to:)`` method to initiate performing of a movement
 /// toward a target position defined by a ``PositionPoint``.
 ///
 /// This abstraction enables deterministic motion planning and performing
@@ -646,8 +646,8 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// - Parameters:
     ///   - point: A target position.
     ///   - completion: A closure invoked after performing completes.
-    public func move_to(
-        point: PositionPoint,
+    public func move(
+        to point: PositionPoint,
         completion: @escaping @Sendable (Result<Void, Error>) -> Void = { _ in }
     )
     {
@@ -660,7 +660,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
             // Move to target on virtual robot
             pointer_position_to_robot()
             
-            model_controller.move_to(point: point)
+            model_controller.move(to: point)
             { result in
                 Task
                 { @MainActor in
@@ -683,7 +683,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
             // Move to target on real robot
             pointer_position_to_robot()
             
-            connector.move_to(point: point)
+            connector.move(to: point)
             { result in
                 Task
                 { @MainActor in
@@ -748,7 +748,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
             program_performed = true // Control Buttons (UI)
             performing_state = .processing // State light (UI)
             
-            move_to_next_point()
+            move_next_point()
         }
         else
         {
@@ -783,11 +783,11 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     }
     
     /// Moves the robot to the next point in the program sequence.
-    public func move_to_next_point()
+    public func move_next_point()
     {
         selected_position_point.performing_state = .processing
         
-        move_to(point: selected_position_point)
+        move(to: selected_position_point)
         { result in
             Task
             { @MainActor in
@@ -844,7 +844,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
         {
             // Select and move to next point
             target_point_index += 1
-            move_to_next_point()
+            move_next_point()
         }
         else
         {

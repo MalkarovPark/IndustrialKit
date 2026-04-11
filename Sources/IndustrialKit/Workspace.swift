@@ -1291,7 +1291,7 @@ import SwiftUI
             )
             robot.point_shift(&target_point)
             
-            robot.move_to(point: target_point)
+            robot.move(to: target_point)
             { result in
                 Task
                 { @MainActor in

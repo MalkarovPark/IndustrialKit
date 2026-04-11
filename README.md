@@ -95,7 +95,7 @@ Robot programming is performed using positional programs (`PositionsProgram`), e
 - Trajectory smoothing mode (`linear` or `fine`)
 - Motion speed (mm/s)
 
-Movement of the end effector to a target position is initiated by calling the `move_to(_:)` function with a `PositionPoint`.
+Movement of the end effector to a target position is initiated by calling the `move(to:)` function with a `PositionPoint`.
 
 ### Tool <a name="tool"></a>
 `Tool` describes other types of robotic devices that do not implement the full capabilities of a robot. A tool can function as a standalone device or as a robot end effector mounted via a mechanical interface.

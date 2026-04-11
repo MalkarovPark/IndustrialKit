@@ -15,7 +15,7 @@ import SceneKit
 /// movement execution.
 ///
 /// It bridges:
-/// - High-level movement commands (`move_to`)
+/// - High-level movement commands (`move`)
 /// - Real device execution (`start_process`)
 /// - Live synchronization with robot state
 /// - Model visualization updates via ``RobotModelController``
@@ -60,7 +60,7 @@ open class RobotConnector: ProductionObjectConnector, @unchecked Sendable
     ///
     /// - Parameter point: Target position in workspace coordinates.
     /// - Throws: An error if the device reports a failure state.
-    public func move_to(point: PositionPoint) throws
+    public func move(to point: PositionPoint) throws
     {
         start_process(point: point)
         
@@ -79,7 +79,7 @@ open class RobotConnector: ProductionObjectConnector, @unchecked Sendable
     /// Starts a movement process on the robot without blocking execution.
     ///
     /// This method triggers device-side execution and returns immediately.
-    /// Use ``move_to(point:)`` for synchronous execution control.
+    /// Use ``move(to:)`` for synchronous execution control.
     ///
     /// - Parameter point: Target position in workspace coordinates.
     open func start_process(point: PositionPoint) {}
@@ -93,8 +93,8 @@ open class RobotConnector: ProductionObjectConnector, @unchecked Sendable
     /// - Parameters:
     ///   - point: Target position in workspace coordinates.
     ///   - completion: Completion handler returning success or failure result.
-    public func move_to(
-        point: PositionPoint,
+    public func move(
+        to point: PositionPoint,
         completion: @escaping @Sendable (Result<Void, Error>) -> Void
     )
     {
@@ -110,7 +110,7 @@ open class RobotConnector: ProductionObjectConnector, @unchecked Sendable
         {
             do
             {
-                try self.move_to(point: point)
+                try self.move(to: point)
                 if !canceled
                 {
                     completion(.success(()))
