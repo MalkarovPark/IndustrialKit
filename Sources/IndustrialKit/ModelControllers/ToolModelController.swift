@@ -133,34 +133,23 @@ open class ToolModelController: ModelController, @unchecked Sendable
                 let resource = try AnimationResource.generate(with: animation_view)
                 if let entity = entities[data.entity_name]
                 {
-                    var controller: AnimationPlaybackController?
-                    
                     switch data.repeat_count
                     {
                     case 1:
-                        //entity.playAnimation(resource)
-                        controller = entity.playAnimation(resource)
+                        entity.playAnimation(resource)
                     case 0:
                         break
                     case nil:
-                        //entity.playAnimation(resource.repeat(duration: .infinity))
-                        controller = entity.playAnimation(resource.repeat(duration: .infinity))
+                        entity.playAnimation(resource.repeat(duration: .infinity))
                     default:
                         if data.repeat_count ?? 1 > 0
                         {
-                            //entity.playAnimation(resource.repeat(count: data.repeat_count ?? 1))
-                            controller = entity.playAnimation(resource.repeat(count: data.repeat_count ?? 1))
+                            entity.playAnimation(resource.repeat(count: data.repeat_count ?? 1))
                         }
                         else // repeat_count < 0
                         {
                             entity.stopAllAnimations()
-                            animation_controllers[data.entity_name] = []
                         }
-                    }
-                    
-                    if let controller
-                    {
-                        animation_controllers[data.entity_name, default: []].append(controller)
                     }
                     
                     let current_animation_time = (data.duration * Double(data.speed)) * Double(data.repeat_count ?? 1) + data.delay
@@ -178,8 +167,6 @@ open class ToolModelController: ModelController, @unchecked Sendable
             }
         }
     }
-    
-    private var animation_controllers: [String: [AnimationPlaybackController]] = [:]
     
     /// Generates animation data for a given operation code.
     ///
