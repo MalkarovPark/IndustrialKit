@@ -74,7 +74,7 @@ This sample demonstrates a fully assembled, document-based IndustrialKit app. Ea
 
 ### [Industrial Builder App](https://github.com/MalkarovPark/Industrial-Builder) <a name="ib-app"></a>
 
-This document-based app provides tools for preparing and deploying production according to user requirements and the underlying technological basis. Each document represents a Standard Template Construction (STC), whose processing enables the implementation of production for a specific product.
+This document-based app provides tools for preparing and deploying production according to user requirements and the underlying technological basis. Each document represents a Standard Template Construct (STC), whose processing enables the implementation of production for a specific product.
 
 <p align="center">
    <img width="972" height="710" alt="macOS_shoot_window" src="https://github.com/user-attachments/assets/1a18d0f7-62e8-4803-b11a-7e377f55c36c" />
