@@ -429,7 +429,7 @@ public struct EntityAnimationData: Codable
         timing_function: TimingFunction = .linear,
         delay: Double = 0,
         speed: Float = 1,
-        repeat_count: Int?
+        repeat_count: Int? = nil
     )
     {
         self.entity_name = entity_name
