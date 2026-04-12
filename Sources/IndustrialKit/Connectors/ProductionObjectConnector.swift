@@ -185,7 +185,7 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
         connection_task.cancel()
         connection_task = Task
         {
-            let success = await connection_process()
+            let success = await perform_connection()
             
             await MainActor.run
             {
@@ -228,10 +228,10 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
             
             /*disconnection_task = Task
             {
-                await disconnection_process()
+                await perform_disconnection()
             }*/
             
-            disconnection_process()
+            perform_disconnection()
             
             connected = false
             connection_updating = false
@@ -245,7 +245,7 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
     /// Subclasses override this method to implement device-specific logic.
     ///
     /// - Returns: `true` if connection succeeded.
-    open func connection_process() async -> Bool
+    open func perform_connection() async -> Bool
     {
         return true
     }
@@ -255,7 +255,7 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
     /// Subclasses override this method to implement device-specific logic.
     ///
     /// - Returns: `true` if connection succeeded.
-    open func disconnection_process() {}
+    open func perform_disconnection() {}
     
     /// Resets the device performing state.
     ///

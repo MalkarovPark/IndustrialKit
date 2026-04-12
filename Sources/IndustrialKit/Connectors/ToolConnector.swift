@@ -323,7 +323,7 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
     /// This array defines parameters received from or passed to an external system.
     public var external_parameters = [ConnectionParameter]()
     
-    override open func connection_process() async -> Bool
+    override open func perform_connection() async -> Bool
     {
         #if os(macOS)
         // Perform connection
@@ -373,7 +373,7 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
         #endif
     }
     
-    override open func disconnection_process()// async
+    override open func perform_disconnection()// async
     {
         #if os(macOS)
         guard let terminal_output: String = send_via_unix_socket(at: socket_name, with: ["disconnect"])

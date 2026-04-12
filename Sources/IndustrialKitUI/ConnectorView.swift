@@ -625,7 +625,7 @@ struct ConnectorView_Previews: PreviewProvider
             ]
         }
         
-        override func connection_process() async -> Bool
+        override func perform_connection() async -> Bool
         {
             sleep(1)
             
