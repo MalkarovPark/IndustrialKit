@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SceneKit
 
 /// A connector that provides control over an industrial robot.
 ///
