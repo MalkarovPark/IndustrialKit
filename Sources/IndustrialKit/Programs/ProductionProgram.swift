@@ -58,10 +58,16 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     // MARK: - Initializer
     /// Creates a new production program.
     ///
-    /// - Parameter name: A human-readable program name. Defaults to `"None"`.
-    public init(name: String = "None")
+    /// - Parameters:
+    ///   - name: A human-readable program name. Defaults to `"None"`.
+    ///   - elements: An ordered list of production program elements representing a structured sequence of operations.
+    public init(
+        name: String = "None",
+        elements: [ProductionProgramElement] = [ProductionProgramElement]()
+    )
     {
         self.name = name
+        self.elements = elements
     }
     
     // MARK: - Element Management

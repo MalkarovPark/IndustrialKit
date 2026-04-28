@@ -48,10 +48,16 @@ public class OperationProgram: Identifiable, Codable, Equatable, ObservableObjec
     // MARK: - Initializer
     /// Creates a new operation program.
     ///
-    /// - Parameter name: A human-readable program name. Defaults to `"None"`.
-    public init(name: String = "None")
+    /// - Parameters:
+    ///   - name: A human-readable program name. Defaults to `"None"`.
+    ///   - codes: An ordered list of operation codes defining the sequence of actions to be performed.
+    public init(
+        name: String = "None",
+        codes: [OperationCode] = [OperationCode]()
+    )
     {
         self.name = name
+        self.codes = codes
     }
     
     // MARK: - Code Management

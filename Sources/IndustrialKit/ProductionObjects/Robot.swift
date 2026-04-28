@@ -297,7 +297,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// Performs loading of all internal module entities.
     ///
     /// - Parameter completion: A closure invoked after performing completes.
-    public static func load_all_internal_module_entities(_ completion: @escaping () -> Void = {})
+    public static func load_internal_module_entities(_ completion: @escaping () -> Void = {})
     {
         Task
         {
@@ -313,7 +313,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// Performs loading of all external module entities.
     ///
     /// - Parameter completion: A closure invoked after performing completes.
-    public static func load_all_external_module_entities(_ completion: @escaping () -> Void = {})
+    public static func load_external_module_entities(_ completion: @escaping () -> Void = {})
     {
         Task
         {

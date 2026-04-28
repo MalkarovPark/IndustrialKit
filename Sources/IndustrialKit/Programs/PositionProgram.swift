@@ -48,10 +48,16 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
     // MARK: - Initializer
     /// Creates a new position program.
     ///
-    /// - Parameter name: A human-readable program name. Defaults to `"None"`.
-    public init(name: String = "None")
+    /// - Parameters:
+    ///   - name: A human-readable program name. Defaults to `"None"`.
+    ///   - points: An ordered list of position points describing target poses and motion parameters.
+    public init(
+        name: String = "None",
+        points: [PositionPoint] = [PositionPoint]()
+    )
     {
         self.name = name
+        self.points = points
     }
     
     // MARK: - Point manage functions

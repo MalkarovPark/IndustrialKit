@@ -1758,7 +1758,7 @@ import SwiftUI
             if self.selected_object != nil { self.update_pointer_entity() } // Dynamic pointer update
         }
         
-        load_all_module_entities
+        load_module_entities
         {
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
@@ -1807,7 +1807,7 @@ import SwiftUI
             if self.selected_object != nil { self.update_pointer_entity() } // Dynamic pointer update
         }
         
-        load_all_module_entities
+        load_module_entities
         {
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
@@ -1847,23 +1847,23 @@ import SwiftUI
     /// Loads all internal and external module entities for robots, tools, and parts.
     ///
     /// Ensures that all visual representations are available before scene assembly.
-    private func load_all_module_entities(_ completion: @escaping () -> Void = {})
+    public func load_module_entities(_ completion: @escaping () -> Void = {})
     {
-        load_all_internal_module_entities
+        load_internal_module_entities
         {
-            load_all_external_module_entities
+            load_external_module_entities
             {
                 completion()
             }
         }
         
-        func load_all_internal_module_entities(_ completion: @escaping () -> Void = {})
+        func load_internal_module_entities(_ completion: @escaping () -> Void = {})
         {
-            Robot.load_all_internal_module_entities
+            Robot.load_internal_module_entities
             {
-                Tool.load_all_internal_module_entities
+                Tool.load_internal_module_entities
                 {
-                    Part.load_all_internal_module_entities
+                    Part.load_internal_module_entities
                     {
                         //print("Internal loaded")
                         completion()
@@ -1872,13 +1872,13 @@ import SwiftUI
             }
         }
         
-        func load_all_external_module_entities(_ completion: @escaping () -> Void = {})
+        func load_external_module_entities(_ completion: @escaping () -> Void = {})
         {
-            Robot.load_all_external_module_entities
+            Robot.load_external_module_entities
             {
-                Tool.load_all_external_module_entities
+                Tool.load_external_module_entities
                 {
-                    Part.load_all_external_module_entities
+                    Part.load_external_module_entities
                     {
                         //print("External loaded")
                         completion()

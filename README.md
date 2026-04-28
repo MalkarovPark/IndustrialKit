@@ -62,7 +62,7 @@ The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS, visionO
 
 IndustrialKit can be installed via SPM. Create a new Xcode project and navigate to `File > Add Package Dependences`. Enter the url `https://github.com/MalkarovPark/IndustrialKit` and select the `main` branch. Next, select targeted project and tap `Add Package`.
 
-<img width="1226" height="797" alt="Add Package" src="https://github.com/user-attachments/assets/290c243b-bea1-4779-b7da-033ef2e91ebe" />
+<img width="1264" height="784" alt="Add Package" src="https://github.com/user-attachments/assets/231421b5-4d82-4d24-8488-f18f52bcc33b" />
 
 ### [Robotic Complex Workspace App](https://github.com/MalkarovPark/Robotic-Complex-Workspace) <a name="rcworkspace-app"></a>
 
