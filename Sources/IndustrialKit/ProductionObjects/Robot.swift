@@ -728,7 +728,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
         guard let selected_program = self.selected_program, selected_program.points_count > 0
         else
         {
-            finish_handler()
+            completion_handler()
             return
         }
         
@@ -836,7 +836,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
         guard let selected_program = self.selected_program
         else
         {
-            finish_handler()
+            completion_handler()
             return
         }
         
@@ -863,20 +863,20 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
             
             pointer_position_to_robot()
             
-            finish_handler()
+            completion_handler()
         }
     }
     
-    /// A closure invoked when program performing finishes successfully.
+    /// A closure invoked when program performing completed successfully.
     ///
     /// Use this handler to trigger post-processing logic such as UI updates
     /// or workflow continuation.
-    public var finish_handler: (() -> Void) = {}
+    public var completion_handler: (() -> Void) = {}
     
-    /// Resets the finish handler to an empty closure.
-    public func clear_finish_handler()
+    /// Resets the completion handler to an empty closure.
+    public func clear_completion_handler()
     {
-        finish_handler = {}
+        completion_handler = {}
     }
     
     /// A closure invoked when an error occurs during program performing.

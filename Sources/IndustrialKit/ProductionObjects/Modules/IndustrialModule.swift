@@ -160,7 +160,7 @@ open class IndustrialModule: Identifiable, Codable, Equatable, ObservableObject
     /// The method determines whether the module is internal or external
     /// and loads the corresponding entity resource.
     ///
-    /// - Parameter completion: A closure called after loading finishes.
+    /// - Parameter completion: A closure called after loading completed.
     @MainActor public func perform_load_entity(_ completion: @escaping () -> Void = {}) //@escaping @Sendable (Result<Void, Error>) -> Void)
     {
         Task

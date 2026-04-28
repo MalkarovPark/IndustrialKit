@@ -836,7 +836,7 @@ import SwiftUI
         guard let selected_program = self.selected_program, selected_program.elements_count > 0
         else
         {
-            finish_handler()
+            completion_handler()
             return
         }
         
@@ -896,7 +896,7 @@ import SwiftUI
                 robot.start_pause_moving()
             }
             
-            robot.clear_finish_handler()
+            robot.clear_completion_handler()
             robot.clear_error_handler()
             
             robot.stop_output_updating()
@@ -915,7 +915,7 @@ import SwiftUI
                 tool.start_pause_performing()
             }
             
-            tool.clear_finish_handler()
+            tool.clear_completion_handler()
             tool.clear_error_handler()
         }
     }
@@ -973,7 +973,7 @@ import SwiftUI
         guard let selected_program = self.selected_program
         else
         {
-            finish_handler()
+            completion_handler()
             return
         }
         
@@ -1010,18 +1010,18 @@ import SwiftUI
                 
                 //update()
                 
-                finish_handler()
+                completion_handler()
             }
         }
     }
     
-    /// Callback invoked when program execution finishes.
-    public var finish_handler: (() -> Void) = {}
+    /// Callback invoked when program execution completed.
+    public var completion_handler: (() -> Void) = {}
     
-    /// Clears finish handler callback.
-    public func clear_finish_handler()
+    /// Clears completion handler callback.
+    public func clear_completion_handler()
     {
-        finish_handler = {}
+        completion_handler = {}
     }
     
     /// Handles execution error state internally.
@@ -1095,7 +1095,7 @@ import SwiftUI
                 robot.deselect_program()
             }
             
-            robot.clear_finish_handler()
+            robot.clear_completion_handler()
             robot.clear_error_handler()
             
             robot.stop_output_updating()
@@ -1115,7 +1115,7 @@ import SwiftUI
                 tool.deselect_program()
             }
             
-            tool.clear_finish_handler()
+            tool.clear_completion_handler()
             tool.clear_error_handler()
         }
     }
@@ -1320,8 +1320,8 @@ import SwiftUI
                 robot.select_program(at: Int(registers[safe: element.program_index] ?? 0))
             }
             
-            robot.finish_handler = {
-                robot.clear_finish_handler()
+            robot.completion_handler = {
+                robot.clear_completion_handler()
                 robot.clear_error_handler()
                 
                 robot.deselect_program()
@@ -1331,7 +1331,7 @@ import SwiftUI
                 completion(.success(()))
             }
             robot.error_handler = { error in
-                robot.clear_finish_handler()
+                robot.clear_completion_handler()
                 robot.clear_error_handler()
                 
                 robot.stop_output_updating()
@@ -1390,14 +1390,14 @@ import SwiftUI
                 tool.select_program(at: Int(registers[safe: element.program_index] ?? 0))
             }
             
-            tool.finish_handler = {
-                tool.clear_finish_handler()
+            tool.completion_handler = {
+                tool.clear_completion_handler()
                 tool.clear_error_handler()
                 
                 completion(.success(()))
             }
             tool.error_handler = { error in
-                tool.clear_finish_handler()
+                tool.clear_completion_handler()
                 tool.clear_error_handler()
                 
                 tool.deselect_program()
