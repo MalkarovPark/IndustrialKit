@@ -55,7 +55,7 @@ The primary IndustrialKit framework codebase supports macOS, iOS/iPadOS, visionO
 
 # Getting Started <a name="getting-started"></a>
 
-* [Website](https://celadon-production-systems.carrd.co/)
+* [Website](https://celadon-production-systems.blogspot.com)
 * [Documentation](https://malkarovpark.github.io/documentation/industrialkit)
 
 ### Installation with SPM
