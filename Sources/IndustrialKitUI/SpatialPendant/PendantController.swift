@@ -71,7 +71,7 @@ import IndustrialKit
             
             ...
             
-            pendant_controller.set_windows_functions
+            pendant_controller.set_window_functions
             {
                 openWindow(id: SPendantDefaultID)
             }
@@ -80,7 +80,7 @@ import IndustrialKit
                 dismissWindow(id: SPendantDefaultID)
             }
      */
-    public func set_windows_functions(
+    public func set_window_functions(
         _ open: @escaping () -> (),
         _ dismiss: @escaping () -> ()
     )
