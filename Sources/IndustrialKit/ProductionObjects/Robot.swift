@@ -941,7 +941,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
         {
             if state_update_enabled
             {
-                if update_scope_type == .continious
+                if update_scope_type == .continuous
                 {
                     start_output_updating()
                 }
@@ -966,7 +966,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
         {
             stop_output_updating()
             
-            if update_scope_type == .continious
+            if update_scope_type == .continuous
             {
                 start_output_updating()
             }
@@ -1009,7 +1009,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     /// Updates device output data.
     private func update_device_output()
     {
-        if is_output_updating && (performed || update_scope_type == .continious)
+        if is_output_updating && (performed || update_scope_type == .continuous)
         {
             if device_mode == .simulation || (connector.connected && is_twin_sync)
             {

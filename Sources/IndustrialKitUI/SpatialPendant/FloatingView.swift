@@ -248,6 +248,14 @@ public struct FloatingView<Content: View>: View
             Rectangle()
                 .fill(.clear)
                 .frame(width: 128, height: 128)
+                /*.overlay
+                {
+                    Text("Floating View")
+                        .font(.title2)
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }*/
         }
         .padding()
     }

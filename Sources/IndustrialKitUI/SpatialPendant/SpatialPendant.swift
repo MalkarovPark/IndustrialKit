@@ -238,6 +238,53 @@ struct SpatialPendant_Previews: PreviewProvider
                     .buttonStyle(.bordered)
                     .padding()
             }
+            
+            /*HStack(spacing: 16)
+            {
+                SpatialPendant(
+                    controller: pendant_controller,
+                    //workspace: workspace,
+                    shows_program_indices: true
+                )
+                .frame(height: 480)
+                .padding(10)
+                .onAppear
+                {
+                    workspace_preparation()
+                    set_programs()
+                }
+                
+                Spacer()
+                
+                WorkspaceControlView(workspace: workspace)
+                    .padding(8)
+                    .frame(height: 480)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .stroke(.tertiary, lineWidth: 1)
+                    )
+                    .padding(10)
+                
+                RobotControlView(robot: workspace.robot(named: "6DOF Robot"))
+                    .padding(8)
+                    .frame(height: 480)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .stroke(.tertiary, lineWidth: 1)
+                    )
+                    .padding(10)
+                
+                ToolControlView(tool: workspace.tool(named: "Gripper"))
+                    .padding(8)
+                    .frame(height: 480)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .stroke(.tertiary, lineWidth: 1)
+                    )
+                    .padding(10)
+            }
+            .frame(minWidth: 1024)
+            .padding(80)*/
         }
         
         @State var inc = 0
@@ -273,8 +320,8 @@ struct SpatialPendant_Previews: PreviewProvider
             workspace.tools.append(Tool(name: "Drill"))
             workspace.tools.append(Tool(name: "Gripper"))
             workspace.tool(named: "Gripper").codes = [
-                OperationCodeInfo(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "UwU"),
-                OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "OwO")
+                OperationCodeInfo(value: 0, name: "Close the Tool", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "Close tool"),
+                OperationCodeInfo(value: 1, name: "Open the Tool", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "OwO")
             ]
             
             workspace.parts.append(Part(name: "Cup"))
@@ -282,6 +329,64 @@ struct SpatialPendant_Previews: PreviewProvider
             
             button_tap()
         }
+        
+        /*private func set_programs()
+        {
+            workspace.add_program(
+                ProductionProgram(
+                    name: "Move Part",
+                    elements: [
+                        WriterModifierElement(inputs: [
+                            WriterInput(value: 0, to: 0),
+                            WriterInput(value: 90, to: 3),
+                            WriterInput(value: 100, to: 4),
+                            
+                            WriterInput(value: 0, to: 5)
+                        ]),
+                        ToolPerformerElement(object_name: "Gripper", is_single_perfrom: true, opcode_index: 5),
+                        RobotPerformerElement(
+                            object_name: "6DOF",
+                            is_single_perfrom: true,
+                            x_index: 1,
+                            p_index: 3,
+                            speed_index: 4
+                        ),
+                        
+                        WriterModifierElement(inputs: [
+                            WriterInput(value: 1, to: 5)
+                        ]),
+                        ToolPerformerElement(object_name: "Gripper", is_single_perfrom: true, opcode_index: 5),
+                        MathModifierElement(expression: "100 - [1]", to_index: 1)
+                    ]
+                )
+            )
+            
+            workspace.robot(named: "6DOF Robot").add_program(
+                PositionProgram(
+                    name: "Square",
+                    points: [
+                        .init(x: 0, y: 0, z: 50, p: 45),
+                        .init(x: 0, y: 50, z: 50, p: 45),
+                        .init(x: 0, y: 50, z: 0),
+                        .init(x: 0, y: 0, z: 0)
+                    ]
+                )
+            )
+            
+            workspace.robot(named: "6DOF Robot").pointer_position = (x: 100, y: 0, z: 0, r: 0, p: 90, w: 0)
+            
+            workspace.tool(named: "Gripper").add_program(
+                OperationProgram(
+                    name: "Double Bite",
+                    codes: [
+                        .init(0),
+                        .init(1),
+                        .init(0),
+                        .init(1)
+                    ]
+                )
+            )
+        }*/
     }
     
     static var previews: some View

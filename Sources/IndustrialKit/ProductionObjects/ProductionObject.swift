@@ -514,7 +514,7 @@ public struct ObjectEntityIdentifier: Component
 public enum ScopeType: String, Codable, Equatable, CaseIterable
 {
     case operational = "Operational"
-    case continious = "Continuous"
+    case continuous = "Continuous"
 }
 
 /// Defines the state of a technological operation.
