@@ -320,8 +320,8 @@ struct SpatialPendant_Previews: PreviewProvider
             workspace.tools.append(Tool(name: "Drill"))
             workspace.tools.append(Tool(name: "Gripper"))
             workspace.tool(named: "Gripper").codes = [
-                OperationCodeInfo(value: 0, name: "Close the Tool", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "Close tool"),
-                OperationCodeInfo(value: 1, name: "Open the Tool", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "OwO")
+                .init(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "Close the Tool"),
+                .init(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "Open the Tool")
             ]
             
             workspace.parts.append(Part(name: "Cup"))
