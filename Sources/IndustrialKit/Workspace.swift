@@ -1992,7 +1992,7 @@ import SwiftUI
         workspace_camera_target.move(
             to: transform,
             relativeTo: nil,
-            duration: animated ? TimeInterval(animation_duration) : TimeInterval(0.0001),
+            duration: TimeInterval(animation_duration),
             timingFunction: .easeInOut
         )
         
@@ -2002,46 +2002,28 @@ import SwiftUI
             let base_width: Float = 0.5
             let base_depth: Float = 0.5
             
-            let target_scale = SIMD3<Float>(
-                tile_size.x / base_width,
-                tile.scale.y,
-                tile_size.y / base_depth
-            )
+            let start_scale = tile.scale
+            let target_scale = SIMD3<Float>(tile_size.x / base_width, tile.scale.y, tile_size.y / base_depth)
             
-            if animated
+            let steps = 400 //160 //40
+            let dt = animation_duration / Float(steps)
+            
+            for i in 1...steps
             {
-                let start_scale = tile.scale
+                let t = Float(i) / Float(steps)
+                let k = t * t * (3 - 2 * t) // Smoothstep easing
                 
-                let steps = 400
-                let dt = animation_duration / Float(steps)
-                
-                for i in 1...steps
-                {
-                    let t = Float(i) / Float(steps)
-                    let k = t * t * (3 - 2 * t)
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
-                        tile?.scale = simd_mix(start_scale, target_scale, SIMD3<Float>(repeating: k))
-                    }
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
+                    guard let tile else { return }
+                    tile.scale = simd_mix(start_scale, target_scale, SIMD3<Float>(repeating: k))
                 }
-            }
-            else
-            {
-                tile.scale = target_scale
             }
         }
         
-        if animated
-        {
-            // Delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration))
-            { [weak self] in
-                self?.is_focusing = false
-            }
-        }
-        else
-        {
-            is_focusing = false
+        // Delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration))
+        { [weak self] in
+            self?.is_focusing = false
         }
     }
     
