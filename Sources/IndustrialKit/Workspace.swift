@@ -1990,7 +1990,7 @@ import SwiftUI
         workspace_camera_target.move(
             to: transform,
             relativeTo: nil,
-            duration: animated ? TimeInterval(animation_duration) : TimeInterval(0.001),
+            duration: animated ? TimeInterval(animation_duration) : TimeInterval(0),
             timingFunction: .easeInOut
         )
         
