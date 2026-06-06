@@ -214,77 +214,89 @@ struct SpatialPendant_Previews: PreviewProvider
         
         var body: some View
         {
-            ZStack
+            Group
             {
-                SpatialPendant(
-                    controller: pendant_controller,
-                    //workspace: workspace,
-                    shows_program_indices: true
-                )
-                #if os(visionOS)
-                .glassBackgroundEffect(in: .rect(cornerRadius: 24, style: .continuous))
+                ZStack
+                {
+                    SpatialPendant(
+                        controller: pendant_controller,
+                        shows_program_indices: true
+                    )
+                    #if os(visionOS)
+                    .glassBackgroundEffect(in: .rect(cornerRadius: 24, style: .continuous))
+                    #endif
+                }
+                #if !os(visionOS)
+                .frame(minWidth: 480, minHeight: 480)
+                #else
+                .frame(minWidth: 800, minHeight: 480)
                 #endif
-            }
-            #if !os(visionOS)
-            .frame(minWidth: 480, minHeight: 480)
-            #else
-            .frame(minWidth: 800, minHeight: 480)
-            #endif
-            .padding(10)
-            .onAppear { workspace_preparation() }
-            .overlay(alignment: .topLeading)
-            {
-                Button("Switch...") { button_tap() }
+                .padding(10)
+                .background(alignment: .topLeading)
+                {
+                    Button(
+                        workspace.selected_object is Robot
+                        ? "Robot"
+                        : workspace.selected_object is Tool
+                        ? "Tool"
+                        : workspace.selected_object is Part
+                        ? "Part"
+                        : "Workspace"
+                    )
+                    {
+                        button_tap()
+                    }
                     .buttonStyle(.bordered)
                     .padding()
-            }
-            
-            /*HStack(spacing: 16)
-            {
-                SpatialPendant(
-                    controller: pendant_controller,
-                    //workspace: workspace,
-                    shows_program_indices: true
-                )
-                .frame(height: 480)
-                .padding(10)
-                .onAppear
-                {
-                    workspace_preparation()
-                    set_programs()
                 }
                 
-                Spacer()
-                
-                WorkspaceControlView(workspace: workspace)
-                    .padding(8)
-                    .frame(height: 480)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .stroke(.tertiary, lineWidth: 1)
+                HStack(spacing: 16)
+                {
+                    SpatialPendant(
+                        controller: pendant_controller,
+                        shows_program_indices: true
                     )
-                    .padding(10)
-                
-                RobotControlView(robot: workspace.robot(named: "6DOF Robot"))
-                    .padding(8)
                     .frame(height: 480)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .stroke(.tertiary, lineWidth: 1)
-                    )
                     .padding(10)
-                
-                ToolControlView(tool: workspace.tool(named: "Gripper"))
-                    .padding(8)
-                    .frame(height: 480)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .stroke(.tertiary, lineWidth: 1)
-                    )
-                    .padding(10)
+                    .zIndex(1)
+                    
+                    Spacer()
+                    
+                    WorkspaceControlView(workspace: workspace)
+                        .padding(8)
+                        .frame(height: 480)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                .stroke(.tertiary, lineWidth: 1)
+                        )
+                        .padding(10)
+                    
+                    RobotControlView(robot: workspace.robot(named: "6DOF Robot"))
+                        .padding(8)
+                        .frame(height: 480)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                .stroke(.tertiary, lineWidth: 1)
+                        )
+                        .padding(10)
+                    
+                    ToolControlView(tool: workspace.tool(named: "Gripper"))
+                        .padding(8)
+                        .frame(height: 480)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                .stroke(.tertiary, lineWidth: 1)
+                        )
+                        .padding(10)
+                }
+                .frame(minWidth: 1024)
+                .padding(80)
             }
-            .frame(minWidth: 1024)
-            .padding(80)*/
+            .onAppear
+            {
+                workspace_preparation()
+                set_programs()
+            }
         }
         
         @State var inc = 0
@@ -307,7 +319,7 @@ struct SpatialPendant_Previews: PreviewProvider
             }
             
             inc += 1
-            if inc > 4 { inc = 0 }
+            if inc > 3/*4*/ { inc = 0 }
         }
         
         private func workspace_preparation()
@@ -330,7 +342,7 @@ struct SpatialPendant_Previews: PreviewProvider
             button_tap()
         }
         
-        /*private func set_programs()
+        private func set_programs()
         {
             workspace.add_program(
                 ProductionProgram(
@@ -386,7 +398,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     ]
                 )
             )
-        }*/
+        }
     }
     
     static var previews: some View

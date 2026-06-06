@@ -66,14 +66,15 @@ open class Part: ProductionObject
     ///   - is_internal: A flag indicating whether the module is internal.
     ///
     /// The module entity is loaded asynchronously and applied when available.
+    /// If `name` is not specified, the module name is used as the object name.
     public init(
-        name: String,
+        name: String = String(),
         module: PartModule,
         
         is_internal: Bool = true
     )
     {
-        super.init(name: name)
+        super.init(name: name.isEmpty ? module.name : name)
         
         is_internal_module = is_internal
         import_module(module)
@@ -85,14 +86,17 @@ open class Part: ProductionObject
     ///   - name: A part identifier.
     ///   - module_name: A module identifier.
     ///   - is_internal: A flag indicating internal or external module source.
+    ///
+    /// The module entity is loaded asynchronously and applied when available.
+    /// If `name` is not specified, the module name is used as the object name.
     public override init(
-        name: String,
+        name: String = String(),
         module_name: String,
         
         is_internal: Bool
     )
     {
-        super.init(name: name, module_name: module_name, is_internal: is_internal)
+        super.init(name: name.isEmpty ? module_name : name, module_name: module_name, is_internal: is_internal)
     }
     
     // MARK: - Entity Preparation

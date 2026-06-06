@@ -123,14 +123,17 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     ///   - name: A robot identifier.
     ///   - module: A robot module defining structure and behavior.
     ///   - is_internal: A flag indicating whether the module is internal.
+    ///
+    /// The module entity is loaded asynchronously and applied when available.
+    /// If `name` is not specified, the module name is used as the object name.
     public init(
-        name: String,
+        name: String = String(),
         module: RobotModule,
         
         is_internal: Bool = true
     )
     {
-        super.init(name: name)
+        super.init(name: name.isEmpty ? module.name : name)
         
         is_internal_module = is_internal
         import_module(module)
@@ -142,14 +145,17 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     ///   - name: A robot identifier.
     ///   - module_name: A module identifier.
     ///   - is_internal: A flag indicating whether the module is internal.
+    ///
+    /// The module entity is loaded asynchronously and applied when available.
+    /// If `name` is not specified, the module name is used as the object name.
     public override init(
-        name: String,
+        name: String = String(),
         module_name: String,
         
         is_internal: Bool
     )
     {
-        super.init(name: name, module_name: module_name, is_internal: is_internal)
+        super.init(name: name.isEmpty ? module_name : name, module_name: module_name, is_internal: is_internal)
     }
     
     /// Creates a robot instance using a module name.
