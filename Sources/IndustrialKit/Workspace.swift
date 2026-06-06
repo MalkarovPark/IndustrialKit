@@ -1991,7 +1991,7 @@ import SwiftUI
             to: transform,
             relativeTo: nil,
             duration: animated ? TimeInterval(animation_duration) : TimeInterval(0),
-            timingFunction: .easeInOut
+            timingFunction: animated ? .easeInOut : .linear
         )
         
         // Tile scale
