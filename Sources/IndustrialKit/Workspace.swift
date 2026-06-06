@@ -1960,7 +1960,7 @@ import SwiftUI
     /// - Parameters:
     ///   - entity: Target entity to focus on (nil = full workspace)
     ///   - animated: If false, jumps directly to final state without animation
-    public func focus(on entity: Entity?, animated: Bool = false)
+    public func focus(on entity: Entity?, animated: Bool = true)
     {
         if is_focusing { return }
         is_focusing = true
