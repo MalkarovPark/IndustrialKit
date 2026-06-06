@@ -1709,7 +1709,7 @@ import SwiftUI
             wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
             workspace_camera_target.addChild(wall)
             target_tile = wall
-            //wall.isEnabled = false
+            wall.isEnabled = false
             
             workspace_camera_target.addChild(wall)
             scene_content?.cameraTarget = workspace_camera_target
