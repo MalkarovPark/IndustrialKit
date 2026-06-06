@@ -1989,12 +1989,19 @@ import SwiftUI
         var transform = workspace_camera_target.transform
         transform.translation = center
         
-        workspace_camera_target.move(
-            to: transform,
-            relativeTo: nil,
-            duration: animated ? TimeInterval(animation_duration) : 0,
-            timingFunction: .easeInOut
-        )
+        if animated
+        {
+            workspace_camera_target.move(
+                to: transform,
+                relativeTo: nil,
+                duration: animated ? TimeInterval(animation_duration) : 0,
+                timingFunction: .easeInOut
+            )
+        }
+        else
+        {
+            workspace_camera_target.transform = transform
+        }
         
         // Tile scale
         if let tile = target_tile
