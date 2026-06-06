@@ -1960,14 +1960,8 @@ import SwiftUI
     /// - Parameters:
     ///   - entity: Target entity to focus on (nil = full workspace)
     ///   - animated: If false, jumps directly to final state without animation
-    public func focus(on entity: Entity?, animated: Bool = true)
+    public func focus(on entity: Entity?, animated: Bool = false)
     {
-        if !animated
-        {
-            scene_content?.cameraTarget?.transform = entity?.transform ?? .init()
-            return
-        }
-        
         if is_focusing { return }
         is_focusing = true
         
@@ -1987,7 +1981,7 @@ import SwiftUI
             tile_size = max(SIMD2<Float>(width * margin, depth * margin), 0.25)//0.5)
         }
         
-        let animation_duration: Float = 0.4
+        let animation_duration: Float = animated ? 0.4 : 0.01
         
         // Pivot movement
         var transform = workspace_camera_target.transform
@@ -2025,7 +2019,7 @@ import SwiftUI
         }
         
         // Delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration))
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration * (animated ? 1 : 2)))
         { [weak self] in
             self?.is_focusing = false
         }
