@@ -1964,7 +1964,7 @@ import SwiftUI
     {
         if !animated
         {
-            scene_content?.cameraTarget = entity
+            scene_content?.cameraTarget?.transform = entity?.transform ?? .init()
             return
         }
         
