@@ -2003,18 +2003,25 @@ import SwiftUI
             let start_scale = tile.scale
             let target_scale = SIMD3<Float>(tile_size.x / base_width, tile.scale.y, tile_size.y / base_depth)
             
-            let steps = 400 //160 //40
-            let dt = animation_duration / Float(steps)
-            
-            for i in 1...steps
+            if animated
             {
-                let t = Float(i) / Float(steps)
-                let k = t * t * (3 - 2 * t) // Smoothstep easing
+                let steps = 400 //160 //40
+                let dt = animation_duration / Float(steps)
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
-                    guard let tile else { return }
-                    tile.scale = simd_mix(start_scale, target_scale, SIMD3<Float>(repeating: k))
+                for i in 1...steps
+                {
+                    let t = Float(i) / Float(steps)
+                    let k = t * t * (3 - 2 * t) // Smoothstep easing
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
+                        guard let tile else { return }
+                        tile.scale = simd_mix(start_scale, target_scale, SIMD3<Float>(repeating: k))
+                    }
                 }
+            }
+            else
+            {
+                tile.scale = target_scale // Skip scale animation
             }
         }
         
