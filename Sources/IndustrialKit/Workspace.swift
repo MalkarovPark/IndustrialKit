@@ -1709,7 +1709,7 @@ import SwiftUI
             wall.orientation = simd_quatf(angle: .pi/2, axis: [0, 1, 0])
             workspace_camera_target.addChild(wall)
             target_tile = wall
-            wall.isEnabled = false
+            //wall.isEnabled = false
             
             workspace_camera_target.addChild(wall)
             scene_content?.cameraTarget = workspace_camera_target
@@ -1960,10 +1960,14 @@ import SwiftUI
     /// - Parameters:
     ///   - entity: Target entity to focus on (nil = full workspace)
     ///   - animated: If false, jumps directly to final state without animation
-    public func focus(on entity: Entity?, animated: Bool = true)
+    public func focus(on entity: Entity?, animated: Bool = false)
     {
         if is_focusing { return }
-        is_focusing = true
+        
+        //if animated
+        //{
+            is_focusing = true
+        //}
         
         var center: SIMD3<Float> = .zero
         var tile_size = SIMD2<Float>(repeating: target_tile_default_size)
@@ -1984,15 +1988,26 @@ import SwiftUI
         let animation_duration: Float = animated ? 0.4 : 0.01
         
         // Pivot movement
-        var transform = workspace_camera_target.transform
-        transform.translation = center
-        
-        workspace_camera_target.move(
-            to: transform,
-            relativeTo: nil,
-            duration: TimeInterval(animation_duration),
-            timingFunction: .easeInOut
-        )
+        if animated
+        {
+            var transform = workspace_camera_target.transform
+            transform.translation = center
+            
+            workspace_camera_target.move(
+                to: transform,
+                relativeTo: nil,
+                duration: TimeInterval(animation_duration),
+                timingFunction: .easeInOut
+            )
+        }
+        else
+        {
+            //scene_content?.cameraTarget = entity
+            var transform = workspace_camera_target.transform
+            transform.translation = center
+            
+            workspace_camera_target.transform = transform
+        }
         
         // Tile scale
         if let tile = target_tile
@@ -2003,26 +2018,36 @@ import SwiftUI
             let start_scale = tile.scale
             let target_scale = SIMD3<Float>(tile_size.x / base_width, tile.scale.y, tile_size.y / base_depth)
             
-            let steps = 400 //160 //40
-            let dt = animation_duration / Float(steps)
-            
-            for i in 1...steps
+            if animated
             {
-                let t = Float(i) / Float(steps)
-                let k = t * t * (3 - 2 * t) // Smoothstep easing
+                let steps = 400 //160 //40
+                let dt = animation_duration / Float(steps)
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
-                    guard let tile else { return }
-                    tile.scale = simd_mix(start_scale, target_scale, SIMD3<Float>(repeating: k))
+                for i in 1...steps
+                {
+                    let t = Float(i) / Float(steps)
+                    let k = t * t * (3 - 2 * t) // Smoothstep easing
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
+                        guard let tile else { return }
+                        tile.scale = simd_mix(start_scale, target_scale, SIMD3<Float>(repeating: k))
+                    }
                 }
+            }
+            else
+            {
+                tile.scale = target_scale
             }
         }
         
         // Delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration * (animated ? 1 : 2)))
-        { [weak self] in
-            self?.is_focusing = false
-        }
+        //if animated
+        //{
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration /* (animated ? 1 : 2)*/))
+            { [weak self] in
+                self?.is_focusing = false
+            }
+        //}
     }
     
     /// Captures initial offset between camera and target pivot.
