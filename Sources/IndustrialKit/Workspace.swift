@@ -1992,14 +1992,9 @@ import SwiftUI
         workspace_camera_target.move(
             to: transform,
             relativeTo: nil,
-            duration: animated ? TimeInterval(animation_duration) : 0,
+            duration: animated ? TimeInterval(animation_duration) : TimeInterval(0.0001),
             timingFunction: .easeInOut
         )
-        
-        if !animated
-        {
-            workspace_camera_target.transform = transform
-        }
         
         // Tile scale
         if let tile = target_tile
