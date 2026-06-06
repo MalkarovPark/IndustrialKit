@@ -1962,8 +1962,6 @@ import SwiftUI
     ///   - animated: If false, jumps directly to final state without animation
     public func focus(on entity: Entity?, animated: Bool = true)
     {
-        //scene_content?.cameraTarget = entity?
-        
         if is_focusing { return }
         is_focusing = true
         
@@ -1992,7 +1990,7 @@ import SwiftUI
         workspace_camera_target.move(
             to: transform,
             relativeTo: nil,
-            duration: TimeInterval(animation_duration),
+            duration: animated ? TimeInterval(animation_duration) : TimeInterval(0.001),
             timingFunction: .easeInOut
         )
         
