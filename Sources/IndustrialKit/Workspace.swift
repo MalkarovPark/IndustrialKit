@@ -1957,8 +1957,10 @@ import SwiftUI
     /// - Grid tile scaling
     /// - Smooth easing transitions
     ///
-    /// - Parameter entity: Target entity to focus on (nil = full workspace)
-    public func focus(on entity: Entity?)
+    /// - Parameters:
+    ///   - entity: Target entity to focus on (nil = full workspace)
+    ///   - animated: If false, jumps directly to final state without animation
+    public func focus(on entity: Entity?, animated: Bool = true)
     {
         //scene_content?.cameraTarget = entity?
         
@@ -1990,38 +1992,56 @@ import SwiftUI
         workspace_camera_target.move(
             to: transform,
             relativeTo: nil,
-            duration: TimeInterval(animation_duration),
+            duration: animated ? TimeInterval(animation_duration) : 0,
             timingFunction: .easeInOut
         )
         
-        // Animate tile scale smoothly
+        // Tile scale
         if let tile = target_tile
         {
             let base_width: Float = 0.5
             let base_depth: Float = 0.5
             
-            let start_scale = tile.scale
-            let target_scale = SIMD3<Float>(tile_size.x / base_width, tile.scale.y, tile_size.y / base_depth)
+            let target_scale = SIMD3<Float>(
+                tile_size.x / base_width,
+                tile.scale.y,
+                tile_size.y / base_depth
+            )
             
-            let steps = 400 //160 //40
-            let dt = animation_duration / Float(steps)
-            
-            for i in 1...steps
+            if animated
             {
-                let t = Float(i) / Float(steps)
-                let k = t * t * (3 - 2 * t) // Smoothstep easing
+                let start_scale = tile.scale
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
-                    guard let tile else { return }
-                    tile.scale = simd_mix(start_scale, target_scale, SIMD3<Float>(repeating: k))
+                let steps = 400
+                let dt = animation_duration / Float(steps)
+                
+                for i in 1...steps
+                {
+                    let t = Float(i) / Float(steps)
+                    let k = t * t * (3 - 2 * t)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(dt * Float(i))) { [weak tile] in
+                        tile?.scale = simd_mix(start_scale, target_scale, SIMD3<Float>(repeating: k))
+                    }
                 }
+            }
+            else
+            {
+                tile.scale = target_scale
             }
         }
         
-        // Delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration))
-        { [weak self] in
-            self?.is_focusing = false
+        if animated
+        {
+            // Delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration))
+            { [weak self] in
+                self?.is_focusing = false
+            }
+        }
+        else
+        {
+            is_focusing = false
         }
     }
     
