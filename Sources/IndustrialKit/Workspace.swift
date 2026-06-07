@@ -1964,10 +1964,7 @@ import SwiftUI
     {
         if is_focusing { return }
         
-        //if animated
-        //{
-            is_focusing = true
-        //}
+        is_focusing = true
         
         var center: SIMD3<Float> = .zero
         var tile_size = SIMD2<Float>(repeating: target_tile_default_size)
@@ -2041,13 +2038,10 @@ import SwiftUI
         }
         
         // Delay
-        //if animated
-        //{
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration /* (animated ? 1 : 2)*/))
-            { [weak self] in
-                self?.is_focusing = false
-            }
-        //}
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(animation_duration /* (animated ? 1 : 2)*/))
+        { [weak self] in
+            self?.is_focusing = false
+        }
     }
     
     /// Captures initial offset between camera and target pivot.

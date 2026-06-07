@@ -249,9 +249,9 @@ Program formation is achieved through a process analogous to **teaching**: a con
 
 These assembled views, placed within a `FloatingView`, form a complete pendant that can be attached to a specific means of production. They collectively define the dynamic content of the `SpatialPendant`.
 
-<!-- <p align="center">
-  <img width="712" height="512" alt="Pendant Views" src="🎆 (program list separately)" />
-</p> -->
+<p align="center">
+  <img width="2784" height="1778" alt="Spatial Pendant Compose" src="https://github.com/user-attachments/assets/a350e8f8-653a-4b71-9770-e9e458c2297e" />
+</p>
 
 ### Registers <a name="registers"></a>
 
