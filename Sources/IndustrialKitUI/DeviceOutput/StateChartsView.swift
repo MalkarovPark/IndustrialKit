@@ -86,7 +86,7 @@ public struct StateChartsView: View
                         AreaMark(x: .value("Month", key), y: .value("Value", item.codomain))
                             .foregroundStyle(by: .value("Type", item.name))
                     }
-                    else if let key = item.domain.keys.first, let value = item.domain[key]
+                    if !chart.text_domain, let key = item.domain.keys.first, let value = item.domain[key]
                     {
                         AreaMark(x: .value("Month", Float(value)), y: .value("Value", item.codomain))
                             .foregroundStyle(by: .value("Type", item.name))
@@ -103,7 +103,7 @@ public struct StateChartsView: View
                         LineMark(x: .value("Month", key), y: .value("Value", item.codomain))
                             .foregroundStyle(by: .value("Type", item.name))
                     }
-                    else if let key = item.domain.keys.first, let value = item.domain[key]
+                    if !chart.text_domain, let key = item.domain.keys.first, let value = item.domain[key]
                     {
                         LineMark(x: .value("Month", Float(value)), y: .value("Value", item.codomain))
                             .foregroundStyle(by: .value("Type", item.name))
@@ -120,7 +120,7 @@ public struct StateChartsView: View
                         BarMark(x: .value("Month", key), y: .value("Value", item.codomain))
                             .foregroundStyle(by: .value("Type", item.name))
                     }
-                    else if let key = item.domain.keys.first, let value = item.domain[key]
+                    if !chart.text_domain, let key = item.domain.keys.first, let value = item.domain[key]
                     {
                         BarMark(x: .value("Month", Float(value)), y: .value("Value", item.codomain))
                             .foregroundStyle(by: .value("Type", item.name))
@@ -171,8 +171,7 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                 .frame(width: 640, height: 480)
                 .onAppear
                 {
-                    /*device_output.charts.append(StateChart(name: "Location", style: .line))
-                    device_output.charts.append(StateChart(name: "Rotation", style: .line))
+                    device_output.charts.append(StateChart(name: "Line", style: .line))
                     
                     for d in 0..<16
                     {
@@ -182,13 +181,6 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                         for i in 0...axis_names.count - 1
                         {
                             device_output.charts[0].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
-                        }
-                        
-                        axis_names = ["R", "P", "W"]
-                        components = [position_point.r, position_point.p, position_point.w]
-                        for i in 0...axis_names.count - 1
-                        {
-                            device_output.charts[1].data.append(ChartDataItem(name: axis_names[i], domain: ["": Float(d)], codomain: Float(components[i])))
                         }
                     }
                     
@@ -217,7 +209,7 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                                 ChartDataItem(name: "Piece 5", domain: ["" : 80], codomain: 30)
                             ]
                         )
-                    )*/
+                    )
                 }
                 .padding(.top)
         }
