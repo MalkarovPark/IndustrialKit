@@ -125,14 +125,11 @@ public struct SpatialPendant: View
                     on_update: on_update_tool
                 )
             case is Part:
-                ZStack
-                {
-                    Text("Part")
-                        .font(.system(size: 18, design: .rounded))
-                        .foregroundStyle(.secondary)
-                }
+                EmptyView()
             case .some(_):
                 Text("Nothing")
+                    .font(.system(size: 18, design: .rounded))
+                    .foregroundStyle(.secondary)
             case .none:
                 WorkspaceControlView(
                     workspace: workspace,
@@ -158,7 +155,7 @@ let pendant_content_width: CGFloat = 200
 #elseif os(iOS)
 let pendant_content_width: CGFloat = 240
 #elseif os(visionOS)
-let pendant_content_width: CGFloat = 300
+let pendant_content_width: CGFloat = 280
 #endif
 
 #if os(visionOS)
@@ -208,8 +205,12 @@ struct SpatialPendant_Previews: PreviewProvider
         @State private var is_pan = false
         #if os(macOS) || os(iOS)
         @State private var scene_content: RealityViewCameraContent?
+        
+        let stack_height: CGFloat = 480
         #else
         @State private var scene_content: RealityViewContent?
+        
+        let stack_height: CGFloat = 600
         #endif
         
         var body: some View
@@ -256,15 +257,17 @@ struct SpatialPendant_Previews: PreviewProvider
                         controller: pendant_controller,
                         shows_program_indices: true
                     )
-                    .frame(height: 480)
+                    .frame(height: stack_height)
                     .padding(10)
                     .zIndex(1)
                     
+                    #if !os(visionOS)
                     Spacer()
+                    #endif
                     
                     WorkspaceControlView(workspace: workspace)
                         .padding(8)
-                        .frame(height: 480)
+                        .frame(height: stack_height)
                         .overlay(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.tertiary, lineWidth: 1)
@@ -273,7 +276,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     
                     RobotControlView(robot: workspace.robot(named: "6DOF Robot"))
                         .padding(8)
-                        .frame(height: 480)
+                        .frame(height: stack_height)
                         .overlay(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.tertiary, lineWidth: 1)
@@ -282,7 +285,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     
                     ToolControlView(tool: workspace.tool(named: "Gripper"))
                         .padding(8)
-                        .frame(height: 480)
+                        .frame(height: stack_height)
                         .overlay(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.tertiary, lineWidth: 1)

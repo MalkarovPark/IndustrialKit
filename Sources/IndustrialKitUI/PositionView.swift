@@ -88,6 +88,9 @@ public struct PositionView: View
                                                 value: binding(for: component),
                                                 in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
                                         .labelsHidden()
+                                        #if os(visionOS)
+                                        .scaleEffect(0.8)
+                                        #endif
                                     }
                                 }
                                 #endif
@@ -200,7 +203,6 @@ struct PositionView_Previews: PreviewProvider
                 {
                     PositionView(position: $position, with_steppers: true)
                 }
-                .frame(width: 256)
                 .modifier(PreviewBorder())
             }
             .padding()
@@ -217,12 +219,19 @@ struct PositionView_Previews: PreviewProvider
         public func body(content: Content) -> some View
         {
             content
+            #if !os(visionOS)
+                .frame(width: 256)
                 .padding()
                 .background(.bar)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .shadow(color: .black.opacity(0.2), radius: 8)
                 .padding()
                 .padding()
+            #else
+                .frame(width: 360)
+                .padding()
+                .glassBackgroundEffect(in: .rect(cornerRadius: 24, style: .continuous))
+            #endif
         }
     }
 }

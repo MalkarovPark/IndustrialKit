@@ -184,15 +184,49 @@ public struct RobotControlView: View
             VStack(alignment: .center, spacing: 10)
             {
                 PositionPane(robot: robot)
+                #if os(visionOS)
+                    .background
+                    {
+                        GeometryReader
+                        { geometry in
+                            Color.clear
+                                .onAppear
+                            {
+                                tile_size = geometry.size
+                                print(tile_size.height)
+                                //update_portal(with: geometry.size)
+                            }
+                            .onChange(of: geometry.size)
+                            { _, new_size in
+                                tile_size = new_size
+                                print(tile_size.height)
+                                //update_portal(with: new_size)
+                            }
+                        }
+                    }
+                #endif
                 
+                #if !os(visionOS)
                 PositionControl(robot: robot)
                     .frame(width: 120)
+                #else
+                if tile_size.height < 55
+                {
+                    PositionControl(robot: robot)
+                        //.frame(width: 120)
+                }
+                #endif
             }
             #if os(visionOS)
+            //.frame(width: 120)
             .padding(.vertical, 16)
             #endif
         }
     }
+    
+    #if os(visionOS)
+    @State private var tile_size = CGSize()
+    #endif
     
     // MARK: Functions
     private func add_item()
@@ -425,12 +459,15 @@ private struct PositionItemView: View
             .popover(isPresented: $position_item_view_presented,
                      arrowEdge: .trailing)
             {
-                #if os(macOS) || os(visionOS)
+                #if os(macOS)
                 PositionPointView(robot: robot, program: program, point: point_item, point_index: point_index, position_item_view_presented: $position_item_view_presented)
                     .frame(minWidth: 256, idealWidth: 288, maxWidth: 512)
-                #else
+                #elseif os(iOS)
                 PositionPointView(robot: robot, program: program, point: point_item, point_index: point_index, position_item_view_presented: $position_item_view_presented, is_compact: horizontal_size_class == .compact)
                     .presentationDetents([.height(496)])
+                #elseif os(visionOS)
+                PositionPointView(robot: robot, program: program, point: point_item, point_index: point_index, position_item_view_presented: $position_item_view_presented)
+                    .frame(width: 360)
                 #endif
             }
         }
@@ -587,8 +624,11 @@ private struct PositionPointView: View
                     .frame(width: 80)
                     .keyboardType(.decimalPad)
                 #endif
-                Stepper("Enter", value: $point.move_speed, in: 0...100)
+                Stepper("Speed", value: $point.move_speed, in: 0...100)
                     .labelsHidden()
+                    #if os(visionOS)
+                    .scaleEffect(0.8)
+                    #endif
             }
         }
         .padding()
@@ -672,13 +712,12 @@ private struct PerformingControlView: View
         #endif
         #if !os(visionOS)
         .glassEffect(.regular.interactive())
-        #else
         .controlSize(.large)
+        #else
         .buttonStyle(.borderless)
         .glassBackgroundEffect()
-        .frame(depth: 24)
         #endif
-        #if os(macOS) || os(iOS)
+        #if !os(visionOS)
         .padding(10)
         #else
         .padding(16)

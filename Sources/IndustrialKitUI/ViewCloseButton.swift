@@ -97,11 +97,9 @@ public struct CircleButtonGlassBorderer: ViewModifier
             .buttonStyle(.glass)
         #elseif os(iOS)
             .glassEffect(.regular.interactive())
-        #else
-            .controlSize(.large)
+        #elseif os(visionOS)
             .buttonStyle(.borderless)
             .glassBackgroundEffect()
-            .frame(depth: 24)
         #endif
     }
 }
@@ -137,6 +135,7 @@ public struct CircleButtonImageFramer: ViewModifier
 {
     ZStack
     {
+        #if !os(visionOS)
         Rectangle()
             .foregroundStyle(.white)
             .frame(width: 320, height: 240)
@@ -148,6 +147,18 @@ public struct CircleButtonImageFramer: ViewModifier
             .modifier(ViewCloseButton(is_presented: .constant(true)))
             .frame(width: 320, height: 240)
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        #else
+        ZStack
+        {
+            Rectangle()
+                .foregroundStyle(.mint.opacity(0.25))
+                .modifier(ViewCloseButton(is_presented: .constant(true)))
+                .frame(width: 320, height: 240)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        }
+        .frame(width: 320, height: 240)
+        .glassBackgroundEffect()
+        #endif
     }
     .padding(32)
 }
@@ -158,7 +169,7 @@ public struct CircleButtonImageFramer: ViewModifier
     
     VStack()
     {
-        Button("View Sheet")
+        Button("Show Sheet")
         {
             is_presented = true
         }

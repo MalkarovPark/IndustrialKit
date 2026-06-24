@@ -427,15 +427,17 @@ public struct PositionPane: View
                         })
                         {
                             Image(systemName: "chevron.compact.down")
-                            #if !os(macOS)
+                            #if os(iOS)
                                 .font(.system(size: 16))
                                 .frame(width: 32, height: 16)
                             #endif
-                            #if os(visionOS)
-                                .padding(2)
-                            #endif
                         }
+                        #if !os(visionOS)
                         .buttonStyle(.plain)
+                        #else
+                        .buttonStyle(.bordered)
+                        .scaleEffect(0.7)
+                        #endif
                         .padding(.top, 10)
                         .scaleEffect(is_editor_mode ? 1 : 0.01)
                         .contentShape(Rectangle())
@@ -454,8 +456,10 @@ public struct PositionPane: View
                     }
                     #if os(macOS)
                     .frame(width: is_editor_mode ? 280 : 120)
-                    #else
+                    #elseif os(iOS)
                     .frame(width: is_editor_mode ? 332 : 120)
+                    #elseif os(visionOS)
+                    .frame(width: is_editor_mode ? 360 : 120)
                     #endif
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
@@ -506,7 +510,11 @@ struct PositionControl_Previews: PreviewProvider
                 PositionControl(robot: robot)
                     .padding()
             }
+            #if !os(visionOS)
             .frame(width: 400, height: 400)
+            #else
+            .frame(width: 400, height: 600)
+            #endif
         }
     }
     

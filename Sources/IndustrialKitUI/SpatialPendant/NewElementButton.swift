@@ -125,7 +125,9 @@ public struct NewElementButton: View
                     #else
                     .frame(height: 44)
                     #endif
+                    #if !os(visionOS)
                     .imageScale(.large)
+                    #endif
                     .glassEffect(.regular.interactive(), in: .capsule(style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
                     #if os(macOS) || os(iOS)
@@ -161,9 +163,7 @@ public struct NewElementButton: View
     
     ZStack
     {
-        NewElementButton(with_name: true, is_expanded: $is_expanded)
-            //.border(.gray)
-            //.padding()
+        NewElementButton(with_name: true, is_expanded: $is_expanded, add_name_action: { new_name in print(new_name) })
     }
     .frame(width: 256)
 }

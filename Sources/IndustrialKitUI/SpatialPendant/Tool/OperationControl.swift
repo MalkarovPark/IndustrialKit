@@ -43,7 +43,7 @@ public struct OperationControl: View
                             #elseif os(iOS)
                                 .font(.system(size: 18, design: .rounded))
                             #elseif os(visionOS)
-                                .font(.system(size: 20, design: .rounded))
+                                .font(.system(size: 14, design: .rounded))
                                 .padding(4)
                             #endif
                                 .foregroundStyle(.secondary)
@@ -99,15 +99,17 @@ public struct OperationControl: View
                         })
                         {
                             Image(systemName: "chevron.compact.down")
-                            #if !os(macOS)
+                            #if os(iOS)
                                 .font(.system(size: 16))
                                 .frame(width: 32, height: 16)
                             #endif
-                            #if os(visionOS)
-                                .padding(2)
-                            #endif
                         }
+                        #if !os(visionOS)
                         .buttonStyle(.plain)
+                        #else
+                        .buttonStyle(.bordered)
+                        .scaleEffect(0.7)
+                        #endif
                         .padding(.top, 10)
                         .scaleEffect(is_expanded ? 1 : 0.01)
                         .contentShape(Rectangle())

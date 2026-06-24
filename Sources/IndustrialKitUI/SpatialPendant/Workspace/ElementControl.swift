@@ -86,15 +86,17 @@ public struct ElementControl: View
                         })
                         {
                             Image(systemName: "chevron.compact.down")
-                            #if !os(macOS)
+                            #if os(iOS)//!os(macOS)
                                 .font(.system(size: 16))
                                 .frame(width: 32, height: 16)
                             #endif
-                            #if os(visionOS)
-                                .padding(2)
-                            #endif
                         }
+                        #if !os(visionOS)
                         .buttonStyle(.plain)
+                        #else
+                        .buttonStyle(.bordered)
+                        .scaleEffect(0.7)
+                        #endif
                         .padding(.top, 10)
                         .scaleEffect(is_expanded ? 1 : 0.01)
                         .contentShape(Rectangle())
