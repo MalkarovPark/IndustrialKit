@@ -184,49 +184,15 @@ public struct RobotControlView: View
             VStack(alignment: .center, spacing: 10)
             {
                 PositionPane(robot: robot)
-                #if os(visionOS)
-                    .background
-                    {
-                        GeometryReader
-                        { geometry in
-                            Color.clear
-                                .onAppear
-                            {
-                                tile_size = geometry.size
-                                print(tile_size.height)
-                                //update_portal(with: geometry.size)
-                            }
-                            .onChange(of: geometry.size)
-                            { _, new_size in
-                                tile_size = new_size
-                                print(tile_size.height)
-                                //update_portal(with: new_size)
-                            }
-                        }
-                    }
-                #endif
                 
-                #if !os(visionOS)
                 PositionControl(robot: robot)
                     .frame(width: 120)
-                #else
-                if tile_size.height < 55
-                {
-                    PositionControl(robot: robot)
-                        //.frame(width: 120)
-                }
-                #endif
             }
             #if os(visionOS)
-            //.frame(width: 120)
             .padding(.vertical, 16)
             #endif
         }
     }
-    
-    #if os(visionOS)
-    @State private var tile_size = CGSize()
-    #endif
     
     // MARK: Functions
     private func add_item()
