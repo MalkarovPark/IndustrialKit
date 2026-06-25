@@ -185,7 +185,11 @@ struct ControlTextView_Previews: PreviewProvider
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            #if !os(visionOS)
             .background(.white)
+            #else
+            .background(.thickMaterial)
+            #endif
             .overlay(alignment: .bottomLeading)
             {
                 Menu

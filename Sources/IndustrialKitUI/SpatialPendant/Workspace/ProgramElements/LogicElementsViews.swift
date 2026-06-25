@@ -82,6 +82,14 @@ public struct ComparatorElementView: View
     
     private let on_update: () -> ()
     
+    #if os(macOS)
+    private let registers_selector_width: CGFloat = 40
+    #elseif os(iOS)
+    private let registers_selector_width: CGFloat = 56
+    #elseif os(visionOS)
+    private let registers_selector_width: CGFloat = 72
+    #endif
+    
     public init(
         element: ComparatorLogicElement,
         workspace: Workspace,
@@ -145,16 +153,16 @@ public struct ComparatorElementView: View
                 )
                 
                 Text("If value of")
-                    .frame(minWidth: 60)
                 
                 RegistersSelector(text: "\(element.value_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: value_index, names: ["Value 1"])
+                    .frame(width: registers_selector_width)
                 
                 CompareTypePicker(compare_type: compare_type)
                 
                 Text("value of")
-                    .frame(minWidth: 48)
                 
                 RegistersSelector(text: "\(element.value2_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: value2_index, names: ["Value 2"])
+                    .frame(width: registers_selector_width)
             }
             .padding(.bottom)
             
@@ -215,6 +223,9 @@ public struct CompareTypePicker: View
         label:
         {
             Image(systemName: compare_type.rawValue)
+            #if !os(visionOS)
+                .padding(4)
+            #endif
         }
         .popover(isPresented: $picker_is_presented)
         {
@@ -228,13 +239,11 @@ public struct CompareTypePicker: View
             .pickerStyle(.segmented)
             .labelsHidden()
             .padding()
-            #if !os(macOS)
+            #if os(iOS)
             .presentationDetents([.height(96)])
             #endif
         }
-        #if os(visionOS)
         .buttonBorderShape(.circle)
-        #endif
     }
 }
 
@@ -308,6 +317,7 @@ struct IMALogicPreviewsContainer: PreviewProvider
                     
                     if let selected_program = workspace.selected_program
                     {
+                        selected_program.elements.append(JumpLogicElement())
                         selected_program.elements.append(ComparatorLogicElement())
                         selected_program.elements.append(MarkLogicElement(name: "Mark"))
                     }
@@ -318,7 +328,6 @@ struct IMALogicPreviewsContainer: PreviewProvider
     struct LogicView: View
     {
         @ObservedObject var workspace: Workspace
-        //var mark = MarkLogicElement(name: "Mark")
         
         var body: some View
         {
@@ -332,26 +341,23 @@ struct IMALogicPreviewsContainer: PreviewProvider
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding([.horizontal, .top], 8)*/
                 
-                HStack(alignment: .top)
+                VStack
                 {
                     if let selected_program = workspace.selected_program
                     {
-                        if let element = selected_program.elements.first as? ComparatorLogicElement, let element2 = selected_program.elements.last as? MarkLogicElement
+                        if let element = selected_program.elements[0] as? JumpLogicElement,
+                           let element2 = selected_program.elements[1] as? ComparatorLogicElement,
+                           let element3 = selected_program.elements[2] as? MarkLogicElement
                         {
-                            ComparatorElementView(element: element, workspace: workspace, program: selected_program)
+                            JumpElementView(element: element, program: selected_program)
                                 .modifier(PreviewBorder())
                             
-                            MarkLogicElementView(element: element2, workspace: workspace, program: selected_program)
+                            ComparatorElementView(element: element2, workspace: workspace, program: selected_program)
+                                .modifier(PreviewBorder())
+                            
+                            MarkLogicElementView(element: element3, workspace: workspace, program: selected_program)
                                 .modifier(PreviewBorder())
                         }
-                    }
-                    else
-                    {
-                        ComparatorElementView(element: ComparatorLogicElement(), workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
-                            .modifier(PreviewBorder())
-                        
-                        MarkLogicElementView(element: MarkLogicElement(), workspace: workspace, program: ProductionProgram())
-                            .modifier(PreviewBorder())
                     }
                 }
             }
@@ -364,12 +370,14 @@ struct IMALogicPreviewsContainer: PreviewProvider
         public func body(content: Content) -> some View
         {
             content
-                .padding()
-            #if !os(visionOS)
+            #if os(macOS)
                 .frame(width: 256)
-            #else
+            #elseif os(iOS)
                 .frame(width: 320)
+            #else
+                .frame(width: 400)
             #endif
+                .padding()
                 .background(.bar)
             #if !os(visionOS)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))

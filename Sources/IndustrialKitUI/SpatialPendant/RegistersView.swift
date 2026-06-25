@@ -122,6 +122,8 @@ public struct RegistersSelector: View
         {
             Text(text)
                 .frame(maxWidth: .infinity)
+                .lineLimit(1)
+                //.truncationMode(.tail)
         }
         .popover(isPresented: $is_presented)
         {

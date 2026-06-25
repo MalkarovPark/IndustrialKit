@@ -475,12 +475,14 @@ struct IMAPerformersPreviewsContainer: PreviewProvider
         public func body(content: Content) -> some View
         {
             content
-                .padding()
-            #if !os(visionOS)
+            #if os(macOS)
                 .frame(width: 256)
-            #else
+            #elseif os(iOS)
                 .frame(width: 320)
+            #else
+                .frame(width: 400)
             #endif
+                .padding()
                 .background(.bar)
             #if !os(visionOS)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))

@@ -245,6 +245,13 @@ public struct WriterElementView: View
                                 indices: output_to,
                                 names: ["To"]
                             )
+                            #if os(macOS)
+                            .frame(width: 64)
+                            #elseif os(iOS)
+                            .frame(width: 64)
+                            #elseif os(visionOS)
+                            .frame(width: 96)
+                            #endif
                         }
                         .listRowSeparator(.hidden)
                         .contextMenu
@@ -384,11 +391,22 @@ public struct MathElementView: View
             
             TextField("Expression", text: expression)
                 .textFieldStyle(.roundedBorder)
+            #if os(macOS)
+                .padding(.trailing, 10)
+            #else
                 .padding(.trailing)
+            #endif
                 .onSubmit(on_update)
                 .frame(minWidth: 160, maxWidth: .infinity)
             
             RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: to_index, names: ["To"])
+            #if os(macOS)
+                .frame(width: 64)
+            #elseif os(iOS)
+                .frame(width: 80)
+            #elseif os(visionOS)
+                .frame(width: 96)
+            #endif
         }
     }
 }
@@ -648,6 +666,13 @@ public struct ObserverElementView: View
                                 indices: output_to,
                                 names: ["To"]
                             )
+                            #if os(macOS)
+                            .frame(width: 64)
+                            #elseif os(iOS)
+                            .frame(width: 80)
+                            #elseif os(visionOS)
+                            .frame(width: 96)
+                            #endif
                         }
                         .listRowSeparator(.hidden)
                         .contextMenu
@@ -826,12 +851,14 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
         public func body(content: Content) -> some View
         {
             content
-                .padding()
-            #if !os(visionOS)
+            #if os(macOS)
                 .frame(width: 256)
-            #else
+            #elseif os(iOS)
                 .frame(width: 320)
+            #else
+                .frame(width: 400)
             #endif
+                .padding()
                 .background(.bar)
             #if !os(visionOS)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))

@@ -110,6 +110,13 @@ public struct ElementControl: View
                                 ProductionProgramElementView(element: workspace.current_element, workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
                                     .padding(4)
                             }
+                            #if os(macOS)
+                            .frame(width: is_expanded ? 256 : 120)
+                            #elseif os(iOS)
+                            .frame(width: is_expanded ? 320 : 120)
+                            #elseif os(visionOS)
+                            .frame(width: is_expanded ? 400 : 120)
+                            #endif
                             
                             Menu("New Element")
                             {
@@ -156,11 +163,6 @@ public struct ElementControl: View
                         }
                         .padding(10)
                     }
-                    #if os(macOS)
-                    .frame(width: is_expanded ? 280 : 120)
-                    #else
-                    .frame(width: is_expanded ? 320 : 120)
-                    #endif
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
                     .matchedGeometryEffect(id: "glass", in: pane_glass)
                     .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
@@ -336,8 +338,6 @@ struct ElementControl_Previews: PreviewProvider
             }
             #if !os(visionOS)
             .frame(width: 400, height: 440)
-            #else
-            .frame(width: 512, height: 440)
             #endif
             .onAppear
             {
