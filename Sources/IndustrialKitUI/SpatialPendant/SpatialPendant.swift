@@ -184,8 +184,10 @@ public struct SpatialPendantScene: SwiftUI.Scene
         {
             SpatialPendant(controller: controller)//, workspace: controller.workspace)
                 .onDisappear(perform: controller.on_dismiss)
-                .padding([.horizontal, .top], 16)
+                .glassBackgroundEffect(in: .rect(cornerRadius: 24, style: .continuous))
+                .frame(minHeight: 640, idealHeight: 640, maxHeight: 800)
         }
+        .windowStyle(.plain)
         .windowResizability(.contentSize)
     }
 }
