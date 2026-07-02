@@ -138,6 +138,9 @@ public struct NewElementButton: View
                 }
             }
         }
+        #if os(visionOS)
+        .frame(depth: 4)
+        #endif
     }
     
     private func name_process()

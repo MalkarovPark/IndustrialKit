@@ -300,7 +300,7 @@ private struct PositionProgramView: View
                 Button(action: dismiss_function)
                 {
                     Image(systemName: "chevron.left")
-                    #if os(iOS)
+                    #if !os(macOS)
                         .font(.system(size: 20))
                         .padding(4)
                         .contentShape(Rectangle())
@@ -716,10 +716,10 @@ struct RobotControlView_Previews: PreviewProvider
                 }
                 .padding(10)
             }
-            #if os(macOS)
-            .frame(height: 480)
+            #if !os(visionOS)
+            .frame(minWidth: 480, minHeight: 480)
             #else
-            .frame(height: 600)
+            .frame(minWidth: 800, minHeight: 480)
             #endif
         }
     }

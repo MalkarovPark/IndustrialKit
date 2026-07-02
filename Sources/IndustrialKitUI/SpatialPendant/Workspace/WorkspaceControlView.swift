@@ -329,11 +329,9 @@ private struct ProgramDropDelegate: DropDelegate
 private struct ProductionProgramView: View
 {
     @Binding var view_program_as_text: Bool
-    
     @Binding var code_editor_text: String
     
     @ObservedObject var workspace: Workspace
-    
     @ObservedObject var program: ProductionProgram
     
     var on_update: () -> () = {}
@@ -351,7 +349,7 @@ private struct ProductionProgramView: View
             HStack
             {
                 Text(program.name)
-                #if os(macOS) || os(visionOS)
+                #if os(macOS)
                     .font(.system(size: 14, design: .rounded))
                 #else
                     .font(.system(size: 18, design: .rounded))
@@ -365,7 +363,7 @@ private struct ProductionProgramView: View
                 Button(action: dismiss_function)
                 {
                     Image(systemName: "chevron.left")
-                    #if os(iOS)
+                    #if !os(macOS)
                         .font(.system(size: 20))
                         .padding(4)
                         .contentShape(Rectangle())
@@ -381,7 +379,7 @@ private struct ProductionProgramView: View
                 {
                     Image(systemName: view_program_as_text ? "text.justify.left" : "square.grid.2x2")
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    #if os(iOS)
+                    #if !os(macOS)
                         .font(.system(size: 20))
                         .padding(4)
                         .contentShape(Rectangle())
@@ -488,7 +486,11 @@ private struct ElementItemView: View
         ZStack
         {
             Rectangle()
+            #if !os(visionOS)
                 .fill(element.color.opacity(0.25))
+            #else
+                .fill(.clear)
+            #endif
             
             Image(systemName: element.symbol_name)
                 .foregroundStyle(element.color)
@@ -496,6 +498,11 @@ private struct ElementItemView: View
                 .frame(width: 24, height: 24)
         }
         .aspectRatio(1, contentMode: .fit)
+        #if !os(visionOS)
+        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+        #else
+        .glassEffect(.regular.interactive().tint(element.color.opacity(0.25)), in: .rect(cornerRadius: 6, style: .continuous))
+        #endif
         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
         .frame(width: element_card_scale, height: element_card_scale)
         .contentShape(Rectangle())
@@ -507,6 +514,9 @@ private struct ElementItemView: View
                     .foregroundStyle(element.performing_state.color)
                     .font(.system(size: element_card_light_size))
                     .padding(element_card_light_padding)
+                #if os(visionOS)
+                    .frame(depth: 2)
+                #endif
             }
         }
         .onTapGesture
@@ -517,6 +527,9 @@ private struct ElementItemView: View
         {
             ProductionProgramElementView(element: element, workspace: workspace, program: program, on_update: on_update)
                 .padding()
+            #if os(visionOS)
+                .frame(width: 300)
+            #endif
         }
         .contextMenu
         {
@@ -618,19 +631,18 @@ private struct PerformingControlView: View
         }
         #if os(macOS)
         .padding(4)
-        #endif
-        #if !os(visionOS)
         .glassEffect(.regular.interactive())
-        #else
-        .controlSize(.large)
+        #elseif os(iOS)
+        .glassEffect(.regular.interactive())
+        #elseif os(visionOS)
         .buttonStyle(.borderless)
         .glassBackgroundEffect()
-        .frame(depth: 24)
+        .frame(depth: 4)
         #endif
-        #if os(macOS) || os(iOS)
+        #if !os(visionOS)
         .padding(10)
         #else
-        .padding(16)
+        .padding(14)
         #endif
     }
 }
@@ -640,18 +652,24 @@ private struct PerformingControlView: View
 // MARK: - Sizes
 let element_card_maximum = element_card_scale + element_card_spacing
 
-#if os(macOS) || os(visionOS)
+#if os(macOS)// || os(visionOS)
 let element_card_scale: CGFloat = 35
 let element_card_spacing: CGFloat = 10
 let element_card_font_size: CGFloat = 14
 let element_card_light_size: CGFloat = 5
 let element_card_light_padding: CGFloat = 3
-#else
+#elseif os(iOS)
 let element_card_scale: CGFloat = 60
 let element_card_spacing: CGFloat = 16
 let element_card_font_size: CGFloat = 24
 let element_card_light_size: CGFloat = 8
 let element_card_light_padding: CGFloat = 6
+#elseif os(visionOS)
+let element_card_scale: CGFloat = 50
+let element_card_spacing: CGFloat = 16
+let element_card_font_size: CGFloat = 18
+let element_card_light_size: CGFloat = 7
+let element_card_light_padding: CGFloat = 5
 #endif
 
 // MARK: - Previews
@@ -672,10 +690,10 @@ struct WorkspaceControl_Previews: PreviewProvider
                 }
                 .padding(10)
             }
-            #if os(macOS)
-            .frame(height: 480)
+            #if !os(visionOS)
+            .frame(minWidth: 480, minHeight: 480)
             #else
-            .frame(height: 600)
+            .frame(minWidth: 800, minHeight: 480)
             #endif
             .onAppear
             {

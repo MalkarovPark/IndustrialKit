@@ -43,8 +43,8 @@ public struct OperationControl: View
                             #elseif os(iOS)
                                 .font(.system(size: 18, design: .rounded))
                             #elseif os(visionOS)
-                                .font(.system(size: 14, design: .rounded))
-                                .padding(4)
+                                .font(.system(size: 16, design: .rounded))
+                                .padding(2)
                             #endif
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity)

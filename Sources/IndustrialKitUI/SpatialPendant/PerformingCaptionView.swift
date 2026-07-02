@@ -48,12 +48,21 @@ struct PerformingCaptionView: View
             {
                 Spacer()
                 Image(systemName:"circlebadge.fill")
+                #if !os(visionOS)
                     .foregroundColor(performing_state.color)
+                #endif
+                    .foregroundColor(.clear)
+                #if os(visionOS)
+                    .glassEffect(.regular.tint(performing_state.color).interactive(), in: .circle)
+                #endif
                 #if os(macOS)
                     .padding(.trailing, 10)
                     .font(.system(size: 14))
-                #else
+                #elseif os(iOS)
                     .padding(.trailing, 10)
+                    .font(.system(size: 18))
+                #elseif os(visionOS)
+                    .padding(.trailing, 12)
                     .font(.system(size: 18))
                 #endif
             }
@@ -64,9 +73,35 @@ struct PerformingCaptionView: View
 
 #Preview
 {
-    PerformingCaptionView(name: "Workspace", performing_state: .none)
-        .frame(width: pendant_content_width)
-        .frame(width: pendant_content_width)
-        .padding()
-        .background(.secondary.opacity(0.25))
+    struct PreviewContainer: View
+    {
+        @State private var current_state_index: Int = 0
+        
+        var body: some View
+        {
+            PerformingCaptionView(
+                name: "Workspace",
+                performing_state: PerformingState.allCases[current_state_index]
+            )
+            .frame(width: pendant_content_width)
+            .padding()
+            #if !os(visionOS)
+            .background(.secondary.opacity(0.1))
+            #endif
+            .onReceive(
+                Timer.publish(
+                    every: 1.5,
+                    on: .main,
+                    in: .common
+                )
+                .autoconnect()
+            )
+            { _ in
+                current_state_index =
+                (current_state_index + 1) % PerformingState.allCases.count
+            }
+        }
+    }
+    
+    return PreviewContainer()
 }
