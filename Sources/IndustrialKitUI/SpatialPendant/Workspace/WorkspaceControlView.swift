@@ -466,7 +466,7 @@ private struct ProductionProgramView: View
     }
 }
 
-private struct ElementItemView: View
+internal struct ElementItemView: View
 {
     @ObservedObject var workspace: Workspace
     @ObservedObject var program: ProductionProgram
@@ -558,7 +558,7 @@ private struct ElementItemView: View
     }
 }
 
-private struct ElementDropDelegate: DropDelegate
+internal struct ElementDropDelegate: DropDelegate
 {
     let workspace: Workspace
     let program: ProductionProgram
@@ -647,8 +647,6 @@ private struct PerformingControlView: View
     }
 }
 
-
-
 // MARK: - Sizes
 let element_card_maximum = element_card_scale + element_card_spacing
 
@@ -678,6 +676,27 @@ struct WorkspaceControl_Previews: PreviewProvider
     struct Container: View
     {
         @StateObject var workspace = Workspace()
+        
+        @State private var sample_program = ProductionProgram(
+            name: "OwO",
+            elements: [
+                RobotPerformerElement(),
+                ToolPerformerElement(),
+                MoverModifierElement(),
+                MoverModifierElement(move_type: .move),
+                WriterModifierElement(),
+                MathModifierElement(),
+                ChangerModifierElement(),
+                ObserverModifierElement(),
+                CleanerModifierElement(),
+                JumpLogicElement(),
+                ComparatorLogicElement(),
+                MarkLogicElement(name: "Fin")
+            ]
+        )
+        @State private var dragging_element_id: UUID?
+        
+        private let columns: [GridItem] = [.init(.adaptive(minimum: element_card_maximum, maximum: element_card_maximum), spacing: 0)]
         
         var body: some View
         {
@@ -709,36 +728,56 @@ struct WorkspaceControl_Previews: PreviewProvider
                 workspace.tools.append(tool)
             }
             
-            VStack
+            LazyVGrid(columns: columns, spacing: element_card_spacing)
             {
-                HStack
-                {
-                    ElementItemView(workspace: workspace, program: ProductionProgram(), element: RobotPerformerElement(), on_update: {})
+                ForEach($sample_program.elements)
+                { $element in
+                    ElementItemView(
+                        workspace: workspace,
+                        program: sample_program,
+                        element: element,
+                        on_update: {}//on_update
+                    )
                     {
-                        
+                        if let index = sample_program.elements.firstIndex(where: { $0.id == element.id })
+                        {
+                            workspace.reset_performing()
+                            sample_program.elements.remove(at: index)
+                            workspace.elements_check(program: sample_program)
+                            
+                            //on_update()
+                        }
                     }
-                    
-                    ElementItemView(workspace: workspace, program: ProductionProgram(), element: MathModifierElement(), on_update: {})
+                    .onDrag
                     {
+                        workspace.reset_performing()
                         
+                        dragging_element_id = element.id
+                        return NSItemProvider(object: element.id.uuidString as NSString)
                     }
-                }
-                
-                HStack
-                {
-                    ElementItemView(workspace: workspace, program: ProductionProgram(), element: JumpLogicElement(), on_update: {})
-                    {
-                        
-                    }
-                    
-                    ElementItemView(workspace: workspace, program: ProductionProgram(), element: JumpLogicElement(), on_update: {})
-                    {
-                        
-                    }
-                    .hidden()
+                    .onDrop(
+                        of: [.text],
+                        delegate: ElementDropDelegate(
+                            workspace: workspace,
+                            program: sample_program,
+                            
+                            current_element: element,
+                            dragging_element_id: $dragging_element_id,
+                            
+                            on_update: {}//on_update
+                        )
+                    )
+                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                 }
             }
-            .frame(width: 160, height: 160)
+            .padding(.vertical, 16)
+            #if os(macOS)
+            .frame(width: 200)
+            #elseif os(iOS)
+            .frame(width: 320)
+            #elseif os(visionOS)
+            .frame(width: 280)
+            #endif
         }
     }
     

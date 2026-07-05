@@ -183,13 +183,17 @@ public struct ElementControl: View
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.image)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.color)
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    #if !os(visionOS)
                         .frame(width: 48, height: 48)
+                    #else
+                        .frame(width: 56, height: 56)
+                    #endif
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             .buttonStyle(.plain)
             .glassEffect(.regular.interactive().tint(workspace.current_element.color), in: .rect(cornerRadius: 16, style: .continuous))
-            #if os(macOS) || os(iOS)
+            #if !os(visionOS)
             .padding(10)
             #else
             .padding(16)

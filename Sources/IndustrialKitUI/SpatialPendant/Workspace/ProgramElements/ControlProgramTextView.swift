@@ -86,6 +86,10 @@ struct ControlTextView_Previews: PreviewProvider
                                         Image(systemName: "chevron.left")
                                             .frame(width: 2, height: 16)
                                     }
+                                    .buttonStyle(.bordered)
+                                    #if !os(macOS)
+                                    .buttonBorderShape(.circle)
+                                    #endif
                                     
                                     Button
                                     {
@@ -99,6 +103,10 @@ struct ControlTextView_Previews: PreviewProvider
                                         Image(systemName: "chevron.right")
                                             .frame(width: 2, height: 16)
                                     }
+                                    .buttonStyle(.bordered)
+                                    #if !os(macOS)
+                                    .buttonBorderShape(.circle)
+                                    #endif
                                 }
                                 .padding(10)
                             }
@@ -116,13 +124,23 @@ struct ControlTextView_Previews: PreviewProvider
                 
                 let tool = Tool(name: "Gripper")
                 tool.is_placed = true
-                tool.add_program(OperationProgram(name: "Close"))
+                tool.add_program(OperationProgram(name: "Bite"))
+                
+                let tool2 = Tool(name: "Sensor")
+                tool2.is_placed = true
                 
                 workspace.robots.append(robot)
                 workspace.tools.append(tool)
+                workspace.tools.append(tool2)
                 
                 workspace.programs.append(ProductionProgram(name: "Program"))
                 workspace.select_program(named: "Program")
+                
+                Changer.internal_modules.append(ChangerModule(name: "Module"))
+                Changer.internal_modules_list.append("Module")
+                
+                Changer.external_modules.append(ChangerModule(name: "Module"))
+                Changer.external_modules_list.append("Module")
             }
         }
     }
@@ -142,46 +160,53 @@ struct ControlTextView_Previews: PreviewProvider
         
         private let columns: [GridItem] = [.init(.adaptive(minimum: element_card_maximum, maximum: element_card_maximum), spacing: 0)]
         
-        @State private var view_program_as_text = false
-        
         var body: some View
         {
             VStack
             {
-                if !view_program_as_text
+                ScrollView
                 {
-                    ScrollView
+                    LazyVGrid(columns: columns, spacing: element_card_spacing)
                     {
-                        LazyVGrid(columns: columns, spacing: element_card_spacing)
-                        {
-                            ForEach($program.elements)
-                            { $element in
-                                ElementItemView(
+                        ForEach($program.elements)
+                        { $element in
+                            ElementItemView(
+                                workspace: workspace,
+                                program: program,
+                                element: element,
+                                on_update: {}
+                            )
+                            {
+                                if let index = program.elements.firstIndex(where: { $0.id == element.id })
+                                {
+                                    workspace.reset_performing()
+                                    program.elements.remove(at: index)
+                                    workspace.elements_check(program: program)
+                                }
+                            }
+                            .onDrag
+                            {
+                                workspace.reset_performing()
+                                
+                                dragging_element_id = element.id
+                                return NSItemProvider(object: element.id.uuidString as NSString)
+                            }
+                            .onDrop(
+                                of: [.text],
+                                delegate: ElementDropDelegate(
                                     workspace: workspace,
                                     program: program,
-                                    element: element
+                                    
+                                    current_element: element,
+                                    dragging_element_id: $dragging_element_id,
+                                    
+                                    on_update: {}
                                 )
-                                { if let index = program.elements.firstIndex(where: { $0.id == element.id })
-                                    {
-                                        program.elements.remove(at: index)
-                                        workspace.elements_check(program: program)
-                                    }
-                                }
-                                .onDrag
-                                {
-                                    dragging_element_id = element.id
-                                    return NSItemProvider(object: element.id.uuidString as NSString)
-                                }
-                                .onDrop(of: [.text], delegate: ElementDropDelegate(current_element: element, program: program, dragging_element_id: $dragging_element_id, workspace: workspace))
-                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                            }
+                            )
+                            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                         }
-                        .padding(.vertical, 16)
                     }
-                }
-                else
-                {
-                    //ControlProgramTextView(program: program, workspace: workspace, code_editor_text: $code_editor_text)
+                    .padding(.vertical, 16)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -235,110 +260,12 @@ struct ControlTextView_Previews: PreviewProvider
                     Image(systemName: "plus")
                 }
                 .pickerStyle(.menu)
+                .buttonStyle(.bordered)
+                #if !os(macOS)
+                .buttonBorderShape(.circle)
+                #endif
                 .padding(10)
             }
-        }
-    }
-    
-    private struct ElementItemView: View
-    {
-        @ObservedObject var workspace: Workspace
-        @ObservedObject var program: ProductionProgram
-        @ObservedObject var element: ProductionProgramElement
-        
-        @State private var element_view_presented = false
-        
-        #if os(iOS)
-        @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
-        #endif
-        
-        let on_delete: () -> ()
-        
-        var body: some View
-        {
-            ZStack
-            {
-                Rectangle()
-                    .fill(element.color.opacity(0.25))
-                
-                Image(systemName: element.symbol_name)
-                    .foregroundStyle(element.color)
-                    .font(.system(size: element_card_font_size))
-                    .frame(width: 24, height: 24)
-            }
-            .aspectRatio(1, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-            .frame(width: element_card_scale, height: element_card_scale)
-            .contentShape(Rectangle())
-            .overlay(alignment: .topLeading)
-            {
-                if element.performing_state != .none
-                {
-                    Image(systemName: "circle.fill")
-                        .foregroundStyle(element.performing_state.color)
-                        .font(.system(size: element_card_light_size))
-                        .padding(element_card_light_padding)
-                }
-            }
-            .onTapGesture
-            {
-                element_view_presented.toggle()
-            }
-            .popover(isPresented: $element_view_presented)
-            {
-                ProductionProgramElementView(element: element, workspace: workspace, program: program)
-                {
-                    workspace.objectWillChange.send()
-                }
-                .padding()
-            }
-            .contextMenu
-            {
-                Button(role: .destructive)
-                {
-                    on_delete()
-                }
-                label:
-                {
-                    Label("Delete", systemImage: "trash")
-                }
-            }
-            .help(element.info)
-        }
-    }
-    
-    private struct ElementDropDelegate: DropDelegate
-    {
-        let current_element: ProductionProgramElement
-        let program: ProductionProgram
-        
-        @Binding var dragging_element_id: UUID?
-        
-        let workspace: Workspace
-        
-        #if os(iOS)
-        @Environment(\.horizontalSizeClass) private var horizontal_size_class // Horizontal window size handler
-        #endif
-        
-        func dropEntered(info: DropInfo)
-        {
-            guard let dragging_id = dragging_element_id else { return }
-            
-            if dragging_id != current_element.id,
-               let from_index = program.elements.firstIndex(where: { $0.id == dragging_id }),
-               let to_index = program.elements.firstIndex(where: { $0.id == current_element.id })
-            {
-                withAnimation
-                {
-                    program.elements.move(fromOffsets: IndexSet(integer: from_index), toOffset: to_index > from_index ? to_index + 1 : to_index)
-                }
-            }
-        }
-        
-        func performDrop(info: DropInfo) -> Bool
-        {
-            dragging_element_id = nil
-            return true
         }
     }
 }
