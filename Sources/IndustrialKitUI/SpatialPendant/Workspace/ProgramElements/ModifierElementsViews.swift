@@ -794,12 +794,13 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                         
                         let tool = Tool(name: "Gripper")
                         tool.is_placed = true
-                        tool.add_program(OperationProgram(name: "Close"))
+                        tool.add_program(OperationProgram(name: "Bite"))
                         
                         workspace.robots.append(robot)
                         workspace.tools.append(tool)
                         
-                        Changer.internal_modules_list.append("Forces To Position")
+                        Changer.internal_modules_list.append("Random")
+                        Changer.external_modules_list.append("Defaults")
                     }
             }
         }
@@ -851,13 +852,7 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
         public func body(content: Content) -> some View
         {
             content
-            #if os(macOS)
-                .frame(width: 256)
-            #elseif os(iOS)
-                .frame(width: 320)
-            #else
-                .frame(width: 400)
-            #endif
+                .frame(width: element_control_width)
                 .padding()
                 .background(.bar)
             #if !os(visionOS)

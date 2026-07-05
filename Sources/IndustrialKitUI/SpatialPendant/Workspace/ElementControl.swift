@@ -110,13 +110,7 @@ public struct ElementControl: View
                                 ProductionProgramElementView(element: workspace.current_element, workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
                                     .padding(4)
                             }
-                            #if os(macOS)
-                            .frame(width: is_expanded ? 256 : 120)
-                            #elseif os(iOS)
-                            .frame(width: is_expanded ? 320 : 120)
-                            #elseif os(visionOS)
-                            .frame(width: is_expanded ? 400 : 120)
-                            #endif
+                            .frame(width: is_expanded ? element_control_width : 120)
                             
                             Menu("New Element")
                             {
@@ -202,6 +196,14 @@ public struct ElementControl: View
         }
     }
 }
+
+#if os(macOS)
+internal let element_control_width: CGFloat = 272
+#elseif os(iOS)
+internal let element_control_width: CGFloat = 370
+#elseif os(visionOS)
+internal let element_control_width: CGFloat = 400
+#endif
 
 //MARK: Type enums
 ///A performer program element type enum.
@@ -351,10 +353,13 @@ struct ElementControl_Previews: PreviewProvider
                 
                 let tool = Tool(name: "Gripper")
                 tool.is_placed = true
-                tool.add_program(OperationProgram(name: "Close"))
+                tool.add_program(OperationProgram(name: "Bite"))
                 
                 workspace.robots.append(robot)
                 workspace.tools.append(tool)
+                
+                Changer.internal_modules_list.append("Random")
+                Changer.external_modules_list.append("Defaults")
             }
         }
     }

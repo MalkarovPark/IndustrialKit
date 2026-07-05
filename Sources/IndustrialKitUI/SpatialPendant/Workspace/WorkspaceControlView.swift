@@ -526,10 +526,8 @@ internal struct ElementItemView: View
         .popover(isPresented: $element_view_presented)
         {
             ProductionProgramElementView(element: element, workspace: workspace, program: program, on_update: on_update)
+                .frame(width: element_control_width)
                 .padding()
-            #if os(visionOS)
-                .frame(width: 300)
-            #endif
         }
         .contextMenu
         {
@@ -700,20 +698,74 @@ struct WorkspaceControl_Previews: PreviewProvider
         
         var body: some View
         {
-            ZStack
+            Group
             {
-                FloatingView(alignment: .trailing)
+                ZStack
                 {
-                    WorkspaceControlView(workspace: workspace /*, on_update: { print("Program Updated") } */)
-                        .padding(8)
+                    FloatingView(alignment: .trailing)
+                    {
+                        WorkspaceControlView(workspace: workspace /*, on_update: { print("Program Updated") } */)
+                            .padding(8)
+                    }
+                    .padding(10)
                 }
-                .padding(10)
+                #if !os(visionOS)
+                .frame(minWidth: 480, minHeight: 480)
+                #else
+                .frame(minWidth: 800, minHeight: 480)
+                #endif
+                
+                LazyVGrid(columns: columns, spacing: element_card_spacing)
+                {
+                    ForEach($sample_program.elements)
+                    { $element in
+                        ElementItemView(
+                            workspace: workspace,
+                            program: sample_program,
+                            element: element,
+                            on_update: {}//on_update
+                        )
+                        {
+                            if let index = sample_program.elements.firstIndex(where: { $0.id == element.id })
+                            {
+                                workspace.reset_performing()
+                                sample_program.elements.remove(at: index)
+                                workspace.elements_check(program: sample_program)
+                                
+                                //on_update()
+                            }
+                        }
+                        .onDrag
+                        {
+                            workspace.reset_performing()
+                            
+                            dragging_element_id = element.id
+                            return NSItemProvider(object: element.id.uuidString as NSString)
+                        }
+                        .onDrop(
+                            of: [.text],
+                            delegate: ElementDropDelegate(
+                                workspace: workspace,
+                                program: sample_program,
+                                
+                                current_element: element,
+                                dragging_element_id: $dragging_element_id,
+                                
+                                on_update: {}//on_update
+                            )
+                        )
+                        .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                    }
+                }
+                .padding(.vertical, 16)
+                #if os(macOS)
+                .frame(width: 200)
+                #elseif os(iOS)
+                .frame(width: 320)
+                #elseif os(visionOS)
+                .frame(width: 280)
+                #endif
             }
-            #if !os(visionOS)
-            .frame(minWidth: 480, minHeight: 480)
-            #else
-            .frame(minWidth: 800, minHeight: 480)
-            #endif
             .onAppear
             {
                 let robot = Robot(name: "6DOF")
@@ -722,62 +774,14 @@ struct WorkspaceControl_Previews: PreviewProvider
                 
                 let tool = Tool(name: "Gripper")
                 tool.is_placed = true
-                tool.add_program(OperationProgram(name: "Close"))
+                tool.add_program(OperationProgram(name: "Bite"))
                 
                 workspace.robots.append(robot)
                 workspace.tools.append(tool)
+                
+                Changer.internal_modules_list.append("Random")
+                Changer.external_modules_list.append("Defaults")
             }
-            
-            LazyVGrid(columns: columns, spacing: element_card_spacing)
-            {
-                ForEach($sample_program.elements)
-                { $element in
-                    ElementItemView(
-                        workspace: workspace,
-                        program: sample_program,
-                        element: element,
-                        on_update: {}//on_update
-                    )
-                    {
-                        if let index = sample_program.elements.firstIndex(where: { $0.id == element.id })
-                        {
-                            workspace.reset_performing()
-                            sample_program.elements.remove(at: index)
-                            workspace.elements_check(program: sample_program)
-                            
-                            //on_update()
-                        }
-                    }
-                    .onDrag
-                    {
-                        workspace.reset_performing()
-                        
-                        dragging_element_id = element.id
-                        return NSItemProvider(object: element.id.uuidString as NSString)
-                    }
-                    .onDrop(
-                        of: [.text],
-                        delegate: ElementDropDelegate(
-                            workspace: workspace,
-                            program: sample_program,
-                            
-                            current_element: element,
-                            dragging_element_id: $dragging_element_id,
-                            
-                            on_update: {}//on_update
-                        )
-                    )
-                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                }
-            }
-            .padding(.vertical, 16)
-            #if os(macOS)
-            .frame(width: 200)
-            #elseif os(iOS)
-            .frame(width: 320)
-            #elseif os(visionOS)
-            .frame(width: 280)
-            #endif
         }
     }
     

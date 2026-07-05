@@ -223,8 +223,12 @@ public struct CompareTypePicker: View
         label:
         {
             Image(systemName: compare_type.rawValue)
-            #if !os(visionOS)
-                .padding(4)
+            #if os(macOS)
+                .frame(width: 16, height: 16)
+            #elseif os(iOS)
+                .frame(width: 20, height: 20)
+            #elseif os(visionOS)
+                .frame(width: 20, height: 20)
             #endif
         }
         .popover(isPresented: $picker_is_presented)
@@ -244,6 +248,7 @@ public struct CompareTypePicker: View
             #endif
         }
         .buttonBorderShape(.circle)
+        .buttonStyle(.bordered)
     }
 }
 
@@ -370,13 +375,7 @@ struct IMALogicPreviewsContainer: PreviewProvider
         public func body(content: Content) -> some View
         {
             content
-            #if os(macOS)
-                .frame(width: 256)
-            #elseif os(iOS)
-                .frame(width: 320)
-            #else
-                .frame(width: 400)
-            #endif
+                .frame(width: element_control_width)
                 .padding()
                 .background(.bar)
             #if !os(visionOS)
