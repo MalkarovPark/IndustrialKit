@@ -107,8 +107,8 @@ public struct OperationControl: View
                         #if !os(visionOS)
                         .buttonStyle(.plain)
                         #else
-                        .buttonStyle(.bordered)
-                        .scaleEffect(0.7)
+                        .buttonStyle(.borderless)
+                        .frame(height: 24)
                         #endif
                         .padding(.top, 10)
                         .scaleEffect(is_expanded ? 1 : 0.01)

@@ -94,8 +94,8 @@ public struct ElementControl: View
                         #if !os(visionOS)
                         .buttonStyle(.plain)
                         #else
-                        .buttonStyle(.bordered)
-                        .scaleEffect(0.7)
+                        .buttonStyle(.borderless)
+                        .frame(height: 24)
                         #endif
                         .padding(.top, 10)
                         .scaleEffect(is_expanded ? 1 : 0.01)
@@ -151,6 +151,7 @@ public struct ElementControl: View
                                 }
                             }
                             .pickerStyle(.menu)
+                            .buttonStyle(.borderless)
                             #if os(iOS)
                             .padding(.vertical, 4)
                             #endif
@@ -177,9 +178,11 @@ public struct ElementControl: View
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.image)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.color)
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    #if !os(visionOS)
+                    #if os(macOS)
                         .frame(width: 48, height: 48)
-                    #else
+                    #elseif os(iOS)
+                        .frame(width: 56, height: 56)
+                    #elseif os(visionOS)
                         .frame(width: 56, height: 56)
                     #endif
                 }

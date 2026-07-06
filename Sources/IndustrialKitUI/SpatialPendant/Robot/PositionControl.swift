@@ -435,8 +435,8 @@ public struct PositionPane: View
                         #if !os(visionOS)
                         .buttonStyle(.plain)
                         #else
-                        .buttonStyle(.bordered)
-                        .scaleEffect(0.7)
+                        .buttonStyle(.borderless)
+                        .frame(height: 24)
                         #endif
                         .padding(.top, 10)
                         .scaleEffect(is_editor_mode ? 1 : 0.01)
