@@ -73,6 +73,11 @@ public struct ElementControl: View
                     }
                     .transition(.opacity.combined(with: .scale(scale: 1.0)))
                     .help(workspace.current_element.info)
+                    #if !os(visionOS)
+                    .padding(.vertical, 10)
+                    #else
+                    .padding(.vertical, 16)
+                    #endif
                 }
                 else
                 {
@@ -164,9 +169,9 @@ public struct ElementControl: View
                 }
             }
             #if !os(visionOS)
-            .padding(.leading, 10)
+            .padding(.trailing, 10)
             #else
-            .padding(.leading, 16)
+            .padding(.trailing, 16)
             #endif
             
             Button
@@ -196,11 +201,6 @@ public struct ElementControl: View
             .buttonStyle(.plain)
             .glassEffect(.regular.interactive().tint(workspace.current_element.color), in: .rect(cornerRadius: 16, style: .continuous))
             .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
-            #if !os(visionOS)
-            .padding(10)
-            #else
-            .padding(16)
-            #endif
         }
     }
 }
