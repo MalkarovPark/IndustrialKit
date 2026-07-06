@@ -27,7 +27,7 @@ public struct JumpElementView: View
         
         self.on_update = on_update
         
-        if self.program.mark_names.count > 0 && self.element.target_mark_name.isEmpty
+        if self.program.mark_names.filter({ !$0.isEmpty }).count > 0 && self.element.target_mark_name.isEmpty
         {
             self.element.target_mark_name = self.program.mark_names[0]
         }

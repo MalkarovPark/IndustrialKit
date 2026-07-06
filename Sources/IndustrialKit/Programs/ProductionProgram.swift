@@ -125,7 +125,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     /// Marks are used as jump targets for logic elements.
     public var mark_names: [String]
     {
-        return elements.compactMap { ($0 as? MarkLogicElement)?.name }
+        return elements.compactMap { ($0 as? MarkLogicElement)?.name }.filter { !$0.isEmpty }
     }
     
     /// Resolves and assigns element indexes for all logic elements.
