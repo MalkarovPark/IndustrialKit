@@ -128,11 +128,11 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         return elements.compactMap { ($0 as? MarkLogicElement)?.name }.filter { !$0.isEmpty }
     }
     
-    /// Resolves and assigns element indexes for all logic elements.
+    /// Resolves and assigns element indices for all logic elements.
     ///
     /// The method builds a mapping between mark names and their positions,
-    /// then assigns target indexes for jump and comparator elements.
-    public func defining_elements_indexes()
+    /// then assigns target indices for jump and comparator elements.
+    public func defining_elements_indices()
     {
         // Build map of mark name – index in one pass
         let marks: [String: Int] = elements.enumerated().reduce(into: [:])
@@ -145,7 +145,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
             }
         }
         
-        // Assign target indexes for jump/comparator elements in one pass
+        // Assign target indices for jump/comparator elements in one pass
         for element in elements
         {
             switch element

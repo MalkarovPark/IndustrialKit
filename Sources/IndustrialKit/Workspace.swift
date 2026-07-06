@@ -1609,9 +1609,11 @@ import SwiftUI
     /// - Parameter element: Jump descriptor
     private func jump(by element: JumpLogicElement)
     {
+        if element.target_mark_name.isEmpty { return }
+        
         selected_element_index = element.target_element_index
         
-        reset_elements_states_to_current() // UI only
+        reset_elements_state_to_current() // UI only
     }
     
     /// Conditional jump based on register comparison result.
@@ -1621,11 +1623,13 @@ import SwiftUI
     /// - Parameter element: Comparator descriptor
     private func compare(by element: ComparatorLogicElement)
     {
+        if element.target_mark_name.isEmpty { return }
+        
         if element.compare_type.compare(registers[safe_float: element.value_index], registers[safe_float: element.value2_index])
         {
             selected_element_index = element.target_element_index
             
-            reset_elements_states_to_current() // UI only
+            reset_elements_state_to_current() // UI only
         }
     }
     
@@ -1633,7 +1637,7 @@ import SwiftUI
     ///
     /// Marks all following elements as non-executing.
     /// Used for visual synchronization only (no logic impact).
-    private func reset_elements_states_to_current()
+    private func reset_elements_state_to_current()
     {
         guard let program = selected_program else { return }
         
@@ -1648,7 +1652,7 @@ import SwiftUI
     /// Builds execution metadata required for runtime traversal.
     private func prepare_program(_ program: ProductionProgram)
     {
-        program.defining_elements_indexes()
+        program.defining_elements_indices()
     }
     
     // MARK: - UI
