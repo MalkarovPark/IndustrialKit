@@ -86,7 +86,7 @@ public struct ElementControl: View
                         })
                         {
                             Image(systemName: "chevron.compact.down")
-                            #if os(iOS)//!os(macOS)
+                            #if os(iOS) //!os(macOS)
                                 .font(.system(size: 16))
                                 .frame(width: 32, height: 16)
                             #endif
@@ -163,6 +163,11 @@ public struct ElementControl: View
                     .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
                 }
             }
+            #if !os(visionOS)
+            .padding(.leading, 10)
+            #else
+            .padding(.leading, 16)
+            #endif
             
             Button
             {
@@ -190,12 +195,12 @@ public struct ElementControl: View
             }
             .buttonStyle(.plain)
             .glassEffect(.regular.interactive().tint(workspace.current_element.color), in: .rect(cornerRadius: 16, style: .continuous))
+            .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
             #if !os(visionOS)
             .padding(10)
             #else
             .padding(16)
             #endif
-            .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
         }
     }
 }

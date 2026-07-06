@@ -238,13 +238,24 @@ public struct CompareTypePicker: View
                 ForEach(CompareType.allCases, id: \.self)
                 { compare_type in
                     Image(systemName: compare_type.rawValue)
+                    #if os(macOS)
+                        .frame(width: 16, height: 16)
+                    #elseif os(iOS)
+                        .frame(width: 20, height: 20)
+                    #elseif os(visionOS)
+                        .frame(width: 20, height: 20)
+                    #endif
                 }
             }
             .pickerStyle(.segmented)
             .labelsHidden()
-            .padding()
-            #if os(iOS)
+            #if os(macOS)
+            .padding(4)
+            #elseif os(iOS)
+            .padding(.horizontal)
             .presentationDetents([.height(96)])
+            #elseif os(visionOS)
+            .padding(.horizontal, 10)
             #endif
         }
         .buttonBorderShape(.circle)
