@@ -173,6 +173,7 @@ public struct ElementControl: View
             #else
             .padding(.trailing, 16)
             #endif
+            .zIndex(1)
             
             Button
             {

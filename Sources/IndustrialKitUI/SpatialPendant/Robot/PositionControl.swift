@@ -508,7 +508,7 @@ struct PositionControl_Previews: PreviewProvider
                 PositionPane(robot: robot)
                 
                 PositionControl(robot: robot)
-                    .padding()
+                    .padding(10)
             }
             #if !os(visionOS)
             .frame(width: 400, height: 400)
