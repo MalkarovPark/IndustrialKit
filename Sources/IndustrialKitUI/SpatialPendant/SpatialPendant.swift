@@ -362,7 +362,7 @@ struct SpatialPendant_Previews: PreviewProvider
                         ]),
                         ToolPerformerElement(object_name: "Gripper", is_single_perfrom: true, opcode_index: 5),
                         RobotPerformerElement(
-                            object_name: "6DOF",
+                            object_name: "6DOF Robot",
                             is_single_perfrom: true,
                             x_index: 1,
                             p_index: 3,

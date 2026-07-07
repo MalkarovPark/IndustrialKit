@@ -332,7 +332,7 @@ public enum RegexPatterns: String, CaseIterable
     // MarkLogicElement
     case _MarkLogicElement = #"l: mark\.\(([^()]*)\)"#
     
-    func make_element(from input: String) -> ProductionProgramElement?
+    public func make_element(from input: String) -> ProductionProgramElement?
     {
         guard match_regex(text: input, pattern: self.rawValue) else
         {

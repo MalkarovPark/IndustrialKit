@@ -768,7 +768,7 @@ struct WorkspaceControl_Previews: PreviewProvider
             }
             .onAppear
             {
-                let robot = Robot(name: "6DOF")
+                let robot = Robot(name: "6DOF Robot")
                 robot.is_placed = true
                 robot.add_program(PositionProgram(name: "Square"))
                 

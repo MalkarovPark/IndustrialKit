@@ -118,7 +118,7 @@ struct ControlTextView_Previews: PreviewProvider
             .frame(width: 440)
             .onAppear
             {
-                let robot = Robot(name: "6DOF")
+                let robot = Robot(name: "6DOF Robot")
                 robot.is_placed = true
                 robot.add_program(PositionProgram(name: "Square"))
                 
