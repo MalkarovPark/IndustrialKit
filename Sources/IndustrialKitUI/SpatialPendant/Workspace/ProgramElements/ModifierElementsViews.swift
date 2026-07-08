@@ -136,7 +136,7 @@ public struct MoverElementView: View
             #if os(iOS)
             .buttonBorderShape(.roundedRectangle)
             #endif
-            .keyboardShortcut(.defaultAction)
+            //.keyboardShortcut(.defaultAction)
         }
         .frame(minWidth: 200, maxWidth: .infinity)
     }
@@ -307,7 +307,7 @@ public struct WriterElementView: View
             #if os(iOS)
             .buttonBorderShape(.roundedRectangle)
             #endif
-            .keyboardShortcut(.defaultAction)
+            //.keyboardShortcut(.defaultAction)
         }
         .frame(minWidth: 200, maxWidth: .infinity)
     }
@@ -729,7 +729,7 @@ public struct ObserverElementView: View
             #if os(iOS)
             .buttonBorderShape(.roundedRectangle)
             #endif
-            .keyboardShortcut(.defaultAction)
+            //.keyboardShortcut(.defaultAction)
         }
         .frame(minWidth: 200, maxWidth: .infinity)
     }
