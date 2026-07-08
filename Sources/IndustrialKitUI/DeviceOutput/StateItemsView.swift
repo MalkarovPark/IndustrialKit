@@ -57,7 +57,7 @@ public struct StateItemsView: View
                 }
                 #endif
                 .listStyle(.plain)
-                .padding()
+                //.padding()
                 .onChange(of: device_output.items)
                 {
                     if shows_output_indices
@@ -250,6 +250,7 @@ struct StateView_PreviewsContainer: PreviewProvider
                 device_output: device_output,
                 shows_output_indices: true
             )
+            .padding()
             .frame(width: 320, height: 240)
         }
     }

@@ -137,10 +137,10 @@ struct ControlTextView_Previews: PreviewProvider
                 workspace.select_program(named: "Program")
                 
                 Changer.internal_modules.append(ChangerModule(name: "Module"))
-                Changer.internal_modules_list.append("Module")
+                Changer.internal_modules_list.append("Random")
                 
                 Changer.external_modules.append(ChangerModule(name: "Module"))
-                Changer.external_modules_list.append("Module")
+                Changer.external_modules_list.append("Defaults")
             }
         }
     }

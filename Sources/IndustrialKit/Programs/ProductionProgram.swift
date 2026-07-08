@@ -245,14 +245,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
             let trimmed_line = line.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed_line.isEmpty else { continue }
             
-            for pattern in RegexPatterns.allCases
-            {
-                if let element = pattern.make_element(from: trimmed_line)
-                {
-                    elements.append(element)
-                    break
-                }
-            }
+            elements.append(parse_element(from: trimmed_line))
         }
     }
     
@@ -461,6 +454,23 @@ private func match_regex(text: String, pattern: String) -> Bool
         //print(error.localizedDescription)
         return false
     }
+}
+
+/// Parses a production program element from its textual representation.
+///
+/// - Parameter string: A string describing a production program element.
+/// - Returns: A parsed production program element.
+public func parse_element(from string: String) -> ProductionProgramElement
+{
+    for pattern in RegexPatterns.allCases
+    {
+        if let element = pattern.make_element(from: string)
+        {
+            return element
+        }
+    }
+    
+    return ProductionProgramElement()
 }
 
 private func extract_data_array(from text: String, pattern regex: String) -> [String]

@@ -259,6 +259,7 @@ public struct DeviceOutputView: View
                                 device_output: device_output,
                                 shows_output_indices: shows_output_indices
                             )
+                            .padding()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
                     }

@@ -55,7 +55,7 @@ public class ProductionProgramElement: Hashable, Identifiable, ObservableObject,
     /// An image name for program element card.
     open var symbol_name: String
     {
-        return "app"
+        return "questionmark"
     }
     
     /// An image for program element card.
