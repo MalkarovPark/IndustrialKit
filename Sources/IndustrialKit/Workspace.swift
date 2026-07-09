@@ -1582,6 +1582,10 @@ import SwiftUI
                 {
                     result.append(value)
                 }
+                else
+                {
+                    result.append("0")
+                }
 
                 if let children = item.children
                 {
