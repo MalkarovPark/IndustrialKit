@@ -1573,6 +1573,35 @@ import SwiftUI
         
         func items_to_array(from items: [StateItem]) -> [String]
         {
+            var result: [String] = []
+
+            func traverse(_ item: StateItem)
+            {
+                //result.append(item.value)
+                if let value = item.value
+                {
+                    result.append(value)
+                }
+
+                if let children = item.children
+                {
+                    for child in children
+                    {
+                        traverse(child)
+                    }
+                }
+            }
+
+            for item in items
+            {
+                traverse(item)
+            }
+
+            return result
+        }
+        
+        /*func items_to_array(from items: [StateItem]) -> [String]
+        {
             var info_output = [String]()
             
             func traverse(_ item: StateItem)
@@ -1599,7 +1628,7 @@ import SwiftUI
             }
             
             return info_output
-        }
+        }*/
     }
     
     /// Jumps unconditionally to target program element index.
