@@ -43,11 +43,11 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     /// elements and is typically used for editor integration.
     public var name: String
     
-    /// A textual code listing representing the program.
+    /// A textual template preserving the original program layout.
     ///
-    /// This optional value may contain a serialized representation of program
-    /// elements and is typically used for editor integration.
-    @Published public var listing_text: String?
+    /// The template contains placeholders for program elements and retains
+    /// comments and non-element text when converting between code and elements.
+    @Published public var listing_template: String?
     
     /// An ordered collection of program elements.
     ///
@@ -211,10 +211,43 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
     }
     
-    //private var code_text = String()
+    /// Placeholder for program elements in the listing template.
+    private let element_placeholder = "%@"
     
     /// Converts program elements into a multiline code string.
     private var elements_to_code: String
+    {
+        guard let listing_template else
+        {
+            return elements
+                .map(\.code_string)
+                .joined(separator: "\n")
+        }
+
+        var element_index = 0
+
+        return listing_template
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map
+            {
+                var line = String($0)
+
+                if line.contains(element_placeholder),
+                   element_index < elements.count
+                {
+                    line = line.replacingOccurrences(
+                        of: element_placeholder,
+                        with: elements[element_index].code_string
+                    )
+
+                    element_index += 1
+                }
+
+                return line
+            }
+            .joined(separator: "\n")
+    }
+    /*private var elements_to_code: String
     {
         var code: String = ""
         
@@ -229,12 +262,86 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         }
         
         return code
-    }
+    }*/
     
     /// Parses a code string and rebuilds program elements.
     ///
     /// - Parameter code: A textual program representation.
     private func code_to_elements(from code: String)
+    {
+        elements.removeAll()
+        
+        var listing_lines = [String]()
+        var has_comments = false
+        
+        let lines = code.split(separator: "\n", omittingEmptySubsequences: false)
+        
+        for line in lines
+        {
+            let original_line = String(line)
+            let trimmed_line = original_line.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            guard !trimmed_line.isEmpty else
+            {
+                listing_lines.append(original_line)
+                continue
+            }
+            
+            var code_part = trimmed_line
+            var comment_part = ""
+            
+            var comment_position: String.Index?
+            
+            if let index = trimmed_line.range(of: "//")?.lowerBound
+            {
+                comment_position = index
+            }
+            
+            if let index = trimmed_line.range(of: "/*")?.lowerBound
+            {
+                if comment_position == nil || index < comment_position!
+                {
+                    comment_position = index
+                }
+            }
+            
+            if let comment_position
+            {
+                code_part = String(trimmed_line[..<comment_position])
+                    .trimmingCharacters(in: .whitespaces)
+                
+                comment_part = String(trimmed_line[comment_position...])
+                
+                has_comments = true
+            }
+            
+            if !code_part.isEmpty,
+               let element = parse_element(from: code_part)
+            {
+                elements.append(element)
+                
+                if comment_part.isEmpty
+                {
+                    listing_lines.append(element_placeholder)
+                }
+                else
+                {
+                    listing_lines.append(
+                        "\(element_placeholder) \(comment_part)"
+                    )
+                }
+            }
+            else
+            {
+                listing_lines.append(original_line)
+            }
+        }
+        
+        listing_template = has_comments
+        ? listing_lines.joined(separator: "\n")
+        : nil
+    }
+    /*private func code_to_elements(from code: String)
     {
         elements.removeAll()
         
@@ -247,7 +354,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
             
             elements.append(parse_element(from: trimmed_line))
         }
-    }
+    }*/
     
     // MARK: - File Hanlding
     private enum CodingKeys: String, CodingKey
@@ -266,7 +373,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         let wrapped = try container.decode([AnyProductionProgramElement].self, forKey: .elements)
         self.elements = wrapped.map { $0.base }
         
-        self.listing_text = try container.decodeIfPresent(String.self, forKey: .listing_text)
+        self.listing_template = try container.decodeIfPresent(String.self, forKey: .listing_text)
     }
     
     public func encode(to encoder: any Encoder) throws
@@ -278,7 +385,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
         let wrapped = elements.map { AnyProductionProgramElement($0) }
         try container.encode(wrapped, forKey: .elements)
         
-        try container.encode(listing_text, forKey: .listing_text)
+        try container.encode(listing_template, forKey: .listing_text)
     }
 }
 
@@ -460,7 +567,7 @@ private func match_regex(text: String, pattern: String) -> Bool
 ///
 /// - Parameter string: A string describing a production program element.
 /// - Returns: A parsed production program element.
-public func parse_element(from string: String) -> ProductionProgramElement
+public func parse_element(from string: String) -> ProductionProgramElement?
 {
     for pattern in RegexPatterns.allCases
     {
@@ -470,7 +577,7 @@ public func parse_element(from string: String) -> ProductionProgramElement
         }
     }
     
-    return ProductionProgramElement()
+    return nil //ProductionProgramElement()
 }
 
 private func extract_data_array(from text: String, pattern regex: String) -> [String]
