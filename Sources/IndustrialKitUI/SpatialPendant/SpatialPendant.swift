@@ -259,6 +259,9 @@ struct SpatialPendant_Previews: PreviewProvider
                         controller: pendant_controller,
                         shows_program_indices: true
                     )
+                    #if os(visionOS)
+                    .glassBackgroundEffect(in: .rect(cornerRadius: 24, style: .continuous))
+                    #endif
                     .frame(height: stack_height)
                     .padding(10)
                     .zIndex(1)

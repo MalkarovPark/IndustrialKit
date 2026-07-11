@@ -391,7 +391,12 @@ private struct PositionItemView: View
         HStack
         {
             Image(systemName: "circle.fill")
+            #if !os(visionOS)
                 .foregroundColor(point_item.performing_state.color)
+            #else
+                .foregroundColor(.clear)
+                .glassEffect(.regular.tint(point_item.performing_state.color).interactive(), in: .circle)
+            #endif
                 .font(.system(size: program_item_light_size))
                 .padding(.leading, program_item_light_padding)
             

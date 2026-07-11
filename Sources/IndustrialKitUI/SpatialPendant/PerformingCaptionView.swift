@@ -50,9 +50,8 @@ struct PerformingCaptionView: View
                 Image(systemName:"circlebadge.fill")
                 #if !os(visionOS)
                     .foregroundColor(performing_state.color)
-                #endif
+                #else
                     .foregroundColor(.clear)
-                #if os(visionOS)
                     .glassEffect(.regular.tint(performing_state.color).interactive(), in: .circle)
                 #endif
                 #if os(macOS)
@@ -89,12 +88,8 @@ struct PerformingCaptionView: View
             .background(.secondary.opacity(0.1))
             #endif
             .onReceive(
-                Timer.publish(
-                    every: 1.5,
-                    on: .main,
-                    in: .common
-                )
-                .autoconnect()
+                Timer.publish(every: 1.5, on: .main, in: .common)
+                    .autoconnect()
             )
             { _ in
                 current_state_index =

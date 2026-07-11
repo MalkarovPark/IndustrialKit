@@ -93,7 +93,11 @@ public struct ProgramItemView: View
         .background
         {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
+            #if !os(visionOS)
                 .fill(.quinary)
+            #else
+                .fill(.thinMaterial)
+            #endif
         }
         .frame(maxWidth: .infinity, maxHeight: 64)
         .clipShape(.rect(cornerRadius: 8, style: .continuous))

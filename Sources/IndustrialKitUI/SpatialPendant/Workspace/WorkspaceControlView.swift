@@ -388,7 +388,8 @@ private struct ProductionProgramView: View
                 .buttonStyle(.plain)
                 .padding(.trailing, 8)
             }
-            /*.background
+            #if !os(visionOS)
+            .background
             {
                 if view_program_as_text
                 {
@@ -397,7 +398,8 @@ private struct ProductionProgramView: View
                         .transition(.move(edge: .trailing))
                         .animation(.easeInOut(duration: 0.3), value: view_program_as_text)
                 }
-            }*/
+            }
+            #endif
             
             Divider()
             
@@ -486,11 +488,7 @@ internal struct ElementItemView: View
         ZStack
         {
             Rectangle()
-            #if !os(visionOS)
                 .fill(element.color.opacity(0.25))
-            #else
-                .fill(.clear)
-            #endif
             
             Image(systemName: element.symbol_name)
                 .foregroundStyle(element.color)
@@ -498,11 +496,6 @@ internal struct ElementItemView: View
                 .frame(width: 24, height: 24)
         }
         .aspectRatio(1, contentMode: .fit)
-        #if !os(visionOS)
-        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-        #else
-        .glassEffect(.regular.interactive().tint(element.color.opacity(0.25)), in: .rect(cornerRadius: 6, style: .continuous))
-        #endif
         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
         .frame(width: element_card_scale, height: element_card_scale)
         .contentShape(Rectangle())
@@ -511,7 +504,12 @@ internal struct ElementItemView: View
             if element.performing_state != .none
             {
                 Image(systemName: "circle.fill")
-                    .foregroundStyle(element.performing_state.color)
+                #if !os(visionOS)
+                    .foregroundColor(element.performing_state.color)
+                #else
+                    .foregroundColor(.clear)
+                    .glassEffect(.regular.tint(element.performing_state.color).interactive(), in: .circle)
+                #endif
                     .font(.system(size: element_card_light_size))
                     .padding(element_card_light_padding)
                 #if os(visionOS)
