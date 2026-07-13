@@ -212,7 +212,7 @@ public class ProductionProgram: Identifiable, Codable, Equatable, ObservableObje
     }
     
     /// Placeholder for program elements in the listing template.
-    private let element_placeholder = "%@"
+    private let element_placeholder = "__IMA_PROGRAM_ELEMENT_A66A6682__"
     
     /// Converts program elements into a multiline code string.
     private var elements_to_code: String
