@@ -79,7 +79,6 @@ public struct SheetCaption: ViewModifier
                     .buttonBorderShape(.circle)
                     .controlSize(.large)
                     .buttonStyle(.bordered)
-                    .frame(depth: 24)
                     #endif
                     .keyboardShortcut(.cancelAction)
                     #if os(macOS) || os(iOS)

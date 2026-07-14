@@ -33,7 +33,6 @@ public struct ViewCloseButton: ViewModifier
                 .buttonBorderShape(.circle)
                 .controlSize(.large)
                 .buttonStyle(.bordered)
-                .frame(depth: 24)
                 #endif
                 #if os(macOS) || os(iOS)
                 .padding(10)
@@ -70,7 +69,6 @@ public struct ViewCloseFuncButton: ViewModifier
                 .buttonBorderShape(.circle)
                 .controlSize(.large)
                 .buttonStyle(.bordered)
-                .frame(depth: 24)
                 #endif
                 #if os(macOS) || os(iOS)
                 .padding(10)
