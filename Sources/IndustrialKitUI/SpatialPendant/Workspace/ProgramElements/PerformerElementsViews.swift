@@ -30,7 +30,7 @@ public struct RobotPerformerElementView: View
         
         if self.element.object_name == ""
         {
-            self.element.object_name = self.workspace.placed_robot_names.first ?? "???"
+            self.element.object_name = self.workspace.placed_robot_names.first ?? String()
             
             if workspace.robot(named: element.object_name).program_names.count > 0
             {
@@ -256,7 +256,7 @@ public struct ToolPerformerElementView: View
         
         if self.element.object_name == ""
         {
-            self.element.object_name = self.workspace.placed_tool_names.first ?? "???"
+            self.element.object_name = self.workspace.placed_tool_names.first ?? String()
             
             if workspace.tool(named: element.object_name).program_names.count > 0
             {

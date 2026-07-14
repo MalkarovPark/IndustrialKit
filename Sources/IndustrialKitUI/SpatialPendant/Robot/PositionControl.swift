@@ -161,10 +161,6 @@ public struct PositionControl: View
                 )
         }
         .frame(width: 120, height: 120)
-        /*#if !os(visionOS)
-        .glassEffect(.regular.tint(.white).interactive(), in: .circle)
-        #else
-        .glassEffect(.regular.interactive(), in: .circle)*/
         .glassEffect(.regular.interactive(), in: .circle)
         #if os(visionOS)
         .offset(z: 8)

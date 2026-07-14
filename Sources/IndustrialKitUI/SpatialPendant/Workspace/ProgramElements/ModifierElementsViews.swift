@@ -431,7 +431,7 @@ public struct ChangerElementView: View
         
         self.on_update = on_update
         
-        if Changer.internal_modules_list.count > 0 && element.module_name == "???"
+        if Changer.internal_modules_list.count > 0 && element.module_name == String()
         {
             element.module_name = Changer.internal_modules_list[0]
         }
@@ -540,7 +540,7 @@ public struct ObserverElementView: View
         
         if self.element.object_name == ""
         {
-            self.element.object_name = self.workspace.placed_robot_names.first ?? "???"
+            self.element.object_name = self.workspace.placed_robot_names.first ?? String()
             
             switch self.element.object_type
             {

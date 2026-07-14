@@ -105,8 +105,7 @@ public struct ElementControl: View
                         .padding(.top, 10)
                         .scaleEffect(is_expanded ? 1 : 0.01)
                         .contentShape(Rectangle())
-                        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
-                        //.animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
+                        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded) // value: workspace.current_element)
                         
                         VStack
                         {
@@ -335,6 +334,8 @@ public struct ProductionProgramElementView: View
     }
 }
 
+
+
 // MARK: - Previews
 struct ElementControl_Previews: PreviewProvider
 {
@@ -369,6 +370,16 @@ struct ElementControl_Previews: PreviewProvider
                 
                 Changer.internal_modules_list.append("Random")
                 Changer.external_modules_list.append("Defaults")
+                
+                if let element = workspace.current_element as? RobotPerformerElement, element.object_name == ""
+                {
+                    element.object_name = workspace.placed_robot_names.first ?? String()
+                    
+                    if workspace.robot(named: element.object_name).program_names.count > 0
+                    {
+                        element.program_name = workspace.robot(named: element.object_name).program_names.first ?? ""
+                    }
+                }
             }
         }
     }

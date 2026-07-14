@@ -304,6 +304,7 @@ struct SpatialPendant_Previews: PreviewProvider
             {
                 workspace_preparation()
                 set_programs()
+                initialize_current_element_defaults()
             }
         }
         
@@ -406,6 +407,19 @@ struct SpatialPendant_Previews: PreviewProvider
                     ]
                 )
             )
+        }
+        
+        private func initialize_current_element_defaults()
+        {
+            if let element = workspace.current_element as? RobotPerformerElement, element.object_name == ""
+            {
+                element.object_name = workspace.placed_robot_names.first ?? String()
+                
+                if workspace.robot(named: element.object_name).program_names.count > 0
+                {
+                    element.program_name = workspace.robot(named: element.object_name).program_names.first ?? ""
+                }
+            }
         }
     }
     

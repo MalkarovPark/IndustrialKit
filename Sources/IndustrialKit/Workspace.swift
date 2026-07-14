@@ -1586,7 +1586,7 @@ import SwiftUI
                 {
                     result.append("0")
                 }
-
+                
                 if let children = item.children
                 {
                     for child in children
@@ -3551,6 +3551,17 @@ import SwiftUI
         
         // Registers
         registers = preset.registers ?? [Float](repeating: 0, count: Workspace.default_registers_count)
+        
+        // Current element initialize
+        if let element = current_element as? RobotPerformerElement, element.object_name == ""
+        {
+            element.object_name = placed_robot_names.first ?? String()
+            
+            if robot(named: element.object_name).program_names.count > 0
+            {
+                element.program_name = robot(named: element.object_name).program_names.first ?? ""
+            }
+        }
     }
 }
 
