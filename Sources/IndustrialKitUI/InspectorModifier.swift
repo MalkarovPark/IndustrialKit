@@ -8,6 +8,7 @@
 #if os(visionOS)
 import Foundation
 import SwiftUI
+//import RealityKit
 
 public struct InspectorModifier<InspectorContent: View>: ViewModifier
 {
@@ -16,28 +17,26 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        ZStack(alignment: .trailing)
+        HStack
         {
             content
 
             if is_presented
             {
-                /*Color.black.opacity(0.2)
-                    .ignoresSafeArea()
-                    .onTapGesture
-                    {
-                        is_presented = false
-                    }
-                    .transition(.opacity)
-                    .animation(.easeInOut, value: is_presented)*/
-                
                 inspector_content()
                     .background(.thickMaterial)
+                    .glassBackgroundEffect(in: .rect(cornerRadius: 40, style: .continuous))
                     .fixedSize(horizontal: true, vertical: false)
-                    .transition(.move(edge: .trailing))
-                    .animation(.easeInOut, value: is_presented)
+                    //.transition(.move(edge: .trailing))
+                    .transition(
+                        .move(edge: .trailing)
+                            .combined(with: .scale(scale: 0.9, anchor: .trailing))
+                            .combined(with: .opacity)
+                    )
+                    .padding(7.8)
             }
         }
+        .animation(.easeInOut, value: is_presented)
     }
 }
 
@@ -50,6 +49,40 @@ public extension View
     ) -> some View
     {
         self.modifier(InspectorModifier(is_presented: isPresented, inspector_content: inspectorContent))
+    }
+}
+
+#Preview(windowStyle: .automatic)
+{
+    @Previewable @State var inspector_presented = true
+    
+    ZStack
+    {
+        Text("View")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        
+        /*RealityView
+        { content in
+            content.add(ModelEntity(
+                mesh: .generateBox(size: Float(0.1), cornerRadius: Float(0.01)),
+                materials: [SimpleMaterial(color: .cyan, isMetallic: true)]
+            ))
+        }*/
+    }
+    .background(alignment: .topLeading)
+    {
+        Button(action: { inspector_presented.toggle() })
+        {
+            Image(systemName: "sidebar.right")
+        }
+        .buttonBorderShape(.circle)
+        .padding(32)
+    }
+    .inspector(isPresented: $inspector_presented)
+    {
+        Text("Sidebar")
+            .frame(width: 320)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 #endif
