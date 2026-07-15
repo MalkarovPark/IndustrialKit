@@ -27,12 +27,16 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
                     .background(.thickMaterial)
                     .glassBackgroundEffect(in: .rect(cornerRadius: 40, style: .continuous))
                     .fixedSize(horizontal: true, vertical: false)
-                    //.transition(.move(edge: .trailing))
                     .transition(
+                        .scale(scale: 0, anchor: .trailing)
+                            .combined(with: .opacity)
+                    )
+                    /*.transition(
                         .move(edge: .trailing)
                             .combined(with: .scale(scale: 0, anchor: .trailing))
                             .combined(with: .opacity)
-                    )
+                    )*/
+                    //.transition(.move(edge: .trailing))
                     .padding(7.8)
             }
         }
