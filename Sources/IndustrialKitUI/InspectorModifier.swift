@@ -30,7 +30,7 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
                     //.transition(.move(edge: .trailing))
                     .transition(
                         .move(edge: .trailing)
-                            .combined(with: .scale(scale: 0.9, anchor: .trailing))
+                            .combined(with: .scale(scale: 0, anchor: .trailing))
                             .combined(with: .opacity)
                     )
                     .padding(7.8)
