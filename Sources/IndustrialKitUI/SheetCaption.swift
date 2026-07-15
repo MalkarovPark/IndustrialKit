@@ -25,103 +25,110 @@ public struct SheetCaption: ViewModifier
     
     public func body(content: Content) -> some View
     {
-        ZStack(alignment: .top)//(spacing: 0)
+        if plain
         {
-            if plain
+            VStack(spacing: 0)
             {
-                VStack(spacing: 0)
-                {
-                    #if os(macOS)
-                    Spacer(minLength: 56)
-                    #elseif os(iOS)
-                    Spacer(minLength: 64)
-                    #else
-                    Spacer(minLength: 82)
-                    #endif
-                    content
-                }
-            }
-            else
-            {
+                CaptionView(is_presented: $is_presented, label: label, plain: plain, clear_background: clear_background)
                 content
             }
-            
-            ZStack
+            #if os(macOS) || os(visionOS)
+            .presentationSizing(.fitted)
+            #endif
+        }
+        else
+        {
+            ZStack(alignment: .top)//(spacing: 0)
             {
-                HStack(alignment: .center)
+                content
+                
+                CaptionView(is_presented: $is_presented, label: label, plain: plain, clear_background: clear_background)
+            }
+            #if os(macOS) || os(visionOS)
+            .presentationSizing(.fitted)
+            #endif
+        }
+    }
+}
+
+private struct CaptionView: View
+{
+    @Binding var is_presented: Bool
+    
+    let label: String
+    let plain: Bool
+    let clear_background: Bool
+    
+    public init(is_presented: Binding<Bool>, label: String = String(), plain: Bool = true, clear_background: Bool = false)
+    {
+        self._is_presented = is_presented
+        self.label = label
+        self.plain = plain
+        self.clear_background = clear_background
+    }
+    
+    var body: some View
+    {
+        ZStack
+        {
+            HStack(alignment: .center)
+            {
+                Text(label)
+                    .padding(0)
+                    .font(.title3)
+                #if os(visionOS)
+                    .font(.title2)
+                    .padding(.vertical)
+                #endif
+            }
+            .padding(.horizontal, 10)
+            #if os(macOS) || os(iOS)
+            .padding(10)
+            #else
+            .padding(16)
+            #endif
+            
+            HStack(spacing: 0)
+            {
+                Button(action: { is_presented = false })
                 {
-                    Text(label)
-                        .padding(0)
-                        .font(.title3)
-                    #if os(visionOS)
-                        .font(.title2)
-                        .padding(.vertical)
-                    #endif
+                    Image(systemName: "xmark")
+                        .modifier(CircleButtonImageFramer())
                 }
-                .padding(.horizontal, 10)
+                .keyboardShortcut(.cancelAction)
+                #if !os(visionOS)
+                .modifier(CircleButtonGlassBorderer())
+                #else
+                .buttonBorderShape(.circle)
+                .controlSize(.large)
+                .buttonStyle(.bordered)
+                #endif
+                .keyboardShortcut(.cancelAction)
                 #if os(macOS) || os(iOS)
                 .padding(10)
                 #else
                 .padding(16)
                 #endif
                 
-                HStack(spacing: 0)
-                {
-                    Button(action: { is_presented = false })
-                    {
-                        Image(systemName: "xmark")
-                            .modifier(CircleButtonImageFramer())
-                    }
-                    .keyboardShortcut(.cancelAction)
-                    #if !os(visionOS)
-                    .modifier(CircleButtonGlassBorderer())
-                    #else
-                    .buttonBorderShape(.circle)
-                    .controlSize(.large)
-                    .buttonStyle(.bordered)
-                    #endif
-                    .keyboardShortcut(.cancelAction)
-                    #if os(macOS) || os(iOS)
-                    .padding(10)
-                    #else
-                    .padding(16)
-                    #endif
-                    
-                    Spacer()
-                }
-            }
-            .background
-            {
-                if !plain && !clear_background
-                {
-                    HStack
-                    {
-                        
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    #if !os(visionOS)
-                    .background(.bar)
-                    #else
-                    .background(.thinMaterial)
-                    #endif
-                }
+                Spacer()
             }
         }
-        /*content
-            .navigationTitle(label)
-            .toolbar
+        .background
+        {
+            if !plain && !clear_background
             {
-                ToolbarItem(placement: .cancellationAction)
+                HStack
                 {
-                    Button("Dismiss", systemImage: "xmark")
-                    {
-                        is_presented = false
-                    }
+                    
                 }
-            }*/
-        #if os(macOS) || os(visionOS)
-        .presentationSizing(.fitted)
-        #endif
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                #if !os(visionOS)
+                .background(.bar)
+                #else
+                .background(.thinMaterial)
+                #endif
+            }
+        }
     }
 }
 
