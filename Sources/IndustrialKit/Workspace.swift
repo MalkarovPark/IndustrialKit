@@ -555,37 +555,6 @@ import SwiftUI
             }
         }
         
-        /*func changer_element_check(_ element: ChangerModifierElement)
-        {
-            if element.module_name.isEmpty
-            {
-                element.module_import_by_name(element.module_name, is_internal: !element.module_name.hasPrefix("."))
-                
-                if !Changer.internal_modules_list.contains(element.module_name)
-                {
-                    if Changer.internal_modules_list.count > 0
-                    {
-                        element.module_name = Changer.internal_modules_list.first!
-                    }
-                    else
-                    {
-                        element.module_name = "None"
-                    }
-                }
-                else if !Changer.external_modules_list.contains(element.module_name)
-                {
-                    if Changer.external_modules_list.count > 0
-                    {
-                        element.module_name = Changer.external_modules_list.first!
-                    }
-                    else
-                    {
-                        element.module_name = "None"
-                    }
-                }
-            }
-        }*/
-        
         func jump_element_check(_ element: JumpLogicElement)
         {
             mark_check(name: &element.target_mark_name)
@@ -2166,16 +2135,6 @@ import SwiftUI
     
     private enum Axis { case x, z }
     
-    /*public var is_grid_visible: Bool { grid_visible } // UI Only
-    
-    public func toggle_grid_visiblity()
-    {
-        grid_visible.toggle()
-        grid_lines.values.forEach { $0.isEnabled = grid_visible }
-        
-        self.objectWillChange.send() // UI Only
-    }*/
-    
     /// Public toggle for grid visibility.
     ///
     /// Automatically enables/disables all grid line entities
@@ -2433,7 +2392,7 @@ import SwiftUI
             
             if let object_identifier = current.components[ObjectEntityIdentifier.self]
             {
-                //print("📍 Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
+                //print("Name: \(object_identifier.name), Type: \(object_identifier.type, default: "No")")
                 
                 if object_identifier.type == .robot
                 {
