@@ -736,6 +736,11 @@ public struct GlassBoxCard<Content: View>: View
         
         world.addChild(entity)
         
+        // Center shift
+        let bounds = entity.visualBounds(relativeTo: nil)
+        let center = bounds.center
+        entity.position -= center
+        
         return world
     }
     
@@ -966,3 +971,4 @@ let register_card_font_size: CGFloat = 32
     }
     .padding(16)
 }
+
