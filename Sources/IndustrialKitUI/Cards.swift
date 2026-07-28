@@ -737,9 +737,9 @@ public struct GlassBoxCard<Content: View>: View
         world.addChild(entity)
         
         // Center shift
-        let bounds = entity.visualBounds(relativeTo: nil)
+        /*let bounds = entity.visualBounds(relativeTo: nil)
         let center = bounds.center
-        entity.position -= center * scale
+        entity.position -= center * scale*/
         
         return world
     }
