@@ -13,6 +13,7 @@ import SwiftUI
 public struct InspectorModifier<InspectorContent: View>: ViewModifier
 {
     @Binding var is_presented: Bool
+    
     let inspector_content: () -> InspectorContent
     
     public func body(content: Content) -> some View
@@ -25,19 +26,8 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
             {
                 inspector_content()
                     .background(.thickMaterial)
-                    .glassBackgroundEffect(in: .rect(cornerRadius: 40, style: .continuous))
                     .fixedSize(horizontal: true, vertical: false)
-                    .transition(
-                        .scale(scale: 0, anchor: .trailing)
-                            .combined(with: .opacity)
-                    )
-                    /*.transition(
-                        .move(edge: .trailing)
-                            .combined(with: .scale(scale: 0, anchor: .trailing))
-                            .combined(with: .opacity)
-                    )*/
-                    //.transition(.move(edge: .trailing))
-                    .padding(7.8)
+                    .transition(.move(edge: .trailing))
             }
         }
         .animation(.easeInOut, value: is_presented)
@@ -88,5 +78,6 @@ public extension View
             .frame(width: 320)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+    .clipShape(UnevenRoundedRectangle(cornerRadii: .init(bottomTrailing: 48, topTrailing: 48), style: .continuous))
 }
 #endif
