@@ -13,7 +13,9 @@ import SwiftUI
 public struct InspectorModifier<InspectorContent: View>: ViewModifier
 {
     @Binding var is_presented: Bool
+    
     let inspector_content: () -> InspectorContent
+    let corner_radii: RectangleCornerRadii = .init(topLeading: 10, bottomLeading: 10, bottomTrailing: 40, topTrailing: 10)
     
     public func body(content: Content) -> some View
     {
@@ -25,7 +27,7 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
             {
                 inspector_content()
                     .background(.thickMaterial)
-                    .clipShape(.rect(cornerRadius: 40, style: .continuous))
+                    .clipShape(UnevenRoundedRectangle(cornerRadii: corner_radii, style: .continuous))
                     //.glassBackgroundEffect(in: .rect(cornerRadius: 40, style: .continuous))
                     .fixedSize(horizontal: true, vertical: false)
                     .transition(
