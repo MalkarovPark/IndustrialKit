@@ -15,7 +15,7 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
     @Binding var is_presented: Bool
     
     let inspector_content: () -> InspectorContent
-    let corner_radii: RectangleCornerRadii = .init(topLeading: 10, bottomLeading: 10, bottomTrailing: 40, topTrailing: 10)
+    let corner_radii: RectangleCornerRadii = .init(topLeading: 20, bottomLeading: 20, bottomTrailing: 40, topTrailing: 20)
     
     public func body(content: Content) -> some View
     {
