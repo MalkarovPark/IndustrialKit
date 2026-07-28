@@ -28,7 +28,7 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
                     .background(.thickMaterial)
                     .fixedSize(horizontal: true, vertical: false)
                     .transition(.move(edge: .trailing))
-                    .backgroundExtensionEffect()
+                    .ignoresSafeArea(.container, edges: .top)
             }
         }
         .animation(.easeInOut, value: is_presented)
