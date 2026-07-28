@@ -82,6 +82,7 @@ public struct BoxCard<Content: View>: View
     {
         ZStack
         {
+            #if !os(visionOS)
             // Shadow
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .intersection(
@@ -91,6 +92,7 @@ public struct BoxCard<Content: View>: View
                 .foregroundStyle(color)
                 .blur(radius: 16)
                 .opacity(0.5)
+            #endif
             
             // Box
             ZStack
@@ -435,6 +437,7 @@ public struct GlassBoxCard<Content: View>: View
     {
         ZStack
         {
+            #if !os(visionOS)
             // Shadow
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .intersection(
@@ -444,6 +447,7 @@ public struct GlassBoxCard<Content: View>: View
                 .foregroundStyle(color)
                 .blur(radius: 16)
                 .opacity(0.1)
+            #endif
             
             // Box
             ZStack
@@ -492,9 +496,9 @@ public struct GlassBoxCard<Content: View>: View
                 }
                 else if let entity = entity
                 {
+                    #if os(macOS) || os(iOS)
                     RealityView
                     { content in
-                        #if os(macOS) || os(iOS)
                         content.add(entity)
                         
                         // Camera reposition
@@ -509,41 +513,37 @@ public struct GlassBoxCard<Content: View>: View
                         camera.position = [0, 0, 1]
                         //camera.rotate_x(by: -.pi / 6)
                         content.add(camera)*/
-                        #else
-                        let world = make_world(with: entity)
-                        portal_entity = make_portal(world: world)
-                        
-                        content.add(world)
-                        content.add(portal_entity)
-                        #endif
-                    }
-                    update:
-                    { _ in
-                        #if os(visionOS)
-                        update_portal(with: tile_size)
-                        #endif
                     }
                     .disabled(true)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    #if os(visionOS)
-                    .frame(depth: 2)
-                    .background
-                    {
-                        GeometryReader
-                        { geometry in
-                            Color.clear
-                                .onAppear
+                    #else
+                    GeometryReader
+                    { geometry in
+                        RealityView
+                        { content in
+                            let bounds = entity.visualBounds(relativeTo: nil)
+                            model_size = bounds.extents
+                            
+                            let world = make_world(with: entity)
+                            portal_entity = make_portal(world: world)
+                            
+                            content.add(world)
+                            content.add(portal_entity)
+                        }
+                        .frame(depth: 1)
+                        .onChange(of: geometry.size)
+                        { _, new_size in
+                            update_scale(with: geometry.size)
+                            update_portal(with: geometry.size)
+                        }
+                        .onAppear
+                        {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25)
                             {
-                                tile_size = geometry.size
-                                //update_portal(with: geometry.size)
-                            }
-                            .onChange(of: geometry.size)
-                            { new_size, _ in
-                                tile_size = new_size
-                                //update_portal(with: new_size)
+                                update_scale(with: geometry.size)
+                                update_portal(with: geometry.size)
                             }
                         }
-                        //.border(.green)
                     }
                     #endif
                 }
@@ -556,6 +556,9 @@ public struct GlassBoxCard<Content: View>: View
                     )
                     .foregroundStyle(gradient)
                     .opacity(0.5)
+                #if os(visionOS)
+                    .frame(depth: 2)
+                #endif
                 
                 // Top Side
                 VStack(spacing: 0)
@@ -632,10 +635,16 @@ public struct GlassBoxCard<Content: View>: View
                                                                 is_renaming = false
                                                             }
                                                     )
+                                                    #if !os(visionOS)
                                                     .textFieldStyle(.roundedBorder)
+                                                    #endif
                                                     .focused($is_focused)
                                                     .labelsHidden()
+                                                    #if !os(visionOS)
                                                     .padding()
+                                                    #else
+                                                    .padding(10)
+                                                    #endif
                                                     #endif
                                                 }
                                             }
@@ -682,8 +691,33 @@ public struct GlassBoxCard<Content: View>: View
     }
     
     #if os(visionOS)
+    @State private var previewed_entity: Entity?
+    @State private var model_size: SIMD3<Float> = .zero
+    @State private var scale: Float = 1
     @State private var portal_entity = Entity()
-    @State private var tile_size = CGSize()
+    
+    private let factor: Float = 0.5
+    private let shift: Float = 200
+    
+    private func update_scale(with size: CGSize = .zero)
+    {
+        guard let previewed_entity = entity else { return }
+        guard model_size != .zero else { return }
+        
+        let view_width = Float(size.width) * 0.001
+        let view_height = Float(size.height) * 0.001
+        
+        let min_view_dimension = min(view_width, view_height)
+        
+        let model_radius = length(model_size) * 0.5
+        
+        guard model_radius > 0, min_view_dimension > 0
+        else { return }
+        
+        scale = (min_view_dimension / length(model_size)) * factor
+        
+        previewed_entity.scale = SIMD3<Float>(repeating: scale)
+    }
     
     private func make_world(with entity: Entity) -> Entity
     {
@@ -720,7 +754,7 @@ public struct GlassBoxCard<Content: View>: View
         return portal
     }
     
-    func update_portal(with size: CGSize = CGSize(width: 0.2, height: 0.2))
+    func update_portal(with size: CGSize = .zero)
     {
         portal_entity.components.remove(ModelComponent.self)
         portal_entity.components[ModelComponent.self] = .init(
