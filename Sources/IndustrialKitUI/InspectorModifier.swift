@@ -13,7 +13,6 @@ import SwiftUI
 public struct InspectorModifier<InspectorContent: View>: ViewModifier
 {
     @Binding var is_presented: Bool
-    
     let inspector_content: () -> InspectorContent
     
     public func body(content: Content) -> some View
@@ -26,12 +25,37 @@ public struct InspectorModifier<InspectorContent: View>: ViewModifier
             {
                 inspector_content()
                     .background(.thickMaterial)
+                    .clipShape(.rect(cornerRadius: 40, style: .continuous))
+                    //.glassBackgroundEffect(in: .rect(cornerRadius: 40, style: .continuous))
                     .fixedSize(horizontal: true, vertical: false)
-                    .transition(.move(edge: .trailing))
-                    .ignoresSafeArea(.container, edges: .top)
+                    .transition(
+                        .scale(scale: 0, anchor: .trailing)
+                            .combined(with: .opacity)
+                    )
+                    /*.transition(
+                        .move(edge: .trailing)
+                            .combined(with: .scale(scale: 0, anchor: .trailing))
+                            .combined(with: .opacity)
+                    )*/
+                    //.transition(.move(edge: .trailing))
+                    .padding(7.8)
             }
         }
         .animation(.easeInOut, value: is_presented)
+        
+        /*HStack
+        {
+            content
+
+            if is_presented
+            {
+                inspector_content()
+                    .background(.thickMaterial)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .transition(.move(edge: .trailing))
+            }
+        }
+        .animation(.easeInOut, value: is_presented)*/
     }
 }
 
@@ -79,6 +103,5 @@ public extension View
             .frame(width: 320)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    .clipShape(UnevenRoundedRectangle(cornerRadii: .init(bottomTrailing: 48, topTrailing: 48), style: .continuous))
 }
 #endif
