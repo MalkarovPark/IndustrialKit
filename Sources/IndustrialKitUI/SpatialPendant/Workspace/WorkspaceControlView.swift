@@ -521,7 +521,16 @@ internal struct ElementItemView: View
         {
             element_view_presented.toggle()
         }
-        .popover(isPresented: $element_view_presented)
+        .popover(
+            isPresented: $element_view_presented,
+            arrowEdge: {
+                #if os(macOS)
+                .bottom
+                #else
+                .top
+                #endif
+            }()
+        )
         {
             ProductionProgramElementView(element: element, workspace: workspace, program: program, on_update: on_update)
                 .frame(width: element_control_width)

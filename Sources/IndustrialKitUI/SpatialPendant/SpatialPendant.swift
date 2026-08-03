@@ -208,7 +208,7 @@ struct SpatialPendant_Previews: PreviewProvider
         #if os(macOS) || os(iOS)
         @State private var scene_content: RealityViewCameraContent?
         
-        let stack_height: CGFloat = 480
+        let stack_height: CGFloat = 520
         #else
         @State private var scene_content: RealityViewContent?
         
@@ -298,6 +298,55 @@ struct SpatialPendant_Previews: PreviewProvider
                         .padding(10)
                 }
                 .frame(minWidth: 1024)
+                .padding(80)
+                
+                HStack(spacing: 40)
+                {
+                    WorkspaceControlView(workspace: workspace)
+                        .padding(8)
+                        .frame(height: stack_height)
+                        .background(
+                            GeometryReader
+                            { geometry in
+                                Rectangle()
+                                    .fill(.clear)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
+                                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            }
+                        )
+                        .padding(10)
+                    
+                    RobotControlView(robot: workspace.robot(named: "6DOF Robot"))
+                        .padding(8)
+                        .frame(height: stack_height)
+                        .background(
+                            GeometryReader
+                            { geometry in
+                                Rectangle()
+                                    .fill(.clear)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
+                                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            }
+                        )
+                        .padding(10)
+                    
+                    ToolControlView(tool: workspace.tool(named: "Gripper"))
+                        .padding(8)
+                        .frame(height: stack_height)
+                        .background(
+                            GeometryReader
+                            { geometry in
+                                Rectangle()
+                                    .fill(.clear)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
+                                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            }
+                        )
+                        .padding(10)
+                }
                 .padding(80)
             }
             .onAppear
@@ -398,10 +447,8 @@ struct SpatialPendant_Previews: PreviewProvider
             
             workspace.tool(named: "Gripper").add_program(
                 OperationProgram(
-                    name: "Double Bite",
+                    name: "Bite",
                     codes: [
-                        .init(0),
-                        .init(1),
                         .init(0),
                         .init(1)
                     ]

@@ -427,8 +427,16 @@ private struct PositionItemView: View
                         }
                     }
             }
-            .popover(isPresented: $position_item_view_presented,
-                     arrowEdge: .trailing)
+            .popover(
+                isPresented: $position_item_view_presented,
+                arrowEdge: {
+                    #if os(macOS)
+                    .bottom
+                    #else
+                    .top
+                    #endif
+                }()
+            )
             {
                 #if os(macOS)
                 PositionPointView(robot: robot, program: program, point: point_item, point_index: point_index, position_item_view_presented: $position_item_view_presented)
