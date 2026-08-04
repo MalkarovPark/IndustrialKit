@@ -1738,10 +1738,7 @@ import SwiftUI
             }
             
             // Prebuild grid
-            let cx = Int(round(camera.position.x / cell_size))
-            let cz = Int(round(camera.position.z / cell_size))
-            
-            create_grid_async(center_x: cx, center_z: cz)
+            //create_grid_async(center_x: cx, center_z: cz)
         }
         
         // Place grid
@@ -1789,9 +1786,6 @@ import SwiftUI
         scene_content?.add(workspace_anchor) // Physics
         
         // Place grid
-        let cx = Int(round(0 / cell_size))
-        let cz = Int(round(0 / cell_size))
-        
         //create_grid_async(center_x: cx, center_z: cz)
         
         /*_ = content.subscribe(to: SceneEvents.Update.self)
@@ -1839,13 +1833,13 @@ import SwiftUI
     public func remove_entity(from content: RealityViewCameraContent)
     {
         content.remove(workspace_entity)
-        grid_lines.removeAll()
+        //grid_lines.removeAll()
     }
     #else
     public func remove_entity(from content: RealityViewContent)
     {
         content.remove(workspace_entity)
-        grid_lines.removeAll()
+        //grid_lines.removeAll()
     }
     #endif
     
@@ -2115,25 +2109,6 @@ import SwiftUI
     
     // MARK: Grid
     private var grid_visible = true
-    private var grid_lines: [String: ModelEntity] = [:]
-    
-    private let cell_size: Float = 0.1 // 100 mm
-    private let render_radius: Int = 200
-    
-    private let minor_width: Float = 0.002 //0.001
-    private let major_width: Float = 0.0025
-    
-    private let major_step = 10
-    
-    private let minor_line_mesh_x = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.002)
-    private let major_line_mesh_x = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.0025)
-    private let axis_line_mesh_x  = MeshResource.generatePlane(width: Float(200*2) * 0.1, depth: 0.00375)
-    
-    private let minor_line_mesh_z = MeshResource.generatePlane(width: 0.002, depth: Float(200*2) * 0.1)
-    private let major_line_mesh_z = MeshResource.generatePlane(width: 0.0025, depth: Float(200*2) * 0.1)
-    private let axis_line_mesh_z  = MeshResource.generatePlane(width: 0.00375, depth: Float(200*2) * 0.1)
-    
-    private enum Axis { case x, z }
     
     /// Public toggle for grid visibility.
     ///
@@ -2148,7 +2123,9 @@ import SwiftUI
         set
         {
             grid_visible = newValue
-            grid_lines.values.forEach { $0.isEnabled = newValue }
+            x_axis_lines.values.forEach { $0.isEnabled = newValue }
+            z_axis_lines.values.forEach { $0.isEnabled = newValue }
+            grid_tiles.values.forEach { $0.isEnabled = newValue }
             
             self.objectWillChange.send() // UI Only
         }
@@ -2164,16 +2141,7 @@ import SwiftUI
     {
         if !grid_visible { return }
         
-        let cx = Int(round(camera_position.x / cell_size))
-        let cz = Int(round(camera_position.z / cell_size))
-        
-        for i in -render_radius...render_radius
-        {
-            add_line(index: cx + i, axis: .x)
-            add_line(index: cz + i, axis: .z)
-        }
-        
-        cleanup_lines(center_x: cx, center_z: cz)
+        update_visible_tiles(camera_position: camera_position)
     }
     
     /// Asynchronously builds grid around a center position.
@@ -2186,18 +2154,20 @@ import SwiftUI
     ///   - center_z: Grid Z center index
     private func create_grid_async(center_x: Int, center_z: Int)
     {
-        Task.detached(priority: .userInitiated)
+        /*Task.detached(priority: .userInitiated)
         { [weak self] in
             guard let self else { return }
             
-            let indices = (-self.render_radius...self.render_radius).map { $0 }
+            let indices: [Int] = Array(-self.render_radius...self.render_radius)
+            let batch_size = 32
             
-            for batch_start in stride(from: 0, to: indices.count, by: 20)
+            for batch_start in stride(from: 0, to: indices.count, by: batch_size)
             {
-                let batch_end = min(batch_start + 20, indices.count)
+                let batch_end = min(batch_start + batch_size, indices.count)
                 
                 await MainActor.run
-                {
+                { [weak self] in
+                    guard let self else { return }
                     for i in batch_start..<batch_end
                     {
                         let idx = indices[i]
@@ -2206,86 +2176,276 @@ import SwiftUI
                     }
                 }
                 
-                try? await Task.sleep(nanoseconds: 1_000_000_0)
+                try? await Task.sleep(nanoseconds: 5_000_000)
             }
-        }
+        }*/
     }
     
-    /// Adds a single grid line at given index and axis.
-    ///
-    /// Performs:
-    /// - Major/minor classification
-    /// - Material assignment
-    /// - Positioning in world space
-    /// - Entity caching
-    private func add_line(index: Int, axis: Axis)
-    {
-        let key = "\(axis)_\(index)"
-        if grid_lines[key] != nil { return }
-        
-        let is_major = index % major_step == 0
-        let is_axis  = index == 0
-        
-        let color = is_axis
-        ? UIColor.gray.withAlphaComponent(0.5)
-        : is_major
-        ? UIColor.gray.withAlphaComponent(0.4)
-        : UIColor.gray.withAlphaComponent(0.3)
-        
-        let mesh: MeshResource
-        switch axis
-        {
-        case .x:
-            mesh = is_axis ? axis_line_mesh_x : is_major ? major_line_mesh_x : minor_line_mesh_x
-        case .z:
-            mesh = is_axis ? axis_line_mesh_z : is_major ? major_line_mesh_z : minor_line_mesh_z
-        }
-        
-        var material = SimpleMaterial(color: color, roughness: 1, isMetallic: false) //UnlitMaterial(color: color)
+    // Floor parameters
+    private var tile_size: Float = 1
+    private var tiles_render_radius: Int = 10
+    private var tile_colors: (even: UIColor, odd: UIColor) = (.systemGreen, .systemPurple)
+    private var axis_line_thickness: Float = 0.00375
+    
+    //private let line_length: Float = 2
+    private let minor_width: Float = 0.002 //0.001
+    private let major_width: Float = 0.0025
+    
+    // Entities
+    private var x_axis_lines: [SIMD2<Int>: ModelEntity] = [:]
+    private var z_axis_lines: [SIMD2<Int>: ModelEntity] = [:]
+    private var grid_tiles: [SIMD2<Int>: ModelEntity] = [:]
+    //private var floor_tiles: [SIMD2<Int>: ModelEntity] = [:]
+    
+    private lazy var axis_line_mesh_x: ModelEntity = {
+        let mesh = MeshResource.generatePlane(width: axis_line_thickness, depth: tile_size)
+        var material = SimpleMaterial(color: .gray.withAlphaComponent(0.5), roughness: 1, isMetallic: false)
         material.faceCulling = .none
-        
         let line = ModelEntity(mesh: mesh, materials: [material])
-        line.orientation = simd_quatf(angle: .pi, axis: [1, 0, 0])
+        return line
+    }()
+    
+    private lazy var axis_line_mesh_z: ModelEntity = {
+        let mesh = MeshResource.generatePlane(width: tile_size, depth: axis_line_thickness)
+        var material = SimpleMaterial(color: .gray.withAlphaComponent(0.5), roughness: 1, isMetallic: false)
+        material.faceCulling = .none
+        let line = ModelEntity(mesh: mesh, materials: [material])
+        return line
+    }()
+    
+    private lazy var grid_tile: ModelEntity = {
+        /*let mesh = MeshResource.generatePlane(width: tile_size, depth: tile_size)
+        var material = SimpleMaterial(color: .cyan.withAlphaComponent(0.25), roughness: 1.0, isMetallic: false)
+        material.faceCulling = .none
+        let tile = ModelEntity(mesh: mesh, materials: [material])
+        tile.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])*/
         
-        switch axis
+        let tile = ModelEntity()
+        
+        add_minor_lines(to: tile, divisions: 10, size: tile_size)
+        add_major_lines(to: tile, size: tile_size)
+        
+        return tile
+    }()
+    
+    private func add_minor_lines(to parent: ModelEntity, divisions: Int, size: Float)
+    {
+        let step = size / Float(divisions)
+        let half_size = size / 2
+        let line_thickness: Float = 0.002
+        
+        // X lines
+        for i in 1..<divisions //0...divisions
         {
-        case .x:
-            line.position = [0, Float(-0.001), Float(index) * cell_size]
-        case .z:
-            line.position = [Float(index) * cell_size, Float(-0.002), 0]
+            let position = -half_size + Float(i) * step
+            let line_mesh = MeshResource.generatePlane(width: line_thickness, depth: size)
+            var line_material = SimpleMaterial(color: .gray.withAlphaComponent(0.3), roughness: 1, isMetallic: false)
+            line_material.faceCulling = .none
+            let line = ModelEntity(mesh: line_mesh, materials: [line_material])
+            line.position = [0, -0.002, position]
+            line.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
+            parent.addChild(line)
         }
         
-        workspace_entity.addChild(line)
-        grid_lines[key] = line
+        // Y lines
+        for i in 1..<divisions //0...divisions
+        {
+            let position = -half_size + Float(i) * step
+            let line_mesh = MeshResource.generatePlane(width: size, depth: line_thickness)
+            var line_material = SimpleMaterial(color: .gray.withAlphaComponent(0.3), roughness: 1, isMetallic: false)
+            line_material.faceCulling = .none
+            let line = ModelEntity(mesh: line_mesh, materials: [line_material])
+            line.position = [position, -0.0025, 0]
+            line.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
+            parent.addChild(line)
+        }
     }
     
-    /// Removes grid lines that are outside render radius.
-    ///
-    /// Prevents memory growth and keeps scene graph lightweight.
-    ///
-    /// - Parameters:
-    ///   - center_x: Current grid center X
-    ///   - center_z: Current grid center Z
-    private func cleanup_lines(center_x: Int, center_z: Int)
+    private func add_major_lines(to parent: ModelEntity, size: Float)
     {
-        for (key, line) in grid_lines
+        let half_size = size / 2
+        let line_thickness: Float = 0.0025
+        
+        let line_mesh = MeshResource.generatePlane(width: size, depth: line_thickness)
+        var line_material = SimpleMaterial(color: .gray.withAlphaComponent(0.4), roughness: 1, isMetallic: false)
+        line_material.faceCulling = .none
+        let line = ModelEntity(mesh: line_mesh, materials: [line_material])
+        line.position = [half_size, -0.0010, 0]
+        line.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
+        parent.addChild(line)
+        
+        let line_mesh2 = MeshResource.generatePlane(width: line_thickness, depth: size)
+        var line_material2 = SimpleMaterial(color: .gray.withAlphaComponent(0.4), roughness: 1, isMetallic: false)
+        line_material2.faceCulling = .none
+        let line2 = ModelEntity(mesh: line_mesh2, materials: [line_material2])
+        line2.position = [0, -0.0015, half_size]
+        line2.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
+        parent.addChild(line2)
+    }
+    
+    private lazy var green_tile: ModelEntity = {
+        let mesh = MeshResource.generatePlane(width: tile_size, depth: tile_size)
+        var material = SimpleMaterial(color: tile_colors.even.withAlphaComponent(0.25), roughness: 1, isMetallic: false)
+        material.faceCulling = .none
+        let tile = ModelEntity(mesh: mesh, materials: [material])
+        tile.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
+        return tile
+    }()
+    
+    private lazy var purple_tile: ModelEntity = {
+        let mesh = MeshResource.generatePlane(width: tile_size, depth: tile_size)
+        var material = SimpleMaterial(color: tile_colors.odd.withAlphaComponent(0.25), roughness: 1, isMetallic: false)
+        material.faceCulling = .none
+        let tile = ModelEntity(mesh: mesh, materials: [material])
+        tile.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
+        return tile
+    }()
+    
+    private func update_visible_tiles(camera_position: SIMD3<Float>)
+    {
+        let cam_x = camera_position.x
+        let cam_z = camera_position.z
+        
+        // Camera viewed tiles
+        let center_tile_x = Int(round(cam_x / tile_size))
+        let center_tile_z = Int(round(cam_z / tile_size))
+        
+        // Viewed area
+        let min_x = center_tile_x - tiles_render_radius
+        let max_x = center_tile_x + tiles_render_radius
+        let min_z = center_tile_z - tiles_render_radius
+        let max_z = center_tile_z + tiles_render_radius
+        
+        update_axis_lines()
+        update_grid_tiles()
+        //update_tiles()
+        
+        func update_axis_lines()
         {
-            if key.hasPrefix("x_"),
-               let idx = Int(key.dropFirst(2)),
-               abs(idx - center_x) > render_radius
+            for dx in min_x...max_x
             {
-                line.removeFromParent()
-                grid_lines.removeValue(forKey: key)
+                for dz in min_z...max_z
+                {
+                    // X
+                    if dx == 0 && x_axis_lines[SIMD2<Int>(dx, dz)] == nil
+                    {
+                        let line = axis_line_mesh_x.clone(recursive: true)
+                        line.position = SIMD3(Float(dx) * tile_size, 0.0001, Float(dz) * tile_size - tile_size / 2)
+                        workspace_entity.addChild(line)
+                        x_axis_lines[SIMD2<Int>(dx, dz)] = line
+                    }
+                    
+                    // Z
+                    if dz == 0 && z_axis_lines[SIMD2<Int>(dx, dz)] == nil
+                    {
+                        let line = axis_line_mesh_z.clone(recursive: true)
+                        line.position = SIMD3(Float(dx) * tile_size - tile_size / 2, 0.0001, Float(dz) * tile_size)
+                        workspace_entity.addChild(line)
+                        z_axis_lines[SIMD2<Int>(dx, dz)] = line
+                    }
+                }
             }
             
-            if key.hasPrefix("z_"),
-               let idx = Int(key.dropFirst(2)),
-               abs(idx - center_z) > render_radius
+            // Remove X
+            for (coord, line) in x_axis_lines
             {
-                line.removeFromParent()
-                grid_lines.removeValue(forKey: key)
+                if coord.x < min_x || coord.x > max_x || coord.y < min_z || coord.y > max_z
+                {
+                    line.removeFromParent()
+                    x_axis_lines.removeValue(forKey: coord)
+                }
+            }
+            
+            // Remove Z
+            for (coord, line) in z_axis_lines
+            {
+                if coord.x < min_x || coord.x > max_x || coord.y < min_z || coord.y > max_z
+                {
+                    line.removeFromParent()
+                    z_axis_lines.removeValue(forKey: coord)
+                }
             }
         }
+        
+        func update_grid_tiles()
+        {
+            for dx in min_x...max_x
+            {
+                for dz in min_z...max_z
+                {
+                    let tile_coord = SIMD2<Int>(dx, dz)
+                    
+                    if grid_tiles[tile_coord] != nil { continue } // Skip if tile exists
+                    
+                    let tile = grid_tile.clone(recursive: true)
+                    
+                    tile.position = SIMD3(Float(dx) * tile_size - tile_size / 2, 0, Float(dz) * tile_size - tile_size / 2) // To origin shift
+                    
+                    // Rotation for major lines
+                    let angle: Float
+                    
+                    if dx > 0 && dz > 0 { angle = 0 } //1
+                    else if dx <= 0 && dz > 0 { angle = .pi * 1.5 } //2
+                    else if dx <= 0 && dz <= 0 { angle = .pi } //3
+                    else { angle = .pi * 0.5 } // 4
+                    
+                    var transform = tile.transform
+                    transform.translation = tile.position
+                    transform.rotation = simd_quatf(angle: angle, axis: [0, 1, 0])
+                    tile.transform = transform
+                    
+                    // Placement
+                    workspace_entity.addChild(tile)
+                    grid_tiles[tile_coord] = tile
+                }
+            }
+            
+            // Remove tiles
+            for (coord, tile) in grid_tiles
+            {
+                if coord.x < min_x || coord.x > max_x || coord.y < min_z || coord.y > max_z
+                {
+                    tile.removeFromParent()
+                    grid_tiles.removeValue(forKey: coord)
+                }
+            }
+        }
+        
+        /*func update_tiles()
+        {
+            for dx in min_x...max_x
+            {
+                for dz in min_z...max_z
+                {
+                    let tile_coord = SIMD2<Int>(dx, dz)
+                    
+                    if floor_tiles[tile_coord] != nil { continue }
+                    
+                    let tile = make_tile(at_grid_x: dx, at_grid_z: dz)
+                    
+                    tile.position = SIMD3(Float(dx) * tile_size - tile_size / 2, 0, Float(dz) * tile_size - tile_size / 2)
+                    
+                    workspace_entity.addChild(tile)
+                    floor_tiles[tile_coord] = tile
+                }
+            }
+            
+            func make_tile(at_grid_x x: Int, at_grid_z z: Int) -> ModelEntity
+            {
+                let is_even_tile = (x + z) % 2 == 0
+                return (is_even_tile ? green_tile : purple_tile).clone(recursive: true)
+            }
+            
+            // Remove
+            for (coord, tile) in floor_tiles
+            {
+                if coord.x < min_x || coord.x > max_x || coord.y < min_z || coord.y > max_z
+                {
+                    tile.removeFromParent()
+                    floor_tiles.removeValue(forKey: coord)
+                }
+            }
+        }*/
     }
     #endif
     
