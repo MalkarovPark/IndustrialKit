@@ -1792,7 +1792,7 @@ import SwiftUI
         let cx = Int(round(0 / cell_size))
         let cz = Int(round(0 / cell_size))
         
-        create_grid_async(center_x: cx, center_z: cz)
+        //create_grid_async(center_x: cx, center_z: cz)
         
         /*_ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
