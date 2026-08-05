@@ -15,11 +15,11 @@ public struct SpatialPendant: View
     @ObservedObject var controller: PendantController
     @ObservedObject var workspace: Workspace
     
-    let shows_program_indices: Bool
+    public var shows_program_indices: Bool
     
-    let on_update_workspace: () -> ()
-    let on_update_robot: () -> ()
-    let on_update_tool: () -> ()
+    public var on_update_workspace: () -> ()
+    public var on_update_robot: () -> ()
+    public var on_update_tool: () -> ()
     
     public init(
         controller: PendantController,

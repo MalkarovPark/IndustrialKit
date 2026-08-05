@@ -971,4 +971,3 @@ let register_card_font_size: CGFloat = 32
     }
     .padding(16)
 }
-
