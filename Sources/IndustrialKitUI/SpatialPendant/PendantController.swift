@@ -18,6 +18,8 @@ import IndustrialKit
         
     }
     
+    public var shows_program_indices: Bool = true
+    
     // MARK: - Workspace management
     @Published public var workspace = Workspace()
     
@@ -87,5 +89,21 @@ import IndustrialKit
     {
         self.open = open
         self.dismiss = dismiss
+    }
+    
+    // MARK: - Document management
+    public var on_update_workspace = {}
+    public var on_update_robot = {}
+    public var on_update_tool = {}
+    
+    public func set_document_functions(
+        _ on_update_workspace: @escaping () -> (),
+        _ on_update_robot: @escaping () -> (),
+        _ on_update_tool: @escaping () -> ()
+    )
+    {
+        self.on_update_workspace = on_update_workspace
+        self.on_update_robot = on_update_robot
+        self.on_update_tool = on_update_tool
     }
 }

@@ -17,9 +17,9 @@ public struct SpatialPendant: View
     
     let shows_program_indices: Bool
     
-    let on_update_workspace: () -> ()
+    /*let on_update_workspace: () -> ()
     let on_update_robot: () -> ()
-    let on_update_tool: () -> ()
+    let on_update_tool: () -> ()*/
     
     public init(
         controller: PendantController,
@@ -38,9 +38,10 @@ public struct SpatialPendant: View
         
         self.shows_program_indices = shows_program_indices
         
-        self.on_update_workspace = on_update_workspace
+        /*self.on_update_workspace = on_update_workspace
         self.on_update_robot = on_update_robot
-        self.on_update_tool = on_update_tool
+        self.on_update_tool = on_update_tool*/
+        self.controller.set_document_functions(on_update_workspace, on_update_robot, on_update_tool)
     }
     
     public var body: some View
@@ -59,14 +60,14 @@ public struct SpatialPendant: View
                         case let robot as Robot:
                             RobotControlView(
                                 robot: robot,
-                                shows_program_indices: shows_program_indices,
-                                on_update: on_update_robot
+                                shows_program_indices: controller.shows_program_indices,//shows_program_indices,
+                                on_update: controller.on_update_robot//on_update: on_update_robot
                             )
                         case let tool as Tool:
                             ToolControlView(
                                 tool: tool,
-                                shows_program_indices: shows_program_indices,
-                                on_update: on_update_tool
+                                shows_program_indices: controller.shows_program_indices,//shows_program_indices,
+                                on_update: controller.on_update_tool//on_update: on_update_tool
                             )
                         case is Part:
                             ZStack
@@ -80,7 +81,7 @@ public struct SpatialPendant: View
                         case .none:
                             WorkspaceControlView(
                                 workspace: workspace,
-                                on_update: on_update_workspace
+                                on_update: controller.on_update_workspace//on_update: on_update_workspace
                             )
                         }
                     }
@@ -115,14 +116,14 @@ public struct SpatialPendant: View
             case let robot as Robot:
                 RobotControlView(
                     robot: robot,
-                    shows_program_indices: shows_program_indices,
-                    on_update: on_update_robot
+                    shows_program_indices: controller.shows_program_indices,//shows_program_indices,
+                    on_update: controller.on_update_robot//on_update: on_update_robot
                 )
             case let tool as Tool:
                 ToolControlView(
                     tool: tool,
-                    shows_program_indices: shows_program_indices,
-                    on_update: on_update_tool
+                    shows_program_indices: controller.shows_program_indices,//shows_program_indices,
+                    on_update: controller.on_update_tool//on_update: on_update_tool
                 )
             case is Part:
                 EmptyView()
@@ -133,7 +134,7 @@ public struct SpatialPendant: View
             case .none:
                 WorkspaceControlView(
                     workspace: workspace,
-                    on_update: on_update_workspace
+                    on_update: controller.on_update_workspace//on_update: on_update_workspace
                 )
             }
         }
