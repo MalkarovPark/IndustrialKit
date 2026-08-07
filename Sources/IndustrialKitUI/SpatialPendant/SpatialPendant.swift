@@ -21,7 +21,7 @@ public struct SpatialPendant: View
     let on_update_robot: () -> ()
     let on_update_tool: () -> ()*/
     
-    public init(
+    /*public init(
         controller: PendantController,
         //workspace: Workspace,
         
@@ -42,6 +42,37 @@ public struct SpatialPendant: View
         self.on_update_robot = on_update_robot
         self.on_update_tool = on_update_tool*/
         self.controller.set_document_functions(on_update_workspace, on_update_robot, on_update_tool)
+    }*/
+    
+    public init(
+        controller: PendantController,
+        
+        shows_program_indices: Bool = false,
+        
+        on_update_workspace: @escaping () -> (),
+        on_update_robot: @escaping () -> (),
+        on_update_tool: @escaping () -> ()
+    )
+    {
+        self.controller = controller
+        self.workspace = controller.workspace
+        //self.workspace = workspace
+        
+        self.shows_program_indices = shows_program_indices
+        
+        self.controller.set_document_functions(on_update_workspace, on_update_robot, on_update_tool)
+    }
+    
+    public init(
+        controller: PendantController,
+        
+        shows_program_indices: Bool = false
+    )
+    {
+        self.controller = controller
+        self.workspace = controller.workspace
+        
+        self.shows_program_indices = shows_program_indices
     }
     
     public var body: some View
