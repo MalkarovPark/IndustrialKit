@@ -256,7 +256,7 @@ public struct GlassBoxCard<Content: View>: View
     
     // Entity
     let entity: Entity?
-    private var vertical_entity_reposition = false
+    private var center_entity = false
     
     // Rename
     @Binding public var is_renaming: Bool
@@ -421,7 +421,7 @@ public struct GlassBoxCard<Content: View>: View
         #else
         self.entity = entity?.clone(recursive: true)
         #endif
-        self.vertical_entity_reposition = vertical_repostion
+        self.center_entity = vertical_repostion
         
         self.image = nil
         self.symbol_name = nil
@@ -720,7 +720,7 @@ public struct GlassBoxCard<Content: View>: View
         
         previewed_entity.scale = SIMD3<Float>(repeating: scale)
         
-        if vertical_entity_reposition
+        if center_entity
         {
             let bounds = previewed_entity.visualBounds(relativeTo: previewed_entity)
 
