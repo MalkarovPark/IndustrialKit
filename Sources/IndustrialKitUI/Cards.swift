@@ -507,16 +507,14 @@ public struct GlassBoxCard<Content: View>: View
                         
                         // Camera reposition
                         let camera = PerspectiveCamera()
-                        //camera.camera.fieldOfViewInDegrees = 60
-                        camera.position = [0, vertical_entity_reposition ? (entity.visualBounds(relativeTo: nil).extents.y) / 2 : 0, (entity.visualBounds(relativeTo: nil).extents.z) * 2]
+                        
+                        if vertical_entity_reposition
+                        {
+                            let bounds = entity.visualBounds(relativeTo: entity)
+                            camera.position = [-bounds.center.x / 2, -bounds.center.y / 2, bounds.extents.z * 2]
+                        }
                         
                         content.add(camera)
-                        
-                        /*let camera = PerspectiveCamera()
-                        camera.camera.fieldOfViewInDegrees = 60
-                        camera.position = [0, 0, 1]
-                        //camera.rotate_x(by: -.pi / 6)
-                        content.add(camera)*/
                     }
                     .disabled(true)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -724,7 +722,9 @@ public struct GlassBoxCard<Content: View>: View
         
         if vertical_entity_reposition
         {
-            previewed_entity.position = [0, -previewed_entity.visualBounds(relativeTo: nil).center.y / 2, 0]
+            let bounds = previewed_entity.visualBounds(relativeTo: previewed_entity)
+
+            previewed_entity.position = [-bounds.center.x, -bounds.center.y, -bounds.center.z] / 2
         }
     }
     #endif
