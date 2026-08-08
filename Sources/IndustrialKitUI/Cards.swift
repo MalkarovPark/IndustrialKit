@@ -416,7 +416,11 @@ public struct GlassBoxCard<Content: View>: View
             endPoint: .trailing
         )
         
+        #if !os(visionOS)
         self.entity = entity
+        #else
+        self.entity = entity?.clone(recursive: true)
+        #endif
         self.vertical_entity_reposition = vertical_repostion
         
         self.image = nil
