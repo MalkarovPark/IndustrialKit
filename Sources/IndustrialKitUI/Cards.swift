@@ -417,6 +417,9 @@ public struct GlassBoxCard<Content: View>: View
         )
         
         self.entity = entity
+        #if os(visionOS)
+        self.previewed_entity = entity?.clone(recursive: true)
+        #endif
         self.vertical_entity_reposition = vertical_repostion
         
         self.image = nil
@@ -521,7 +524,7 @@ public struct GlassBoxCard<Content: View>: View
                     { geometry in
                         RealityView
                         { content in
-                            if let previewed_entity
+                            if let previewed_entity = previewed_entity
                             {
                                 let bounds = previewed_entity.visualBounds(relativeTo: nil)
                                 model_size = bounds.extents
@@ -703,7 +706,7 @@ public struct GlassBoxCard<Content: View>: View
     
     private func update_scale()
     {
-        guard let previewed_entity else { return }
+        guard let previewed_entity = previewed_entity else { return }
         guard model_size != .zero else { return }
         
         let view_width = Float(view_size.width) * 0.001
