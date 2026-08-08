@@ -417,9 +417,6 @@ public struct GlassBoxCard<Content: View>: View
         )
         
         self.entity = entity
-        #if os(visionOS)
-        self.previewed_entity = entity?.clone(recursive: true)
-        #endif
         self.vertical_entity_reposition = vertical_repostion
         
         self.image = nil
@@ -524,13 +521,12 @@ public struct GlassBoxCard<Content: View>: View
                     { geometry in
                         RealityView
                         { content in
-                            if let previewed_entity = previewed_entity
-                            {
-                                let bounds = previewed_entity.visualBounds(relativeTo: nil)
-                                model_size = bounds.extents
-                                
-                                content.add(previewed_entity)
-                            }
+                            let previewed_entity = entity
+                            
+                            let bounds = previewed_entity.visualBounds(relativeTo: nil)
+                            model_size = bounds.extents
+                            
+                            content.add(previewed_entity)
                         }
                         .frame(depth: CGFloat(scale * model_size.x * 1000 + shift * scale))
                         .onChange(of: geometry.size)
@@ -695,7 +691,6 @@ public struct GlassBoxCard<Content: View>: View
     }
     
     #if os(visionOS)
-    @State private var previewed_entity: Entity?
     @State private var model_size: SIMD3<Float> = .zero
     @State private var view_size: CGSize = .zero
     @State private var scale: Float = 1
@@ -706,7 +701,7 @@ public struct GlassBoxCard<Content: View>: View
     
     private func update_scale()
     {
-        guard let previewed_entity = previewed_entity else { return }
+        guard let previewed_entity = entity else { return }
         guard model_size != .zero else { return }
         
         let view_width = Float(view_size.width) * 0.001
