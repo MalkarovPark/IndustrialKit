@@ -395,7 +395,7 @@ public struct GlassBoxCard<Content: View>: View
         color: Color? = nil,
         
         entity: Entity?,
-        vertical_repostion: Bool = false,
+        center_entity: Bool = false,
         
         is_renaming: Binding<Bool> = .constant(false),
         on_rename: @escaping (String) -> () = { _ in },
@@ -421,7 +421,7 @@ public struct GlassBoxCard<Content: View>: View
         #else
         self.entity = entity?.clone(recursive: true)
         #endif
-        self.center_entity = vertical_repostion
+        self.center_entity = center_entity
         
         self.image = nil
         self.symbol_name = nil
