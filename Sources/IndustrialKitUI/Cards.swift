@@ -724,7 +724,7 @@ public struct GlassBoxCard<Content: View>: View
         {
             let bounds = previewed_entity.visualBounds(relativeTo: previewed_entity)
 
-            previewed_entity.position = [-bounds.center.x, -bounds.center.y, -bounds.center.z] / 2
+            previewed_entity.position = [-bounds.center.x, -bounds.center.y, 0/*-bounds.center.z*/] / 2
         }
     }
     #endif
