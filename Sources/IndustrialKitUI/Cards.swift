@@ -521,12 +521,13 @@ public struct GlassBoxCard<Content: View>: View
                     { geometry in
                         RealityView
                         { content in
-                            let previewed_entity = entity.clone(recursive: true)
-                            
-                            let bounds = previewed_entity.visualBounds(relativeTo: nil)
-                            model_size = bounds.extents
-                            
-                            content.add(previewed_entity)
+                            if let previewed_entity
+                            {
+                                let bounds = previewed_entity.visualBounds(relativeTo: nil)
+                                model_size = bounds.extents
+                                
+                                content.add(previewed_entity)
+                            }
                         }
                         .frame(depth: CGFloat(scale * model_size.x * 1000 + shift * scale))
                         .onChange(of: geometry.size)
@@ -702,7 +703,7 @@ public struct GlassBoxCard<Content: View>: View
     
     private func update_scale()
     {
-        guard let previewed_entity = entity else { return }
+        guard let previewed_entity else { return }
         guard model_size != .zero else { return }
         
         let view_width = Float(view_size.width) * 0.001
