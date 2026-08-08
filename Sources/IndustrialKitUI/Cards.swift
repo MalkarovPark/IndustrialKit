@@ -524,27 +524,25 @@ public struct GlassBoxCard<Content: View>: View
                             let bounds = entity.visualBounds(relativeTo: nil)
                             model_size = bounds.extents
                             
-                            let world = make_world(with: entity)
-                            portal_entity = make_portal(world: world)
-                            
-                            content.add(world)
-                            content.add(portal_entity)
+                            content.add(entity)
                         }
-                        .frame(depth: 1)
+                        .frame(depth: CGFloat(scale * model_size.x * 1000 + shift * scale))
                         .onChange(of: geometry.size)
                         { _, new_size in
-                            update_scale(with: geometry.size)
-                            update_portal(with: geometry.size)
+                            view_size = new_size
+                            update_scale()
                         }
                         .onAppear
                         {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25)
                             {
-                                update_scale(with: geometry.size)
-                                update_portal(with: geometry.size)
+                                view_size = geometry.size
+                                update_scale()
                             }
                         }
                     }
+                    .disabled(true)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     #endif
                 }
                 
@@ -693,19 +691,20 @@ public struct GlassBoxCard<Content: View>: View
     #if os(visionOS)
     @State private var previewed_entity: Entity?
     @State private var model_size: SIMD3<Float> = .zero
+    @State private var view_size: CGSize = .zero
     @State private var scale: Float = 1
-    @State private var portal_entity = Entity()
     
     private let factor: Float = 0.5
     private let shift: Float = 200
+    private let grid_factor: Float = 0.675
     
-    private func update_scale(with size: CGSize = .zero)
+    private func update_scale()
     {
         guard let previewed_entity = entity else { return }
         guard model_size != .zero else { return }
         
-        let view_width = Float(size.width) * 0.001
-        let view_height = Float(size.height) * 0.001
+        let view_width = Float(view_size.width) * 0.001
+        let view_height = Float(view_size.height) * 0.001
         
         let min_view_dimension = min(view_width, view_height)
         
@@ -717,58 +716,6 @@ public struct GlassBoxCard<Content: View>: View
         scale = (min_view_dimension / length(model_size)) * factor
         
         previewed_entity.scale = SIMD3<Float>(repeating: scale)
-    }
-    
-    private func make_world(with entity: Entity) -> Entity
-    {
-        let world = Entity()
-        world.components[WorldComponent.self] = .init()
-        
-        let material = UnlitMaterial(color: UIColor(color))//.white)
-        let background = Entity()
-        background.components.set(ModelComponent(
-            mesh: .generateSphere(radius: 0.8),
-            materials: [material]))
-        background.scale.x *= -1
-        world.addChild(background)
-        
-        entity.components[PortalCrossingComponent.self] = .init()
-        
-        world.addChild(entity)
-        
-        // Center shift
-        /*let bounds = entity.visualBounds(relativeTo: nil)
-        let center = bounds.center
-        entity.position -= center * scale*/
-        
-        return world
-    }
-    
-    private func make_portal(world: Entity) -> Entity
-    {
-        let portal = Entity()
-        portal.components[PortalComponent.self] = .init(target: world)
-        
-        let portalComponent = PortalComponent(
-            target: world,
-            clippingMode: .disabled,
-            crossingMode: .disabled
-        )
-        portal.components.set(portalComponent)
-        
-        return portal
-    }
-    
-    func update_portal(with size: CGSize = .zero)
-    {
-        portal_entity.components.remove(ModelComponent.self)
-        portal_entity.components[ModelComponent.self] = .init(
-            mesh: .generatePlane(
-                width: Float(size.width / 1370),
-                height: Float(size.height / 1370),
-                cornerRadius: Float(0.01)),
-            materials: [PortalMaterial()]
-        )
     }
     #endif
 }
