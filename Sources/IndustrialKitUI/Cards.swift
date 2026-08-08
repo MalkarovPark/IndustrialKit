@@ -524,7 +524,7 @@ public struct GlassBoxCard<Content: View>: View
                             let bounds = entity.visualBounds(relativeTo: nil)
                             model_size = bounds.extents
                             
-                            entity.position = [0, vertical_entity_reposition ? (entity.visualBounds(relativeTo: nil).extents.y) / 2 : 0, (entity.visualBounds(relativeTo: nil).extents.z) * 2]
+                            entity.position = [0, vertical_entity_reposition ? (-entity.visualBounds(relativeTo: nil).extents.y) / 2 : 0, (-entity.visualBounds(relativeTo: nil).extents.z) * 2]
                             
                             content.add(entity)
                         }
