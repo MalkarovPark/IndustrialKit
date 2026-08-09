@@ -75,8 +75,9 @@ private struct CaptionView: View
             {
                 Text(label)
                     .padding(0)
+                #if !os(visionOS)
                     .font(.title3)
-                #if os(visionOS)
+                #else
                     .font(.title2)
                     .padding(.vertical)
                 #endif
