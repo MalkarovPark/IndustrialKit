@@ -542,6 +542,7 @@ public struct GlassBoxCard<Content: View>: View
                             content.add(previewed_entity)
                         }
                         .frame(depth: CGFloat(scale * model_size.x * 1000 + shift * scale))
+                        .opacity(first_lodaded ? 0 : 1)
                         .onChange(of: geometry.size)
                         { _, new_size in
                             view_size = new_size
@@ -553,6 +554,7 @@ public struct GlassBoxCard<Content: View>: View
                             {
                                 view_size = geometry.size
                                 update_scale()
+                                first_lodaded = false
                             }
                         }
                     }
@@ -708,6 +710,8 @@ public struct GlassBoxCard<Content: View>: View
     @State private var model_size: SIMD3<Float> = .zero
     @State private var view_size: CGSize = .zero
     @State private var scale: Float = 1
+    
+    @State private var first_lodaded = true
     
     private let factor: Float = 0.5
     private let shift: Float = 200
