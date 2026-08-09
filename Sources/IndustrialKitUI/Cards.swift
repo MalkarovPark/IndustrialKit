@@ -569,9 +569,6 @@ public struct GlassBoxCard<Content: View>: View
                     )
                     .foregroundStyle(gradient)
                     .opacity(0.5)
-                #if os(visionOS)
-                    .frame(depth: 2)
-                #endif
                 
                 // Top Side
                 VStack(spacing: 0)
@@ -670,6 +667,10 @@ public struct GlassBoxCard<Content: View>: View
                                     #endif
                                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                     .padding(8)
+                                    #if os(visionOS)
+                                    .border(.ultraThinMaterial.opacity(0.0000000000000000000000000001)) //??
+                                    .frame(depth: entity == nil ? 0 : CGFloat(scale * model_size.x * 1000 + shift * scale) * 2)
+                                    #endif
                                     .onChange(of: is_renaming)
                                     { _, new_value in
                                         new_name = title ?? String()
