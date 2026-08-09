@@ -508,7 +508,7 @@ public struct GlassBoxCard<Content: View>: View
                         // Camera reposition
                         let camera = PerspectiveCamera()
                         
-                        if vertical_entity_reposition
+                        if center_entity
                         {
                             let bounds = entity.visualBounds(relativeTo: entity)
                             camera.position = [-bounds.center.x / 2, -bounds.center.y / 2, bounds.extents.z * 2]
@@ -724,7 +724,7 @@ public struct GlassBoxCard<Content: View>: View
         {
             let bounds = previewed_entity.visualBounds(relativeTo: previewed_entity)
 
-            previewed_entity.position = [-bounds.center.x, -bounds.center.y, 0/*-bounds.center.z*/] / 2
+            previewed_entity.position = [bounds.center.x, bounds.center.y, 0/*-bounds.center.z*/] / 2
         }
     }
     #endif
