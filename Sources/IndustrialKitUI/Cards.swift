@@ -416,11 +416,11 @@ public struct GlassBoxCard<Content: View>: View
             endPoint: .trailing
         )
         
-        #if !os(visionOS)
+        //#if !os(visionOS)
         self.entity = entity
-        #else
+        /*#else
         self.entity = entity?.clone(recursive: true)
-        #endif
+        #endif*/
         self.center_entity = center_entity
         
         self.image = nil
@@ -928,3 +928,24 @@ let register_card_font_size: CGFloat = 32
     }
     .padding(16)
 }
+
+/*#Preview(windowStyle: .automatic)
+{
+    let columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 36)]
+    let card_spacing: CGFloat = 36
+    let card_height: CGFloat = 192
+    
+    LazyVGrid(columns: columns, spacing: card_spacing)
+    {
+        ForEach(0..<6, id: \.self) { _ in
+            GlassBoxCard(
+                title: "??",
+                entity: ModelEntity(
+                    mesh: .generateBox(size: Float(0.1), cornerRadius: Float(0.01)),
+                    materials: [SimpleMaterial(color: .white, isMetallic: false)]
+                ), center_entity: true
+            )
+            .frame(height: card_height)
+        }
+    }
+}*/
