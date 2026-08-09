@@ -501,20 +501,31 @@ public struct GlassBoxCard<Content: View>: View
                 else if let entity = entity
                 {
                     #if os(macOS) || os(iOS)
-                    RealityView
-                    { content in
-                        content.add(entity)
-                        
-                        // Camera reposition
-                        let camera = PerspectiveCamera()
-                        
-                        if center_entity
-                        {
-                            let bounds = entity.visualBounds(relativeTo: entity)
-                            camera.position = [-bounds.center.x / 2, -bounds.center.y / 2, bounds.extents.z * 2]
+                    GeometryReader
+                    { geometry in
+                        RealityView
+                        { content in
+                            content.add(entity)
+                            
+                            if center_entity
+                            {
+                                let camera = PerspectiveCamera()
+                                let bounds = entity.visualBounds(relativeTo: entity)
+                                
+                                let fov_y = camera.camera.fieldOfViewInDegrees * .pi / 180
+                                let aspect = Float(geometry.size.width / geometry.size.height)
+                                let fov_x = 2 * atan(tan(fov_y / 2) * aspect)
+                                
+                                let dx = bounds.extents.x / (2 * tan(fov_x / 2))
+                                let dy = bounds.extents.y / (2 * tan(fov_y / 2))
+                                let dz = bounds.extents.z / 2 + bounds.center.z
+                                
+                                let distance = max(dx, dy, dz)
+                                
+                                camera.position = [bounds.center.x, bounds.center.y, distance + Float(0.25)]
+                                content.add(camera)
+                            }
                         }
-                        
-                        content.add(camera)
                     }
                     .disabled(true)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -525,7 +536,7 @@ public struct GlassBoxCard<Content: View>: View
                         { content in
                             let previewed_entity = entity
                             
-                            let bounds = previewed_entity.visualBounds(relativeTo: nil)
+                            let bounds = previewed_entity.visualBounds(relativeTo: previewed_entity)
                             model_size = bounds.extents
                             
                             content.add(previewed_entity)
@@ -723,8 +734,12 @@ public struct GlassBoxCard<Content: View>: View
         if center_entity
         {
             let bounds = previewed_entity.visualBounds(relativeTo: previewed_entity)
-
-            previewed_entity.position = [bounds.center.x, bounds.center.y, 0/*-bounds.center.z*/] / 2
+            
+            previewed_entity.position = [
+                bounds.extents.x / 2 + bounds.center.x,
+                bounds.extents.y / 2 + bounds.center.y,
+                bounds.extents.z / 2 + bounds.center.z
+            ] * scale * -0.5
         }
     }
     #endif
@@ -928,24 +943,3 @@ let register_card_font_size: CGFloat = 32
     }
     .padding(16)
 }
-
-/*#Preview(windowStyle: .automatic)
-{
-    let columns: [GridItem] = [.init(.adaptive(minimum: 192, maximum: .infinity), spacing: 36)]
-    let card_spacing: CGFloat = 36
-    let card_height: CGFloat = 192
-    
-    LazyVGrid(columns: columns, spacing: card_spacing)
-    {
-        ForEach(0..<6, id: \.self) { _ in
-            GlassBoxCard(
-                title: "??",
-                entity: ModelEntity(
-                    mesh: .generateBox(size: Float(0.1), cornerRadius: Float(0.01)),
-                    materials: [SimpleMaterial(color: .white, isMetallic: false)]
-                ), center_entity: true
-            )
-            .frame(height: card_height)
-        }
-    }
-}*/
