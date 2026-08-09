@@ -672,6 +672,7 @@ public struct GlassBoxCard<Content: View>: View
                                     #if os(visionOS)
                                     .border(.ultraThinMaterial.opacity(0.0000000000000000000000000001)) //??
                                     .frame(depth: entity == nil || first_lodaded ? 0 : CGFloat(scale * model_size.x * 1000 + shift * scale) * 2)
+                                    .animation(.easeInOut(duration: 0.2), value: CGFloat(scale * model_size.x * 1000 + shift * scale) * 2)
                                     #endif
                                     .onChange(of: is_renaming)
                                     { _, new_value in
