@@ -416,11 +416,11 @@ public struct GlassBoxCard<Content: View>: View
             endPoint: .trailing
         )
         
-        //#if !os(visionOS)
+        #if !os(visionOS)
         self.entity = entity
-        /*#else
+        #else
         self.entity = entity?.clone(recursive: true)
-        #endif*/
+        #endif
         self.center_entity = center_entity
         
         self.image = nil
