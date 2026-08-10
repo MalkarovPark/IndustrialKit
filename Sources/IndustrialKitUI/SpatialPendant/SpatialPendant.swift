@@ -156,8 +156,23 @@ public struct SpatialPendant: View
                     shows_program_indices: controller.shows_program_indices,//shows_program_indices,
                     on_update: controller.on_update_tool//on_update: on_update_tool
                 )
+                #if !os(visionOS)
             case is Part:
                 EmptyView()
+                #else
+            case let part as Part:
+                VStack(spacing: 10)
+                {
+                    Text(part.name)
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                    
+                    Text("Part")
+                        .font(.system(size: 18, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: pendant_content_width, maxHeight: .infinity)
+                #endif
             case .some(_):
                 Text("Nothing")
                     .font(.system(size: 18, design: .rounded))
