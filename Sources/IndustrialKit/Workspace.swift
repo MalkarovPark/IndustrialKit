@@ -2114,6 +2114,10 @@ import SwiftUI
             update_grid(camera_position: device_camera_position)
         }
     }
+    public func force_update_grid(camera_position: SIMD3<Float>)
+    {
+        update_grid(camera_position: camera_position)
+    }
     #endif
     
     // MARK: Grid
