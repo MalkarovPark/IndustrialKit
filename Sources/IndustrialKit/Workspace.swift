@@ -2112,15 +2112,6 @@ import SwiftUI
             update_grid(camera_position: device_camera_position)
         }
     }
-    public func force_update_grid(camera_position: SIMD3<Float>)
-    {
-        Task.detached(priority: .userInitiated)
-        { [weak self] in
-            guard let self else { return }
-            
-            await self.update_grid(camera_position: camera_position)
-        }
-    }
     #endif
     
     // MARK: Grid
@@ -2162,7 +2153,11 @@ import SwiftUI
     
     // Floor parameters
     private var tile_size: Float = 1
+    #if !os(visionOS)
     private var tiles_render_radius: Int = 10
+    #else
+    private var tiles_render_radius: Int = 5
+    #endif
     private var tile_colors: (even: UIColor, odd: UIColor) = (.systemGreen, .systemPurple)
     private var axis_line_thickness: Float = 0.00375
     
