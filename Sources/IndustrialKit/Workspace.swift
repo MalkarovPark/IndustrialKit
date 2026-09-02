@@ -2107,7 +2107,7 @@ import SwiftUI
     }
     #else
     /// Current device camera position.
-    private var device_camera_position: SIMD3<Float> = .zero
+    public var device_camera_position: SIMD3<Float> = .zero
     {
         didSet
         {
