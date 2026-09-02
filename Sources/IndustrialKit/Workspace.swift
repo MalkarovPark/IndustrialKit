@@ -2280,7 +2280,6 @@ import SwiftUI
         return tile
     }()
     
-    @MainActor //??!!
     private func update_visible_tiles(camera_position: SIMD3<Float>)
     {
         let cam_x = camera_position.x
