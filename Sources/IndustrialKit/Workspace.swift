@@ -2116,7 +2116,12 @@ import SwiftUI
     }
     public func force_update_grid(camera_position: SIMD3<Float>)
     {
-        update_grid(camera_position: camera_position)
+        Task.detached(priority: .userInitiated)
+        { [weak self] in
+            guard let self else { return }
+            
+            await self.update_grid(camera_position: camera_position)
+        }
     }
     #endif
     
@@ -2155,43 +2160,6 @@ import SwiftUI
         if !grid_visible { return }
         
         update_visible_tiles(camera_position: camera_position)
-    }
-    
-    /// Asynchronously builds grid around a center position.
-    ///
-    /// Uses batched updates to avoid blocking main thread.
-    /// Suitable for initial scene setup or teleport-like camera moves.
-    ///
-    /// - Parameters:
-    ///   - center_x: Grid X center index
-    ///   - center_z: Grid Z center index
-    private func create_grid_async(center_x: Int, center_z: Int)
-    {
-        /*Task.detached(priority: .userInitiated)
-        { [weak self] in
-            guard let self else { return }
-            
-            let indices: [Int] = Array(-self.render_radius...self.render_radius)
-            let batch_size = 32
-            
-            for batch_start in stride(from: 0, to: indices.count, by: batch_size)
-            {
-                let batch_end = min(batch_start + batch_size, indices.count)
-                
-                await MainActor.run
-                { [weak self] in
-                    guard let self else { return }
-                    for i in batch_start..<batch_end
-                    {
-                        let idx = indices[i]
-                        self.add_line(index: center_x + idx, axis: .x)
-                        self.add_line(index: center_z + idx, axis: .z)
-                    }
-                }
-                
-                try? await Task.sleep(nanoseconds: 5_000_000)
-            }
-        }*/
     }
     
     // Floor parameters
