@@ -2105,6 +2105,15 @@ import SwiftUI
             tile.scale = SIMD3<Float>(repeating: clamped)
         }
     }
+    #else
+    /// Current device camera position.
+    private var device_camera_position: SIMD3<Float> = .zero
+    {
+        didSet
+        {
+            update_grid(camera_position: device_camera_position)
+        }
+    }
     #endif
     
     // MARK: Grid
