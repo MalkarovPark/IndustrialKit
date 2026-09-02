@@ -1786,13 +1786,11 @@ import SwiftUI
         scene_content?.add(workspace_anchor) // Physics
         
         // Place grid
-        //create_grid_async(center_x: cx, center_z: cz)
-        
-        /*_ = content.subscribe(to: SceneEvents.Update.self)
+        _ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
-            guard let self, let camera = self.workspace_camera else { return }
-            self.update_grid(camera_position: camera.position)
-        }*/
+            guard let self/*, let camera = self.workspace_camera*/ else { return }
+            self.update_grid(camera_position: .zero/*camera.position*/)
+        }
         
         // Place pointer
         workspace_entity.addChild(pointer_entity)
