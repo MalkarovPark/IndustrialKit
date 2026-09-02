@@ -1786,11 +1786,11 @@ import SwiftUI
         scene_content?.add(workspace_anchor) // Physics
         
         // Place grid
-        _ = content.subscribe(to: SceneEvents.Update.self)
+        /*_ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
             guard let self/*, let camera = self.workspace_camera*/ else { return }
             self.update_grid(camera_position: .zero/*camera.position*/)
-        }
+        }*/
         
         // Place pointer
         workspace_entity.addChild(pointer_entity)
@@ -2201,7 +2201,11 @@ import SwiftUI
         
         let tile = ModelEntity()
         
+        #if !os(visionOS)
         add_minor_lines(to: tile, divisions: 10, size: tile_size)
+        #else
+        add_minor_lines(to: tile, divisions: 5, size: tile_size)
+        #endif
         add_major_lines(to: tile, size: tile_size)
         
         return tile
