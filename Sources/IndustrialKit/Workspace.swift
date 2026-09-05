@@ -1839,7 +1839,7 @@ import SwiftUI
         scene_content = content
         
         scene_content?.add(workspace_entity)
-        scene_content?.add(workspace_anchor)
+        //scene_content?.add(workspace_anchor)
         
         build_portal()
         
@@ -2164,7 +2164,7 @@ import SwiftUI
         portal_entity.isEnabled = true
         
         portal_root_entity.addChild(workspace_entity)
-        portal_root_entity.addChild(workspace_anchor)
+        //portal_root_entity.addChild(workspace_anchor)
         
         update_portal_size(with: CGSize(width: 1280, height: 720))
         workspace_entity.scale = .init(repeating: 0.25)
@@ -2181,7 +2181,7 @@ import SwiftUI
         portal_entity.isEnabled = false
         
         scene_content.add(workspace_entity)
-        scene_content.add(workspace_anchor)
+        //scene_content.add(workspace_anchor)
     }
     
     private func build_portal()
