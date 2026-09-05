@@ -1665,7 +1665,7 @@ import SwiftUI
     private var workspace_entity = Entity()
     
     /// Anchor entity used for physics and world alignment in RealityKit scene.
-    private var workspace_anchor = AnchorEntity(world: .zero)
+    private var workspace_anchor = Entity()//AnchorEntity(world: .zero)
     
     #if os(macOS) || os(iOS)
     private var scene_content: RealityViewCameraContent?
