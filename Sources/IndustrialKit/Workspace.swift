@@ -1796,7 +1796,8 @@ import SwiftUI
         scene_content = content
         
         scene_content?.add(workspace_entity)
-        scene_content?.add(workspace_anchor) // Physics
+        workspace_entity.addChild(workspace_anchor)
+        //scene_content?.add(workspace_anchor) // Physics
         
         // Place pointer
         workspace_entity.addChild(pointer_entity)
@@ -2586,9 +2587,7 @@ import SwiftUI
     public func place_object_entity(object: ProductionObject)
     {
         object.entity.update_position(object.position)
-        //workspace_anchor.addChild(object.entity)
-        
-        workspace_entity.addChild(object.entity) //??!!
+        workspace_anchor.addChild(object.entity)
     }
     
     /// Removes a production object entity from workspace.
