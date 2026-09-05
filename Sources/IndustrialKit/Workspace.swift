@@ -2153,6 +2153,14 @@ import SwiftUI
     private let portal_entity_scale_factor: Float = 0.5
     
     //private var displays_as_portal: Bool = false
+    @Published public var portal_entity_scale: Float = 0.25
+    {
+        didSet
+        {
+            portal_root_entity.scale = .init(repeating: portal_entity_scale)
+            //update_portal_entity_scale(with: portal_geometry_size)
+        }
+    }
     
     public func enter_portal_mode()
     {
@@ -2166,7 +2174,7 @@ import SwiftUI
         portal_root_entity.addChild(workspace_anchor)
         
         update_portal_size(with: CGSize(width: 1280, height: 720))
-        workspace_entity.scale = .init(repeating: 0.25)
+        workspace_entity.scale = .init(repeating: portal_entity_scale)
         //update_portal_entity_scale(with: portal_geometry_size)
     }
     
@@ -2176,7 +2184,7 @@ import SwiftUI
         
         guard let scene_content else { return }
         
-        workspace_entity.scale = .init(repeating: 1)
+        //workspace_entity.scale = .init(repeating: 1)
         portal_entity.isEnabled = false
         
         scene_content.add(workspace_entity)
@@ -2234,7 +2242,7 @@ import SwiftUI
         }
     }
     
-    private func update_portal_entity_scale(with size: CGSize = .zero)
+    /*private func update_portal_entity_scale(with size: CGSize = .zero)
     {
         guard workspace_entity_scale != .zero else { return }
         
@@ -2248,9 +2256,9 @@ import SwiftUI
         else { return }
         
         workspace_entity.scale = SIMD3<Float>(repeating: (min_view_dimension / length(workspace_entity_scale)) * portal_entity_scale_factor)
-    }
+    }*/
     
-    private func update_portal_size(with size: CGSize = .zero)
+    public func update_portal_size(with size: CGSize = .zero)
     {
         portal_entity.components.remove(ModelComponent.self)
         portal_entity.components[ModelComponent.self] = .init(
@@ -2263,7 +2271,7 @@ import SwiftUI
     }
     #endif
     
-    // MARK: - Visual
+    // MARK: - Visual Modeling
     // MARK: Grid
     private var grid_visible = true
     
