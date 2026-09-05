@@ -2174,7 +2174,7 @@ import SwiftUI
         portal_root_entity.addChild(workspace_anchor)
         
         update_portal_size(with: CGSize(width: 1280, height: 720))
-        workspace_entity.scale = .init(repeating: portal_entity_scale)
+        //portal_root_entity.scale = .init(repeating: portal_entity_scale)
         //update_portal_entity_scale(with: portal_geometry_size)
     }
     
