@@ -1842,9 +1842,9 @@ import SwiftUI
         scene_content?.add(workspace_entity)
         scene_content?.add(workspace_anchor)
         
-        //build_portal()
+        build_portal()
         
-        scene_content?.add(portal_entity)
+        //scene_content?.add(portal_entity)
         
         if !as_portal
         {
@@ -2165,8 +2165,6 @@ import SwiftUI
         workspace_entity_scale = workspace_entity.visualBounds(relativeTo: nil).extents
         
         portal_entity.isEnabled = true
-        
-        build_portal()
         
         portal_root_entity.addChild(workspace_entity)
         portal_root_entity.addChild(workspace_anchor)
