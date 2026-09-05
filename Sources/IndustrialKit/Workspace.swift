@@ -1785,6 +1785,8 @@ import SwiftUI
         
         scene_content?.add(workspace_anchor) // Physics
         
+        build_portal() // Portal setup
+        
         // Place grid
         /*_ = content.subscribe(to: SceneEvents.Update.self)
         { [weak self] _ in
@@ -1886,8 +1888,8 @@ import SwiftUI
         }
     }
     
+    // MARK: - Camera
     #if os(macOS) || os(iOS)
-    // MARK: Camera
     /// Perspective camera used for workspace visualization.
     private var workspace_camera: PerspectiveCamera?
     
@@ -2112,8 +2114,123 @@ import SwiftUI
             update_grid(camera_position: device_camera_position)
         }
     }
+    
+    // MARK: Portal
+    private var workspace_entity_scale: SIMD3<Float> = .zero
+    private var portal_entity = Entity()
+    private var portal_root_entity = Entity()
+    private var portal_geometry_size: CGSize = .zero
+    
+    private let portal_entity_scale_factor: Float = 0.5
+    
+    //private var displays_as_portal: Bool = false
+    
+    public func enter_portal_mode()
+    {
+        //displays_as_portal = true
+        
+        workspace_entity_scale = workspace_entity.visualBounds(relativeTo: nil).extents
+        
+        portal_entity.isEnabled = true
+        portal_root_entity.addChild(workspace_entity)
+        
+        update_portal_entity_scale(with: portal_geometry_size)
+    }
+    
+    public func exit_portal_mode()
+    {
+        //displays_as_portal = false
+        
+        guard let scene_content else { return }
+        
+        workspace_entity.scale = .init(repeating: 1)
+        portal_entity.isEnabled = false
+        scene_content.add(workspace_entity)
+    }
+    
+    private func build_portal()
+    {
+        guard let scene_content else { return }
+        
+        workspace_entity_scale = workspace_entity.visualBounds(relativeTo: nil).extents
+        
+        let world = make_world()
+        portal_entity.components[PortalComponent.self] = .init(target: world)
+        
+        let portalComponent = PortalComponent(
+            target: world,
+            clippingMode: .disabled,
+            crossingMode: .disabled
+        )
+        portal_entity.components.set(portalComponent)
+        
+        scene_content.add(world)
+        scene_content.add(portal_entity)
+        
+        //portal_root_entity.addChild(workspace_entity)
+        update_portal_size(with: CGSize(width: 1280, height: 720))
+        exit_portal_mode()
+        
+        func make_world() -> Entity
+        {
+            // World
+            let world = Entity()
+            world.components[WorldComponent.self] = .init()
+            
+            // Background
+            let material = UnlitMaterial(color: .white)
+            let background = Entity()
+            background.components.set(ModelComponent(
+                mesh: .generateSphere(radius: 0.8),
+                materials: [material]))
+            background.scale.x *= -1
+            world.addChild(background)
+            
+            // Light
+            let light = DirectionalLight()
+            light.light.intensity = 4000
+            light.light.color = .white
+            light.position = [0, 2, 2]
+            light.look(at: [0, 0, 0], from: light.position, relativeTo: nil)
+            world.addChild(light)
+            
+            // Entity
+            world.addChild(portal_root_entity)
+            
+            return world
+        }
+    }
+    
+    private func update_portal_entity_scale(with size: CGSize = .zero)
+    {
+        guard workspace_entity_scale != .zero else { return }
+        
+        let view_width = Float(size.width) * 0.001
+        let view_height = Float(size.height) * 0.001
+        
+        let min_view_dimension = min(view_width, view_height)
+        let model_radius = length(workspace_entity_scale) * 0.5
+        
+        guard model_radius > 0, min_view_dimension > 0
+        else { return }
+        
+        workspace_entity.scale = SIMD3<Float>(repeating: (min_view_dimension / length(workspace_entity_scale)) * portal_entity_scale_factor)
+    }
+    
+    private func update_portal_size(with size: CGSize = .zero)
+    {
+        portal_entity.components.remove(ModelComponent.self)
+        portal_entity.components[ModelComponent.self] = .init(
+            mesh: .generatePlane(
+                width: Float(size.width / 1370),
+                height: Float(size.height / 1370),
+                cornerRadius: Float(0.03)),
+            materials: [PortalMaterial()]
+        )
+    }
     #endif
     
+    // MARK: - Visual
     // MARK: Grid
     private var grid_visible = true
     
