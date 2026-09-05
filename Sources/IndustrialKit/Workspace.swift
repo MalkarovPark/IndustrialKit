@@ -1775,6 +1775,19 @@ import SwiftUI
         }
     }
     #else
+    /// Injects workspace into RealityKit scene content.
+    ///
+    /// Responsible for:
+    /// - Scene initialization
+    /// - Camera setup (macOS/iOS)
+    /// - Grid generation
+    /// - Pointer system activation
+    /// - Module entity loading
+    /// - Object placement
+    ///
+    /// - Parameters:
+    ///   - content: RealityKit scene container
+    ///   - completion: Completion callback
     public func place_entity(
         in content: RealityViewContent,
         completion: @escaping () -> () = {}
@@ -1820,6 +1833,34 @@ import SwiftUI
             #endif
             
             completion()
+        }
+    }
+    
+    /// Moves the workspace entity into the specified RealityKit scene content.
+    ///
+    /// Responsible for:
+    /// - Updating the current scene content
+    /// - Adding the workspace entity to the scene
+    /// - Optionally configuring the workspace as a portal
+    ///
+    /// - Parameters:
+    ///   - content: RealityKit scene container to add the workspace entity to
+    ///   - as_portal: A Boolean value that indicates whether to configure the workspace as a portal
+    public func move_entity(
+        to content: RealityViewContent,
+        as_portal: Bool
+    )
+    {
+        scene_content = content
+        scene_content?.add(workspace_entity)
+        
+        if !as_portal
+        {
+            exit_portal_mode()
+        }
+        else
+        {
+            enter_portal_mode()
         }
     }
     #endif
@@ -2157,12 +2198,12 @@ import SwiftUI
         let world = make_world()
         portal_entity.components[PortalComponent.self] = .init(target: world)
         
-        let portalComponent = PortalComponent(
+        let portal_component = PortalComponent(
             target: world,
             clippingMode: .disabled,
             crossingMode: .disabled
         )
-        portal_entity.components.set(portalComponent)
+        portal_entity.components.set(portal_component)
         
         scene_content.add(world)
         scene_content.add(portal_entity)
