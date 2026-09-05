@@ -1798,8 +1798,6 @@ import SwiftUI
         scene_content?.add(workspace_entity)
         scene_content?.add(workspace_anchor) // Physics
         
-        //build_portal() // Portal setup
-        
         // Place pointer
         workspace_entity.addChild(pointer_entity)
         pointer_entity.isEnabled = false
@@ -2588,7 +2586,9 @@ import SwiftUI
     public func place_object_entity(object: ProductionObject)
     {
         object.entity.update_position(object.position)
-        workspace_anchor.addChild(object.entity)
+        //workspace_anchor.addChild(object.entity)
+        
+        workspace_entity.addChild(object.entity) //??!!
     }
     
     /// Removes a production object entity from workspace.
