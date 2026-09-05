@@ -1798,7 +1798,7 @@ import SwiftUI
         scene_content?.add(workspace_entity)
         scene_content?.add(workspace_anchor) // Physics
         
-        build_portal() // Portal setup
+        //build_portal() // Portal setup
         
         // Place pointer
         workspace_entity.addChild(pointer_entity)
@@ -1842,7 +1842,7 @@ import SwiftUI
         scene_content?.add(workspace_entity)
         scene_content?.add(workspace_anchor)
         
-        build_portal() // ??!!
+        build_portal()
         
         scene_content?.add(portal_entity)
         
@@ -2165,10 +2165,12 @@ import SwiftUI
         workspace_entity_scale = workspace_entity.visualBounds(relativeTo: nil).extents
         
         portal_entity.isEnabled = true
+        
         portal_root_entity.addChild(workspace_entity)
         portal_root_entity.addChild(workspace_anchor)
         
         update_portal_size(with: CGSize(width: 1280, height: 720))
+        workspace_entity.scale = .init(repeating: 0.25)
         //update_portal_entity_scale(with: portal_geometry_size)
     }
     
@@ -2180,6 +2182,7 @@ import SwiftUI
         
         workspace_entity.scale = .init(repeating: 1)
         portal_entity.isEnabled = false
+        
         scene_content.add(workspace_entity)
         scene_content.add(workspace_anchor)
     }
@@ -2188,7 +2191,7 @@ import SwiftUI
     {
         guard let scene_content else { return }
         
-        workspace_entity_scale = workspace_entity.visualBounds(relativeTo: nil).extents
+        //workspace_entity_scale = workspace_entity.visualBounds(relativeTo: nil).extents
         
         let world = make_world()
         portal_entity.components[PortalComponent.self] = .init(target: world)
