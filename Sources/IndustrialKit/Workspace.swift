@@ -1693,8 +1693,8 @@ import SwiftUI
     )
     {
         scene_content = content
-        scene_content?.add(workspace_entity)
         
+        scene_content?.add(workspace_entity)
         scene_content?.add(workspace_anchor) // Physics
         
         // Place (connect) camera
@@ -1794,18 +1794,11 @@ import SwiftUI
     )
     {
         scene_content = content
-        scene_content?.add(workspace_entity)
         
+        scene_content?.add(workspace_entity)
         scene_content?.add(workspace_anchor) // Physics
         
         build_portal() // Portal setup
-        
-        // Place grid
-        /*_ = content.subscribe(to: SceneEvents.Update.self)
-        { [weak self] _ in
-            guard let self/*, let camera = self.workspace_camera*/ else { return }
-            self.update_grid(camera_position: .zero/*camera.position*/)
-        }*/
         
         // Place pointer
         workspace_entity.addChild(pointer_entity)
@@ -1845,8 +1838,11 @@ import SwiftUI
     )
     {
         scene_content = content
+        
         scene_content?.add(workspace_entity)
         scene_content?.add(workspace_anchor)
+        
+        scene_content?.add(portal_entity)
         
         if !as_portal
         {
