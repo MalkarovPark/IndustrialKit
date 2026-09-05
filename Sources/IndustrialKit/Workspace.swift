@@ -1844,8 +1844,6 @@ import SwiftUI
         
         build_portal()
         
-        //scene_content?.add(portal_entity)
-        
         if !as_portal
         {
             exit_portal_mode()
@@ -1854,6 +1852,9 @@ import SwiftUI
         {
             enter_portal_mode()
         }
+        
+        place_physical_floor() // Place floor
+        place_objects() // Place objects
     }
     #endif
     
