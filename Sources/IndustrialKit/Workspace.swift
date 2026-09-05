@@ -1825,13 +1825,6 @@ import SwiftUI
             self.place_physical_floor() // Place floor
             self.place_objects() // Place objects
             
-            #if os(macOS) || os(iOS)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
-            {
-                self.focus(on: nil) // Focus on a whole workspace
-            }
-            #endif
-            
             completion()
         }
     }
@@ -1853,6 +1846,7 @@ import SwiftUI
     {
         scene_content = content
         scene_content?.add(workspace_entity)
+        scene_content?.add(workspace_anchor)
         
         if !as_portal
         {
