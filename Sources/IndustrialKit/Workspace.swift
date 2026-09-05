@@ -1853,8 +1853,8 @@ import SwiftUI
             enter_portal_mode()
         }
         
-        place_physical_floor() // Place floor
-        place_objects() // Place objects
+        //place_physical_floor() // Place floor
+        //place_objects() // Place objects
     }
     #endif
     
@@ -2209,7 +2209,7 @@ import SwiftUI
         
         //portal_root_entity.addChild(workspace_entity)
         update_portal_size(with: CGSize(width: 1280, height: 720))
-        exit_portal_mode()
+        //exit_portal_mode()
         
         func make_world() -> Entity
         {
