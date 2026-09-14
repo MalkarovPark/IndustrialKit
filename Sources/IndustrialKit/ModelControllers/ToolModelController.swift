@@ -164,7 +164,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
             }
             catch
             {
-                //print(error.localizedDescription)
+                print(error.localizedDescription)
             }
         }
     }
