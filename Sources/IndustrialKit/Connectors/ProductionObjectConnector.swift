@@ -344,7 +344,7 @@ open class ProductionObjectConnector: ObservableObject, @unchecked Sendable
     ///
     /// - Important:
     /// This method should remain lightweight to avoid blocking the update loop.
-    open func sync_with_device()
+    @MainActor open func sync_with_device()
     {
         
     }

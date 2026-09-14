@@ -30,7 +30,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
     ///
     /// - Parameter code: An operation code defining the tool action.
     /// - Throws: An error if animation generation fails.
-    public func perform(code: Int) async throws // /*async*/ throws
+    @MainActor public func perform(code: Int) async throws // /*async*/ throws
     {
         let entity_animations = try entity_animations(code: code)
         
@@ -66,7 +66,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
         canceled = false
         
         performing_task = Task
-        {
+        { @MainActor in
             do
             {
                 try await self.perform(code: code)
@@ -92,7 +92,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
     /// - Parameter code: An operation code.
     /// - Returns: A list of animation data.
     /// - Throws: An error if generation fails.
-    public func process_animation(by entity_animations: [EntityAnimationData]) -> TimeInterval
+    @MainActor public func process_animation(by entity_animations: [EntityAnimationData]) -> TimeInterval
     {
         var animation_time: TimeInterval = 0
         
@@ -103,7 +103,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
         
         return animation_time
         
-        func process_animation(by data: EntityAnimationData)
+        @MainActor func process_animation(by data: EntityAnimationData)
         {
             let transform = Transform(
                 scale: SIMD3<Float>(x: data.scale.y, y: data.scale.z, z: data.scale.x),

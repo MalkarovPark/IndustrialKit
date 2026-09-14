@@ -99,7 +99,7 @@ open class ToolConnector: ProductionObjectConnector, @unchecked Sendable
     /// - Entity animations
     ///
     /// Ensures consistency between simulation and real device behavior.
-    override open func sync_with_device()
+    @MainActor override open func sync_with_device()
     {
         guard let current_device_state = current_device_state else { return }
         
