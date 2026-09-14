@@ -30,13 +30,14 @@ open class ToolModelController: ModelController, @unchecked Sendable
     ///
     /// - Parameter code: An operation code defining the tool action.
     /// - Throws: An error if animation generation fails.
-    public func perform(code: Int) throws
+    public func perform(code: Int) async throws // /*async*/ throws
     {
         let entity_animations = try entity_animations(code: code)
         
         let animation_time = process_animation(by: entity_animations) // Perform and get animation time
         
-        usleep(UInt32(animation_time * 1_000_000))
+        //usleep(UInt32(animation_time * 1_000_000))
+        try await Task.sleep(nanoseconds: UInt64(animation_time * 1_000_000_000))
     }
     
     /// Indicates whether the current performing operation is canceled.
@@ -68,7 +69,7 @@ open class ToolModelController: ModelController, @unchecked Sendable
         {
             do
             {
-                try self.perform(code: code)
+                try await self.perform(code: code)
                 if !canceled
                 {
                     completion(.success(()))
