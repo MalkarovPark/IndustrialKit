@@ -54,7 +54,7 @@ public struct NewElementButton: View
                 if !is_expanded
                 {
                     // Button
-                    Button(action: { withAnimation(/*.spring(response: 0.35, dampingFraction: 0.85)*/)
+                    Button(action: { withAnimation() //.spring(response: 0.35, dampingFraction: 0.85)
                         {
                             if with_name
                             {
@@ -141,12 +141,6 @@ public struct NewElementButton: View
             #else
             .padding(16)
             #endif
-            .onTapGesture
-            { withAnimation
-                {
-                    is_expanded.toggle()
-                }
-            }
         }
     }
     
