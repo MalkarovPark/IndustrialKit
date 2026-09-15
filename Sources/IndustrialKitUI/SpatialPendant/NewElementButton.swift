@@ -72,11 +72,16 @@ public struct NewElementButton: View
                             .padding(.horizontal, 9.25)
                         #elseif os(iOS)
                             .padding(.horizontal, 10.5)
+                            .opacity(0.5)
                         #elseif os(visionOS)
                             .padding(.horizontal, 11.25)
                         #endif
                     }
+                    #if !os(iOS)
+                    .buttonStyle(.borderless)
+                    #else
                     .buttonStyle(.plain)
+                    #endif
                     .buttonBorderShape(.circle)
                 }
                 else
@@ -99,8 +104,15 @@ public struct NewElementButton: View
                         {
                             Image(systemName: "xmark")
                                 .padding(.horizontal, 6)
+                            #if os(iOS)
+                                .opacity(0.5)
+                            #endif
                         }
+                        #if !os(iOS)
+                        .buttonStyle(.borderless)
+                        #else
                         .buttonStyle(.plain)
+                        #endif
                         .buttonBorderShape(.circle)
                         .contentShape(Circle())
                         .keyboardShortcut(.cancelAction)
@@ -115,11 +127,18 @@ public struct NewElementButton: View
                         {
                             Image(systemName: "checkmark")
                                 .padding(.horizontal, 6)
+                            #if os(iOS)
+                                .padding(.trailing, 6)
+                                .opacity(0.5)
+                            #endif
                         }
+                        #if !os(iOS)
+                        .buttonStyle(.borderless)
+                        #else
                         .buttonStyle(.plain)
+                        #endif
                         .buttonBorderShape(.circle)
                         .contentShape(Circle())
-                        .padding(.trailing, 6)
                         .keyboardShortcut(.defaultAction)
                     }
                     .frame(maxWidth: .infinity)
