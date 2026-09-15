@@ -13,7 +13,6 @@ public struct NewElementButton: View
     private var with_name: Bool = true
     
     @Binding var is_expanded: Bool
-    //@State private var is_expanded = false
     @State private var new_item_name = ""
     
     private var add_name_action: (String) -> Void
@@ -42,18 +41,18 @@ public struct NewElementButton: View
         self.add_action = add_action
     }
     
-    @Namespace private var pane_glass
+    @Namespace private var glass_pane
     
     public var body: some View
     {
-        GlassEffectContainer
+        HStack
         {
-            HStack(spacing: 0)
+            if !is_expanded { Spacer() }
+            
+            HStack(spacing: 16)
             {
                 if !is_expanded
                 {
-                    Spacer()
-                    
                     // Button
                     Button(action: { withAnimation(/*.spring(response: 0.35, dampingFraction: 0.85)*/)
                         {
@@ -69,14 +68,16 @@ public struct NewElementButton: View
                     })
                     {
                         Image(systemName: "plus")
-                            .modifier(CircleButtonImageFramer())
+                        #if os(macOS)
+                            .padding(.horizontal, 9.25)
+                        #elseif os(iOS)
+                            .padding(.horizontal, 10.5)
+                        #elseif os(visionOS)
+                            .padding(.horizontal, 11.25)
+                        #endif
                     }
-                    .modifier(CircleButtonGlassBorderer())
-                    #if os(macOS) || os(iOS)
-                    .padding(10)
-                    #else
-                    .padding(16)
-                    #endif
+                    .buttonStyle(.plain)
+                    .buttonBorderShape(.circle)
                 }
                 else
                 {
@@ -92,11 +93,12 @@ public struct NewElementButton: View
                             withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
                             {
                                 is_expanded = false
+                                new_item_name = .init()
                             }
                         })
                         {
                             Image(systemName: "xmark")
-                                .modifier(CircleButtonImageFramer())
+                                .padding(.horizontal, 6)
                         }
                         .buttonStyle(.plain)
                         .buttonBorderShape(.circle)
@@ -104,7 +106,7 @@ public struct NewElementButton: View
                         .keyboardShortcut(.cancelAction)
                         
                         Button(action: {
-                            withAnimation(/*.spring(response: 0.35, dampingFraction: 0.75)*/)
+                            withAnimation()//.spring(response: 0.35, dampingFraction: 0.75))
                             {
                                 is_expanded = false
                                 name_process()
@@ -112,7 +114,7 @@ public struct NewElementButton: View
                         })
                         {
                             Image(systemName: "checkmark")
-                                .modifier(CircleButtonImageFramer())
+                                .padding(.horizontal, 6)
                         }
                         .buttonStyle(.plain)
                         .buttonBorderShape(.circle)
@@ -120,27 +122,32 @@ public struct NewElementButton: View
                         .padding(.trailing, 6)
                         .keyboardShortcut(.defaultAction)
                     }
-                    #if os(macOS)
-                    .frame(height: 36)
-                    #else
-                    .frame(height: 44)
-                    #endif
-                    #if !os(visionOS)
-                    .imageScale(.large)
-                    #endif
-                    .glassEffect(.regular.interactive(), in: .capsule(style: .continuous))
-                    .matchedGeometryEffect(id: "glass", in: pane_glass)
-                    #if os(macOS) || os(iOS)
-                    .padding(10)
-                    #else
-                    .padding(16)
-                    #endif
+                    .frame(maxWidth: .infinity)
+                    //.contentShape(.capsule(style: .continuous))
+                }
+            }
+            #if os(macOS)
+            .frame(height: 36)
+            #else
+            .frame(height: 44)
+            #endif
+            #if !os(visionOS)
+            .imageScale(.large)
+            #endif
+            .glassEffect(.regular.interactive(), in: .capsule(style: .continuous))
+            //.glassBackgroundEffect()
+            #if os(macOS) || os(iOS)
+            .padding(10)
+            #else
+            .padding(16)
+            #endif
+            .onTapGesture
+            { withAnimation
+                {
+                    is_expanded.toggle()
                 }
             }
         }
-        #if os(visionOS)
-        .frame(depth: 4)
-        #endif
     }
     
     private func name_process()
