@@ -42,6 +42,7 @@ public struct NewElementButton: View
     }
     
     @Namespace private var glass_pane
+    @FocusState private var is_focused: Bool
     
     public var body: some View
     {
@@ -49,32 +50,29 @@ public struct NewElementButton: View
         {
             if !is_expanded { Spacer() }
             
-            HStack(spacing: 16)
+            HStack(spacing: 0)
             {
-                if !is_expanded
+                if is_expanded
                 {
-                    // Button
-                    Button(action: { withAnimation() //.spring(response: 0.35, dampingFraction: 0.85)
+                    // Editor
+                    TextField("Name", text: $new_item_name)
+                        .frame(maxWidth: .infinity)
+                        .textFieldStyle(.plain)
+                        .padding(.leading, 14)
+                        .focused($is_focused)
+                    
+                    Button(action: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
                         {
-                            if with_name
-                            {
-                                is_expanded = true
-                            }
-                            else
-                            {
-                                add_action()
-                            }
+                            is_expanded = false
+                            new_item_name = .init()
                         }
                     })
                     {
-                        Image(systemName: "plus")
-                        #if os(macOS)
-                            .padding(.horizontal, 9.25)
-                        #elseif os(iOS)
-                            .padding(.horizontal, 10.5)
+                        Image(systemName: "xmark")
+                            .padding(.horizontal, 6)
+                        #if os(iOS)
                             .opacity(0.5)
-                        #elseif os(visionOS)
-                            .padding(.horizontal, 11.25)
                         #endif
                     }
                     #if !os(iOS)
@@ -83,68 +81,56 @@ public struct NewElementButton: View
                     .buttonStyle(.plain)
                     #endif
                     .buttonBorderShape(.circle)
+                    .contentShape(Circle())
+                    .keyboardShortcut(.cancelAction)
                 }
-                else
-                {
-                    // Editor
-                    HStack(spacing: 0)
+                
+                // Button
+                Button(action:
+                { withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
                     {
-                        TextField("Name", text: $new_item_name)
-                            .frame(maxWidth: .infinity)
-                            .textFieldStyle(.plain)
-                            .padding(.leading, 14)
-                        
-                        Button(action: {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
-                            {
-                                is_expanded = false
-                                new_item_name = .init()
-                            }
-                        })
+                        if is_expanded
                         {
-                            Image(systemName: "xmark")
-                                .padding(.horizontal, 6)
-                            #if os(iOS)
-                                .opacity(0.5)
-                            #endif
+                            is_expanded = false
+                            name_process()
+                            
+                            is_focused = false
                         }
-                        #if !os(iOS)
-                        .buttonStyle(.borderless)
-                        #else
-                        .buttonStyle(.plain)
-                        #endif
-                        .buttonBorderShape(.circle)
-                        .contentShape(Circle())
-                        .keyboardShortcut(.cancelAction)
-                        
-                        Button(action: {
-                            withAnimation()//.spring(response: 0.35, dampingFraction: 0.75))
-                            {
-                                is_expanded = false
-                                name_process()
-                            }
-                        })
+                        else
                         {
-                            Image(systemName: "checkmark")
-                                .padding(.horizontal, 6)
-                            #if os(iOS)
-                                .padding(.trailing, 6)
-                                .opacity(0.5)
-                            #endif
+                            if with_name
+                            {
+                                is_expanded = true
+                                
+                                is_focused = true
+                            }
+                            else
+                            {
+                                add_action()
+                            }
                         }
-                        #if !os(iOS)
-                        .buttonStyle(.borderless)
-                        #else
-                        .buttonStyle(.plain)
-                        #endif
-                        .buttonBorderShape(.circle)
-                        .contentShape(Circle())
-                        .keyboardShortcut(.defaultAction)
                     }
-                    .frame(maxWidth: .infinity)
-                    //.contentShape(.capsule(style: .continuous))
+                })
+                {
+                    Image(systemName: is_expanded ? "checkmark" : "plus")
+                    #if os(macOS)
+                        .padding(.horizontal, 9.25)
+                    #elseif os(iOS)
+                        .padding(.horizontal, 10.5)
+                        .opacity(0.5)
+                    #elseif os(visionOS)
+                        .padding(.horizontal, 11.25)
+                    #endif
                 }
+                #if !os(iOS)
+                .buttonStyle(.borderless)
+                #else
+                .buttonStyle(.plain)
+                #endif
+                .buttonBorderShape(.circle)
+                .keyboardShortcut(is_expanded ? .defaultAction : nil)
             }
+            .clipShape(.capsule(style: .continuous))
             #if os(macOS)
             .frame(height: 36)
             #else
@@ -154,7 +140,6 @@ public struct NewElementButton: View
             .imageScale(.large)
             #endif
             .glassEffect(.regular.interactive(), in: .capsule(style: .continuous))
-            //.glassBackgroundEffect()
             #if os(macOS) || os(iOS)
             .padding(10)
             #else
