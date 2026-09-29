@@ -2311,12 +2311,8 @@ import SwiftUI
     
     // Floor parameters
     private var tile_size: Float = 1
-    #if !os(visionOS)
-    private var tiles_render_radius: Int = 10
-    #else
     private var tiles_render_radius: Int = 5
-    #endif
-    private var tile_colors: (even: UIColor, odd: UIColor) = (.systemGreen, .systemPurple)
+    //private var tile_colors: (even: UIColor, odd: UIColor) = (.systemGreen, .systemPurple)
     private var axis_line_thickness: Float = 0.00375
     
     //private let line_length: Float = 2
@@ -2378,7 +2374,7 @@ import SwiftUI
             var line_material = SimpleMaterial(color: .gray.withAlphaComponent(0.3), roughness: 1, isMetallic: false)
             line_material.faceCulling = .none
             let line = ModelEntity(mesh: line_mesh, materials: [line_material])
-            line.position = [0, -0.002, position]
+            line.position = [0, -0.00020, position]
             line.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
             parent.addChild(line)
         }
@@ -2391,7 +2387,7 @@ import SwiftUI
             var line_material = SimpleMaterial(color: .gray.withAlphaComponent(0.3), roughness: 1, isMetallic: false)
             line_material.faceCulling = .none
             let line = ModelEntity(mesh: line_mesh, materials: [line_material])
-            line.position = [position, -0.0025, 0]
+            line.position = [position, -0.00025, 0]
             line.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
             parent.addChild(line)
         }
@@ -2406,7 +2402,7 @@ import SwiftUI
         var line_material = SimpleMaterial(color: .gray.withAlphaComponent(0.4), roughness: 1, isMetallic: false)
         line_material.faceCulling = .none
         let line = ModelEntity(mesh: line_mesh, materials: [line_material])
-        line.position = [half_size, -0.0010, 0]
+        line.position = [half_size, -0.00010, 0]
         line.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
         parent.addChild(line)
         
@@ -2414,12 +2410,12 @@ import SwiftUI
         var line_material2 = SimpleMaterial(color: .gray.withAlphaComponent(0.4), roughness: 1, isMetallic: false)
         line_material2.faceCulling = .none
         let line2 = ModelEntity(mesh: line_mesh2, materials: [line_material2])
-        line2.position = [0, -0.0015, half_size]
+        line2.position = [0, -0.00015, half_size]
         line2.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
         parent.addChild(line2)
     }
     
-    private lazy var green_tile: ModelEntity = {
+    /*private lazy var green_tile: ModelEntity = {
         let mesh = MeshResource.generatePlane(width: tile_size, depth: tile_size)
         var material = SimpleMaterial(color: tile_colors.even.withAlphaComponent(0.25), roughness: 1, isMetallic: false)
         material.faceCulling = .none
@@ -2435,7 +2431,7 @@ import SwiftUI
         let tile = ModelEntity(mesh: mesh, materials: [material])
         tile.orientation = simd_quatf(angle: .pi/2, axis: [0,1,0])
         return tile
-    }()
+    }()*/
     
     private func update_visible_tiles(camera_position: SIMD3<Float>)
     {
@@ -2466,7 +2462,7 @@ import SwiftUI
                     if dx == 0 && x_axis_lines[SIMD2<Int>(dx, dz)] == nil
                     {
                         let line = axis_line_mesh_x.clone(recursive: true)
-                        line.position = SIMD3(Float(dx) * tile_size, 0.0001, Float(dz) * tile_size - tile_size / 2)
+                        line.position = SIMD3(Float(dx) * tile_size, 0, Float(dz) * tile_size - tile_size / 2)
                         workspace_entity.addChild(line)
                         x_axis_lines[SIMD2<Int>(dx, dz)] = line
                     }
@@ -2475,7 +2471,7 @@ import SwiftUI
                     if dz == 0 && z_axis_lines[SIMD2<Int>(dx, dz)] == nil
                     {
                         let line = axis_line_mesh_z.clone(recursive: true)
-                        line.position = SIMD3(Float(dx) * tile_size - tile_size / 2, 0.0001, Float(dz) * tile_size)
+                        line.position = SIMD3(Float(dx) * tile_size - tile_size / 2, -0.00005, Float(dz) * tile_size)
                         workspace_entity.addChild(line)
                         z_axis_lines[SIMD2<Int>(dx, dz)] = line
                     }
