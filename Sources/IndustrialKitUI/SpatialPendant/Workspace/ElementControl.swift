@@ -127,7 +127,7 @@ public struct ElementControl: View
                         }
                         .buttonStyle(.borderless)
                         #if os(iOS)
-                        .tint(.secondary)
+                        .tint(.black)
                         #endif
                         .contentShape(Rectangle())
                         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
@@ -182,6 +182,7 @@ public struct ElementControl: View
                             .pickerStyle(.menu)
                             .buttonStyle(.borderless)
                             #if os(iOS)
+                            .tint(.black)
                             .padding(.vertical, 4)
                             #endif
                         }

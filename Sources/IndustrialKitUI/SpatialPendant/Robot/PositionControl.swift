@@ -453,7 +453,7 @@ public struct PositionPane: View
                     }
                     .buttonStyle(.borderless)
                     #if os(iOS)
-                    .tint(.secondary)
+                    .tint(.black)
                     #endif
                     .contentShape(Rectangle())
                     .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_editor_mode)

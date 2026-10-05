@@ -32,7 +32,7 @@ public struct PositionView: View
     #if os(macOS) || os(iOS)
     private let hstack_spacing: CGFloat = 12
     #else
-    private let hstack_spacing: CGFloat = 0
+    private let hstack_spacing: CGFloat = 12
     #endif
     
     public var body: some View
@@ -61,13 +61,7 @@ public struct PositionView: View
                                 {
                                     TextField("0", value: binding(for: component), format: .number)
                                         .textFieldStyle(.roundedBorder)
-                                    #if os(iOS)
-                                        .frame(minWidth: 60)
-                                        .keyboardType(.decimalPad)
-                                    #elseif os(visionOS)
-                                        .frame(minWidth: 80)
-                                        .keyboardType(.decimalPad)
-                                    #endif
+                                    
                                     if with_steppers
                                     {
                                         Stepper("Position",
@@ -77,27 +71,34 @@ public struct PositionView: View
                                     }
                                 }
                                 #else
-                                VStack(spacing: 8)
+                                VStack//(spacing: 8)
                                 {
                                     TextField("0", value: binding(for: component), format: .number)
                                         .textFieldStyle(.roundedBorder)
-                                    #if os(iOS)
-                                        .frame(minWidth: 60)
                                         .keyboardType(.decimalPad)
-                                    #elseif os(visionOS)
-                                        //.frame(minWidth: 80)
-                                        .frame(width: 96)
-                                        .keyboardType(.decimalPad)
-                                    #endif
+                                    
                                     if with_steppers
                                     {
-                                        Stepper("Position",
+                                        Rectangle()
+                                            .fill(.clear)
+                                            .frame(height: 42)
+                                            .overlay
+                                            {
+                                                Stepper("Position",
+                                                        value: binding(for: component),
+                                                        in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                                    .labelsHidden()
+                                                    #if os(visionOS)
+                                                    .scaleEffect(0.85)
+                                                    #endif
+                                        }
+                                        /*Stepper("Position",
                                                 value: binding(for: component),
                                                 in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
                                         .labelsHidden()
                                         #if os(visionOS)
                                         .scaleEffect(0.8)
-                                        #endif
+                                        #endif*/
                                     }
                                 }
                                 #endif
@@ -111,6 +112,13 @@ public struct PositionView: View
                 }
             }
         }
+        #if os(macOS)
+        .frame(minWidth: 280)
+        #elseif os(iOS)
+        .frame(minWidth: 300)
+        #elseif os(visionOS)
+        .frame(minWidth: 340)
+        #endif
     }
     
     private func binding(for component: PositionComponents) -> Binding<Float>
@@ -227,7 +235,11 @@ struct PositionView_Previews: PreviewProvider
         {
             content
             #if !os(visionOS)
-                .frame(width: 256)
+            #if os(macOS)
+                .frame(width: 280)
+            #elseif os(iOS)
+                .frame(width: 300)
+            #endif
                 .padding()
                 .background(.bar)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
