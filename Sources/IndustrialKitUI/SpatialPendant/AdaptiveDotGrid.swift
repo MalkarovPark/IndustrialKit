@@ -66,6 +66,7 @@ public struct AdaptiveDotGrid: View
             .frame(width: square_size, height: square_size)
         }
         .frame(width: square_size, height: square_size)
+        .opacity(0.5)
     }
 }
 

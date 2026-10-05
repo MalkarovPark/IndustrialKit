@@ -17,7 +17,11 @@ public struct PositionControl: View
     @State private var tilt_y: CGFloat = 0
     @State private var is_touching = false
     
-    private let max_tilt: CGFloat = 5
+    #if os(macOS) || os(iOS)
+    private let max_tilt: CGFloat = 1
+    #else
+    private let max_tilt: CGFloat = 2.5 //5
+    #endif
     private let panel_update_interval: TimeInterval = 0.016 // ~60 FPS
     
     @State private var is_central_pressed = false
@@ -163,12 +167,16 @@ public struct PositionControl: View
         .frame(width: 120, height: 120)
         .glassEffect(.regular.interactive(), in: .circle)
         #if os(visionOS)
-        .offset(z: 8)
+        .offset(z: 4) //8)
         #endif
         .contentShape(Circle())
         .compositingGroup()
         #if !os(visionOS)
-        .rotation3DEffect(.degrees(tilt_magnitude), axis: (x: tilt_x, y: tilt_y, z: 0), perspective: 0.12)
+        //.rotation3DEffect(.degrees(tilt_magnitude), axis: (x: tilt_x, y: tilt_y, z: 0), perspective: 0.12)
+        .modifier(
+            _Rotation3DEffect(angle: .degrees(tilt_magnitude), axis: (x: tilt_x, y: tilt_y, z: 0), anchor: .center)
+                .ignoredByLayout()
+        )
         #else
         .rotation3DEffect(.degrees(tilt_magnitude), axis: (x: tilt_x, y: tilt_y, z: 0))
         #endif
@@ -216,6 +224,7 @@ public struct PositionControl: View
     {
         tilt_x = 0
         tilt_y = 0
+        
         is_touching = false
     }
     
@@ -306,166 +315,176 @@ public struct PositionPane: View
     @State private var is_editor_mode = false
     @State private var is_central_pressed = false
     
-    @Namespace private var pane_glass
+    @Namespace private var glass_pane
     
-    public init(robot: Robot)
+    let on_expand: () -> ()
+    let on_collapse: () -> ()
+    
+    public init(
+        robot: Robot,
+        
+        on_expand: @escaping () -> Void = {},
+        on_collapse: @escaping () -> Void = {}
+    )
     {
         self.robot = robot
+        
+        self.on_expand = on_expand
+        self.on_collapse = on_collapse
     }
     
     public var body: some View
     {
-        GlassEffectContainer
+        ZStack
         {
-            ZStack
+            if !is_expanded && !is_editor_mode
             {
-                if !is_expanded && !is_editor_mode
+                HStack
                 {
-                    HStack
-                    {
-                        Image(systemName: "ellipsis")
-                            .font(.system(size: 14))
-                            .foregroundStyle(.secondary)
-                        #if os(macOS)
-                            .frame(width: 32, height: 32)
-                        #else
-                            .frame(width: 40, height: 40)
-                        #endif
-                    }
-                    .background(.clear)
-                    .frame(width: 120)
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
-                    .matchedGeometryEffect(id: "glass", in: pane_glass)
-                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .onTapGesture
-                    {
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
-                        {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                    #if os(macOS)
+                        .frame(width: 32, height: 32)
+                    #else
+                        .frame(width: 40, height: 40)
+                    #endif
+                }
+                .background(.clear)
+                .frame(width: 120)
+                .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .gesture(
+                    LongPressGesture(minimumDuration: 0.5)
+                        .onChanged
+                        { _ in
                             is_central_pressed = true
+                        }
+                        .onEnded
+                        { _ in
                             is_expanded = true
+                            
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
                             {
                                 is_central_pressed = false
                             }
                         }
-                    }
-                    .transition(.opacity.combined(with: .scale(scale: 1.0)))
-                }
-                else if is_expanded && !is_editor_mode
-                {
-                    // Coordinate Pane
-                    VStack(alignment: .center, spacing: 10)
-                    {
-                        ZStack
-                        {
-                            Text("X \(String(format: "%.0f", robot.pointer_position.x)) Y \(String(format: "%.0f", robot.pointer_position.y)) Z \(String(format: "%.0f", robot.pointer_position.z))")
-                                .font(.system(size: 10))
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        
-                        ZStack
-                        {
-                            Text("R \(String(format: "%.0f", robot.pointer_position.r)) P \(String(format: "%.0f", robot.pointer_position.p)) W \(String(format: "%.0f", robot.pointer_position.w))")
-                                .font(.system(size: 10))
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    }
-                    .padding(8)
-                    .frame(width: 120)
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
-                    .matchedGeometryEffect(id: "glass", in: pane_glass)
-                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .scaleEffect(is_central_pressed ? 0.95 : 1)
-                    .animation(
-                        .interactiveSpring(response: 0.35, dampingFraction: 0.6, blendDuration: 0),
-                        value: is_central_pressed
-                    )
-                    .gesture(
-                        LongPressGesture(minimumDuration: 0.5)
-                            .onChanged
-                            { _ in
-                                is_central_pressed = true
-                            }
-                            .onEnded
-                            { _ in
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                        .simultaneously(
+                            with:
+                            TapGesture()
+                                .onEnded
                                 {
-                                    long_press_action()
-                                    is_central_pressed = false
-                                }
-                            }
-                            .simultaneously(with:
-                                TapGesture()
-                                    .onEnded
+                                    is_central_pressed = true
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.025)
                                     {
-                                        is_central_pressed = true
-                                        
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.025)
-                                        {
-                                            //is_central_pressed = false
-                                            tap_action()
-                                            is_central_pressed = false
-                                        }
+                                        is_expanded = true
+                                        is_central_pressed = false
                                     }
+                                }
                             )
-                    )
-                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                }
-                else if is_editor_mode
+                )
+            }
+            else if is_expanded && !is_editor_mode
+            {
+                // Coordinate Pane
+                VStack(alignment: .center, spacing: 10)
                 {
-                    // Editor
-                    VStack(spacing: 0)
+                    ZStack
                     {
-                        Button(action: {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
-                                is_editor_mode = false
+                        Text("X \(String(format: "%.0f", robot.pointer_position.x)) Y \(String(format: "%.0f", robot.pointer_position.y)) Z \(String(format: "%.0f", robot.pointer_position.z))")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    ZStack
+                    {
+                        Text("R \(String(format: "%.0f", robot.pointer_position.r)) P \(String(format: "%.0f", robot.pointer_position.p)) W \(String(format: "%.0f", robot.pointer_position.w))")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .padding(8)
+                .frame(width: 120)
+                .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .gesture(
+                    LongPressGesture(minimumDuration: 0.5)
+                        .onChanged
+                        { _ in
+                            is_central_pressed = true
+                        }
+                        .onEnded
+                        { _ in
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                            {
+                                long_press_action()
+                                is_central_pressed = false
                             }
-                        })
-                        {
-                            Image(systemName: "chevron.compact.down")
-                            #if os(iOS)
-                                .font(.system(size: 16))
-                                .frame(width: 32, height: 16)
-                            #endif
                         }
-                        #if !os(visionOS)
-                        .buttonStyle(.plain)
-                        #else
-                        .buttonStyle(.borderless)
-                        .frame(height: 24)
-                        #endif
-                        .padding(.top, 10)
-                        .scaleEffect(is_editor_mode ? 1 : 0.01)
-                        .contentShape(Rectangle())
-                        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_editor_mode)
-                        
-                        HStack
-                        {
-                            PositionView(position: $robot.pointer_position, with_steppers: true)
-                                .opacity(is_editor_mode ? 1 : 0)
-                        }
-                        #if os(macOS)
-                        .padding(10)
-                        #else
-                        .padding(16)
+                        .simultaneously(
+                            with:
+                                TapGesture()
+                                .onEnded
+                                {
+                                    is_central_pressed = true
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.025)
+                                    {
+                                        tap_action()
+                                        is_central_pressed = false
+                                    }
+                                }
+                            )
+                )
+            }
+            else if is_editor_mode
+            {
+                // Editor
+                VStack(spacing: 0)
+                {
+                    Button(action: collapse_tap_action)
+                    {
+                        Image(systemName: "chevron.compact.down")
+                            .padding(10)
+                        #if os(iOS)
+                            .font(.system(size: 16))
                         #endif
                     }
-                    #if os(macOS)
-                    .frame(width: is_editor_mode ? 280 : 120)
-                    #elseif os(iOS)
-                    .frame(width: is_editor_mode ? 332 : 120)
-                    #elseif os(visionOS)
-                    .frame(width: is_editor_mode ? 360 : 120)
+                    .buttonStyle(.borderless)
+                    #if os(iOS)
+                    .tint(.secondary)
                     #endif
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
-                    .matchedGeometryEffect(id: "glass", in: pane_glass)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_editor_mode)
+                    .contentShape(Rectangle())
+                    .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_editor_mode)
+                    
+                    HStack
+                    {
+                        PositionView(position: $robot.pointer_position, with_steppers: true)
+                            .opacity(is_editor_mode ? 1 : 0)
+                    }
+                    .padding([.horizontal, .bottom], 10)
                 }
+                #if os(macOS)
+                .frame(width: is_editor_mode ? 280 : 120)
+                #elseif os(iOS)
+                .frame(width: is_editor_mode ? 332 : 120)
+                #elseif os(visionOS)
+                .frame(width: is_editor_mode ? 372 : 120)
+                #endif
+                .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_editor_mode)
             }
         }
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
         .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
+        .scaleEffect(is_central_pressed ? 1.05 : 1)
+        .animation(
+            .interactiveSpring(response: 0.35, dampingFraction: 0.6, blendDuration: 0),
+            value: is_central_pressed
+        )
+        #if os(visionOS)
+        .offset(z: 2)
+        #endif
     }
     
     // MARK: – Central press actions
@@ -474,6 +493,18 @@ public struct PositionPane: View
         withAnimation(.spring(response: 0.35, dampingFraction: 0.95))
         {
             is_editor_mode = true
+            
+            on_expand()
+        }
+    }
+    
+    private func collapse_tap_action()
+    {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
+        {
+            is_editor_mode = false
+            
+            on_collapse()
         }
     }
     
@@ -483,6 +514,8 @@ public struct PositionPane: View
         {
             is_expanded = false
             is_editor_mode = false
+            
+            on_collapse()
         }
     }
 }
@@ -497,16 +530,45 @@ struct PositionControl_Previews: PreviewProvider
         
         @StateObject var robot = Robot()
         
+        @State private var position_pane_is_expanded = false
+        
         var body: some View
         {
             VStack(spacing: 0)
             {
                 Spacer()
                 
-                PositionPane(robot: robot)
+                PositionPane(
+                    robot: robot,
+                    on_expand: { withAnimation { position_pane_is_expanded = true } },
+                    on_collapse: { withAnimation { position_pane_is_expanded = false } }
+                )
+                .zIndex(1)
                 
-                PositionControl(robot: robot)
+                if !position_pane_is_expanded
+                {
+                    PositionControl(robot: robot)
+                        .frame(width: 120)
+                    #if !os(visionOS)
+                        .transition(.scale(scale: 0, anchor: .center).combined(with: .opacity))
+                    #else
+                        .transition(
+                            .asymmetric(
+                                insertion: .identity,
+                                removal: .offset(x: 0, y: -4) //8)
+                                    .combined(with: .scale(scale: 0, anchor: .center))
+                                    .combined(with: .opacity)
+                            )
+                        )
+                        .offset(z: position_pane_is_expanded ? -8 : 0)
+                    #endif
+                        .padding(10)
+                }
+                /*PositionControl(robot: robot)
                     .padding(10)
+                    .offset(z: position_pane_is_expanded ? -8 : 0)
+                    .frame(width: position_pane_is_expanded ? 0 : 120, height: position_pane_is_expanded ? 0 : 120)
+                    .scaleEffect(position_pane_is_expanded ? 0 : 1)*/
             }
             #if !os(visionOS)
             .frame(width: 400, height: 400)

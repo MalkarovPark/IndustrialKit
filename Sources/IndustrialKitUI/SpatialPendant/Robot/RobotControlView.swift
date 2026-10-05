@@ -37,6 +37,7 @@ public struct RobotControlView: View
     @Namespace private var animation_namespace
     
     @State private var new_view_is_expanded = false
+    @State private var position_pane_is_expanded = false
     
     public var body: some View
     {
@@ -82,12 +83,6 @@ public struct RobotControlView: View
                                     {
                                         robot.programs.remove(at: index)
                                         on_update()
-                                        /*if let index = robot.programs.firstIndex(where: { $0.id == program.id })
-                                        {
-                                            robot.programs.remove(at: index)
-                                            
-                                            on_update()
-                                        }*/
                                     }
                                 )
                                 .matchedGeometryEffect(id: program.id, in: animation_namespace)
@@ -183,14 +178,20 @@ public struct RobotControlView: View
             // MARK: Controls
             VStack(alignment: .center, spacing: 10)
             {
-                PositionPane(robot: robot)
+                PositionPane (
+                    robot: robot,
+                    on_expand: { position_pane_is_expanded = true },
+                    on_collapse: { position_pane_is_expanded = false }
+                )
+                .zIndex(1)
                 
-                PositionControl(robot: robot)
-                    .frame(width: 120)
+                if !position_pane_is_expanded
+                {
+                    PositionControl(robot: robot)
+                        .frame(width: 120)
+                        .transition(.scale(scale: 0, anchor: .center).combined(with: .opacity))
+                }
             }
-            #if os(visionOS)
-            .padding(.vertical, 16)
-            #endif
         }
     }
     
@@ -722,12 +723,28 @@ struct RobotControlView_Previews: PreviewProvider
         {
             ZStack
             {
+                #if !os(visionOS)
                 FloatingView(alignment: .trailing)
                 {
                     RobotControlView(robot: robot, shows_program_indices: true)
                         .padding(8)
                 }
                 .padding(10)
+                #else
+                RobotControlView(robot: robot, shows_program_indices: true)
+                    .padding(8)
+                    .background(
+                        GeometryReader
+                        { geometry in
+                            Rectangle()
+                                .fill(.clear)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
+                                .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        }
+                    )
+                    .padding(10)
+                #endif
             }
             #if !os(visionOS)
             .frame(minWidth: 480, minHeight: 480)

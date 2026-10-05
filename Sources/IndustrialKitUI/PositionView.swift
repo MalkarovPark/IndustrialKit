@@ -29,6 +29,12 @@ public struct PositionView: View
         self.with_steppers = with_steppers
     }
     
+    #if os(macOS) || os(iOS)
+    private let hstack_spacing: CGFloat = 12
+    #else
+    private let hstack_spacing: CGFloat = 0
+    #endif
+    
     public var body: some View
     {
         VStack(spacing: 10)
@@ -44,7 +50,7 @@ public struct PositionView: View
                         Spacer()
                     }
                     
-                    HStack(spacing: 12)
+                    HStack(spacing: hstack_spacing)
                     {
                         ForEach(PositionComponents.components(for: group), id: \.self)
                         { component in
@@ -79,7 +85,8 @@ public struct PositionView: View
                                         .frame(minWidth: 60)
                                         .keyboardType(.decimalPad)
                                     #elseif os(visionOS)
-                                        .frame(minWidth: 80)
+                                        //.frame(minWidth: 80)
+                                        .frame(width: 96)
                                         .keyboardType(.decimalPad)
                                     #endif
                                     if with_steppers
@@ -228,7 +235,7 @@ struct PositionView_Previews: PreviewProvider
                 .padding()
                 .padding()
             #else
-                .frame(width: 360)
+                .frame(width: 340)
                 .padding()
                 .glassBackgroundEffect(in: .rect(cornerRadius: 24, style: .continuous))
             #endif

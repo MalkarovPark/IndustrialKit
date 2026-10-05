@@ -70,7 +70,7 @@ public struct NewElementButton: View
                     })
                     {
                         Image(systemName: "xmark")
-                            .padding(.horizontal, 6)
+                            //.padding(.horizontal, 6)
                         #if os(iOS)
                             .opacity(0.5)
                         #endif

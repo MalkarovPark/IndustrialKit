@@ -26,9 +26,9 @@ public struct OperationControl: View
     
     public var body: some View
     {
-        GlassEffectContainer
+        HStack(spacing: 0)
         {
-            HStack(spacing: 0)
+            ZStack
             {
                 if !is_expanded
                 {
@@ -59,32 +59,45 @@ public struct OperationControl: View
                     }
                     .background(.clear)
                     .frame(width: 104) //.frame(maxWidth: .infinity)
-                    .glassEffect(.regular.interactive(), in: .capsule(style: .continuous))
-                    .matchedGeometryEffect(id: "glass", in: pane_glass)
                     .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .scaleEffect(is_central_pressed ? 0.95 : 1)
-                    .animation(
-                        .interactiveSpring(response: 0.35, dampingFraction: 0.6, blendDuration: 0),
-                        value: is_central_pressed
-                    )
-                    .onTapGesture
-                    {
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
-                        {
-                            is_central_pressed = true
-                            is_expanded = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                            {
-                                is_central_pressed = false
+                    .gesture(
+                        LongPressGesture(minimumDuration: 0.5)
+                            .onChanged
+                            { _ in
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                                {
+                                    is_central_pressed = true
+                                }
                             }
-                        }
-                    }
-                    .transition(.opacity.combined(with: .scale(scale: 1.0)))
-                    #if os(macOS)
-                    .padding(.leading, 10)
-                    #else
-                    .padding(.leading, 16)
-                    #endif
+                            .onEnded
+                            { _ in
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                                {
+                                    is_expanded = true
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                                    {
+                                        is_central_pressed = false
+                                    }
+                                }
+                            }
+                            .simultaneously(
+                                with:
+                                    TapGesture()
+                                    .onEnded
+                                    {
+                                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                                        {
+                                            is_central_pressed = true
+                                            is_expanded = true
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                                            {
+                                                is_central_pressed = false
+                                            }
+                                        }
+                                    }
+                                )
+                    )
                 }
                 else
                 {
@@ -99,19 +112,15 @@ public struct OperationControl: View
                         })
                         {
                             Image(systemName: "chevron.compact.down")
+                                .padding(10)
                             #if os(iOS)
                                 .font(.system(size: 16))
-                                .frame(width: 32, height: 16)
                             #endif
                         }
-                        #if !os(visionOS)
-                        .buttonStyle(.plain)
-                        #else
                         .buttonStyle(.borderless)
-                        .frame(height: 24)
+                        #if os(iOS)
+                        .tint(.secondary)
                         #endif
-                        .padding(.top, 10)
-                        .scaleEffect(is_expanded ? 1 : 0.01)
                         .contentShape(Rectangle())
                         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
                         
@@ -260,51 +269,54 @@ public struct OperationControl: View
                             .background(.quinary)
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         }
-                        .padding(10)
+                        .padding([.horizontal, .bottom], 10)
                     }
+                    .transition(.opacity.combined(with: .scale(scale: 1.0)))
                     #if os(macOS)
                     .frame(width: is_expanded ? 300 : 120)
                     #else
                     .frame(width: is_expanded ? 360 : 120)
                     #endif
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
-                    .matchedGeometryEffect(id: "glass", in: pane_glass)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
                 }
-                
-                Button
-                {
-                    tool.start_pause_single_operation()
-                }
-                label:
-                {
-                    if tool.codes.count > 0
-                    {
-                        Image(systemName:
-                                is_valid_symbol(current_code_info.symbol_name) ?
-                                current_code_info.symbol_name :
-                                ""
-                        )
-                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                        .modifier(CircleButtonImageFramer())
-                    }
-                    else
-                    {
-                        Rectangle()
-                            .fill(.clear)
-                            .modifier(CircleButtonImageFramer())
-                    }
-                }
-                .modifier(CircleButtonGlassBorderer())
-                #if os(macOS) || os(iOS)
-                .padding(10)
-                #else
-                .padding(16)
-                #endif
             }
-            .disabled(tool.codes.count == 0)
+            .clipShape(ExpandingShape(progress: is_expanded ? 1 : 0))
+            .glassEffect(.regular.interactive(), in: ExpandingShape(progress: is_expanded ? 1 : 0))
+            .scaleEffect(is_central_pressed ? 1.05 : 1)
+            
+            Button
+            {
+                tool.start_pause_single_operation()
+            }
+            label:
+            {
+                if tool.codes.count > 0
+                {
+                    Image(systemName:
+                            is_valid_symbol(current_code_info.symbol_name) ?
+                            current_code_info.symbol_name :
+                            ""
+                    )
+                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    .modifier(CircleButtonImageFramer())
+                }
+                else
+                {
+                    Rectangle()
+                        .fill(.clear)
+                        .modifier(CircleButtonImageFramer())
+                }
+            }
+            .modifier(CircleButtonGlassBorderer())
+            #if os(macOS) || os(iOS)
+            .padding(10)
+            #else
+            .padding(16)
+            #endif
         }
-        //.animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
+        .disabled(tool.codes.count == 0)
+        #if os(visionOS)
+        .offset(z: 2)
+        #endif
     }
     
     private func is_valid_symbol(_ symbol: String) -> Bool
@@ -319,6 +331,45 @@ public struct OperationControl: View
     private var current_code_info: OperationCodeInfo
     {
         return tool.code_info(tool.current_operation.value)
+    }
+}
+
+private struct ExpandingShape: InsettableShape
+{
+    var progress: CGFloat
+    var inset_amount: CGFloat = 0
+    
+    var animatableData: AnimatablePair<CGFloat, CGFloat>
+    {
+        get
+        {
+            AnimatablePair(progress, inset_amount)
+        }
+        set
+        {
+            progress = newValue.first
+            inset_amount = newValue.second
+        }
+    }
+    
+    func path(in rect: CGRect) -> Path
+    {
+        let rect = rect.insetBy(dx: inset_amount, dy: inset_amount)
+        let capsule_radius = min(rect.width, rect.height) / 2
+        let radius = 16 + (capsule_radius - 16) * (1 - progress)
+        
+        return RoundedRectangle(
+            cornerRadius: radius,
+            style: .continuous
+        )
+        .path(in: rect)
+    }
+    
+    func inset(by amount: CGFloat) -> ExpandingShape
+    {
+        var copy = self
+        copy.inset_amount += amount
+        return copy
     }
 }
 

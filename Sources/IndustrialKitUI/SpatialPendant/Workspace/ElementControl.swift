@@ -28,7 +28,7 @@ public struct ElementControl: View
     {
         HStack(spacing: 0)
         {
-            GlassEffectContainer
+            ZStack
             {
                 if !is_expanded
                 {
@@ -41,6 +41,7 @@ public struct ElementControl: View
                                 .font(.title3.scaled(by: 0.8))
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.title)
                                 .lineLimit(1)
+                            
                             Text(workspace.current_element.info)
                                 .font(.default.scaled(by: 0.8))
                                 .foregroundColor(.secondary)
@@ -50,16 +51,9 @@ public struct ElementControl: View
                         .padding(10)
                     }
                     .background(.clear)
-                    .frame(width: 120) //.frame(maxWidth: .infinity)
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
-                    .matchedGeometryEffect(id: "glass", in: pane_glass)
+                    .frame(width: element_panel_width)
                     .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .scaleEffect(is_central_pressed ? 0.95 : 1)
-                    .animation(
-                        .interactiveSpring(response: 0.35, dampingFraction: 0.6, blendDuration: 0),
-                        value: is_central_pressed
-                    )
-                    .onTapGesture
+                    /*.onTapGesture
                     {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
                         {
@@ -70,14 +64,48 @@ public struct ElementControl: View
                                 is_central_pressed = false
                             }
                         }
-                    }
-                    .transition(.opacity.combined(with: .scale(scale: 1.0)))
+                    }*/
+                    .gesture(
+                        LongPressGesture(minimumDuration: 0.5)
+                            .onChanged
+                            { _ in
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                                {
+                                    is_central_pressed = true
+                                }
+                            }
+                            .onEnded
+                            { _ in
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                                {
+                                    is_expanded = true
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                                    {
+                                        is_central_pressed = false
+                                    }
+                                }
+                            }
+                            .simultaneously(
+                                with:
+                                    TapGesture()
+                                    .onEnded
+                                    {
+                                        is_central_pressed = true
+                                        
+                                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                                        {
+                                            is_central_pressed = true
+                                            is_expanded = true
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                                            {
+                                                is_central_pressed = false
+                                            }
+                                        }
+                                    }
+                                )
+                    )
                     .help(workspace.current_element.info)
-                    #if !os(visionOS)
-                    .padding(.vertical, 10)
-                    #else
-                    .padding(.vertical, 16)
-                    #endif
                 }
                 else
                 {
@@ -85,27 +113,24 @@ public struct ElementControl: View
                     VStack(spacing: 0)
                     {
                         Button(action: {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
+                            {
                                 is_expanded = false
                             }
                         })
                         {
                             Image(systemName: "chevron.compact.down")
-                            #if os(iOS) //!os(macOS)
+                                .padding(10)
+                            #if os(iOS)
                                 .font(.system(size: 16))
-                                .frame(width: 32, height: 16)
                             #endif
                         }
-                        #if !os(visionOS)
-                        .buttonStyle(.plain)
-                        #else
                         .buttonStyle(.borderless)
-                        .frame(height: 24)
+                        #if os(iOS)
+                        .tint(.secondary)
                         #endif
-                        .padding(.top, 10)
-                        .scaleEffect(is_expanded ? 1 : 0.01)
                         .contentShape(Rectangle())
-                        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded) // value: workspace.current_element)
+                        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
                         
                         VStack
                         {
@@ -160,13 +185,14 @@ public struct ElementControl: View
                             .padding(.vertical, 4)
                             #endif
                         }
-                        .padding(10)
+                        .padding([.horizontal, .bottom], 10)
                     }
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
-                    .matchedGeometryEffect(id: "glass", in: pane_glass)
-                    .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
                 }
             }
+            .clipShape(.rect(cornerRadius: 16, style: .continuous))
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
+            .scaleEffect(is_central_pressed ? 1.05 : 1)
+            .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
             #if !os(visionOS)
             .padding(.trailing, 10)
             #else
@@ -184,7 +210,7 @@ public struct ElementControl: View
                 {
                     workspace.current_element.image
                         .foregroundColor(.white)
-                        .imageScale(.large)
+                        .font(.system(size: 20)) //.imageScale(.large)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.image)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.color)
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
@@ -202,15 +228,21 @@ public struct ElementControl: View
             .glassEffect(.regular.interactive().tint(workspace.current_element.color), in: .rect(cornerRadius: 16, style: .continuous))
             .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
         }
+        #if os(visionOS)
+        .offset(z: 2)
+        #endif
     }
 }
 
 #if os(macOS)
 internal let element_control_width: CGFloat = 272
+internal let element_panel_width: CGFloat = 120
 #elseif os(iOS)
 internal let element_control_width: CGFloat = 370
+internal let element_panel_width: CGFloat = 140
 #elseif os(visionOS)
 internal let element_control_width: CGFloat = 400
+internal let element_panel_width: CGFloat = 160
 #endif
 
 //MARK: Type enums
@@ -317,7 +349,7 @@ public struct ProductionProgramElementView: View
             case let element as ObserverModifierElement:
                 ObserverElementView(element: element, workspace: workspace, on_update: on_update)
             case let element as CleanerModifierElement:
-                Text("Clean all registers")
+                Text("Set all registers to 0")
                 
             case let element as JumpLogicElement:
                 JumpElementView(element: element, program: program, on_update: on_update)

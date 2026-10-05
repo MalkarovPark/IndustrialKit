@@ -709,12 +709,28 @@ struct WorkspaceControl_Previews: PreviewProvider
             {
                 ZStack
                 {
+                    #if !os(visionOS)
                     FloatingView(alignment: .trailing)
                     {
                         WorkspaceControlView(workspace: workspace /*, on_update: { print("Program Updated") } */)
                             .padding(8)
                     }
                     .padding(10)
+                    #else
+                    WorkspaceControlView(workspace: workspace)
+                        .padding(8)
+                        .background(
+                            GeometryReader
+                            { geometry in
+                                Rectangle()
+                                    .fill(.clear)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
+                                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            }
+                        )
+                        .padding(10)
+                    #endif
                 }
                 #if !os(visionOS)
                 .frame(minWidth: 480, minHeight: 480)
@@ -771,6 +787,7 @@ struct WorkspaceControl_Previews: PreviewProvider
                 .frame(width: 320)
                 #elseif os(visionOS)
                 .frame(width: 280)
+                .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
                 #endif
             }
             .onAppear

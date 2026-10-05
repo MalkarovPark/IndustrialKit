@@ -43,7 +43,32 @@ public extension Glass
 }
 
 // MARK: - AnyShape
-public struct AnyShape: Shape, @unchecked Sendable
+public struct AnyShape: InsettableShape, @unchecked Sendable
+{
+    private let pathBuilder: @Sendable (CGRect) -> Path
+    private let insetBuilder: @Sendable (CGFloat) -> AnyShape
+    
+    public init<S: InsettableShape>(_ shape: S)
+    {
+        pathBuilder = { rect in shape.path(in: rect) }
+        insetBuilder = { amount in AnyShape(shape.inset(by: amount)) }
+    }
+    
+    private init(
+        pathBuilder: @escaping @Sendable (CGRect) -> Path,
+        insetBuilder: @escaping @Sendable (CGFloat) -> AnyShape
+    )
+    {
+        self.pathBuilder = pathBuilder
+        self.insetBuilder = insetBuilder
+    }
+    
+    public func path(in rect: CGRect) -> Path { pathBuilder(rect) }
+    
+    public func inset(by amount: CGFloat) -> AnyShape { insetBuilder(amount) }
+}
+
+/*public struct AnyShape: Shape, @unchecked Sendable
 {
     private let pathBuilder: @Sendable (CGRect) -> Path
     
@@ -58,7 +83,7 @@ public struct AnyShape: Shape, @unchecked Sendable
     {
         pathBuilder(rect)
     }
-}
+}*/
 
 // MARK: - Core modifier (visionOS replacement)
 private struct GlassEffectModifier<S: InsettableShape>: ViewModifier

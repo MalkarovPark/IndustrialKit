@@ -267,8 +267,37 @@ struct SpatialPendant_Previews: PreviewProvider
         {
             Group
             {
-                ZStack
+                ZStack(alignment: .topLeading)
                 {
+                    /*RealityView
+                    { content in
+                        scene_content = content
+                        #if !os(visionOS)
+                        scene_content?.camera = .virtual
+                        #endif
+                        
+                        workspace.place_entity(in: content)
+                    }
+                    .ignoresSafeArea(.container, edges: .all)
+                    #if !os(visionOS)
+                    .realityViewCameraControls(.orbit)
+                    #endif*/
+                    
+                    Button(
+                        workspace.selected_object is Robot
+                        ? "Robot"
+                        : workspace.selected_object is Tool
+                        ? "Tool"
+                        : workspace.selected_object is Part
+                        ? "Part"
+                        : "Workspace"
+                    )
+                    {
+                        button_tap()
+                    }
+                    .buttonStyle(.bordered)
+                    .padding()
+                    
                     SpatialPendant(
                         controller: pendant_controller,
                         shows_program_indices: true
@@ -276,14 +305,15 @@ struct SpatialPendant_Previews: PreviewProvider
                     #if os(visionOS)
                     .glassBackgroundEffect(in: .rect(cornerRadius: 24, style: .continuous))
                     #endif
+                    .padding(10)
                 }
                 #if !os(visionOS)
                 .frame(minWidth: 480, minHeight: 480)
                 #else
                 .frame(minWidth: 800, minHeight: 480)
                 #endif
-                .padding(10)
-                .background(alignment: .topLeading)
+                //.padding(10)
+                /*.background(alignment: .topLeading)
                 {
                     Button(
                         workspace.selected_object is Robot
@@ -299,7 +329,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     }
                     .buttonStyle(.bordered)
                     .padding()
-                }
+                }*/
                 
                 HStack(spacing: 16)
                 {
