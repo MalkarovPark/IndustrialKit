@@ -28,7 +28,7 @@ public struct RobotPerformerElementView: View
         
         self.on_update = on_update
         
-        if self.element.object_name == ""
+        if self.element.object_name == "" && self.workspace.robots.count > 0
         {
             self.element.object_name = self.workspace.placed_robot_names.first ?? String()
             
@@ -254,7 +254,7 @@ public struct ToolPerformerElementView: View
         
         self.on_update = on_update
         
-        if self.element.object_name == ""
+        if self.element.object_name == "" && self.workspace.tools.count > 0
         {
             self.element.object_name = self.workspace.placed_tool_names.first ?? String()
             
