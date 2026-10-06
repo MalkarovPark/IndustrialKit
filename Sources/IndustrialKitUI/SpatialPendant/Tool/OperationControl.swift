@@ -280,7 +280,7 @@ public struct OperationControl: View
                 }
             }
             .clipShape(ExpandingShape(progress: is_expanded ? 1 : 0))
-            .glassEffect(.regular.interactive(), in: ExpandingShape(progress: is_expanded ? 1 : 0))
+            .glassEffect(.regular, in: ExpandingShape(progress: is_expanded ? 1 : 0))
             .scaleEffect(is_central_pressed ? 1.05 : 1)
             
             Button

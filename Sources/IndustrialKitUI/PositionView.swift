@@ -113,7 +113,7 @@ public struct PositionView: View
             }
         }
         #if os(macOS)
-        .frame(minWidth: 280)
+        .frame(minWidth: 260)
         #elseif os(iOS)
         .frame(minWidth: 300)
         #elseif os(visionOS)
@@ -236,7 +236,7 @@ struct PositionView_Previews: PreviewProvider
             content
             #if !os(visionOS)
             #if os(macOS)
-                .frame(width: 280)
+                .frame(width: 260)
             #elseif os(iOS)
                 .frame(width: 300)
             #endif

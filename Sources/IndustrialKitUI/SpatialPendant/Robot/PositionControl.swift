@@ -475,7 +475,7 @@ public struct PositionPane: View
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_editor_mode)
             }
         }
-        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
+        .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
         .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
         .scaleEffect(is_central_pressed ? 1.05 : 1)
         .animation(

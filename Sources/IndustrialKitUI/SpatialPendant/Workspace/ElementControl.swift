@@ -191,7 +191,7 @@ public struct ElementControl: View
                 }
             }
             .clipShape(.rect(cornerRadius: 16, style: .continuous))
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16, style: .continuous))
+            .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
             .scaleEffect(is_central_pressed ? 1.05 : 1)
             .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
             #if !os(visionOS)
@@ -211,7 +211,7 @@ public struct ElementControl: View
                 {
                     workspace.current_element.image
                         .foregroundColor(.white)
-                        .font(.system(size: 20)) //.imageScale(.large)
+                        .font(.system(size: 18)) //.imageScale(.large)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.image)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.color)
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
