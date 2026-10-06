@@ -208,7 +208,7 @@ private struct RegistersSelectorView: View
                 .pickerStyle(.segmented)
                 .labelsHidden()
                 #if os(macOS)
-                .glassEffect(in: .rect(cornerRadius: 8, style: .continuous))
+                .glassEffect(in: .capsule(style: .continuous))
                 .controlSize(.large)
                 #else
                 .glassEffect(in: .capsule(style: .continuous))
