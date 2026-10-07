@@ -90,7 +90,7 @@ public func clone_element(_ element: ProductionProgramElement, to program: Produ
     // Performer
     if let e = element as? RobotPerformerElement { insert(e); return }
     if let e = element as? ToolPerformerElement { insert(e); return }
-
+    
     // Modifier
     if let e = element as? MoverModifierElement { insert(e); return }
     if let e = element as? WriterModifierElement { insert(e); return }
@@ -98,12 +98,13 @@ public func clone_element(_ element: ProductionProgramElement, to program: Produ
     if let e = element as? ChangerModifierElement { insert(e); return }
     if let e = element as? ObserverModifierElement { insert(e); return }
     if let e = element as? CleanerModifierElement { insert(e); return }
-
+    
     // Logic
     if let e = element as? JumpLogicElement { insert(e); return }
     if let e = element as? ComparatorLogicElement { insert(e); return }
     if let e = element as? MarkLogicElement { insert(e); return }
-
+    if let e = element as? WaitLogicElement { insert(e); return }
+    
     //print("clone_element: unsupported type:", type(of: element))
     
     func insert<T: ProductionProgramElement>(_ original: T)

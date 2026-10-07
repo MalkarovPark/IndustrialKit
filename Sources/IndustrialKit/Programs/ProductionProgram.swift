@@ -432,6 +432,9 @@ public enum RegexPatterns: String, CaseIterable
     // MarkLogicElement
     case _MarkLogicElement = #"l: mark\.\(([^()]*)\)"#
     
+    // WaitLogicElement
+    case _WaitLogicElement = #"l: wait\.\((\d+(?:\.\d+)?)\)"#
+    
     public func make_element(from input: String) -> ProductionProgramElement?
     {
         guard match_regex(text: input, pattern: self.rawValue) else
@@ -543,6 +546,9 @@ public enum RegexPatterns: String, CaseIterable
         // Mark
         case ._MarkLogicElement: // l: mark.(Name)
             return MarkLogicElement(name: data[0])
+        // Wait
+        case ._WaitLogicElement: // l: wait.(#)
+            return WaitLogicElement(time_interval: Double(data[0]) ?? 0)
         }
     }
 }

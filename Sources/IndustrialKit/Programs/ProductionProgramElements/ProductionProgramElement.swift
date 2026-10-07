@@ -199,4 +199,6 @@ public enum ProductionProgramElementIdentifier: Codable, Equatable, CaseIterable
     case jump_logic
     case comparator_logic
     case mark_logic
+    case wait
+    case waitfor
 }

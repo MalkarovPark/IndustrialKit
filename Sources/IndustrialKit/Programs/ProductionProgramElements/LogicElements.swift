@@ -290,3 +290,65 @@ public class MarkLogicElement: LogicElement
         try super.encode(to: encoder)
     }
 }
+
+/// A program element that causes a time delay.
+public class WaitLogicElement: LogicElement
+{
+    public init(time_interval: Double = 0)
+    {
+        self.time_interval = abs(time_interval)
+        
+        super.init()
+    }
+    
+    /// A target mark time.
+    @Published public var time_interval: Double = 0
+    
+    public override var title: String
+    {
+        return "Wait"
+    }
+    
+    public override var info: String
+    {
+        return "Wait \(time_interval) sec"
+    }
+    
+    public override var symbol_name: String
+    {
+        return "clock"
+    }
+    
+    // Code Double conversion
+    public override var code_string: String
+    {
+        return "l: wait.(\(time_interval))"
+    }
+    
+    // File handling
+    private enum CodingKeys: String, CodingKey
+    {
+        case time_interval
+    }
+
+    public required init(from decoder: Decoder) throws
+    {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.time_interval = try container.decodeIfPresent(Double.self, forKey: .time_interval) ?? 0
+        
+        try super.init(from: decoder)
+    }
+
+    public override func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(time_interval, forKey: .time_interval)
+        
+        try super.encode(to: encoder)
+    }
+}
+
+/// A waitfor program element
+// ...

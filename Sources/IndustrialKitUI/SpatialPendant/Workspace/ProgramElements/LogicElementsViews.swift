@@ -311,6 +311,62 @@ public struct MarkLogicElementView: View
     }
 }
 
+public struct WaitLogicElementView: View
+{
+    @ObservedObject var element: WaitLogicElement
+    @ObservedObject var workspace: Workspace
+    @ObservedObject var program: ProductionProgram
+    
+    let on_update: () -> ()
+    
+    public init(
+        element: WaitLogicElement,
+        workspace: Workspace,
+        program: ProductionProgram,
+        
+        on_update: @escaping () -> () = {}
+    )
+    {
+        self.element = element
+        self.workspace = workspace
+        self.program = program
+        
+        self.on_update = on_update
+    }
+    
+    public var body: some View
+    {
+        HStack
+        {
+            Text("Wait")
+            
+            TextField("Time", text: Binding(
+                get:
+                    {
+                        String(format: "%.2f", element.time_interval)
+                    },
+                set:
+                    { newValue in
+                        if let value = Double(newValue)
+                        {
+                            element.time_interval = abs(value)
+                        }
+                    })
+            )
+            .frame(minWidth: 64, maxWidth: 96)
+            #if os(iOS) || os(visionOS)
+                .frame(idealWidth: 96)
+                .textFieldStyle(.roundedBorder)
+            #endif
+            
+            Stepper("Time", value: $element.time_interval, in: 0.0...60, step: 0.01)
+                .labelsHidden()
+            
+            Text("sec")
+        }
+    }
+}
+
 //MARK: - Previews
 struct IMALogicPreviewsContainer: PreviewProvider
 {
@@ -336,6 +392,7 @@ struct IMALogicPreviewsContainer: PreviewProvider
                         selected_program.elements.append(JumpLogicElement())
                         selected_program.elements.append(ComparatorLogicElement())
                         selected_program.elements.append(MarkLogicElement(name: "Mark"))
+                        selected_program.elements.append(WaitLogicElement(time_interval: 10))
                     }
                 }
         }
@@ -363,7 +420,8 @@ struct IMALogicPreviewsContainer: PreviewProvider
                     {
                         if let element = selected_program.elements[0] as? JumpLogicElement,
                            let element2 = selected_program.elements[1] as? ComparatorLogicElement,
-                           let element3 = selected_program.elements[2] as? MarkLogicElement
+                           let element3 = selected_program.elements[2] as? MarkLogicElement,
+                           let element4 = selected_program.elements[3] as? WaitLogicElement
                         {
                             JumpElementView(element: element, program: selected_program)
                                 .modifier(PreviewBorder())
@@ -372,6 +430,9 @@ struct IMALogicPreviewsContainer: PreviewProvider
                                 .modifier(PreviewBorder())
                             
                             MarkLogicElementView(element: element3, workspace: workspace, program: selected_program)
+                                .modifier(PreviewBorder())
+                            
+                            WaitLogicElementView(element: element4, workspace: workspace, program: selected_program)
                                 .modifier(PreviewBorder())
                         }
                     }

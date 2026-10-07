@@ -293,6 +293,7 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
     case jump = "Jump"
     case comparator = "Comparator"
     case mark = "Mark"
+    case wait = "Wait"
     
     public var element: LogicElement
     {
@@ -301,6 +302,7 @@ public enum LogicType: String, Codable, Equatable, CaseIterable
         case .jump: JumpLogicElement()
         case .comparator: ComparatorLogicElement()
         case .mark: MarkLogicElement()
+        case .wait: WaitLogicElement()
         }
     }
 }
@@ -358,6 +360,8 @@ public struct ProductionProgramElementView: View
                 ComparatorElementView(element: element, workspace: workspace, program: program, on_update: on_update)
             case let element as MarkLogicElement:
                 MarkLogicElementView(element: element, workspace: workspace, program: program, on_update: on_update)
+            case let element as WaitLogicElement:
+                WaitLogicElementView(element: element, workspace: workspace, program: program, on_update: on_update)
                 
             default:
                 EmptyView()

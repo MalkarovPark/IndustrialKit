@@ -30,7 +30,7 @@ import SwiftUI
     /// - Empty collections of robots, tools, and parts
     public init()
     {
-        current_element = RobotPerformerElement()//MarkLogicElement(name: "")
+        current_element = RobotPerformerElement() //MarkLogicElement(name: "")
         
         registers = [Float](repeating: 0, count: Workspace.default_registers_count)
     }
@@ -774,6 +774,18 @@ import SwiftUI
         case is MarkLogicElement:
             performed = false
             completion(.success(()))
+        case let wait_element as WaitLogicElement:
+            wait(
+                by: wait_element,
+                completion:
+                { result in
+                    DispatchQueue.main.async
+                    {
+                        self.performed = false
+                        completion(result)
+                    }
+                }
+            )
         default:
             performed = false
             completion(.success(()))
@@ -847,6 +859,8 @@ import SwiftUI
                 pause_handler(performer_element)
             case let performer_element as ToolPerformerElement:
                 pause_handler(performer_element)
+            case let wait_element as WaitLogicElement:
+                pause_handler(wait_element)
             default:
                 break
             }
@@ -886,6 +900,11 @@ import SwiftUI
             
             tool.clear_completion_handler()
             tool.clear_error_handler()
+        }
+        
+        func pause_handler(_ element: WaitLogicElement)
+        {
+            wait_canceled = true //wait_task.cancel()
         }
     }
     
@@ -1034,6 +1053,8 @@ import SwiftUI
             reset_handler(performer_element)
         case let performer_element as ToolPerformerElement:
             reset_handler(performer_element)
+        case let wait_element as WaitLogicElement:
+            reset_handler(wait_element)
         default:
             break
         }
@@ -1086,6 +1107,11 @@ import SwiftUI
             
             tool.clear_completion_handler()
             tool.clear_error_handler()
+        }
+        
+        func reset_handler(_ element: WaitLogicElement)
+        {
+            wait_canceled = true //wait_task.cancel()
         }
     }
     
@@ -1632,6 +1658,38 @@ import SwiftUI
             selected_element_index = element.target_element_index
             
             reset_elements_state_to_current() // UI only
+        }
+    }
+    
+    private var wait_task = Task<Void, Error> {}
+    private var wait_canceled = false
+    
+    @MainActor private func wait(by element: WaitLogicElement, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+    {
+        if element.time_interval <= 0 { return }
+        
+        //usleep(UInt32(element.time_interval * 1_000_000))
+        
+        wait_task = Task
+        { @MainActor in
+            do
+            {
+                try await Task.sleep(nanoseconds: UInt64(element.time_interval * 1_000_000_000))
+                if !wait_canceled
+                {
+                    wait_task.cancel()
+                    completion(.success(()))
+                }
+                //wait_task.cancel()
+                //completion(.success(()))
+            }
+            catch
+            {
+                //completion(.failure(error))
+                completion(.success(()))
+            }
+            
+            wait_canceled = false
         }
     }
     
