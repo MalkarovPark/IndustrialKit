@@ -26,7 +26,7 @@ public struct ElementControl: View
     
     public var body: some View
     {
-        HStack(spacing: 0)
+        HStack(spacing: 12)
         {
             ZStack
             {
@@ -194,11 +194,6 @@ public struct ElementControl: View
             .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
             .scaleEffect(is_central_pressed ? 1.05 : 1)
             .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
-            #if !os(visionOS)
-            .padding(.trailing, 10)
-            #else
-            .padding(.trailing, 16)
-            #endif
             .zIndex(1)
             
             Button
