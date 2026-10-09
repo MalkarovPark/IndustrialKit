@@ -26,7 +26,7 @@ public struct OperationControl: View
     
     public var body: some View
     {
-        HStack(spacing: 0)
+        HStack(spacing: 12)
         {
             ZStack
             {
@@ -307,11 +307,6 @@ public struct OperationControl: View
                 }
             }
             .modifier(CircleButtonGlassBorderer())
-            #if os(macOS) || os(iOS)
-            .padding(10)
-            #else
-            .padding(16)
-            #endif
         }
         .disabled(tool.codes.count == 0)
         #if os(visionOS)
