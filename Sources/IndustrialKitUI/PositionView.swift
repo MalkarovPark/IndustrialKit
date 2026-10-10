@@ -29,11 +29,7 @@ public struct PositionView: View
         self.with_steppers = with_steppers
     }
     
-    #if os(macOS) || os(iOS)
-    private let hstack_spacing: CGFloat = 12
-    #else
-    private let hstack_spacing: CGFloat = 12
-    #endif
+    //private let hstack_spacing: CGFloat = 12
     
     public var body: some View
     {
@@ -50,7 +46,7 @@ public struct PositionView: View
                         Spacer()
                     }
                     
-                    HStack(spacing: hstack_spacing)
+                    HStack(spacing: 12)
                     {
                         ForEach(PositionComponents.components(for: group), id: \.self)
                         { component in

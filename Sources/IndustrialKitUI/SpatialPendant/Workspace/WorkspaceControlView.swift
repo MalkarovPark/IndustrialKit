@@ -696,7 +696,8 @@ struct WorkspaceControl_Previews: PreviewProvider
                 CleanerModifierElement(),
                 JumpLogicElement(),
                 ComparatorLogicElement(),
-                MarkLogicElement(name: "Fin")
+                MarkLogicElement(name: "Fin"),
+                WaitLogicElement(time_interval: 1)
             ]
         )
         @State private var dragging_element_id: UUID?
