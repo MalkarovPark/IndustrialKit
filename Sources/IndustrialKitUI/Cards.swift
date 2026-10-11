@@ -721,7 +721,7 @@ public struct GlassBoxCard<Content: View>: View
     
     private let factor: Float = 0.5
     private let depth_shift: Float = 100 //200
-    private let grid_factor: Float = 0.675
+    //private let grid_factor: Float = 0.675
     
     private func update_scale()
     {
@@ -746,11 +746,11 @@ public struct GlassBoxCard<Content: View>: View
         {
             let bounds = previewed_entity.visualBounds(relativeTo: previewed_entity)
             
-            previewed_entity.position = [
+            previewed_entity.position = -bounds.center * scale /*[
                 bounds.extents.x / 2 + bounds.center.x,
                 bounds.extents.y / 2 + bounds.center.y,
                 bounds.extents.z / 2 + bounds.center.z
-            ] * scale * -0.5
+            ] * -0.5 * scale*/
         }
     }
     #endif
