@@ -512,7 +512,6 @@ private struct PerformingControlView: View
             })
             {
                 Image(systemName: "stop.fill")
-                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                     .modifier(CircleButtonImageFramer())
             }
             .buttonStyle(.borderless)

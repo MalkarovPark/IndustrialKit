@@ -913,7 +913,7 @@ let register_card_font_size: CGFloat = 32
             GlassBoxCard(
                 title: names[2],
                 entity: ModelEntity(
-                    mesh: .generateBox(size: Float(0.1), cornerRadius: Float(0.01)),
+                    mesh: .generateBox(size: Float(1), cornerRadius: Float(0.1)),
                     materials: [SimpleMaterial(color: .white, isMetallic: false)]
                 ),
                 is_renaming: $is_renaming[2]

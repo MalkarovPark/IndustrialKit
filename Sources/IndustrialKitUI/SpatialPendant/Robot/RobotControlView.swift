@@ -568,12 +568,22 @@ private struct PositionPointView: View
             
             HStack
             {
+                let move_type = Binding(
+                    get: { point.move_type },
+                    set:
+                        { new_value in
+                            point.move_type = new_value
+                            
+                            robot.update_program_entity(by: program, point_index: point_index)
+                        }
+                )
+                
                 Text("Type")
                     .fontWeight(.light)
                 
                 Spacer()
                 
-                Picker("Type", selection: $point.move_type)
+                Picker("Type", selection: move_type)//$point.move_type)
                 {
                     ForEach(MoveType.allCases, id: \.self)
                     { type in
@@ -667,7 +677,6 @@ private struct PerformingControlView: View
             })
             {
                 Image(systemName: "stop.fill")
-                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                     .modifier(CircleButtonImageFramer())
             }
             .buttonStyle(.borderless)
@@ -759,3 +768,151 @@ struct RobotControlView_Previews: PreviewProvider
         Container()
     }
 }
+
+/*import RealityKit
+struct RobotTrajectoryView: View
+{
+    @State private var scene_content: RealityViewCameraContent?
+    @ObservedObject private var robot = Robot(
+        name: "6DOF Robot",
+        entity: ModelEntity(
+            mesh: .generateBox(size: Float(0.05), cornerRadius: Float(0.005)),
+            materials: [SimpleMaterial(color: .systemMint, isMetallic: true)]
+        )
+    )
+    @State private var opened = false
+    @State private var camera_entity = Entity()
+    
+    @State private var selected_point_index = 0
+    
+    var body: some View
+    {
+        ZStack(alignment: .bottom)
+        {
+            RealityView
+            { content in
+                scene_content = content
+                
+                let camera = PerspectiveCamera()
+                camera.position.z = 0.5
+                content.add(camera)
+            }
+            .realityViewCameraControls(.orbit)
+            .task { place_robot() }
+            
+            if opened
+            {
+                HStack(spacing: 0)
+                {
+                    Spacer()
+                    
+                    VStack(spacing: 0)
+                    {
+                        HStack
+                        {
+                            Button
+                            {
+                                if selected_point_index == 0 { selected_point_index = robot.selected_program!.points_count - 1 }
+                                else { selected_point_index -= 1 }
+                                robot.update_program_entity(by: robot.selected_program!, point_index: selected_point_index)
+                            } label: { Image(systemName: "chevron.left").padding() }
+                                .buttonStyle(.plain)
+                            
+                            Text("\(selected_point_index)")
+                            
+                            Button
+                            {
+                                if selected_point_index < robot.selected_program!.points_count - 1 { selected_point_index += 1 }
+                                else { selected_point_index = 0 }
+                                robot.update_program_entity(by: robot.selected_program!, point_index: selected_point_index)
+                            } label: { Image(systemName: "chevron.right").padding() }
+                                .buttonStyle(.plain)
+                        }
+                        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        
+                        PositionPointView(robot: robot, program: robot.selected_program!, point: robot.selected_program!.points[selected_point_index], point_index: selected_point_index, position_item_view_presented: .constant(true))
+                            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .frame(width: 320)
+                            .padding()
+                    }
+                }
+                .overlay(alignment: .bottomLeading)
+                {
+                    HStack
+                    {
+                        Button
+                        {
+                            robot.start_pause_moving()
+                            robot.objectWillChange.send()
+                        }
+                        label:
+                        {
+                            Image(systemName: robot.program_performed ? "pause.fill" : "play.fill")
+                                .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                                .padding(8)
+                        }
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glass)
+                        
+                        Button
+                        {
+                            robot.reset_moving()
+                        }
+                        label:
+                        {
+                            Image(systemName: "stop.fill")
+                                .padding(8)
+                        }
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glass)
+                    }
+                    .padding()
+                }
+            }
+        }
+        .frame(width: 700, height: 400)
+        .overlay(alignment: .topLeading)
+        {
+            PositionPane(robot: robot)
+                .padding()
+        }
+    }
+    
+    private func place_robot()
+    {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+        {
+            scene_content?.add(robot.entity)
+            robot.position.y = -250
+            robot.position.z = -100
+            
+            robot.add_program(
+                PositionProgram(
+                    name: "Program",
+                    points: [
+                        .init(x: 0, y: 0, z: 0),
+                        .init(x: 0, y: 100, z: 0),
+                        .init(x: 0, y: 100, z: 100),
+                        .init(x: 0, y: 200, z: 100),
+                        .init(x: 0, y: 200, z: 0)
+                    ]
+                )
+            )
+            
+            robot.select_program(at: 0)
+            
+            opened = true
+            
+            robot.model_entity?.isEnabled = false
+            
+            robot.show_working_area()
+            robot.show_position_pointer()
+            robot.show_position_program()
+        }
+    }
+}
+
+#Preview
+{
+    RobotTrajectoryView()
+}*/

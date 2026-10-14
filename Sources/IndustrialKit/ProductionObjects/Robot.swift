@@ -1261,15 +1261,13 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
         
         for i in 0..<3
         {
-            //let point = ModelEntity(mesh: .generateSphere(radius: Float(0.005)), materials: [SimpleMaterial(color: .white.withAlphaComponent(0.5), roughness: 1.0, isMetallic: false)])
+            let cylinder = ModelEntity(mesh: .generateCylinder(height: Float(0.0125), radius: Float(0.002)), materials: [UnlitMaterial(color: colors[i])])
             
-            let cone = ModelEntity(mesh: .generateCylinder(height: Float(0.0125), radius: Float(0.002)), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
-            
-            cone.position = positions[i]
-            cone.euler_angles = rotations[i]
+            cylinder.position = positions[i]
+            cylinder.euler_angles = rotations[i]
             
             //parent.addChild(point)
-            parent.addChild(cone)
+            parent.addChild(cylinder)
         }
         
         return parent

@@ -70,7 +70,6 @@ public struct NewElementButton: View
                     })
                     {
                         Image(systemName: "xmark")
-                            //.padding(.horizontal, 6)
                         #if os(iOS)
                             .opacity(0.5)
                         #endif
@@ -101,7 +100,6 @@ public struct NewElementButton: View
                             if with_name
                             {
                                 is_expanded = true
-                                
                                 is_focused = true
                             }
                             else

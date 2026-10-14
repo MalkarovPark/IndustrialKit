@@ -137,10 +137,13 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             if points.count > 1
             {
                 var is_first = true
-                var pivot_points: [SIMD3<Float>] = [SIMD3<Float>(), SIMD3<Float>()]
-                var index = 0
+                var pivot_points = [SIMD3<Float>](repeating: .zero, count: 2)
+                //var index = 0
                 
-                for point in points
+                var skip_next_line = false
+                
+                //for point in points
+                for (index, point) in points.enumerated()
                 {
                     let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.0025)))
                     
@@ -148,11 +151,11 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                     
                     if let selected_index = point_index, selected_index == index
                     {
-                        visual_point.model?.materials = [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)]
+                        visual_point.model?.materials = [UnlitMaterial(color: selected_point_color)]
                     }
                     else
                     {
-                        visual_point.model?.materials = [SimpleMaterial(color: point_color, roughness: 1.0, isMetallic: false)]
+                        visual_point.model?.materials = [UnlitMaterial(color: point_color)]
                     }
                     
                     if is_first
@@ -162,14 +165,57 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                     }
                     else
                     {
-                        pivot_points[1] = point_location + SIMD3<Float>(.random(in: Float(-0.000001)..<Float(0.000001)), .random(in: Float(-0.000001)..<Float(0.000001)), .random(in: Float(-0.000001)..<Float(0.000001)))
+                        pivot_points[1] = point_location + randomized_point()
                         
-                        positions_group.addChild(build_ptp_line(from: pivot_points[0], to: pivot_points[1]))
+                        if !skip_next_line
+                        {
+                            switch point.move_type
+                            {
+                            case .linear:
+                                positions_group.addChild(
+                                    linear_ptp_line(
+                                        from: pivot_points[0],
+                                        to: pivot_points[1]
+                                    )
+                                )
+                            case .spline:
+                                if index < points.count - 1
+                                {
+                                    skip_next_line = true
+                                    positions_group.addChild(
+                                        spline_ptp_line(
+                                            from: pivot_points[0],
+                                            via: pivot_points[1],
+                                            to: {
+                                                guard let point = points[safe: index + 1] else { return .zero }
+                                                return SIMD3<Float>(point.y, point.z, point.x) / 1000
+                                            }()
+                                        )
+                                    )
+                                }
+                                else
+                                {
+                                    positions_group.addChild(linear_ptp_line(from: pivot_points[0], to: pivot_points[1]))
+                                }
+                            case .fine:
+                                positions_group.addChild(fine_ptp_line(from: pivot_points[0], to: pivot_points[1]))
+                            }
+                        }
+                        else
+                        {
+                            skip_next_line = false
+                        }
+                        
                         pivot_points[0] = pivot_points[1]
                     }
                     
                     positions_group.addChild(visual_point)
-                    index += 1
+                    //index += 1
+                }
+                
+                func randomized_point() -> SIMD3<Float>
+                {
+                    return SIMD3<Float>(.random(in: Float(-0.000001)..<Float(0.000001)), .random(in: Float(-0.000001)..<Float(0.000001)), .random(in: Float(-0.000001)..<Float(0.000001)))
                 }
             }
             else
@@ -195,13 +241,13 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
         return positions_group
         
         // Functions
-        func build_ptp_line(from: SIMD3<Float>, to: SIMD3<Float>) -> Entity
+        func linear_ptp_line(from: SIMD3<Float>, to: SIMD3<Float>) -> Entity
         {
             let vector = to - from
             let height = length(vector)
             
             let cylinder_mesh = MeshResource.generateCylinder(height: height, radius: Float(0.001))
-            let line_entity = ModelEntity(mesh: cylinder_mesh, materials: [SimpleMaterial(color: cylinder_color, roughness: 1.0, isMetallic: false)])
+            let line_entity = ModelEntity(mesh: cylinder_mesh, materials: [UnlitMaterial(color: cylinder_color)])
             
             line_entity.position = from + vector / 2
             
@@ -210,6 +256,80 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             line_entity.orientation = rotation_quat
             
             return line_entity
+        }
+        
+        func spline_ptp_line(from: SIMD3<Float>, via: SIMD3<Float>, to: SIMD3<Float>) -> Entity
+        {
+            let line_group = Entity()
+            
+            let parts_count: Int = 1000 // Trajectory steps calculation
+            
+            for i in 1...parts_count // Incremental drawing
+            {
+                let t = Float(i) / Float(parts_count)
+                let one_minus_t = 1 - t
+                
+                let current_position =
+                    one_minus_t * one_minus_t * from +
+                    2 * one_minus_t * t * via +
+                    t * t * to
+                
+                let visual_point = ModelEntity(
+                    mesh: .generateSphere(radius: Float(0.001)),
+                    materials: [UnlitMaterial(color: cylinder_color)]
+                )
+                
+                visual_point.position = current_position
+                line_group.addChild(visual_point)
+            }
+            
+            return line_group
+        }
+        
+        func fine_ptp_line(from: SIMD3<Float>, to: SIMD3<Float>) -> Entity
+        {
+            let line_group = Entity()
+            
+            let parts_count: Int = 1000 //10 // Trajectory steps calculation
+            
+            var current_position = from
+            
+            let delta_x: Float = to.x - current_position.x
+            let delta_y: Float = to.y - current_position.y
+            let delta_z: Float = to.z - current_position.z
+            
+            /*let delta_r: Float = to.r - current_position.r
+            let delta_p: Float = to.p - current_position.p
+            let delta_w: Float = to.w - current_position.w*/
+            
+            let step_x: Float = delta_x / Float(parts_count)
+            let step_y: Float = delta_y / Float(parts_count)
+            let step_z: Float = delta_z / Float(parts_count)
+            
+            /*let step_r: Float = delta_r / Float(parts_count)
+            let step_p: Float = delta_p / Float(parts_count)
+            let step_w: Float = delta_w / Float(parts_count)*/
+            
+            for _ in 0..<parts_count // Incremental movement
+            {
+                current_position.x += step_x
+                current_position.y += step_y
+                current_position.z += step_z
+                
+                /*current_position.r += step_r
+                current_position.p += step_p
+                current_position.w += step_w*/
+                
+                let visual_point = ModelEntity(
+                    mesh: .generateBox(size: 0.001),//.generateSphere(radius: Float(0.001)),
+                    materials: [UnlitMaterial(color: .gray)]
+                )
+                
+                visual_point.position = SIMD3<Float>(current_position.x, current_position.y, current_position.z)
+                line_group.addChild(visual_point)
+            }
+            
+            return line_group
         }
         
         func node_by_data(node: ModelEntity, point: PositionPoint, location: inout SIMD3<Float>)
@@ -245,7 +365,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             
             for i in 0..<3
             {
-                let cone = ModelEntity(mesh: .generateCone(height: 0.004, radius: 0.002), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
+                let cone = ModelEntity(mesh: .generateCone(height: 0.004, radius: 0.002), materials: [UnlitMaterial(color: colors[i])])
                 
                 cone.position = positions[i]
                 cone.euler_angles = rotations[i]

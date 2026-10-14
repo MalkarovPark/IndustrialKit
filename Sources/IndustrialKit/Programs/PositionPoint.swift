@@ -156,12 +156,17 @@ public enum MoveType: String, Codable, Equatable, CaseIterable
 {
     /// Linear motion between points.
     ///
-    /// The robot follows a continuous path with interpolation.
+    /// The robot follows a straight path between points.
     case linear = "Linear"
     
-    /// Precise positioning at the target point.
+    /// Spline motion between points.
     ///
-    /// The robot prioritizes accuracy and stops exactly at the point.
+    /// The robot follows a smooth curved path from the first point to the next point.
+    case spline = "Spline"
+    
+    /// Blended motion between points.
+    ///
+    /// The robot smooths the path through points without stopping at each one.
     case fine = "Fine"
     
     init(register_value: Int)
