@@ -16,17 +16,70 @@ public struct PositionView: View
     private var with_steppers: Bool = false
     
     public init(position: Binding<(x: Float, y: Float, z: Float,
-                                   r: Float, p: Float, w: Float)>)
+                                   r: Float, p: Float, w: Float)>,
+                with_steppers: Bool = false)
     {
         self._position = position
+        
+        self.with_steppers = with_steppers
+        
+        self.with_location = true
+        self.with_rotation = true
     }
     
-    public init(position: Binding<(x: Float, y: Float, z: Float,
-                                   r: Float, p: Float, w: Float)>,
-                with_steppers: Bool)
+    private var with_location = false
+    private var with_rotation = false
+    
+    public init(location: Binding<(x: Float, y: Float, z: Float)>,
+                with_steppers: Bool = false)
     {
-        self._position = position
+        self._position = Binding(
+            get: {
+                (
+                    x: location.wrappedValue.x,
+                    y: location.wrappedValue.y,
+                    z: location.wrappedValue.z,
+                    r: 0, p: 0, w: 0
+                )
+            },
+            set: { newValue in
+                location.wrappedValue = (
+                    x: newValue.x,
+                    y: newValue.y,
+                    z: newValue.z
+                )
+            }
+        )
+        
         self.with_steppers = with_steppers
+        
+        self.with_location = true
+    }
+    
+    public init(rotation: Binding<(r: Float, p: Float, w: Float)>,
+                with_steppers: Bool = false)
+    {
+        self._position = Binding(
+            get: {
+                (
+                    x: 0, y: 0, z: 0,
+                    r: rotation.wrappedValue.r,
+                    p: rotation.wrappedValue.p,
+                    w: rotation.wrappedValue.w,
+                )
+            },
+            set: { newValue in
+                rotation.wrappedValue = (
+                    r: newValue.r,
+                    p: newValue.p,
+                    w: newValue.w
+                )
+            }
+        )
+        
+        self.with_steppers = with_steppers
+        
+        self.with_rotation = true
     }
     
     //private let hstack_spacing: CGFloat = 12
@@ -37,71 +90,78 @@ public struct PositionView: View
         {
             ForEach(PositionComponents.Group.allCases, id: \.self)
             { group in
-                VStack
+                if (
+                    (with_location && with_rotation) ||
+                    (with_location && group != .rotation) ||
+                    (with_rotation && group != .location)
+                )
                 {
-                    HStack
+                    VStack
                     {
-                        Text(group.rawValue)
-                            .fontWeight(.light)
-                        Spacer()
-                    }
-                    
-                    HStack(spacing: 12)
-                    {
-                        ForEach(PositionComponents.components(for: group), id: \.self)
-                        { component in
-                            VStack
-                            {
-                                #if os(macOS)
-                                HStack(spacing: 8)
+                        HStack
+                        {
+                            Text(group.rawValue)
+                                .fontWeight(.light)
+                            Spacer()
+                        }
+                        
+                        HStack(spacing: 12)
+                        {
+                            ForEach(PositionComponents.components(for: group), id: \.self)
+                            { component in
+                                VStack
                                 {
-                                    TextField("0", value: binding(for: component), format: .number)
-                                        .textFieldStyle(.roundedBorder)
-                                    
-                                    if with_steppers
+                                    #if os(macOS)
+                                    HStack(spacing: 8)
                                     {
-                                        Stepper("Position",
-                                                value: binding(for: component),
-                                                in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
-                                        .labelsHidden()
-                                    }
-                                }
-                                #else
-                                VStack//(spacing: 8)
-                                {
-                                    TextField("0", value: binding(for: component), format: .number)
-                                        .textFieldStyle(.roundedBorder)
-                                        .keyboardType(.decimalPad)
-                                    
-                                    if with_steppers
-                                    {
-                                        Rectangle()
-                                            .fill(.clear)
-                                            .frame(height: 42)
-                                            .overlay
-                                            {
-                                                Stepper("Position",
-                                                        value: binding(for: component),
-                                                        in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
-                                                    .labelsHidden()
-                                                    #if os(visionOS)
-                                                    .scaleEffect(0.85)
-                                                    #endif
+                                        TextField("0", value: binding(for: component), format: .number)
+                                            .textFieldStyle(.roundedBorder)
+                                        
+                                        if with_steppers
+                                        {
+                                            Stepper("Position",
+                                                    value: binding(for: component),
+                                                    in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                            .labelsHidden()
                                         }
-                                        /*Stepper("Position",
-                                                value: binding(for: component),
-                                                in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
-                                        .labelsHidden()
-                                        #if os(visionOS)
-                                        .scaleEffect(0.8)
-                                        #endif*/
                                     }
+                                    #else
+                                    VStack//(spacing: 8)
+                                    {
+                                        TextField("0", value: binding(for: component), format: .number)
+                                            .textFieldStyle(.roundedBorder)
+                                            .keyboardType(.decimalPad)
+                                        
+                                        if with_steppers
+                                        {
+                                            Rectangle()
+                                                .fill(.clear)
+                                                .frame(height: 42)
+                                                .overlay
+                                                {
+                                                    Stepper("Position",
+                                                            value: binding(for: component),
+                                                            in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                                        .labelsHidden()
+                                                        #if os(visionOS)
+                                                        .scaleEffect(0.85)
+                                                        #endif
+                                            }
+                                            /*Stepper("Position",
+                                                    value: binding(for: component),
+                                                    in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
+                                            .labelsHidden()
+                                            #if os(visionOS)
+                                            .scaleEffect(0.8)
+                                            #endif*/
+                                        }
+                                    }
+                                    #endif
+                                    
+                                    Text(component.info.text)
+                                        .fontWeight(.light)
+                                        .foregroundStyle(.secondary)
                                 }
-                                #endif
-                                
-                                Text(component.info.text)
-                                    .fontWeight(.light)
-                                    .foregroundStyle(.secondary)
                             }
                         }
                     }
@@ -206,13 +266,29 @@ struct PositionView_Previews: PreviewProvider
     {
         @State private var position: (x: Float, y: Float, z: Float, r: Float, p: Float, w: Float) = (x: 20, y: 40, z: 60, r: 0, p: 90, w: 0)
         
+        @State private var location: (x: Float, y: Float, z: Float) = (x: 20, y: 40, z: 60)
+        
+        @State private var rotation: (r: Float, p: Float, w: Float) = (r: 0, p: 90, w: 0)
+        
         var body: some View
         {
-            HStack
+            VStack(spacing: 0)
             {
                 HStack(spacing: 16)
                 {
                     PositionView(position: $position, with_steppers: true)
+                }
+                .modifier(PreviewBorder())
+                
+                HStack(spacing: 16)
+                {
+                    PositionView(location: $location, with_steppers: true)
+                }
+                .modifier(PreviewBorder())
+                
+                HStack(spacing: 16)
+                {
+                    PositionView(rotation: $rotation, with_steppers: true)
                 }
                 .modifier(PreviewBorder())
             }

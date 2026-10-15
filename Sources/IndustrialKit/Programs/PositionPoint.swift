@@ -45,7 +45,7 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
     /// Defines the horizontal displacement in the workspace coordinate system.
     @Published public var x: Float
     
-    /// The position along the Z axis.
+    /// The position along the Y axis.
     ///
     /// Defines the vertical displacement in the workspace coordinate system.
     @Published public var y: Float
@@ -59,21 +59,39 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
     /// The rotation around the X axis (roll).
     @Published public var r: Float
     
-    /// The rotation around the P axis (pitch).
+    /// The rotation around the Y axis (pitch).
     @Published public var p: Float
     
-    /// The rotation around the Y axis (yaw).
+    /// The rotation around the Z axis (yaw).
     @Published public var w: Float
-    
-    /// The movement type used to reach this point.
-    ///
-    /// Determines interpolation and motion behavior.
-    @Published public var move_type: MoveType
     
     /// The movement speed when approaching this point.
     ///
     /// - Note: The value is specified in millimeters per second (mm/s).
     @Published public var move_speed: Float
+    
+    // MARK: - Movement Trajectory
+    /// The movement type used to reach this point.
+    ///
+    /// Determines interpolation and motion behavior.
+    @Published public var move_type: MoveType
+    {
+        didSet
+        {
+            switch move_type
+            {
+            case .linear:
+                spline_points = nil
+            case .spline:
+                spline_points = [SIMD3<Float>](repeating: .zero, count: 1)
+            case .fine:
+                spline_points = nil
+            }
+        }
+    }
+    
+    /// Via
+    @Published public var spline_points: [SIMD3<Float>]?
     
     // MARK: - Initializer
     /// Creates a position point with spatial and motion parameters.
@@ -87,7 +105,13 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
     ///   - w: Yaw angle.
     ///   - move_speed: Movement speed in mm/s.
     ///   - move_type: Movement type used to reach the point.
-    public init(x: Float = 0, y: Float = 0, z: Float = 0, r: Float = 0, p: Float = 0, w: Float = 0, move_speed: Float = 100, move_type: MoveType = .linear)
+    public init(
+        x: Float = 0, y: Float = 0, z: Float = 0,
+        r: Float = 0, p: Float = 0, w: Float = 0,
+        move_speed: Float = 100,
+        move_type: MoveType = .linear,
+        spline_points: [SIMD3<Float>]? = nil
+    )
     {
         self.x = x
         self.y = y
@@ -99,6 +123,21 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
         
         self.move_speed = move_speed
         self.move_type = move_type
+        
+        //Set spline points
+        //self.spline_points = spline_points
+        switch move_type
+        {
+        case .linear: return
+        case .spline: self.spline_points = [SIMD3<Float>](repeating: .zero, count: 2)
+        case .fine: return
+        }
+        
+        if spline_points != nil && self.spline_points != nil
+        {
+            for i in 0..<min(spline_points?.count ?? 0, self.spline_points?.count ?? 0)
+            { self.spline_points?[i] = spline_points?[i] ?? .zero }
+        }
     }
     
     // MARK: - UI
@@ -112,7 +151,7 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
     // For performing_state exclusion
     enum CodingKeys: String, CodingKey
     {
-        case x, y, z, r, p, w, move_type, move_speed
+        case x, y, z, r, p, w, move_type, move_speed, spline_points
     }
     
     public required init(from decoder: any Decoder) throws
@@ -129,6 +168,8 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
         
         move_type = try container.decode(MoveType.self, forKey: .move_type)
         move_speed = try container.decode(Float.self, forKey: .move_speed)
+        
+        spline_points = try container.decodeIfPresent([SIMD3<Float>].self, forKey: .spline_points) ?? nil
     }
     
     public func encode(to encoder: any Encoder) throws
@@ -145,6 +186,8 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
         
         try container.encode(move_type, forKey: .move_type)
         try container.encode(move_speed, forKey: .move_speed)
+        
+        try container.encode(spline_points, forKey: .spline_points)
     }
 }
 
@@ -176,6 +219,8 @@ public enum MoveType: String, Codable, Equatable, CaseIterable
         case 0:
             self = .linear
         case 1:
+            self = .spline
+        case 2:
             self = .fine
         default:
             self = .linear
@@ -187,10 +232,9 @@ public enum MoveType: String, Codable, Equatable, CaseIterable
     {
         switch self
         {
-        case .linear:
-            return 0
-        case .fine:
-            return 1
+        case .linear: 0
+        case .spline: 1
+        case .fine: 2
         }
     }*/
 }

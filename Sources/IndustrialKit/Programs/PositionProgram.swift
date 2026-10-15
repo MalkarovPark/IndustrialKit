@@ -140,9 +140,6 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                 var pivot_points = [SIMD3<Float>](repeating: .zero, count: 2)
                 //var index = 0
                 
-                var skip_next_line = false
-                
-                //for point in points
                 for (index, point) in points.enumerated()
                 {
                     let visual_point = ModelEntity(mesh: .generateSphere(radius: Float(0.0025)))
@@ -167,50 +164,31 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                     {
                         pivot_points[1] = point_location + randomized_point()
                         
-                        if !skip_next_line
+                        switch point.move_type
                         {
-                            switch point.move_type
-                            {
-                            case .linear:
-                                positions_group.addChild(
-                                    linear_ptp_line(
-                                        from: pivot_points[0],
-                                        to: pivot_points[1]
-                                    )
+                        case .linear:
+                            positions_group.addChild(
+                                linear_ptp_line(
+                                    from: pivot_points[0],
+                                    to: pivot_points[1]
                                 )
-                            case .spline:
-                                if index < points.count - 1
-                                {
-                                    skip_next_line = true
-                                    positions_group.addChild(
-                                        spline_ptp_line(
-                                            from: pivot_points[0],
-                                            via: pivot_points[1],
-                                            to: {
-                                                guard let point = points[safe: index + 1] else { return .zero }
-                                                return SIMD3<Float>(point.y, point.z, point.x) / 1000
-                                            }()
-                                        )
-                                    )
-                                }
-                                else
-                                {
-                                    positions_group.addChild(linear_ptp_line(from: pivot_points[0], to: pivot_points[1]))
-                                }
-                            case .fine:
-                                positions_group.addChild(fine_ptp_line(from: pivot_points[0], to: pivot_points[1]))
-                            }
-                        }
-                        else
-                        {
-                            skip_next_line = false
+                            )
+                        case .spline:
+                            positions_group.addChild(
+                                spline_ptp_line(
+                                    from: pivot_points[0],
+                                    via: point.spline_points?[safe: 0] ?? .zero,
+                                    to: pivot_points[1]
+                                )
+                            )
+                        case .fine:
+                            break
                         }
                         
                         pivot_points[0] = pivot_points[1]
                     }
                     
                     positions_group.addChild(visual_point)
-                    //index += 1
                 }
                 
                 func randomized_point() -> SIMD3<Float>
@@ -227,11 +205,11 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                 
                 if point_index == 0
                 {
-                    visual_point.model?.materials = [SimpleMaterial(color: selected_point_color, roughness: 1.0, isMetallic: false)]
+                    visual_point.model?.materials = [UnlitMaterial(color: selected_point_color)]
                 }
                 else
                 {
-                    visual_point.model?.materials = [SimpleMaterial(color: point_color, roughness: 1.0, isMetallic: false)]
+                    visual_point.model?.materials = [UnlitMaterial(color: point_color)]
                 }
                 
                 positions_group.addChild(visual_point)
@@ -261,7 +239,9 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
         func spline_ptp_line(from: SIMD3<Float>, via: SIMD3<Float>, to: SIMD3<Float>) -> Entity
         {
             let line_group = Entity()
+            let d_via = SIMD3<Float>(x: via.y / 1000, y: via.z / 1000, z: via.x / 1000) //via / 1000
             
+            // Draw spline line
             let parts_count: Int = 1000 // Trajectory steps calculation
             
             for i in 1...parts_count // Incremental drawing
@@ -271,7 +251,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                 
                 let current_position =
                     one_minus_t * one_minus_t * from +
-                    2 * one_minus_t * t * via +
+                    2 * one_minus_t * t * d_via +
                     t * t * to
                 
                 let visual_point = ModelEntity(
@@ -283,51 +263,15 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                 line_group.addChild(visual_point)
             }
             
-            return line_group
-        }
-        
-        func fine_ptp_line(from: SIMD3<Float>, to: SIMD3<Float>) -> Entity
-        {
-            let line_group = Entity()
+            // Draw spline point
+            let spline_point = ModelEntity(
+                mesh: .generateSphere(radius: Float(0.0025)),
+                materials: [UnlitMaterial(color: .magenta)]
+            )
+            spline_point.position = d_via
+            add_cones(to: spline_point)
             
-            let parts_count: Int = 1000 //10 // Trajectory steps calculation
-            
-            var current_position = from
-            
-            let delta_x: Float = to.x - current_position.x
-            let delta_y: Float = to.y - current_position.y
-            let delta_z: Float = to.z - current_position.z
-            
-            /*let delta_r: Float = to.r - current_position.r
-            let delta_p: Float = to.p - current_position.p
-            let delta_w: Float = to.w - current_position.w*/
-            
-            let step_x: Float = delta_x / Float(parts_count)
-            let step_y: Float = delta_y / Float(parts_count)
-            let step_z: Float = delta_z / Float(parts_count)
-            
-            /*let step_r: Float = delta_r / Float(parts_count)
-            let step_p: Float = delta_p / Float(parts_count)
-            let step_w: Float = delta_w / Float(parts_count)*/
-            
-            for _ in 0..<parts_count // Incremental movement
-            {
-                current_position.x += step_x
-                current_position.y += step_y
-                current_position.z += step_z
-                
-                /*current_position.r += step_r
-                current_position.p += step_p
-                current_position.w += step_w*/
-                
-                let visual_point = ModelEntity(
-                    mesh: .generateBox(size: 0.001),//.generateSphere(radius: Float(0.001)),
-                    materials: [UnlitMaterial(color: .gray)]
-                )
-                
-                visual_point.position = SIMD3<Float>(current_position.x, current_position.y, current_position.z)
-                line_group.addChild(visual_point)
-            }
+            line_group.addChild(spline_point)
             
             return line_group
         }
@@ -346,9 +290,31 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             
             cones_entity.orientation = w_rot * p_rot * r_rot
             
+            //add_cones(to: node)
             node.addChild(cones_entity)
             
             node.orientation = simd_quatf() // Optional, explicit identity rotation
+        }
+        
+        func add_cones(to: Entity)
+        {
+            let colors: [UIColor] = [
+                UIColor.systemIndigo/*.withAlphaComponent(0.75)*/,
+                UIColor.systemPink/*.withAlphaComponent(0.75)*/,
+                UIColor.systemTeal/*.withAlphaComponent(0.75)*/
+            ]
+            let rotations: [SIMD3<Float>] = [[.pi/2, 0, 0], [0, 0, -.pi / 2], [0, 0, 0]]
+            let positions: [SIMD3<Float>] = [[0, 0, Float(0.008)], [Float(0.008), 0, 0], [0, Float(0.008), 0]]
+            
+            for i in 0..<3
+            {
+                let cone = ModelEntity(mesh: .generateCone(height: 0.004, radius: 0.002), materials: [UnlitMaterial(color: colors[i])])
+                
+                cone.position = positions[i]
+                cone.euler_angles = rotations[i]
+                
+                to.addChild(cone)
+            }
         }
         
         func build_cones() -> Entity

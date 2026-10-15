@@ -215,69 +215,16 @@ open class RobotModelController: ModelController, @unchecked Sendable
     /// - Throws: An error if movement fails.
     open func move(to point: PositionPoint) throws
     {
-        let parts_count: Int = 1000 // Trajectory steps calculation
-        
-        let current_position = pointer_position
-        
-        let delta_x: Float = point.x - current_position.x
-        let delta_y: Float = point.y - current_position.y
-        let delta_z: Float = point.z - current_position.z
-        
-        let delta_r: Float = point.r - current_position.r
-        let delta_p: Float = point.p - current_position.p
-        let delta_w: Float = point.w - current_position.w
-        
-        let distance_xyz: Double = sqrt(
-            pow(Double(delta_x), 2) +
-            pow(Double(delta_y), 2) +
-            pow(Double(delta_z), 2)
-        )
-        
-        let distance_rpw: Double = sqrt(
-            pow(Double(delta_r), 2) +
-            pow(Double(delta_p), 2) +
-            pow(Double(delta_w), 2)
-        )
-        
-        let total_distance: Double = max(distance_xyz, distance_rpw)
-        
-        let move_speed: Double = Double(point.move_speed)
-        guard move_speed > 0, parts_count > 0 else
+        switch point.move_type
         {
-            return
-        }
-        
-        let total_time: Double = total_distance / move_speed
-        let part_time: Double = total_time / Double(parts_count)
-        
-        let step_x: Float = delta_x / Float(parts_count)
-        let step_y: Float = delta_y / Float(parts_count)
-        let step_z: Float = delta_z / Float(parts_count)
-        
-        let step_r: Float = delta_r / Float(parts_count)
-        let step_p: Float = delta_p / Float(parts_count)
-        let step_w: Float = delta_w / Float(parts_count)
-        
-        for _ in 0..<parts_count // Incremental movement
-        {
-            var new_position = pointer_position
-            
-            new_position.x += step_x
-            new_position.y += step_y
-            new_position.z += step_z
-            
-            new_position.r += step_r
-            new_position.p += step_p
-            new_position.w += step_w
-            
-            pointer_position = new_position
-            
-            update_pointer_position()
-            do { try update_model() } catch { throw error }
-            
-            usleep(UInt32(part_time * 1_000_000))
-            
-            if canceled { break }
+        case .linear:
+            do { try linear_movement_inc(from: pointer_position, to: point) } catch { throw error }
+        case .spline:
+            print("SPLINE")
+            print(point.spline_points)
+            do { try spline_movement_inc(from: pointer_position, via: point.spline_points?[safe: 0] ?? .zero, to: point) } catch { throw error }
+        case .fine:
+            do { try linear_movement_inc(from: pointer_position, to: point) } catch { throw error }
         }
         
         if !canceled // Final step to point
@@ -290,6 +237,164 @@ open class RobotModelController: ModelController, @unchecked Sendable
             update_pointer_position()
             do { try update_model() } catch { throw error }
         }
+        
+        // Functions
+        func linear_movement_inc(
+            from: (x: Float, y: Float, z: Float,
+                   r: Float, p: Float, w: Float),
+            to: PositionPoint,
+            steps: Int = 1000
+        ) throws
+        {
+            let move_speed: Double = Double(to.move_speed)
+            guard move_speed > 0, steps > 0 else { return }
+            
+            let delta_x: Float = to.x - from.x
+            let delta_y: Float = to.y - from.y
+            let delta_z: Float = to.z - from.z
+            
+            let delta_r: Float = to.r - from.r
+            let delta_p: Float = to.p - from.p
+            let delta_w: Float = to.w - from.w
+            
+            let distance_xyz: Double = sqrt(
+                Double(delta_x) * Double(delta_x) +
+                Double(delta_y) * Double(delta_y) +
+                Double(delta_z) * Double(delta_z)
+            )
+            
+            let distance_rpw: Double = sqrt(
+                Double(delta_r) * Double(delta_r) +
+                Double(delta_p) * Double(delta_p) +
+                Double(delta_w) * Double(delta_w)
+            )
+            
+            //let total_distance: Double = distance_xyz//max(distance_xyz, distance_rpw)
+            
+            let total_time: Double = (distance_xyz > 0 ? distance_xyz : distance_rpw) / move_speed
+            let step_time: Double = total_time / Double(steps)
+            
+            let step_x: Float = delta_x / Float(steps)
+            let step_y: Float = delta_y / Float(steps)
+            let step_z: Float = delta_z / Float(steps)
+            
+            let step_r: Float = delta_r / Float(steps)
+            let step_p: Float = delta_p / Float(steps)
+            let step_w: Float = delta_w / Float(steps)
+            
+            var new_position = from
+            
+            for _ in 0..<steps // Incremental movement
+            {
+                if distance_xyz > 0
+                {
+                    new_position.x += step_x
+                    new_position.y += step_y
+                    new_position.z += step_z
+                }
+                
+                if distance_rpw > 0
+                {
+                    new_position.r += step_r
+                    new_position.p += step_p
+                    new_position.w += step_w
+                }
+                
+                pointer_position = new_position
+                
+                update_pointer_position()
+                do { try update_model() } catch { throw error }
+                
+                usleep(UInt32(step_time * 1_000_000))
+                
+                if canceled { break }
+            }
+        }
+        
+        func spline_movement_inc(
+            from: (x: Float, y: Float, z: Float,
+                   r: Float, p: Float, w: Float),
+            via: SIMD3<Float>,
+            to: PositionPoint,
+            steps: Int = 1000
+        ) throws
+        {
+            let move_speed: Double = Double(to.move_speed)
+            guard move_speed > 0, steps > 0 else { return }
+            
+            let f_from = SIMD3(x: from.x, y: from.y, z: from.z)
+            let f_via = SIMD3(x: via.x, y: via.z, z: via.y)
+            let f_to = SIMD3(x: to.x, y: to.y, z: to.z)
+            
+            //var length: Float = 0
+            
+            let delta_r: Float = to.r - from.r
+            let delta_p: Float = to.p - from.p
+            let delta_w: Float = to.w - from.w
+            
+            let step_r: Float = delta_r / Float(steps)
+            let step_p: Float = delta_p / Float(steps)
+            let step_w: Float = delta_w / Float(steps)
+            
+            // ... Add angle inc ...
+            
+            var previous = f_from
+            
+            for i in 1...steps // Incremental movement
+            {
+                let t = Float(i) / Float(steps)
+                let u = 1 - t
+                
+                let new_position =
+                u * u * f_from +
+                2 * u * t * f_via +
+                t * t * f_to
+                
+                //length += simd_length(point - previous)
+                let step_time: Double = Double(simd_length(new_position - previous)) / move_speed
+                previous = new_position
+                
+                pointer_position.x = new_position.x
+                pointer_position.y = new_position.y
+                pointer_position.z = new_position.z
+                
+                update_pointer_position()
+                do { try update_model() } catch { throw error }
+                
+                usleep(UInt32(step_time * 1_000_000))
+                
+                if canceled { break }
+            }
+        }
+        
+        /*func bezier_length(
+            from: SIMD3<Float>,
+            via: SIMD3<Float>,
+            to: SIMD3<Float>,
+            steps: Int = 1000
+        ) -> Float
+        {
+            guard steps > 0 else { return 0 }
+            
+            var length: Float = 0
+            var previous = from
+            
+            for i in 1...steps
+            {
+                let t = Float(i) / Float(steps)
+                let u = 1 - t
+                
+                let point =
+                u * u * from +
+                2 * u * t * via +
+                t * t * to
+                
+                length += simd_length(point - previous)
+                previous = point
+            }
+            
+            return length
+        }*/
     }
     
     /// Indicates whether the current movement operation is canceled.

@@ -597,6 +597,34 @@ private struct PositionPointView: View
                 #endif
             }
             
+            if point.move_type == .spline
+            {
+                let spline_point_bidnding = Binding<(x: Float, y: Float, z: Float)>(
+                    get:
+                        {
+                            if let spline_point = point.spline_points?.first
+                            {
+                                return (x: spline_point.x, y: spline_point.y, z: spline_point.z)
+                            }
+                            else
+                            {
+                                return (x: 0, y: 0, z: 0)
+                            }
+                        },
+                    set:
+                        { new_value in
+                            if point.spline_points?.first != nil
+                            {
+                                point.spline_points?[0] = SIMD3<Float>(new_value.x, new_value.y, new_value.z)
+                                
+                                robot.update_program_entity(by: program, point_index: point_index)
+                            }
+                        }
+                )
+                
+                PositionView(location: spline_point_bidnding, with_steppers: true)
+            }
+            
             Divider()
             
             HStack
@@ -870,7 +898,7 @@ struct RobotTrajectoryView: View
                 }
             }
         }
-        .frame(width: 700, height: 400)
+        .frame(width: 700, height: 700)
         .overlay(alignment: .topLeading)
         {
             PositionPane(robot: robot)
@@ -891,10 +919,13 @@ struct RobotTrajectoryView: View
                     name: "Program",
                     points: [
                         .init(x: 0, y: 0, z: 0),
+                        .init(x: 0, y: 100, z: 0, move_type: .spline, spline_points: [.init(x: 0, y: 50, z: 50)]),
+                        .init(x: 0, y: 100, z: 100)
+                        /*.init(x: 0, y: 0, z: 0),
                         .init(x: 0, y: 100, z: 0),
                         .init(x: 0, y: 100, z: 100),
                         .init(x: 0, y: 200, z: 100),
-                        .init(x: 0, y: 200, z: 0)
+                        .init(x: 0, y: 200, z: 0)*/
                     ]
                 )
             )
