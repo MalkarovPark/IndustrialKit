@@ -83,7 +83,7 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
             case .linear:
                 spline_points = nil
             case .spline:
-                spline_points = [SIMD3<Float>](repeating: .zero, count: 1)
+                spline_points = [SIMD3<Float>(x: x, y: y, z: z)] //[SIMD3<Float>](repeating: .zero, count: 1)
             case .fine:
                 spline_points = nil
             }

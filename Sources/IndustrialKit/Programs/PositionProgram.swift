@@ -178,7 +178,8 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                                 spline_ptp_line(
                                     from: pivot_points[0],
                                     via: point.spline_points?[safe: 0] ?? .zero,
-                                    to: pivot_points[1]
+                                    to: pivot_points[1],
+                                    selected: point_index == index
                                 )
                             )
                         case .fine:
@@ -236,7 +237,7 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             return line_entity
         }
         
-        func spline_ptp_line(from: SIMD3<Float>, via: SIMD3<Float>, to: SIMD3<Float>) -> Entity
+        func spline_ptp_line(from: SIMD3<Float>, via: SIMD3<Float>, to: SIMD3<Float>, selected: Bool = false) -> Entity
         {
             let line_group = Entity()
             let d_via = SIMD3<Float>(x: via.y / 1000, y: via.z / 1000, z: via.x / 1000) //via / 1000
@@ -264,14 +265,17 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
             }
             
             // Draw spline point
-            let spline_point = ModelEntity(
-                mesh: .generateSphere(radius: Float(0.0025)),
-                materials: [UnlitMaterial(color: .magenta)]
-            )
-            spline_point.position = d_via
-            add_cones(to: spline_point)
-            
-            line_group.addChild(spline_point)
+            if selected
+            {
+                let spline_point = ModelEntity(
+                    mesh: .generateSphere(radius: Float(0.0025)),
+                    materials: [UnlitMaterial(color: .magenta)]
+                )
+                spline_point.position = d_via
+                add_cones(to: spline_point)
+                
+                line_group.addChild(spline_point)
+            }
             
             return line_group
         }

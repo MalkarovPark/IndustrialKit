@@ -918,14 +918,12 @@ struct RobotTrajectoryView: View
                 PositionProgram(
                     name: "Program",
                     points: [
-                        .init(x: 0, y: 0, z: 0),
-                        .init(x: 0, y: 100, z: 0, move_type: .spline, spline_points: [.init(x: 0, y: 50, z: 50)]),
-                        .init(x: 0, y: 100, z: 100)
                         /*.init(x: 0, y: 0, z: 0),
+                        .init(x: 0, y: 100, z: 0, move_type: .spline, spline_points: [.init(x: 0, y: 50, z: 50)]),
+                        .init(x: 0, y: 100, z: 100)*/
+                        .init(x: 0, y: 0, z: 0),
                         .init(x: 0, y: 100, z: 0),
-                        .init(x: 0, y: 100, z: 100),
-                        .init(x: 0, y: 200, z: 100),
-                        .init(x: 0, y: 200, z: 0)*/
+                        .init(x: 0, y: 100, z: 0, p: 90)
                     ]
                 )
             )
