@@ -615,7 +615,10 @@ private struct PositionPointView: View
                         { new_value in
                             if point.spline_points?.first != nil
                             {
-                                point.spline_points?[0] = SIMD3<Float>(new_value.x, new_value.y, new_value.z)
+                                var new_point = PositionPoint(x: new_value.x, y: new_value.y, z: new_value.z)
+                                robot.point_shift(&new_point)
+                                
+                                point.spline_points?[0] = SIMD3<Float>(new_point.x, new_point.y, new_point.z)
                                 
                                 robot.update_program_entity(by: program, point_index: point_index)
                             }
@@ -918,12 +921,12 @@ struct RobotTrajectoryView: View
                 PositionProgram(
                     name: "Program",
                     points: [
-                        /*.init(x: 0, y: 0, z: 0),
-                        .init(x: 0, y: 100, z: 0, move_type: .spline, spline_points: [.init(x: 0, y: 50, z: 50)]),
-                        .init(x: 0, y: 100, z: 100)*/
                         .init(x: 0, y: 0, z: 0),
+                        .init(x: 0, y: 100, z: 0, move_type: .spline, spline_points: [.init(x: 0, y: 50, z: 50)]),
+                        .init(x: 0, y: 100, z: 100)
+                        /*.init(x: 0, y: 0, z: 0),
                         .init(x: 0, y: 100, z: 0),
-                        .init(x: 0, y: 100, z: 0, p: 90)
+                        .init(x: 0, y: 100, z: 0, p: 90)*/
                     ]
                 )
             )

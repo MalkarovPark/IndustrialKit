@@ -1322,15 +1322,6 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
         position_program_entity.isEnabled = is_enabled
         
         origin_entity.addChild(position_program_entity)
-        
-        /*let is_enabled = position_program_entity.isEnabled
-        
-        position_program_entity.removeFromParent()
-        position_program_entity = program.entity(point_index)
-        
-        position_program_entity.isEnabled = is_enabled
-        
-        origin_entity.addChild(position_program_entity)*/
     }
     
     // MARK: End Point Entity
