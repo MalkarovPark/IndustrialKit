@@ -52,10 +52,10 @@ public struct StateChartsView: View
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 #if os(visionOS)
                     .padding()
-                    .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                     .background
                     {
-                        RoundedRectangle(cornerRadius: 32, style: .continuous)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .fill(.thickMaterial)
                     }
                 #endif
@@ -212,6 +212,9 @@ struct ChartsView_PreviewsContainer: PreviewProvider
                     )
                 }
                 .padding(.top)
+            #if os(visionOS)
+                .glassBackgroundEffect(in: .rect(cornerRadius: 30, style: .continuous))
+            #endif
         }
     }
 }

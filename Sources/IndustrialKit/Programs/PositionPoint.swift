@@ -84,8 +84,8 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
                 spline_points = nil
             case .spline:
                 spline_points = [SIMD3<Float>(x: x, y: y, z: z)] //[SIMD3<Float>](repeating: .zero, count: 1)
-            case .fine:
-                spline_points = nil
+            /*case .fine:
+                spline_points = nil*/
             }
         }
     }
@@ -104,7 +104,7 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
     ///   - p: Pitch angle.
     ///   - w: Yaw angle.
     ///   - move_speed: Movement speed in mm/s.
-    ///   - move_type: Movement type used to reach the point.
+    ///   - move_type: Movement trajectory type used to reach the point.
     public init(
         x: Float = 0, y: Float = 0, z: Float = 0,
         r: Float = 0, p: Float = 0, w: Float = 0,
@@ -130,7 +130,7 @@ public class PositionPoint: Identifiable, Codable, Hashable, ObservableObject, @
         {
         case .linear: return
         case .spline: self.spline_points = [SIMD3<Float>](repeating: .zero, count: 2)
-        case .fine: return
+        //case .fine: return
         }
         
         if spline_points != nil && self.spline_points != nil
@@ -207,10 +207,10 @@ public enum MoveType: String, Codable, Equatable, CaseIterable
     /// The robot follows a smooth curved path from the first point to the next point.
     case spline = "Spline"
     
-    /// Blended motion between points.
+    /*/// Blended motion between points.
     ///
     /// The robot smooths the path through points without stopping at each one.
-    case fine = "Fine"
+    case fine = "Fine"*/
     
     init(register_value: Int)
     {
@@ -220,8 +220,8 @@ public enum MoveType: String, Codable, Equatable, CaseIterable
             self = .linear
         case 1:
             self = .spline
-        case 2:
-            self = .fine
+        /*case 2:
+            self = .fine*/
         default:
             self = .linear
         }

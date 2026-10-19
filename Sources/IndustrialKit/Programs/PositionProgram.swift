@@ -182,8 +182,8 @@ public class PositionProgram: Identifiable, Codable, Equatable, ObservableObject
                                     selected: point_index == index
                                 )
                             )
-                        case .fine:
-                            break
+                        /*case .fine:
+                            break*/
                         }
                         
                         pivot_points[0] = pivot_points[1]

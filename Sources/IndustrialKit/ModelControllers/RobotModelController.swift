@@ -227,8 +227,8 @@ open class RobotModelController: ModelController, @unchecked Sendable
                     to: point
                 )
             } catch { throw error }
-        case .fine:
-            do { try linear_movement_inc(from: pointer_position, to: point) } catch { throw error }
+        /*case .fine:
+            do { try linear_movement_inc(from: pointer_position, to: point) } catch { throw error }*/
         }
         
         if !canceled // Final step to point
