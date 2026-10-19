@@ -609,7 +609,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     }
     
     /// A robot default pointer position.
-    public var default_pointer_position: (
+    @Published public var default_pointer_position: (
         x: Float, y: Float, z: Float,
         r: Float, p: Float, w: Float
     )?
