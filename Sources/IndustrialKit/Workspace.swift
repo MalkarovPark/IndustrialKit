@@ -2945,7 +2945,7 @@ import SwiftUI
         for i in 0..<3
         {
             // Cone
-            let cone = ModelEntity(mesh: .generateCone(height: cone_height, radius: cone_radius), materials: [SimpleMaterial(color: colors[i], roughness: 1.0, isMetallic: false)])
+            let cone = ModelEntity(mesh: .generateCone(height: cone_height, radius: cone_radius), materials: [UnlitMaterial(color: colors[i])])
             cone.components.set(
                 CollisionComponent(
                     shapes: [.generateConvex(from: cone.model!.mesh)]
@@ -2956,7 +2956,7 @@ import SwiftUI
             cone.euler_angles = rotations[i]
             
             // Cylinder
-            let cylinder = ModelEntity(mesh: .generateCylinder(height: cylinder_shift, radius: cone_radius), materials: [SimpleMaterial(color: .white, roughness: 1.0, isMetallic: false)])
+            let cylinder = ModelEntity(mesh: .generateCylinder(height: cylinder_shift, radius: cone_radius), materials: [UnlitMaterial(color: .white)])
             cylinder.components.set(
                 CollisionComponent(
                     shapes: [.generateConvex(from: cone.model!.mesh)]

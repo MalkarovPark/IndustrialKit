@@ -147,13 +147,6 @@ public struct PositionView: View
                                                         .scaleEffect(0.85)
                                                         #endif
                                             }
-                                            /*Stepper("Position",
-                                                    value: binding(for: component),
-                                                    in: group == .location ? (-Float.infinity)...(Float.infinity) : -180...180)
-                                            .labelsHidden()
-                                            #if os(visionOS)
-                                            .scaleEffect(0.8)
-                                            #endif*/
                                         }
                                     }
                                     #endif
