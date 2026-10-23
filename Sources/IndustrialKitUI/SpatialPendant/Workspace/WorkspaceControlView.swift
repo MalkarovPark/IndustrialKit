@@ -652,26 +652,26 @@ private struct PerformingControlView: View
 }
 
 // MARK: - Sizes
-let element_card_maximum = element_card_scale + element_card_spacing
+internal let element_card_maximum = element_card_scale + element_card_spacing
 
 #if os(macOS)// || os(visionOS)
-let element_card_scale: CGFloat = 35
-let element_card_spacing: CGFloat = 10
-let element_card_font_size: CGFloat = 14
-let element_card_light_size: CGFloat = 5
-let element_card_light_padding: CGFloat = 3
+internal let element_card_scale: CGFloat = 35
+internal let element_card_spacing: CGFloat = 10
+internal let element_card_font_size: CGFloat = 14
+internal let element_card_light_size: CGFloat = 5
+internal let element_card_light_padding: CGFloat = 3
 #elseif os(iOS)
-let element_card_scale: CGFloat = 60
-let element_card_spacing: CGFloat = 16
-let element_card_font_size: CGFloat = 24
-let element_card_light_size: CGFloat = 8
-let element_card_light_padding: CGFloat = 6
+internal let element_card_scale: CGFloat = 60
+internal let element_card_spacing: CGFloat = 16
+internal let element_card_font_size: CGFloat = 24
+internal let element_card_light_size: CGFloat = 8
+internal let element_card_light_padding: CGFloat = 6
 #elseif os(visionOS)
-let element_card_scale: CGFloat = 50
-let element_card_spacing: CGFloat = 16
-let element_card_font_size: CGFloat = 18
-let element_card_light_size: CGFloat = 7
-let element_card_light_padding: CGFloat = 5
+internal let element_card_scale: CGFloat = 50
+internal let element_card_spacing: CGFloat = 16
+internal let element_card_font_size: CGFloat = 18
+internal let element_card_light_size: CGFloat = 7
+internal let element_card_light_padding: CGFloat = 5
 #endif
 
 // MARK: - Previews

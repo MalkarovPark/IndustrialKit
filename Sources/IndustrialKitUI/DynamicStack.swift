@@ -11,30 +11,30 @@ public struct DynamicStack<Content: View>: View
 {
     @ViewBuilder var content: () -> Content
     
-    @Binding var is_compact: Bool
+    @Binding var is_vertical: Bool
     
     var horizontal_alignment = HorizontalAlignment.center
     var vertical_alignment = VerticalAlignment.center
     var spacing: CGFloat?
     
     public init(
-        @ViewBuilder content: @escaping () -> Content,
-        is_compact: Binding<Bool>,
+        is_vertical: Binding<Bool>,
         horizontal_alignment: HorizontalAlignment = .center,
         vertical_alignment: VerticalAlignment = .center,
-        spacing: CGFloat? = nil
+        spacing: CGFloat? = nil,
+        @ViewBuilder content: @escaping () -> Content
     )
     {
         self.horizontal_alignment = horizontal_alignment
         self.vertical_alignment = vertical_alignment
         self.spacing = spacing
-        self._is_compact = is_compact
+        self._is_vertical = is_vertical
         self.content = content
     }
     
     public var body: some View
     {
-        if is_compact
+        if is_vertical
         {
             VStack(alignment: horizontal_alignment, spacing: spacing, content: content)
         }
@@ -47,26 +47,26 @@ public struct DynamicStack<Content: View>: View
 
 #Preview
 {
-    DynamicStack(content: {
-        Rectangle()
+    @Previewable @State var is_vertical = false
+    DynamicStack(is_vertical: $is_vertical, spacing: 16)
+    {
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
             .fill(Color.cyan)
-            .padding(.trailing)
         
-        Rectangle()
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
             .fill(Color.mint)
-    }, is_compact: .constant(false), spacing: 0)
-    .padding()
-}
-
-#Preview
-{
-    DynamicStack(content: {
-        Rectangle()
-            .fill(Color.cyan)
-            .padding(.bottom)
         
-        Rectangle()
-            .fill(Color.mint)
-    }, is_compact: .constant(true), spacing: 0)
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .fill(Color.indigo)
+    }
     .padding()
+    .overlay(alignment: .bottomLeading)
+    {
+        Button(is_vertical ? "Vertical" : "Horizontal")
+        {
+            is_vertical.toggle()
+        }
+        .buttonStyle(.glass)
+        .padding(32)
+    }
 }
