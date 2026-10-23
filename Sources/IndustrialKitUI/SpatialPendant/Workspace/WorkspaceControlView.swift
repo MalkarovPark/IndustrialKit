@@ -14,27 +14,35 @@ struct WorkspaceControlView: View
 {
     @ObservedObject var workspace: Workspace
     
+    let shows_program_indices: Bool
+    
+    @Binding var is_vertical: Bool
+    
     @State private var dragging_program_id: UUID?
     @State private var new_program_view_presented = false
     
     @Namespace private var animation_namespace
     
     @State private var new_view_is_expanded = false
-    
     @State private var registers_view_presented = false
-    
     @State private var registers_updated = false
-    
     @State private var code_editor_text = ""
     
     let on_update: () -> ()
     
     public init(
         workspace: Workspace,
+        
+        shows_program_indices: Bool = false,
+        is_vertical: Binding<Bool> = .constant(true),
+        
         on_update: @escaping () -> Void = {}
     )
     {
         self.workspace = workspace
+        
+        self.shows_program_indices = shows_program_indices
+        self._is_vertical = is_vertical
         
         self.on_update = on_update
     }
@@ -43,209 +51,225 @@ struct WorkspaceControlView: View
     
     var body: some View
     {
-        VStack(alignment: .center, spacing: 10)
+        DynamicStack(is_vertical: $is_vertical, vertical_alignment: .center, spacing: 10) // VStack(alignment: .center, spacing: 10)
         {
-            // MARK: Caption
-            PerformingCaptionView(name: "Workspace", performing_state: workspace.performing_state)
-                .frame(width: pendant_content_width)
-                .overlay(alignment: .leading)
-                {
-                    HStack
+            VStack(spacing: 10)
+            {
+                // MARK: Caption
+                PerformingCaptionView(name: "Workspace", performing_state: workspace.performing_state)
+                    .frame(maxWidth: is_vertical ? pendant_content_width : .infinity)
+                    //.frame(width: pendant_content_width)
+                    .overlay(alignment: .leading)
                     {
-                        Button
+                        HStack
                         {
-                            registers_view_presented = true
-                            registers_updated = false
-                        }
-                        label:
-                        {
-                            Image(systemName: "number")
-                                .padding(.leading, 10)
-                        }
-                        .buttonStyle(.plain)
-                        .overlay(alignment: .topTrailing)
-                        {
-                            if registers_updated
+                            Button
                             {
-                                ZStack
+                                registers_view_presented = true
+                                registers_updated = false
+                            }
+                            label:
+                            {
+                                Image(systemName: "number")
+                                    .padding(.leading, 10)
+                            }
+                            .buttonStyle(.plain)
+                            .overlay(alignment: .topTrailing)
+                            {
+                                if registers_updated
                                 {
-                                    #if os(macOS) || os(iOS)
-                                    Image(systemName: "circle.fill")
-                                        .foregroundStyle(.white)
+                                    ZStack
+                                    {
+                                        #if os(macOS) || os(iOS)
+                                        Image(systemName: "circle.fill")
+                                            .foregroundStyle(.white)
+                                        #if os(macOS)
+                                            .font(.system(size: 6))
+                                        #else
+                                            .font(.system(size: 8))
+                                        #endif
+                                        #endif
+                                        
+                                        Image(systemName: "circle.fill")
+                                            .foregroundStyle(.pink)
+                                        #if os(macOS)
+                                            .font(.system(size: 3))
+                                        #else
+                                            .font(.system(size: 4.5))
+                                        #endif
+                                    }
                                     #if os(macOS)
-                                        .font(.system(size: 6))
+                                    .padding(0.5)
                                     #else
-                                        .font(.system(size: 8))
-                                    #endif
-                                    #endif
-                                    
-                                    Image(systemName: "circle.fill")
-                                        .foregroundStyle(.pink)
-                                    #if os(macOS)
-                                        .font(.system(size: 3))
-                                    #else
-                                        .font(.system(size: 4.5))
+                                    .padding(0.3)
                                     #endif
                                 }
-                                #if os(macOS)
-                                .padding(0.5)
-                                #else
-                                .padding(0.3)
-                                #endif
                             }
-                        }
-                        .onChange(of: workspace.registers)
-                        { _, _ in
-                            if !registers_view_presented
+                            .onChange(of: workspace.registers)
+                            { _, _ in
+                                if !registers_view_presented
+                                {
+                                    registers_updated = true
+                                }
+                            }
+                            
+                            Button(action: { workspace.cycled.toggle() })
                             {
-                                registers_updated = true
+                                if workspace.cycled
+                                {
+                                    Image(systemName: "repeat")
+                                }
+                                else
+                                {
+                                    Image(systemName: "repeat.1")
+                                }
                             }
+                            .buttonStyle(.plain)
                         }
-                        
-                        Button(action: { workspace.cycled.toggle() })
+                    }
+                    .sheet(isPresented: $registers_view_presented)
+                    {
+                        RegistersDataView(is_presented: $registers_view_presented, workspace: workspace, save_registers: on_update)
+                        .onDisappear()
                         {
-                            if workspace.cycled
-                            {
-                                Image(systemName: "repeat")
-                            }
-                            else
-                            {
-                                Image(systemName: "repeat.1")
-                            }
+                            registers_view_presented = false
                         }
-                        .buttonStyle(.plain)
+                        #if os(macOS)
+                        .frame(width: 420, height: 480)
+                        #elseif os(visionOS)
+                        .frame(width: 600, height: 600)
+                        #endif
                     }
-                }
-                .sheet(isPresented: $registers_view_presented)
-                {
-                    RegistersDataView(is_presented: $registers_view_presented, workspace: workspace, save_registers: on_update)
-                    .onDisappear()
-                    {
-                        registers_view_presented = false
-                    }
-                    #if os(macOS)
-                    .frame(width: 420, height: 480)
-                    #elseif os(visionOS)
-                    .frame(width: 600, height: 600)
-                    #endif
-                }
-            
-            // MARK: Programs
-            ZStack
-            {
-                Rectangle()
-                    .fill(.clear)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
                 
-                ScrollView
+                // MARK: Programs
+                ZStack
                 {
-                    LazyVStack(spacing: 8)
+                    Rectangle()
+                        .fill(.clear)
+                        .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                    
+                    ScrollView
                     {
-                        ForEach(workspace.programs)
-                        { program in
-                            if workspace.selected_program == nil
-                            {
-                                ProgramItemView(
-                                    name: Binding(
-                                        get: { program.name },
-                                        set: { new_value in
+                        LazyVStack(spacing: 8)
+                        {
+                            ForEach(workspace.programs)
+                            { program in
+                                if workspace.selected_program == nil
+                                {
+                                    ProgramItemView(
+                                        name: Binding(
+                                            get: { program.name },
+                                            set: { new_value in
+                                                if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
+                                                {
+                                                    workspace.programs[index].name = unique_name(for: new_value, in: workspace.program_names)
+                                                    
+                                                    on_update()
+                                                }
+                                            }
+                                        ),
+                                        count: program.elements_count,
+                                        on_update: on_update,
+                                        on_duplicate:
+                                        {
+                                            workspace.add_program(clone_codable(program) ?? ProductionProgram())
+                                        },
+                                        on_delete:
+                                        {
                                             if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
                                             {
-                                                workspace.programs[index].name = unique_name(for: new_value, in: workspace.program_names)
-                                                
-                                                on_update()
+                                                workspace.programs.remove(at: index)
                                             }
                                         }
-                                    ),
-                                    count: program.elements_count,
-                                    on_update: on_update,
-                                    on_duplicate:
-                                    {
-                                        workspace.add_program(clone_codable(program) ?? ProductionProgram())
-                                    },
-                                    on_delete:
-                                    {
-                                        if let index = workspace.programs.firstIndex(where: { $0.id == program.id })
-                                        {
-                                            workspace.programs.remove(at: index)
-                                        }
-                                    }
-                                )
-                                .matchedGeometryEffect(id: program.id, in: animation_namespace)
-                                .onTapGesture
-                                {
-                                    select_program(program)
-                                }
-                                .onDrag
-                                {
-                                    dragging_program_id = program.id
-                                    return NSItemProvider(object: program.id.uuidString as NSString)
-                                }
-                                .onDrop(
-                                    of: [.text],
-                                    delegate: ProgramDropDelegate(
-                                        workspace: workspace,
-                                        
-                                        current_program: program,
-                                        dragging_program_id: $dragging_program_id,
-                                        
-                                        on_update: on_update
                                     )
-                                )
-                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                    .matchedGeometryEffect(id: program.id, in: animation_namespace)
+                                    .onTapGesture
+                                    {
+                                        select_program(program)
+                                    }
+                                    .onDrag
+                                    {
+                                        dragging_program_id = program.id
+                                        return NSItemProvider(object: program.id.uuidString as NSString)
+                                    }
+                                    .onDrop(
+                                        of: [.text],
+                                        delegate: ProgramDropDelegate(
+                                            workspace: workspace,
+                                            
+                                            current_program: program,
+                                            dragging_program_id: $dragging_program_id,
+                                            
+                                            on_update: on_update
+                                        )
+                                    )
+                                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                }
                             }
+                            .animation(.spring(), value: workspace.programs)
                         }
-                        .animation(.spring(), value: workspace.programs)
-                    }
-                    .padding(8)
-                    
-                    Spacer(minLength: 48)
-                }
-                .frame(maxWidth: .infinity)
-                .clipShape(.rect(cornerRadius: 16, style: .continuous))
-                
-                if let program = workspace.selected_program
-                {
-                    ProductionProgramView(view_program_as_text: $view_program_as_text, code_editor_text: $code_editor_text, workspace: workspace, program: program, on_update: on_update)
-                        {
-                            deselect_program()
-                        }
-                        .matchedGeometryEffect(id: program.id, in: animation_namespace)
-                        .zIndex(1)
-                }
-            }
-            .frame(width: pendant_content_width)
-            .overlay(alignment: .bottomTrailing)
-            {
-                HStack(spacing: 0)
-                {
-                    if workspace.selected_program != nil
-                    {
-                        PerformingControlView(workspace: workspace)
+                        .padding(8)
                         
-                        Spacer()
+                        Spacer(minLength: 48)
                     }
+                    .frame(maxWidth: .infinity)
+                    .clipShape(.rect(cornerRadius: 16, style: .continuous))
                     
-                    NewElementButton(
-                        with_name: workspace.selected_program == nil,
-                        is_expanded: $new_view_is_expanded,
-                        names: workspace.program_names,
-                        add_name_action:
-                            { new_name in
-                                workspace.add_program(ProductionProgram(name: new_name))
-                                on_update()
-                            },
-                        add_action:
+                    if let program = workspace.selected_program
+                    {
+                        ProductionProgramView(view_program_as_text: $view_program_as_text, code_editor_text: $code_editor_text, workspace: workspace, program: program, on_update: on_update)
                             {
-                                add_item()
+                                deselect_program()
                             }
-                    )
-                    .disabled(workspace.program_performed)
+                            .matchedGeometryEffect(id: program.id, in: animation_namespace)
+                            .zIndex(1)
+                    }
+                }
+                .frame(
+                    minWidth: pendant_content_width, maxWidth: is_vertical ? pendant_content_width : .infinity,
+                    maxHeight: is_vertical ? .infinity : pendant_content_height
+                )
+                //.frame(width: pendant_content_width)
+                .overlay(alignment: .bottomTrailing)
+                {
+                    HStack(spacing: 0)
+                    {
+                        if workspace.selected_program != nil
+                        {
+                            PerformingControlView(
+                                reset_performing: { workspace.reset_performing() },
+                                start_pause_performing: { workspace.start_pause_performing() },
+                                
+                                program_performed: workspace.program_performed
+                            )
+                            
+                            Spacer()
+                        }
+                        
+                        NewElementButton(
+                            with_name: workspace.selected_program == nil,
+                            is_expanded: $new_view_is_expanded,
+                            names: workspace.program_names,
+                            add_name_action:
+                                { new_name in
+                                    workspace.add_program(ProductionProgram(name: new_name))
+                                    on_update()
+                                },
+                            add_action:
+                                {
+                                    add_item()
+                                }
+                        )
+                        .disabled(workspace.program_performed)
+                    }
                 }
             }
             
             // MARK: Controls
-            ElementControl(workspace: workspace)
+            ElementControl(workspace: workspace, is_vertical: Binding(
+                get: { !is_vertical },
+                set: { new_value in is_vertical = !new_value }
+            ))
         }
     }
     
@@ -601,60 +625,10 @@ internal struct ElementDropDelegate: DropDelegate
     }
 }
 
-private struct PerformingControlView: View
-{
-    @ObservedObject var workspace: Workspace
-    
-    var body: some View
-    {
-        HStack(spacing: 2)
-        {
-            Button(action: {
-                workspace.reset_performing()
-            })
-            {
-                Image(systemName: "stop.fill")
-                    .modifier(CircleButtonImageFramer())
-            }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-            
-            Divider()
-                .frame(height: 24)
-            
-            Button(action: {
-                workspace.start_pause_performing()
-            })
-            {
-                Image(systemName: workspace.program_performed ? "pause.fill" : "play.fill")
-                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    .modifier(CircleButtonImageFramer())
-            }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-        }
-        #if os(macOS)
-        .padding(4)
-        .glassEffect(.regular.interactive())
-        #elseif os(iOS)
-        .glassEffect(.regular.interactive())
-        #elseif os(visionOS)
-        .buttonStyle(.borderless)
-        .glassBackgroundEffect()
-        .frame(depth: 4)
-        #endif
-        #if !os(visionOS)
-        .padding(10)
-        #else
-        .padding(14)
-        #endif
-    }
-}
-
 // MARK: - Sizes
 internal let element_card_maximum = element_card_scale + element_card_spacing
 
-#if os(macOS)// || os(visionOS)
+#if os(macOS)
 internal let element_card_scale: CGFloat = 35
 internal let element_card_spacing: CGFloat = 10
 internal let element_card_font_size: CGFloat = 14
@@ -681,6 +655,8 @@ struct WorkspaceControl_Previews: PreviewProvider
     {
         @StateObject var workspace = Workspace()
         
+        @State var is_vertical = true
+        
         @State private var sample_program = ProductionProgram(
             name: "OwO",
             elements: [
@@ -699,6 +675,7 @@ struct WorkspaceControl_Previews: PreviewProvider
                 WaitLogicElement(time_interval: 1)
             ]
         )
+        
         @State private var dragging_element_id: UUID?
         
         private let columns: [GridItem] = [.init(.adaptive(minimum: element_card_maximum, maximum: element_card_maximum), spacing: 0)]
@@ -710,14 +687,17 @@ struct WorkspaceControl_Previews: PreviewProvider
                 ZStack
                 {
                     #if !os(visionOS)
-                    FloatingView(alignment: .trailing)
+                    FloatingView(
+                        alignment: .trailing,
+                        on_overflow: { _ in is_vertical.toggle() }
+                    )
                     {
-                        WorkspaceControlView(workspace: workspace /*, on_update: { print("Program Updated") } */)
+                        WorkspaceControlView(workspace: workspace, is_vertical: $is_vertical /*, on_update: { print("Program Updated") } */)
                             .padding(8)
                     }
                     .padding(10)
                     #else
-                    WorkspaceControlView(workspace: workspace)
+                    WorkspaceControlView(workspace: workspace, is_vertical: $is_vertical)
                         .padding(8)
                         .background(
                             GeometryReader
@@ -736,6 +716,19 @@ struct WorkspaceControl_Previews: PreviewProvider
                 .frame(minWidth: 480, minHeight: 480)
                 #else
                 .frame(minWidth: 800, minHeight: 480)
+                #endif
+                #if os(visionOS)
+                .overlay(alignment: .topLeading)
+                {
+                    Button(is_vertical ? "Vertical" : "Horizontal")
+                    {
+                        withAnimation
+                        {
+                            is_vertical.toggle()
+                        }
+                    }
+                    .padding()
+                }
                 #endif
                 
                 LazyVGrid(columns: columns, spacing: element_card_spacing)
@@ -774,7 +767,7 @@ struct WorkspaceControl_Previews: PreviewProvider
                                 current_element: element,
                                 dragging_element_id: $dragging_element_id,
                                 
-                                on_update: {}//on_update
+                                on_update: {} //on_update
                             )
                         )
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
@@ -792,28 +785,33 @@ struct WorkspaceControl_Previews: PreviewProvider
             }
             .onAppear
             {
-                let robot = Robot(name: "6DOF Robot")
-                robot.is_placed = true
-                robot.add_program(PositionProgram(name: "Square"))
+                prepare_workspace()
+            }
+        }
+        
+        private func prepare_workspace()
+        {
+            let robot = Robot(name: "6DOF Robot")
+            robot.is_placed = true
+            robot.add_program(PositionProgram(name: "Square"))
+            
+            let tool = Tool(name: "Gripper")
+            tool.is_placed = true
+            tool.add_program(OperationProgram(name: "Bite"))
+            
+            workspace.robots.append(robot)
+            workspace.tools.append(tool)
+            
+            Changer.internal_modules_list.append("Random")
+            Changer.external_modules_list.append("Defaults")
+            
+            if let element = workspace.current_element as? RobotPerformerElement, element.object_name == ""
+            {
+                element.object_name = workspace.placed_robot_names.first ?? String()
                 
-                let tool = Tool(name: "Gripper")
-                tool.is_placed = true
-                tool.add_program(OperationProgram(name: "Bite"))
-                
-                workspace.robots.append(robot)
-                workspace.tools.append(tool)
-                
-                Changer.internal_modules_list.append("Random")
-                Changer.external_modules_list.append("Defaults")
-                
-                if let element = workspace.current_element as? RobotPerformerElement, element.object_name == ""
+                if workspace.robot(named: element.object_name).program_names.count > 0
                 {
-                    element.object_name = workspace.placed_robot_names.first ?? String()
-                    
-                    if workspace.robot(named: element.object_name).program_names.count > 0
-                    {
-                        element.program_name = workspace.robot(named: element.object_name).program_names.first ?? ""
-                    }
+                    element.program_name = workspace.robot(named: element.object_name).program_names.first ?? ""
                 }
             }
         }

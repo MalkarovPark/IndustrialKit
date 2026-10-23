@@ -17,33 +17,6 @@ public struct SpatialPendant: View
     
     let shows_program_indices: Bool
     
-    /*let on_update_workspace: () -> ()
-    let on_update_robot: () -> ()
-    let on_update_tool: () -> ()*/
-    
-    /*public init(
-        controller: PendantController,
-        //workspace: Workspace,
-        
-        shows_program_indices: Bool = false,
-        
-        on_update_workspace: @escaping () -> () = {},
-        on_update_robot: @escaping () -> () = {},
-        on_update_tool: @escaping () -> () = {}
-    )
-    {
-        self.controller = controller
-        self.workspace = controller.workspace
-        //self.workspace = workspace
-        
-        self.shows_program_indices = shows_program_indices
-        
-        /*self.on_update_workspace = on_update_workspace
-        self.on_update_robot = on_update_robot
-        self.on_update_tool = on_update_tool*/
-        self.controller.set_document_functions(on_update_workspace, on_update_robot, on_update_tool)
-    }*/
-    
     public init(
         controller: PendantController,
         
@@ -78,7 +51,10 @@ public struct SpatialPendant: View
     public var body: some View
     {
         #if os(macOS) || os(iOS)
-        FloatingView(alignment: .trailing)
+        FloatingView(
+            alignment: .trailing,
+            on_overflow: { _ in controller.is_vertical.toggle() }
+        )
         {
             ZStack
             {
@@ -92,12 +68,14 @@ public struct SpatialPendant: View
                             RobotControlView(
                                 robot: robot,
                                 shows_program_indices: controller.shows_program_indices,//shows_program_indices,
+                                is_vertical: $controller.is_vertical,
                                 on_update: controller.on_update_robot//on_update: on_update_robot
                             )
                         case let tool as Tool:
                             ToolControlView(
                                 tool: tool,
                                 shows_program_indices: controller.shows_program_indices,//shows_program_indices,
+                                is_vertical: $controller.is_vertical,
                                 on_update: controller.on_update_tool//on_update: on_update_tool
                             )
                         case is Part:
@@ -112,6 +90,7 @@ public struct SpatialPendant: View
                         case .none:
                             WorkspaceControlView(
                                 workspace: workspace,
+                                is_vertical: $controller.is_vertical,
                                 on_update: controller.on_update_workspace//on_update: on_update_workspace
                             )
                         }
@@ -199,10 +178,13 @@ public struct SpatialPendant: View
 
 #if os(macOS)
 let pendant_content_width: CGFloat = 200
+let pendant_content_height: CGFloat = 200
 #elseif os(iOS)
 let pendant_content_width: CGFloat = 240
+let pendant_content_height: CGFloat = 240
 #elseif os(visionOS)
 let pendant_content_width: CGFloat = 280
+let pendant_content_height: CGFloat = 280
 #endif
 
 #if os(visionOS)
@@ -251,6 +233,8 @@ struct SpatialPendant_Previews: PreviewProvider
     {
         @StateObject var workspace = Workspace()
         @StateObject var pendant_controller = PendantController()
+        
+        @State var is_vertical = true
         
         @State private var is_pan = false
         #if os(macOS) || os(iOS)
@@ -378,54 +362,79 @@ struct SpatialPendant_Previews: PreviewProvider
                 .frame(minWidth: 1024)
                 .padding(80)
                 
-                HStack(spacing: 40)
+                ZStack
                 {
-                    WorkspaceControlView(workspace: workspace)
-                        .padding(8)
-                        .frame(height: stack_height)
-                        .background(
-                            GeometryReader
-                            { geometry in
-                                Rectangle()
-                                    .fill(.clear)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
-                                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                            }
-                        )
-                        .padding(10)
-                    
-                    RobotControlView(robot: workspace.robot(named: "6DOF Robot"))
-                        .padding(8)
-                        .frame(height: stack_height)
-                        .background(
-                            GeometryReader
-                            { geometry in
-                                Rectangle()
-                                    .fill(.clear)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
-                                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                            }
-                        )
-                        .padding(10)
-                    
-                    ToolControlView(tool: workspace.tool(named: "Gripper"))
-                        .padding(8)
-                        .frame(height: stack_height)
-                        .background(
-                            GeometryReader
-                            { geometry in
-                                Rectangle()
-                                    .fill(.clear)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
-                                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                            }
-                        )
-                        .padding(10)
+                    DynamicStack(
+                        is_vertical: Binding(
+                            get: { !is_vertical },
+                            set: { new_value in is_vertical = !new_value }
+                        ),
+                        spacing: is_vertical ? 40 : 0
+                    )
+                    {
+                        WorkspaceControlView(workspace: workspace, is_vertical: $is_vertical)
+                            //.frame(width: pendant_content_width)
+                            .padding(8)
+                            .frame(minHeight: is_vertical ? stack_height : .init())
+                            .background(
+                                GeometryReader
+                                { geometry in
+                                    Rectangle()
+                                        .fill(.clear)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
+                                        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                                }
+                            )
+                            .padding(10)
+                        
+                        RobotControlView(robot: workspace.robot(named: "6DOF Robot"), is_vertical: $is_vertical)
+                            //.frame(width: pendant_content_width)
+                            .padding(8)
+                            .frame(minHeight: is_vertical ? stack_height : .init())
+                            .background(
+                                GeometryReader
+                                { geometry in
+                                    Rectangle()
+                                        .fill(.clear)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
+                                        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                                }
+                            )
+                            .padding(10)
+                        
+                        ToolControlView(tool: workspace.tool(named: "Gripper"), is_vertical: $is_vertical)
+                            //.frame(width: pendant_content_width)
+                            .padding(8)
+                            .frame(minHeight: is_vertical ? stack_height : .init())
+                            .background(
+                                GeometryReader
+                                { geometry in
+                                    Rectangle()
+                                        .fill(.clear)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        .glassEffect(.regular, in: .rect(cornerRadius: 24, style: .continuous))
+                                        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                                }
+                            )
+                            .padding(10)
+                    }
+                    .padding(is_vertical ? 80 : 20)
+                    .frame(width: !is_vertical ? pendant_content_width * 3 : .infinity)
                 }
-                .padding(80)
+                .frame(maxWidth: .infinity)
+                .overlay(alignment: .topLeading)
+                {
+                    Button(is_vertical ? "Vertical" : "Horizontal")
+                    {
+                        withAnimation
+                        {
+                            is_vertical.toggle()
+                        }
+                    }
+                    .padding()
+                }
             }
             .onAppear
             {

@@ -173,3 +173,14 @@ public struct NewElementButton: View
     }
     .frame(width: 256)
 }
+
+#Preview
+{
+    @Previewable @State var is_expanded = false
+    
+    ZStack
+    {
+        NewElementButton(with_name: false, is_expanded: $is_expanded, add_action: { print("Action") })
+    }
+    .frame(width: 256)
+}

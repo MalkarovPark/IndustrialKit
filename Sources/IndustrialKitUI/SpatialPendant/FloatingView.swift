@@ -15,13 +15,25 @@ public struct FloatingView<Content: View>: View
     @State private var view_size: CGSize = .zero
     @State private var stuck_alignment: Alignment?
     
+    @State private var overflow_alignment: Alignment?
+    private let overflow_limit: CGFloat = 64
+    
     // Content
     let alignment: Alignment
+    let on_overflow: (Alignment) -> Void
+    
     let content: () -> Content
     
-    public init(alignment: Alignment = .center, @ViewBuilder content: @escaping () -> Content)
+    public init(
+        alignment: Alignment = .center,
+        on_overflow: @escaping (Alignment) -> Void = { _ in },
+        
+        @ViewBuilder content: @escaping () -> Content
+    )
     {
         self.alignment = alignment
+        self.on_overflow = on_overflow
+        
         self.content = content
     }
     
@@ -117,11 +129,33 @@ public struct FloatingView<Content: View>: View
         DragGesture()
             .onChanged
             { value in
+                //if !is_dragging { overflow_alignment = nil } // Overflow Side
+                
                 is_dragging = true
                 drag_offset = value.translation
+                
+                /*if let side = overflow_side(
+                    at: CGPoint(
+                        x: position.x + value.translation.width,
+                        y: position.y + value.translation.height
+                    ),
+                    in: container_size
+                )
+                {
+                    overflow_alignment = side
+                }*/
             }
             .onEnded
             { value in
+                let dragged_position = CGPoint(
+                    x: position.x + value.translation.width,
+                    y: position.y + value.translation.height
+                )
+                
+                if let side = overflow_side(at: dragged_position, in: container_size) { on_overflow(side) }
+                //if let alignment = overflow_alignment { on_overflow(alignment) }
+                //overflow_alignment = nil
+                
                 position.x += value.translation.width
                 position.y += value.translation.height
                 drag_offset = .zero
@@ -193,9 +227,9 @@ public struct FloatingView<Content: View>: View
         let dx_max = abs(point.x - max_x)
         let dy_min = abs(point.y - min_y)
         let dy_max = abs(point.y - max_y)
-        let minDist = min(dx_min, dx_max, dy_min, dy_max)
+        let min_dist = min(dx_min, dx_max, dy_min, dy_max)
         
-        switch minDist
+        switch min_dist
         {
         case dx_min:
             return .leading
@@ -237,13 +271,27 @@ public struct FloatingView<Content: View>: View
             return CGPoint(x: container.width / 2, y: container.height / 2)
         }
     }
+    
+    // MARK: - Overflow Edge
+    private func overflow_side(at point: CGPoint, in container: CGSize) -> Alignment?
+    {
+        let half_w = view_size.width / 2
+        let half_h = view_size.height / 2
+
+        if point.x - half_w < -overflow_limit { return .leading }
+        if point.x + half_w > container.width + overflow_limit { return .trailing }
+        if point.y - half_h < -overflow_limit { return .top }
+        if point.y + half_h > container.height + overflow_limit { return .bottom }
+
+        return nil
+    }
 }
 
 #Preview
 {
     ZStack
     {
-        FloatingView()
+        FloatingView(on_overflow: { alignment in print(alignment) })
         {
             Rectangle()
                 .fill(.clear)

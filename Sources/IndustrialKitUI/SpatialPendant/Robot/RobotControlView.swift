@@ -16,6 +16,8 @@ public struct RobotControlView: View
     
     let shows_program_indices: Bool
     
+    @Binding var is_vertical: Bool
+    
     let on_update: () -> ()
     
     @State private var dragging_program_id: UUID?
@@ -23,13 +25,17 @@ public struct RobotControlView: View
     
     public init(
         robot: Robot,
-        shows_program_indices: Bool = false,
         
-        on_update: @escaping () -> Void = { }
+        shows_program_indices: Bool = false,
+        is_vertical: Binding<Bool> = .constant(true),
+        
+        on_update: @escaping () -> Void = {}
     )
     {
         self.robot = robot
+        
         self.shows_program_indices = shows_program_indices
+        self._is_vertical = is_vertical
         
         self.on_update = on_update
     }
@@ -41,137 +47,150 @@ public struct RobotControlView: View
     
     public var body: some View
     {
-        VStack(alignment: .center, spacing: 10)
+        DynamicStack(is_vertical: $is_vertical, vertical_alignment: .center, spacing: 10) // VStack(alignment: .center, spacing: 10)
         {
-            // MARK: Caption
-            PerformingCaptionView(name: robot.name, performing_state: robot.performing_state)
-                .frame(width: pendant_content_width)
-            
-            // MARK: Program
-            ZStack
+            VStack(spacing: 10)
             {
-                Rectangle()
-                    .fill(.clear)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                // MARK: Caption
+                PerformingCaptionView(name: robot.name, performing_state: robot.performing_state)
+                    .frame(maxWidth: is_vertical ? pendant_content_width : .infinity)
+                    //.frame(width: pendant_content_width)
                 
-                ScrollView
+                // MARK: Program
+                ZStack
                 {
-                    LazyVStack(spacing: 8)
+                    Rectangle()
+                        .fill(.clear)
+                        .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                    
+                    ScrollView
                     {
-                        ForEach(Array(robot.programs.enumerated()), id: \.element.id)
-                        { index, program in
-                            if robot.selected_program == nil
-                            {
-                                ProgramItemView(
-                                    name: Binding(
-                                        get: { program.name },
-                                        set: { new_value in
-                                            if let index = robot.programs.firstIndex(where: { $0.id == program.id })
-                                            {
-                                                robot.programs[index].name = unique_name(for: new_value, in: robot.program_names)
-                                                on_update()
+                        LazyVStack(spacing: 8)
+                        {
+                            ForEach(Array(robot.programs.enumerated()), id: \.element.id)
+                            { index, program in
+                                if robot.selected_program == nil
+                                {
+                                    ProgramItemView(
+                                        name: Binding(
+                                            get: { program.name },
+                                            set: { new_value in
+                                                if let index = robot.programs.firstIndex(where: { $0.id == program.id })
+                                                {
+                                                    robot.programs[index].name = unique_name(for: new_value, in: robot.program_names)
+                                                    on_update()
+                                                }
                                             }
+                                        ),
+                                        count: program.points_count,
+                                        on_update: on_update,
+                                        on_duplicate:
+                                        {
+                                            robot.add_program(clone_codable(program) ?? PositionProgram())
+                                        },
+                                        on_delete:
+                                        {
+                                            robot.programs.remove(at: index)
+                                            on_update()
                                         }
-                                    ),
-                                    count: program.points_count,
-                                    on_update: on_update,
-                                    on_duplicate:
-                                    {
-                                        robot.add_program(clone_codable(program) ?? PositionProgram())
-                                    },
-                                    on_delete:
-                                    {
-                                        robot.programs.remove(at: index)
-                                        on_update()
-                                    }
-                                )
-                                .matchedGeometryEffect(id: program.id, in: animation_namespace)
-                                .onTapGesture
-                                {
-                                    select_program(program)
-                                }
-                                .onDrag
-                                {
-                                    dragging_program_id = program.id
-                                    return NSItemProvider(object: program.id.uuidString as NSString)
-                                }
-                                .onDrop(
-                                    of: [.text],
-                                    delegate: ProgramDropDelegate(
-                                        robot: robot,
-                                        
-                                        current_program: program,
-                                        dragging_program_id: $dragging_program_id,
-                                        
-                                        on_update: on_update
                                     )
-                                )
-                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                                .overlay(alignment: .topLeading)
-                                {
-                                    if shows_program_indices
+                                    .matchedGeometryEffect(id: program.id, in: animation_namespace)
+                                    .onTapGesture
                                     {
-                                        Text("\(index)")
-                                            .font(.system(size: program_index_font_size))
-                                            .foregroundStyle(.tertiary)
-                                            .frame(height: 20)
-                                            .lineLimit(1)
-                                            .padding(.leading, 6)
-                                            .allowsHitTesting(false)
+                                        select_program(program)
+                                    }
+                                    .onDrag
+                                    {
+                                        dragging_program_id = program.id
+                                        return NSItemProvider(object: program.id.uuidString as NSString)
+                                    }
+                                    .onDrop(
+                                        of: [.text],
+                                        delegate: ProgramDropDelegate(
+                                            robot: robot,
+                                            
+                                            current_program: program,
+                                            dragging_program_id: $dragging_program_id,
+                                            
+                                            on_update: on_update
+                                        )
+                                    )
+                                    .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                    .overlay(alignment: .topLeading)
+                                    {
+                                        if shows_program_indices
+                                        {
+                                            Text("\(index)")
+                                                .font(.system(size: program_index_font_size))
+                                                .foregroundStyle(.tertiary)
+                                                .frame(height: 20)
+                                                .lineLimit(1)
+                                                .padding(.leading, 6)
+                                                .allowsHitTesting(false)
+                                        }
                                     }
                                 }
                             }
+                            .animation(.spring(), value: robot.programs)
                         }
-                        .animation(.spring(), value: robot.programs)
-                    }
-                    .padding(8)
-                    
-                    Spacer(minLength: 48)
-                }
-                .frame(maxWidth: .infinity)
-                .clipShape(.rect(cornerRadius: 16, style: .continuous))
-                
-                if let program = robot.selected_program
-                {
-                    PositionProgramView(
-                        robot: robot,
-                        program: program,
-                        on_update: on_update
-                    )
-                    {
-                        deselect_program()
-                    }
-                    .matchedGeometryEffect(id: program.id, in: animation_namespace)
-                    .zIndex(1)
-                }
-            }
-            .frame(width: pendant_content_width)
-            .overlay(alignment: .bottomTrailing)
-            {
-                HStack(spacing: 0)
-                {
-                    if robot.selected_program != nil
-                    {
-                        PerformingControlView(robot: robot)
+                        .padding(8)
                         
-                        Spacer()
+                        Spacer(minLength: 48)
                     }
+                    .frame(maxWidth: .infinity)
+                    .clipShape(.rect(cornerRadius: 16, style: .continuous))
                     
-                    NewElementButton(
-                        with_name: robot.selected_program == nil,
-                        is_expanded: $new_view_is_expanded,
-                        names: robot.program_names,
-                        add_name_action:
-                            { new_name in
-                                robot.add_program(PositionProgram(name: new_name))
-                                on_update()
-                            },
-                        add_action:
-                            {
-                                add_item()
-                            }
-                    )
-                    .disabled(robot.program_performed)
+                    if let program = robot.selected_program
+                    {
+                        PositionProgramView(
+                            robot: robot,
+                            program: program,
+                            on_update: on_update
+                        )
+                        {
+                            deselect_program()
+                        }
+                        .matchedGeometryEffect(id: program.id, in: animation_namespace)
+                        .zIndex(1)
+                    }
+                }
+                .frame(
+                    minWidth: pendant_content_width, maxWidth: is_vertical ? pendant_content_width : .infinity,
+                    maxHeight: is_vertical ? .infinity : pendant_content_height
+                )
+                //.frame(width: pendant_content_width)
+                .overlay(alignment: .bottomTrailing)
+                {
+                    HStack(spacing: 0)
+                    {
+                        if robot.selected_program != nil
+                        {
+                            PerformingControlView(
+                                reset_performing: { robot.reset_moving() },
+                                start_pause_performing: { robot.start_pause_moving() },
+                                
+                                program_performed: robot.program_performed
+                            )
+                            
+                            Spacer()
+                        }
+                        
+                        NewElementButton(
+                            with_name: robot.selected_program == nil,
+                            is_expanded: $new_view_is_expanded,
+                            names: robot.program_names,
+                            add_name_action:
+                                { new_name in
+                                    robot.add_program(PositionProgram(name: new_name))
+                                    on_update()
+                                },
+                            add_action:
+                                {
+                                    add_item()
+                                }
+                        )
+                        .disabled(robot.program_performed)
+                    }
                 }
             }
             
@@ -695,56 +714,6 @@ private struct PositionPointView: View
     }
 }
 
-private struct PerformingControlView: View
-{
-    @ObservedObject var robot: Robot
-    
-    var body: some View
-    {
-        HStack(spacing: 2)
-        {
-            Button(action: {
-                robot.reset_moving()
-            })
-            {
-                Image(systemName: "stop.fill")
-                    .modifier(CircleButtonImageFramer())
-            }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-            
-            Divider()
-                .frame(height: 24)
-            
-            Button(action: {
-                robot.start_pause_moving()
-            })
-            {
-                Image(systemName: robot.program_performed ? "pause.fill" : "play.fill")
-                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    .modifier(CircleButtonImageFramer())
-            }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-        }
-        #if os(macOS)
-        .padding(4)
-        #endif
-        #if !os(visionOS)
-        .glassEffect(.regular.interactive())
-        .controlSize(.large)
-        #else
-        .buttonStyle(.borderless)
-        .glassBackgroundEffect()
-        #endif
-        #if !os(visionOS)
-        .padding(10)
-        #else
-        .padding(16)
-        #endif
-    }
-}
-
 // MARK: - Sizes
 #if os(macOS)
 let position_item_font_size: CGFloat = 8
@@ -759,19 +728,24 @@ struct RobotControlView_Previews: PreviewProvider
     {
         @StateObject var robot = Robot(name: "6DOF Robot")
         
+        @State var is_vertical = true
+        
         var body: some View
         {
             ZStack
             {
                 #if !os(visionOS)
-                FloatingView(alignment: .trailing)
+                FloatingView(
+                    alignment: .trailing,
+                    on_overflow: { _ in is_vertical.toggle() }
+                )
                 {
-                    RobotControlView(robot: robot, shows_program_indices: true)
+                    RobotControlView(robot: robot, shows_program_indices: true, is_vertical: $is_vertical)
                         .padding(8)
                 }
                 .padding(10)
                 #else
-                RobotControlView(robot: robot, shows_program_indices: true)
+                RobotControlView(robot: robot, shows_program_indices: true, is_vertical: $is_vertical)
                     .padding(8)
                     .background(
                         GeometryReader
@@ -790,6 +764,19 @@ struct RobotControlView_Previews: PreviewProvider
             .frame(minWidth: 480, minHeight: 480)
             #else
             .frame(minWidth: 800, minHeight: 480)
+            #endif
+            #if os(visionOS)
+            .overlay(alignment: .topLeading)
+            {
+                Button(is_vertical ? "Vertical" : "Horizontal")
+                {
+                    withAnimation
+                    {
+                        is_vertical.toggle()
+                    }
+                }
+                .padding()
+            }
             #endif
         }
     }

@@ -34,6 +34,19 @@ public struct DynamicStack<Content: View>: View
     
     public var body: some View
     {
+        let layout: AnyLayout = is_vertical
+        ? AnyLayout(VStackLayout(alignment: horizontal_alignment, spacing: spacing))
+        : AnyLayout(HStackLayout(alignment: vertical_alignment, spacing: spacing))
+        
+        layout
+        {
+            content()
+        }
+        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_vertical)
+        //.animation(.easeInOut(duration: 0.3), value: is_vertical)
+    }
+    /*public var body: some View
+    {
         if is_vertical
         {
             VStack(alignment: horizontal_alignment, spacing: spacing, content: content)
@@ -42,12 +55,13 @@ public struct DynamicStack<Content: View>: View
         {
             HStack(alignment: vertical_alignment, spacing: spacing, content: content)
         }
-    }
+    }*/
 }
 
 #Preview
 {
     @Previewable @State var is_vertical = false
+    
     DynamicStack(is_vertical: $is_vertical, spacing: 16)
     {
         RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -66,7 +80,10 @@ public struct DynamicStack<Content: View>: View
         {
             is_vertical.toggle()
         }
+        #if !os(visionOS)
         .buttonStyle(.glass)
+        #endif
+        .keyboardShortcut(.defaultAction)
         .padding(32)
     }
 }

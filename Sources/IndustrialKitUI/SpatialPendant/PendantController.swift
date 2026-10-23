@@ -91,6 +91,8 @@ import IndustrialKit
         self.dismiss = dismiss
     }
     
+    @Published public var is_vertical: Bool = true
+    
     // MARK: - Document management
     public var on_update_workspace = {}
     public var on_update_robot = {}

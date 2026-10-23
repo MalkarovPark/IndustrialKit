@@ -12,21 +12,25 @@ public struct OperationControl: View
 {
     @ObservedObject var tool: Tool
     
+    @Binding var is_vertical: Bool
+    
     @State private var is_expanded = false
     @State private var is_central_pressed = false
     
     @Namespace private var pane_glass
     
     public init(
-        tool: Tool
+        tool: Tool,
+        is_vertical: Binding<Bool> = .constant(false)
     )
     {
         self.tool = tool
+        self._is_vertical = is_vertical
     }
     
     public var body: some View
     {
-        HStack(spacing: 12)
+        DynamicStack(is_vertical: $is_vertical) //HStack(spacing: 12)
         {
             ZStack
             {
@@ -374,6 +378,7 @@ struct OperationControl_Previews: PreviewProvider
     struct Container: View
     {
         @StateObject var tool = Tool(name: "Gripper")
+        @State var is_vertical = false
         
         var body: some View
         {
@@ -381,7 +386,7 @@ struct OperationControl_Previews: PreviewProvider
             {
                 Spacer()
                 
-                OperationControl(tool: tool)
+                OperationControl(tool: tool, is_vertical: $is_vertical)
                     .padding()
             }
             .frame(width: 400, height: 400)
@@ -391,6 +396,13 @@ struct OperationControl_Previews: PreviewProvider
                     OperationCodeInfo(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "Close the Tool"),
                     OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "Open the Tool")
                 ]
+            }
+            .overlay(alignment: .topLeading)
+            {
+                Button(is_vertical ? "Vertical" : "Horizontal")
+                {
+                    is_vertical.toggle()
+                }
             }
         }
     }

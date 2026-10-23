@@ -12,21 +12,25 @@ public struct ElementControl: View
 {
     @ObservedObject var workspace: Workspace
     
+    @Binding var is_vertical: Bool
+    
     @State private var is_expanded = false
     @State private var is_central_pressed = false
     
     @Namespace private var pane_glass
     
     public init(
-        workspace: Workspace
+        workspace: Workspace,
+        is_vertical: Binding<Bool> = .constant(false)
     )
     {
         self.workspace = workspace
+        self._is_vertical = is_vertical
     }
     
     public var body: some View
     {
-        HStack(spacing: 12)
+        DynamicStack(is_vertical: $is_vertical, spacing: 12)
         {
             ZStack
             {
@@ -53,18 +57,6 @@ public struct ElementControl: View
                     .background(.clear)
                     .frame(width: element_panel_width)
                     .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    /*.onTapGesture
-                    {
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
-                        {
-                            is_central_pressed = true
-                            is_expanded = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                            {
-                                is_central_pressed = false
-                            }
-                        }
-                    }*/
                     .gesture(
                         LongPressGesture(minimumDuration: 0.5)
                             .onChanged
@@ -375,42 +367,53 @@ struct ElementControl_Previews: PreviewProvider
     {
         @StateObject var workspace = Workspace()
         
+        @State var is_vertical = false
+        
         var body: some View
         {
             VStack(spacing: 0)
             {
                 Spacer()
                 
-                ElementControl(workspace: workspace)
+                ElementControl(workspace: workspace, is_vertical: $is_vertical)
                     .padding()
             }
             #if !os(visionOS)
             .frame(width: 400, height: 440)
             #endif
-            .onAppear
+            .onAppear { prepare_workspace() }
+            .overlay(alignment: .topLeading)
             {
-                let robot = Robot(name: "6DOF Robot")
-                robot.is_placed = true
-                robot.add_program(PositionProgram(name: "Square"))
-                
-                let tool = Tool(name: "Gripper")
-                tool.is_placed = true
-                tool.add_program(OperationProgram(name: "Bite"))
-                
-                workspace.robots.append(robot)
-                workspace.tools.append(tool)
-                
-                Changer.internal_modules_list.append("Random")
-                Changer.external_modules_list.append("Defaults")
-                
-                if let element = workspace.current_element as? RobotPerformerElement, element.object_name == ""
+                Button(is_vertical ? "Vertical" : "Horizontal")
                 {
-                    element.object_name = workspace.placed_robot_names.first ?? String()
-                    
-                    if workspace.robot(named: element.object_name).program_names.count > 0
-                    {
-                        element.program_name = workspace.robot(named: element.object_name).program_names.first ?? ""
-                    }
+                    is_vertical.toggle()
+                }
+            }
+        }
+        
+        private func prepare_workspace()
+        {
+            let robot = Robot(name: "6DOF Robot")
+            robot.is_placed = true
+            robot.add_program(PositionProgram(name: "Square"))
+            
+            let tool = Tool(name: "Gripper")
+            tool.is_placed = true
+            tool.add_program(OperationProgram(name: "Bite"))
+            
+            workspace.robots.append(robot)
+            workspace.tools.append(tool)
+            
+            Changer.internal_modules_list.append("Random")
+            Changer.external_modules_list.append("Defaults")
+            
+            if let element = workspace.current_element as? RobotPerformerElement, element.object_name == ""
+            {
+                element.object_name = workspace.placed_robot_names.first ?? String()
+                
+                if workspace.robot(named: element.object_name).program_names.count > 0
+                {
+                    element.program_name = workspace.robot(named: element.object_name).program_names.first ?? ""
                 }
             }
         }
