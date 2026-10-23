@@ -114,6 +114,7 @@ public struct DeviceOutputView: View
                                     Text("Charts").tag(0)
                                     Text("Items").tag(1)
                                 }
+                                .labelStyle(.titleAndIcon)
                                 #else
                                 Menu
                                 {
@@ -127,11 +128,13 @@ public struct DeviceOutputView: View
                                 {
                                     Label("View", systemImage: "eye")
                                 }
+                                .labelStyle(.titleAndIcon)
                                 #endif
                             }
                             else
                             {
                                 Label("View", systemImage: "eye")
+                                    .labelStyle(.titleAndIcon)
                                     .disabled(true)
                             }
                             
@@ -139,6 +142,7 @@ public struct DeviceOutputView: View
                             {
                                 Label("Set Interval...", systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
                             }
+                            .labelStyle(.titleAndIcon)
                             
                             if !state_output_device.is_output_updating
                             {
@@ -150,7 +154,7 @@ public struct DeviceOutputView: View
                                         Text(scope_type.rawValue).tag(scope_type)
                                     }
                                 }
-                                //.disabled(get_statistics)
+                                .labelStyle(.titleAndIcon)
                                 #else
                                 Menu
                                 {
@@ -166,12 +170,13 @@ public struct DeviceOutputView: View
                                 {
                                     Label("Scope", systemImage: "selection.pin.in.out")
                                 }
-                                //.disabled(get_statistics)
+                                .labelStyle(.titleAndIcon)
                                 #endif
                             }
                             else
                             {
                                 Label("Scope", systemImage: "clock")
+                                    .labelStyle(.titleAndIcon)
                                     .disabled(true)
                             }
                             
