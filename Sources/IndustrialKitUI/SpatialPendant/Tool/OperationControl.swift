@@ -17,6 +17,10 @@ public struct OperationControl: View
     @State private var is_expanded = false
     @State private var is_central_pressed = false
     
+    @State private var code_index = 0
+    @State private var slide_out: Edge = .top
+    @State private var slide_in: Edge = .bottom
+    
     @Namespace private var pane_glass
     
     public init(
@@ -39,6 +43,24 @@ public struct OperationControl: View
                     // Operation Pane
                     HStack(spacing: 0)
                     {
+                        if tool.codes.count > 0
+                        {
+                            Button
+                            {
+                                move_code(-1)
+                            }
+                            label:
+                            {
+                                Image(systemName: "chevron.left")
+                                    .padding([.vertical, .leading], 12)
+                            }
+                            .buttonStyle(.borderless)
+                            #if os(iOS)
+                            .tint(.black)
+                            #endif
+                            .contentShape(Rectangle())
+                        }
+                        
                         VStack
                         {
                             Text(tool.codes.count > 0 ? tool.code_info(tool.current_operation.value).name : "")
@@ -59,10 +81,33 @@ public struct OperationControl: View
                                 .padding(tool.codes.count > 0 ? 0 : 4)
                                 .foregroundStyle(.black)
                             #endif
+                                .id(tool.current_operation.value)
+                                .transition(.asymmetric(
+                                    insertion: .move(edge: slide_in),
+                                    removal: .move(edge: slide_out)
+                                ))
+                        }
+                        
+                        if tool.codes.count > 0
+                        {
+                            Button
+                            {
+                                move_code(1)
+                            }
+                            label:
+                            {
+                                Image(systemName: "chevron.right")
+                                    .padding([.vertical, .trailing], 12)
+                            }
+                            .buttonStyle(.borderless)
+                            #if os(iOS)
+                            .tint(.black)
+                            #endif
+                            .contentShape(Rectangle())
                         }
                     }
                     .background(.clear)
-                    .frame(width: 104) //.frame(maxWidth: .infinity)
+                    .frame(width: 120)//(width: 104) //.frame(maxWidth: .infinity)
                     .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .gesture(
                         LongPressGesture(minimumDuration: 0.5)
@@ -94,6 +139,7 @@ public struct OperationControl: View
                                         {
                                             is_central_pressed = true
                                             is_expanded = true
+                                            
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
                                             {
                                                 is_central_pressed = false
@@ -316,6 +362,30 @@ public struct OperationControl: View
         #if os(visionOS)
         .offset(z: 2)
         #endif
+    }
+    
+    private func move_code(_ step: Int)
+    {
+        guard !tool.codes.isEmpty else { return }
+        
+        if step > 0
+        {
+            slide_out = .top
+            slide_in = .bottom
+        }
+        else
+        {
+            slide_out = .bottom
+            slide_in = .top
+        }
+        
+        withAnimation(.easeInOut)
+        {
+            code_index = tool.codes.firstIndex(of: current_code_info) ?? 0
+            
+            code_index = (code_index + step + tool.codes.count) % tool.codes.count
+            tool.current_operation = OperationCode(tool.codes[code_index].value)
+        }
     }
     
     private func is_valid_symbol(_ symbol: String) -> Bool
