@@ -51,10 +51,10 @@ public struct DynamicStack<Content: View>: View
     DynamicStack(is_vertical: $is_vertical, spacing: 16)
     {
         RoundedRectangle(cornerRadius: 8, style: .continuous)
-            .fill(Color.cyan)
+            .fill(Color.mint)
         
         RoundedRectangle(cornerRadius: 8, style: .continuous)
-            .fill(Color.mint)
+            .fill(Color.cyan)
         
         RoundedRectangle(cornerRadius: 8, style: .continuous)
             .fill(Color.indigo)
