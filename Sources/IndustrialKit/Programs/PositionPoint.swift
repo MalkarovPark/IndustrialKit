@@ -227,6 +227,17 @@ public enum MoveType: String, Codable, Equatable, CaseIterable
         }
     }
     
+    /// A symbol identifier used for visual representation in UI.
+    public var symbol_name: String
+    {
+        switch self
+        {
+        case .linear: "guidepoint.vertical"
+        case .spline: "point.topleft.down.to.point.bottomright.curvepath.fill" //"beziercurve"
+        //case .fine: "questionmark"
+        }
+    }
+    
     /*/// Register value.
     public var register_value: Int
     {

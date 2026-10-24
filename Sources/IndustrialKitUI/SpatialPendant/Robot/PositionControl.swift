@@ -391,7 +391,7 @@ public struct PositionPane: View
                 {
                     ZStack
                     {
-                        Text("X \(String(format: "%.0f", robot.pointer_position.x)) Y \(String(format: "%.0f", robot.pointer_position.y)) Z \(String(format: "%.0f", robot.pointer_position.z))")
+                        Text("X: \(String(format: "%.0f", robot.pointer_position.x)) Y: \(String(format: "%.0f", robot.pointer_position.y)) Z: \(String(format: "%.0f", robot.pointer_position.z))")
                             .font(.system(size: 10))
                             .foregroundStyle(.secondary)
                     }
@@ -399,7 +399,7 @@ public struct PositionPane: View
                     
                     ZStack
                     {
-                        Text("R \(String(format: "%.0f", robot.pointer_position.r)) P \(String(format: "%.0f", robot.pointer_position.p)) W \(String(format: "%.0f", robot.pointer_position.w))")
+                        Text("R: \(String(format: "%.0f", robot.pointer_position.r)) P: \(String(format: "%.0f", robot.pointer_position.p)) W: \(String(format: "%.0f", robot.pointer_position.w))")
                             .font(.system(size: 10))
                             .foregroundStyle(.secondary)
                     }

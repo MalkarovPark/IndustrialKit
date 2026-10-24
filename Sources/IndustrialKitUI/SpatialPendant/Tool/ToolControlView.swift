@@ -66,7 +66,13 @@ public struct ToolControlView: View
                     
                     ScrollView
                     {
-                        LazyVStack(spacing: 8)
+                        LazyVGrid(
+                            columns: Array(
+                                repeating: GridItem(.flexible()),
+                                count: is_vertical ? 1 : 3
+                            ),
+                            spacing: 8
+                        )
                         {
                             ForEach(Array(tool.programs.enumerated()), id: \.element.id)
                             { index, program in
@@ -158,6 +164,7 @@ public struct ToolControlView: View
                         OperationProgramView(
                             tool: tool,
                             program: program,
+                            is_vertical: $is_vertical,
                             on_update: on_update
                         )
                         {
@@ -302,6 +309,8 @@ private struct OperationProgramView: View
     
     @ObservedObject var program: OperationProgram
     
+    @Binding var is_vertical: Bool
+    
     let on_update: () -> ()
     
     let dismiss_function: () -> ()
@@ -344,7 +353,14 @@ private struct OperationProgramView: View
             
             ScrollView
             {
-                LazyVStack(spacing: 8)
+                //LazyVStack(spacing: 8)
+                LazyVGrid(
+                    columns: Array(
+                        repeating: GridItem(.flexible()),
+                        count: is_vertical ? 1 : 3
+                    ),
+                    spacing: 8
+                )
                 {
                     ForEach($program.codes)
                     { $code in
@@ -379,10 +395,10 @@ private struct OperationProgramView: View
                         )
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
-                    
-                    Spacer(minLength: 48)
                 }
                 .padding(8)
+                
+                Spacer(minLength: 48)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -413,54 +429,48 @@ private struct OperationItemView: View
                 .font(.system(size: program_item_light_size))
                 .padding(.leading, program_item_light_padding)
             
-            ZStack
+            Picker(tool.code_info(code_item.value).name, selection: $code_item.value)
             {
-                Rectangle()
-                    .fill(.clear)
-                    .overlay
-                    {
-                        HStack(spacing: 0)
-                        {
-                            ZStack
-                            {
-                                Picker(tool.code_info(code_item.value).name, selection: $code_item.value)
-                                {
-                                    if tool.codes.count > 0
-                                    {
-                                        ForEach(tool.codes.map { $0.value }, id:\.self)
-                                        { code in
-                                            Text(tool.code_info(code).name)
-                                                .lineLimit(1)
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Text("None")
-                                    }
-                                }
-                                .font(.system(size: operation_item_font_size))
-                                .disabled(tool.codes.count == 0)
-                                .frame(maxWidth: .infinity)
-                                .pickerStyle(.menu)
-                                .buttonStyle(.plain)
-                                .labelsHidden()
-                                #if !os(macOS)
-                                .scaleEffect(0.95)
-                                #endif
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        }
+                if tool.codes.count > 0
+                {
+                    ForEach(tool.codes.map { $0.value }, id:\.self)
+                    { code in
+                        Text(tool.code_info(code).name)
+                            .lineLimit(1)
                     }
+                }
+                else
+                {
+                    Text("None")
+                }
             }
+            .font(.system(size: operation_item_font_size))
+            .disabled(tool.codes.count == 0)
+            .frame(maxWidth: .infinity)
+            .pickerStyle(.menu)
+            .buttonStyle(.plain)
+            .labelsHidden()
+            #if !os(macOS)
+            .scaleEffect(0.95)
+            #endif
             .frame(height: 24)
             
             Image(systemName: tool.code_info(code_item.value).symbol_name)
-                .font(.system(size: operatioin_item_image_size))
-                .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                .frame(width: 24)
+                .font(.system(size: program_item_light_size * 1.5))
+                .frame(width: program_item_light_size * 2, height: program_item_light_size * 2)
+                .padding(.trailing, program_item_light_padding)
         }
         .frame(height: program_item_height)
         .contentShape(Rectangle())
+        .background
+        {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+            #if !os(visionOS)
+                .fill(.quinary)
+            #else
+                .fill(.thinMaterial)
+            #endif
+        }
         .contextMenu
         {
             Button
@@ -570,7 +580,7 @@ struct ToolControlView_Previews: PreviewProvider
                 #endif
             }
             #if !os(visionOS)
-            .frame(minWidth: 480, minHeight: 480)
+            .frame(minWidth: 640, minHeight: 480)
             #else
             .frame(minWidth: 800, minHeight: 480)
             #endif

@@ -136,15 +136,21 @@ public struct ProgramItemView: View
 
 // MARK: - Sizes
 #if os(macOS)
-let program_item_height: CGFloat = 24
+let program_item_height: CGFloat = 36
 let program_item_light_size: CGFloat = 8
-let program_item_light_padding: CGFloat = 6
+let program_item_light_padding: CGFloat = 12
 
 let program_index_font_size: CGFloat = 10
-#else
-let program_item_height: CGFloat = 32
-let program_item_light_size: CGFloat = 8
-let program_item_light_padding: CGFloat = 6
+#elseif os(iOS)
+let program_item_height: CGFloat = 48
+let program_item_light_size: CGFloat = 10
+let program_item_light_padding: CGFloat = 12
+
+let program_index_font_size: CGFloat = 10
+#elseif os(visionOS)
+let program_item_height: CGFloat = 48
+let program_item_light_size: CGFloat = 12
+let program_item_light_padding: CGFloat = 12
 
 let program_index_font_size: CGFloat = 10
 #endif

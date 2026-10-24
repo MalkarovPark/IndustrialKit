@@ -65,7 +65,13 @@ public struct RobotControlView: View
                     
                     ScrollView
                     {
-                        LazyVStack(spacing: 8)
+                        LazyVGrid(
+                            columns: Array(
+                                repeating: GridItem(.flexible()),
+                                count: is_vertical ? 1 : 3
+                            ),
+                            spacing: 8
+                        )
                         {
                             ForEach(Array(robot.programs.enumerated()), id: \.element.id)
                             { index, program in
@@ -145,6 +151,7 @@ public struct RobotControlView: View
                         PositionProgramView(
                             robot: robot,
                             program: program,
+                            is_vertical: $is_vertical,
                             on_update: on_update
                         )
                         {
@@ -293,6 +300,8 @@ private struct PositionProgramView: View
     
     @ObservedObject var program: PositionProgram
     
+    @Binding var is_vertical: Bool
+    
     let on_update: () -> ()
     
     let dismiss_function: () -> ()
@@ -335,7 +344,13 @@ private struct PositionProgramView: View
             
             ScrollView
             {
-                LazyVStack(spacing: 8)
+                LazyVGrid(
+                    columns: Array(
+                        repeating: GridItem(.flexible()),
+                        count: is_vertical ? 1 : 3
+                    ),
+                    spacing: 8
+                )
                 {
                     ForEach(Array(program.points.enumerated()), id: \.element.id)
                     { index, point in
@@ -373,10 +388,10 @@ private struct PositionProgramView: View
                         )
                         .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
                     }
-                    
-                    Spacer(minLength: 48)
                 }
                 .padding(8)
+                
+                Spacer(minLength: 48)
             }
             
             /*Button(action: { program.add_point(PositionPoint(x: 0, y: 0, z: 0)) })
@@ -408,7 +423,7 @@ private struct PositionItemView: View
     
     var body: some View
     {
-        HStack
+        HStack(spacing: 0)
         {
             Image(systemName: "circle.fill")
             #if !os(visionOS)
@@ -422,40 +437,35 @@ private struct PositionItemView: View
             
             ZStack
             {
-                Rectangle()
-                    .fill(.clear)
-                    .overlay
+                VStack(spacing: 6)
+                {
+                    
+                    ZStack
                     {
-                        HStack(spacing: 0)
-                        {
-                            
-                            ZStack
-                            {
-                                Text("X \(String(format: "%.0f", point_item.x)) Y \(String(format: "%.0f", point_item.y)) Z \(String(format: "%.0f", point_item.z))")
-                                    .font(.system(size: position_item_font_size))
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            
-                            Divider()
-                            
-                            ZStack
-                            {
-                                Text("R \(String(format: "%.0f", point_item.r)) P \(String(format: "%.0f", point_item.p)) W \(String(format: "%.0f", point_item.w))")
-                                    .font(.system(size: position_item_font_size))
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        }
+                        Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
+                            .font(.system(size: position_item_font_size))
                     }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    //Divider()
+                    
+                    ZStack
+                    {
+                        Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
+                            .font(.system(size: position_item_font_size))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
             }
             .popover(
                 isPresented: $position_item_view_presented,
-                arrowEdge: {
+                /*arrowEdge: {
                     #if os(macOS)
                     .bottom
                     #else
                     .top
                     #endif
-                }()
+                }()*/
             )
             {
                 #if os(macOS)
@@ -469,9 +479,23 @@ private struct PositionItemView: View
                     .frame(width: 360)
                 #endif
             }
+            
+            Image(systemName: point_item.move_type.symbol_name)
+                .font(.system(size: program_item_light_size * 1.5))
+                .frame(width: program_item_light_size * 2, height: program_item_light_size * 2)
+                .padding(.trailing, program_item_light_padding)
         }
         .frame(height: program_item_height)
         .contentShape(Rectangle())
+        .background
+        {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+            #if !os(visionOS)
+                .fill(.quinary)
+            #else
+                .fill(.thinMaterial)
+            #endif
+        }
         .onTapGesture
         {
             position_item_view_presented.toggle()
@@ -761,7 +785,7 @@ struct RobotControlView_Previews: PreviewProvider
                 #endif
             }
             #if !os(visionOS)
-            .frame(minWidth: 480, minHeight: 480)
+            .frame(minWidth: 640, minHeight: 480)
             #else
             .frame(minWidth: 800, minHeight: 480)
             #endif

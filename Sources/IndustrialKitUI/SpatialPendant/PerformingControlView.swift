@@ -29,14 +29,28 @@ public struct PerformingControlView: View
     
     public var body: some View
     {
-        HStack(spacing: 2)
+        HStack(spacing: 0)
         {
             Button(action: reset_performing)
             {
                 Image(systemName: "stop.fill")
-                    .modifier(CircleButtonImageFramer())
+                #if !os(visionOS)
+                    .imageScale(.large)
+                #endif
+                #if os(macOS)
+                    .frame(width: 36, height: 36)
+                #else
+                    .frame(width: 44, height: 44)
+                #endif
+                #if os(iOS)
+                    .tint(.black)
+                #endif
             }
+            #if !os(iOS)
             .buttonStyle(.borderless)
+            #else
+            .buttonStyle(.plain)
+            #endif
             .buttonBorderShape(.circle)
             
             Divider()
@@ -46,22 +60,27 @@ public struct PerformingControlView: View
             {
                 Image(systemName: program_performed ? "pause.fill" : "play.fill")
                     .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    .modifier(CircleButtonImageFramer())
+                #if !os(visionOS)
+                    .imageScale(.large)
+                #endif
+                #if os(macOS)
+                    .frame(width: 36, height: 36)
+                #else
+                    .frame(width: 44, height: 44)
+                #endif
+                #if os(iOS)
+                    .tint(.black)
+                #endif
             }
+            #if !os(iOS)
             .buttonStyle(.borderless)
+            #else
+            .buttonStyle(.plain)
+            #endif
             .buttonBorderShape(.circle)
         }
-        #if os(macOS)
-        .padding(4)
-        #endif
-        #if !os(visionOS)
-        .glassEffect(.regular.interactive())
-        #else
-        .controlSize(.large)
-        .buttonStyle(.borderless)
-        .glassBackgroundEffect()
-        .frame(depth: 24)
-        #endif
+        .clipShape(.capsule(style: .continuous))
+        .glassEffect(.regular.interactive(), in: .capsule(style: .continuous))
         #if os(macOS) || os(iOS)
         .padding(10)
         #else

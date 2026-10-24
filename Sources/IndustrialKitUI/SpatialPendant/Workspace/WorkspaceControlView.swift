@@ -150,10 +150,18 @@ struct WorkspaceControlView: View
                     
                     ScrollView
                     {
-                        LazyVStack(spacing: 8)
+                        //LazyVStack(spacing: 8)
+                        //LazyVGrid(columns: [GridItem(.flexible())], spacing: 8)
+                        LazyVGrid(
+                            columns: Array(
+                                repeating: GridItem(.flexible()),
+                                count: is_vertical ? 1 : 3
+                            ),
+                            spacing: 8
+                        )
                         {
-                            ForEach(workspace.programs)
-                            { program in
+                            ForEach(Array(workspace.programs.enumerated()), id: \.element.id) //ForEach(workspace.programs)
+                            { index, program in // program in
                                 if workspace.selected_program == nil
                                 {
                                     ProgramItemView(
@@ -204,6 +212,19 @@ struct WorkspaceControlView: View
                                         )
                                     )
                                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+                                    .overlay(alignment: .topLeading)
+                                    {
+                                        if shows_program_indices
+                                        {
+                                            Text("\(index)")
+                                                .font(.system(size: program_index_font_size))
+                                                .foregroundStyle(.tertiary)
+                                                .frame(height: 20)
+                                                .lineLimit(1)
+                                                .padding(.leading, 6)
+                                                .allowsHitTesting(false)
+                                        }
+                                    }
                                 }
                             }
                             .animation(.spring(), value: workspace.programs)
@@ -692,12 +713,12 @@ struct WorkspaceControl_Previews: PreviewProvider
                         on_overflow: { _ in is_vertical.toggle() }
                     )
                     {
-                        WorkspaceControlView(workspace: workspace, is_vertical: $is_vertical /*, on_update: { print("Program Updated") } */)
+                        WorkspaceControlView(workspace: workspace, shows_program_indices: true, is_vertical: $is_vertical /*, on_update: { print("Program Updated") } */)
                             .padding(8)
                     }
                     .padding(10)
                     #else
-                    WorkspaceControlView(workspace: workspace, is_vertical: $is_vertical)
+                    WorkspaceControlView(workspace: workspace, shows_program_indices: true, is_vertical: $is_vertical)
                         .padding(8)
                         .background(
                             GeometryReader
@@ -713,7 +734,7 @@ struct WorkspaceControl_Previews: PreviewProvider
                     #endif
                 }
                 #if !os(visionOS)
-                .frame(minWidth: 480, minHeight: 480)
+                .frame(minWidth: 640, minHeight: 480)
                 #else
                 .frame(minWidth: 800, minHeight: 480)
                 #endif

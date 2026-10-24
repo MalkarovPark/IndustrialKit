@@ -123,7 +123,7 @@ public struct CircleButtonImageFramer: ViewModifier
             .padding(6)
         #if os(iOS)
             .padding(4)
-            .foregroundStyle(.black)
+            .tint(.black)//.foregroundStyle(.black)
         #endif
     }
 }

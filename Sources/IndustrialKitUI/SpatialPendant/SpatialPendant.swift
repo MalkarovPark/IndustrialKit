@@ -67,16 +67,16 @@ public struct SpatialPendant: View
                         case let robot as Robot:
                             RobotControlView(
                                 robot: robot,
-                                shows_program_indices: controller.shows_program_indices,//shows_program_indices,
+                                shows_program_indices: controller.shows_program_indices,
                                 is_vertical: $controller.is_vertical,
-                                on_update: controller.on_update_robot//on_update: on_update_robot
+                                on_update: controller.on_update_robot
                             )
                         case let tool as Tool:
                             ToolControlView(
                                 tool: tool,
-                                shows_program_indices: controller.shows_program_indices,//shows_program_indices,
+                                shows_program_indices: controller.shows_program_indices,
                                 is_vertical: $controller.is_vertical,
-                                on_update: controller.on_update_tool//on_update: on_update_tool
+                                on_update: controller.on_update_tool
                             )
                         case is Part:
                             ZStack
@@ -90,8 +90,9 @@ public struct SpatialPendant: View
                         case .none:
                             WorkspaceControlView(
                                 workspace: workspace,
+                                shows_program_indices: controller.shows_program_indices,
                                 is_vertical: $controller.is_vertical,
-                                on_update: controller.on_update_workspace//on_update: on_update_workspace
+                                on_update: controller.on_update_workspace
                             )
                         }
                     }
@@ -126,14 +127,14 @@ public struct SpatialPendant: View
             case let robot as Robot:
                 RobotControlView(
                     robot: robot,
-                    shows_program_indices: controller.shows_program_indices,//shows_program_indices,
-                    on_update: controller.on_update_robot//on_update: on_update_robot
+                    shows_program_indices: controller.shows_program_indices,
+                    on_update: controller.on_update_robot
                 )
             case let tool as Tool:
                 ToolControlView(
                     tool: tool,
-                    shows_program_indices: controller.shows_program_indices,//shows_program_indices,
-                    on_update: controller.on_update_tool//on_update: on_update_tool
+                    shows_program_indices: controller.shows_program_indices,
+                    on_update: controller.on_update_tool
                 )
                 #if !os(visionOS)
             case is Part:
@@ -292,7 +293,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     .padding(10)
                 }
                 #if !os(visionOS)
-                .frame(minWidth: 480, minHeight: 480)
+                .frame(minWidth: 640, minHeight: 480)
                 #else
                 .frame(minWidth: 800, minHeight: 480)
                 #endif
@@ -421,7 +422,7 @@ struct SpatialPendant_Previews: PreviewProvider
                             .padding(10)
                     }
                     .padding(is_vertical ? 80 : 20)
-                    .frame(width: !is_vertical ? pendant_content_width * 3 : .infinity)
+                    .frame(width: !is_vertical ? pendant_content_width * 3.5 : .infinity)
                 }
                 .frame(maxWidth: .infinity)
                 .overlay(alignment: .topLeading)
