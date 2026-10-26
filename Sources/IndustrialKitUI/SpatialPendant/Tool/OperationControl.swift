@@ -36,7 +36,7 @@ public struct OperationControl: View
     {
         DynamicStack(is_vertical: $is_vertical) //HStack(spacing: 12)
         {
-            ZStack
+            ZStack(alignment: !is_expanded ? .center : .bottomTrailing)
             {
                 if !is_expanded
                 {
@@ -57,9 +57,6 @@ public struct OperationControl: View
                                     Image(systemName: "chevron.left")
                                         .padding(.trailing)
                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    #if !os(macOS)
-                                        .font(.system(size: 14, design: .rounded))
-                                    #endif
                                 }
                                 .buttonStyle(.borderless)
                                 #if os(iOS)
@@ -79,9 +76,6 @@ public struct OperationControl: View
                                     Image(systemName: "chevron.right")
                                         .padding(.leading)
                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    #if !os(macOS)
-                                        .font(.system(size: 14, design: .rounded))
-                                    #endif
                                 }
                                 .buttonStyle(.borderless)
                                 #if os(iOS)
@@ -91,44 +85,18 @@ public struct OperationControl: View
                             }
                         }
                         
-                        // Operation Button
-                        Button
-                        {
-                            tool.start_pause_single_operation()
-                        }
-                        label:
-                        {
-                            if tool.codes.count > 0
-                            {
-                                Image(systemName:
-                                        is_valid_symbol(current_code_info.symbol_name) ?
-                                        current_code_info.symbol_name :
-                                        ""
-                                )
-                                .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                                .modifier(CircleButtonImageFramer())
-                            }
-                            else
-                            {
-                                Rectangle()
-                                    .fill(.clear)
-                                    .modifier(CircleButtonImageFramer())
-                            }
-                        }
-                        .modifier(CircleButtonGlassBorderer())
-                        
                         VStack
                         {
                             Text(tool.codes.count > 0 ? tool.code_info(tool.current_operation.value).name : "")
                                 .font(.system(size: 14, design: .rounded))
-                                .foregroundStyle(.secondary)
+                                //.foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity)
                                 .lineLimit(1)
                                 .padding(10)
-                            #if os(iOS)
+                            /*#if os(iOS)
                                 .padding(tool.codes.count > 0 ? 0 : 4)
                                 .foregroundStyle(.black)
-                            #endif
+                            #endif*/
                                 .id(tool.current_operation.value)
                                 .transition(.asymmetric(
                                     insertion: .move(edge: slide_in).combined(with: .opacity),
@@ -156,7 +124,6 @@ public struct OperationControl: View
                                 .textFieldStyle(.plain)
                         }
                     }
-                    //.background(.clear)
                     .frame(width: 120, height: 120)
                     .gesture(
                         LongPressGesture(minimumDuration: 0.5)
@@ -290,6 +257,12 @@ public struct OperationControl: View
                                                 //.font(.system(size: 16))
                                             HStack
                                             {
+                                                #if os(iOS)
+                                                Rectangle()
+                                                    .fill(.clear)
+                                                    .frame(width: 4)
+                                                #endif
+                                                
                                                 VStack(alignment: .leading)
                                                 {
                                                     Text(code.name)
@@ -303,7 +276,12 @@ public struct OperationControl: View
                                                             .help(code.description)
                                                     }
                                                 }
+                                                
+                                                #if os(iOS)
                                                 Spacer()
+                                                #else
+                                                Spacer(minLength: 4)
+                                                #endif
                                             }
                                         }
                                     }
@@ -354,9 +332,37 @@ public struct OperationControl: View
                     .transition(.opacity.combined(with: .scale(scale: 1.0)))
                     .frame(width: is_expanded ? 200 : 120, height: !is_vertical ? 120 : pendant_content_height)
                 }
+                
+                // Operation Button
+                Button
+                {
+                    tool.start_pause_single_operation()
+                }
+                label:
+                {
+                    if tool.codes.count > 0
+                    {
+                        Image(systemName:
+                                is_valid_symbol(current_code_info.symbol_name) ?
+                                current_code_info.symbol_name :
+                                ""
+                        )
+                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                        .modifier(CircleButtonImageFramer())
+                    }
+                    else
+                    {
+                        Rectangle()
+                            .fill(.clear)
+                            .modifier(CircleButtonImageFramer())
+                    }
+                }
+                .modifier(CircleButtonGlassBorderer())
+                .scaleEffect(!is_expanded ? 1 : 0.8)
+                .padding(8)
             }
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             .scaleEffect(is_central_pressed ? 1.05 : 1)
         }
         .disabled(tool.codes.count == 0)
@@ -467,7 +473,7 @@ struct OperationControl_Previews: PreviewProvider
                     OperationCodeInfo(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "Close the Tool"),
                     OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "Open the Tool"),
                     OperationCodeInfo(value: 2, name: "UwU", symbol_name: "questionmark"),
-                    OperationCodeInfo(value: 3, name: "OwO UwU WuW", symbol_name: "questionmark", description: "In some concept art, it was revealed that the loot in ancient cities was originally going to be stored within jar-shaped pots")
+                    OperationCodeInfo(value: 3, name: "OwO UwU WuW", symbol_name: "exclamationmark", description: "In some concept art, it was revealed that the loot in ancient cities was originally going to be stored within jar-shaped pots")
                 ]
             }
             .overlay(alignment: .topLeading)

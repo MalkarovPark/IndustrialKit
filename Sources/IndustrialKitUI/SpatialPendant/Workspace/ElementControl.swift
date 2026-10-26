@@ -12,182 +12,186 @@ public struct ElementControl: View
 {
     @ObservedObject var workspace: Workspace
     
-    @Binding var is_vertical: Bool
-    
     @State private var is_expanded = false
     @State private var is_central_pressed = false
     
     @Namespace private var pane_glass
     
     public init(
-        workspace: Workspace,
-        is_vertical: Binding<Bool> = .constant(false)
+        workspace: Workspace
     )
     {
         self.workspace = workspace
-        self._is_vertical = is_vertical
     }
     
     public var body: some View
     {
-        DynamicStack(is_vertical: $is_vertical, spacing: 12)
+        ZStack(alignment: !is_expanded ? .center : .bottomTrailing)
         {
-            ZStack
+            if !is_expanded
             {
-                if !is_expanded
+                // Element Pane
+                VStack
                 {
-                    // Element Pane
                     HStack(spacing: 0)
                     {
                         VStack(alignment: .leading)
                         {
                             Text(workspace.current_element.title)
-                                .font(.title3.scaled(by: 0.8))
-                                .animation(.easeInOut(duration: 0.2), value: workspace.current_element.title)
+                                .font(.system(size: 14, design: .rounded))
+                                //.foregroundColor(.secondary)
+                                .frame(maxWidth: .infinity)
                                 .lineLimit(1)
+                                /*.font(.title3.scaled(by: 0.8))
+                                .animation(.easeInOut(duration: 0.2), value: workspace.current_element.title)
+                                .lineLimit(1)*/
                             
-                            Text(workspace.current_element.info)
+                            /*Text(workspace.current_element.info)
                                 .font(.default.scaled(by: 0.8))
                                 .foregroundColor(.secondary)
                                 .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
-                                .lineLimit(1)
+                                .lineLimit(1)*/
                         }
                         .padding(10)
                     }
-                    .background(.clear)
-                    .frame(width: element_panel_width)
-                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .gesture(
-                        LongPressGesture(minimumDuration: 0.5)
-                            .onChanged
-                            { _ in
-                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                    
+                    Spacer()
+                    
+                    Text(workspace.current_element.info)
+                        .font(.default.scaled(by: 0.8))
+                        .foregroundColor(.secondary)
+                        .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
+                        .lineLimit(1)
+                        .padding(10)
+                }
+                .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .gesture(
+                    LongPressGesture(minimumDuration: 0.5)
+                        .onChanged
+                        { _ in
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                            {
+                                is_central_pressed = true
+                            }
+                        }
+                        .onEnded
+                        { _ in
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                            {
+                                is_expanded = true
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+                                {
+                                    is_central_pressed = false
+                                }
+                            }
+                        }
+                        .simultaneously(
+                            with:
+                                TapGesture()
+                                .onEnded
                                 {
                                     is_central_pressed = true
-                                }
-                            }
-                            .onEnded
-                            { _ in
-                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
-                                {
-                                    is_expanded = true
                                     
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                                    {
-                                        is_central_pressed = false
-                                    }
-                                }
-                            }
-                            .simultaneously(
-                                with:
-                                    TapGesture()
-                                    .onEnded
+                                    withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
                                     {
                                         is_central_pressed = true
-                                        
-                                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                                        is_expanded = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
                                         {
-                                            is_central_pressed = true
-                                            is_expanded = true
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                                            {
-                                                is_central_pressed = false
-                                            }
+                                            is_central_pressed = false
                                         }
                                     }
-                                )
-                    )
-                    .help(workspace.current_element.info)
-                }
-                else
+                                }
+                            )
+                )
+                .frame(width: 120, height: 120)
+                .help(workspace.current_element.info)
+            }
+            else
+            {
+                // Editor
+                VStack(spacing: 0)
                 {
-                    // Editor
-                    VStack(spacing: 0)
-                    {
-                        Button(action: {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
-                            {
-                                is_expanded = false
-                            }
-                        })
+                    Button(action: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
                         {
-                            Image(systemName: "chevron.compact.down")
-                                .padding(10)
-                            #if os(iOS)
-                                .font(.system(size: 16))
-                            #endif
+                            is_expanded = false
                         }
+                    })
+                    {
+                        Image(systemName: "chevron.compact.down")
+                            .padding(10)
+                        #if os(iOS)
+                            .font(.system(size: 16))
+                        #endif
+                    }
+                    .buttonStyle(.borderless)
+                    #if os(iOS)
+                    .tint(.black)
+                    #endif
+                    .contentShape(Rectangle())
+                    .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
+                    
+                    VStack
+                    {
+                        GroupBox
+                        {
+                            ProductionProgramElementView(element: workspace.current_element, workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
+                                .padding(4)
+                        }
+                        .frame(width: is_expanded ? element_control_width : 120)
+                        
+                        Menu("New Element")
+                        {
+                            Section(header: Text("Performer"))
+                            {
+                                ForEach(PerformerType.allCases, id: \.self)
+                                { type in
+                                    Button(type.rawValue)
+                                    {
+                                        workspace.current_element = type.element
+                                    }
+                                    .tag(type)
+                                }
+                            }
+                            
+                            Section(header: Text("Modifier"))
+                            {
+                                ForEach(ModifierType.allCases, id: \.self)
+                                { type in
+                                    Button(type.rawValue)
+                                    {
+                                        workspace.current_element = type.element
+                                    }
+                                    .tag(type)
+                                }
+                            }
+                            
+                            Section(header: Text("Logic"))
+                            {
+                                ForEach(LogicType.allCases, id: \.self)
+                                { type in
+                                    Button(type.rawValue)
+                                    {
+                                        workspace.current_element = type.element
+                                    }
+                                    .tag(type)
+                                }
+                            }
+                        }
+                        .pickerStyle(.menu)
                         .buttonStyle(.borderless)
                         #if os(iOS)
                         .tint(.black)
+                        .padding(.vertical, 4)
                         #endif
-                        .contentShape(Rectangle())
-                        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
-                        
-                        VStack
-                        {
-                            GroupBox
-                            {
-                                ProductionProgramElementView(element: workspace.current_element, workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
-                                    .padding(4)
-                            }
-                            .frame(width: is_expanded ? element_control_width : 120)
-                            
-                            Menu("New Element")
-                            {
-                                Section(header: Text("Performer"))
-                                {
-                                    ForEach(PerformerType.allCases, id: \.self)
-                                    { type in
-                                        Button(type.rawValue)
-                                        {
-                                            workspace.current_element = type.element
-                                        }
-                                        .tag(type)
-                                    }
-                                }
-                                
-                                Section(header: Text("Modifier"))
-                                {
-                                    ForEach(ModifierType.allCases, id: \.self)
-                                    { type in
-                                        Button(type.rawValue)
-                                        {
-                                            workspace.current_element = type.element
-                                        }
-                                        .tag(type)
-                                    }
-                                }
-                                
-                                Section(header: Text("Logic"))
-                                {
-                                    ForEach(LogicType.allCases, id: \.self)
-                                    { type in
-                                        Button(type.rawValue)
-                                        {
-                                            workspace.current_element = type.element
-                                        }
-                                        .tag(type)
-                                    }
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .buttonStyle(.borderless)
-                            #if os(iOS)
-                            .tint(.black)
-                            .padding(.vertical, 4)
-                            #endif
-                        }
-                        .padding([.horizontal, .bottom], 10)
                     }
+                    .padding([.horizontal, .bottom], 10)
                 }
             }
-            .clipShape(.rect(cornerRadius: 16, style: .continuous))
-            .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
-            .scaleEffect(is_central_pressed ? 1.05 : 1)
-            .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
-            .zIndex(1)
             
+            // Element Button
             Button
             {
                 workspace.start_pause_single_element()
@@ -215,7 +219,14 @@ public struct ElementControl: View
             .buttonStyle(.plain)
             .glassEffect(.regular.interactive().tint(workspace.current_element.color), in: .rect(cornerRadius: 16, style: .continuous))
             .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
+            .scaleEffect(!is_expanded ? 1 : 0.8)
+            .padding(8)
         }
+        .clipShape(.rect(cornerRadius: 16, style: .continuous))
+        .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+        .scaleEffect(is_central_pressed ? 1.05 : 1)
+        .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
+        .zIndex(1)
         #if os(visionOS)
         .offset(z: 2)
         #endif
@@ -375,7 +386,7 @@ struct ElementControl_Previews: PreviewProvider
             {
                 Spacer()
                 
-                ElementControl(workspace: workspace, is_vertical: $is_vertical)
+                ElementControl(workspace: workspace)
                     .padding()
             }
             #if !os(visionOS)

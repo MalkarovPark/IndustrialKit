@@ -286,10 +286,7 @@ struct WorkspaceControlView: View
             )
             
             // MARK: Controls
-            ElementControl(workspace: workspace, is_vertical: Binding(
-                get: { !is_vertical },
-                set: { new_value in is_vertical = !new_value }
-            ))
+            ElementControl(workspace: workspace)
         }
     }
     

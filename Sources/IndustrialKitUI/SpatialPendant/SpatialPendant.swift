@@ -185,10 +185,12 @@ let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #elseif os(iOS)
 let pendant_content_width: CGFloat = 240
 let pendant_content_height: CGFloat = 240
+let max_pendant_content_height: CGFloat = 520
 let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #elseif os(visionOS)
 let pendant_content_width: CGFloat = 280
 let pendant_content_height: CGFloat = 280
+let max_pendant_content_height: CGFloat = 520
 let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #endif
 
@@ -374,7 +376,7 @@ struct SpatialPendant_Previews: PreviewProvider
                             get: { !is_vertical },
                             set: { new_value in is_vertical = !new_value }
                         ),
-                        spacing: is_vertical ? 40 : 0
+                        spacing: is_vertical ? 40 : 20
                     )
                     {
                         WorkspaceControlView(workspace: workspace, is_vertical: $is_vertical)
@@ -391,7 +393,6 @@ struct SpatialPendant_Previews: PreviewProvider
                                         .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                                 }
                             )
-                            .padding(10)
                         
                         RobotControlView(robot: workspace.robot(named: "6DOF Robot"), is_vertical: $is_vertical)
                             //.frame(width: pendant_content_width)
@@ -407,7 +408,6 @@ struct SpatialPendant_Previews: PreviewProvider
                                         .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                                 }
                             )
-                            .padding(10)
                         
                         ToolControlView(tool: workspace.tool(named: "Gripper"), is_vertical: $is_vertical)
                             //.frame(width: pendant_content_width)
@@ -423,7 +423,6 @@ struct SpatialPendant_Previews: PreviewProvider
                                         .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                                 }
                             )
-                            .padding(10)
                     }
                     .padding(is_vertical ? 80 : 20)
                     .frame(width: !is_vertical ? pendant_content_width * 3.5 : .infinity)
