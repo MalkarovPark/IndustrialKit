@@ -185,11 +185,6 @@ public struct ToolControlView: View
                             .foregroundStyle(.secondary)
                     }
                 }
-                .frame(
-                    minWidth: pendant_content_width, maxWidth: is_vertical ? pendant_content_width : .infinity,
-                    maxHeight: is_vertical ? .infinity : pendant_content_height
-                )
-                //.frame(width: pendant_content_width)
                 .overlay(alignment: .bottomTrailing)
                 {
                     HStack(spacing: 0)
@@ -227,6 +222,10 @@ public struct ToolControlView: View
                     }
                 }
             }
+            .frame(
+                minWidth: pendant_content_width, maxWidth: is_vertical ? pendant_content_width : max_pendant_content_width,
+                maxHeight: is_vertical ? max_pendant_content_height : pendant_content_height
+            )
             
             // MARK: Controls
             OperationControl(tool: tool, is_vertical: Binding(

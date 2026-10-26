@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  OperationControl.swift
 //  IndustrialKit
 //
 //  Created by Artem on 02.02.2026.
@@ -41,41 +41,89 @@ public struct OperationControl: View
                 if !is_expanded
                 {
                     // Operation Pane
-                    HStack(spacing: 0)
+                    ZStack
                     {
-                        if tool.codes.count > 0
+                        // Chevron Buttons
+                        HStack(spacing: 0)
                         {
-                            Button
+                            if tool.codes.count > 0
                             {
-                                move_code(-1)
+                                Button
+                                {
+                                    move_code(-1)
+                                }
+                                label:
+                                {
+                                    Image(systemName: "chevron.left")
+                                        .padding(.trailing)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    #if !os(macOS)
+                                        .font(.system(size: 14, design: .rounded))
+                                    #endif
+                                }
+                                .buttonStyle(.borderless)
+                                #if os(iOS)
+                                .tint(.black)
+                                #endif
+                                .contentShape(Rectangle())
                             }
-                            label:
+                            
+                            if tool.codes.count > 0
                             {
-                                Image(systemName: "chevron.left")
-                                    .padding([.vertical, .leading], 12)
+                                Button
+                                {
+                                    move_code(1)
+                                }
+                                label:
+                                {
+                                    Image(systemName: "chevron.right")
+                                        .padding(.leading)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    #if !os(macOS)
+                                        .font(.system(size: 14, design: .rounded))
+                                    #endif
+                                }
+                                .buttonStyle(.borderless)
+                                #if os(iOS)
+                                .tint(.black)
+                                #endif
+                                .contentShape(Rectangle())
                             }
-                            .buttonStyle(.borderless)
-                            #if os(iOS)
-                            .tint(.black)
-                            #endif
-                            .contentShape(Rectangle())
                         }
+                        
+                        // Operation Button
+                        Button
+                        {
+                            tool.start_pause_single_operation()
+                        }
+                        label:
+                        {
+                            if tool.codes.count > 0
+                            {
+                                Image(systemName:
+                                        is_valid_symbol(current_code_info.symbol_name) ?
+                                        current_code_info.symbol_name :
+                                        ""
+                                )
+                                .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                                .modifier(CircleButtonImageFramer())
+                            }
+                            else
+                            {
+                                Rectangle()
+                                    .fill(.clear)
+                                    .modifier(CircleButtonImageFramer())
+                            }
+                        }
+                        .modifier(CircleButtonGlassBorderer())
                         
                         VStack
                         {
                             Text(tool.codes.count > 0 ? tool.code_info(tool.current_operation.value).name : "")
-                            #if os(macOS)
                                 .font(.system(size: 14, design: .rounded))
-                            #elseif os(iOS)
-                                .font(.system(size: 18, design: .rounded))
-                            #elseif os(visionOS)
-                                .font(.system(size: 16, design: .rounded))
-                                .padding(2)
-                            #endif
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity)
                                 .lineLimit(1)
-                                //.truncationMode(.tail)
                                 .padding(10)
                             #if os(iOS)
                                 .padding(tool.codes.count > 0 ? 0 : 4)
@@ -83,32 +131,33 @@ public struct OperationControl: View
                             #endif
                                 .id(tool.current_operation.value)
                                 .transition(.asymmetric(
-                                    insertion: .move(edge: slide_in),
-                                    removal: .move(edge: slide_out)
+                                    insertion: .move(edge: slide_in).combined(with: .opacity),
+                                    removal: .move(edge: slide_out).combined(with: .opacity)
                                 ))
-                        }
-                        
-                        if tool.codes.count > 0
-                        {
-                            Button
-                            {
-                                move_code(1)
-                            }
-                            label:
-                            {
-                                Image(systemName: "chevron.right")
-                                    .padding([.vertical, .trailing], 12)
-                            }
-                            .buttonStyle(.borderless)
-                            #if os(iOS)
-                            .tint(.black)
-                            #endif
-                            .contentShape(Rectangle())
+                                .background { Color.clear.contentShape(Rectangle()) }
+                            
+                            Spacer()
+                            
+                            let value_binding = Binding(
+                                get: { current_code_info.value },
+                                set:
+                                    { new_value in
+                                        tool.current_operation = OperationCode(new_value)
+                                    }
+                            )
+                            
+                            TextField("Value", value: value_binding, format: .number)
+                                .font(.system(size: 14, design: .rounded))
+                                .foregroundColor(.secondary)
+                                .frame(maxWidth: .infinity)
+                                .lineLimit(1)
+                                .padding(10)
+                                .multilineTextAlignment(.center)
+                                .textFieldStyle(.plain)
                         }
                     }
-                    .background(.clear)
-                    .frame(width: 120)//(width: 104) //.frame(maxWidth: .infinity)
-                    .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    //.background(.clear)
+                    .frame(width: 120, height: 120)
                     .gesture(
                         LongPressGesture(minimumDuration: 0.5)
                             .onChanged
@@ -174,55 +223,8 @@ public struct OperationControl: View
                         .contentShape(Rectangle())
                         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
                         
-                        HStack
+                        HStack(spacing: 0)
                         {
-                            ScrollView
-                            {
-                                if !current_code_info.description.isEmpty
-                                {
-                                    Text(current_code_info.description)
-                                        .multilineTextAlignment(.leading)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    #if os(macOS)
-                                        .font(.system(size: 10))
-                                    #else
-                                        .font(.system(size: 14))
-                                    #endif
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            .background(.quinary)
-                            #if os(macOS)
-                            .frame(width: 80, height: 80)
-                            #else
-                            .frame(width: 96, height: 96)
-                            #endif
-                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                            .overlay
-                            {
-                                if current_code_info.description.isEmpty
-                                {
-                                    ZStack
-                                    {
-                                        Text("No Info")
-                                            .frame(maxWidth: .infinity)
-                                            #if os(macOS)
-                                            .font(.system(size: 12))
-                                            #else
-                                            .font(.system(size: 16))
-                                            #endif
-                                            .foregroundStyle(.secondary)
-                                    }
-                                    #if os(macOS)
-                                    .frame(width: 80, height: 80)
-                                    #else
-                                    .frame(width: 96, height: 96)
-                                    #endif
-                                    .background(.quinary)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                                }
-                            }
-                            
                             ZStack
                             {
                                 let operation_binding = Binding(
@@ -245,8 +247,25 @@ public struct OperationControl: View
                                         {
                                             ForEach(tool.codes, id:\.self)
                                             { code in
-                                                Text(code.name)
-                                                    .font(.system(size: 12))
+                                                //Text(code.name)
+                                                    //.font(.system(size: 12))
+                                                HStack
+                                                {
+                                                    VStack(alignment: .leading)
+                                                    {
+                                                        Text(code.name)
+                                                            .font(.system(size: 12))
+                                                        
+                                                        if !code.description.isEmpty
+                                                        {
+                                                            Text(code.description)
+                                                                .font(.system(size: 8))
+                                                                .lineLimit(1)
+                                                                .help(code.description)
+                                                        }
+                                                    }
+                                                    Spacer()
+                                                }
                                             }
                                         }
                                         else
@@ -267,8 +286,25 @@ public struct OperationControl: View
                                     {
                                         ForEach(tool.codes, id:\.self)
                                         { code in
-                                            Text(code.name)
-                                                .font(.system(size: 16))
+                                            //Text(code.name)
+                                                //.font(.system(size: 16))
+                                            HStack
+                                            {
+                                                VStack(alignment: .leading)
+                                                {
+                                                    Text(code.name)
+                                                        .font(.system(size: 12))
+                                                    
+                                                    if !code.description.isEmpty
+                                                    {
+                                                        Text(code.description)
+                                                            .font(.system(size: 8))
+                                                            .lineLimit(1)
+                                                            .help(code.description)
+                                                    }
+                                                }
+                                                Spacer()
+                                            }
                                         }
                                     }
                                     else
@@ -280,83 +316,48 @@ public struct OperationControl: View
                                 .buttonStyle(.borderedProminent)
                                 #endif
                             }
-                            .background(.quinary)
-                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                            #if os(macOS)
-                            .frame(maxWidth: .infinity, maxHeight: 80)
-                            #else
-                            .frame(maxWidth: .infinity, maxHeight: 96)
-                            #endif
                             
-                            ZStack
+                            /*Divider()
+                                .padding(.vertical, 4)
+                            
+                            if !current_code_info.description.isEmpty
                             {
-                                let value_binding = Binding(
-                                    get: { current_code_info.value },
-                                    set:
-                                        { new_value in
-                                            tool.current_operation = OperationCode(new_value)
-                                        }
-                                )
-                                
-                                Rectangle()
-                                    .fill(.clear)
-                                
-                                TextField("Value", value: value_binding, format: .number)
-                                #if os(macOS)
-                                    .font(.system(size: 20))
-                                #else
-                                    .font(.system(size: 24))
-                                    .keyboardType(.decimalPad)
-                                #endif
-                                    .multilineTextAlignment(.center)
-                                    .textFieldStyle(.plain)
+                                ScrollView
+                                {
+                                    Text(current_code_info.description)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    #if os(macOS)
+                                        .font(.system(size: 10))
+                                    #else
+                                        .font(.system(size: 14))
+                                    #endif
+                                        .foregroundStyle(.secondary)
+                                        .textSelection(.enabled)
+                                        .padding(.horizontal, 4)
+                                }
                             }
-                            #if os(macOS)
-                            .frame(width: 80, height: 80)
-                            #else
-                            .frame(width: 96, height: 96)
-                            #endif
-                            .background(.quinary)
-                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            else
+                            {
+                                Text("No Info")
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                                    #if os(macOS)
+                                    .font(.system(size: 12))
+                                    #else
+                                    .font(.system(size: 16))
+                                    #endif
+                                    .foregroundStyle(.secondary)
+                                    .offset(y: -8)
+                            }*/
                         }
-                        .padding([.horizontal, .bottom], 10)
                     }
                     .transition(.opacity.combined(with: .scale(scale: 1.0)))
-                    #if os(macOS)
-                    .frame(width: is_expanded ? 300 : 120)
-                    #else
-                    .frame(width: is_expanded ? 360 : 120)
-                    #endif
+                    .frame(width: is_expanded ? 200 : 120, height: !is_vertical ? 120 : pendant_content_height)
                 }
             }
-            .clipShape(ExpandingShape(progress: is_expanded ? 1 : 0))
-            .glassEffect(.regular, in: ExpandingShape(progress: is_expanded ? 1 : 0))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             .scaleEffect(is_central_pressed ? 1.05 : 1)
-            
-            Button
-            {
-                tool.start_pause_single_operation()
-            }
-            label:
-            {
-                if tool.codes.count > 0
-                {
-                    Image(systemName:
-                            is_valid_symbol(current_code_info.symbol_name) ?
-                            current_code_info.symbol_name :
-                            ""
-                    )
-                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    .modifier(CircleButtonImageFramer())
-                }
-                else
-                {
-                    Rectangle()
-                        .fill(.clear)
-                        .modifier(CircleButtonImageFramer())
-                }
-            }
-            .modifier(CircleButtonGlassBorderer())
         }
         .disabled(tool.codes.count == 0)
         #if os(visionOS)
@@ -464,7 +465,9 @@ struct OperationControl_Previews: PreviewProvider
             {
                 tool.codes = [
                     OperationCodeInfo(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "Close the Tool"),
-                    OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "Open the Tool")
+                    OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "Open the Tool"),
+                    OperationCodeInfo(value: 2, name: "UwU", symbol_name: "questionmark"),
+                    OperationCodeInfo(value: 3, name: "OwO UwU WuW", symbol_name: "questionmark", description: "In some concept art, it was revealed that the loot in ancient cities was originally going to be stored within jar-shaped pots")
                 ]
             }
             .overlay(alignment: .topLeading)
