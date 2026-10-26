@@ -380,7 +380,6 @@ struct SpatialPendant_Previews: PreviewProvider
                     )
                     {
                         WorkspaceControlView(workspace: workspace, is_vertical: $is_vertical)
-                            //.frame(width: pendant_content_width)
                             .padding(8)
                             .frame(minHeight: is_vertical ? stack_height : .init())
                             .background(
@@ -395,7 +394,6 @@ struct SpatialPendant_Previews: PreviewProvider
                             )
                         
                         RobotControlView(robot: workspace.robot(named: "6DOF Robot"), is_vertical: $is_vertical)
-                            //.frame(width: pendant_content_width)
                             .padding(8)
                             .frame(minHeight: is_vertical ? stack_height : .init())
                             .background(
@@ -410,7 +408,6 @@ struct SpatialPendant_Previews: PreviewProvider
                             )
                         
                         ToolControlView(tool: workspace.tool(named: "Gripper"), is_vertical: $is_vertical)
-                            //.frame(width: pendant_content_width)
                             .padding(8)
                             .frame(minHeight: is_vertical ? stack_height : .init())
                             .background(
