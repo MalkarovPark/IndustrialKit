@@ -58,11 +58,16 @@ public struct ElementControl: View
                     Spacer()
                     
                     Text(workspace.current_element.info)
+                    #if os(macOS)
+                        .font(.default.scaled(by: 0.8))
+                    #else
                         .font(.default.scaled(by: 0.4))
+                    #endif
                         .foregroundColor(.secondary)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
                         .lineLimit(2)
                         .padding(10)
+                        .frame(height: (120 - 48) / 2)
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .gesture(
