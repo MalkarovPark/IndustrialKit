@@ -188,8 +188,8 @@ let pendant_content_height: CGFloat = 240
 let max_pendant_content_height: CGFloat = 520
 let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #elseif os(visionOS)
-let pendant_content_width: CGFloat = 280
-let pendant_content_height: CGFloat = 280
+let pendant_content_width: CGFloat = 240
+let pendant_content_height: CGFloat = 240
 let max_pendant_content_height: CGFloat = 520
 let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #endif
@@ -288,6 +288,9 @@ struct SpatialPendant_Previews: PreviewProvider
                     }
                     .buttonStyle(.bordered)
                     .padding()
+                    #if os(visionOS)
+                    .offset(x: -200)
+                    #endif
                     
                     SpatialPendant(
                         controller: pendant_controller,

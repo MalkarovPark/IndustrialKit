@@ -58,10 +58,10 @@ public struct ElementControl: View
                     Spacer()
                     
                     Text(workspace.current_element.info)
-                        .font(.default.scaled(by: 0.8))
+                        .font(.default.scaled(by: 0.4))
                         .foregroundColor(.secondary)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
-                        .lineLimit(1)
+                        .lineLimit(2)
                         .padding(10)
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -206,20 +206,19 @@ public struct ElementControl: View
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.image)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.color)
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    #if os(macOS)
                         .frame(width: 48, height: 48)
-                    #elseif os(iOS)
-                        .frame(width: 56, height: 56)
-                    #elseif os(visionOS)
-                        .frame(width: 56, height: 56)
-                    #endif
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .glassEffect(.regular/*.interactive()*/.tint(workspace.current_element.color), in: .rect(cornerRadius: 10, style: .continuous))
+                .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
             }
             .buttonStyle(.plain)
-            .glassEffect(.regular.interactive().tint(workspace.current_element.color), in: .rect(cornerRadius: 16, style: .continuous))
-            .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
+            .buttonBorderShape(.roundedRectangle(radius: 10))
             .scaleEffect(!is_expanded ? 1 : 0.8)
+            /*.modifier(
+                _ScaleEffect(scale: CGSize(width: !is_expanded ? 1 : 0.8, height: !is_expanded ? 1 : 0.8), anchor: .center)
+                    .ignoredByLayout()
+            )*/
             .padding(8)
         }
         .clipShape(.rect(cornerRadius: 16, style: .continuous))

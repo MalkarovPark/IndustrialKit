@@ -57,8 +57,14 @@ public struct OperationControl: View
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                             }
                             .buttonStyle(.borderless)
+                            #if !os(macOS)
+                            .imageScale(.small)
+                            #endif
                             #if os(iOS)
                             .tint(.black)
+                            #endif
+                            #if os(visionOS)
+                            .buttonBorderShape(.roundedRectangle(radius: 0))
                             #endif
                             .contentShape(Rectangle())
                         }
@@ -76,8 +82,14 @@ public struct OperationControl: View
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                             }
                             .buttonStyle(.borderless)
+                            #if !os(macOS)
+                            .imageScale(.small)
+                            #endif
                             #if os(iOS)
                             .tint(.black)
+                            #endif
+                            #if os(visionOS)
+                            .buttonBorderShape(.roundedRectangle(radius: 0))
                             #endif
                             .contentShape(Rectangle())
                         }
@@ -85,22 +97,44 @@ public struct OperationControl: View
                     
                     VStack
                     {
+                        #if os(macOS) || os(iOS)
                         Text(tool.codes.count > 0 ? tool.code_info(tool.current_operation.value).name : "")
                             .font(.system(size: 14, design: .rounded))
                             //.foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity)
                             .lineLimit(1)
                             .padding(10)
-                        /*#if os(iOS)
-                            .padding(tool.codes.count > 0 ? 0 : 4)
-                            .foregroundStyle(.black)
-                        #endif*/
                             .id(tool.current_operation.value)
                             .transition(.asymmetric(
                                 insertion: .move(edge: slide_in).combined(with: .opacity),
                                 removal: .move(edge: slide_out).combined(with: .opacity)
                             ))
                             .background { Color.clear.contentShape(Rectangle()) }
+                        #else
+                        Button
+                        {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                            {
+                                is_expanded = true
+                            }
+                        }
+                        label:
+                        {
+                            Text(tool.codes.count > 0 ? tool.code_info(tool.current_operation.value).name : "")
+                                .font(.system(size: 14, design: .rounded))
+                                //.foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity)
+                                .lineLimit(1)
+                                //.padding(10)
+                                .id(tool.current_operation.value)
+                                .transition(.asymmetric(
+                                    insertion: .move(edge: slide_in).combined(with: .opacity),
+                                    removal: .move(edge: slide_out).combined(with: .opacity)
+                                ))
+                        }
+                        .buttonStyle(.plain)
+                        .padding(10)
+                        #endif
                         
                         Spacer()
                         
@@ -120,9 +154,13 @@ public struct OperationControl: View
                             .padding(10)
                             .multilineTextAlignment(.center)
                             .textFieldStyle(.plain)
+                        #if os(iOS) || os(visionOS)
+                            .keyboardType(.decimalPad)
+                        #endif
                     }
                 }
                 .frame(width: 120, height: 120)
+                #if os(macOS) || os(iOS)
                 .gesture(
                     LongPressGesture(minimumDuration: 0.5)
                         .onChanged
@@ -162,6 +200,7 @@ public struct OperationControl: View
                                 }
                             )
                 )
+                #endif
             }
             else
             {
@@ -255,11 +294,11 @@ public struct OperationControl: View
                                             //.font(.system(size: 16))
                                         HStack
                                         {
-                                            #if os(iOS)
+                                            //#if os(iOS)
                                             Rectangle()
                                                 .fill(.clear)
                                                 .frame(width: 4)
-                                            #endif
+                                            //#endif
                                             
                                             VStack(alignment: .leading)
                                             {
@@ -275,11 +314,7 @@ public struct OperationControl: View
                                                 }
                                             }
                                             
-                                            #if os(iOS)
-                                            Spacer()
-                                            #else
                                             Spacer(minLength: 4)
-                                            #endif
                                         }
                                     }
                                 }
@@ -289,7 +324,6 @@ public struct OperationControl: View
                                 }
                             }
                             .pickerStyle(.wheel)
-                            .buttonStyle(.borderedProminent)
                             #endif
                         }
                         
@@ -340,13 +374,26 @@ public struct OperationControl: View
             {
                 if tool.codes.count > 0
                 {
-                    Image(systemName:
-                            is_valid_symbol(current_code_info.symbol_name) ?
-                            current_code_info.symbol_name :
-                            ""
+                    Image(
+                        systemName:
+                            is_valid_symbol(current_code_info.symbol_name)
+                        ? current_code_info.symbol_name
+                        : String()
                     )
-                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    .modifier(CircleButtonImageFramer())
+                    #if os(macOS)
+                        .imageScale(.large)
+                    #endif
+                    #if os(macOS)
+                        .frame(width: 16, height: 16)
+                    #else
+                        .frame(width: 24, height: 24)
+                    #endif
+                        .padding(6)
+                    #if os(iOS)
+                        .tint(.black)
+                    #endif
+                        .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                    //.modifier(CircleButtonImageFramer())
                 }
                 else
                 {
@@ -470,7 +517,7 @@ struct OperationControl_Previews: PreviewProvider
                     OperationCodeInfo(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "Close the Tool"),
                     OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "Open the Tool"),
                     OperationCodeInfo(value: 2, name: "UwU", symbol_name: "questionmark"),
-                    OperationCodeInfo(value: 3, name: "OwO UwU WuW", symbol_name: "exclamationmark", description: "In some concept art, it was revealed that the loot in ancient cities was originally going to be stored within jar-shaped pots")
+                    OperationCodeInfo(value: 3, name: "OwO", symbol_name: "woof", description: "In some concept art, it was revealed that the loot in ancient cities was originally going to be stored within jar-shaped pots")
                 ]
             }
             .overlay(alignment: .topLeading)
