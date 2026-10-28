@@ -12,16 +12,30 @@ public struct ElementControl: View
 {
     @ObservedObject var workspace: Workspace
     
+    //@Binding var is_vertical: Bool
+    
     @State private var is_expanded = false
     @State private var is_central_pressed = false
+    
+    let on_expand: () -> ()
+    let on_collapse: () -> ()
     
     @Namespace private var pane_glass
     
     public init(
-        workspace: Workspace
+        workspace: Workspace,
+        
+        //is_vertical: Binding<Bool> = .constant(false),
+        
+        on_expand: @escaping () -> Void = {},
+        on_collapse: @escaping () -> Void = {}
     )
     {
         self.workspace = workspace
+        //self._is_vertical = is_vertical
+        
+        self.on_expand = on_expand
+        self.on_collapse = on_collapse
     }
     
     public var body: some View
@@ -81,32 +95,16 @@ public struct ElementControl: View
                         }
                         .onEnded
                         { _ in
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
-                            {
-                                is_expanded = true
-                                
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                                {
-                                    is_central_pressed = false
-                                }
-                            }
+                            tap_action()
                         }
                         .simultaneously(
                             with:
                                 TapGesture()
                                 .onEnded
                                 {
-                                    is_central_pressed = true
+                                    is_central_pressed = false
                                     
-                                    withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
-                                    {
-                                        is_central_pressed = true
-                                        is_expanded = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
-                                        {
-                                            is_central_pressed = false
-                                        }
-                                    }
+                                    tap_action()
                                 }
                             )
                 )
@@ -118,12 +116,7 @@ public struct ElementControl: View
                 // Editor
                 VStack(spacing: 0)
                 {
-                    Button(action: {
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
-                        {
-                            is_expanded = false
-                        }
-                    })
+                    Button(action: collapse_tap_action)
                     {
                         Image(systemName: "chevron.compact.down")
                             .padding(10)
@@ -145,7 +138,9 @@ public struct ElementControl: View
                             ProductionProgramElementView(element: workspace.current_element, workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
                                 .padding(4)
                         }
-                        .frame(width: is_expanded ? element_control_width : 120)
+                        //.frame(idealWidth: element_control_width * 0.75)
+                        //.frame(width: is_vertical ? nil : element_control_width)
+                        //.frame(width: is_expanded ? element_control_width : 120)
                         
                         Menu("New Element")
                         {
@@ -194,6 +189,11 @@ public struct ElementControl: View
                     }
                     .padding([.horizontal, .bottom], 10)
                 }
+                /*.frame(
+                    width: is_vertical ? expanded_element_control_width : element_control_width,
+                    height: is_vertical ? nil : expanded_element_control_height
+                )*/
+                //.animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
             }
             
             // Element Button
@@ -214,7 +214,7 @@ public struct ElementControl: View
                         .frame(width: 48, height: 48)
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .glassEffect(.regular/*.interactive()*/.tint(workspace.current_element.color), in: .rect(cornerRadius: 10, style: .continuous))
+                .glassEffect(.regular.tint(workspace.current_element.color), in: .rect(cornerRadius: 10, style: .continuous))
                 .animation(.spring(response: 0.35, dampingFraction: 0.75), value: workspace.current_element)
             }
             .buttonStyle(.plain)
@@ -235,17 +235,43 @@ public struct ElementControl: View
         .offset(z: 2)
         #endif
     }
+    
+    // MARK: – Central press actions
+    private func tap_action()
+    {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+        {
+            is_expanded = true
+            
+            on_expand()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1)
+            {
+                is_central_pressed = false
+            }
+        }
+    }
+    
+    private func collapse_tap_action()
+    {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
+        {
+            is_expanded = false
+            
+            on_collapse()
+        }
+    }
 }
 
 #if os(macOS)
 internal let element_control_width: CGFloat = 272
-internal let element_panel_width: CGFloat = 120
+internal let element_control_height: CGFloat = 272
 #elseif os(iOS)
 internal let element_control_width: CGFloat = 370
-internal let element_panel_width: CGFloat = 140
+internal let element_control_height: CGFloat = 370
 #elseif os(visionOS)
 internal let element_control_width: CGFloat = 400
-internal let element_panel_width: CGFloat = 160
+internal let element_control_height: CGFloat = 400
 #endif
 
 //MARK: Type enums
@@ -373,8 +399,6 @@ public struct ProductionProgramElementView: View
     }
 }
 
-
-
 // MARK: - Previews
 struct ElementControl_Previews: PreviewProvider
 {
@@ -382,7 +406,7 @@ struct ElementControl_Previews: PreviewProvider
     {
         @StateObject var workspace = Workspace()
         
-        @State var is_vertical = false
+        //@State var is_vertical = true
         
         var body: some View
         {
@@ -390,20 +414,21 @@ struct ElementControl_Previews: PreviewProvider
             {
                 Spacer()
                 
-                ElementControl(workspace: workspace)
+                ElementControl(workspace: workspace)//, is_vertical: $is_vertical)
+                    .frame(maxWidth: element_control_width)
                     .padding()
             }
             #if !os(visionOS)
             .frame(width: 400, height: 440)
             #endif
             .onAppear { prepare_workspace() }
-            .overlay(alignment: .topLeading)
+            /*.overlay(alignment: .topLeading)
             {
                 Button(is_vertical ? "Vertical" : "Horizontal")
                 {
                     is_vertical.toggle()
                 }
-            }
+            }*/
         }
         
         private func prepare_workspace()

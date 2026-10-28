@@ -67,10 +67,9 @@ public struct ToolControlView: View
                     ScrollView
                     {
                         LazyVGrid(
-                            columns: Array(
-                                repeating: GridItem(.flexible()),
-                                count: is_vertical ? 1 : 3
-                            ),
+                            columns: is_vertical
+                                ? [GridItem(.flexible())]
+                                : [GridItem(.adaptive(minimum: 120), spacing: 8)],
                             spacing: 8
                         )
                         {
@@ -222,10 +221,6 @@ public struct ToolControlView: View
                     }
                 }
             }
-            .frame(
-                minWidth: pendant_content_width, maxWidth: is_vertical ? pendant_content_width : max_pendant_content_width,
-                maxHeight: is_vertical ? max_pendant_content_height : pendant_content_height
-            )
             
             // MARK: Controls
             OperationControl(tool: tool, is_vertical: Binding(
@@ -233,6 +228,20 @@ public struct ToolControlView: View
                 set: { new_value in is_vertical = !new_value }
             ))
         }
+        /*.frame(
+            maxWidth: is_vertical
+            ? position_pane_expanded ? expanded_position_view_width : pendant_content_width
+            : max_pendant_content_width,
+            maxHeight: is_vertical
+            ? max_pendant_content_height
+            : position_pane_expanded ? expanded_position_view_height : pendant_content_height
+        )*/
+        .frame(
+            minWidth: pendant_content_width,
+            maxWidth: is_vertical ? pendant_content_width : max_pendant_content_width,
+            minHeight: pendant_content_height,
+            maxHeight: is_vertical ? max_pendant_content_height : pendant_content_height
+        )
     }
     
     // MARK: Functions
@@ -354,10 +363,9 @@ private struct OperationProgramView: View
             {
                 //LazyVStack(spacing: 8)
                 LazyVGrid(
-                    columns: Array(
-                        repeating: GridItem(.flexible()),
-                        count: is_vertical ? 1 : 3
-                    ),
+                    columns: is_vertical
+                        ? [GridItem(.flexible())]
+                        : [GridItem(.adaptive(minimum: 120), spacing: 8)],
                     spacing: 8
                 )
                 {

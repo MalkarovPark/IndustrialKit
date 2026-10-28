@@ -361,8 +361,11 @@ public struct OperationControl: View
                         }*/
                     }
                 }
+                .frame(
+                    width: is_expanded ? pendant_content_width : 120,
+                    height: is_vertical ? pendant_content_height : 160
+                )
                 .transition(.opacity.combined(with: .scale(scale: 1.0)))
-                .frame(width: is_expanded ? 200 : 120, height: !is_vertical ? 120 : pendant_content_height)
             }
             
             // Operation Button

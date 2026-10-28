@@ -52,6 +52,7 @@ public struct ProgramItemView: View
                     .font(.system(size: 18, design: .rounded))
                 #endif
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
                     .padding(.leading, 16)
             }
             else

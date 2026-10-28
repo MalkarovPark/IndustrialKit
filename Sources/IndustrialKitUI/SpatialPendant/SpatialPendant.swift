@@ -84,6 +84,10 @@ public struct SpatialPendant: View
                                 Rectangle()
                                     .fill(.clear)
                                     .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+                                    .frame(
+                                        minWidth: pendant_content_width, maxWidth: controller.is_vertical ? pendant_content_width : max_pendant_content_width,
+                                        minHeight: pendant_content_height, maxHeight: controller.is_vertical ? max_pendant_content_height : pendant_content_height
+                                    )
                             }
                         case .some(_):
                             Text("Nothing")
@@ -108,7 +112,10 @@ public struct SpatialPendant: View
                             .fill(.clear)
                             .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
                     }
-                    .frame(width: pendant_content_width)
+                    .frame(
+                        minWidth: pendant_content_width, maxWidth: controller.is_vertical ? pendant_content_width : max_pendant_content_width,
+                        minHeight: pendant_content_height, maxHeight: controller.is_vertical ? max_pendant_content_height : pendant_content_height
+                    )
                     .hidden()
                 }
             }
@@ -151,7 +158,10 @@ public struct SpatialPendant: View
                         .font(.system(size: 18, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
-                .frame(maxWidth: pendant_content_width, maxHeight: .infinity)
+                .frame(
+                    minWidth: pendant_content_width, maxWidth: controller.is_vertical ? pendant_content_width : max_pendant_content_width,
+                    minHeight: pendant_content_height, maxHeight: controller.is_vertical ? max_pendant_content_height : pendant_content_height
+                )
                 #endif
             case .some(_):
                 Text("Nothing")
@@ -344,7 +354,6 @@ struct SpatialPendant_Previews: PreviewProvider
                     
                     WorkspaceControlView(workspace: workspace)
                         .padding(8)
-                        .frame(height: stack_height)
                         .overlay(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.tertiary, lineWidth: 1)
@@ -353,7 +362,6 @@ struct SpatialPendant_Previews: PreviewProvider
                     
                     RobotControlView(robot: workspace.robot(named: "6DOF Robot"))
                         .padding(8)
-                        .frame(height: stack_height)
                         .overlay(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.tertiary, lineWidth: 1)
@@ -362,7 +370,6 @@ struct SpatialPendant_Previews: PreviewProvider
                     
                     ToolControlView(tool: workspace.tool(named: "Gripper"))
                         .padding(8)
-                        .frame(height: stack_height)
                         .overlay(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.tertiary, lineWidth: 1)
@@ -384,7 +391,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     {
                         WorkspaceControlView(workspace: workspace, is_vertical: $is_vertical)
                             .padding(8)
-                            .frame(minHeight: is_vertical ? stack_height : .init())
+                            //.frame(minHeight: is_vertical ? stack_height : nil)
                             .background(
                                 GeometryReader
                                 { geometry in
@@ -398,7 +405,7 @@ struct SpatialPendant_Previews: PreviewProvider
                         
                         RobotControlView(robot: workspace.robot(named: "6DOF Robot"), is_vertical: $is_vertical)
                             .padding(8)
-                            .frame(minHeight: is_vertical ? stack_height : .init())
+                            //.frame(minHeight: is_vertical ? stack_height : nil)
                             .background(
                                 GeometryReader
                                 { geometry in
@@ -412,7 +419,7 @@ struct SpatialPendant_Previews: PreviewProvider
                         
                         ToolControlView(tool: workspace.tool(named: "Gripper"), is_vertical: $is_vertical)
                             .padding(8)
-                            .frame(minHeight: is_vertical ? stack_height : .init())
+                            //.frame(minHeight: is_vertical ? stack_height : nil)
                             .background(
                                 GeometryReader
                                 { geometry in
@@ -424,11 +431,11 @@ struct SpatialPendant_Previews: PreviewProvider
                                 }
                             )
                     }
-                    .padding(is_vertical ? 80 : 20)
-                    .frame(width: !is_vertical ? pendant_content_width * 3.5 : .infinity)
+                    .frame(minHeight: is_vertical ? stack_height : nil)
+                    .padding(is_vertical ? 100 : 20)
                 }
                 .frame(maxWidth: .infinity)
-                .overlay(alignment: .topLeading)
+                .background(alignment: .topLeading)
                 {
                     Button(is_vertical ? "Vertical" : "Horizontal")
                     {

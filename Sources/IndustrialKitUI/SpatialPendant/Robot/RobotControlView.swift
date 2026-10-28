@@ -43,7 +43,7 @@ public struct RobotControlView: View
     @Namespace private var animation_namespace
     
     @State private var new_view_is_expanded = false
-    @State private var position_pane_is_expanded = false
+    @State private var position_pane_expanded = false
     
     public var body: some View
     {
@@ -53,8 +53,6 @@ public struct RobotControlView: View
             {
                 // MARK: Caption
                 PerformingCaptionView(name: robot.name, performing_state: robot.performing_state)
-                    .frame(maxWidth: is_vertical ? pendant_content_width : .infinity)
-                    //.frame(width: pendant_content_width)
                 
                 // MARK: Program
                 ZStack
@@ -66,10 +64,13 @@ public struct RobotControlView: View
                     ScrollView
                     {
                         LazyVGrid(
-                            columns: Array(
+                            /*columns: Array(
                                 repeating: GridItem(.flexible()),
                                 count: is_vertical ? 1 : 3
-                            ),
+                            )*/
+                            columns: is_vertical
+                                ? [GridItem(.flexible())]
+                                : [GridItem(.adaptive(minimum: 120), spacing: 8)],
                             spacing: 8
                         )
                         {
@@ -143,7 +144,6 @@ public struct RobotControlView: View
                         
                         Spacer(minLength: 48)
                     }
-                    .frame(maxWidth: .infinity)
                     .clipShape(.rect(cornerRadius: 16, style: .continuous))
                     
                     if let program = robot.selected_program
@@ -195,22 +195,19 @@ public struct RobotControlView: View
                     }
                 }
             }
-            .frame(
-                minWidth: pendant_content_width, maxWidth: is_vertical ? pendant_content_width : max_pendant_content_width,
-                maxHeight: is_vertical ? max_pendant_content_height : pendant_content_height
-            )
             
             // MARK: Controls
             VStack(alignment: .center, spacing: 10)
             {
                 PositionPane (
                     robot: robot,
-                    on_expand: { position_pane_is_expanded = true },
-                    on_collapse: { position_pane_is_expanded = false }
+                    is_vertical: is_vertical,
+                    on_expand: { position_pane_expanded = true },
+                    on_collapse: { position_pane_expanded = false }
                 )
                 .zIndex(1)
                 
-                if !position_pane_is_expanded
+                if !position_pane_expanded
                 {
                     PositionControl(robot: robot)
                         .frame(width: 120)
@@ -218,6 +215,16 @@ public struct RobotControlView: View
                 }
             }
         }
+        .frame(
+            minWidth: pendant_content_width,
+            maxWidth: is_vertical
+            ? position_pane_expanded ? expanded_position_view_width : pendant_content_width
+            : max_pendant_content_width,
+            minHeight: pendant_content_height,
+            maxHeight: is_vertical
+            ? max_pendant_content_height
+            : position_pane_expanded ? expanded_position_view_height : pendant_content_height
+        )
     }
     
     // MARK: Functions
@@ -264,6 +271,7 @@ private struct ProgramDropDelegate: DropDelegate
     let robot: Robot
     
     let current_program: PositionProgram
+    
     @Binding var dragging_program_id: UUID?
     
     let on_update: () -> ()
@@ -344,10 +352,9 @@ private struct PositionProgramView: View
             ScrollView
             {
                 LazyVGrid(
-                    columns: Array(
-                        repeating: GridItem(.flexible()),
-                        count: is_vertical ? 1 : 3
-                    ),
+                    columns: is_vertical
+                        ? [GridItem(.flexible())]
+                        : [GridItem(.adaptive(minimum: 120), spacing: 8)],
                     spacing: 8
                 )
                 {
@@ -443,6 +450,7 @@ private struct PositionItemView: View
                     {
                         Text("X: \(String(format: "%.0f", point_item.x)) Y: \(String(format: "%.0f", point_item.y)) Z: \(String(format: "%.0f", point_item.z))")
                             .font(.system(size: position_item_font_size))
+                            .lineLimit(1)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                     
@@ -452,6 +460,7 @@ private struct PositionItemView: View
                     {
                         Text("R: \(String(format: "%.0f", point_item.r)) P: \(String(format: "%.0f", point_item.p)) W: \(String(format: "%.0f", point_item.w))")
                             .font(.system(size: position_item_font_size))
+                            .lineLimit(1)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }

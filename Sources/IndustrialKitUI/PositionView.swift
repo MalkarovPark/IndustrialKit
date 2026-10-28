@@ -14,14 +14,19 @@ public struct PositionView: View
                                    r: Float, p: Float, w: Float)
     
     private var with_steppers: Bool = false
+    private var with_spacer: Bool = false
     
-    public init(position: Binding<(x: Float, y: Float, z: Float,
-                                   r: Float, p: Float, w: Float)>,
-                with_steppers: Bool = false)
+    public init(
+        position: Binding<(x: Float, y: Float, z: Float,
+                           r: Float, p: Float, w: Float)>,
+        with_steppers: Bool = false,
+        with_spacer: Bool = false
+    )
     {
         self._position = position
         
         self.with_steppers = with_steppers
+        self.with_spacer = with_spacer
         
         self.with_location = true
         self.with_rotation = true
@@ -30,8 +35,11 @@ public struct PositionView: View
     private var with_location = false
     private var with_rotation = false
     
-    public init(location: Binding<(x: Float, y: Float, z: Float)>,
-                with_steppers: Bool = false)
+    public init(
+        location: Binding<(x: Float, y: Float, z: Float)>,
+        with_steppers: Bool = false,
+        with_spacer: Bool = false
+    )
     {
         self._position = Binding(
             get: {
@@ -52,12 +60,16 @@ public struct PositionView: View
         )
         
         self.with_steppers = with_steppers
+        self.with_spacer = with_spacer
         
         self.with_location = true
     }
     
-    public init(rotation: Binding<(r: Float, p: Float, w: Float)>,
-                with_steppers: Bool = false)
+    public init(
+        rotation: Binding<(r: Float, p: Float, w: Float)>,
+        with_steppers: Bool = false,
+        with_spacer: Bool = false
+    )
     {
         self._position = Binding(
             get: {
@@ -78,6 +90,7 @@ public struct PositionView: View
         )
         
         self.with_steppers = with_steppers
+        self.with_spacer = with_spacer
         
         self.with_rotation = true
     }
@@ -157,17 +170,23 @@ public struct PositionView: View
                                 }
                             }
                         }
+                        
+                        if with_spacer
+                        {
+                            Spacer(minLength: 0)
+                        }
                     }
                 }
             }
         }
-        #if os(macOS)
-        .frame(minWidth: 260)
+        /*#if os(macOS)
+        .frame(minWidth: pendant_content_width)
+        //.frame(minWidth: 260)
         #elseif os(iOS)
         .frame(minWidth: 300)
         #elseif os(visionOS)
         .frame(minWidth: 340)
-        #endif
+        #endif*/
     }
     
     private func binding(for component: PositionComponents) -> Binding<Float>

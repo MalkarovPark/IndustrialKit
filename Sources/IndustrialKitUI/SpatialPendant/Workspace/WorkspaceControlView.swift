@@ -49,6 +49,8 @@ struct WorkspaceControlView: View
     
     @State private var view_program_as_text = false
     
+    @State private var element_pane_expanded = false
+    
     var body: some View
     {
         DynamicStack(is_vertical: $is_vertical, vertical_alignment: .center, spacing: 10) // VStack(alignment: .center, spacing: 10)
@@ -57,8 +59,6 @@ struct WorkspaceControlView: View
             {
                 // MARK: Caption
                 PerformingCaptionView(name: "Workspace", performing_state: workspace.performing_state)
-                    .frame(maxWidth: is_vertical ? pendant_content_width : .infinity)
-                    //.frame(width: pendant_content_width)
                     .overlay(alignment: .leading)
                     {
                         HStack
@@ -233,17 +233,22 @@ struct WorkspaceControlView: View
                         
                         Spacer(minLength: 48)
                     }
-                    .frame(maxWidth: .infinity)
                     .clipShape(.rect(cornerRadius: 16, style: .continuous))
                     
                     if let program = workspace.selected_program
                     {
-                        ProductionProgramView(view_program_as_text: $view_program_as_text, code_editor_text: $code_editor_text, workspace: workspace, program: program, on_update: on_update)
-                            {
-                                deselect_program()
-                            }
-                            .matchedGeometryEffect(id: program.id, in: animation_namespace)
-                            .zIndex(1)
+                        ProductionProgramView(
+                            view_program_as_text: $view_program_as_text,
+                            code_editor_text: $code_editor_text,
+                            workspace: workspace,
+                            program: program,
+                            on_update: on_update
+                        )
+                        {
+                            deselect_program()
+                        }
+                        .matchedGeometryEffect(id: program.id, in: animation_namespace)
+                        .zIndex(1)
                     }
                 }
                 .overlay(alignment: .bottomTrailing)
@@ -280,14 +285,23 @@ struct WorkspaceControlView: View
                     }
                 }
             }
-            .frame(
-                minWidth: pendant_content_width, maxWidth: is_vertical ? pendant_content_width : max_pendant_content_width,
-                maxHeight: is_vertical ? max_pendant_content_height : pendant_content_height
-            )
             
             // MARK: Controls
-            ElementControl(workspace: workspace)
+            ElementControl(workspace: workspace, /*is_vertical: Binding(
+                get: { !is_vertical },
+                set: { new_value in is_vertical = !new_value }
+            ),*/ on_expand: { element_pane_expanded = true }, on_collapse: { element_pane_expanded = false })
         }
+        .frame(
+            minWidth: pendant_content_width,
+            maxWidth: is_vertical
+            ? element_pane_expanded ? element_control_width : pendant_content_width
+            : max_pendant_content_width,
+            minHeight: pendant_content_height,
+            maxHeight: is_vertical
+            ? max_pendant_content_height
+            : element_pane_expanded ? element_control_height : pendant_content_height
+        )
     }
     
     // MARK: Functions

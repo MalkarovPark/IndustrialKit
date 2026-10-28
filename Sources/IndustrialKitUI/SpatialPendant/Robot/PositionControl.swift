@@ -315,19 +315,25 @@ public struct PositionPane: View
     @State private var is_editor_mode = false
     @State private var is_central_pressed = false
     
-    @Namespace private var glass_pane
+    var is_vertical: Bool
     
     let on_expand: () -> ()
     let on_collapse: () -> ()
     
+    @Namespace private var glass_pane
+    
     public init(
         robot: Robot,
+        
+        is_vertical: Bool = true,
         
         on_expand: @escaping () -> Void = {},
         on_collapse: @escaping () -> Void = {}
     )
     {
         self.robot = robot
+        
+        self.is_vertical = is_vertical
         
         self.on_expand = on_expand
         self.on_collapse = on_collapse
@@ -460,18 +466,19 @@ public struct PositionPane: View
                     
                     HStack
                     {
-                        PositionView(position: $robot.pointer_position, with_steppers: true)
-                            .opacity(is_editor_mode ? 1 : 0)
+                        PositionView(
+                            position: $robot.pointer_position,
+                            with_steppers: false/*!is_vertical*/,
+                            with_spacer: !is_vertical
+                        )
+                        .opacity(is_editor_mode ? 1 : 0)
                     }
                     .padding([.horizontal, .bottom], 10)
                 }
-                #if os(macOS)
-                .frame(width: is_editor_mode ? 280 : 120)
-                #elseif os(iOS)
-                .frame(width: is_editor_mode ? 332 : 120)
-                #elseif os(visionOS)
-                .frame(width: is_editor_mode ? 372 : 120)
-                #endif
+                .frame(
+                    width: is_vertical ? expanded_position_view_width : position_view_width,
+                    height: is_vertical ? nil : expanded_position_view_height
+                )
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_editor_mode)
             }
         }
@@ -520,17 +527,30 @@ public struct PositionPane: View
     }
 }
 
+#if os(macOS)
+internal let expanded_position_view_width: CGFloat = pendant_content_width // 200 // 280
+internal let expanded_position_view_height: CGFloat = 200
+internal let position_view_width: CGFloat = 260
+#elseif os(iOS)
+internal let expanded_position_view_width: CGFloat = 332
+internal let expanded_position_view_height: CGFloat = 260
+internal let position_view_width: CGFloat = 300
+#elseif os(visionOS)
+internal let expanded_position_view_width: CGFloat = 372
+internal let expanded_position_view_height: CGFloat = 300
+internal let position_view_width: CGFloat = 340
+#endif
+
 // MARK: - Previews
 struct PositionControl_Previews: PreviewProvider
 {
     struct Container: View
     {
-        @State private var is_spatial = false
-        @State var is_pan = true
+        @State var is_vertical = true
         
         @StateObject var robot = Robot()
         
-        @State private var position_pane_is_expanded = false
+        @State private var position_pane_expanded = false
         
         var body: some View
         {
@@ -540,12 +560,13 @@ struct PositionControl_Previews: PreviewProvider
                 
                 PositionPane(
                     robot: robot,
-                    on_expand: { withAnimation { position_pane_is_expanded = true } },
-                    on_collapse: { withAnimation { position_pane_is_expanded = false } }
+                    is_vertical: is_vertical,
+                    on_expand: { withAnimation { position_pane_expanded = true } },
+                    on_collapse: { withAnimation { position_pane_expanded = false } }
                 )
                 .zIndex(1)
                 
-                if !position_pane_is_expanded
+                if !position_pane_expanded
                 {
                     PositionControl(robot: robot)
                         .frame(width: 120)
@@ -560,21 +581,28 @@ struct PositionControl_Previews: PreviewProvider
                                     .combined(with: .opacity)
                             )
                         )
-                        .offset(z: position_pane_is_expanded ? -8 : 0)
+                        .offset(z: position_pane_expanded ? -8 : 0)
                     #endif
                         .padding(10)
                 }
                 /*PositionControl(robot: robot)
                     .padding(10)
-                    .offset(z: position_pane_is_expanded ? -8 : 0)
-                    .frame(width: position_pane_is_expanded ? 0 : 120, height: position_pane_is_expanded ? 0 : 120)
-                    .scaleEffect(position_pane_is_expanded ? 0 : 1)*/
+                    .offset(z: position_pane_expanded ? -8 : 0)
+                    .frame(width: position_pane_expanded ? 0 : 120, height: position_pane_expanded ? 0 : 120)
+                    .scaleEffect(position_pane_expanded ? 0 : 1)*/
             }
             #if !os(visionOS)
             .frame(width: 400, height: 400)
             #else
             .frame(width: 400, height: 600)
             #endif
+            .overlay(alignment: .topLeading)
+            {
+                Button(is_vertical ? "Vertical" : "Horizontal")
+                {
+                    is_vertical.toggle()
+                }
+            }
         }
     }
     
