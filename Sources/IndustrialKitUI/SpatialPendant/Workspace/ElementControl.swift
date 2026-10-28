@@ -193,7 +193,8 @@ public struct ElementControl: View
                     width: is_vertical ? expanded_element_control_width : element_control_width,
                     height: is_vertical ? nil : expanded_element_control_height
                 )*/
-                //.animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
+                .frame(width: element_control_width)//, height: element_control_height)
+                .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
             }
             
             // Element Button
