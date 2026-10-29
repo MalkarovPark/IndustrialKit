@@ -626,7 +626,8 @@ import SwiftUI
             }
         }
         
-        element.import_module(element.module_name, is_internal: !element.module_name.hasPrefix("."))
+        element.import_module()
+        //element.import_module(element.module_name, is_internal: !element.module_name.hasPrefix("."))
     }
     
     // MARK: - Performing State

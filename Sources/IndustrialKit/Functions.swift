@@ -105,12 +105,14 @@ public func clone_element(_ element: ProductionProgramElement, to program: Produ
     if let e = element as? MarkLogicElement { insert(e); return }
     if let e = element as? WaitLogicElement { insert(e); return }
     
-    //print("clone_element: unsupported type:", type(of: element))
+    //print("Unsupported element type:", type(of: element))
     
     func insert<T: ProductionProgramElement>(_ original: T)
     {
         if let copy = clone_codable(original)
         {
+            if let e = copy as? ChangerModifierElement { e.import_module() }
+            
             program.add_element(copy)
         }
     }

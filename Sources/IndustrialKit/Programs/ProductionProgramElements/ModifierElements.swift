@@ -368,8 +368,10 @@ public class ChangerModifierElement: ModifierElement
      - Parameters:
         - name: An installed module name.
         - is_internal: Is module internal or external.
+     
+     > A leading "." indicates an external module.
      */
-    public func import_module(_ name: String, is_internal: Bool = true)
+    public func import_module(_ name: String, is_internal: Bool)// = true)
     {
         let modules = is_internal ? Changer.internal_modules : Changer.external_modules
         
@@ -381,6 +383,15 @@ public class ChangerModifierElement: ModifierElement
         }
         
         import_module(modules[index])
+    }
+    
+    /**
+     Imports the module specified by `module_name`.
+     A leading "." indicates an external module.
+     */
+    public func import_module()
+    {
+        import_module(module_name, is_internal: !module_name.hasPrefix("."))
     }
     
     /**
