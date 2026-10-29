@@ -177,6 +177,7 @@ struct WorkspaceControlView: View
                                             }
                                         ),
                                         count: program.elements_count,
+                                        index: shows_program_indices ? index : nil,
                                         on_update: on_update,
                                         on_duplicate:
                                         {
@@ -212,19 +213,6 @@ struct WorkspaceControlView: View
                                         )
                                     )
                                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                                    .overlay(alignment: .topLeading)
-                                    {
-                                        if shows_program_indices
-                                        {
-                                            Text("\(index)")
-                                                .font(.system(size: program_index_font_size))
-                                                .foregroundStyle(.tertiary)
-                                                .frame(height: 20)
-                                                .lineLimit(1)
-                                                .padding(.leading, 6)
-                                                .allowsHitTesting(false)
-                                        }
-                                    }
                                 }
                             }
                             .animation(.spring(), value: workspace.programs)

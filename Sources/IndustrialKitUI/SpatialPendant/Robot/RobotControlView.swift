@@ -90,6 +90,7 @@ public struct RobotControlView: View
                                             }
                                         ),
                                         count: program.points_count,
+                                        index: shows_program_indices ? index : nil,
                                         on_update: on_update,
                                         on_duplicate:
                                         {
@@ -123,19 +124,6 @@ public struct RobotControlView: View
                                         )
                                     )
                                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                                    .overlay(alignment: .topLeading)
-                                    {
-                                        if shows_program_indices
-                                        {
-                                            Text("\(index)")
-                                                .font(.system(size: program_index_font_size))
-                                                .foregroundStyle(.tertiary)
-                                                .frame(height: 20)
-                                                .lineLimit(1)
-                                                .padding(.leading, 6)
-                                                .allowsHitTesting(false)
-                                        }
-                                    }
                                 }
                             }
                             .animation(.spring(), value: robot.programs)
@@ -495,6 +483,17 @@ private struct PositionItemView: View
         }
         .frame(height: program_item_height)
         .contentShape(Rectangle())
+        .background(alignment: .topLeading)
+        {
+            Text("\(point_index)")
+                .font(.system(size: program_index_font_size * 0.75))
+                .foregroundStyle(.tertiary)
+                .frame(height: 20 * 0.75)
+                .lineLimit(1)
+                .padding(.leading, 6 * 0.75)
+                .allowsHitTesting(false)
+                .frame(width: 40, alignment: .leading)
+        }
         .background
         {
             RoundedRectangle(cornerRadius: 8, style: .continuous)

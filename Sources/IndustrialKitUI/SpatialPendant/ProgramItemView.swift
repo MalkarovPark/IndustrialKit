@@ -13,6 +13,8 @@ public struct ProgramItemView: View
     
     let count: Int
     
+    let index: Int?
+    
     let on_update: () -> Void
     let on_duplicate: () -> Void
     let on_delete: () -> Void
@@ -25,6 +27,7 @@ public struct ProgramItemView: View
     public init(
         name: Binding<String>,
         count: Int,
+        index: Int? = nil,
         
         on_update: @escaping () -> Void,
         on_duplicate: @escaping () -> Void,
@@ -33,6 +36,7 @@ public struct ProgramItemView: View
     {
         self._name = name
         self.count = count
+        self.index = index
         
         self.on_update = on_update
         self.on_duplicate = on_duplicate
@@ -90,6 +94,19 @@ public struct ProgramItemView: View
             
             AdaptiveDotGrid(count: count, square_size: 24)
                 .frame(width: 48, height: 48)
+        }
+        .overlay(alignment: .topLeading)
+        {
+            if let index
+            {
+                Text("\(index)")
+                    .font(.system(size: program_index_font_size))
+                    .foregroundStyle(.tertiary)
+                    .frame(height: 20)
+                    .lineLimit(1)
+                    .padding(.leading, 6)
+                    .allowsHitTesting(false)
+            }
         }
         .background
         {

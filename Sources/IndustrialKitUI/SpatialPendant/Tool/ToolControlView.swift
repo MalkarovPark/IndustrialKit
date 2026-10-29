@@ -90,6 +90,7 @@ public struct ToolControlView: View
                                             }
                                         ),
                                         count: program.codes_count,
+                                        index: shows_program_indices ? index : nil,
                                         on_update: on_update,
                                         on_duplicate:
                                         {
@@ -134,19 +135,6 @@ public struct ToolControlView: View
                                         )
                                     )
                                     .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
-                                    .overlay(alignment: .topLeading)
-                                    {
-                                        if shows_program_indices
-                                        {
-                                            Text("\(index)")
-                                                .font(.system(size: program_index_font_size))
-                                                .foregroundStyle(.tertiary)
-                                                .frame(height: 20)
-                                                .lineLimit(1)
-                                                .padding(.leading, 6)
-                                                .allowsHitTesting(false)
-                                        }
-                                    }
                                 }
                             }
                             .animation(.spring(), value: tool.programs)
@@ -369,12 +357,13 @@ private struct OperationProgramView: View
                     spacing: 8
                 )
                 {
-                    ForEach($program.codes)
-                    { $code in
+                    ForEach(Array(program.codes.enumerated()), id: \.element.id) //($program.codes)
+                    {  index, code in //$code in
                         OperationItemView(
                             tool: tool,
                             program: program,
                             code_item: code,
+                            code_index: index,
                             on_update: on_update
                         )
                         {
@@ -418,6 +407,8 @@ private struct OperationItemView: View
     @ObservedObject var tool: Tool
     @ObservedObject var program: OperationProgram
     @ObservedObject var code_item: OperationCode
+    
+    let code_index: Int
     
     let on_update: () -> ()
     let on_delete: () -> ()
@@ -469,6 +460,17 @@ private struct OperationItemView: View
         }
         .frame(height: program_item_height)
         .contentShape(Rectangle())
+        .background(alignment: .topLeading)
+        {
+            Text("\(code_index)")
+                .font(.system(size: program_index_font_size * 0.75))
+                .foregroundStyle(.tertiary)
+                .frame(height: 20 * 0.75)
+                .lineLimit(1)
+                .padding(.leading, 6 * 0.75)
+                .allowsHitTesting(false)
+                .frame(width: 40, alignment: .leading)
+        }
         .background
         {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
