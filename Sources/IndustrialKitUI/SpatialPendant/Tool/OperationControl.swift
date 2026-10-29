@@ -205,7 +205,105 @@ public struct OperationControl: View
             else
             {
                 // Editor
-                VStack(spacing: 0)
+                ZStack
+                {
+                    let operation_binding = Binding(
+                        get: { current_code_info },
+                        set:
+                            { new_value in
+                                tool.current_operation = OperationCode(new_value.value)
+                            }
+                    )
+                    
+                    #if os(macOS)
+                    ScrollView
+                    {
+                        Rectangle()
+                            .fill(.clear)
+                            .frame(height: 12) //33)
+                        
+                        Picker("Code", selection: operation_binding)
+                        {
+                            if tool.codes.count > 0
+                            {
+                                ForEach(tool.codes, id:\.self)
+                                { code in
+                                    //Text(code.name)
+                                        //.font(.system(size: 12))
+                                    HStack
+                                    {
+                                        VStack(alignment: .leading)
+                                        {
+                                            Text(code.name)
+                                                .font(.system(size: 12))
+                                            
+                                            if !code.description.isEmpty
+                                            {
+                                                Text(code.description)
+                                                    .font(.system(size: 8))
+                                                    .lineLimit(1)
+                                                    .help(code.description)
+                                            }
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Text("None")
+                                    .font(.system(size: 12))
+                            }
+                        }
+                        .pickerStyle(.radioGroup)
+                        .labelsHidden()
+                        .padding(10)
+                        .frame(maxWidth: .infinity)
+                    }
+                    #else
+                    Picker("Code", selection: operation_binding)
+                    {
+                        if tool.codes.count > 0
+                        {
+                            ForEach(tool.codes, id:\.self)
+                            { code in
+                                //Text(code.name)
+                                    //.font(.system(size: 16))
+                                HStack
+                                {
+                                    //#if os(iOS)
+                                    Rectangle()
+                                        .fill(.clear)
+                                        .frame(width: 4)
+                                    //#endif
+                                    
+                                    VStack(alignment: .leading)
+                                    {
+                                        Text(code.name)
+                                            .font(.system(size: 12))
+                                        
+                                        if !code.description.isEmpty
+                                        {
+                                            Text(code.description)
+                                                .font(.system(size: 8))
+                                                .lineLimit(1)
+                                                .help(code.description)
+                                        }
+                                    }
+                                    
+                                    Spacer(minLength: 4)
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Text("None")
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    #endif
+                }
+                .overlay(alignment: .topLeading)
                 {
                     Button(action: {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.75))
@@ -214,7 +312,7 @@ public struct OperationControl: View
                         }
                     })
                     {
-                        Image(systemName: "chevron.compact.down")
+                        Image(systemName: "xmark")
                             .padding(10)
                         #if os(iOS)
                             .font(.system(size: 16))
@@ -224,142 +322,8 @@ public struct OperationControl: View
                     #if os(iOS)
                     .tint(.black)
                     #endif
-                    .contentShape(Rectangle())
+                    .buttonBorderShape(.circle)
                     .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
-                    
-                    HStack(spacing: 0)
-                    {
-                        ZStack
-                        {
-                            let operation_binding = Binding(
-                                get: { current_code_info },
-                                set:
-                                    { new_value in
-                                        tool.current_operation = OperationCode(new_value.value)
-                                    }
-                            )
-                            
-                            Rectangle()
-                                .fill(.clear)
-                            
-                            #if os(macOS)
-                            ScrollView
-                            {
-                                Picker("Code", selection: operation_binding)
-                                {
-                                    if tool.codes.count > 0
-                                    {
-                                        ForEach(tool.codes, id:\.self)
-                                        { code in
-                                            //Text(code.name)
-                                                //.font(.system(size: 12))
-                                            HStack
-                                            {
-                                                VStack(alignment: .leading)
-                                                {
-                                                    Text(code.name)
-                                                        .font(.system(size: 12))
-                                                    
-                                                    if !code.description.isEmpty
-                                                    {
-                                                        Text(code.description)
-                                                            .font(.system(size: 8))
-                                                            .lineLimit(1)
-                                                            .help(code.description)
-                                                    }
-                                                }
-                                                Spacer()
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Text("None")
-                                            .font(.system(size: 12))
-                                    }
-                                }
-                                .pickerStyle(.radioGroup)
-                                .labelsHidden()
-                                .padding(10)
-                                .frame(maxWidth: .infinity)
-                            }
-                            #else
-                            Picker("Code", selection: operation_binding)
-                            {
-                                if tool.codes.count > 0
-                                {
-                                    ForEach(tool.codes, id:\.self)
-                                    { code in
-                                        //Text(code.name)
-                                            //.font(.system(size: 16))
-                                        HStack
-                                        {
-                                            //#if os(iOS)
-                                            Rectangle()
-                                                .fill(.clear)
-                                                .frame(width: 4)
-                                            //#endif
-                                            
-                                            VStack(alignment: .leading)
-                                            {
-                                                Text(code.name)
-                                                    .font(.system(size: 12))
-                                                
-                                                if !code.description.isEmpty
-                                                {
-                                                    Text(code.description)
-                                                        .font(.system(size: 8))
-                                                        .lineLimit(1)
-                                                        .help(code.description)
-                                                }
-                                            }
-                                            
-                                            Spacer(minLength: 4)
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    Text("None")
-                                }
-                            }
-                            .pickerStyle(.wheel)
-                            #endif
-                        }
-                        
-                        /*Divider()
-                            .padding(.vertical, 4)
-                        
-                        if !current_code_info.description.isEmpty
-                        {
-                            ScrollView
-                            {
-                                Text(current_code_info.description)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                #if os(macOS)
-                                    .font(.system(size: 10))
-                                #else
-                                    .font(.system(size: 14))
-                                #endif
-                                    .foregroundStyle(.secondary)
-                                    .textSelection(.enabled)
-                                    .padding(.horizontal, 4)
-                            }
-                        }
-                        else
-                        {
-                            Text("No Info")
-                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                                #if os(macOS)
-                                .font(.system(size: 12))
-                                #else
-                                .font(.system(size: 16))
-                                #endif
-                                .foregroundStyle(.secondary)
-                                .offset(y: -8)
-                        }*/
-                    }
                 }
                 .frame(
                     width: is_expanded ? pendant_content_width : 120,

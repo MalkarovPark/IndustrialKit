@@ -447,11 +447,11 @@ public struct PositionPane: View
             else if is_editor_mode
             {
                 // Editor
-                VStack(spacing: 0)
+                VStack(alignment: .leading, spacing: 0)
                 {
                     Button(action: collapse_tap_action)
                     {
-                        Image(systemName: "chevron.compact.down")
+                        Image(systemName: "xmark")
                             .padding(10)
                         #if os(iOS)
                             .font(.system(size: 16))
@@ -461,7 +461,7 @@ public struct PositionPane: View
                     #if os(iOS)
                     .tint(.black)
                     #endif
-                    .contentShape(Rectangle())
+                    .buttonBorderShape(.circle)
                     .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_editor_mode)
                     
                     HStack
