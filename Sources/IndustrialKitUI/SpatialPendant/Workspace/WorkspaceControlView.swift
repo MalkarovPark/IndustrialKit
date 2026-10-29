@@ -452,12 +452,13 @@ private struct ProductionProgramView: View
                 {
                     LazyVGrid(columns: columns, spacing: element_card_spacing)
                     {
-                        ForEach($program.elements)
-                        { $element in
+                        ForEach(Array(program.elements.enumerated()), id: \.element.id)//($program.elements)
+                        { index, element in //$element in
                             ElementItemView(
                                 workspace: workspace,
                                 program: program,
                                 element: element,
+                                index: index,
                                 on_update: on_update
                             )
                             {
@@ -493,6 +494,8 @@ private struct ProductionProgramView: View
                         }
                     }
                     .padding(.vertical, 16)
+                    
+                    Spacer(minLength: 48)
                 }
             }
             else
@@ -523,8 +526,27 @@ internal struct ElementItemView: View
     @Environment(\.horizontalSizeClass) public var horizontal_size_class // Horizontal window size handler
     #endif
     
+    let index: Int?// = nil
+    
     let on_update: () -> ()
     let on_delete: () -> ()
+    
+    init(
+        workspace: Workspace,
+        program: ProductionProgram,
+        element: ProductionProgramElement,
+        index: Int? = nil,
+        on_update: @escaping () -> Void = {},
+        on_delete: @escaping () -> Void = {}
+    )
+    {
+        self.workspace = workspace
+        self.program = program
+        self.element = element
+        self.index = index
+        self.on_update = on_update
+        self.on_delete = on_delete
+    }
     
     var body: some View
     {
@@ -558,6 +580,21 @@ internal struct ElementItemView: View
                 #if os(visionOS)
                     .frame(depth: 2)
                 #endif
+            }
+        }
+        .background(alignment: .bottomLeading)
+        {
+            if let index
+            {
+                Text("\(index)")
+                    .font(.system(size: program_index_font_size * 0.75))
+                    .foregroundStyle(element.color)
+                    .opacity(0.5)
+                    .frame(height: 20 * 0.75)
+                    .lineLimit(1)
+                    .padding(.leading, 6 * 0.75)
+                    .allowsHitTesting(false)
+                    .frame(width: 40, alignment: .leading)
             }
         }
         .onTapGesture
