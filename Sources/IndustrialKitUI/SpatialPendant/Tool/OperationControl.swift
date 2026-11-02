@@ -262,36 +262,33 @@ public struct OperationControl: View
                     {
                         if tool.codes.count > 0
                         {
-                            Section("New")
-                            {
-                                ForEach(tool.codes, id:\.self)
-                                { code in
-                                    //Text(code.name)
-                                        //.font(.system(size: 16))
-                                    HStack
+                            ForEach(tool.codes, id:\.self)
+                            { code in
+                                //Text(code.name)
+                                    //.font(.system(size: 16))
+                                HStack
+                                {
+                                    //#if os(iOS)
+                                    Rectangle()
+                                        .fill(.clear)
+                                        .frame(width: 4)
+                                    //#endif
+                                    
+                                    VStack(alignment: .leading)
                                     {
-                                        //#if os(iOS)
-                                        Rectangle()
-                                            .fill(.clear)
-                                            .frame(width: 4)
-                                        //#endif
+                                        Text(code.name)
+                                            .font(.system(size: 12))
                                         
-                                        VStack(alignment: .leading)
+                                        if !code.description.isEmpty
                                         {
-                                            Text(code.name)
-                                                .font(.system(size: 12))
-                                            
-                                            if !code.description.isEmpty
-                                            {
-                                                Text(code.description)
-                                                    .font(.system(size: 8))
-                                                    .lineLimit(1)
-                                                    .help(code.description)
-                                            }
+                                            Text(code.description)
+                                                .font(.system(size: 8))
+                                                .lineLimit(1)
+                                                .help(code.description)
                                         }
-                                        
-                                        Spacer(minLength: 4)
                                     }
+                                    
+                                    Spacer(minLength: 4)
                                 }
                             }
                         }
