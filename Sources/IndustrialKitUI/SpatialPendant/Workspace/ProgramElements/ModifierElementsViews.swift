@@ -106,7 +106,7 @@ public struct MoverElementView: View
                         element.links.remove(atOffsets: offsets)
                     }
                 }
-                .frame(minHeight: 160)
+                .frame(minHeight: 120)
                 .modifier(ListBorderer())
                 .padding(.bottom)
             }
@@ -122,7 +122,7 @@ public struct MoverElementView: View
                     Text("No values to \(element.move_type == .move ? "move" : "copy")")
                         .foregroundStyle(.secondary)
                 }
-                .frame(height: 160)
+                .frame(minHeight: 120)
                 .modifier(ListBorderer())
                 .padding(.bottom)
             }
@@ -277,7 +277,7 @@ public struct WriterElementView: View
                         element.inputs.remove(atOffsets: offsets)
                     }
                 }
-                .frame(minHeight: 160)
+                .frame(minHeight: 120)
                 .modifier(ListBorderer())
                 .padding(.bottom)
             }
@@ -293,7 +293,7 @@ public struct WriterElementView: View
                     Text("No values to write")
                         .foregroundStyle(.secondary)
                 }
-                .frame(height: 160)
+                .frame(minHeight: 120)
                 .modifier(ListBorderer())
                 .padding(.bottom)
             }
@@ -450,8 +450,7 @@ public struct ChangerElementView: View
                 }
         )
         
-        #if os(macOS)
-        HStack
+        VStack
         {
             Picker("Module", selection: module_name) // Changer module picker
             {
@@ -480,39 +479,8 @@ public struct ChangerElementView: View
             }
             .frame(minWidth: 160, maxWidth: .infinity)
             .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
-        }
-        #else
-        VStack
-        {
-            Picker("Module", selection: module_name) // Changer module picker
-            {
-                if Changer.internal_modules_list.count > 0
-                {
-                    Section(header: Text("Internal"))
-                    {
-                        ForEach(Changer.internal_modules_list, id: \.self)
-                        {
-                            Text($0).tag($0)
-                        }
-                    }
-                    
-                    Section(header: Text("External"))
-                    {
-                        ForEach(Changer.external_modules_list, id: \.self)
-                        {
-                            Text($0).tag(".\($0)")
-                        }
-                    }
-                }
-                else
-                {
-                    Text("None")
-                }
-            }
-            .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
             .buttonStyle(.bordered)
         }
-        #endif
     }
 }
 
@@ -556,42 +524,13 @@ public struct ObserverElementView: View
     {
         VStack(spacing: 0)
         {
-            let object_type = Binding(
-                get: { element.object_type },
-                set:
-                    { new_value in
-                        element.object_type = new_value
-                        
-                        switch new_value
-                        {
-                        case .robot:
-                            element.object_name = workspace.placed_robot_names.first ?? "New Robot"
-                        case .tool:
-                            element.object_name = workspace.placed_tool_names.first ?? "New Tool"
-                        }
-                        
-                        on_update()
-                    }
-            )
-            
-            Picker("Type", selection: object_type)
-            {
-                ForEach(ObserverObjectType.allCases, id: \.self)
-                { object_type in
-                    Text(object_type.rawValue)
-                }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .padding(.bottom)
-            
             let object_name = Binding(
                 get: { element.object_name },
                 set:
                     { new_value in
                         element.object_name = new_value
                         
-                        on_update()
+                        //on_update()
                     }
             )
             
@@ -605,35 +544,38 @@ public struct ObserverElementView: View
                     }
             )
             
-            switch element.object_type
+            Picker("From", selection: object_name)
             {
-            case .robot:
                 if workspace.placed_robot_names.count > 0
                 {
-                    Picker("Name", selection: object_name) // robot picker
+                    Section("Robots")
                     {
                         ForEach(workspace.placed_robot_names, id: \.self)
                         { name in
-                            Text(name)
+                            Button(name) { element.object_type = .robot; on_update() } //Text(name)
+                                .buttonStyle(.plain)
                         }
                     }
-                    .disabled(workspace.placed_robot_names.count == 0)
-                    .padding(.bottom)
                 }
-            case .tool:
+                
                 if workspace.placed_tool_names.count > 0
                 {
-                    Picker("Name", selection: object_name) // tool picker
+                    Section("Tools")
                     {
                         ForEach(workspace.placed_tool_names, id: \.self)
                         { name in
-                            Text(name)
+                            Button(name) { element.object_type = .tool; on_update() } //Text(name)
+                                .buttonStyle(.plain)
                         }
                     }
-                    .disabled(workspace.placed_tool_names.count == 0)
-                    .padding(.bottom)
                 }
             }
+            .disabled(
+                workspace.placed_robot_names.count == 0
+                && workspace.placed_tool_names.count == 0
+            )
+            .buttonSizing(.flexible)
+            .padding(.bottom)
             
             if outputs.count > 0
             {
@@ -699,7 +641,7 @@ public struct ObserverElementView: View
                     }
 
                 }
-                .frame(minHeight: 160)
+                .frame(minHeight: 120)
                 .modifier(ListBorderer())
                 .padding(.bottom)
             }
@@ -715,7 +657,7 @@ public struct ObserverElementView: View
                     Text("No items to ouput")
                         .foregroundStyle(.secondary)
                 }
-                .frame(height: 160)
+                .frame(minHeight: 120)
                 .modifier(ListBorderer())
                 .padding(.bottom)
             }
@@ -822,6 +764,7 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding([.horizontal, .top], 8)*/
                 
+                #if os(macOS)
                 HStack
                 {
                     WriterElementView(element: WriterModifierElement(), workspace: workspace)
@@ -842,6 +785,32 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                     MathElementView(element: MathModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                 }
+                #else
+                HStack
+                {
+                    WriterElementView(element: WriterModifierElement(), workspace: workspace)
+                        .modifier(PreviewBorder())
+                    
+                    MoverElementView(element: MoverModifierElement(), workspace: workspace)
+                        .modifier(PreviewBorder())
+                }
+                
+                HStack
+                {
+                    ObserverElementView(element: ObserverModifierElement(), workspace: workspace)
+                        .modifier(PreviewBorder())
+                    
+                    VStack
+                    {
+                        ChangerElementView(element: ChangerModifierElement(), workspace: workspace)
+                            .modifier(PreviewBorder())
+                        
+                        MathElementView(element: MathModifierElement(), workspace: workspace)
+                            .modifier(PreviewBorder())
+                    }
+                }
+                .frame(height: 320)
+                #endif
             }
             .padding()
         }

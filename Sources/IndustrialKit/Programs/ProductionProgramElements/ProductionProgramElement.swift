@@ -41,22 +41,13 @@ public class ProductionProgramElement: Hashable, Identifiable, ObservableObject,
     
     // MARK: - UI functions
     /// A string for the title in program element card.
-    open var title: String
-    {
-        return "Title"
-    }
+    open var title: String { "Title" }
     
     /// A string for the text in program element card.
-    open var info: String
-    {
-        return "Info"
-    }
+    open var info: String { "Info" }
     
     /// An image name for program element card.
-    open var symbol_name: String
-    {
-        return "questionmark"
-    }
+    open var symbol_name: String { "questionmark" }
     
     /// An image for program element card.
     public var image: Image
@@ -155,10 +146,8 @@ public enum ModifierMoveType: String, Codable, Equatable, CaseIterable
     {
         switch self
         {
-        case .copy:
-            return "copy"
-        case .move:
-            return "move"
+        case .copy: "copy"
+        case .move: "move"
         }
     }
 }
@@ -172,10 +161,8 @@ public enum ObserverObjectType: String, Codable, Equatable, CaseIterable
     {
         switch self
         {
-        case .robot:
-            return "r"
-        case .tool:
-            return "t"
+        case .robot: "r"
+        case .tool: "t"
         }
     }
 }

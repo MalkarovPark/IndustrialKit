@@ -43,6 +43,8 @@ public class PerformerElement: ProductionProgramElement
     /// An index of register with index of program to perform.
     @Published public var program_index = 0
     
+    public override var title: String { "Performer" }
+    
     public override var info: String
     {
         if object_name != ""
@@ -165,15 +167,9 @@ public class RobotPerformerElement: PerformerElement
     /// Index of movement type.
     @Published public var type_index = 0
     
-    public override var title: String
-    {
-        return "Robot"
-    }
+    public override var title: String { "Robot" }
     
-    public override var symbol_name: String
-    {
-        return "r.square"
-    }
+    public override var symbol_name: String { "r.square" }
     
     // Code string conversion
     public override var code_string: String
@@ -262,15 +258,9 @@ public class ToolPerformerElement: PerformerElement
     /// Index of operation code location component.
     @Published public var opcode_index = 0
     
-    public override var title: String
-    {
-        return "Tool"
-    }
+    public override var title: String { "Tool" }
     
-    public override var symbol_name: String
-    {
-        return "hammer"
-    }
+    public override var symbol_name: String { "hammer" }
     
     // Code string conversion
     public override var code_string: String

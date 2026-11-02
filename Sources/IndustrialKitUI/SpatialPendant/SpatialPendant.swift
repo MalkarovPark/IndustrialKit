@@ -53,7 +53,20 @@ public struct SpatialPendant: View
         #if os(macOS) || os(iOS)
         FloatingView(
             alignment: .trailing,
-            on_overflow: { _ in controller.is_vertical.toggle() }
+            on_overflow:
+                { alignemnt in
+                    
+                    if alignemnt == .leading || alignemnt == .trailing
+                    {
+                        controller.is_vertical = true
+                    }
+                    
+                    if alignemnt == .top || alignemnt == .bottom
+                    {
+                        controller.is_vertical = false
+                    }
+                    //controller.is_vertical.toggle()
+                }
         )
         {
             ZStack
@@ -195,12 +208,12 @@ let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #elseif os(iOS)
 let pendant_content_width: CGFloat = 240
 let pendant_content_height: CGFloat = 240
-let max_pendant_content_height: CGFloat = 520
+let max_pendant_content_height: CGFloat = 600//520
 let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #elseif os(visionOS)
 let pendant_content_width: CGFloat = 240
 let pendant_content_height: CGFloat = 240
-let max_pendant_content_height: CGFloat = 520
+let max_pendant_content_height: CGFloat = 600//520
 let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #endif
 

@@ -42,6 +42,8 @@ public class MoverModifierElement: ModifierElement
     /// Inputs bindings
     @Published public var links = [MoverLink]()
     
+    public override var title: String { "Mover" }
+    
     public override var info: String
     {
         if links.count > 0
@@ -58,10 +60,8 @@ public class MoverModifierElement: ModifierElement
     {
         switch move_type
         {
-        case .copy:
-            return "plus.square.on.square"
-        case .move:
-            return "square.on.square.dashed"
+        case .copy: "plus.square.on.square"
+        case .move: "square.on.square.dashed"
         }
     }
     
@@ -147,6 +147,8 @@ public class WriterModifierElement: ModifierElement
     /// Inputs bindings
     @Published public var inputs = [WriterInput]()
     
+    public override var title: String { "Writer" }
+    
     public override var info: String
     {
         if inputs.count > 0
@@ -159,10 +161,7 @@ public class WriterModifierElement: ModifierElement
         }
     }
     
-    public override var symbol_name: String
-    {
-        return "square.and.pencil"
-    }
+    public override var symbol_name: String { "square.and.pencil" }
     
     // Code string conversion
     public override var code_string: String
@@ -229,6 +228,7 @@ public class WriterInput: ObservableObject, Codable, Identifiable
     }
 }
 
+/// Calculates a mathematical expression and writes the result to the selected register.
 public class MathModifierElement: ModifierElement
 {
     public init(
@@ -248,15 +248,14 @@ public class MathModifierElement: ModifierElement
     /// An index of register to write.
     @Published public var to_index = 0
     
+    public override var title: String { "Math" }
+    
     public override var info: String
     {
         return "Value of \(expression) to \(to_index)"
     }
     
-    public override var symbol_name: String
-    {
-        return "function"
-    }
+    public override var symbol_name: String { "function" }
     
     // Code string conversion
     public override var code_string: String
@@ -319,15 +318,14 @@ public class ChangerModifierElement: ModifierElement
         return !module_name.hasPrefix(".") // Intrnal module has not dot "." in name
     }
     
+    public override var title: String { "Changer" }
+    
     public override var info: String
     {
         return "Module – \(is_internal_module ? module_name : String(module_name.dropFirst()))"
     }
     
-    public override var symbol_name: String
-    {
-        return "wand.and.rays"
-    }
+    public override var symbol_name: String { "wand.and.rays" }
     
     // Code string conversion
     public override var code_string: String
@@ -473,10 +471,9 @@ public class ObserverModifierElement: ModifierElement
         }
     }
     
-    public override var symbol_name: String
-    {
-        return "loupe"
-    }
+    public override var title: String { "Observer" }
+    
+    public override var symbol_name: String { "loupe" }
     
     // Code string conversion
     public override var code_string: String
@@ -560,10 +557,9 @@ public class CleanerModifierElement: ModifierElement
         return "Clear all registers"
     }
     
-    public override var symbol_name: String
-    {
-        return "clear"
-    }
+    public override var title: String { "Cleaner" }
+    
+    public override var symbol_name: String { "clear" }
     
     // Code string conversion
     public override var code_string: String

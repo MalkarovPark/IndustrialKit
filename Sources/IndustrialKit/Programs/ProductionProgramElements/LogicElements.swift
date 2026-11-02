@@ -11,10 +11,7 @@ import SwiftUI
 /// Controls the order of performing of program elements through conditional and unconditional transitions to given labels.
 public class LogicElement: ProductionProgramElement
 {
-    public override var title: String
-    {
-        return "Logic"
-    }
+    public override var title: String { "Logic" }
     
     public override var color: Color
     {
@@ -41,6 +38,8 @@ public class JumpLogicElement: LogicElement
     
     /// An index of the target mark element.
     @Published public var target_element_index = 0
+    
+    public override var title: String { "Jump" }
     
     public override var info: String
     {
@@ -126,6 +125,8 @@ public class ComparatorLogicElement: LogicElement
     
     /// An index of the target mark element.
     @Published public var target_element_index = 0
+    
+    public override var title: String { "Comparator" }
     
     public override var info: String
     {
@@ -245,10 +246,7 @@ public class MarkLogicElement: LogicElement
     /// A target mark name.
     @Published public var name = "None"
     
-    public override var title: String
-    {
-        return "Mark"
-    }
+    public override var title: String { "Mark" }
     
     public override var info: String
     {
@@ -304,10 +302,7 @@ public class WaitLogicElement: LogicElement
     /// A target mark time.
     @Published public var time_interval: Double = 0
     
-    public override var title: String
-    {
-        return "Wait"
-    }
+    public override var title: String { "Wait" }
     
     public override var info: String
     {

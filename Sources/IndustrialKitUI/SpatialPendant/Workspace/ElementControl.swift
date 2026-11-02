@@ -12,7 +12,7 @@ public struct ElementControl: View
 {
     @ObservedObject var workspace: Workspace
     
-    //@Binding var is_vertical: Bool
+    @Binding var is_vertical: Bool
     
     @State private var is_expanded = false
     @State private var is_central_pressed = false
@@ -25,14 +25,15 @@ public struct ElementControl: View
     public init(
         workspace: Workspace,
         
-        //is_vertical: Binding<Bool> = .constant(false),
+        is_vertical: Binding<Bool> = .constant(false),
         
         on_expand: @escaping () -> Void = {},
         on_collapse: @escaping () -> Void = {}
     )
     {
         self.workspace = workspace
-        //self._is_vertical = is_vertical
+        
+        self._is_vertical = is_vertical
         
         self.on_expand = on_expand
         self.on_collapse = on_collapse
@@ -114,11 +115,11 @@ public struct ElementControl: View
             else
             {
                 // Editor
-                VStack(spacing: 0)
+                VStack(alignment: .leading, spacing: 0)
                 {
                     Button(action: collapse_tap_action)
                     {
-                        Image(systemName: "chevron.compact.down")
+                        Image(systemName: "xmark")
                             .padding(10)
                         #if os(iOS)
                             .font(.system(size: 16))
@@ -128,15 +129,19 @@ public struct ElementControl: View
                     #if os(iOS)
                     .tint(.black)
                     #endif
-                    .contentShape(Rectangle())
+                    .buttonBorderShape(.circle)
                     .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
                     
                     VStack
                     {
                         GroupBox
                         {
+                            if !is_vertical { Spacer(minLength: 0) }
+                            
                             ProductionProgramElementView(element: workspace.current_element, workspace: workspace, program: workspace.selected_program ?? ProductionProgram())
                                 .padding(4)
+                            
+                            if !is_vertical { Spacer(minLength: 0) }
                         }
                         //.frame(idealWidth: element_control_width * 0.75)
                         //.frame(width: is_vertical ? nil : element_control_width)
@@ -193,7 +198,7 @@ public struct ElementControl: View
                     width: is_vertical ? expanded_element_control_width : element_control_width,
                     height: is_vertical ? nil : expanded_element_control_height
                 )*/
-                .frame(width: element_control_width)//, height: element_control_height)
+                .frame(width: element_control_width) //, height: element_control_height)
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
             }
             
@@ -265,13 +270,13 @@ public struct ElementControl: View
 }
 
 #if os(macOS)
-internal let element_control_width: CGFloat = 272
+internal let element_control_width: CGFloat = 240 //272
 internal let element_control_height: CGFloat = 272
 #elseif os(iOS)
-internal let element_control_width: CGFloat = 370
+internal let element_control_width: CGFloat = 320 //370
 internal let element_control_height: CGFloat = 370
 #elseif os(visionOS)
-internal let element_control_width: CGFloat = 400
+internal let element_control_width: CGFloat = 320 //400
 internal let element_control_height: CGFloat = 400
 #endif
 
@@ -407,7 +412,7 @@ struct ElementControl_Previews: PreviewProvider
     {
         @StateObject var workspace = Workspace()
         
-        //@State var is_vertical = true
+        @State var is_vertical = true
         
         var body: some View
         {
@@ -415,7 +420,7 @@ struct ElementControl_Previews: PreviewProvider
             {
                 Spacer()
                 
-                ElementControl(workspace: workspace)//, is_vertical: $is_vertical)
+                ElementControl(workspace: workspace, is_vertical: $is_vertical)
                     .frame(maxWidth: element_control_width)
                     .padding()
             }
@@ -423,13 +428,13 @@ struct ElementControl_Previews: PreviewProvider
             .frame(width: 400, height: 440)
             #endif
             .onAppear { prepare_workspace() }
-            /*.overlay(alignment: .topLeading)
+            .overlay(alignment: .topLeading)
             {
                 Button(is_vertical ? "Vertical" : "Horizontal")
                 {
                     is_vertical.toggle()
                 }
-            }*/
+            }
         }
         
         private func prepare_workspace()
