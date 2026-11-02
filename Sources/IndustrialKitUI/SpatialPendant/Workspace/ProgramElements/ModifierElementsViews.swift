@@ -65,79 +65,82 @@ public struct MoverElementView: View
             .labelsHidden()
             .padding(.bottom)
             
-            if links.count > 0
+            Group
             {
-                List
+                if links.count > 0
                 {
-                    ForEach($element.links)
-                    { $link in
-                        HStack
-                        {
-                            let link_indices = binding_for_link($link)
-                            
-                            RegistersSelector(
-                                text: "From \(link.from) to \(link.to)",
-                                registers_count: workspace.registers.count,
-                                colors: default_register_colors,
-                                indices: link_indices,
-                                names: ["From", "To"]
-                            )
-                        }
-                        .listRowSeparator(.hidden)
-                        .contextMenu
-                        {
-                            Button(role: .destructive)
+                    List
+                    {
+                        ForEach($element.links)
+                        { $link in
+                            HStack
                             {
-                                delete_item($link.wrappedValue)
+                                let link_indices = binding_for_link($link)
+                                
+                                RegistersSelector(
+                                    text: "From \(link.from) to \(link.to)",
+                                    registers_count: workspace.registers.count,
+                                    colors: default_register_colors,
+                                    indices: link_indices,
+                                    names: ["From", "To"]
+                                )
                             }
-                            label:
+                            .listRowSeparator(.hidden)
+                            .contextMenu
                             {
-                                Label("Delete", systemImage: "trash")
+                                Button(role: .destructive)
+                                {
+                                    delete_item($link.wrappedValue)
+                                }
+                                label:
+                                {
+                                    Label("Delete", systemImage: "trash")
+                                }
                             }
+                            #if os(iOS)
+                            .frame(height: 2)
+                            #endif
+                            #if os(visionOS)
+                            .listRowInsets(EdgeInsets(top: 16, leading: -10, bottom: 0, trailing: -10))
+                            #endif
                         }
-                        #if os(iOS)
-                        .frame(height: 2)
-                        #endif
-                        #if os(visionOS)
-                        .listRowInsets(EdgeInsets(top: 16, leading: -10, bottom: 0, trailing: -10))
-                        #endif
+                        .onDelete
+                        { offsets in
+                            element.links.remove(atOffsets: offsets)
+                        }
+                        
+                        Spacer(minLength: 32)
                     }
-                    .onDelete
-                    { offsets in
-                        element.links.remove(atOffsets: offsets)
-                    }
+                    .frame(minHeight: 120)
+                    .modifier(ListBorderer())
                 }
-                .frame(minHeight: 120)
-                .modifier(ListBorderer())
-                .padding(.bottom)
-            }
-            else
-            {
-                ZStack
+                else
                 {
-                    #if !os(visionOS)
-                    Rectangle()
-                        .foregroundStyle(.white)
-                    #endif
-                    
-                    Text("No values to \(element.move_type == .move ? "move" : "copy")")
-                        .foregroundStyle(.secondary)
+                    ZStack
+                    {
+                        #if !os(visionOS)
+                        Rectangle()
+                            .foregroundStyle(.white)
+                        #endif
+                        
+                        Text("No values to \(element.move_type == .move ? "move" : "copy")")
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(minHeight: 120)
+                    .modifier(ListBorderer())
                 }
-                .frame(minHeight: 120)
-                .modifier(ListBorderer())
-                .padding(.bottom)
             }
-            
-            Button(action: add_item)
+            .overlay(alignment: .bottomTrailing)
             {
-                Text("Add")
-                    .frame(maxWidth: .infinity)
+                Button(action: add_item)
+                {
+                    Image(systemName: "plus")
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.roundedRectangle)
+                .padding(8)
+                //.keyboardShortcut(.defaultAction)
             }
-            .buttonStyle(.borderedProminent)
-            #if os(iOS)
-            .buttonBorderShape(.roundedRectangle)
-            #endif
-            //.keyboardShortcut(.defaultAction)
         }
         .frame(minWidth: 200, maxWidth: .infinity)
     }
@@ -211,104 +214,107 @@ public struct WriterElementView: View
                     }
             )
             
-            if outputs.count > 0
+            Group
             {
-                List
+                if outputs.count > 0
                 {
-                    ForEach($element.inputs)
-                    { $input in
-                        HStack
-                        {
-                            let output_to = binding_for_single($input.to)
-                            let output_value = Binding(
-                                get: { $input.value.wrappedValue },
-                                set: {
-                                    $input.value.wrappedValue = $0
-                                    
-                                    on_update()
+                    List
+                    {
+                        ForEach($element.inputs)
+                        { $input in
+                            HStack
+                            {
+                                let output_to = binding_for_single($input.to)
+                                let output_value = Binding(
+                                    get: { $input.value.wrappedValue },
+                                    set: {
+                                        $input.value.wrappedValue = $0
+                                        
+                                        on_update()
+                                    }
+                                )
+                                
+                                Text("Write")
+                                TextField("0", value: output_value, format: .number)
+                                #if !os(macOS)
+                                    .keyboardType(.decimalPad)
+                                #endif
+                                #if os(macOS)
+                                Stepper("Enter", value: output_value, in: 0...10000)
+                                    .labelsHidden()
+                                #endif
+                                
+                                RegistersSelector(
+                                    text: "to \($input.to.wrappedValue)",
+                                    registers_count: workspace.registers.count,
+                                    colors: default_register_colors,
+                                    indices: output_to,
+                                    names: ["To"]
+                                )
+                                #if os(macOS)
+                                .frame(width: 64)
+                                #elseif os(iOS)
+                                .frame(width: 64)
+                                #elseif os(visionOS)
+                                .frame(width: 96)
+                                #endif
+                            }
+                            .listRowSeparator(.hidden)
+                            .contextMenu
+                            {
+                                Button(role: .destructive)
+                                {
+                                    delete_item($input.wrappedValue)
                                 }
-                            )
-                            
-                            Text("Write")
-                            TextField("0", value: output_value, format: .number)
-                            #if !os(macOS)
-                                .keyboardType(.decimalPad)
+                                label:
+                                {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                            #if os(iOS)
+                            .frame(height: 2)
                             #endif
-                            #if os(macOS)
-                            Stepper("Enter", value: output_value, in: 0...10000)
-                                .labelsHidden()
-                            #endif
-                            
-                            RegistersSelector(
-                                text: "to \($input.to.wrappedValue)",
-                                registers_count: workspace.registers.count,
-                                colors: default_register_colors,
-                                indices: output_to,
-                                names: ["To"]
-                            )
-                            #if os(macOS)
-                            .frame(width: 64)
-                            #elseif os(iOS)
-                            .frame(width: 64)
-                            #elseif os(visionOS)
-                            .frame(width: 96)
+                            #if os(visionOS)
+                            .listRowInsets(EdgeInsets(top: 16, leading: -10, bottom: 0, trailing: -10))
                             #endif
                         }
-                        .listRowSeparator(.hidden)
-                        .contextMenu
-                        {
-                            Button(role: .destructive)
-                            {
-                                delete_item($input.wrappedValue)
-                            }
-                            label:
-                            {
-                                Label("Delete", systemImage: "trash")
-                            }
+                        .onDelete
+                        { offsets in
+                            element.inputs.remove(atOffsets: offsets)
                         }
-                        #if os(iOS)
-                        .frame(height: 2)
-                        #endif
-                        #if os(visionOS)
-                        .listRowInsets(EdgeInsets(top: 16, leading: -10, bottom: 0, trailing: -10))
-                        #endif
+                        
+                        Spacer(minLength: 32)
                     }
-                    .onDelete
-                    { offsets in
-                        element.inputs.remove(atOffsets: offsets)
-                    }
+                    .frame(minHeight: 120)
+                    .modifier(ListBorderer())
                 }
-                .frame(minHeight: 120)
-                .modifier(ListBorderer())
-                .padding(.bottom)
-            }
-            else
-            {
-                ZStack
+                else
                 {
-                    #if !os(visionOS)
-                    Rectangle()
-                        .foregroundStyle(.white)
-                    #endif
-                    
-                    Text("No values to write")
-                        .foregroundStyle(.secondary)
+                    ZStack
+                    {
+                        #if !os(visionOS)
+                        Rectangle()
+                            .foregroundStyle(.white)
+                        #endif
+                        
+                        Text("No values to write")
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(minHeight: 120)
+                    .modifier(ListBorderer())
                 }
-                .frame(minHeight: 120)
-                .modifier(ListBorderer())
-                .padding(.bottom)
             }
-            
-            Button(action: add_item)
+            .overlay(alignment: .bottomTrailing)
             {
-                Text("Add")
-                    .frame(maxWidth: .infinity)
+                Button(action: add_item)
+                {
+                    Image(systemName: "plus")
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.roundedRectangle)
+                .padding(8)
+                //.keyboardShortcut(.defaultAction)
             }
-            .buttonStyle(.borderedProminent)
-            #if os(iOS)
-            .buttonBorderShape(.roundedRectangle)
-            #endif
-            //.keyboardShortcut(.defaultAction)
         }
         .frame(minWidth: 200, maxWidth: .infinity)
     }
@@ -580,101 +586,103 @@ public struct ObserverElementView: View
             .buttonSizing(.flexible)
             .padding(.bottom)
             
-            if outputs.count > 0
+            Group
             {
-                List
+                if outputs.count > 0
                 {
-                    ForEach($element.outputs)
-                    { $output in
-                        HStack
-                        {
-                            let output_to = binding_for_single($output.to)
-                            let output_from = Binding(
-                                get: { $output.from.wrappedValue },
-                                set: { $output.from.wrappedValue = $0; on_update() }
-                            )
+                    List
+                    {
+                        ForEach($element.outputs)
+                        { $output in
+                            HStack
+                            {
+                                let output_to = binding_for_single($output.to)
+                                let output_from = Binding(
+                                    get: { $output.from.wrappedValue },
+                                    set: { $output.from.wrappedValue = $0; on_update() }
+                                )
 
-                            Text("From")
-                            TextField("0", value: output_from, format: .number)
-                            #if !os(macOS)
-                                .keyboardType(.decimalPad)
-                            #endif
-                            #if os(macOS)
-                            Stepper("Enter", value: output_from, in: 0...10000)
-                                .labelsHidden()
-                            #endif
+                                Text("From")
+                                TextField("0", value: output_from, format: .number)
+                                #if !os(macOS)
+                                    .keyboardType(.decimalPad)
+                                #endif
+                                #if os(macOS)
+                                Stepper("Enter", value: output_from, in: 0...10000)
+                                    .labelsHidden()
+                                #endif
 
-                            RegistersSelector(
-                                text: "to \($output.to.wrappedValue)",
-                                registers_count: workspace.registers.count,
-                                colors: default_register_colors,
-                                indices: output_to,
-                                names: ["To"]
-                            )
-                            #if os(macOS)
-                            .frame(width: 64)
-                            #elseif os(iOS)
-                            .frame(width: 80)
-                            #elseif os(visionOS)
-                            .frame(width: 96)
+                                RegistersSelector(
+                                    text: "to \($output.to.wrappedValue)",
+                                    registers_count: workspace.registers.count,
+                                    colors: default_register_colors,
+                                    indices: output_to,
+                                    names: ["To"]
+                                )
+                                #if os(macOS)
+                                .frame(width: 64)
+                                #elseif os(iOS)
+                                .frame(width: 80)
+                                #elseif os(visionOS)
+                                .frame(width: 96)
+                                #endif
+                            }
+                            .listRowSeparator(.hidden)
+                            .contextMenu
+                            {
+                                Button(role: .destructive)
+                                {
+                                    delete_item($output.wrappedValue)
+                                }
+                                label:
+                                {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                            #if os(iOS)
+                            .frame(height: 2)
+                            #endif
+                            #if os(visionOS)
+                            .listRowInsets(EdgeInsets(top: 16, leading: -10, bottom: 0, trailing: -10))
                             #endif
                         }
-                        .listRowSeparator(.hidden)
-                        .contextMenu
-                        {
-                            Button(role: .destructive)
-                            {
-                                delete_item($output.wrappedValue)
-                            }
-                            label:
-                            {
-                                Label("Delete", systemImage: "trash")
-                            }
+                        .onDelete
+                        { offsets in
+                            element.outputs.remove(atOffsets: offsets)
                         }
-                        #if os(iOS)
-                        .frame(height: 2)
-                        #endif
-                        #if os(visionOS)
-                        .listRowInsets(EdgeInsets(top: 16, leading: -10, bottom: 0, trailing: -10))
-                        #endif
+                        
+                        Spacer(minLength: 32)
                     }
-                    .onDelete
-                    { offsets in
-                        element.outputs.remove(atOffsets: offsets)
-                    }
-
+                    .frame(minHeight: 120)
+                    .modifier(ListBorderer())
                 }
-                .frame(minHeight: 120)
-                .modifier(ListBorderer())
-                .padding(.bottom)
-            }
-            else
-            {
-                ZStack
+                else
                 {
-                    #if !os(visionOS)
-                    Rectangle()
-                        .foregroundStyle(.white)
-                    #endif
-                    
-                    Text("No items to ouput")
-                        .foregroundStyle(.secondary)
+                    ZStack
+                    {
+                        #if !os(visionOS)
+                        Rectangle()
+                            .foregroundStyle(.white)
+                        #endif
+                        
+                        Text("No items to ouput")
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(minHeight: 120)
+                    .modifier(ListBorderer())
                 }
-                .frame(minHeight: 120)
-                .modifier(ListBorderer())
-                .padding(.bottom)
             }
-            
-            Button(action: add_item)
+            .overlay(alignment: .bottomTrailing)
             {
-                Text("Add")
-                    .frame(maxWidth: .infinity)
+                Button(action: add_item)
+                {
+                    Image(systemName: "plus")
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.roundedRectangle)
+                .padding(8)
+                //.keyboardShortcut(.defaultAction)
             }
-            .buttonStyle(.borderedProminent)
-            #if os(iOS)
-            .buttonBorderShape(.roundedRectangle)
-            #endif
-            //.keyboardShortcut(.defaultAction)
         }
         .frame(minWidth: 200, maxWidth: .infinity)
     }
@@ -770,37 +778,37 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                 #if os(macOS)
                 HStack
                 {
-                    WriterElementView(element: WriterModifierElement(), workspace: workspace)
-                        .modifier(PreviewBorder())
-                    
                     MoverElementView(element: MoverModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                     
                     ObserverElementView(element: ObserverModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
-                }
-                
-                HStack
-                {
-                    ChangerElementView(element: ChangerModifierElement(), workspace: workspace)
-                        .modifier(PreviewBorder())
                     
-                    MathElementView(element: MathModifierElement(), workspace: workspace)
-                        .modifier(PreviewBorder())
+                    VStack
+                    {
+                        WriterElementView(element: WriterModifierElement(), workspace: workspace)
+                            .modifier(PreviewBorder())
+                        
+                        ChangerElementView(element: ChangerModifierElement(), workspace: workspace)
+                            .modifier(PreviewBorder())
+                        
+                        MathElementView(element: MathModifierElement(), workspace: workspace)
+                            .modifier(PreviewBorder())
+                    }
                 }
                 #else
                 HStack
                 {
-                    WriterElementView(element: WriterModifierElement(), workspace: workspace)
+                    MoverElementView(element: MoverModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                     
-                    MoverElementView(element: MoverModifierElement(), workspace: workspace)
+                    ObserverElementView(element: ObserverModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                 }
                 
                 HStack
                 {
-                    ObserverElementView(element: ObserverModifierElement(), workspace: workspace)
+                    WriterElementView(element: WriterModifierElement(), workspace: workspace)
                         .modifier(PreviewBorder())
                     
                     VStack
@@ -810,6 +818,8 @@ struct IMAModifiersPreviewsContainer: PreviewProvider
                         
                         MathElementView(element: MathModifierElement(), workspace: workspace)
                             .modifier(PreviewBorder())
+                        
+                        Spacer()
                     }
                 }
                 .frame(height: 320)
