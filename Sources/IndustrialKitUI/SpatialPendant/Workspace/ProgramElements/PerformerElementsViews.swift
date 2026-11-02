@@ -69,6 +69,7 @@ public struct RobotPerformerElementView: View
                     }
                 }
                 .buttonStyle(.bordered)
+                .buttonSizing(.flexible)
                 .disabled(workspace.placed_robot_names.count == 0)
                 .frame(maxWidth: .infinity)
                 .padding(.bottom)
@@ -89,6 +90,7 @@ public struct RobotPerformerElementView: View
                     Text("Program").tag(false)
                 }
                 .pickerStyle(.segmented)
+                .buttonSizing(.flexible)
                 .labelsHidden()
                 .frame(maxWidth: .infinity)
                 
@@ -180,6 +182,7 @@ public struct RobotPerformerElementView: View
                             Text("Index").tag(true)
                         }
                         .pickerStyle(.segmented)
+                        .buttonSizing(.flexible)
                         .labelsHidden()
                         .padding(.bottom)
                         
@@ -217,6 +220,7 @@ public struct RobotPerformerElementView: View
                                 }
                             }
                             .buttonStyle(.bordered)
+                            .buttonSizing(.flexible)
                             .disabled(workspace.robot(named: element.object_name).program_names.count == 0)
                         }
                     }
@@ -293,6 +297,7 @@ public struct ToolPerformerElementView: View
                     }
                 }
                 .buttonStyle(.bordered)
+                .buttonSizing(.flexible)
                 .disabled(workspace.placed_tool_names.count == 0)
                 .frame(maxWidth: .infinity)
                 .padding(.bottom)
@@ -313,6 +318,7 @@ public struct ToolPerformerElementView: View
                     Text("Program").tag(false)
                 }
                 .pickerStyle(.segmented)
+                .buttonSizing(.flexible)
                 .labelsHidden()
                 .frame(maxWidth: .infinity)
                 
@@ -355,6 +361,7 @@ public struct ToolPerformerElementView: View
                             Text("Index").tag(true)
                         }
                         .pickerStyle(.segmented)
+                        .buttonSizing(.flexible)
                         .labelsHidden()
                         .padding(.bottom)
                         
@@ -392,6 +399,7 @@ public struct ToolPerformerElementView: View
                                 }
                             }
                             .buttonStyle(.bordered)
+                            .buttonSizing(.flexible)
                             .disabled(workspace.tool(named: element.object_name).program_names.count == 0)
                         }
                     }

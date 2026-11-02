@@ -61,6 +61,7 @@ public struct MoverElementView: View
                 }
             }
             .pickerStyle(.segmented)
+            .buttonSizing(.flexible)
             .labelsHidden()
             .padding(.bottom)
             
@@ -397,7 +398,7 @@ public struct MathElementView: View
                 .padding(.trailing)
             #endif
                 .onSubmit(on_update)
-                .frame(minWidth: 160, maxWidth: .infinity)
+                //.frame(minWidth: 120, maxWidth: .infinity)
             
             RegistersSelector(text: "to \(element.to_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: to_index, names: ["To"])
             #if os(macOS)
@@ -478,8 +479,9 @@ public struct ChangerElementView: View
                 }
             }
             .frame(minWidth: 160, maxWidth: .infinity)
-            .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
             .buttonStyle(.bordered)
+            .buttonSizing(.flexible)
+            .disabled(Changer.internal_modules_list.count == 0 && Changer.external_modules_list.count == 0)
         }
     }
 }
@@ -574,6 +576,7 @@ public struct ObserverElementView: View
                 workspace.placed_robot_names.count == 0
                 && workspace.placed_tool_names.count == 0
             )
+            .buttonStyle(.bordered)
             .buttonSizing(.flexible)
             .padding(.bottom)
             

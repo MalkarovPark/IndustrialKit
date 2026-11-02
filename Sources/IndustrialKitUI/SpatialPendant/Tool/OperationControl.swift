@@ -67,10 +67,7 @@ public struct OperationControl: View
                             .buttonBorderShape(.roundedRectangle(radius: 0))
                             #endif
                             .contentShape(Rectangle())
-                        }
-                        
-                        if tool.codes.count > 0
-                        {
+                            
                             Button
                             {
                                 move_code(1)
@@ -265,33 +262,36 @@ public struct OperationControl: View
                     {
                         if tool.codes.count > 0
                         {
-                            ForEach(tool.codes, id:\.self)
-                            { code in
-                                //Text(code.name)
-                                    //.font(.system(size: 16))
-                                HStack
-                                {
-                                    //#if os(iOS)
-                                    Rectangle()
-                                        .fill(.clear)
-                                        .frame(width: 4)
-                                    //#endif
-                                    
-                                    VStack(alignment: .leading)
+                            Section("New")
+                            {
+                                ForEach(tool.codes, id:\.self)
+                                { code in
+                                    //Text(code.name)
+                                        //.font(.system(size: 16))
+                                    HStack
                                     {
-                                        Text(code.name)
-                                            .font(.system(size: 12))
+                                        //#if os(iOS)
+                                        Rectangle()
+                                            .fill(.clear)
+                                            .frame(width: 4)
+                                        //#endif
                                         
-                                        if !code.description.isEmpty
+                                        VStack(alignment: .leading)
                                         {
-                                            Text(code.description)
-                                                .font(.system(size: 8))
-                                                .lineLimit(1)
-                                                .help(code.description)
+                                            Text(code.name)
+                                                .font(.system(size: 12))
+                                            
+                                            if !code.description.isEmpty
+                                            {
+                                                Text(code.description)
+                                                    .font(.system(size: 8))
+                                                    .lineLimit(1)
+                                                    .help(code.description)
+                                            }
                                         }
+                                        
+                                        Spacer(minLength: 4)
                                     }
-                                    
-                                    Spacer(minLength: 4)
                                 }
                             }
                         }

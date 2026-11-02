@@ -208,12 +208,12 @@ let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #elseif os(iOS)
 let pendant_content_width: CGFloat = 240
 let pendant_content_height: CGFloat = 240
-let max_pendant_content_height: CGFloat = 600//520
+let max_pendant_content_height: CGFloat = 600 //520
 let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #elseif os(visionOS)
 let pendant_content_width: CGFloat = 240
 let pendant_content_height: CGFloat = 240
-let max_pendant_content_height: CGFloat = 600//520
+let max_pendant_content_height: CGFloat = 640 //520
 let max_pendant_content_width: CGFloat = pendant_content_width * 3.5
 #endif
 
@@ -367,7 +367,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     
                     WorkspaceControlView(workspace: workspace)
                         .padding(8)
-                        .overlay(
+                        .background(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.tertiary, lineWidth: 1)
                         )
@@ -375,7 +375,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     
                     RobotControlView(robot: workspace.robot(named: "6DOF Robot"))
                         .padding(8)
-                        .overlay(
+                        .background(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.tertiary, lineWidth: 1)
                         )
@@ -383,7 +383,7 @@ struct SpatialPendant_Previews: PreviewProvider
                     
                     ToolControlView(tool: workspace.tool(named: "Gripper"))
                         .padding(8)
-                        .overlay(
+                        .background(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.tertiary, lineWidth: 1)
                         )

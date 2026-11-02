@@ -41,35 +41,13 @@ public struct ElementControl: View
     
     public var body: some View
     {
-        ZStack(alignment: !is_expanded ? .center : .bottomTrailing)
+        ZStack//(alignment: !is_expanded ? .center : .bottomTrailing)
         {
             if !is_expanded
             {
                 // Element Pane
                 VStack
                 {
-                    HStack(spacing: 0)
-                    {
-                        VStack(alignment: .leading)
-                        {
-                            Text(workspace.current_element.title)
-                                .font(.system(size: 14, design: .rounded))
-                                //.foregroundColor(.secondary)
-                                .frame(maxWidth: .infinity)
-                                .lineLimit(1)
-                                /*.font(.title3.scaled(by: 0.8))
-                                .animation(.easeInOut(duration: 0.2), value: workspace.current_element.title)
-                                .lineLimit(1)*/
-                            
-                            /*Text(workspace.current_element.info)
-                                .font(.default.scaled(by: 0.8))
-                                .foregroundColor(.secondary)
-                                .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
-                                .lineLimit(1)*/
-                        }
-                        .padding(10)
-                    }
-                    
                     Spacer()
                     
                     Text(workspace.current_element.info)
@@ -132,7 +110,7 @@ public struct ElementControl: View
                     .buttonBorderShape(.circle)
                     .animation(.spring(response: 0.35, dampingFraction: 0.75), value: is_expanded)
                     
-                    VStack
+                    VStack//(spacing: 0)
                     {
                         GroupBox
                         {
@@ -143,54 +121,10 @@ public struct ElementControl: View
                             
                             if !is_vertical { Spacer(minLength: 0) }
                         }
-                        //.frame(idealWidth: element_control_width * 0.75)
-                        //.frame(width: is_vertical ? nil : element_control_width)
-                        //.frame(width: is_expanded ? element_control_width : 120)
                         
-                        Menu("New Element")
-                        {
-                            Section(header: Text("Performer"))
-                            {
-                                ForEach(PerformerType.allCases, id: \.self)
-                                { type in
-                                    Button(type.rawValue)
-                                    {
-                                        workspace.current_element = type.element
-                                    }
-                                    .tag(type)
-                                }
-                            }
-                            
-                            Section(header: Text("Modifier"))
-                            {
-                                ForEach(ModifierType.allCases, id: \.self)
-                                { type in
-                                    Button(type.rawValue)
-                                    {
-                                        workspace.current_element = type.element
-                                    }
-                                    .tag(type)
-                                }
-                            }
-                            
-                            Section(header: Text("Logic"))
-                            {
-                                ForEach(LogicType.allCases, id: \.self)
-                                { type in
-                                    Button(type.rawValue)
-                                    {
-                                        workspace.current_element = type.element
-                                    }
-                                    .tag(type)
-                                }
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .buttonStyle(.borderless)
-                        #if os(iOS)
-                        .tint(.black)
-                        .padding(.vertical, 4)
-                        #endif
+                        Rectangle()
+                            .fill(.clear)
+                            .frame(height: 32)
                     }
                     .padding([.horizontal, .bottom], 10)
                 }
@@ -201,7 +135,9 @@ public struct ElementControl: View
                 .frame(width: element_control_width) //, height: element_control_height)
                 .animation(.spring(response: 0.35, dampingFraction: 0.95), value: is_expanded)
             }
-            
+        }
+        .overlay(alignment: !is_expanded ? .center : .bottom)
+        {
             // Element Button
             Button
             {
@@ -217,7 +153,11 @@ public struct ElementControl: View
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.image)
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.color)
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                        .frame(width: 48, height: 48)
+                        .frame(
+                            width: !is_expanded ? 48 : (element_control_width - 20) / 2,
+                            height: !is_expanded ? 48 : 32
+                        )
+                        //.frame(width: 48, height: 48)
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .glassEffect(.regular.tint(workspace.current_element.color), in: .rect(cornerRadius: 10, style: .continuous))
@@ -225,12 +165,92 @@ public struct ElementControl: View
             }
             .buttonStyle(.plain)
             .buttonBorderShape(.roundedRectangle(radius: 10))
-            .scaleEffect(!is_expanded ? 1 : 0.8)
-            /*.modifier(
-                _ScaleEffect(scale: CGSize(width: !is_expanded ? 1 : 0.8, height: !is_expanded ? 1 : 0.8), anchor: .center)
-                    .ignoredByLayout()
-            )*/
-            .padding(8)
+            .padding(10)
+        }
+        .overlay(alignment: .top)
+        {
+            // New Element Menu
+            VStack
+            {
+                Menu
+                {
+                    Section(header: Text("Performer"))
+                    {
+                        ForEach(PerformerType.allCases, id: \.self)
+                        { type in
+                            Button(type.rawValue)
+                            {
+                                workspace.current_element = type.element
+                            }
+                            .tag(type)
+                        }
+                    }
+                    
+                    Section(header: Text("Modifier"))
+                    {
+                        ForEach(ModifierType.allCases, id: \.self)
+                        { type in
+                            Button(type.rawValue)
+                            {
+                                workspace.current_element = type.element
+                            }
+                            .tag(type)
+                        }
+                    }
+                    
+                    Section(header: Text("Logic"))
+                    {
+                        ForEach(LogicType.allCases, id: \.self)
+                        { type in
+                            Button(type.rawValue)
+                            {
+                                workspace.current_element = type.element
+                            }
+                            .tag(type)
+                        }
+                    }
+                }
+                label:
+                {
+                    #if os(macOS) || os(iOS)
+                    Text(workspace.current_element.title)
+                        .font(.system(size: 14, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .lineLimit(1)
+                        //.padding(10)
+                        //.background { Color.clear.contentShape(Rectangle()) }
+                        .frame(
+                            height: !is_expanded
+                            ? nil
+                            : {
+                            #if os(macOS)
+                                12
+                            #elseif os(iOS)
+                                16
+                            #endif
+                            }()
+                        )
+                    #else
+                    Text(workspace.current_element.title)
+                        .font(.system(size: 14, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .lineLimit(1)
+                        .frame(height: !is_expanded ? nil : 24)
+                        .border(.pink)
+                    #endif
+                }
+                .menuIndicator(.hidden)
+                .buttonStyle(.plain)
+                .padding(10)
+                #if os(iOS)
+                .tint(.black)
+                #elseif os(visionOS)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                #endif
+                
+                Spacer()
+            }
+            .frame(width: 120, height: 120)
         }
         .clipShape(.rect(cornerRadius: 16, style: .continuous))
         .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
@@ -271,13 +291,13 @@ public struct ElementControl: View
 
 #if os(macOS)
 internal let element_control_width: CGFloat = 240 //272
-internal let element_control_height: CGFloat = 272
+internal let element_control_height: CGFloat = 240
 #elseif os(iOS)
 internal let element_control_width: CGFloat = 320 //370
-internal let element_control_height: CGFloat = 370
+internal let element_control_height: CGFloat = 320
 #elseif os(visionOS)
 internal let element_control_width: CGFloat = 320 //400
-internal let element_control_height: CGFloat = 400
+internal let element_control_height: CGFloat = 320
 #endif
 
 //MARK: Type enums

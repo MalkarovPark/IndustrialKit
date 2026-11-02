@@ -275,10 +275,12 @@ struct WorkspaceControlView: View
             }
             
             // MARK: Controls
-            ElementControl(workspace: workspace, is_vertical: $is_vertical, /*is_vertical: Binding(
-                get: { !is_vertical },
-                set: { new_value in is_vertical = !new_value }
-            ),*/ on_expand: { element_pane_expanded = true }, on_collapse: { element_pane_expanded = false })
+            ElementControl(
+                workspace: workspace,
+                is_vertical: $is_vertical,
+                on_expand: { element_pane_expanded = true },
+                on_collapse: { element_pane_expanded = false }
+            )
         }
         .frame(
             minWidth: pendant_content_width,

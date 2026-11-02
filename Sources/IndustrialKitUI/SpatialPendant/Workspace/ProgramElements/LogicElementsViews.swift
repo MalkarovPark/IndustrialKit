@@ -68,6 +68,7 @@ public struct JumpElementView: View
                     }
                 }
                 .buttonStyle(.bordered)
+                .buttonSizing(.flexible)
                 .disabled(program.mark_names.count == 0)
             }
         }
@@ -152,14 +153,14 @@ public struct ComparatorElementView: View
                         }
                 )
                 
-                Text("If value of")
+                Text("If value")
                 
                 RegistersSelector(text: "\(element.value_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: value_index, names: ["Value 1"])
                     .frame(width: registers_selector_width)
                 
                 CompareTypePicker(compare_type: compare_type)
                 
-                Text("value of")
+                Text("value")
                 
                 RegistersSelector(text: "\(element.value2_index)", registers_count: workspace.registers.count, colors: default_register_colors, indices: value2_index, names: ["Value 2"])
                     .frame(width: registers_selector_width)
@@ -353,7 +354,6 @@ public struct WaitLogicElementView: View
                         }
                     })
             )
-            .frame(minWidth: 64, maxWidth: 96)
             #if os(iOS) || os(visionOS)
                 .frame(idealWidth: 96)
                 .textFieldStyle(.roundedBorder)
