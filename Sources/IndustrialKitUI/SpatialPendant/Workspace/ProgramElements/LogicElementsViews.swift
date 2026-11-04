@@ -35,42 +35,39 @@ public struct JumpElementView: View
     
     public var body: some View
     {
-        VStack(spacing: 0)
+        HStack
         {
-            HStack
-            {
-                let target_mark_name = Binding(
-                    get: { element.target_mark_name },
-                    set:
-                        { new_value in
-                            element.target_mark_name = new_value
-                            
-                            on_update()
-                        }
-                )
-                
-                #if !os(macOS)
-                Text("Jump to")
-                #endif
-                
-                Picker("Jump to", selection: target_mark_name) // Target mark picker
-                {
-                    if program.mark_names.count > 0
-                    {
-                        ForEach(program.mark_names, id: \.self)
-                        { name in
-                            Text(name)
-                        }
+            let target_mark_name = Binding(
+                get: { element.target_mark_name },
+                set:
+                    { new_value in
+                        element.target_mark_name = new_value
+                        
+                        on_update()
                     }
-                    else
-                    {
-                        Text("None")
+            )
+            
+            #if !os(macOS)
+            Text("Jump to")
+            #endif
+            
+            Picker("Jump to", selection: target_mark_name) // Target mark picker
+            {
+                if program.mark_names.count > 0
+                {
+                    ForEach(program.mark_names, id: \.self)
+                    { name in
+                        Text(name)
                     }
                 }
-                .buttonStyle(.bordered)
-                .buttonSizing(.flexible)
-                .disabled(program.mark_names.count == 0)
+                else
+                {
+                    Text("None")
+                }
             }
+            .buttonStyle(.bordered)
+            .buttonSizing(.flexible)
+            .disabled(program.mark_names.count == 0)
         }
     }
 }

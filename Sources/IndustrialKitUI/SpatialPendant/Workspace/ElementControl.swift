@@ -214,14 +214,29 @@ public struct ElementControl: View
                 {
                     #if os(macOS) || os(iOS)
                     Text(workspace.current_element.title)
-                        .font(.system(size: 14, design: .rounded))
+                        .font(
+                            .system(
+                                size: {
+                                #if os(macOS)
+                                    14
+                                #elseif os(iOS)
+                                    16
+                                #endif
+                                }(),
+                                design: .rounded
+                            )
+                        )
                         .frame(maxWidth: .infinity)
                         .lineLimit(1)
-                        //.padding(10)
-                        //.background { Color.clear.contentShape(Rectangle()) }
                         .frame(
                             height: !is_expanded
-                            ? nil
+                            ? {
+                            #if os(macOS)
+                                16
+                            #elseif os(iOS)
+                                16
+                            #endif
+                            }()
                             : {
                             #if os(macOS)
                                 12
@@ -232,11 +247,10 @@ public struct ElementControl: View
                         )
                     #else
                     Text(workspace.current_element.title)
-                        .font(.system(size: 14, design: .rounded))
+                        .font(.system(size: !is_expanded ? 16 : 18, design: .rounded))
                         .frame(maxWidth: .infinity)
                         .lineLimit(1)
-                        .frame(height: !is_expanded ? nil : 24)
-                        .border(.pink)
+                        .frame(height: !is_expanded ? 16 : 24)
                     #endif
                 }
                 .menuIndicator(.hidden)
@@ -290,14 +304,14 @@ public struct ElementControl: View
 }
 
 #if os(macOS)
-internal let element_control_width: CGFloat = 240 //272
-internal let element_control_height: CGFloat = 240
+internal let element_control_width: CGFloat = 240
+internal let element_control_height: CGFloat = 260 //240
 #elseif os(iOS)
-internal let element_control_width: CGFloat = 320 //370
-internal let element_control_height: CGFloat = 320
+internal let element_control_width: CGFloat = 320
+internal let element_control_height: CGFloat = 370 //320
 #elseif os(visionOS)
-internal let element_control_width: CGFloat = 320 //400
-internal let element_control_height: CGFloat = 320
+internal let element_control_width: CGFloat = 320
+internal let element_control_height: CGFloat = 420 //320
 #endif
 
 //MARK: Type enums
