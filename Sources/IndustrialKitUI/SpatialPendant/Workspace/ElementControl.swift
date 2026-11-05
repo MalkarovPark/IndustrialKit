@@ -22,6 +22,9 @@ public struct ElementControl: View
     
     @Namespace private var pane_glass
     
+    private let element_button_height: CGFloat = 48
+    private let element_button_min_height: CGFloat = 20 //24 //32
+    
     public init(
         workspace: Workspace,
         
@@ -127,12 +130,13 @@ public struct ElementControl: View
                             
                             if !is_vertical { Spacer(minLength: 0) }
                         }
-                        
-                        Rectangle()
-                            .fill(.clear)
-                            .frame(height: 32)
                     }
-                    .padding([.horizontal, .bottom], 10)
+                    .padding(.horizontal, 10)
+                    //.padding([.horizontal, .bottom], 10)
+                    
+                    Rectangle()
+                        .fill(.clear)
+                        .frame(height: element_button_min_height + 9.5 * 2)
                 }
                 /*.frame(
                     width: is_vertical ? expanded_element_control_width : element_control_width,
@@ -160,9 +164,10 @@ public struct ElementControl: View
                         .animation(.easeInOut(duration: 0.2), value: workspace.current_element.color)
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
                         .frame(
-                            width: !is_expanded ? 48 : (element_control_width - 20) / 2,
-                            height: !is_expanded ? 48 : 32
+                            width: !is_expanded ? element_button_height : (element_control_width - 20) / 2,
+                            height: !is_expanded ? element_button_height : element_button_min_height
                         )
+                        .scaleEffect(!is_expanded ? 1 : 0.75)
                         //.frame(width: 48, height: 48)
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -171,7 +176,7 @@ public struct ElementControl: View
             }
             .buttonStyle(.plain)
             .buttonBorderShape(.roundedRectangle(radius: 10))
-            .padding(10)
+            .padding(9.5)//(10)
         }
         .overlay(alignment: .top)
         {

@@ -768,7 +768,13 @@ struct RobotControlView_Previews: PreviewProvider
                 #if !os(visionOS)
                 FloatingView(
                     alignment: .trailing,
-                    on_overflow: { _ in is_vertical.toggle() }
+                    on_overflow:
+                        { alignemnt in
+                            if alignemnt == .leading || alignemnt == .trailing { is_vertical = true }
+                            
+                            if alignemnt == .top || alignemnt == .bottom { is_vertical = false }
+                            //controller.is_vertical.toggle()
+                        }
                 )
                 {
                     RobotControlView(robot: robot, shows_program_indices: true, is_vertical: $is_vertical)

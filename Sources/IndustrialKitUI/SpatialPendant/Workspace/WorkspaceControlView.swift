@@ -317,14 +317,11 @@ struct WorkspaceControlView: View
     {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8))
         {
-            // Dismiss new program view
-            if new_view_is_expanded { new_view_is_expanded = false }
+            if new_view_is_expanded { new_view_is_expanded = false } // Dismiss new program view
             
-            // Editor handling
-            workspace.selected_program = program
+            workspace.selected_program = program // Editor handling
             
-            // Performing Handling
-            workspace.select_program(named: program.name)
+            workspace.select_program(named: program.name) // Performing Handling
         }
     }
     
@@ -747,7 +744,13 @@ struct WorkspaceControl_Previews: PreviewProvider
                     #if !os(visionOS)
                     FloatingView(
                         alignment: .trailing,
-                        on_overflow: { _ in is_vertical.toggle() }
+                        on_overflow:
+                            { alignemnt in
+                                if alignemnt == .leading || alignemnt == .trailing { is_vertical = true }
+                                
+                                if alignemnt == .top || alignemnt == .bottom { is_vertical = false }
+                                //controller.is_vertical.toggle()
+                            }
                     )
                     {
                         WorkspaceControlView(workspace: workspace, shows_program_indices: true, is_vertical: $is_vertical /*, on_update: { print("Program Updated") } */)

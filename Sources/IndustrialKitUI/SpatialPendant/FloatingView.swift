@@ -16,6 +16,7 @@ public struct FloatingView<Content: View>: View
     @State private var stuck_alignment: Alignment?
     
     @State private var overflow_alignment: Alignment?
+    
     private let overflow_limit: CGFloat = 64
     
     // Content
@@ -129,21 +130,8 @@ public struct FloatingView<Content: View>: View
         DragGesture()
             .onChanged
             { value in
-                //if !is_dragging { overflow_alignment = nil } // Overflow Side
-                
                 is_dragging = true
                 drag_offset = value.translation
-                
-                /*if let side = overflow_side(
-                    at: CGPoint(
-                        x: position.x + value.translation.width,
-                        y: position.y + value.translation.height
-                    ),
-                    in: container_size
-                )
-                {
-                    overflow_alignment = side
-                }*/
             }
             .onEnded
             { value in
@@ -153,8 +141,6 @@ public struct FloatingView<Content: View>: View
                 )
                 
                 if let side = overflow_side(at: dragged_position, in: container_size) { on_overflow(side) }
-                //if let alignment = overflow_alignment { on_overflow(alignment) }
-                //overflow_alignment = nil
                 
                 position.x += value.translation.width
                 position.y += value.translation.height
