@@ -150,13 +150,10 @@ struct WorkspaceControlView: View
                     
                     ScrollView
                     {
-                        //LazyVStack(spacing: 8)
-                        //LazyVGrid(columns: [GridItem(.flexible())], spacing: 8)
                         LazyVGrid(
-                            columns: Array(
-                                repeating: GridItem(.flexible()),
-                                count: is_vertical ? 1 : 3
-                            ),
+                            columns: is_vertical
+                                ? [GridItem(.flexible())]
+                                : [GridItem(.adaptive(minimum: 120), spacing: 8)],
                             spacing: 8
                         )
                         {

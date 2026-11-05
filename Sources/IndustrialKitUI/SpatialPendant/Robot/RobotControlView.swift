@@ -64,10 +64,6 @@ public struct RobotControlView: View
                     ScrollView
                     {
                         LazyVGrid(
-                            /*columns: Array(
-                                repeating: GridItem(.flexible()),
-                                count: is_vertical ? 1 : 3
-                            )*/
                             columns: is_vertical
                                 ? [GridItem(.flexible())]
                                 : [GridItem(.adaptive(minimum: 120), spacing: 8)],
