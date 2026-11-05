@@ -23,7 +23,11 @@ public struct ElementControl: View
     @Namespace private var pane_glass
     
     private let element_button_height: CGFloat = 48
-    private let element_button_min_height: CGFloat = 20 //24 //32
+    #if os(macOS)
+    private let element_button_min_height: CGFloat = 20
+    #else
+    private let element_button_min_height: CGFloat = 24
+    #endif
     
     public init(
         workspace: Workspace,
@@ -55,20 +59,11 @@ public struct ElementControl: View
                     
                     MarqueeText(
                         workspace.current_element.info,
-                        font: .system(
-                            size: {
-                                #if os(macOS)
-                                10
-                                #else
-                                5
-                                #endif
-                            }()
-                        )
+                        font: .system(size: 10),
+                        leading_inset: 12
                     )
                     .foregroundColor(.secondary)
                     .animation(.easeInOut(duration: 0.2), value: is_expanded)
-                    //.animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
-                    //.padding(10)
                     .frame(height: (120 - 48) / 2)
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -321,16 +316,22 @@ private struct MarqueeText: View
     var spacing: CGFloat
     var points_per_second: CGFloat
     var pause_duration: Duration
+    var leading_inset: CGFloat
     
     @State private var text_width: CGFloat = 0
     @State private var offset: CGFloat = 0
+    @State private var needs_scrolling = false
+    
+    private let gradient_margin: CGFloat = 0.04
+    private let gradient_gap: CGFloat = 0.08
     
     init(
         _ text: String,
         font: Font = .system(size: 16),
         spacing: CGFloat = 32,
         points_per_second: CGFloat = 30,
-        pause_duration: Duration = .seconds(1.5)
+        pause_duration: Duration = .seconds(1.5),
+        leading_inset: CGFloat = 0
     )
     {
         self.text = text
@@ -338,6 +339,7 @@ private struct MarqueeText: View
         self.spacing = spacing
         self.points_per_second = points_per_second
         self.pause_duration = pause_duration
+        self.leading_inset = leading_inset
     }
     
     var body: some View
@@ -345,7 +347,7 @@ private struct MarqueeText: View
         GeometryReader
         { geometry in
             let viewport_width = geometry.size.width
-            let needs_scrolling = text_width > viewport_width
+            //let needs_scrolling = text_width > viewport_width
             let distance = text_width + spacing
             let duration = Double(distance / max(points_per_second, 1))
             
@@ -369,6 +371,7 @@ private struct MarqueeText: View
                 height: geometry.size.height,
                 alignment: needs_scrolling ? .leading : .center
             )
+            .padding(.leading, needs_scrolling ? leading_inset : 0)
             .clipped()
             .background
             {
@@ -414,8 +417,29 @@ private struct MarqueeText: View
                     withTransaction(transaction) { offset = 0 }
                 }
             }
+            .onAppear { needs_scrolling = text_width > viewport_width }
         }
         .accessibilityLabel(text)
+        .mask
+        {
+            if needs_scrolling
+            {
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: gradient_margin),
+                        .init(color: .black, location: gradient_margin + gradient_gap),
+                        .init(color: .black, location: 1 - gradient_margin - gradient_gap),
+                        .init(color: .clear, location: 1 - gradient_margin)
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            }
+            else
+            {
+                Rectangle()
+            }
+        }
     }
 }
 
