@@ -50,17 +50,23 @@ public struct ElementControl: View
                 {
                     Spacer()
                     
-                    Text(workspace.current_element.info)
-                    #if os(macOS)
-                        .font(.default.scaled(by: 0.8))
-                    #else
-                        .font(.default.scaled(by: 0.4))
-                    #endif
-                        .foregroundColor(.secondary)
-                        .animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
-                        .lineLimit(2)
-                        .padding(10)
-                        .frame(height: (120 - 48) / 2)
+                    MarqueeText(
+                        workspace.current_element.info,
+                        font: .system(
+                            size: {
+                                #if os(macOS)
+                                10
+                                #else
+                                5
+                                #endif
+                            }()
+                        )
+                    )
+                    .foregroundColor(.secondary)
+                    .animation(.easeInOut(duration: 0.2), value: is_expanded)
+                    //.animation(.easeInOut(duration: 0.2), value: workspace.current_element.info)
+                    //.padding(10)
+                    .frame(height: (120 - 48) / 2)
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .gesture(
@@ -300,6 +306,111 @@ public struct ElementControl: View
             
             on_collapse()
         }
+    }
+}
+
+private struct MarqueeText: View
+{
+    let text: String
+    var font: Font
+    var spacing: CGFloat
+    var points_per_second: CGFloat
+    var pause_duration: Duration
+    
+    @State private var text_width: CGFloat = 0
+    @State private var offset: CGFloat = 0
+    
+    init(
+        _ text: String,
+        font: Font = .system(size: 16),
+        spacing: CGFloat = 32,
+        points_per_second: CGFloat = 30,
+        pause_duration: Duration = .seconds(1.5)
+    )
+    {
+        self.text = text
+        self.font = font
+        self.spacing = spacing
+        self.points_per_second = points_per_second
+        self.pause_duration = pause_duration
+    }
+    
+    var body: some View
+    {
+        GeometryReader
+        { geometry in
+            let viewport_width = geometry.size.width
+            let needs_scrolling = text_width > viewport_width
+            let distance = text_width + spacing
+            let duration = Double(distance / max(points_per_second, 1))
+            
+            HStack(spacing: spacing)
+            {
+                Text(text)
+                    .fixedSize()
+                
+                if needs_scrolling
+                {
+                    Text(text)
+                        .fixedSize()
+                        .accessibilityHidden(true)
+                }
+            }
+            .font(font)
+            .offset(x: offset)
+            //.frame(height: geometry.size.height, alignment: .leading)
+            .frame(
+                width: needs_scrolling ? nil : viewport_width,
+                height: geometry.size.height,
+                alignment: needs_scrolling ? .leading : .center
+            )
+            .clipped()
+            .background
+            {
+                Text(text)
+                    .font(font)
+                    .fixedSize()
+                    .hidden()
+                    .background
+                {
+                    GeometryReader
+                    { text_geometry in
+                        Color.clear
+                            .onAppear
+                        {
+                            text_width = text_geometry.size.width
+                        }
+                        .onChange(of: text_geometry.size.width)
+                        { _, new_width in
+                            text_width = new_width
+                        }
+                    }
+                }
+            }
+            .task(id: "\(text)-\(text_width)-\(viewport_width)")
+            {
+                offset = 0
+                guard needs_scrolling else { return }
+                
+                while !Task.isCancelled
+                {
+                    try? await Task.sleep(for: pause_duration)
+                    guard !Task.isCancelled else { break }
+                    
+                    withAnimation(.linear(duration: duration))
+                    {
+                        offset = -distance
+                    }
+                    try? await Task.sleep(for: .seconds(duration))
+                    guard !Task.isCancelled else { break }
+                    
+                    var transaction = Transaction()
+                    transaction.animation = nil
+                    withTransaction(transaction) { offset = 0 }
+                }
+            }
+        }
+        .accessibilityLabel(text)
     }
 }
 
