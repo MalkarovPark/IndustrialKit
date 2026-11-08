@@ -73,6 +73,15 @@ public extension View
     }
 }
 
+extension View
+{
+    @ViewBuilder
+    func inspectorColumnWidth(_ width: CGFloat) -> some View
+    {
+        self.frame(width: width)
+    }
+}
+
 #Preview(windowStyle: .automatic)
 {
     @Previewable @State var inspector_presented = true
