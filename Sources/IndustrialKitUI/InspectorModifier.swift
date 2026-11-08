@@ -73,7 +73,7 @@ public extension View
     }
 }
 
-extension View
+public extension View
 {
     @ViewBuilder
     func inspectorColumnWidth(_ width: CGFloat) -> some View
