@@ -22,6 +22,10 @@ public struct BoxCard<Content: View>: View
     // Shape
     let corner_radius: CGFloat
     let depth: CGFloat
+    let shows_shadow: Bool
+    
+    // Behavior
+    let enables_hover: Bool
     
     // Symbol
     let symbol_name: String
@@ -48,6 +52,9 @@ public struct BoxCard<Content: View>: View
         
         corner_radius: CGFloat = 16,
         depth: CGFloat = 10,
+        shows_shadow: Bool = true,
+        
+        enables_hover: Bool = true,
         
         symbol_name: String = String(),
         symbol_size: CGFloat = 96,
@@ -74,6 +81,9 @@ public struct BoxCard<Content: View>: View
         
         self.corner_radius = corner_radius
         self.depth = depth
+        self.shows_shadow = shows_shadow
+        
+        self.enables_hover = enables_hover
         
         self.symbol_name = symbol_name
         self.symbol_size = symbol_size
@@ -94,14 +104,17 @@ public struct BoxCard<Content: View>: View
         {
             #if !os(visionOS)
             // Shadow
-            RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
-                .intersection(
-                    RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
-                        .offset(y: depth)
-                )
-                .foregroundStyle(color)
-                .blur(radius: 16)
-                .opacity(0.5)
+            if shows_shadow
+            {
+                RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                    .intersection(
+                        RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                            .offset(y: depth)
+                    )
+                    .foregroundStyle(color)
+                    .blur(radius: 16)
+                    .opacity(0.5)
+            }
             #endif
             
             // Box
@@ -236,9 +249,12 @@ public struct BoxCard<Content: View>: View
             .clipShape(RoundedRectangle(cornerRadius: corner_radius, style: .continuous))
             .onHover
             { hovered in
-                withAnimation(.easeInOut(duration: 0.2))
+                if enables_hover
                 {
-                    self.hovered = hovered
+                    withAnimation(.easeInOut(duration: 0.2))
+                    {
+                        self.hovered = hovered
+                    }
                 }
             }
             .offset(y: hovered && !is_renaming ? -2 : 0)
@@ -259,6 +275,10 @@ public struct GlassBoxCard<Content: View>: View
     // Shape
     let corner_radius: CGFloat
     let depth: CGFloat
+    let shows_shadow: Bool
+    
+    // Behavior
+    let enables_hover: Bool
     
     // Image
     let image: UIImage?
@@ -288,8 +308,11 @@ public struct GlassBoxCard<Content: View>: View
     public init(
         color: Color? = nil,
         
-        depth: CGFloat = 10,
         corner_radius: CGFloat = 16,
+        depth: CGFloat = 10,
+        shows_shadow: Bool = true,
+        
+        enables_hover: Bool = true,
         
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
@@ -306,6 +329,9 @@ public struct GlassBoxCard<Content: View>: View
         
         self.corner_radius = corner_radius
         self.depth = depth
+        self.shows_shadow = shows_shadow
+        
+        self.enables_hover = enables_hover
         
         self.title = nil
         self.subtitle = nil
@@ -332,6 +358,9 @@ public struct GlassBoxCard<Content: View>: View
         
         corner_radius: CGFloat = 16,
         depth: CGFloat = 10,
+        shows_shadow: Bool = true,
+        
+        enables_hover: Bool = true,
         
         image: UIImage?,
         
@@ -356,6 +385,9 @@ public struct GlassBoxCard<Content: View>: View
         
         self.corner_radius = corner_radius
         self.depth = depth
+        self.shows_shadow = shows_shadow
+        
+        self.enables_hover = enables_hover
         
         self.image = image
         
@@ -380,6 +412,9 @@ public struct GlassBoxCard<Content: View>: View
         
         corner_radius: CGFloat = 16,
         depth: CGFloat = 10,
+        shows_shadow: Bool = true,
+        
+        enables_hover: Bool = true,
         
         symbol_name: String = String(),
         symbol_size: CGFloat = 96,
@@ -406,6 +441,9 @@ public struct GlassBoxCard<Content: View>: View
         
         self.corner_radius = corner_radius
         self.depth = depth
+        self.shows_shadow = shows_shadow
+        
+        self.enables_hover = enables_hover
         
         self.symbol_name = symbol_name
         self.symbol_size = symbol_size
@@ -430,6 +468,9 @@ public struct GlassBoxCard<Content: View>: View
         
         corner_radius: CGFloat = 16,
         depth: CGFloat = 10,
+        shows_shadow: Bool = true,
+        
+        enables_hover: Bool = true,
         
         entity: Entity?,
         center_entity: Bool = false,
@@ -455,6 +496,9 @@ public struct GlassBoxCard<Content: View>: View
         
         self.corner_radius = corner_radius
         self.depth = depth
+        self.shows_shadow = shows_shadow
+        
+        self.enables_hover = enables_hover
         
         #if !os(visionOS)
         self.entity = entity
@@ -483,14 +527,17 @@ public struct GlassBoxCard<Content: View>: View
         {
             #if !os(visionOS)
             // Shadow
-            RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
-                .intersection(
-                    RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
-                        .offset(y: depth)
-                )
-                .foregroundStyle(color)
-                .blur(radius: 16)
-                .opacity(0.1)
+            if shows_shadow
+            {
+                RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                    .intersection(
+                        RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                            .offset(y: depth)
+                    )
+                    .foregroundStyle(color)
+                    .blur(radius: 16)
+                    .opacity(0.1)
+            }
             #endif
             
             // Box
@@ -743,9 +790,12 @@ public struct GlassBoxCard<Content: View>: View
             }
             .onHover
             { hovered in
-                withAnimation(.easeInOut(duration: 0.2))
+                if enables_hover
                 {
-                    self.hovered = hovered
+                    withAnimation(.easeInOut(duration: 0.2))
+                    {
+                        self.hovered = hovered
+                    }
                 }
             }
             .offset(y: hovered && !is_renaming ? -2 : 0)
