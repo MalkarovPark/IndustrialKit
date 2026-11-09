@@ -19,6 +19,10 @@ public struct BoxCard<Content: View>: View
     // Color
     let color: Color
     
+    // Shape
+    let corner_radius: CGFloat
+    let depth: CGFloat
+    
     // Symbol
     let symbol_name: String
     let symbol_size: CGFloat
@@ -41,6 +45,9 @@ public struct BoxCard<Content: View>: View
         subtitle: String? = nil,
         
         color: Color? = nil,
+        
+        corner_radius: CGFloat = 16,
+        depth: CGFloat = 10,
         
         symbol_name: String = String(),
         symbol_size: CGFloat = 96,
@@ -65,6 +72,9 @@ public struct BoxCard<Content: View>: View
             endPoint: .trailing
         )
         
+        self.corner_radius = corner_radius
+        self.depth = depth
+        
         self.symbol_name = symbol_name
         self.symbol_size = symbol_size
         self.symbol_weight = symbol_weight
@@ -84,10 +94,10 @@ public struct BoxCard<Content: View>: View
         {
             #if !os(visionOS)
             // Shadow
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
                 .intersection(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .offset(y: 10)
+                    RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                        .offset(y: depth)
                 )
                 .foregroundStyle(color)
                 .blur(radius: 16)
@@ -218,12 +228,12 @@ public struct BoxCard<Content: View>: View
                         
                         overlay_view
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: corner_radius, style: .continuous))
                     
-                    Spacer(minLength: 10)
+                    Spacer(minLength: depth)
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: corner_radius, style: .continuous))
             .onHover
             { hovered in
                 withAnimation(.easeInOut(duration: 0.2))
@@ -245,6 +255,10 @@ public struct GlassBoxCard<Content: View>: View
     
     // Color
     let color: Color
+    
+    // Shape
+    let corner_radius: CGFloat
+    let depth: CGFloat
     
     // Image
     let image: UIImage?
@@ -274,6 +288,9 @@ public struct GlassBoxCard<Content: View>: View
     public init(
         color: Color? = nil,
         
+        depth: CGFloat = 10,
+        corner_radius: CGFloat = 16,
+        
         @ViewBuilder overlay: () -> Content? = { EmptyView() }
     )
     {
@@ -286,6 +303,9 @@ public struct GlassBoxCard<Content: View>: View
             startPoint: .leading,
             endPoint: .trailing
         )
+        
+        self.corner_radius = corner_radius
+        self.depth = depth
         
         self.title = nil
         self.subtitle = nil
@@ -309,6 +329,10 @@ public struct GlassBoxCard<Content: View>: View
         subtitle: String? = nil,
         
         color: Color? = nil,
+        
+        corner_radius: CGFloat = 16,
+        depth: CGFloat = 10,
+        
         image: UIImage?,
         
         is_renaming: Binding<Bool> = .constant(false),
@@ -330,6 +354,9 @@ public struct GlassBoxCard<Content: View>: View
             endPoint: .trailing
         )
         
+        self.corner_radius = corner_radius
+        self.depth = depth
+        
         self.image = image
         
         self.symbol_name = nil
@@ -350,6 +377,9 @@ public struct GlassBoxCard<Content: View>: View
         subtitle: String? = nil,
         
         color: Color? = nil,
+        
+        corner_radius: CGFloat = 16,
+        depth: CGFloat = 10,
         
         symbol_name: String = String(),
         symbol_size: CGFloat = 96,
@@ -374,6 +404,9 @@ public struct GlassBoxCard<Content: View>: View
             endPoint: .trailing
         )
         
+        self.corner_radius = corner_radius
+        self.depth = depth
+        
         self.symbol_name = symbol_name
         self.symbol_size = symbol_size
         self.symbol_weight = symbol_weight
@@ -392,7 +425,11 @@ public struct GlassBoxCard<Content: View>: View
     public init(
         title: String? = nil,
         subtitle: String? = nil,
+        
         color: Color? = nil,
+        
+        corner_radius: CGFloat = 16,
+        depth: CGFloat = 10,
         
         entity: Entity?,
         center_entity: Bool = false,
@@ -415,6 +452,9 @@ public struct GlassBoxCard<Content: View>: View
             startPoint: .leading,
             endPoint: .trailing
         )
+        
+        self.corner_radius = corner_radius
+        self.depth = depth
         
         #if !os(visionOS)
         self.entity = entity
@@ -443,10 +483,10 @@ public struct GlassBoxCard<Content: View>: View
         {
             #if !os(visionOS)
             // Shadow
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
                 .intersection(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .offset(y: 10)
+                    RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                        .offset(y: depth)
                 )
                 .foregroundStyle(color)
                 .blur(radius: 16)
@@ -457,19 +497,19 @@ public struct GlassBoxCard<Content: View>: View
             ZStack
             {
                 // Bottom Side
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
                     .intersection(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .offset(y: 10)
+                        RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                            .offset(y: depth)
                     )
                     .foregroundStyle(gradient)
                     .opacity(0.2)
                 
                 // Back Side
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
                     .subtracting(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .offset(y: 10)
+                        RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                            .offset(y: depth)
                     )
                     .foregroundStyle(gradient)
                     .opacity(0.5)
@@ -487,7 +527,7 @@ public struct GlassBoxCard<Content: View>: View
                             Image(uiImage: image)
                             #endif
                         }
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: corner_radius, style: .continuous))
                 }
                 else if let symbol_name = symbol_name
                 {
@@ -528,7 +568,7 @@ public struct GlassBoxCard<Content: View>: View
                         }
                     }
                     .disabled(true)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: corner_radius, style: .continuous))
                     #else
                     GeometryReader
                     { geometry in
@@ -559,15 +599,15 @@ public struct GlassBoxCard<Content: View>: View
                         }
                     }
                     .disabled(true)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: corner_radius, style: .continuous))
                     #endif
                 }
                 
                 // Forward Side
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
                     .subtracting(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .offset(y: -10)
+                        RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                            .offset(y: -depth)
                     )
                     .foregroundStyle(gradient)
                     .opacity(0.5)
@@ -577,7 +617,7 @@ public struct GlassBoxCard<Content: View>: View
                 {
                     ZStack
                     {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
                             .foregroundStyle(gradient)
                             .opacity(0.2)
                             .overlay(alignment: .bottomLeading)
@@ -655,7 +695,7 @@ public struct GlassBoxCard<Content: View>: View
                                                     #if !os(visionOS)
                                                     .padding()
                                                     #else
-                                                    .padding(10)
+                                                    .padding(depth)
                                                     #endif
                                                     #endif
                                                 }
@@ -667,7 +707,7 @@ public struct GlassBoxCard<Content: View>: View
                                     #else
                                     .background(.thinMaterial)
                                     #endif
-                                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                    .clipShape(RoundedRectangle(cornerRadius: corner_radius * 10 / 16, style: .continuous))
                                     .padding(8)
                                     #if os(visionOS)
                                     .border(.ultraThinMaterial.opacity(0.0000000000000000000000000001)) //??
@@ -696,9 +736,9 @@ public struct GlassBoxCard<Content: View>: View
                             .animation(.easeInOut(duration: 0.2), value: CGFloat(scale * model_size.x * 1000 + depth_shift * scale) * 2)
                         #endif
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: corner_radius, style: .continuous))
                     
-                    Spacer(minLength: 10)
+                    Spacer(minLength: depth)
                 }
             }
             .onHover
@@ -858,6 +898,8 @@ let register_card_font_size: CGFloat = 32
                 title: names[0],
                 subtitle: "Workspace",
                 color: .teal,
+                //corner_radius: 20,
+                //depth: 5,
                 symbol_name: "cube",
                 is_renaming: $is_renaming[0]
             )
