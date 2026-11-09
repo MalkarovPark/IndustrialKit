@@ -25,11 +25,15 @@ struct PerformingCaptionView: View
         {
             Rectangle()
                 .fill(.clear)
-            #if os(macOS)
-                .frame(height: 32)
-            #else
-                .frame(height: 40)
-            #endif
+                .frame(
+                    height: {
+                        #if os(macOS)
+                        32
+                        #else
+                        40
+                        #endif
+                    }()
+                )
                 .glassEffect(.clear, in: .capsule(style: .continuous))
             
             VStack
@@ -47,23 +51,42 @@ struct PerformingCaptionView: View
             HStack
             {
                 Spacer()
-                Image(systemName:"circlebadge.fill")
-                #if !os(visionOS)
-                    .foregroundColor(performing_state.color)
-                #else
-                    .foregroundColor(.clear)
+                
+                Circle()
+                    .fill(.clear)
+                    .frame(
+                        width: {
+                            #if os(macOS)
+                            12
+                            #elseif os(iOS)
+                            14
+                            #elseif os(visionOS)
+                            14
+                            #endif
+                        }(),
+                        height: {
+                            #if os(macOS)
+                            12
+                            #elseif os(iOS)
+                            14
+                            #elseif os(visionOS)
+                            14
+                            #endif
+                        }()
+                    )
                     .glassEffect(.regular.tint(performing_state.color).interactive(), in: .circle)
-                #endif
-                #if os(macOS)
-                    .padding(.trailing, 10)
-                    .font(.system(size: 14))
-                #elseif os(iOS)
-                    .padding(.trailing, 10)
-                    .font(.system(size: 18))
-                #elseif os(visionOS)
-                    .padding(.trailing, 12)
-                    .font(.system(size: 18))
-                #endif
+                    .padding(
+                        .trailing,
+                        {
+                        #if os(macOS)
+                            10
+                        #elseif os(iOS)
+                            14
+                        #elseif os(visionOS)
+                            12
+                        #endif
+                        }()
+                    )
             }
         }
         .frame(maxWidth: .infinity)
@@ -85,7 +108,7 @@ struct PerformingCaptionView: View
             .frame(width: pendant_content_width)
             .padding()
             #if !os(visionOS)
-            .background(.secondary.opacity(0.1))
+            .background(.secondary.opacity(0.05))
             #endif
             .onReceive(
                 Timer.publish(every: 1.5, on: .main, in: .common)

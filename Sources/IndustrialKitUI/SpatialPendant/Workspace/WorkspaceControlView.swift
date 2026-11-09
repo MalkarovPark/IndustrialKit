@@ -51,6 +51,9 @@ struct WorkspaceControlView: View
     
     @State private var element_pane_expanded = false
     
+    private let ur_badge_scale = 0.15
+    private let ur_badge_shift = 4.0
+    
     var body: some View
     {
         DynamicStack(is_vertical: $is_vertical, vertical_alignment: .center, spacing: 10) // VStack(alignment: .center, spacing: 10)
@@ -61,7 +64,7 @@ struct WorkspaceControlView: View
                 PerformingCaptionView(name: "Workspace", performing_state: workspace.performing_state)
                     .overlay(alignment: .leading)
                     {
-                        HStack
+                        HStack(spacing: 0)
                         {
                             Button
                             {
@@ -70,41 +73,69 @@ struct WorkspaceControlView: View
                             }
                             label:
                             {
-                                Image(systemName: "number")
-                                    .padding(.leading, 10)
-                            }
-                            .buttonStyle(.plain)
-                            .overlay(alignment: .topTrailing)
-                            {
-                                if registers_updated
+                                ZStack
                                 {
-                                    ZStack
+                                    Image(systemName: "number")
+                                        .font(
+                                            .system(
+                                                size: {
+                                                    #if os(macOS)
+                                                    12
+                                                    #else
+                                                    14
+                                                    #endif
+                                                }()
+                                            )
+                                        )
+                                    
+                                    /*Rectangle()
+                                        .subtracting(
+                                            Circle()
+                                                .scale(ur_badge_scale)
+                                                .offset(x: ur_badge_shift, y: -ur_badge_shift)
+                                        )
+                                        .opacity(0.5)*/
+                                    
+                                    if registers_updated
                                     {
-                                        #if os(macOS) || os(iOS)
-                                        Image(systemName: "circle.fill")
-                                            .foregroundStyle(.white)
-                                        #if os(macOS)
-                                            .font(.system(size: 6))
-                                        #else
-                                            .font(.system(size: 8))
-                                        #endif
-                                        #endif
-                                        
-                                        Image(systemName: "circle.fill")
-                                            .foregroundStyle(.pink)
-                                        #if os(macOS)
-                                            .font(.system(size: 3))
-                                        #else
-                                            .font(.system(size: 4.5))
-                                        #endif
+                                        Circle()
+                                            .scale(ur_badge_scale * 0.7)
+                                            .offset(x: ur_badge_shift, y: -ur_badge_shift)
+                                            .fill(.pink)
                                     }
-                                    #if os(macOS)
-                                    .padding(0.5)
-                                    #else
-                                    .padding(0.3)
-                                    #endif
                                 }
+                                .clipShape(
+                                    Rectangle()
+                                        .subtracting(
+                                            Circle()
+                                                .scale(ur_badge_scale)
+                                                .offset(x: ur_badge_shift, y: -ur_badge_shift)
+                                                .subtracting(
+                                                    Circle()
+                                                        .scale(ur_badge_scale * (registers_updated ? 0.6 : 10))
+                                                        .offset(x: ur_badge_shift, y: -ur_badge_shift)
+                                                )
+                                        )
+                                )
                             }
+                            .frame(
+                                width: {
+                                    #if os(macOS)
+                                    32
+                                    #else
+                                    40
+                                    #endif
+                                }(),
+                                height: {
+                                    #if os(macOS)
+                                    32
+                                    #else
+                                    40
+                                    #endif
+                                }()
+                            )
+                            .buttonBorderShape(.circle)
+                            .buttonStyle(.plain)
                             .onChange(of: workspace.registers)
                             { _, _ in
                                 if !registers_view_presented
@@ -118,13 +149,61 @@ struct WorkspaceControlView: View
                                 if workspace.cycled
                                 {
                                     Image(systemName: "repeat")
+                                        .font(
+                                            .system(
+                                                size: {
+                                                    #if os(macOS)
+                                                    12
+                                                    #else
+                                                    14
+                                                    #endif
+                                                }()
+                                            )
+                                        )
                                 }
                                 else
                                 {
                                     Image(systemName: "repeat.1")
+                                        .font(
+                                            .system(
+                                                size: {
+                                                    #if os(macOS)
+                                                    12
+                                                    #else
+                                                    14
+                                                    #endif
+                                                }()
+                                            )
+                                        )
                                 }
                             }
+                            .frame(
+                                width: {
+                                    #if os(macOS)
+                                    32
+                                    #else
+                                    40
+                                    #endif
+                                }(),
+                                height: {
+                                    #if os(macOS)
+                                    32
+                                    #else
+                                    40
+                                    #endif
+                                }()
+                            )
+                            .buttonBorderShape(.circle)
                             .buttonStyle(.plain)
+                            .offset(x: {
+                                #if os(macOS)
+                                -12
+                                #elseif os(iOS)
+                                -14
+                                #elseif os(visionOS)
+                                -16
+                                #endif
+                            }())
                         }
                     }
                     .sheet(isPresented: $registers_view_presented)
