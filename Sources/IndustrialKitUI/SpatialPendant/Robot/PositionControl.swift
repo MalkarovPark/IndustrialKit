@@ -364,6 +364,14 @@ public struct PositionPane: View
                         .onChanged
                         { _ in
                             is_central_pressed = true
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                            {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                                {
+                                    is_central_pressed = false
+                                }
+                            }
                         }
                         .onEnded
                         { _ in
@@ -419,6 +427,14 @@ public struct PositionPane: View
                         .onChanged
                         { _ in
                             is_central_pressed = true
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5)
+                            {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85))
+                                {
+                                    is_central_pressed = false
+                                }
+                            }
                         }
                         .onEnded
                         { _ in
