@@ -102,7 +102,6 @@ public struct BoxCard<Content: View>: View
     {
         ZStack
         {
-            #if !os(visionOS)
             // Shadow
             if shows_shadow
             {
@@ -113,9 +112,14 @@ public struct BoxCard<Content: View>: View
                     )
                     .foregroundStyle(color)
                     .blur(radius: 16)
-                    .opacity(0.5)
+                    .opacity({
+                        #if !os(visionOS)
+                        0.5
+                        #else
+                        0.1
+                        #endif
+                    }())
             }
-            #endif
             
             // Box
             ZStack
@@ -525,7 +529,6 @@ public struct GlassBoxCard<Content: View>: View
     {
         ZStack
         {
-            #if !os(visionOS)
             // Shadow
             if shows_shadow
             {
@@ -536,9 +539,14 @@ public struct GlassBoxCard<Content: View>: View
                     )
                     .foregroundStyle(color)
                     .blur(radius: 16)
-                    .opacity(0.1)
+                    .opacity({
+                        #if !os(visionOS)
+                        0.5
+                        #else
+                        0.1
+                        #endif
+                    }())
             }
-            #endif
             
             // Box
             ZStack
@@ -1030,6 +1038,7 @@ let register_card_font_size: CGFloat = 32
         .frame(width: 320, height: 192)
     }
     .padding(8)
+    .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
 }
 
 #Preview
