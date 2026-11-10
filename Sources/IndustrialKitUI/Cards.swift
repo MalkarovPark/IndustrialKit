@@ -1037,8 +1037,12 @@ let register_card_font_size: CGFloat = 32
         .padding(4)
         .frame(width: 320, height: 192)
     }
+    #if !os(visionOS)
     .padding(8)
-    .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
+    #else
+    .padding(16)
+    .glassEffect(.regular, in: .rect(cornerRadius: 32, style: .continuous))
+    #endif
 }
 
 #Preview
@@ -1053,5 +1057,10 @@ let register_card_font_size: CGFloat = 32
         
         RegisterCard(value: $values[2], number: 20, color: .indigo)
     }
+    #if !os(visionOS)
     .padding(16)
+    #else
+    .padding(24)
+    .glassEffect(.regular, in: .rect(cornerRadius: 32, style: .continuous))
+    #endif
 }
