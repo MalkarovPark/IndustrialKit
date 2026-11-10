@@ -541,9 +541,9 @@ public struct GlassBoxCard<Content: View>: View
                     .blur(radius: 16)
                     .opacity({
                         #if !os(visionOS)
-                        0.5
-                        #else
                         0.1
+                        #else
+                        0.02
                         #endif
                     }())
             }
