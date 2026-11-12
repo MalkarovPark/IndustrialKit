@@ -426,6 +426,17 @@ private struct ExternalConnectorView: View
             //.disabled(device.device_mode == .simulation)
             .buttonStyle(.bordered)
             .buttonBorderShape(.circle)
+            .overlay(alignment: .topTrailing)
+            {
+                if external_connector.program_component_status != .not_running && !is_presented
+                {
+                    Image(systemName: "circle.fill")
+                        .foregroundColor(external_connector.program_component_status.color)
+                        .font(.system(size: program_item_light_size))
+                        .allowsHitTesting(false)
+                        .offset(x: 1.5, y: -1.5)
+                }
+            }
             .popover(isPresented: $is_presented)
             {
                 VStack(spacing: 16)
@@ -471,7 +482,7 @@ private struct ExternalConnectorView: View
                             }
                         }
                         
-                        Spacer(minLength: 32)
+                        Spacer(minLength: 64) //32)
                         
                         Toggle(isOn: Binding(
                             get: { external_connector.program_component_enabled },
@@ -489,6 +500,31 @@ private struct ExternalConnectorView: View
                         .tint(.accentColor)
                         #endif
                         .labelsHidden()
+                        .overlay
+                        {
+                            if external_connector.program_component_status == .running
+                            {
+                                Button
+                                {
+                                    #if os(macOS)
+                                    NSPasteboard.general.clearContents()
+                                    NSPasteboard.general.setString(external_connector.socket_name, forType: .string)
+                                    #else
+                                    UIPasteboard.general.string = external_connector.socket_name
+                                    #endif
+                                    //print(external_connector.socket_name)
+                                }
+                                label:
+                                {
+                                    Image(systemName: "document.on.document")
+                                        .frame(width: 20, height: 20)
+                                }
+                                .help("Copy socket name to clipboard")
+                                .buttonStyle(.bordered)
+                                .buttonBorderShape(.circle)
+                                .offset(x: -48)
+                            }
+                        }
                     }
                     
                     /*Divider()
@@ -551,14 +587,12 @@ struct ConnectorView_Previews: PreviewProvider
 {
     struct Container: View
     {
-        @ObservedObject private var object = Tool(name: "Test", entity_name: "??", connector: Test_Connector())
+        @ObservedObject private var object = Tool(name: "Test", entity_name: "??", connector: TestConnector())
         @State private var update_model = false
         
         var body: some View
         {
             ConnectorView(object: object)
-                //.frame(width: 320, height: 448)
-                //.padding(40)
             #if !os(visionOS)
                 .frame(width: 320)
             #else
@@ -571,6 +605,11 @@ struct ConnectorView_Previews: PreviewProvider
             #if os(visionOS)
                 .glassBackgroundEffect()
             #endif
+            
+            #if os(macOS)
+            ExternalConnectorView(connector: ExternalTestConnector())
+                .padding(32)
+            #endif
         }
     }
     
@@ -579,7 +618,7 @@ struct ConnectorView_Previews: PreviewProvider
         Container()
     }
     
-    class Test_Connector: ToolConnector, /*ExternalConnector,*/ @unchecked Sendable
+    class TestConnector: ToolConnector, /*ExternalConnector,*/ @unchecked Sendable
     {
         // MARK: Program component handling
         public var program_component_enabled: Bool = false
@@ -644,4 +683,46 @@ struct ConnectorView_Previews: PreviewProvider
             return result
         }
     }
+    
+    #if os(macOS)
+    class ExternalTestConnector: ToolConnector, ExternalConnector, @unchecked Sendable
+    {
+        @Published var program_component_enabled: Bool = false
+        {
+            didSet
+            {
+                program_component_enabled ?
+                start_program_component() :
+                stop_program_component()
+            }
+        }
+        
+        func start_program_component()
+        {
+            Task
+            {
+                program_component_status = .starting
+                
+                sleep(1)
+                
+                program_component_status = .running
+                objectWillChange.send()
+            }
+        }
+        
+        func stop_program_component()
+        {
+            program_component_status = .not_running
+        }
+        
+        var program_component_status: IndustrialKit.ProgramComponentStatus = .not_running
+        
+        let program_component_url: URL = URL(fileURLWithPath: String())
+        
+        public var socket_name: String
+        {
+            return "/tmp/Module\(Int(bitPattern: id))_tool_connector_socket"
+        }
+    }
+    #endif
 }
