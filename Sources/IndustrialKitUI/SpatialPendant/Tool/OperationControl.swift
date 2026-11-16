@@ -67,6 +67,7 @@ public struct OperationControl: View
                             .buttonBorderShape(.roundedRectangle(radius: 0))
                             #endif
                             .contentShape(Rectangle())
+                            .disabled(tool.codes.count < 2)
                             
                             Button
                             {
@@ -89,6 +90,7 @@ public struct OperationControl: View
                             .buttonBorderShape(.roundedRectangle(radius: 0))
                             #endif
                             .contentShape(Rectangle())
+                            .disabled(tool.codes.count < 2)
                         }
                     }
                     
@@ -143,17 +145,21 @@ public struct OperationControl: View
                                 }
                         )
                         
-                        TextField("Value", value: value_binding, format: .number)
-                            .font(.system(size: 14, design: .rounded))
-                            .foregroundColor(.secondary)
-                            .frame(maxWidth: .infinity)
-                            .lineLimit(1)
-                            .padding(10)
-                            .multilineTextAlignment(.center)
-                            .textFieldStyle(.plain)
-                        #if os(iOS) || os(visionOS)
-                            .keyboardType(.decimalPad)
-                        #endif
+                        if tool.codes.count > 0
+                        {
+                            TextField("\(current_code_info.value)", value: value_binding, format: .number)
+                                .font(.system(size: 14, design: .rounded))
+                                .foregroundColor(.secondary)
+                                .frame(maxWidth: .infinity)
+                                .lineLimit(1)
+                                .padding(10)
+                                .multilineTextAlignment(.center)
+                                .textFieldStyle(.plain)
+                            #if os(iOS) || os(visionOS)
+                                .keyboardType(.decimalPad)
+                            #endif
+                                .disabled(tool.codes.count < 2)
+                        }
                     }
                 }
                 .frame(width: 120, height: 120)
@@ -338,13 +344,13 @@ public struct OperationControl: View
             }
             
             // Operation Button
-            Button
+            if tool.codes.count > 0
             {
-                tool.start_pause_single_operation()
-            }
-            label:
-            {
-                if tool.codes.count > 0
+                Button
+                {
+                    tool.start_pause_single_operation()
+                }
+                label:
                 {
                     Image(
                         systemName:
@@ -365,18 +371,17 @@ public struct OperationControl: View
                         .tint(.black)
                     #endif
                         .contentTransition(.symbolEffect(.replace.offUp.byLayer))
-                    //.modifier(CircleButtonImageFramer())
                 }
-                else
-                {
-                    Rectangle()
-                        .fill(.clear)
-                        .modifier(CircleButtonImageFramer())
-                }
+                .modifier(CircleButtonGlassBorderer())
+                .scaleEffect(!is_expanded ? 1 : 0.8)
+                .padding(8)
             }
-            .modifier(CircleButtonGlassBorderer())
-            .scaleEffect(!is_expanded ? 1 : 0.8)
-            .padding(8)
+            else
+            {
+                Image(systemName: "xmark")
+                    .font(.system(size: 40))
+                    .foregroundStyle(.thinMaterial)
+            }
         }
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -487,9 +492,9 @@ struct OperationControl_Previews: PreviewProvider
             {
                 tool.codes = [
                     OperationCodeInfo(value: 0, name: "Close", symbol_name: "arrowtriangle.right.and.line.vertical.and.arrowtriangle.left.fill", description: "Close the Tool"),
-                    OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "Open the Tool"),
-                    OperationCodeInfo(value: 2, name: "UwU", symbol_name: "questionmark"),
-                    OperationCodeInfo(value: 3, name: "OwO", symbol_name: "woof", description: "In some concept art, it was revealed that the loot in ancient cities was originally going to be stored within jar-shaped pots")
+                    OperationCodeInfo(value: 1, name: "Open", symbol_name: "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill", description: "Open the Tool")//,
+                    //OperationCodeInfo(value: 2, name: "UwU", symbol_name: "questionmark"),
+                    //OperationCodeInfo(value: 3, name: "OwO", symbol_name: "woof", description: "In some concept art, it was revealed that the loot in ancient cities was originally going to be stored within jar-shaped pots")
                 ]
             }
             .overlay(alignment: .topLeading)
