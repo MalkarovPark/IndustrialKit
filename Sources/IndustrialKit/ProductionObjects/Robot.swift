@@ -1017,7 +1017,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     {
         if is_output_updating && (performed || update_scope_type == .continuous)
         {
-            if device_mode == .simulation || (connector.connected && is_twin_sync)
+            if device_mode == .simulation || connector.connected //(connector.connected && is_twin_sync)
             {
                 update_statistics_data()
             }
