@@ -296,23 +296,20 @@ struct UpdateIntervalView: View
         {
             Text("sec")
             
-            TextField("Time", text: Binding(
-                get:
-                    {
-                        String(format: "%.2f", time_interval)
-                    },
-                set:
-                    { newValue in
-                        if let value = Double(newValue)
-                        {
-                            time_interval = value
-                        }
-                    })
+            TextField(
+                "Time",
+                value: Binding(
+                    get: { time_interval },
+                    set:
+                        { new_value in
+                            time_interval = new_value > 0 ? new_value : 0.01
+                        }), //$time_interval,
+                format: .number
             )
             .frame(minWidth: 64, maxWidth: 96)
             #if os(iOS) || os(visionOS)
-                .frame(idealWidth: 96)
-                .textFieldStyle(.roundedBorder)
+            .frame(idealWidth: 96)
+            .textFieldStyle(.roundedBorder)
             #endif
             
             Stepper("Time", value: $time_interval, in: 0.01...60, step: 0.01)
