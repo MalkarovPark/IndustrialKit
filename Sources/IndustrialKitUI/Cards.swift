@@ -525,6 +525,9 @@ public struct GlassBoxCard<Content: View>: View
     
     @State private var hovered = false
     
+    private let shadow_line_width: CGFloat = 4
+    private let shadow_corner_scale: CGFloat = 0.94
+    
     public var body: some View
     {
         ZStack
@@ -532,20 +535,34 @@ public struct GlassBoxCard<Content: View>: View
             // Shadow
             if shows_shadow
             {
-                RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
-                    .intersection(
-                        RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
-                            .offset(y: depth)
-                    )
-                    .foregroundStyle(color)
-                    .blur(radius: 16)
-                    .opacity({
-                        #if !os(visionOS)
-                        0.1
-                        #else
-                        0.02
-                        #endif
-                    }())
+                GeometryReader
+                { geometry in
+                    RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                        .intersection(
+                            RoundedRectangle(cornerRadius: corner_radius, style: .continuous)
+                                .offset(y: depth)
+                        )
+                        .subtracting(
+                            RoundedRectangle(cornerRadius: corner_radius * shadow_corner_scale, style: .continuous)
+                                .intersection(
+                                    RoundedRectangle(cornerRadius: corner_radius * shadow_corner_scale, style: .continuous)
+                                        .offset(y: depth)
+                                )
+                                .scale(
+                                    x: 1 - shadow_line_width / geometry.size.width,
+                                    y: 1 - shadow_line_width / (geometry.size.height - depth)
+                                )
+                        )
+                        .foregroundStyle(color)
+                        .blur(radius: 16)
+                        .opacity({
+                            #if !os(visionOS)
+                            0.5
+                            #else
+                            0.1
+                            #endif
+                        }())
+                }
             }
             
             // Box
