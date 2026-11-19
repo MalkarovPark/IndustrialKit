@@ -343,7 +343,22 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
     {
         didSet
         {
-            if device_mode == .simulation && connector.connected
+            if device_mode == .simulation
+            {
+                if connector.connected
+                {
+                    reset_moving()
+                    disconnect_device()
+                }
+                
+                update_model()
+            }
+            else if device_mode == .real && is_twin_sync
+            {
+                connector.model_controller = model_controller
+            }
+            
+            /*if device_mode == .simulation && connector.connected
             {
                 reset_moving()
                 disconnect_device()
@@ -351,9 +366,7 @@ open class Robot: ProductionObject, DeviceTwin, StateOutputCapable
             else if device_mode == .real && is_twin_sync
             {
                 connector.model_controller = model_controller
-            }
-            
-            //model_controller.toggle_alt_pointer(device_mode == .simulation)
+            }*/
         }
     }
     
