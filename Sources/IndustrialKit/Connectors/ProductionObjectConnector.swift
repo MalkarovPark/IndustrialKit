@@ -516,6 +516,9 @@ public protocol ExternalConnector: ProductionObjectConnector, ObservableObject, 
     
     /// Name of the communication socket.
     var socket_name: String { get }
+    
+    /// Custom name for the communication socket.
+    var custom_socket_name: String? { get set }
 }
 
 // MARK: - Program Component Status

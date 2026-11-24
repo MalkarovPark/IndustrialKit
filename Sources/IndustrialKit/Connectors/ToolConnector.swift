@@ -246,9 +246,9 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
     {
         didSet
         {
-            program_component_enabled ?
-            start_program_component() :
-            stop_program_component()
+            program_component_enabled
+            ? start_program_component()
+            : stop_program_component()
         }
     }
     
@@ -308,8 +308,12 @@ public class ExternalToolConnector: ToolConnector, ExternalConnector, @unchecked
     
     public var socket_name: String
     {
+        if let custom_socket_name { return custom_socket_name }
+        
         return "/tmp/\(module_name)\(Int(bitPattern: id))_tool_connector_socket"
     }
+    
+    public var custom_socket_name: String?
     
     // MARK: Connection Handling
     override open var default_parameters: [ConnectionParameter]

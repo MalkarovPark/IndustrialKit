@@ -404,10 +404,11 @@ private struct ExternalConnectorView: View
     
     @State private var is_presented = false
     
-    @State private var enabled = false
+    @State private var is_custom_socket = false
+    @State private var did_copy = false
     
-    @State private var sharing_enabled = false
-    @State private var sharing_address = "0.0.0.0"
+    //@State private var sharing_enabled = false
+    //@State private var sharing_address = "0.0.0.0"
     
     var body: some View
     {
@@ -500,7 +501,7 @@ private struct ExternalConnectorView: View
                         .tint(.accentColor)
                         #endif
                         .labelsHidden()
-                        .overlay
+                        /*.overlay
                         {
                             if external_connector.program_component_status == .running
                             {
@@ -524,6 +525,64 @@ private struct ExternalConnectorView: View
                                 .buttonBorderShape(.circle)
                                 .offset(x: -48)
                             }
+                        }*/
+                    }
+                    
+                    Divider()
+                    
+                    HStack
+                    {
+                        Text("Socket Name")
+                        
+                        Spacer()
+                        
+                        TextField(
+                            "\(external_connector.socket_name)",
+                            text: Binding(
+                                get: { external_connector.custom_socket_name ?? String() },
+                                set:
+                                    { new_value in
+                                        
+                                        is_custom_socket = !new_value.isEmpty
+                                        
+                                        if !new_value.isEmpty
+                                        {
+                                            external_connector.custom_socket_name = new_value
+                                        }
+                                        else
+                                        {
+                                            external_connector.custom_socket_name = nil
+                                        }
+                                    }
+                            )
+                        )
+                        //.textFieldStyle(.plain)
+                        .frame(width: 128, height: 30)
+                        
+                        if !is_custom_socket
+                        {
+                            Button
+                            {
+                                #if os(macOS)
+                                NSPasteboard.general.clearContents()
+                                NSPasteboard.general.setString(external_connector.socket_name, forType: .string)
+                                #else
+                                UIPasteboard.general.string = external_connector.socket_name
+                                #endif
+                                //print(external_connector.socket_name)
+                                
+                                did_copy = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { did_copy = false }
+                            }
+                            label:
+                            {
+                                Image(systemName: did_copy ? "checkmark" : "rectangle.portrait.on.rectangle.portrait")
+                                    .frame(width: 20, height: 20)
+                                    .contentTransition(.symbolEffect(.replace.offUp.byLayer))
+                            }
+                            .help("Copy socket name to clipboard")
+                            .frame(width: 30, height: 30)
+                            .buttonStyle(.bordered)
                         }
                     }
                     
@@ -723,6 +782,8 @@ struct ConnectorView_Previews: PreviewProvider
         {
             return "/tmp/Module\(Int(bitPattern: id))_tool_connector_socket"
         }
+        
+        public var custom_socket_name: String?
     }
     #endif
 }
